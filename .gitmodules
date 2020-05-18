@@ -1,0 +1,3 @@
+[submodule "ExternalDependencies"]
+	path = ExternalDependencies
+	url = https://github.com/ldalzotto/GameEngine-ExternalDependencies.git
