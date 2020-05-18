@@ -4,6 +4,7 @@
 
 namespace _GameEngine
 {
+
     struct Log
     {
         std::shared_ptr<spdlog::logger> CoreLogger;

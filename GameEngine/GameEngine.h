@@ -1,4 +1,6 @@
 #pragma once
 
-#include "Log/Log.h"
 #include "GameEngineApplication.h"
+
+#include "Log/Log.h"
+#include "Render/Render.h"

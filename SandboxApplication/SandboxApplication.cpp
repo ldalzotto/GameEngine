@@ -10,16 +10,13 @@ int main()
 {
     App = app_alloc();
 
-    App->Log->CoreLogger->warn("Initialized Log!");
-    App->Log->ClientLogger->info("Initialized Log!");
-
     try
     {
         app_run(App);
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        App->Log->ClientLogger->error(e.what());
         app_free(App);
         return EXIT_FAILURE;
     }
