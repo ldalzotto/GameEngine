@@ -2,13 +2,14 @@
 
 #include "Log/Log.h"
 #include "Render/Render.h"
+#include "GameLoop/GameLoop.h"
 
 namespace _GameEngine
 {
 
     struct GameEngineApplication
     {
-        Log *Log;
+        GameLoop *GameLoop;
         Render *Render;
     };
 

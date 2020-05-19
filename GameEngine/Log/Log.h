@@ -11,6 +11,12 @@ namespace _GameEngine
         std::shared_ptr<spdlog::logger> ClientLogger;
     };
 
-    Log *Log_alloc();
-    void Log_free(Log *p_log);
+    namespace _Log
+    {
+        extern Log *LogInstance;
+
+        void Log_alloc();
+        void Log_free(Log *p_log);
+    } // namespace _Log
+
 } // namespace _GameEngine

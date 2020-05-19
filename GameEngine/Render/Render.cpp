@@ -14,4 +14,8 @@ namespace _GameEngine
         delete p_render;
     };
 
+    void Render_render(Render *p_render){
+
+    };
+
 } // namespace _GameEngine

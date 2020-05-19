@@ -13,4 +13,5 @@ namespace _GameEngine
     Render *Render_alloc();
     void Render_free(Render *p_render);
 
+    void Render_render(Render *p_render);
 } // namespace _GameEngine
