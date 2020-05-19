@@ -25,8 +25,8 @@ namespace _GameEngine
     void app_free(GameEngineApplication *p_app)
     {
         free(p_app->GameLoop);
-        _Log::Log_free(_Log::LogInstance);
         Render_free(p_app->Render);
+        _Log::Log_free(_Log::LogInstance);
         delete p_app;
     }
 

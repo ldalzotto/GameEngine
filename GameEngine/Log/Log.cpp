@@ -24,8 +24,8 @@ namespace _GameEngine
 
 		void Log_free(Log *p_log)
 		{
-			delete p_log->ClientLogger.get();
-			delete p_log->CoreLogger.get();
+			// delete p_log->ClientLogger.get();
+			// delete p_log->CoreLogger.get();
 			delete p_log;
 		};
 	} // namespace _Log

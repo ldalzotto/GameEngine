@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "vulkan/vulkan.h"
 
 namespace _GameEngine
 {
@@ -8,6 +9,7 @@ namespace _GameEngine
     struct Render
     {
         Window Window;
+        VkInstance Instance;
     };
 
     Render *Render_alloc();
