@@ -15,13 +15,14 @@ namespace _GameEngine::_Render
 	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo);
 	void freeVulkanDebugger(Render* p_render);
 
+	void setupLogicalDeviceValidation(_Device::DeviceValidation* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo);
+
 	Render* alloc()
 	{
 		Render* l_render = new Render();
 
 		Window_init(&l_render->Window);
 		initializeVulkan(l_render);
-		_Device::Device_build(l_render->Instance, &l_render->Device);
 
 		return l_render;
 	};
@@ -82,6 +83,11 @@ namespace _GameEngine::_Render
 		}
 
 		initVulkanDebugger(p_render);
+
+		_Device::DeviceValidation l_deviceValidation{};
+		l_deviceValidation.Closure = &p_render->ValidationLayers;
+		l_deviceValidation.SetupValidation = setupLogicalDeviceValidation;
+		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceValidation);
 	}
 
 	void freeVulkan(Render* p_render)
@@ -152,5 +158,19 @@ namespace _GameEngine::_Render
 			p_render->RenderDebug.PfnDestroyDebugUtilsMessengerEXT(p_render->Instance, p_render->RenderDebug.DebugMessenger, nullptr);
 		}
 	};
+
+	void setupLogicalDeviceValidation(_Device::DeviceValidation* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo)
+	{
+		auto l_validationLayers = (_ValidationLayers::ValidationLayers*)p_deviceValidation->Closure;
+		if (l_validationLayers->EnableValidationLayers)
+		{
+			p_deviceCreateInfo->enabledLayerCount = l_validationLayers->ValidationLayers.size();
+			p_deviceCreateInfo->ppEnabledLayerNames = l_validationLayers->ValidationLayers.data();
+		}
+		else
+		{
+			p_deviceCreateInfo->enabledLayerCount = 0;
+		}
+	}
 
 } // namespace _GameEngine

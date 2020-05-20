@@ -7,7 +7,8 @@ namespace _GameEngine
 {
 	namespace _ValidationLayers {
 
-		struct ValidationLayers {
+		struct ValidationLayers 
+		{
 			std::vector<const char*> ValidationLayers;
 			bool EnableValidationLayers;
 		};

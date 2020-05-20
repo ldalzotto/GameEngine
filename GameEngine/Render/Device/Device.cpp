@@ -21,7 +21,7 @@ namespace _GameEngine::_Render::_Device
 	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice);
 	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice);
 
-	void Device_build(VkInstance p_instance, Device* p_device)
+	void Device_build(VkInstance p_instance, Device* p_device, DeviceValidation* p_deviceValidation)
 	{
 		p_device->PhysicalDevice = VK_NULL_HANDLE;
 
@@ -57,7 +57,6 @@ namespace _GameEngine::_Render::_Device
 
 		VkDeviceQueueCreateInfo l_graphicsQueueCreateInfo{};
 		l_graphicsQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		l_graphicsQueueCreateInfo.flags = VkDeviceQueueCreateFlagBits::VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT;
 		l_graphicsQueueCreateInfo.queueFamilyIndex = l_physicalQueueFamilies.Graphics.QueueIndex;
 		l_graphicsQueueCreateInfo.queueCount = 1;
 		l_graphicsQueueCreateInfo.pQueuePriorities = l_graphicsQueuePriorityArray.data();
@@ -69,7 +68,20 @@ namespace _GameEngine::_Render::_Device
 		l_deviceCreateInfo.queueCreateInfoCount = l_graphicsQueueCreationArray.size();
 		l_deviceCreateInfo.pQueueCreateInfos = l_graphicsQueueCreationArray.data();
 
-		vkCreateDevice(p_device->PhysicalDevice, &l_deviceCreateInfo, nullptr, &p_device->LogicalDevice);
+		VkPhysicalDeviceFeatures deviceFeatures{};
+		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
+
+		if (p_deviceValidation)
+		{
+			p_deviceValidation->SetupValidation(p_deviceValidation, &l_deviceCreateInfo);
+		}
+
+		if (vkCreateDevice(p_device->PhysicalDevice, &l_deviceCreateInfo, nullptr, &p_device->LogicalDevice) != VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create logical device!"));
+		}
+
+		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Graphics.QueueIndex, 0, &p_device->GraphicsQueue);
 	};
 
 	void Device_free(Device* p_device)
