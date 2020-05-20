@@ -25,7 +25,7 @@ namespace _GameEngine::_Render
 	};
 
 	Render* alloc();
-	void free(Render* p_render);
+	void free(Render** p_render);
 
 	void render(Render* p_render);
 

@@ -26,10 +26,12 @@ namespace _GameEngine::_Render
 		return l_render;
 	};
 
-	void free(Render* p_render)
+	void free(Render** p_render)
 	{
-		freeVulkan(p_render);
-		delete p_render;
+		_Device::Device_free(&(*p_render)->Device);
+		freeVulkan(*p_render);
+		delete *p_render;
+		*p_render = nullptr;
 	};
 
 	void initializeVulkan(Render* p_render)

@@ -22,11 +22,10 @@ namespace _GameEngine
 			LogInstance->ClientLogger->set_level(spdlog::level::trace);
 		};
 
-		void Log_free(Log* p_log)
+		void Log_free(Log** p_log)
 		{
-			// delete p_log->ClientLogger.get();
-			// delete p_log->CoreLogger.get();
-			delete p_log;
+			delete *p_log;
+			*p_log = nullptr;
 		};
 
 		std::string Log_formatError(const std::string& p_file, int p_line, const std::string& p_message)

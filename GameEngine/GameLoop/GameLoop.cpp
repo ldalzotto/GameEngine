@@ -21,9 +21,10 @@ namespace _GameEngine
 			return l_instance;
 		};
 
-		void free(GameLoop* p_gameLoop)
+		void free(GameLoop** p_gameLoop)
 		{
-			delete p_gameLoop;
+			delete *p_gameLoop;
+			*p_gameLoop = nullptr;
 		};
 
 		void set_updateCallback(GameLoop* p_gameLoop, UpdateCallback p_updateCallback, void* p_closure)

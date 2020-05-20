@@ -34,7 +34,7 @@ namespace _GameEngine
     namespace _GameLoop
     {
         GameLoop *alloc(TimeClockPrecision p_timeBetweenUpdates_µs);
-        void free(GameLoop *p_gameLoop);
+        void free(GameLoop **p_gameLoop);
 
         void set_updateCallback(GameLoop *p_gameLoop, UpdateCallback p_updateCallback, void *p_closure);
         void set_renderCallback(GameLoop *p_gameLoop, RenderCallback p_renderCallback, void *p_closure);
