@@ -5,6 +5,8 @@
 
 namespace _GameEngine::_Render::_Window
 {
+	const int WINDOW_WIDTH = 800;
+	const int WINDOW_HEIGHT = 600;
 
 	const std::string WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
@@ -13,7 +15,7 @@ namespace _GameEngine::_Render::_Window
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		p_window->Window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
+		p_window->Window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan", nullptr, nullptr);
 	}
 
 	void Window_closeWindow(Window* p_window)
@@ -26,6 +28,14 @@ namespace _GameEngine::_Render::_Window
 	bool Window_askedForClose(Window* p_window)
 	{
 		return glfwWindowShouldClose(p_window->Window);
+	};
+
+	_DataStructures::WindowSize getWindowSize(Window* p_window)
+	{
+		_DataStructures::WindowSize l_windowSize{};
+		l_windowSize.Width = WINDOW_WIDTH;
+		l_windowSize.Height = WINDOW_HEIGHT;
+		return l_windowSize;
 	};
 
 	std::vector<char*> Window_getRequiredExtensionsV2(Window* p_window)

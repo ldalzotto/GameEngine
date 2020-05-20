@@ -96,12 +96,15 @@ namespace _GameEngine::_Render
 
 		l_deviceBuildPROXYCallbacks.QueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR = PROXY_vkGetPhysicalDeviceSurfaceSupportKHR;
 		l_deviceBuildPROXYCallbacks.QueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure = &p_render->WindowSurface;
+		l_deviceBuildPROXYCallbacks.SwapChainQuery.IsSwapChainSupported = _SwapChain::_Composition::isSwapChainSupported(&p_render->WindowSurface);
 
-		l_deviceBuildPROXYCallbacks.SwapChainQuery.IsSwapChainSupported = [p_render](VkPhysicalDevice PhysicalDevice) {
-			return _SwapChain::_Composition::isSwapChainSupported(&p_render->WindowSurface, PhysicalDevice);
-		};
-		
 		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
+
+		_SwapChain::SwapChainCreationStructure l_swapChainCreation{};
+		l_swapChainCreation.SwapChainSupportDetailsCallbacks = &_SwapChain::_Composition::buildSwapChainSupportDetailsCallback(&p_render->WindowSurface, &p_render->Device);
+		l_swapChainCreation.GetCurrentWindowSize = _SwapChain::_Composition::getCurrentWindowSize(&p_render->Window);
+		l_swapChainCreation.FeedVkSwapchainCreateInfoKHRWithWindowSurface = _SwapChain::_Composition::feedVkSwapchainCreateInfoKHRWithWindowSurface(&p_render->WindowSurface);
+		_SwapChain::build(&p_render->SwapChain, &l_swapChainCreation);
 	}
 
 	void freeVulkan(Render* p_render)

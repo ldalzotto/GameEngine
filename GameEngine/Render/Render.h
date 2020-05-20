@@ -5,6 +5,7 @@
 #include "vulkan/vulkan.h"
 #include "ValidationLayers.h"
 #include "Device/Device.h"
+#include "SwapChain/SwapChain.h"
 
 namespace _GameEngine::_Render
 {
@@ -23,6 +24,7 @@ namespace _GameEngine::_Render
 		_ValidationLayers::ValidationLayers ValidationLayers;
 		RenderDebug RenderDebug;
 		_Device::Device Device;
+		_SwapChain::SwapChain SwapChain;
 	};
 
 	Render* alloc();

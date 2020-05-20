@@ -1,5 +1,7 @@
 #include "SwapChainComposition.h"
 
+
+
 namespace _GameEngine::_Render::_SwapChain::_Composition
 {
 	_SwapChain::GetSwapChainSupportDetailsCallbacks buildSwapChainSupportDetailsCallback(_Surface::Surface* p_surface, VkPhysicalDevice p_physicalDevice)
@@ -26,10 +28,34 @@ namespace _GameEngine::_Render::_SwapChain::_Composition
 		return l_callbacks;
 	};
 
-	bool isSwapChainSupported(_Surface::Surface* p_surface, VkPhysicalDevice p_physicalDevice)
+	_SwapChain::GetSwapChainSupportDetailsCallbacks buildSwapChainSupportDetailsCallback(_Surface::Surface* p_surface, _Device::Device* p_device)
 	{
-		auto l_swapChainSupportDetailsCallback = buildSwapChainSupportDetailsCallback(p_surface, p_physicalDevice);
-		_SwapChain::SwapChainSupportDetails l_swapCahinSupportDetails = _SwapChain::getSwapChainSupportDetails(&l_swapChainSupportDetailsCallback);
-		return _SwapChain::isSwapChainSupported(&l_swapCahinSupportDetails);
+		return buildSwapChainSupportDetailsCallback(p_surface, p_device->PhysicalDevice);
+	}
+
+	std::function<bool(VkPhysicalDevice p_physicalDevice)> isSwapChainSupported(_Surface::Surface* p_surface)
+	{
+		return [p_surface](VkPhysicalDevice p_physicalDevice)
+		{
+			auto l_swapChainSupportDetailsCallback = buildSwapChainSupportDetailsCallback(p_surface, p_physicalDevice);
+			_SwapChain::SwapChainSupportDetails l_swapCahinSupportDetails = _SwapChain::getSwapChainSupportDetails(&l_swapChainSupportDetailsCallback);
+			return _SwapChain::isSwapChainSupported(&l_swapCahinSupportDetails);
+		};
+	}
+
+	std::function<_DataStructures::WindowSize()> getCurrentWindowSize(_Window::Window* p_window)
+	{
+		return [p_window]()
+		{
+			return _Window::getWindowSize(p_window);
+		};
+	};
+
+	std::function<void(VkSwapchainCreateInfoKHR*)> feedVkSwapchainCreateInfoKHRWithWindowSurface(_Surface::Surface* p_surface)
+	{
+		return [p_surface](VkSwapchainCreateInfoKHR* p_swapChainCreateInfo)
+		{
+			p_swapChainCreateInfo->surface = p_surface->WindowSurface;
+		};
 	};
 }

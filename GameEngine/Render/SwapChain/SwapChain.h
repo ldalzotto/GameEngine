@@ -3,10 +3,18 @@
 #include <vector>
 #include <functional>
 
+#include "Render/CommonDataStructures/DataStructures.h"
 #include "vulkan/vulkan.h"
 
 namespace _GameEngine::_Render::_SwapChain
 {
+	struct SwapChain
+	{
+		VkExtent2D SwapExtend;
+		VkSurfaceFormatKHR SurfaceFormat;
+		VkPresentModeKHR PresentMode;
+	};
+
 	struct SwapChainSupportDetails
 	{
 		/**
@@ -24,6 +32,15 @@ namespace _GameEngine::_Render::_SwapChain
 		std::function<void(uint32_t* p_presentModeCount, VkPresentModeKHR* p_presentModes)> getPhysicalDeviceSurfacePresentModesKHR;
 	};
 
+	struct SwapChainCreationStructure
+	{
+		std::function<_DataStructures::WindowSize()> GetCurrentWindowSize;
+		GetSwapChainSupportDetailsCallbacks* SwapChainSupportDetailsCallbacks;
+		std::function<void(VkSwapchainCreateInfoKHR*)> FeedVkSwapchainCreateInfoKHRWithWindowSurface;
+	};
+
+	void build(SwapChain* p_swapChain, SwapChainCreationStructure* p_swapChainCreationStructure);
 	SwapChainSupportDetails getSwapChainSupportDetails(GetSwapChainSupportDetailsCallbacks* p_callbacks);
 	bool isSwapChainSupported(SwapChainSupportDetails* p_swapCahinSupportDetails);
+
 }
