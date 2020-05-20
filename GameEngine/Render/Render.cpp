@@ -1,36 +1,41 @@
 #include "Render.h"
 
+#include "Extensions/Extensions.h"
 #include "Log/Log.h"
 
 #include <stdexcept>
-#include <vector>
 
-namespace _GameEngine
+
+namespace _GameEngine::_Render
 {
-	void Render_initializeVulkan(Render* p_render);
-	void Render_freeVulkan(Render* p_render);
+	void initializeVulkan(Render* p_render);
+	void freeVulkan(Render* p_render);
 
-	/// Graphics extensions check
-	void Render_checkPresenceOfRequiredWindowExtensions();
-	std::vector<std::string> Render_getSupportedExtensions();
-	/// END
+	void initVulkanDebugger(Render* p_render);
+	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo);
+	void freeVulkanDebugger(Render* p_render);
 
-	Render* Render_alloc()
+	Render* alloc()
 	{
 		Render* l_render = new Render();
+
 		Window_init(&l_render->Window);
-		Render_initializeVulkan(l_render);
+		initializeVulkan(l_render);
+
 		return l_render;
 	};
 
-	void Render_free(Render* p_render)
+	void free(Render* p_render)
 	{
-		Render_freeVulkan(p_render);
+		freeVulkan(p_render);
 		delete p_render;
 	};
 
-	void Render_initializeVulkan(Render* p_render)
+	void initializeVulkan(Render* p_render)
 	{
+		_ValidationLayers::init(&p_render->ValidationLayers);
+		_ValidationLayers::checkValidationLayerSupport(&p_render->ValidationLayers);
+
 		VkApplicationInfo appInfo{};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = "GameEngine";
@@ -43,70 +48,106 @@ namespace _GameEngine
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &appInfo;
 
-		char** l_extension = nullptr;
-		uint32_t l_extensionCount = 0;
-		Window_get_instanceExtension(&l_extension, &l_extensionCount);
+		std::vector<char*> l_requiredExtensions = Window_getRequiredExtensionsV2(&p_render->Window);
+		_Extensions::checkPresenceOfRequiredWindowExtensions(l_requiredExtensions);
+		_Extensions::populateRequiredExtensions(&l_requiredExtensions, p_render->ValidationLayers.EnableValidationLayers);
 
-		createInfo.enabledExtensionCount = l_extensionCount;
-		createInfo.ppEnabledExtensionNames = l_extension;
+		createInfo.enabledExtensionCount = l_requiredExtensions.size();
+		createInfo.ppEnabledExtensionNames = l_requiredExtensions.data();
 
-		createInfo.enabledLayerCount = 0;
+		// /!\ This messenger create info is used to log any problems in the creation and destroy of vulkan instance.
+		//	   It is placed outside the if because vulakn only accepts a pointer to it, so this is to avoid stack destruction.
+		VkDebugUtilsMessengerCreateInfoEXT l_debugUtlsMessengerCreateInfo{};
+
+		_ValidationLayers::ValidationLayers* l_validationLayers = &p_render->ValidationLayers;
+		if (l_validationLayers->EnableValidationLayers)
+		{
+			createInfo.enabledLayerCount = l_validationLayers->ValidationLayers.size();
+			createInfo.ppEnabledLayerNames = l_validationLayers->ValidationLayers.data();
+
+			initVkDebugUtilsMessengerCreateInfoEXT(&l_debugUtlsMessengerCreateInfo);
+			createInfo.pNext = &l_debugUtlsMessengerCreateInfo;
+		}
+		else
+		{
+			createInfo.enabledLayerCount = 0;
+		}
 
 		if (vkCreateInstance(&createInfo, nullptr, &p_render->Instance) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Failed to create Vulkan instance.");
 		}
 
-#ifndef NDEBUG
-		Render_checkPresenceOfRequiredWindowExtensions();
-#endif // !NDEBUG
-
+		initVulkanDebugger(p_render);
 	}
 
-	void Render_freeVulkan(Render* p_render) 
+	void freeVulkan(Render* p_render)
 	{
+		freeVulkanDebugger(p_render);
 		vkDestroyInstance(p_render->Instance, nullptr);
 	}
 
-	/// Graphics extensions check
-
-	void Render_checkPresenceOfRequiredWindowExtensions() 
+	void render(Render* p_render)
 	{
-		std::vector<std::string> l_supportedExtensions = Render_getSupportedExtensions();
-		std::vector<std::string> l_requiredExtensions = Window_getRequiredExtensions();
-		for (auto&& l_requiredExtension : l_requiredExtensions) 
-		{
-			if (std::find(l_supportedExtensions.begin(), l_supportedExtensions.end(), l_requiredExtension) == l_supportedExtensions.end()) 
-			{
-				throw std::runtime_error("The graphics API doesn't support the required Window extensions : " + l_requiredExtension);
-			}
-		}
-	}
 
-	std::vector<std::string> Render_getSupportedExtensions() 
-	{
-		/// Extenstions debug log
-		uint32_t l_vulkanExtensionCount = 0;
-		vkEnumerateInstanceExtensionProperties(nullptr, &l_vulkanExtensionCount, nullptr);
-
-		std::vector<VkExtensionProperties> l_extensions(l_vulkanExtensionCount);
-		std::vector<std::string> l_extensionsName(l_vulkanExtensionCount);
-
-		vkEnumerateInstanceExtensionProperties(nullptr, &l_vulkanExtensionCount, l_extensions.data());
-
-		for (int i = 0; i < l_extensions.size(); i++) 
-		{
-			l_extensionsName.at(i) = std::string(l_extensions[i].extensionName);
-		}
-
-		return l_extensionsName;
 	};
 
-	/// END
-
-	void Render_render(Render* p_render)
+	VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT p_messageSeverity, VkDebugUtilsMessageTypeFlagsEXT p_messageType,
+		const VkDebugUtilsMessengerCallbackDataEXT* p_callbackData, void* p_userData)
 	{
+		switch (p_messageSeverity)
+		{
+		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+			_Log::LogInstance->CoreLogger->trace(p_callbackData->pMessage);
+			break;
+		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+			_Log::LogInstance->CoreLogger->info(p_callbackData->pMessage);
+			break;
+		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+			_Log::LogInstance->CoreLogger->warn(p_callbackData->pMessage);
+			break;
+		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+			_Log::LogInstance->CoreLogger->error(p_callbackData->pMessage);
+			break;
+		}
 
+		return VK_FALSE;
+	};
+
+	void initVulkanDebugger(Render* p_render)
+	{
+		if (p_render->ValidationLayers.EnableValidationLayers)
+		{
+			RenderDebug* l_renderDebug = &p_render->RenderDebug;
+			l_renderDebug->PfnCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(p_render->Instance, "vkCreateDebugUtilsMessengerEXT");
+			l_renderDebug->PfnDestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(p_render->Instance, "vkDestroyDebugUtilsMessengerEXT");
+
+
+			VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+			initVkDebugUtilsMessengerCreateInfoEXT(&createInfo);
+
+			if(l_renderDebug->PfnCreateDebugUtilsMessengerEXT(p_render->Instance, &createInfo, nullptr, &l_renderDebug->DebugMessenger) != VK_SUCCESS)
+			{
+				throw std::runtime_error("Failed to set up debug message!");
+			}
+		}
+	};
+
+	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo)
+	{
+		p_debugUtilsMessengerCreateInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		p_debugUtilsMessengerCreateInfo->messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		p_debugUtilsMessengerCreateInfo->messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		p_debugUtilsMessengerCreateInfo->pfnUserCallback = debugCallback;
+		p_debugUtilsMessengerCreateInfo->pUserData = nullptr;
+	};
+
+	void freeVulkanDebugger(Render* p_render)
+	{
+		if (p_render->ValidationLayers.EnableValidationLayers) 
+		{
+			p_render->RenderDebug.PfnDestroyDebugUtilsMessengerEXT(p_render->Instance, p_render->RenderDebug.DebugMessenger, nullptr);
+		}
 	};
 
 } // namespace _GameEngine

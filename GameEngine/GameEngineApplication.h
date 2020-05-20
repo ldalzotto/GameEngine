@@ -10,7 +10,7 @@ namespace _GameEngine
     struct GameEngineApplication
     {
         GameLoop *GameLoop;
-        Render *Render;
+        _Render::Render *Render;
     };
 
     GameEngineApplication *app_alloc();

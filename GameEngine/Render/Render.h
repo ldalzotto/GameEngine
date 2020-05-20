@@ -1,19 +1,30 @@
 #pragma once
 
-#include "Window.h"
+#include "Window/Window.h"
 #include "vulkan/vulkan.h"
+#include "ValidationLayers.h"
 
-namespace _GameEngine
+namespace _GameEngine::_Render
 {
+	struct RenderDebug
+	{
+		VkDebugUtilsMessengerEXT DebugMessenger;
+		PFN_vkCreateDebugUtilsMessengerEXT PfnCreateDebugUtilsMessengerEXT;
+		PFN_vkDestroyDebugUtilsMessengerEXT PfnDestroyDebugUtilsMessengerEXT;
+	};
 
-    struct Render
-    {
-        Window Window;
-        VkInstance Instance;
-    };
+	struct Render
+	{
+		Window Window;
+		
+		VkInstance Instance;
+		_ValidationLayers::ValidationLayers ValidationLayers;
+		RenderDebug RenderDebug;
+	};
 
-    Render *Render_alloc();
-    void Render_free(Render *p_render);
+	Render* alloc();
+	void free(Render* p_render);
 
-    void Render_render(Render *p_render);
-} // namespace _GameEngine
+	void render(Render* p_render);
+
+} // namespace _GameEngine::_Render
