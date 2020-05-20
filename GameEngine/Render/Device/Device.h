@@ -1,10 +1,14 @@
+#pragma once
 
 #include "vulkan/vulkan.h"
 
 #include <vector>
+#include <functional>
 
 namespace _GameEngine::_Render::_Device
 {
+	extern std::vector<char*> DeviceExtensions;
+
 	struct Device 
 	{
 		VkPhysicalDevice PhysicalDevice;
@@ -13,10 +17,10 @@ namespace _GameEngine::_Render::_Device
 		VkQueue PresentQueue;
 	};
 
-	struct DeviceValidation
+	struct DeviceValidationLayer
 	{
 		void* Closure;
-		void(*SetupValidation)(DeviceValidation*, VkDeviceCreateInfo*);
+		void(*SetupValidation)(DeviceValidationLayer*, VkDeviceCreateInfo*);
 	};
 
 	struct QueueQueries
@@ -24,10 +28,20 @@ namespace _GameEngine::_Render::_Device
 		void* PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure;
 		VkResult(*PROXY_vkGetPhysicalDeviceSurfaceSupportKHR)(QueueQueries* p_closure, VkPhysicalDevice p_device, uint32_t p_queueFamilyIndex, VkBool32* p_supported);
 	};
-	
-	void Device_build(VkInstance p_instance, Device* p_device, 
-				QueueQueries* p_queueQueries,
-				DeviceValidation* p_deviceValidation = nullptr);
+
+	struct SwapChainQuery
+	{
+		std::function<bool(VkPhysicalDevice PhysicalDevice)> IsSwapChainSupported;
+	};
+
+	struct DeviceBuildPROXYCallbacks 
+	{
+		DeviceValidationLayer DeviceValidation;
+		QueueQueries QueueQueries;
+		SwapChainQuery SwapChainQuery;
+	};
+		
+	void Device_build(VkInstance p_instance, Device* p_device, DeviceBuildPROXYCallbacks* p_proxyCallbacks);
 
 	void Device_free(Device* p_device);
 }

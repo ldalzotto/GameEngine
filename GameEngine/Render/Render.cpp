@@ -1,6 +1,7 @@
 #include "Render.h"
 
 #include "Extensions/Extensions.h"
+#include "_Composition/SwapChainComposition.h"
 #include "Log/Log.h"
 
 #include <stdexcept>
@@ -15,7 +16,7 @@ namespace _GameEngine::_Render
 	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo);
 	void freeVulkanDebugger(Render* p_render);
 
-	void setupLogicalDeviceValidation(_Device::DeviceValidation* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo);
+	void setupLogicalDeviceValidation(_Device::DeviceValidationLayer* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo);
 	VkResult PROXY_vkGetPhysicalDeviceSurfaceSupportKHR(_Device::QueueQueries* p_closure, VkPhysicalDevice p_physicalDevice, uint32_t p_queueFamilyIndex, VkBool32* p_supported);
 
 	Render* alloc()
@@ -55,7 +56,7 @@ namespace _GameEngine::_Render
 		createInfo.pApplicationInfo = &appInfo;
 
 		std::vector<char*> l_requiredExtensions = Window_getRequiredExtensionsV2(&p_render->Window);
-		_Extensions::checkPresenceOfRequiredWindowExtensions(l_requiredExtensions);
+		_Extensions::checkPresenceOfRequiredInstanceExtensions(l_requiredExtensions);
 		_Extensions::populateRequiredExtensions(&l_requiredExtensions, p_render->ValidationLayers.EnableValidationLayers);
 
 		createInfo.enabledExtensionCount = l_requiredExtensions.size();
@@ -88,15 +89,19 @@ namespace _GameEngine::_Render
 
 		_Surface::build(&p_render->WindowSurface, p_render->Instance, &p_render->Window);
 
-		_Device::DeviceValidation l_deviceValidation{};
-		l_deviceValidation.Closure = &p_render->ValidationLayers;
-		l_deviceValidation.SetupValidation = setupLogicalDeviceValidation;
+		_Device::DeviceBuildPROXYCallbacks l_deviceBuildPROXYCallbacks{};
 
-		_Device::QueueQueries l_deviceQueueQueries{};
-		l_deviceQueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR = PROXY_vkGetPhysicalDeviceSurfaceSupportKHR;
-		l_deviceQueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure = &p_render->WindowSurface;
+		l_deviceBuildPROXYCallbacks.DeviceValidation.Closure = &p_render->ValidationLayers;
+		l_deviceBuildPROXYCallbacks.DeviceValidation.SetupValidation = setupLogicalDeviceValidation;
 
-		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceQueueQueries, &l_deviceValidation);
+		l_deviceBuildPROXYCallbacks.QueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR = PROXY_vkGetPhysicalDeviceSurfaceSupportKHR;
+		l_deviceBuildPROXYCallbacks.QueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure = &p_render->WindowSurface;
+
+		l_deviceBuildPROXYCallbacks.SwapChainQuery.IsSwapChainSupported = [p_render](VkPhysicalDevice PhysicalDevice) {
+			return _SwapChain::_Composition::isSwapChainSupported(&p_render->WindowSurface, PhysicalDevice);
+		};
+		
+		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
 	}
 
 	void freeVulkan(Render* p_render)
@@ -168,7 +173,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void setupLogicalDeviceValidation(_Device::DeviceValidation* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo)
+	void setupLogicalDeviceValidation(_Device::DeviceValidationLayer* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo)
 	{
 		auto l_validationLayers = (_ValidationLayers::ValidationLayers*)p_deviceValidation->Closure;
 		if (l_validationLayers->EnableValidationLayers)
@@ -187,5 +192,7 @@ namespace _GameEngine::_Render
 		_Surface::Surface* l_surface = (_Surface::Surface*)p_closure->PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure;
 		return vkGetPhysicalDeviceSurfaceSupportKHR(p_physicalDevice, p_queueFamilyIndex, l_surface->WindowSurface, p_supported);
 	};
+
+
 
 } // namespace _GameEngine

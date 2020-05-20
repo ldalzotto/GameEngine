@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "vulkan/vulkan.h"
+
 /**
 	@brief Extensions are the graphics API features.
 
@@ -23,5 +25,6 @@ namespace _GameEngine::_Render::_Extensions
 
 		@throw @see std::runtime_error if required extensions are not fulfilled.
 	*/
-	void checkPresenceOfRequiredWindowExtensions(std::vector<char*>& p_requiredExtensions);
+	void checkPresenceOfRequiredInstanceExtensions(std::vector<char*>& p_requiredExtensions);
+	bool checkPresenceOfRequiredDeviceExtensions(std::vector<char*>& p_requiredExtensions, VkPhysicalDevice p_device);
 }

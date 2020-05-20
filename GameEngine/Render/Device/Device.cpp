@@ -1,6 +1,7 @@
 
 #include "Device.h"
 #include "Log/Log.h"
+#include "Render/Extensions/Extensions.h"
 
 #include <stdexcept>
 #include <vector>
@@ -8,6 +9,8 @@
 
 namespace _GameEngine::_Render::_Device
 {
+	std::vector<char*> _Device::DeviceExtensions = std::vector<char*>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 	struct QueueFamily
 	{
 		bool QueueFound;
@@ -20,11 +23,40 @@ namespace _GameEngine::_Render::_Device
 		QueueFamily Present;
 	};
 
-	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueQueries* p_queueQueries);
+	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, QueueQueries* p_queueQueries, SwapChainQuery* p_swapChainQuery);
+	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceValidationLayer* p_deviceValidation, Device* p_device);
+
 	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, QueueQueries* p_queueQueries);
 	bool QueueFamilies_allQueuesFound(QueueFamilies* p_queueFamilies);
 
-	void Device_build(VkInstance p_instance, Device* p_device, QueueQueries* p_queueQueries, DeviceValidation* p_deviceValidation)
+	
+	void Device_build(VkInstance p_instance, Device* p_device, DeviceBuildPROXYCallbacks* p_proxyCallbacks)
+	{
+		Device_buildPhysicalDevice(p_device, p_instance, &p_proxyCallbacks->QueueQueries, &p_proxyCallbacks->SwapChainQuery);
+
+		QueueFamilies l_physicalQueueFamilies = findQueues(p_device->PhysicalDevice, &p_proxyCallbacks->QueueQueries);
+
+		Device_buildLogicalDevice(l_physicalQueueFamilies, &p_proxyCallbacks->DeviceValidation, p_device);
+
+		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Graphics.QueueIndex, 0, &p_device->GraphicsQueue);
+		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Present.QueueIndex, 0, &p_device->PresentQueue);
+	};
+
+	void Device_free(Device* p_device)
+	{
+		vkDestroyDevice(p_device->LogicalDevice, nullptr);
+	};
+
+	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueQueries* p_queueQueries, SwapChainQuery* p_swapChainQuery)
+	{
+		QueueFamilies l_queues = findQueues(l_physicalDevice, p_queueQueries);
+		return 
+				QueueFamilies_allQueuesFound(&l_queues) && 
+				_Extensions::checkPresenceOfRequiredDeviceExtensions(_Device::DeviceExtensions, l_physicalDevice) &&
+				p_swapChainQuery->IsSwapChainSupported(l_physicalDevice);
+	}
+
+	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, QueueQueries* p_queueQueries, SwapChainQuery* p_swapChainQuery)
 	{
 		p_device->PhysicalDevice = VK_NULL_HANDLE;
 
@@ -41,7 +73,7 @@ namespace _GameEngine::_Render::_Device
 
 		for (auto&& l_physicalDevice : l_physicalDevices)
 		{
-			if (isPhysicalDeviceElligible(l_physicalDevice, p_queueQueries))
+			if (isPhysicalDeviceElligible(l_physicalDevice, p_queueQueries, p_swapChainQuery))
 			{
 				p_device->PhysicalDevice = l_physicalDevice;
 				break;
@@ -52,9 +84,10 @@ namespace _GameEngine::_Render::_Device
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find a suitable GPU!"));
 		}
+	};
 
-		QueueFamilies l_physicalQueueFamilies = findQueues(p_device->PhysicalDevice, p_queueQueries);
-
+	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceValidationLayer* p_deviceValidation, Device* p_device)
+	{
 		std::set<uint32_t> l_uniqueDeviceQueueFamilyIndex{ l_physicalQueueFamilies.Graphics.QueueIndex, l_physicalQueueFamilies.Present.QueueIndex };
 		std::vector<float> l_graphicsQueuePriorityArray{ 1.0f };
 
@@ -75,6 +108,8 @@ namespace _GameEngine::_Render::_Device
 		l_deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		l_deviceCreateInfo.queueCreateInfoCount = l_graphicsQueueCreationArray.size();
 		l_deviceCreateInfo.pQueueCreateInfos = l_graphicsQueueCreationArray.data();
+		l_deviceCreateInfo.enabledExtensionCount = _Device::DeviceExtensions.size();
+		l_deviceCreateInfo.ppEnabledExtensionNames = _Device::DeviceExtensions.data();
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
 		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
@@ -88,21 +123,7 @@ namespace _GameEngine::_Render::_Device
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create logical device!"));
 		}
-
-		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Graphics.QueueIndex, 0, &p_device->GraphicsQueue);
-		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Present.QueueIndex, 0, &p_device->PresentQueue);
 	};
-
-	void Device_free(Device* p_device)
-	{
-		vkDestroyDevice(p_device->LogicalDevice, nullptr);
-	};
-
-	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueQueries* p_queueQueries)
-	{
-		QueueFamilies l_queues = findQueues(l_physicalDevice, p_queueQueries);
-		return QueueFamilies_allQueuesFound(&l_queues);
-	}
 
 	void QueueFamily_build(QueueFamily* p_queueFamily, bool p_queueFound, uint32_t p_queueIndex);
 	void QueueFamilies_build(QueueFamilies* p_queueFamilies);
