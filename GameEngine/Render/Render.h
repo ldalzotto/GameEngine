@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window/Window.h"
+#include "Window/Surface.h"
 #include "vulkan/vulkan.h"
 #include "ValidationLayers.h"
 #include "Device/Device.h"
@@ -16,8 +17,8 @@ namespace _GameEngine::_Render
 
 	struct Render
 	{
-		Window Window;
-		
+		_Window::Window Window;
+		_Surface::Surface WindowSurface;
 		VkInstance Instance;
 		_ValidationLayers::ValidationLayers ValidationLayers;
 		RenderDebug RenderDebug;

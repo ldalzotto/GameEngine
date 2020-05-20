@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-namespace _GameEngine
+namespace _GameEngine::_Render::_Window
 {
 
 	const std::string WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";

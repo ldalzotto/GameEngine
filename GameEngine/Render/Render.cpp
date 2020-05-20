@@ -16,6 +16,7 @@ namespace _GameEngine::_Render
 	void freeVulkanDebugger(Render* p_render);
 
 	void setupLogicalDeviceValidation(_Device::DeviceValidation* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo);
+	VkResult PROXY_vkGetPhysicalDeviceSurfaceSupportKHR(_Device::QueueQueries* p_closure, VkPhysicalDevice p_physicalDevice, uint32_t p_queueFamilyIndex, VkBool32* p_supported);
 
 	Render* alloc()
 	{
@@ -30,8 +31,9 @@ namespace _GameEngine::_Render
 	void free(Render** p_render)
 	{
 		_Device::Device_free(&(*p_render)->Device);
+		_Surface::release(&(*p_render)->WindowSurface, (*p_render)->Instance);
 		freeVulkan(*p_render);
-		delete *p_render;
+		delete* p_render;
 		*p_render = nullptr;
 	};
 
@@ -84,10 +86,17 @@ namespace _GameEngine::_Render
 
 		initVulkanDebugger(p_render);
 
+		_Surface::build(&p_render->WindowSurface, p_render->Instance, &p_render->Window);
+
 		_Device::DeviceValidation l_deviceValidation{};
 		l_deviceValidation.Closure = &p_render->ValidationLayers;
 		l_deviceValidation.SetupValidation = setupLogicalDeviceValidation;
-		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceValidation);
+
+		_Device::QueueQueries l_deviceQueueQueries{};
+		l_deviceQueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR = PROXY_vkGetPhysicalDeviceSurfaceSupportKHR;
+		l_deviceQueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure = &p_render->WindowSurface;
+
+		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceQueueQueries, &l_deviceValidation);
 	}
 
 	void freeVulkan(Render* p_render)
@@ -128,14 +137,14 @@ namespace _GameEngine::_Render
 		if (p_render->ValidationLayers.EnableValidationLayers)
 		{
 			RenderDebug* l_renderDebug = &p_render->RenderDebug;
-			l_renderDebug->PfnCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(p_render->Instance, "vkCreateDebugUtilsMessengerEXT");
-			l_renderDebug->PfnDestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(p_render->Instance, "vkDestroyDebugUtilsMessengerEXT");
+			l_renderDebug->PfnCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_render->Instance, "vkCreateDebugUtilsMessengerEXT");
+			l_renderDebug->PfnDestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_render->Instance, "vkDestroyDebugUtilsMessengerEXT");
 
 
 			VkDebugUtilsMessengerCreateInfoEXT createInfo{};
 			initVkDebugUtilsMessengerCreateInfoEXT(&createInfo);
 
-			if(l_renderDebug->PfnCreateDebugUtilsMessengerEXT(p_render->Instance, &createInfo, nullptr, &l_renderDebug->DebugMessenger) != VK_SUCCESS)
+			if (l_renderDebug->PfnCreateDebugUtilsMessengerEXT(p_render->Instance, &createInfo, nullptr, &l_renderDebug->DebugMessenger) != VK_SUCCESS)
 			{
 				throw std::runtime_error("Failed to set up debug message!");
 			}
@@ -153,7 +162,7 @@ namespace _GameEngine::_Render
 
 	void freeVulkanDebugger(Render* p_render)
 	{
-		if (p_render->ValidationLayers.EnableValidationLayers) 
+		if (p_render->ValidationLayers.EnableValidationLayers)
 		{
 			p_render->RenderDebug.PfnDestroyDebugUtilsMessengerEXT(p_render->Instance, p_render->RenderDebug.DebugMessenger, nullptr);
 		}
@@ -171,6 +180,12 @@ namespace _GameEngine::_Render
 		{
 			p_deviceCreateInfo->enabledLayerCount = 0;
 		}
-	}
+	};
+
+	VkResult PROXY_vkGetPhysicalDeviceSurfaceSupportKHR(_Device::QueueQueries* p_closure, VkPhysicalDevice p_physicalDevice, uint32_t p_queueFamilyIndex, VkBool32* p_supported)
+	{
+		_Surface::Surface* l_surface = (_Surface::Surface*)p_closure->PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure;
+		return vkGetPhysicalDeviceSurfaceSupportKHR(p_physicalDevice, p_queueFamilyIndex, l_surface->WindowSurface, p_supported);
+	};
 
 } // namespace _GameEngine

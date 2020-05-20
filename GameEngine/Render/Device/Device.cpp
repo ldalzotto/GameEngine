@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <set>
 
 namespace _GameEngine::_Render::_Device
 {
@@ -16,12 +17,14 @@ namespace _GameEngine::_Render::_Device
 	struct QueueFamilies
 	{
 		QueueFamily Graphics;
+		QueueFamily Present;
 	};
 
-	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice);
-	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice);
+	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueQueries* p_queueQueries);
+	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, QueueQueries* p_queueQueries);
+	bool QueueFamilies_allQueuesFound(QueueFamilies* p_queueFamilies);
 
-	void Device_build(VkInstance p_instance, Device* p_device, DeviceValidation* p_deviceValidation)
+	void Device_build(VkInstance p_instance, Device* p_device, QueueQueries* p_queueQueries, DeviceValidation* p_deviceValidation)
 	{
 		p_device->PhysicalDevice = VK_NULL_HANDLE;
 
@@ -38,7 +41,7 @@ namespace _GameEngine::_Render::_Device
 
 		for (auto&& l_physicalDevice : l_physicalDevices)
 		{
-			if (isPhysicalDeviceElligible(l_physicalDevice))
+			if (isPhysicalDeviceElligible(l_physicalDevice, p_queueQueries))
 			{
 				p_device->PhysicalDevice = l_physicalDevice;
 				break;
@@ -50,18 +53,23 @@ namespace _GameEngine::_Render::_Device
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find a suitable GPU!"));
 		}
 
-		QueueFamilies l_physicalQueueFamilies = findQueues(p_device->PhysicalDevice);
+		QueueFamilies l_physicalQueueFamilies = findQueues(p_device->PhysicalDevice, p_queueQueries);
 
-
+		std::set<uint32_t> l_uniqueDeviceQueueFamilyIndex{ l_physicalQueueFamilies.Graphics.QueueIndex, l_physicalQueueFamilies.Present.QueueIndex };
 		std::vector<float> l_graphicsQueuePriorityArray{ 1.0f };
 
-		VkDeviceQueueCreateInfo l_graphicsQueueCreateInfo{};
-		l_graphicsQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		l_graphicsQueueCreateInfo.queueFamilyIndex = l_physicalQueueFamilies.Graphics.QueueIndex;
-		l_graphicsQueueCreateInfo.queueCount = 1;
-		l_graphicsQueueCreateInfo.pQueuePriorities = l_graphicsQueuePriorityArray.data();
+		std::vector<VkDeviceQueueCreateInfo> l_graphicsQueueCreationArray;
 
-		std::vector<VkDeviceQueueCreateInfo> l_graphicsQueueCreationArray{ l_graphicsQueueCreateInfo };
+		for (auto&& l_queueFamilyIndex : l_uniqueDeviceQueueFamilyIndex)
+		{
+			VkDeviceQueueCreateInfo l_graphicsQueueCreateInfo{};
+			l_graphicsQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			l_graphicsQueueCreateInfo.queueFamilyIndex = l_queueFamilyIndex;
+			l_graphicsQueueCreateInfo.queueCount = 1;
+			l_graphicsQueueCreateInfo.pQueuePriorities = l_graphicsQueuePriorityArray.data();
+
+			l_graphicsQueueCreationArray.emplace_back(l_graphicsQueueCreateInfo);
+		}
 
 		VkDeviceCreateInfo l_deviceCreateInfo{};
 		l_deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -82,6 +90,7 @@ namespace _GameEngine::_Render::_Device
 		}
 
 		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Graphics.QueueIndex, 0, &p_device->GraphicsQueue);
+		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Present.QueueIndex, 0, &p_device->PresentQueue);
 	};
 
 	void Device_free(Device* p_device)
@@ -89,15 +98,16 @@ namespace _GameEngine::_Render::_Device
 		vkDestroyDevice(p_device->LogicalDevice, nullptr);
 	};
 
-	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice)
+	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueQueries* p_queueQueries)
 	{
-		return findQueues(l_physicalDevice).Graphics.QueueFound;
+		QueueFamilies l_queues = findQueues(l_physicalDevice, p_queueQueries);
+		return QueueFamilies_allQueuesFound(&l_queues);
 	}
 
 	void QueueFamily_build(QueueFamily* p_queueFamily, bool p_queueFound, uint32_t p_queueIndex);
 	void QueueFamilies_build(QueueFamilies* p_queueFamilies);
 
-	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice)
+	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, QueueQueries* p_queueQueries)
 	{
 		QueueFamilies l_queues;
 		QueueFamilies_build(&l_queues);
@@ -113,9 +123,21 @@ namespace _GameEngine::_Render::_Device
 			if (l_queueFamilies[i].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT)
 			{
 				QueueFamily_build(&l_queues.Graphics, true, i);
+			}
+
+			VkBool32 l_presentSupport;
+			p_queueQueries->PROXY_vkGetPhysicalDeviceSurfaceSupportKHR(p_queueQueries, p_physicalDevice, i, &l_presentSupport);
+			if (l_presentSupport)
+			{
+				QueueFamily_build(&l_queues.Present, true, i);
+			}
+
+			if (QueueFamilies_allQueuesFound(&l_queues))
+			{
 				break;
 			}
 		}
+
 
 		return l_queues;
 	};
@@ -129,6 +151,11 @@ namespace _GameEngine::_Render::_Device
 	void QueueFamilies_build(QueueFamilies* p_queueFamilies)
 	{
 		QueueFamily_build(&p_queueFamilies->Graphics, false, 0);
+	};
+
+	bool QueueFamilies_allQueuesFound(QueueFamilies* p_queueFamilies)
+	{
+		return p_queueFamilies->Graphics.QueueFound && p_queueFamilies->Present.QueueFound;
 	};
 
 }
