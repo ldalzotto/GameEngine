@@ -21,6 +21,7 @@ namespace _GameEngine::_Render
 
 		Window_init(&l_render->Window);
 		initializeVulkan(l_render);
+		_Device::Device_build(l_render->Instance, &l_render->Device);
 
 		return l_render;
 	};

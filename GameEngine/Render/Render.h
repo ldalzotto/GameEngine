@@ -3,6 +3,7 @@
 #include "Window/Window.h"
 #include "vulkan/vulkan.h"
 #include "ValidationLayers.h"
+#include "Device/Device.h"
 
 namespace _GameEngine::_Render
 {
@@ -20,6 +21,7 @@ namespace _GameEngine::_Render
 		VkInstance Instance;
 		_ValidationLayers::ValidationLayers ValidationLayers;
 		RenderDebug RenderDebug;
+		_Device::Device Device;
 	};
 
 	Render* alloc();
