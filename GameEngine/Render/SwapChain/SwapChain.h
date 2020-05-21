@@ -11,11 +11,24 @@
 
 namespace _GameEngine::_Render::_SwapChain
 {
+
+	struct SwapChainDependencies
+	{
+		_Device::Device* Device;
+		_Window::Window* Window;
+		_Surface::Surface* Surface;
+	};
+
 	struct SwapChain
 	{
+		VkSwapchainKHR VkSwapchainKHR;
+		SwapChainDependencies SwapChainDependencies;
+
 		VkExtent2D SwapExtend;
 		VkSurfaceFormatKHR SurfaceFormat;
 		VkPresentModeKHR PresentMode;
+
+		std::vector<VkImage> SwapChainImages;
 	};
 
 	struct SwapChainSupportDetails
@@ -28,15 +41,10 @@ namespace _GameEngine::_Render::_SwapChain
 		std::vector<VkPresentModeKHR> PresentModes;
 	};
 
-	struct SwapChainCreationStructure
-	{
-		_Device::Device* Device;
-		_Window::Window* Window;
-		_Surface::Surface* Surface;
-	};
-
-	void build(SwapChain* p_swapChain, SwapChainCreationStructure* p_swapChainCreationStructure);
+	void build(SwapChain* p_swapChain, const SwapChainDependencies& p_swapChainDependencies);
 	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface);
 	bool isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails);
+
+	void swapChain_free(SwapChain* p_swapChain);
 
 }

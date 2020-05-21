@@ -1,6 +1,9 @@
 #include "SwapChain.h"
 
+#include <stdexcept>
 #include <algorithm>
+
+#include "Log/Log.h"
 
 namespace _GameEngine::_Render::_SwapChain
 {
@@ -78,15 +81,16 @@ namespace _GameEngine::_Render::_SwapChain
 		}
 	};
 
-	void build(SwapChain* p_swapChain, SwapChainCreationStructure* p_swapChainCreationStructure)
+	void build(SwapChain* p_swapChain, const SwapChainDependencies& p_swapChainDependencies)
 	{
+		p_swapChain->SwapChainDependencies = p_swapChainDependencies;
 		SwapChainSupportDetails l_swapChainDetails = getSwapChainSupportDetails(
-			p_swapChainCreationStructure->Device->PhysicalDevice.PhysicalDevice,
-			p_swapChainCreationStructure->Surface);
+			p_swapChain->SwapChainDependencies.Device->PhysicalDevice.PhysicalDevice,
+			p_swapChain->SwapChainDependencies.Surface);
 
 		p_swapChain->SurfaceFormat = chooseSwapSurfaceFormat(l_swapChainDetails.SurfaceFormats);
 		p_swapChain->PresentMode = chooseSwapPresentMode(l_swapChainDetails.PresentModes);
-		p_swapChain->SwapExtend = chooseSwapExtent(p_swapChainCreationStructure->Window, l_swapChainDetails.Capabilities);
+		p_swapChain->SwapExtend = chooseSwapExtent(p_swapChain->SwapChainDependencies.Window, l_swapChainDetails.Capabilities);
 
 		uint32_t l_imageCount = l_swapChainDetails.Capabilities.minImageCount + 1;
 		if (l_swapChainDetails.Capabilities.minImageCount > 0 && l_imageCount > l_swapChainDetails.Capabilities.maxImageCount)
@@ -96,13 +100,51 @@ namespace _GameEngine::_Render::_SwapChain
 		
 		VkSwapchainCreateInfoKHR l_createInfo{ };
 		l_createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		l_createInfo.surface = p_swapChainCreationStructure->Surface->WindowSurface;
+		l_createInfo.surface = p_swapChain->SwapChainDependencies.Surface->WindowSurface;
 		l_createInfo.minImageCount = l_imageCount;
 		l_createInfo.imageFormat = p_swapChain->SurfaceFormat.format;
 		l_createInfo.imageColorSpace = p_swapChain->SurfaceFormat.colorSpace;
 		l_createInfo.imageExtent = p_swapChain->SwapExtend;
 		l_createInfo.imageArrayLayers = 1;
 		l_createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+
+		// How swap chain is handling images
+		auto l_physicalDeviceQueues = &p_swapChain->SwapChainDependencies.Device->PhysicalDevice.QueueFamilies;
+
+		// Graphics and Presentation queues are not the same.
+		if (l_physicalDeviceQueues->Graphics.QueueIndex != l_physicalDeviceQueues->Present.QueueIndex)
+		{
+			l_createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+			l_createInfo.queueFamilyIndexCount = 2;
+			l_createInfo.pQueueFamilyIndices = new uint32_t[2]{ l_physicalDeviceQueues->Graphics.QueueIndex , l_physicalDeviceQueues->Present.QueueIndex };
+		}
+		else
+		{
+			l_createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			l_createInfo.queueFamilyIndexCount = 0;
+			l_createInfo.pQueueFamilyIndices = nullptr;
+		}
+
+		l_createInfo.preTransform = l_swapChainDetails.Capabilities.currentTransform;
+		l_createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+		l_createInfo.presentMode = p_swapChain->PresentMode;
+		l_createInfo.clipped = VK_TRUE;
+		l_createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+		if (vkCreateSwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, &l_createInfo, nullptr, &p_swapChain->VkSwapchainKHR) != VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create swap chain!"));
+		}
+
+		l_imageCount = 0;
+		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, nullptr);
+		p_swapChain->SwapChainImages.resize(l_imageCount);
+		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, p_swapChain->SwapChainImages.data());
 	};
 
+	void swapChain_free(SwapChain* p_swapChain)
+	{
+		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
+	};
 }

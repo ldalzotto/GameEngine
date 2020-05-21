@@ -24,6 +24,7 @@ namespace _GameEngine::_Render
 	void freeDevice(Render* p_render);
 
 	void initSwapChain(Render* p_render);
+	void freeSwapChain(Render* p_render);
 
 	Render* alloc()
 	{
@@ -43,7 +44,7 @@ namespace _GameEngine::_Render
 
 	void free(Render** p_render)
 	{
-
+		freeSwapChain(*p_render);
 		freeDevice(*p_render);
 		freeSurface(*p_render);
 		freeVulkanDebugger((*p_render));
@@ -237,13 +238,16 @@ namespace _GameEngine::_Render
 
 	void initSwapChain(Render* p_render)
 	{
-		/// SwapChain
-		_SwapChain::SwapChainCreationStructure l_swapChainCreation{};
+		_SwapChain::SwapChainDependencies l_swapChainCreation{};
 		l_swapChainCreation.Device = &p_render->Device;
 		l_swapChainCreation.Surface = &p_render->WindowSurface;
 		l_swapChainCreation.Window = &p_render->Window;
-		_SwapChain::build(&p_render->SwapChain, &l_swapChainCreation);
-		///
+		_SwapChain::build(&p_render->SwapChain, l_swapChainCreation);
+	};
+
+	void freeSwapChain(Render* p_render)
+	{
+		_SwapChain::swapChain_free(&p_render->SwapChain);
 	};
 
 	/////// END SWAP CHAIN
