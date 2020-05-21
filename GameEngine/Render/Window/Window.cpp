@@ -30,9 +30,9 @@ namespace _GameEngine::_Render::_Window
 		return glfwWindowShouldClose(p_window->Window);
 	};
 
-	_DataStructures::WindowSize getWindowSize(Window* p_window)
+	WindowSize getWindowSize(Window* p_window)
 	{
-		_DataStructures::WindowSize l_windowSize{};
+		WindowSize l_windowSize{};
 		l_windowSize.Width = WINDOW_WIDTH;
 		l_windowSize.Height = WINDOW_HEIGHT;
 		return l_windowSize;

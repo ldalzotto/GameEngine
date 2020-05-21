@@ -3,7 +3,10 @@
 #include <vector>
 #include <functional>
 
-#include "Render/CommonDataStructures/DataStructures.h"
+#include "Render/Device/Device.h"
+#include "Render/Window/Window.h"
+#include "Render/Window/Surface.h"
+
 #include "vulkan/vulkan.h"
 
 namespace _GameEngine::_Render::_SwapChain
@@ -25,22 +28,15 @@ namespace _GameEngine::_Render::_SwapChain
 		std::vector<VkPresentModeKHR> PresentModes;
 	};
 
-	struct GetSwapChainSupportDetailsCallbacks
-	{
-		std::function<void(VkSurfaceCapabilitiesKHR* pSurfaceCapabilities)> getPhysicalDeviceSurfaceCapabilitiesKHR;
-		std::function<void(uint32_t* p_formatCount, VkSurfaceFormatKHR* p_pSurfaceFormats)> getPhysicalDeviceSurfaceFormatsKHR;
-		std::function<void(uint32_t* p_presentModeCount, VkPresentModeKHR* p_presentModes)> getPhysicalDeviceSurfacePresentModesKHR;
-	};
-
 	struct SwapChainCreationStructure
 	{
-		std::function<_DataStructures::WindowSize()> GetCurrentWindowSize;
-		GetSwapChainSupportDetailsCallbacks* SwapChainSupportDetailsCallbacks;
-		std::function<void(VkSwapchainCreateInfoKHR*)> FeedVkSwapchainCreateInfoKHRWithWindowSurface;
+		_Device::Device* Device;
+		_Window::Window* Window;
+		_Surface::Surface* Surface;
 	};
 
 	void build(SwapChain* p_swapChain, SwapChainCreationStructure* p_swapChainCreationStructure);
-	SwapChainSupportDetails getSwapChainSupportDetails(GetSwapChainSupportDetailsCallbacks* p_callbacks);
+	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface);
 	bool isSwapChainSupported(SwapChainSupportDetails* p_swapCahinSupportDetails);
 
 }

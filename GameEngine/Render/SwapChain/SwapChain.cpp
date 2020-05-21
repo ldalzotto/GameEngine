@@ -4,27 +4,27 @@
 
 namespace _GameEngine::_Render::_SwapChain
 {
-	SwapChainSupportDetails getSwapChainSupportDetails(GetSwapChainSupportDetailsCallbacks* p_callbacks)
+	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
 	{
 		SwapChainSupportDetails l_swapChainSupportDetails{};
 
-		p_callbacks->getPhysicalDeviceSurfaceCapabilitiesKHR(&l_swapChainSupportDetails.Capabilities);
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_physicalDevice, p_surface->WindowSurface, &l_swapChainSupportDetails.Capabilities);
 
 		uint32_t l_deviceSurfaceFormatCount;
-		p_callbacks->getPhysicalDeviceSurfaceFormatsKHR(&l_deviceSurfaceFormatCount, nullptr);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(p_physicalDevice, p_surface->WindowSurface, &l_deviceSurfaceFormatCount, nullptr);
 
 		if (l_deviceSurfaceFormatCount > 0)
 		{
 			l_swapChainSupportDetails.SurfaceFormats = std::vector<VkSurfaceFormatKHR>(l_deviceSurfaceFormatCount);
-			p_callbacks->getPhysicalDeviceSurfaceFormatsKHR(&l_deviceSurfaceFormatCount, l_swapChainSupportDetails.SurfaceFormats.data());
+			vkGetPhysicalDeviceSurfaceFormatsKHR(p_physicalDevice, p_surface->WindowSurface, &l_deviceSurfaceFormatCount, l_swapChainSupportDetails.SurfaceFormats.data());
 		}
 
 		uint32_t l_presentModeCount;
-		p_callbacks->getPhysicalDeviceSurfacePresentModesKHR(&l_presentModeCount, nullptr);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(p_physicalDevice, p_surface->WindowSurface, &l_presentModeCount, nullptr);
 		if (l_presentModeCount > 0)
 		{
 			l_swapChainSupportDetails.PresentModes = std::vector<VkPresentModeKHR>(l_presentModeCount);
-			p_callbacks->getPhysicalDeviceSurfacePresentModesKHR(&l_presentModeCount, l_swapChainSupportDetails.PresentModes.data());
+			vkGetPhysicalDeviceSurfacePresentModesKHR(p_physicalDevice, p_surface->WindowSurface, &l_presentModeCount, l_swapChainSupportDetails.PresentModes.data());
 		}
 
 		return l_swapChainSupportDetails;
@@ -60,7 +60,7 @@ namespace _GameEngine::_Render::_SwapChain
 		return VK_PRESENT_MODE_FIFO_KHR;
 	};
 
-	VkExtent2D chooseSwapExtent(const _DataStructures::WindowSize& p_currentWindowSize, const VkSurfaceCapabilitiesKHR& p_capabilities)
+	VkExtent2D chooseSwapExtent(_Window::Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities)
 	{
 		if (p_capabilities.currentExtent.width != UINT32_MAX)
 		{
@@ -68,7 +68,8 @@ namespace _GameEngine::_Render::_SwapChain
 		}
 		else
 		{
-			VkExtent2D l_actualExtent{ p_currentWindowSize.Width, p_currentWindowSize.Height };
+			_Window::WindowSize l_currentWindowSize = _Window::getWindowSize(p_window);
+			VkExtent2D l_actualExtent{ l_currentWindowSize.Width, l_currentWindowSize.Height };
 
 			l_actualExtent.width = std::max(p_capabilities.minImageExtent.width, std::min(p_capabilities.maxImageExtent.width, l_actualExtent.width));
 			l_actualExtent.height = std::max(p_capabilities.minImageExtent.height, std::min(p_capabilities.maxImageExtent.height, l_actualExtent.height));
@@ -79,11 +80,13 @@ namespace _GameEngine::_Render::_SwapChain
 
 	void build(SwapChain* p_swapChain, SwapChainCreationStructure* p_swapChainCreationStructure)
 	{
-		SwapChainSupportDetails l_swapChainDetails = getSwapChainSupportDetails(p_swapChainCreationStructure->SwapChainSupportDetailsCallbacks);
+		SwapChainSupportDetails l_swapChainDetails = getSwapChainSupportDetails(
+			p_swapChainCreationStructure->Device->PhysicalDevice,
+			p_swapChainCreationStructure->Surface);
 
 		p_swapChain->SurfaceFormat = chooseSwapSurfaceFormat(l_swapChainDetails.SurfaceFormats);
 		p_swapChain->PresentMode = chooseSwapPresentMode(l_swapChainDetails.PresentModes);
-		p_swapChain->SwapExtend = chooseSwapExtent(p_swapChainCreationStructure->GetCurrentWindowSize(), l_swapChainDetails.Capabilities);
+		p_swapChain->SwapExtend = chooseSwapExtent(p_swapChainCreationStructure->Window, l_swapChainDetails.Capabilities);
 
 		uint32_t l_imageCount = l_swapChainDetails.Capabilities.minImageCount + 1;
 		if (l_swapChainDetails.Capabilities.minImageCount > 0 && l_imageCount > l_swapChainDetails.Capabilities.maxImageCount)
@@ -93,7 +96,7 @@ namespace _GameEngine::_Render::_SwapChain
 		
 		VkSwapchainCreateInfoKHR l_createInfo{ };
 		l_createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		p_swapChainCreationStructure->FeedVkSwapchainCreateInfoKHRWithWindowSurface(&l_createInfo);
+		l_createInfo.surface = p_swapChainCreationStructure->Surface->WindowSurface;
 		l_createInfo.minImageCount = l_imageCount;
 		l_createInfo.imageFormat = p_swapChain->SurfaceFormat.format;
 		l_createInfo.imageColorSpace = p_swapChain->SurfaceFormat.colorSpace;

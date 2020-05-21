@@ -101,9 +101,9 @@ namespace _GameEngine::_Render
 		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
 
 		_SwapChain::SwapChainCreationStructure l_swapChainCreation{};
-		l_swapChainCreation.SwapChainSupportDetailsCallbacks = &_SwapChain::_Composition::buildSwapChainSupportDetailsCallback(&p_render->WindowSurface, &p_render->Device);
-		l_swapChainCreation.GetCurrentWindowSize = _SwapChain::_Composition::getCurrentWindowSize(&p_render->Window);
-		l_swapChainCreation.FeedVkSwapchainCreateInfoKHRWithWindowSurface = _SwapChain::_Composition::feedVkSwapchainCreateInfoKHRWithWindowSurface(&p_render->WindowSurface);
+		l_swapChainCreation.Device = &p_render->Device;
+		l_swapChainCreation.Surface = &p_render->WindowSurface;
+		l_swapChainCreation.Window = &p_render->Window;
 		_SwapChain::build(&p_render->SwapChain, &l_swapChainCreation);
 	}
 
