@@ -30,9 +30,9 @@ namespace _GameEngine::_Render::_SwapChain
 		return l_swapChainSupportDetails;
 	};
 
-	bool isSwapChainSupported(SwapChainSupportDetails* p_swapCahinSupportDetails)
+	bool isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails)
 	{
-		return p_swapCahinSupportDetails->PresentModes.size() > 0 && p_swapCahinSupportDetails->SurfaceFormats.size() > 0;
+		return p_swapCahinSupportDetails.PresentModes.size() > 0 && p_swapCahinSupportDetails.SurfaceFormats.size() > 0;
 	};
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats)

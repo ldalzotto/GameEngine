@@ -37,6 +37,6 @@ namespace _GameEngine::_Render::_SwapChain
 
 	void build(SwapChain* p_swapChain, SwapChainCreationStructure* p_swapChainCreationStructure);
 	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface);
-	bool isSwapChainSupported(SwapChainSupportDetails* p_swapCahinSupportDetails);
+	bool isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails);
 
 }

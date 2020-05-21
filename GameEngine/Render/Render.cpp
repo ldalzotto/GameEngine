@@ -1,7 +1,6 @@
 #include "Render.h"
 
 #include "Extensions/Extensions.h"
-#include "_Composition/SwapChainComposition.h"
 #include "Log/Log.h"
 
 #include <stdexcept>
@@ -12,37 +11,51 @@ namespace _GameEngine::_Render
 	void initializeVulkan(Render* p_render);
 	void freeVulkan(Render* p_render);
 
+	void initValidationLayers(Render* p_render);
+
 	void initVulkanDebugger(Render* p_render);
 	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo);
 	void freeVulkanDebugger(Render* p_render);
 
-	void setupLogicalDeviceValidation(_Device::DeviceValidationLayer* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo);
-	VkResult PROXY_vkGetPhysicalDeviceSurfaceSupportKHR(_Device::QueueQueries* p_closure, VkPhysicalDevice p_physicalDevice, uint32_t p_queueFamilyIndex, VkBool32* p_supported);
+	void initSurface(Render* p_render);
+	void freeSurface(Render* p_render);
+
+	void initDevice(Render* p_render);
+	void freeDevice(Render* p_render);
+
+	void initSwapChain(Render* p_render);
 
 	Render* alloc()
 	{
 		Render* l_render = new Render();
 
 		Window_init(&l_render->Window);
+
+		initValidationLayers(l_render);
 		initializeVulkan(l_render);
+		initVulkanDebugger(l_render);
+		initSurface(l_render);
+		initDevice(l_render);
+		initSwapChain(l_render);
 
 		return l_render;
 	};
 
 	void free(Render** p_render)
 	{
-		_Device::Device_free(&(*p_render)->Device);
-		_Surface::release(&(*p_render)->WindowSurface, (*p_render)->Instance);
+
+		freeDevice(*p_render);
+		freeSurface(*p_render);
+		freeVulkanDebugger((*p_render));
 		freeVulkan(*p_render);
 		delete* p_render;
 		*p_render = nullptr;
 	};
 
+	/////// VULKAN
+
 	void initializeVulkan(Render* p_render)
 	{
-		_ValidationLayers::init(&p_render->ValidationLayers);
-		_ValidationLayers::checkValidationLayerSupport(&p_render->ValidationLayers);
-
 		VkApplicationInfo appInfo{};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = "GameEngine";
@@ -84,38 +97,44 @@ namespace _GameEngine::_Render
 		{
 			throw std::runtime_error("Failed to create Vulkan instance.");
 		}
-
-		initVulkanDebugger(p_render);
-
-		_Surface::build(&p_render->WindowSurface, p_render->Instance, &p_render->Window);
-
-		_Device::DeviceBuildPROXYCallbacks l_deviceBuildPROXYCallbacks{};
-
-		l_deviceBuildPROXYCallbacks.DeviceValidation.Closure = &p_render->ValidationLayers;
-		l_deviceBuildPROXYCallbacks.DeviceValidation.SetupValidation = setupLogicalDeviceValidation;
-
-		l_deviceBuildPROXYCallbacks.QueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR = PROXY_vkGetPhysicalDeviceSurfaceSupportKHR;
-		l_deviceBuildPROXYCallbacks.QueueQueries.PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure = &p_render->WindowSurface;
-		l_deviceBuildPROXYCallbacks.SwapChainQuery.IsSwapChainSupported = _SwapChain::_Composition::isSwapChainSupported(&p_render->WindowSurface);
-
-		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
-
-		_SwapChain::SwapChainCreationStructure l_swapChainCreation{};
-		l_swapChainCreation.Device = &p_render->Device;
-		l_swapChainCreation.Surface = &p_render->WindowSurface;
-		l_swapChainCreation.Window = &p_render->Window;
-		_SwapChain::build(&p_render->SwapChain, &l_swapChainCreation);
 	}
 
 	void freeVulkan(Render* p_render)
 	{
-		freeVulkanDebugger(p_render);
 		vkDestroyInstance(p_render->Instance, nullptr);
-	}
+	};
 
-	void render(Render* p_render)
+	////// END VULKAN
+
+	/////// VALIDATION LAYERS
+
+	void initValidationLayers(Render* p_render)
 	{
+		_ValidationLayers::init(&p_render->ValidationLayers);
+		_ValidationLayers::checkValidationLayerSupport(&p_render->ValidationLayers);
+	};
 
+	/////// END VALIDATION LAYERS
+
+	/////// VULKAN DEBUGGER
+
+	void initVulkanDebugger(Render* p_render)
+	{
+		if (p_render->ValidationLayers.EnableValidationLayers)
+		{
+			RenderDebug* l_renderDebug = &p_render->RenderDebug;
+			l_renderDebug->PfnCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_render->Instance, "vkCreateDebugUtilsMessengerEXT");
+			l_renderDebug->PfnDestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_render->Instance, "vkDestroyDebugUtilsMessengerEXT");
+
+
+			VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+			initVkDebugUtilsMessengerCreateInfoEXT(&createInfo);
+
+			if (l_renderDebug->PfnCreateDebugUtilsMessengerEXT(p_render->Instance, &createInfo, nullptr, &l_renderDebug->DebugMessenger) != VK_SUCCESS)
+			{
+				throw std::runtime_error("Failed to set up debug message!");
+			}
+		}
 	};
 
 	VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT p_messageSeverity, VkDebugUtilsMessageTypeFlagsEXT p_messageType,
@@ -140,25 +159,6 @@ namespace _GameEngine::_Render
 		return VK_FALSE;
 	};
 
-	void initVulkanDebugger(Render* p_render)
-	{
-		if (p_render->ValidationLayers.EnableValidationLayers)
-		{
-			RenderDebug* l_renderDebug = &p_render->RenderDebug;
-			l_renderDebug->PfnCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_render->Instance, "vkCreateDebugUtilsMessengerEXT");
-			l_renderDebug->PfnDestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(p_render->Instance, "vkDestroyDebugUtilsMessengerEXT");
-
-
-			VkDebugUtilsMessengerCreateInfoEXT createInfo{};
-			initVkDebugUtilsMessengerCreateInfoEXT(&createInfo);
-
-			if (l_renderDebug->PfnCreateDebugUtilsMessengerEXT(p_render->Instance, &createInfo, nullptr, &l_renderDebug->DebugMessenger) != VK_SUCCESS)
-			{
-				throw std::runtime_error("Failed to set up debug message!");
-			}
-		}
-	};
-
 	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo)
 	{
 		p_debugUtilsMessengerCreateInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -176,13 +176,49 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void setupLogicalDeviceValidation(_Device::DeviceValidationLayer* p_deviceValidation, VkDeviceCreateInfo* p_deviceCreateInfo)
+	/////// END VULKAN DEBUGGER
+
+	/////// SURFACE
+
+	void initSurface(Render* p_render)
 	{
-		auto l_validationLayers = (_ValidationLayers::ValidationLayers*)p_deviceValidation->Closure;
-		if (l_validationLayers->EnableValidationLayers)
+		_Surface::build(&p_render->WindowSurface, p_render->Instance, &p_render->Window);
+	};
+
+	void freeSurface(Render* p_render)
+	{
+		_Surface::release(&p_render->WindowSurface, p_render->Instance);
+	};
+
+	/////// END SURFACE
+
+	/////// DEVICE
+
+	void setupLogicalDeviceValidation(_ValidationLayers::ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo);
+
+	void initDevice(Render* p_render)
+	{
+		_Device::DeviceBuildPROXYCallbacks l_deviceBuildPROXYCallbacks{};
+		l_deviceBuildPROXYCallbacks.SetupValidation = [p_render](VkDeviceCreateInfo* p_deviceCreateInfo) {
+			setupLogicalDeviceValidation(&p_render->ValidationLayers, p_deviceCreateInfo);
+		};
+		l_deviceBuildPROXYCallbacks.GetPhysicalDeviceSurfaceSupport = [p_render](VkPhysicalDevice p_device, uint32_t p_queueFamilyIndex, VkBool32* p_supported)
 		{
-			p_deviceCreateInfo->enabledLayerCount = l_validationLayers->ValidationLayers.size();
-			p_deviceCreateInfo->ppEnabledLayerNames = l_validationLayers->ValidationLayers.data();
+			return vkGetPhysicalDeviceSurfaceSupportKHR(p_device, p_queueFamilyIndex, p_render->WindowSurface.WindowSurface, p_supported);
+		};
+		l_deviceBuildPROXYCallbacks.IsSwapChainSupported = [p_render](VkPhysicalDevice p_physicalDevice)
+		{
+			return _SwapChain::isSwapChainSupported(_SwapChain::getSwapChainSupportDetails(p_physicalDevice, &p_render->WindowSurface));
+		};
+		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
+	};
+
+	void setupLogicalDeviceValidation(_ValidationLayers::ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo)
+	{
+		if (p_validationLayers->EnableValidationLayers)
+		{
+			p_deviceCreateInfo->enabledLayerCount = p_validationLayers->ValidationLayers.size();
+			p_deviceCreateInfo->ppEnabledLayerNames = p_validationLayers->ValidationLayers.data();
 		}
 		else
 		{
@@ -190,12 +226,31 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	VkResult PROXY_vkGetPhysicalDeviceSurfaceSupportKHR(_Device::QueueQueries* p_closure, VkPhysicalDevice p_physicalDevice, uint32_t p_queueFamilyIndex, VkBool32* p_supported)
+	void freeDevice(Render* p_render)
 	{
-		_Surface::Surface* l_surface = (_Surface::Surface*)p_closure->PROXY_vkGetPhysicalDeviceSurfaceSupportKHR_closure;
-		return vkGetPhysicalDeviceSurfaceSupportKHR(p_physicalDevice, p_queueFamilyIndex, l_surface->WindowSurface, p_supported);
+		_Device::Device_free(&p_render->Device);
 	};
 
+	/////// END DEVICE
 
+	/////// SWAP CHAIN
+
+	void initSwapChain(Render* p_render)
+	{
+		/// SwapChain
+		_SwapChain::SwapChainCreationStructure l_swapChainCreation{};
+		l_swapChainCreation.Device = &p_render->Device;
+		l_swapChainCreation.Surface = &p_render->WindowSurface;
+		l_swapChainCreation.Window = &p_render->Window;
+		_SwapChain::build(&p_render->SwapChain, &l_swapChainCreation);
+		///
+	};
+
+	/////// END SWAP CHAIN
+
+	void render(Render* p_render)
+	{
+
+	};
 
 } // namespace _GameEngine

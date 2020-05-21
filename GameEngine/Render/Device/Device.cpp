@@ -23,20 +23,20 @@ namespace _GameEngine::_Render::_Device
 		QueueFamily Present;
 	};
 
-	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, QueueQueries* p_queueQueries, SwapChainQuery* p_swapChainQuery);
-	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceValidationLayer* p_deviceValidation, Device* p_device);
+	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks);
+	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks, Device* p_device);
 
-	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, QueueQueries* p_queueQueries);
+	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks);
 	bool QueueFamilies_allQueuesFound(QueueFamilies* p_queueFamilies);
 
 	
 	void Device_build(VkInstance p_instance, Device* p_device, DeviceBuildPROXYCallbacks* p_proxyCallbacks)
 	{
-		Device_buildPhysicalDevice(p_device, p_instance, &p_proxyCallbacks->QueueQueries, &p_proxyCallbacks->SwapChainQuery);
+		Device_buildPhysicalDevice(p_device, p_instance, p_proxyCallbacks);
 
-		QueueFamilies l_physicalQueueFamilies = findQueues(p_device->PhysicalDevice, &p_proxyCallbacks->QueueQueries);
+		QueueFamilies l_physicalQueueFamilies = findQueues(p_device->PhysicalDevice, p_proxyCallbacks);
 
-		Device_buildLogicalDevice(l_physicalQueueFamilies, &p_proxyCallbacks->DeviceValidation, p_device);
+		Device_buildLogicalDevice(l_physicalQueueFamilies, p_proxyCallbacks, p_device);
 
 		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Graphics.QueueIndex, 0, &p_device->GraphicsQueue);
 		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Present.QueueIndex, 0, &p_device->PresentQueue);
@@ -47,16 +47,16 @@ namespace _GameEngine::_Render::_Device
 		vkDestroyDevice(p_device->LogicalDevice, nullptr);
 	};
 
-	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueQueries* p_queueQueries, SwapChainQuery* p_swapChainQuery)
+	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks)
 	{
-		QueueFamilies l_queues = findQueues(l_physicalDevice, p_queueQueries);
+		QueueFamilies l_queues = findQueues(l_physicalDevice, p_deviceBuildCallbacks);
 		return 
 				QueueFamilies_allQueuesFound(&l_queues) && 
 				_Extensions::checkPresenceOfRequiredDeviceExtensions(_Device::DeviceExtensions, l_physicalDevice) &&
-				p_swapChainQuery->IsSwapChainSupported(l_physicalDevice);
+			p_deviceBuildCallbacks->IsSwapChainSupported(l_physicalDevice);
 	}
 
-	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, QueueQueries* p_queueQueries, SwapChainQuery* p_swapChainQuery)
+	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks)
 	{
 		p_device->PhysicalDevice = VK_NULL_HANDLE;
 
@@ -73,7 +73,7 @@ namespace _GameEngine::_Render::_Device
 
 		for (auto&& l_physicalDevice : l_physicalDevices)
 		{
-			if (isPhysicalDeviceElligible(l_physicalDevice, p_queueQueries, p_swapChainQuery))
+			if (isPhysicalDeviceElligible(l_physicalDevice, p_deviceBuildCallbacks))
 			{
 				p_device->PhysicalDevice = l_physicalDevice;
 				break;
@@ -86,7 +86,7 @@ namespace _GameEngine::_Render::_Device
 		}
 	};
 
-	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceValidationLayer* p_deviceValidation, Device* p_device)
+	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks, Device* p_device)
 	{
 		std::set<uint32_t> l_uniqueDeviceQueueFamilyIndex{ l_physicalQueueFamilies.Graphics.QueueIndex, l_physicalQueueFamilies.Present.QueueIndex };
 		std::vector<float> l_graphicsQueuePriorityArray{ 1.0f };
@@ -114,9 +114,9 @@ namespace _GameEngine::_Render::_Device
 		VkPhysicalDeviceFeatures deviceFeatures{};
 		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
-		if (p_deviceValidation)
+		if (p_deviceBuildCallbacks->SetupValidation)
 		{
-			p_deviceValidation->SetupValidation(p_deviceValidation, &l_deviceCreateInfo);
+			p_deviceBuildCallbacks->SetupValidation(&l_deviceCreateInfo);
 		}
 
 		if (vkCreateDevice(p_device->PhysicalDevice, &l_deviceCreateInfo, nullptr, &p_device->LogicalDevice) != VK_SUCCESS)
@@ -128,7 +128,7 @@ namespace _GameEngine::_Render::_Device
 	void QueueFamily_build(QueueFamily* p_queueFamily, bool p_queueFound, uint32_t p_queueIndex);
 	void QueueFamilies_build(QueueFamilies* p_queueFamilies);
 
-	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, QueueQueries* p_queueQueries)
+	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks)
 	{
 		QueueFamilies l_queues;
 		QueueFamilies_build(&l_queues);
@@ -147,7 +147,7 @@ namespace _GameEngine::_Render::_Device
 			}
 
 			VkBool32 l_presentSupport;
-			p_queueQueries->PROXY_vkGetPhysicalDeviceSurfaceSupportKHR(p_queueQueries, p_physicalDevice, i, &l_presentSupport);
+			p_deviceBuildCallbacks->GetPhysicalDeviceSurfaceSupport(p_physicalDevice, i, &l_presentSupport);
 			if (l_presentSupport)
 			{
 				QueueFamily_build(&l_queues.Present, true, i);
