@@ -4,7 +4,7 @@
 
 namespace _GameEngine::_Render::_SwapChain
 {
-	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
+	SwapChainSupportDetails getSwapChainSupportDetails( VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
 	{
 		SwapChainSupportDetails l_swapChainSupportDetails{};
 
@@ -81,7 +81,7 @@ namespace _GameEngine::_Render::_SwapChain
 	void build(SwapChain* p_swapChain, SwapChainCreationStructure* p_swapChainCreationStructure)
 	{
 		SwapChainSupportDetails l_swapChainDetails = getSwapChainSupportDetails(
-			p_swapChainCreationStructure->Device->PhysicalDevice,
+			p_swapChainCreationStructure->Device->PhysicalDevice.PhysicalDevice,
 			p_swapChainCreationStructure->Surface);
 
 		p_swapChain->SurfaceFormat = chooseSwapSurfaceFormat(l_swapChainDetails.SurfaceFormats);

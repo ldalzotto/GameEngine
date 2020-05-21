@@ -2,6 +2,7 @@
 #include "Device.h"
 #include "Log/Log.h"
 #include "Render/Extensions/Extensions.h"
+#include "Queue.h"
 
 #include <stdexcept>
 #include <vector>
@@ -11,54 +12,30 @@ namespace _GameEngine::_Render::_Device
 {
 	std::vector<char*> _Device::DeviceExtensions = std::vector<char*>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	struct QueueFamily
+	void buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildCallbacks* p_deviceBuildCallbacks);
+	void buildLogicalDevice(Device* p_device, DeviceBuildCallbacks* p_deviceBuildCallbacks);
+
+	void build(VkInstance p_instance, Device* p_device, DeviceBuildCallbacks* p_proxyCallbacks)
 	{
-		bool QueueFound;
-		uint32_t QueueIndex;
-	};
-
-	struct QueueFamilies
-	{
-		QueueFamily Graphics;
-		QueueFamily Present;
-	};
-
-	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks);
-	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks, Device* p_device);
-
-	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks);
-	bool QueueFamilies_allQueuesFound(QueueFamilies* p_queueFamilies);
-
-	
-	void Device_build(VkInstance p_instance, Device* p_device, DeviceBuildPROXYCallbacks* p_proxyCallbacks)
-	{
-		Device_buildPhysicalDevice(p_device, p_instance, p_proxyCallbacks);
-
-		QueueFamilies l_physicalQueueFamilies = findQueues(p_device->PhysicalDevice, p_proxyCallbacks);
-
-		Device_buildLogicalDevice(l_physicalQueueFamilies, p_proxyCallbacks, p_device);
-
-		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Graphics.QueueIndex, 0, &p_device->GraphicsQueue);
-		vkGetDeviceQueue(p_device->LogicalDevice, l_physicalQueueFamilies.Present.QueueIndex, 0, &p_device->PresentQueue);
+		buildPhysicalDevice(p_device, p_instance, p_proxyCallbacks);
+		buildLogicalDevice(p_device, p_proxyCallbacks);
 	};
 
 	void Device_free(Device* p_device)
 	{
-		vkDestroyDevice(p_device->LogicalDevice, nullptr);
+		vkDestroyDevice(p_device->LogicalDevice.LogicalDevice, nullptr);
 	};
 
-	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks)
+	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueFamilies* out_queueFamilies, DeviceBuildCallbacks* p_deviceBuildCallbacks)
 	{
-		QueueFamilies l_queues = findQueues(l_physicalDevice, p_deviceBuildCallbacks);
-		return 
-				QueueFamilies_allQueuesFound(&l_queues) && 
-				_Extensions::checkPresenceOfRequiredDeviceExtensions(_Device::DeviceExtensions, l_physicalDevice) &&
+		return getQueue(l_physicalDevice, out_queueFamilies, p_deviceBuildCallbacks->GetPhysicalDeviceSurfaceSupport) &&
+			_Extensions::checkPresenceOfRequiredDeviceExtensions(_Device::DeviceExtensions, l_physicalDevice) &&
 			p_deviceBuildCallbacks->IsSwapChainSupported(l_physicalDevice);
 	}
 
-	void Device_buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks)
+	void buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildCallbacks* p_deviceBuildCallbacks)
 	{
-		p_device->PhysicalDevice = VK_NULL_HANDLE;
+		p_device->PhysicalDevice.PhysicalDevice = VK_NULL_HANDLE;
 
 		uint32_t l_deviceCount = 0;
 		vkEnumeratePhysicalDevices(p_instance, &l_deviceCount, nullptr);
@@ -73,22 +50,23 @@ namespace _GameEngine::_Render::_Device
 
 		for (auto&& l_physicalDevice : l_physicalDevices)
 		{
-			if (isPhysicalDeviceElligible(l_physicalDevice, p_deviceBuildCallbacks))
+			if (isPhysicalDeviceElligible(l_physicalDevice, 
+					&p_device->PhysicalDevice.QueueFamilies, p_deviceBuildCallbacks))
 			{
-				p_device->PhysicalDevice = l_physicalDevice;
+				p_device->PhysicalDevice.PhysicalDevice = l_physicalDevice;
 				break;
 			}
 		}
 
-		if (p_device->PhysicalDevice == VK_NULL_HANDLE)
+		if (p_device->PhysicalDevice.PhysicalDevice == VK_NULL_HANDLE)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find a suitable GPU!"));
 		}
 	};
 
-	void Device_buildLogicalDevice(QueueFamilies& l_physicalQueueFamilies, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks, Device* p_device)
+	void buildLogicalDevice(Device* p_device, DeviceBuildCallbacks* p_deviceBuildCallbacks)
 	{
-		std::set<uint32_t> l_uniqueDeviceQueueFamilyIndex{ l_physicalQueueFamilies.Graphics.QueueIndex, l_physicalQueueFamilies.Present.QueueIndex };
+		std::set<uint32_t> l_uniqueDeviceQueueFamilyIndex{ p_device->PhysicalDevice.QueueFamilies.Graphics.QueueIndex, p_device->PhysicalDevice.QueueFamilies.Present.QueueIndex };
 		std::vector<float> l_graphicsQueuePriorityArray{ 1.0f };
 
 		std::vector<VkDeviceQueueCreateInfo> l_graphicsQueueCreationArray;
@@ -119,64 +97,13 @@ namespace _GameEngine::_Render::_Device
 			p_deviceBuildCallbacks->SetupValidation(&l_deviceCreateInfo);
 		}
 
-		if (vkCreateDevice(p_device->PhysicalDevice, &l_deviceCreateInfo, nullptr, &p_device->LogicalDevice) != VK_SUCCESS)
+		if (vkCreateDevice(p_device->PhysicalDevice.PhysicalDevice, &l_deviceCreateInfo, nullptr, &p_device->LogicalDevice.LogicalDevice) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create logical device!"));
 		}
-	};
 
-	void QueueFamily_build(QueueFamily* p_queueFamily, bool p_queueFound, uint32_t p_queueIndex);
-	void QueueFamilies_build(QueueFamilies* p_queueFamilies);
-
-	QueueFamilies findQueues(VkPhysicalDevice p_physicalDevice, DeviceBuildPROXYCallbacks* p_deviceBuildCallbacks)
-	{
-		QueueFamilies l_queues;
-		QueueFamilies_build(&l_queues);
-
-		uint32_t l_queueFamilyCount = 0;
-		vkGetPhysicalDeviceQueueFamilyProperties(p_physicalDevice, &l_queueFamilyCount, nullptr);
-
-		std::vector<VkQueueFamilyProperties> l_queueFamilies(l_queueFamilyCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(p_physicalDevice, &l_queueFamilyCount, l_queueFamilies.data());
-
-		for (int i = 0; i < l_queueFamilies.size(); i++)
-		{
-			if (l_queueFamilies[i].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT)
-			{
-				QueueFamily_build(&l_queues.Graphics, true, i);
-			}
-
-			VkBool32 l_presentSupport;
-			p_deviceBuildCallbacks->GetPhysicalDeviceSurfaceSupport(p_physicalDevice, i, &l_presentSupport);
-			if (l_presentSupport)
-			{
-				QueueFamily_build(&l_queues.Present, true, i);
-			}
-
-			if (QueueFamilies_allQueuesFound(&l_queues))
-			{
-				break;
-			}
-		}
-
-
-		return l_queues;
-	};
-
-	void QueueFamily_build(QueueFamily* p_queueFamily, bool p_queueFound, uint32_t p_queueIndex)
-	{
-		p_queueFamily->QueueFound = p_queueFound;
-		p_queueFamily->QueueIndex = p_queueIndex;
-	};
-
-	void QueueFamilies_build(QueueFamilies* p_queueFamilies)
-	{
-		QueueFamily_build(&p_queueFamilies->Graphics, false, 0);
-	};
-
-	bool QueueFamilies_allQueuesFound(QueueFamilies* p_queueFamilies)
-	{
-		return p_queueFamilies->Graphics.QueueFound && p_queueFamilies->Present.QueueFound;
+		vkGetDeviceQueue(p_device->LogicalDevice.LogicalDevice, p_device->PhysicalDevice.QueueFamilies.Graphics.QueueIndex, 0, &p_device->LogicalDevice.Queues.GraphicsQueue);
+		vkGetDeviceQueue(p_device->LogicalDevice.LogicalDevice, p_device->PhysicalDevice.QueueFamilies.Present.QueueIndex, 0, &p_device->LogicalDevice.Queues.PresentQueue);
 	};
 
 }

@@ -198,7 +198,7 @@ namespace _GameEngine::_Render
 
 	void initDevice(Render* p_render)
 	{
-		_Device::DeviceBuildPROXYCallbacks l_deviceBuildPROXYCallbacks{};
+		_Device::DeviceBuildCallbacks l_deviceBuildPROXYCallbacks{};
 		l_deviceBuildPROXYCallbacks.SetupValidation = [p_render](VkDeviceCreateInfo* p_deviceCreateInfo) {
 			setupLogicalDeviceValidation(&p_render->ValidationLayers, p_deviceCreateInfo);
 		};
@@ -210,7 +210,7 @@ namespace _GameEngine::_Render
 		{
 			return _SwapChain::isSwapChainSupported(_SwapChain::getSwapChainSupportDetails(p_physicalDevice, &p_render->WindowSurface));
 		};
-		_Device::Device_build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
+		_Device::build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
 	};
 
 	void setupLogicalDeviceValidation(_ValidationLayers::ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo)
