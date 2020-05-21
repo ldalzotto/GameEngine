@@ -7,7 +7,7 @@
 
 namespace _GameEngine::_Render::_SwapChain
 {
-	SwapChainSupportDetails getSwapChainSupportDetails( VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
+	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
 	{
 		SwapChainSupportDetails l_swapChainSupportDetails{};
 
@@ -51,7 +51,7 @@ namespace _GameEngine::_Render::_SwapChain
 		return p_surfaceFormats[0];
 	};
 
-	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes) 
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes)
 	{
 		for (auto&& l_presentMode : p_availablePresentModes)
 		{
@@ -84,27 +84,30 @@ namespace _GameEngine::_Render::_SwapChain
 	void build(SwapChain* p_swapChain, const SwapChainDependencies& p_swapChainDependencies)
 	{
 		p_swapChain->SwapChainDependencies = p_swapChainDependencies;
+		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
+		SwapChainImages* l_swapChainImages = &p_swapChain->SwapChainImages;
+
 		SwapChainSupportDetails l_swapChainDetails = getSwapChainSupportDetails(
 			p_swapChain->SwapChainDependencies.Device->PhysicalDevice.PhysicalDevice,
 			p_swapChain->SwapChainDependencies.Surface);
 
-		p_swapChain->SurfaceFormat = chooseSwapSurfaceFormat(l_swapChainDetails.SurfaceFormats);
-		p_swapChain->PresentMode = chooseSwapPresentMode(l_swapChainDetails.PresentModes);
-		p_swapChain->SwapExtend = chooseSwapExtent(p_swapChain->SwapChainDependencies.Window, l_swapChainDetails.Capabilities);
+		l_swapChainInfo->SurfaceFormat = chooseSwapSurfaceFormat(l_swapChainDetails.SurfaceFormats);
+		l_swapChainInfo->PresentMode = chooseSwapPresentMode(l_swapChainDetails.PresentModes);
+		l_swapChainInfo->SwapExtend = chooseSwapExtent(p_swapChain->SwapChainDependencies.Window, l_swapChainDetails.Capabilities);
 
 		uint32_t l_imageCount = l_swapChainDetails.Capabilities.minImageCount + 1;
 		if (l_swapChainDetails.Capabilities.minImageCount > 0 && l_imageCount > l_swapChainDetails.Capabilities.maxImageCount)
 		{
 			l_imageCount = l_swapChainDetails.Capabilities.maxImageCount;
 		}
-		
+
 		VkSwapchainCreateInfoKHR l_createInfo{ };
 		l_createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		l_createInfo.surface = p_swapChain->SwapChainDependencies.Surface->WindowSurface;
 		l_createInfo.minImageCount = l_imageCount;
-		l_createInfo.imageFormat = p_swapChain->SurfaceFormat.format;
-		l_createInfo.imageColorSpace = p_swapChain->SurfaceFormat.colorSpace;
-		l_createInfo.imageExtent = p_swapChain->SwapExtend;
+		l_createInfo.imageFormat = l_swapChainInfo->SurfaceFormat.format;
+		l_createInfo.imageColorSpace = l_swapChainInfo->SurfaceFormat.colorSpace;
+		l_createInfo.imageExtent = l_swapChainInfo->SwapExtend;
 		l_createInfo.imageArrayLayers = 1;
 		l_createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
@@ -128,7 +131,7 @@ namespace _GameEngine::_Render::_SwapChain
 
 		l_createInfo.preTransform = l_swapChainDetails.Capabilities.currentTransform;
 		l_createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-		l_createInfo.presentMode = p_swapChain->PresentMode;
+		l_createInfo.presentMode = l_swapChainInfo->PresentMode;
 		l_createInfo.clipped = VK_TRUE;
 		l_createInfo.oldSwapchain = VK_NULL_HANDLE;
 
@@ -139,12 +142,17 @@ namespace _GameEngine::_Render::_SwapChain
 
 		l_imageCount = 0;
 		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, nullptr);
-		p_swapChain->SwapChainImages.resize(l_imageCount);
-		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, p_swapChain->SwapChainImages.data());
+		l_swapChainImages->SwapChainImages.resize(l_imageCount);
+		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, l_swapChainImages->SwapChainImages.data());
+
+		ImageViewsDependencies l_imageViewDependencies{};
+		l_imageViewDependencies.Device = p_swapChainDependencies.Device;
+		init(&l_swapChainImages->ImageViews, l_imageViewDependencies, &p_swapChain->SwapChainInfo, &l_swapChainImages->SwapChainImages);
 	};
 
 	void swapChain_free(SwapChain* p_swapChain)
 	{
+		ImageViews_free(&p_swapChain->SwapChainImages.ImageViews);
 		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
 	};
 }

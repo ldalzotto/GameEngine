@@ -7,6 +7,9 @@
 #include "Render/Window/Window.h"
 #include "Render/Window/Surface.h"
 
+#include "Render/SwapChain/SwapChainSharedStructures.h"
+#include "Render/SwapChain/ImageViews.h"
+
 #include "vulkan/vulkan.h"
 
 namespace _GameEngine::_Render::_SwapChain
@@ -19,16 +22,18 @@ namespace _GameEngine::_Render::_SwapChain
 		_Surface::Surface* Surface;
 	};
 
+	struct SwapChainImages
+	{
+		std::vector<VkImage> SwapChainImages;
+		ImageViews ImageViews;
+	};
+
 	struct SwapChain
 	{
 		VkSwapchainKHR VkSwapchainKHR;
 		SwapChainDependencies SwapChainDependencies;
-
-		VkExtent2D SwapExtend;
-		VkSurfaceFormatKHR SurfaceFormat;
-		VkPresentModeKHR PresentMode;
-
-		std::vector<VkImage> SwapChainImages;
+		SwapChainInfo SwapChainInfo;
+		SwapChainImages SwapChainImages;
 	};
 
 	struct SwapChainSupportDetails
