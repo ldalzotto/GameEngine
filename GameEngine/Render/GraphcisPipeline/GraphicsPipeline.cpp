@@ -57,7 +57,7 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 
 		createPipelineLayout(p_graphicsPipeline);
 		l_pipelineCreateInfo.layout = p_graphicsPipeline->PipelineLayout;
-		
+
 
 		RenderPassBuildInfo l_renderpassBuildInfo{};
 		RenderPassDependencies l_renderPassDependencies{};
@@ -78,10 +78,18 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 
 		_Shader::freeShader(&l_vertexShader);
 		_Shader::freeShader(&l_fragmentShader);
+
+
+		FrameBufferDependencies l_frameBufferDependencies{};
+		l_frameBufferDependencies.RenderPass = &p_graphicsPipeline->RenderPass;
+		l_frameBufferDependencies.ImageViews = &p_graphicsPipelineDependencies.SwapChain->SwapChainImages.ImageViews;
+		FrameBuffer_init(&p_graphicsPipeline->FrameBuffer, &l_frameBufferDependencies);
+
 	};
 
 	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline)
 	{
+		FrameBuffer_free(&p_graphicsPipeline->FrameBuffer);
 		vkDestroyPipeline(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->Pipeline, nullptr);
 		clearPipelineLayout(p_graphicsPipeline);
 		RenderPass_free(&p_graphicsPipeline->RenderPass);
@@ -139,7 +147,7 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		return l_viewport;
 	};
 
-	VkRect2D createScissor(GraphicsPipeline* p_graphicsPipeline) 
+	VkRect2D createScissor(GraphicsPipeline* p_graphicsPipeline)
 	{
 		VkRect2D l_scissor{};
 		l_scissor.offset = { 0,0 };
@@ -227,7 +235,7 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		l_pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
 		if (vkCreatePipelineLayout(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, &l_pipelineLayoutCreateInfo, nullptr, &p_graphicsPipeline->PipelineLayout)
-					!= VK_SUCCESS)
+			!= VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create pipeline layout!"));
 		}

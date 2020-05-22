@@ -4,6 +4,7 @@
 #include "Render/SwapChain/SwapChain.h"
 
 #include "Render/GraphcisPipeline/RenderPass.h"
+#include "Render/GraphcisPipeline/FrameBuffer.h"
 
 #include "Render/Shader/Shader.h"
 
@@ -21,6 +22,7 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		VkPipeline Pipeline;
 		VkPipelineLayout PipelineLayout;
 		RenderPass RenderPass;
+		FrameBuffer FrameBuffer;
 	};
 
 	void build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies);
