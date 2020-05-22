@@ -29,6 +29,11 @@ namespace _GameEngine::_Render
 	void initGraphicsPipeline(Render* p_render);
 	void freeGraphicsPipeline(Render* p_render);
 
+	void initCommandPool(Render* p_render);
+	void freeCommandPool(Render* p_render);
+
+	void initCommandBuffers(Render* p_render);
+
 	Render* alloc()
 	{
 		Render* l_render = new Render();
@@ -42,12 +47,22 @@ namespace _GameEngine::_Render
 		initDevice(l_render);
 		initSwapChain(l_render);
 		initGraphicsPipeline(l_render);
+		initCommandPool(l_render);
+		initCommandBuffers(l_render);
+
+
+		StartRenderPassInfo l_startRenderPassInfo;
+		l_startRenderPassInfo.CommandBuffers = &l_render->CommandBuffers;
+		l_startRenderPassInfo.GraphicsPipeline = &l_render->GraphicsPipeline;
+		l_startRenderPassInfo.SwapChain = &l_render->SwapChain;
+		startRenderPass(&l_startRenderPassInfo);
 
 		return l_render;
 	};
 
 	void free(Render** p_render)
 	{
+		freeCommandPool(*p_render);
 		freeGraphicsPipeline(*p_render);
 		freeSwapChain(*p_render);
 		freeDevice(*p_render);
@@ -280,9 +295,71 @@ namespace _GameEngine::_Render
 
 	/////// END GRAPHICS PIPELINE
 
+	/////// COMMAND POOL
+
+	void initCommandPool(Render* p_render)
+	{
+		_CommandBuffer::CommandPoolDependencies l_commandPoolDependencies{};
+		l_commandPoolDependencies.Device = &p_render->Device;
+		_CommandBuffer::CommandPool_Init(&p_render->CommandPool, &l_commandPoolDependencies);
+	};
+
+	void freeCommandPool(Render* p_render)
+	{
+		_CommandBuffer::CommandPool_free(&p_render->CommandPool);
+	};
+
+	/////// END COMMAND POOL
+
+	/////// COMMAND BUFFERS
+
+	void initCommandBuffers(Render* p_render)
+	{
+		_CommandBuffer::CommandBuffersDependencies l_commandBuffersDependencies{};
+		l_commandBuffersDependencies.CommandPool = &p_render->CommandPool;
+		l_commandBuffersDependencies.FrameBuffer = &p_render->GraphicsPipeline.FrameBuffer;
+		_CommandBuffer::CommandBuffers_init(&p_render->CommandBuffers, &l_commandBuffersDependencies);
+	};
+
+	/////// END COMMAND BUFFERS
+
+	void startRenderPass(StartRenderPassInfo* p_startRenderPassInfo)
+	{
+		_GraphicsPipeline::RenderPass* RenderPass = &p_startRenderPassInfo->GraphicsPipeline->RenderPass;
+		_GraphicsPipeline::FrameBuffer* FrameBuffer = &p_startRenderPassInfo->GraphicsPipeline->FrameBuffer;
+
+		for (size_t i = 0; i < FrameBuffer->FrameBuffers.size(); i++)
+		{
+			VkRenderPassBeginInfo l_renderPassBeginInfo{};
+			l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+			l_renderPassBeginInfo.renderPass = RenderPass->renderPass;
+			l_renderPassBeginInfo.framebuffer = FrameBuffer->FrameBuffers[i];
+			l_renderPassBeginInfo.renderArea.offset = { 0,0 };
+			l_renderPassBeginInfo.renderArea.extent = p_startRenderPassInfo->SwapChain->SwapChainInfo.SwapExtend;
+
+			VkClearValue l_clearValue = { 0.0f,0.0f,0.0f,1.0f };
+			l_renderPassBeginInfo.clearValueCount = 1;
+			l_renderPassBeginInfo.pClearValues = &l_clearValue;
+
+			VkCommandBuffer l_commandBuffer = p_startRenderPassInfo->CommandBuffers->CommandBuffers[i];
+
+			vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_startRenderPassInfo->GraphicsPipeline->Pipeline);
+			vkCmdDraw(l_commandBuffer, 3, 1, 0, 0);
+			vkCmdEndRenderPass(l_commandBuffer);
+
+			if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
+			{
+				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
+			}
+		}
+	};
+
 	void render(Render* p_render)
 	{
-		
+
 	};
+
+	
 
 } // namespace _GameEngine

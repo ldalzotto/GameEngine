@@ -29,4 +29,5 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline);
 
 	VkPipelineShaderStageCreateInfo buildShaderStageCreate(_Shader::Shader* p_shader);
+
 }

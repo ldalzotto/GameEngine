@@ -7,6 +7,8 @@
 #include "Device/Device.h"
 #include "SwapChain/SwapChain.h"
 #include "GraphcisPipeline/GraphicsPipeline.h"
+#include "CommandBuffer/CommandPool.h"
+#include "CommandBuffer/CommandBuffers.h"
 
 namespace _GameEngine::_Render
 {
@@ -27,11 +29,21 @@ namespace _GameEngine::_Render
 		_Device::Device Device;
 		_SwapChain::SwapChain SwapChain;
 		_GraphicsPipeline::GraphicsPipeline GraphicsPipeline;
+		_CommandBuffer::CommandPool CommandPool;
+		_CommandBuffer::CommandBuffers CommandBuffers;
 	};
 
 	Render* alloc();
 	void free(Render** p_render);
-
 	void render(Render* p_render);
+
+	struct StartRenderPassInfo
+	{
+		_GraphicsPipeline::GraphicsPipeline* GraphicsPipeline;
+		_SwapChain::SwapChain* SwapChain;
+		_CommandBuffer::CommandBuffers* CommandBuffers;
+	};
+
+	void startRenderPass(StartRenderPassInfo* p_startRenderPassInfo);
 
 } // namespace _GameEngine::_Render
