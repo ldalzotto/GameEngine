@@ -12,13 +12,13 @@ namespace _GameEngine::_Render::_Device
 {
 	std::vector<char*> _Device::DeviceExtensions = std::vector<char*>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	void buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildCallbacks* p_deviceBuildCallbacks);
-	void buildLogicalDevice(Device* p_device, DeviceBuildCallbacks* p_deviceBuildCallbacks);
+	void buildPhysicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);
+	void buildLogicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);
 
-	void build(VkInstance p_instance, Device* p_device, DeviceBuildCallbacks* p_proxyCallbacks)
+	void Device_build(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo)
 	{
-		buildPhysicalDevice(p_device, p_instance, p_proxyCallbacks);
-		buildLogicalDevice(p_device, p_proxyCallbacks);
+		buildPhysicalDevice(p_device, p_deviceBuildInfo);
+		buildLogicalDevice(p_device, p_deviceBuildInfo);
 	};
 
 	void Device_free(Device* p_device)
@@ -33,12 +33,12 @@ namespace _GameEngine::_Render::_Device
 			p_deviceBuildCallbacks->IsSwapChainSupported(l_physicalDevice);
 	}
 
-	void buildPhysicalDevice(Device* p_device, const VkInstance& p_instance, DeviceBuildCallbacks* p_deviceBuildCallbacks)
+	void buildPhysicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo)
 	{
 		p_device->PhysicalDevice.PhysicalDevice = VK_NULL_HANDLE;
 
 		uint32_t l_deviceCount = 0;
-		vkEnumeratePhysicalDevices(p_instance, &l_deviceCount, nullptr);
+		vkEnumeratePhysicalDevices(p_deviceBuildInfo->Instance, &l_deviceCount, nullptr);
 
 		if (l_deviceCount == 0)
 		{
@@ -46,12 +46,12 @@ namespace _GameEngine::_Render::_Device
 		}
 
 		std::vector<VkPhysicalDevice> l_physicalDevices(l_deviceCount);
-		vkEnumeratePhysicalDevices(p_instance, &l_deviceCount, l_physicalDevices.data());
+		vkEnumeratePhysicalDevices(p_deviceBuildInfo->Instance, &l_deviceCount, l_physicalDevices.data());
 
 		for (auto&& l_physicalDevice : l_physicalDevices)
 		{
 			if (isPhysicalDeviceElligible(l_physicalDevice, 
-					&p_device->PhysicalDevice.QueueFamilies, p_deviceBuildCallbacks))
+					&p_device->PhysicalDevice.QueueFamilies, &p_deviceBuildInfo->DeviceBuildCallbacks))
 			{
 				p_device->PhysicalDevice.PhysicalDevice = l_physicalDevice;
 				break;
@@ -64,7 +64,7 @@ namespace _GameEngine::_Render::_Device
 		}
 	};
 
-	void buildLogicalDevice(Device* p_device, DeviceBuildCallbacks* p_deviceBuildCallbacks)
+	void buildLogicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo)
 	{
 		std::set<uint32_t> l_uniqueDeviceQueueFamilyIndex{ p_device->PhysicalDevice.QueueFamilies.Graphics.QueueIndex, p_device->PhysicalDevice.QueueFamilies.Present.QueueIndex };
 		std::vector<float> l_graphicsQueuePriorityArray{ 1.0f };
@@ -92,9 +92,9 @@ namespace _GameEngine::_Render::_Device
 		VkPhysicalDeviceFeatures deviceFeatures{};
 		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
-		if (p_deviceBuildCallbacks->SetupValidation)
+		if (p_deviceBuildInfo->DeviceBuildCallbacks.SetupValidation)
 		{
-			p_deviceBuildCallbacks->SetupValidation(&l_deviceCreateInfo);
+			p_deviceBuildInfo->DeviceBuildCallbacks.SetupValidation(&l_deviceCreateInfo);
 		}
 
 		if (vkCreateDevice(p_device->PhysicalDevice.PhysicalDevice, &l_deviceCreateInfo, nullptr, &p_device->LogicalDevice.LogicalDevice) != VK_SUCCESS)

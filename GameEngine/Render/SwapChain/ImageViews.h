@@ -20,6 +20,13 @@ namespace _GameEngine::_Render::_SwapChain
 		std::vector<VkImageView> ImageViews;
 	};
 
-	void init(ImageViews* p_imageViews, const ImageViewsDependencies& p_imageViewsDependencies, SwapChainInfo* p_swapChainInfo,	std::vector<VkImage>* p_swapChainImages);
+	struct ImageViewInitializationInfo
+	{
+		ImageViewsDependencies* ImageViewDependencies;
+		SwapChainInfo* SwapChainInfo;
+		std::vector<VkImage>* SwapChainImages;
+	};
+
+	void ImageViews_init(ImageViews* p_imageViews, ImageViewInitializationInfo* p_imageViewInitializationInfo);
 	void ImageViews_free(ImageViews* p_imageViews);
 }

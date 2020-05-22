@@ -202,19 +202,24 @@ namespace _GameEngine::_Render
 
 	void initDevice(Render* p_render)
 	{
-		_Device::DeviceBuildCallbacks l_deviceBuildPROXYCallbacks{};
-		l_deviceBuildPROXYCallbacks.SetupValidation = [p_render](VkDeviceCreateInfo* p_deviceCreateInfo) {
+		_Device::DeviceBuildInfo l_deviceBuildInfo{};
+		l_deviceBuildInfo.Instance = p_render->Instance;
+
+		_Device::DeviceBuildCallbacks* l_deviceBuildCallbacks = &l_deviceBuildInfo.DeviceBuildCallbacks;
+
+		l_deviceBuildCallbacks->SetupValidation = [p_render](VkDeviceCreateInfo* p_deviceCreateInfo) {
 			setupLogicalDeviceValidation(&p_render->ValidationLayers, p_deviceCreateInfo);
 		};
-		l_deviceBuildPROXYCallbacks.GetPhysicalDeviceSurfaceSupport = [p_render](VkPhysicalDevice p_device, uint32_t p_queueFamilyIndex, VkBool32* p_supported)
+		l_deviceBuildCallbacks->GetPhysicalDeviceSurfaceSupport = [p_render](VkPhysicalDevice p_device, uint32_t p_queueFamilyIndex, VkBool32* p_supported)
 		{
 			return vkGetPhysicalDeviceSurfaceSupportKHR(p_device, p_queueFamilyIndex, p_render->WindowSurface.WindowSurface, p_supported);
 		};
-		l_deviceBuildPROXYCallbacks.IsSwapChainSupported = [p_render](VkPhysicalDevice p_physicalDevice)
+		l_deviceBuildCallbacks->IsSwapChainSupported = [p_render](VkPhysicalDevice p_physicalDevice)
 		{
 			return _SwapChain::isSwapChainSupported(_SwapChain::getSwapChainSupportDetails(p_physicalDevice, &p_render->WindowSurface));
 		};
-		_Device::build(p_render->Instance, &p_render->Device, &l_deviceBuildPROXYCallbacks);
+
+		_Device::Device_build(&p_render->Device, &l_deviceBuildInfo);
 	};
 
 	void setupLogicalDeviceValidation(_ValidationLayers::ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo)
@@ -262,6 +267,7 @@ namespace _GameEngine::_Render
 	{
 		_GraphicsPipeline::GraphicsPipelineDependencies l_graphicsPipelineDependencies{};
 		l_graphicsPipelineDependencies.Device = &p_render->Device;
+		l_graphicsPipelineDependencies.SwapChain = &p_render->SwapChain;
 		_GraphicsPipeline::build(&p_render->GraphicsPieline, l_graphicsPipelineDependencies);
 	};
 

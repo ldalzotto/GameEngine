@@ -47,8 +47,14 @@ namespace _GameEngine::_Render::_Device
 		std::function<VkResult(VkPhysicalDevice p_device, uint32_t p_queueFamilyIndex, VkBool32* p_supported)> GetPhysicalDeviceSurfaceSupport;
 		std::function<bool(VkPhysicalDevice PhysicalDevice)> IsSwapChainSupported;
 	};
+
+	struct DeviceBuildInfo
+	{
+		VkInstance Instance;
+		DeviceBuildCallbacks DeviceBuildCallbacks;
+	};
 		
-	void build(VkInstance p_instance, Device* p_device, DeviceBuildCallbacks* p_proxyCallbacks);
+	void Device_build(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);
 
 	void Device_free(Device* p_device);
 }

@@ -144,10 +144,17 @@ namespace _GameEngine::_Render::_SwapChain
 		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, nullptr);
 		l_swapChainImages->SwapChainImages.resize(l_imageCount);
 		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, l_swapChainImages->SwapChainImages.data());
+		
+
 
 		ImageViewsDependencies l_imageViewDependencies{};
 		l_imageViewDependencies.Device = p_swapChainDependencies.Device;
-		init(&l_swapChainImages->ImageViews, l_imageViewDependencies, &p_swapChain->SwapChainInfo, &l_swapChainImages->SwapChainImages);
+		ImageViewInitializationInfo l_imageViewInitializationInfo{};
+		l_imageViewInitializationInfo.ImageViewDependencies = &l_imageViewDependencies;
+		l_imageViewInitializationInfo.SwapChainImages = &l_swapChainImages->SwapChainImages;
+		l_imageViewInitializationInfo.SwapChainInfo = &p_swapChain->SwapChainInfo;
+
+		ImageViews_init(&l_swapChainImages->ImageViews, &l_imageViewInitializationInfo);
 	};
 
 	void swapChain_free(SwapChain* p_swapChain)
