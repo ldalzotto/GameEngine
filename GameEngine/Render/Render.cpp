@@ -27,6 +27,7 @@ namespace _GameEngine::_Render
 	void freeSwapChain(Render* p_render);
 
 	void initGraphicsPipeline(Render* p_render);
+	void freeGraphicsPipeline(Render* p_render);
 
 	Render* alloc()
 	{
@@ -47,6 +48,7 @@ namespace _GameEngine::_Render
 
 	void free(Render** p_render)
 	{
+		freeGraphicsPipeline(*p_render);
 		freeSwapChain(*p_render);
 		freeDevice(*p_render);
 		freeSurface(*p_render);
@@ -268,14 +270,19 @@ namespace _GameEngine::_Render
 		_GraphicsPipeline::GraphicsPipelineDependencies l_graphicsPipelineDependencies{};
 		l_graphicsPipelineDependencies.Device = &p_render->Device;
 		l_graphicsPipelineDependencies.SwapChain = &p_render->SwapChain;
-		_GraphicsPipeline::build(&p_render->GraphicsPieline, l_graphicsPipelineDependencies);
+		_GraphicsPipeline::build(&p_render->GraphicsPipeline, l_graphicsPipelineDependencies);
+	};
+
+	void freeGraphicsPipeline(Render* p_render)
+	{
+		_GraphicsPipeline::GraphicsPipeline_free(&p_render->GraphicsPipeline);
 	};
 
 	/////// END GRAPHICS PIPELINE
 
 	void render(Render* p_render)
 	{
-
+		
 	};
 
 } // namespace _GameEngine

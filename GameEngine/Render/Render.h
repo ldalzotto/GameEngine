@@ -26,7 +26,7 @@ namespace _GameEngine::_Render
 		RenderDebug RenderDebug;
 		_Device::Device Device;
 		_SwapChain::SwapChain SwapChain;
-		_GraphicsPipeline::GraphicsPieline GraphicsPieline;
+		_GraphicsPipeline::GraphicsPipeline GraphicsPipeline;
 	};
 
 	Render* alloc();

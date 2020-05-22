@@ -15,14 +15,16 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		_SwapChain::SwapChain* SwapChain;
 	};
 
-	struct GraphicsPieline
+	struct GraphicsPipeline
 	{
 		GraphicsPipelineDependencies GraphicsPipelineDependencies;
+		VkPipeline Pipeline;
 		VkPipelineLayout PipelineLayout;
 		RenderPass RenderPass;
 	};
 
-	void build(GraphicsPieline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies);
+	void build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies);
+	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline);
 
 	VkPipelineShaderStageCreateInfo buildShaderStageCreate(_Shader::Shader* p_shader);
 }
