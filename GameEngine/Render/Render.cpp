@@ -26,6 +26,8 @@ namespace _GameEngine::_Render
 	void initSwapChain(Render* p_render);
 	void freeSwapChain(Render* p_render);
 
+	void initGraphicsPipeline(Render* p_render);
+
 	Render* alloc()
 	{
 		Render* l_render = new Render();
@@ -38,6 +40,7 @@ namespace _GameEngine::_Render
 		initSurface(l_render);
 		initDevice(l_render);
 		initSwapChain(l_render);
+		initGraphicsPipeline(l_render);
 
 		return l_render;
 	};
@@ -73,7 +76,7 @@ namespace _GameEngine::_Render
 		_Extensions::checkPresenceOfRequiredInstanceExtensions(l_requiredExtensions);
 		_Extensions::populateRequiredExtensions(&l_requiredExtensions, p_render->ValidationLayers.EnableValidationLayers);
 
-		createInfo.enabledExtensionCount = l_requiredExtensions.size();
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(l_requiredExtensions.size());
 		createInfo.ppEnabledExtensionNames = l_requiredExtensions.data();
 
 		// /!\ This messenger create info is used to log any problems in the creation and destroy of vulkan instance.
@@ -83,7 +86,7 @@ namespace _GameEngine::_Render
 		_ValidationLayers::ValidationLayers* l_validationLayers = &p_render->ValidationLayers;
 		if (l_validationLayers->EnableValidationLayers)
 		{
-			createInfo.enabledLayerCount = l_validationLayers->ValidationLayers.size();
+			createInfo.enabledLayerCount = static_cast<uint32_t>(l_validationLayers->ValidationLayers.size());
 			createInfo.ppEnabledLayerNames = l_validationLayers->ValidationLayers.data();
 
 			initVkDebugUtilsMessengerCreateInfoEXT(&l_debugUtlsMessengerCreateInfo);
@@ -218,7 +221,7 @@ namespace _GameEngine::_Render
 	{
 		if (p_validationLayers->EnableValidationLayers)
 		{
-			p_deviceCreateInfo->enabledLayerCount = p_validationLayers->ValidationLayers.size();
+			p_deviceCreateInfo->enabledLayerCount = static_cast<uint32_t>(p_validationLayers->ValidationLayers.size());
 			p_deviceCreateInfo->ppEnabledLayerNames = p_validationLayers->ValidationLayers.data();
 		}
 		else
@@ -251,6 +254,18 @@ namespace _GameEngine::_Render
 	};
 
 	/////// END SWAP CHAIN
+
+
+	/////// GRAPHICS PIPELINE
+
+	void initGraphicsPipeline(Render* p_render)
+	{
+		_GraphicsPipeline::GraphicsPipelineDependencies l_graphicsPipelineDependencies{};
+		l_graphicsPipelineDependencies.Device = &p_render->Device;
+		_GraphicsPipeline::build(&p_render->GraphicsPieline, l_graphicsPipelineDependencies);
+	};
+
+	/////// END GRAPHICS PIPELINE
 
 	void render(Render* p_render)
 	{

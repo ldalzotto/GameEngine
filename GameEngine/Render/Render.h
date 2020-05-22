@@ -6,6 +6,7 @@
 #include "ValidationLayers.h"
 #include "Device/Device.h"
 #include "SwapChain/SwapChain.h"
+#include "GraphcisPipeline/GraphicsPipeline.h"
 
 namespace _GameEngine::_Render
 {
@@ -25,6 +26,7 @@ namespace _GameEngine::_Render
 		RenderDebug RenderDebug;
 		_Device::Device Device;
 		_SwapChain::SwapChain SwapChain;
+		_GraphicsPipeline::GraphicsPieline GraphicsPieline;
 	};
 
 	Render* alloc();

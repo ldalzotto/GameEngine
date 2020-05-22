@@ -9,8 +9,8 @@ namespace _GameEngine::_Render::_Window
 {
 	struct WindowSize
 	{
-		int Width;
-		int Height;
+		uint32_t Width;
+		uint32_t Height;
 	};
 
 	struct Window

@@ -84,9 +84,9 @@ namespace _GameEngine::_Render::_Device
 
 		VkDeviceCreateInfo l_deviceCreateInfo{};
 		l_deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		l_deviceCreateInfo.queueCreateInfoCount = l_graphicsQueueCreationArray.size();
+		l_deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(l_graphicsQueueCreationArray.size());
 		l_deviceCreateInfo.pQueueCreateInfos = l_graphicsQueueCreationArray.data();
-		l_deviceCreateInfo.enabledExtensionCount = _Device::DeviceExtensions.size();
+		l_deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(_Device::DeviceExtensions.size());
 		l_deviceCreateInfo.ppEnabledExtensionNames = _Device::DeviceExtensions.data();
 
 		VkPhysicalDeviceFeatures deviceFeatures{};

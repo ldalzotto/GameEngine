@@ -5,8 +5,8 @@
 
 namespace _GameEngine::_Render::_Window
 {
-	const int WINDOW_WIDTH = 800;
-	const int WINDOW_HEIGHT = 600;
+	const uint32_t WINDOW_WIDTH = 800;
+	const uint32_t WINDOW_HEIGHT = 600;
 
 	const std::string WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
