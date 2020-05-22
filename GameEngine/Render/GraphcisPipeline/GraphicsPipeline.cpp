@@ -172,5 +172,6 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 	void clearPipelineLayout(GraphicsPieline* p_graphicsPipeline)
 	{
 		vkDestroyPipelineLayout(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->PipelineLayout, nullptr);
+		RenderPass_free(&p_graphicsPipeline->RenderPass);
 	};
 }

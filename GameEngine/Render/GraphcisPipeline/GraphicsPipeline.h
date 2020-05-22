@@ -3,6 +3,8 @@
 #include "Render/Device/Device.h"
 #include "Render/SwapChain/SwapChain.h"
 
+#include "Render/GraphcisPipeline/RenderPass.h"
+
 #include "Render/Shader/Shader.h"
 
 namespace _GameEngine::_Render::_GraphicsPipeline
@@ -17,6 +19,7 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 	{
 		GraphicsPipelineDependencies GraphicsPipelineDependencies;
 		VkPipelineLayout PipelineLayout;
+		RenderPass RenderPass;
 	};
 
 	void build(GraphicsPieline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies);
