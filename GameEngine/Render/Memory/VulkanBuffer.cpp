@@ -8,17 +8,25 @@ namespace _GameEngine::_Render::_Memory
 	void createEmptyBuffer(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device);
 	void allocateBufferMemory(VulkanBuffer* p_buffer, _Device::Device* p_device);
 
-	void VertexBuffer_alloc(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device)
+	void VulkanBuffer_alloc(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device)
 	{
 		createEmptyBuffer(p_buffer, p_bufferAllocInfo, p_device);
 		allocateBufferMemory(p_buffer, p_device);
 		vkBindBufferMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->Buffer, p_buffer->BufferMemory, 0);
 	};
 
-	void VertexBuffer_free(VulkanBuffer* p_vertexBuffer, _Device::Device* p_device)
+	void VulkanBuffer_free(VulkanBuffer* p_vertexBuffer, _Device::Device* p_device)
 	{
 		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->BufferMemory, nullptr);
 		vkDestroyBuffer(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->Buffer, nullptr);
+	};
+
+	void VulkanBuffer_pushToGPU(VulkanBuffer* p_buffer, _Device::Device* p_device, void* p_source, size_t p_size)
+	{
+		void* data;
+		vkMapMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->BufferMemory, 0, p_size, 0, &data);
+		memcpy(data, p_source, p_size);
+		vkUnmapMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->BufferMemory);
 	};
 
 	void createEmptyBuffer(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device)
