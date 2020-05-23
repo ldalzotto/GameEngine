@@ -4,6 +4,8 @@
 #include "Render/Hardware/Device/Device.h"
 using namespace _GameEngine::_Render::_Hardware;
 
+#include "Render/GraphcisPipeline/Shader/VertexInput.h"
+
 #include <string>
 
 namespace _GameEngine::_Render::_Shader
@@ -17,6 +19,11 @@ namespace _GameEngine::_Render::_Shader
 	{
 		VERTEX = 0x01,
 		FRAGMENT = 0x02
+	};
+
+	struct VertexShaderDescription
+	{
+		VertexInput VertexInput;
 	};
 
 	struct Shader

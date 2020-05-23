@@ -25,7 +25,6 @@ namespace _GameEngine::_Render::_Shader
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create shader module!"));
 		}
-
 		return l_shader;
 	};
 

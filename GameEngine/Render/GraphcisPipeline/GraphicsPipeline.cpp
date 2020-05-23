@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 
-#include "Render/GraphcisPipeline/Shader/Shader.h"
 
 #include "vulkan/vulkan.h"
 #include "Log/Log.h"
@@ -30,6 +29,8 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		l_shaderDependencies.Device = p_graphicsPipelineDependencies.Device;
 
 		_Shader::Shader l_vertexShader = _Shader::createShader(l_shaderDependencies, _Shader::ShaderType::VERTEX, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv");
+		_Shader::VertexInput_buildInput(&p_graphicsPipeline->VertexShaderDescription.VertexInput);
+
 		_Shader::Shader l_fragmentShader = _Shader::createShader(l_shaderDependencies, _Shader::ShaderType::FRAGMENT, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv");
 
 		VkPipelineShaderStageCreateInfo l_shaderStages[] = { buildShaderStageCreate(&l_vertexShader), buildShaderStageCreate(&l_fragmentShader) };
@@ -111,10 +112,10 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 	{
 		VkPipelineVertexInputStateCreateInfo l_vertexInputStateCreate{};
 		l_vertexInputStateCreate.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		l_vertexInputStateCreate.vertexBindingDescriptionCount = 0;
-		l_vertexInputStateCreate.pVertexBindingDescriptions = nullptr;
-		l_vertexInputStateCreate.vertexAttributeDescriptionCount = 0;
-		l_vertexInputStateCreate.pVertexAttributeDescriptions = nullptr;
+		l_vertexInputStateCreate.vertexBindingDescriptionCount = 1;
+		l_vertexInputStateCreate.pVertexBindingDescriptions = &p_graphicsPipeline->VertexShaderDescription.VertexInput.VertexInputBinding;
+		l_vertexInputStateCreate.vertexAttributeDescriptionCount = static_cast<uint32_t>(p_graphicsPipeline->VertexShaderDescription.VertexInput.VertexInputAttributeDescriptions.size());
+		l_vertexInputStateCreate.pVertexAttributeDescriptions = p_graphicsPipeline->VertexShaderDescription.VertexInput.VertexInputAttributeDescriptions.data();
 		return l_vertexInputStateCreate;
 	};
 
