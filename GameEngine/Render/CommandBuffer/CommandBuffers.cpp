@@ -5,42 +5,31 @@
 
 namespace _GameEngine::_Render::_CommandBuffer
 {
-	void CommandBuffers_init(CommandBuffers* p_commandBuffers, CommandBuffersDependencies* p_commandBuffersDependencies)
+	void CommandBuffer_init(CommandBuffer* p_commandBuffer, CommandBuffersDependencies* p_commandBuffersDependencies)
 	{
-		p_commandBuffers->CommandBuffersDependencies = *p_commandBuffersDependencies;
-		p_commandBuffers->CommandBuffers.resize(p_commandBuffers->CommandBuffersDependencies.FrameBuffer->FrameBuffers.size());
+		p_commandBuffer->CommandBuffersDependencies = *p_commandBuffersDependencies;
 
 		VkCommandBufferAllocateInfo l_commandBufferAllocateInfo{};
 		l_commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		l_commandBufferAllocateInfo.commandPool = p_commandBuffers->CommandBuffersDependencies.CommandPool->CommandPool;
+		l_commandBufferAllocateInfo.commandPool = p_commandBuffer->CommandBuffersDependencies.CommandPool->CommandPool;
 		l_commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		l_commandBufferAllocateInfo.commandBufferCount = (uint32_t)p_commandBuffers->CommandBuffers.size();
+		l_commandBufferAllocateInfo.commandBufferCount = 1;
 
-		if (vkAllocateCommandBuffers(p_commandBuffersDependencies->CommandPool->CommanPoolDependencies.Device->LogicalDevice.LogicalDevice, &l_commandBufferAllocateInfo, p_commandBuffers->CommandBuffers.data())
+		if (vkAllocateCommandBuffers(p_commandBuffersDependencies->CommandPool->CommanPoolDependencies.Device->LogicalDevice.LogicalDevice, &l_commandBufferAllocateInfo, &p_commandBuffer->CommandBuffer)
 			!= VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to allocate command buffers!"));
 		}
 
-		// Starting command buffers
-		for (size_t i = 0; i < p_commandBuffers->CommandBuffers.size(); i++)
+		// Starting command buffer
+		VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
+		l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		l_commandBufferBeginInfo.flags = 0;
+		l_commandBufferBeginInfo.pInheritanceInfo = nullptr;
+
+		if (vkBeginCommandBuffer(p_commandBuffer->CommandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
 		{
-			VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
-			l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			l_commandBufferBeginInfo.flags = 0;
-			l_commandBufferBeginInfo.pInheritanceInfo = nullptr;
-
-			if (vkBeginCommandBuffer(p_commandBuffers->CommandBuffers[i], &l_commandBufferBeginInfo) != VK_SUCCESS)
-			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
-			}
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
 		}
-
-
-	};
-
-	VkFramebuffer get_frameBuffer(GetFrameBufferInfo* p_getFrameBufferInfo)
-	{
-		return p_getFrameBufferInfo->CommandBuffers->CommandBuffersDependencies.FrameBuffer->FrameBuffers[p_getFrameBufferInfo->CommandBufferIndex];
 	};
 };

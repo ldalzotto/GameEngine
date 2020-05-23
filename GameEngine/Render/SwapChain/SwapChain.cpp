@@ -86,13 +86,12 @@ namespace _GameEngine::_Render::_SwapChain
 		}
 	};
 
-	void build(SwapChain* p_swapChain, const SwapChainDependencies& p_swapChainDependencies)
+	void build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo)
 	{
-		p_swapChain->SwapChainDependencies = p_swapChainDependencies;
+		p_swapChain->SwapChainDependencies = p_swapChainBuildInfo->SwapChainDependencies;
 		p_swapChain->OnWindowSizeChangeCallback = _Observer::Observer_register(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, [p_swapChain](void*) {swapChainInavlidate(p_swapChain); });
 
 		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
-		SwapChainImages* l_swapChainImages = &p_swapChain->SwapChainImages;
 
 		SwapChainSupportDetails l_swapChainDetails = getSwapChainSupportDetails(
 			p_swapChain->SwapChainDependencies.Device->PhysicalDevice.PhysicalDevice,
@@ -147,28 +146,35 @@ namespace _GameEngine::_Render::_SwapChain
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create swap chain!"));
 		}
 
+
+		std::vector<VkImage> l_swapChainRawImages;
 		l_imageCount = 0;
 		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, nullptr);
-		l_swapChainImages->SwapChainImages.resize(l_imageCount);
-		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, l_swapChainImages->SwapChainImages.data());
+		l_swapChainRawImages.resize(l_imageCount);
+		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, l_swapChainRawImages.data());
 		
+		p_swapChain->SwapChainImages.resize(l_imageCount);
 
-
-		ImageViewsDependencies l_imageViewDependencies{};
-		l_imageViewDependencies.Device = p_swapChainDependencies.Device;
-		ImageViewInitializationInfo l_imageViewInitializationInfo{};
-		l_imageViewInitializationInfo.ImageViewDependencies = &l_imageViewDependencies;
-		l_imageViewInitializationInfo.SwapChainImages = &l_swapChainImages->SwapChainImages;
-		l_imageViewInitializationInfo.SwapChainInfo = &p_swapChain->SwapChainInfo;
-
-
-		ImageViews_init(&l_swapChainImages->ImageViews, &l_imageViewInitializationInfo);
+		for (size_t i = 0; i < l_imageCount; i++)
+		{
+			_SwapChainImage::SwapChainImageInitializationInfo l_swapChainImageInitializationInfo{};
+			l_swapChainImageInitializationInfo.CreatedImage = l_swapChainRawImages[i];
+			l_swapChainImageInitializationInfo.Device = p_swapChain->SwapChainDependencies.Device;
+			l_swapChainImageInitializationInfo.SwapChainInfo = &p_swapChain->SwapChainInfo;
+			l_swapChainImageInitializationInfo.CommandPool = p_swapChainBuildInfo->CommandPool;
+			_SwapChainImage::SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);
+		}
 	};
 
 	void swapChain_free(SwapChain* p_swapChain)
 	{
 		_Observer::Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, p_swapChain->OnWindowSizeChangeCallback);
-		ImageViews_free(&p_swapChain->SwapChainImages.ImageViews);
+
+		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)
+		{
+			_SwapChainImage::SwapChainImage_free(&p_swapChain->SwapChainImages[i]);
+		}
+
 		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
 	};
 }

@@ -5,7 +5,6 @@
 
 #include <stdexcept>
 
-
 namespace _GameEngine::_Render
 {
 	void initializeVulkan(Render* p_render);
@@ -32,8 +31,6 @@ namespace _GameEngine::_Render
 	void initCommandPool(Render* p_render);
 	void freeCommandPool(Render* p_render);
 
-	void initCommandBuffers(Render* p_render);
-
 	void initRenderSemaphore(Render* p_render);
 	void freeRenderSemaphore(Render* p_render);
 
@@ -48,10 +45,9 @@ namespace _GameEngine::_Render
 		initVulkanDebugger(l_render);
 		initSurface(l_render);
 		initDevice(l_render);
+		initCommandPool(l_render);
 		initSwapChain(l_render);
 		initGraphicsPipeline(l_render);
-		initCommandPool(l_render);
-		initCommandBuffers(l_render);
 		initRenderSemaphore(l_render);
 
 		StartRenderPassInfo l_startRenderPassInfo;
@@ -70,9 +66,9 @@ namespace _GameEngine::_Render
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
 		freeRenderSemaphore(*p_render);
-		freeCommandPool(*p_render);
 		freeGraphicsPipeline(*p_render);
 		freeSwapChain(*p_render);
+		freeCommandPool(*p_render);
 		freeDevice(*p_render);
 		freeSurface(*p_render);
 		freeVulkanDebugger((*p_render));
@@ -87,14 +83,13 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle(p_render->Device.LogicalDevice.LogicalDevice);
 		freeRenderSemaphore(p_render);
-		freeCommandPool(p_render);
 		freeGraphicsPipeline(p_render);
 		freeSwapChain(p_render);
+		freeCommandPool(p_render);
 
+		initCommandPool(p_render);
 		initSwapChain(p_render);
 		initGraphicsPipeline(p_render);
-		initCommandPool(p_render);
-		initCommandBuffers(p_render);
 		initRenderSemaphore(p_render);
 
 		StartRenderPassInfo l_startRenderPassInfo;
@@ -297,11 +292,12 @@ namespace _GameEngine::_Render
 
 	void initSwapChain(Render* p_render)
 	{
-		_SwapChain::SwapChainDependencies l_swapChainCreation{};
-		l_swapChainCreation.Device = &p_render->Device;
-		l_swapChainCreation.Surface = &p_render->WindowSurface;
-		l_swapChainCreation.Window = &p_render->Window;
-		_SwapChain::build(&p_render->SwapChain, l_swapChainCreation);
+		_SwapChain::SwapChainBuildInfo l_swapChainBuildInfo{};
+		l_swapChainBuildInfo.SwapChainDependencies.Device = &p_render->Device;
+		l_swapChainBuildInfo.SwapChainDependencies.Surface = &p_render->WindowSurface;
+		l_swapChainBuildInfo.SwapChainDependencies.Window = &p_render->Window;
+		l_swapChainBuildInfo.CommandPool = &p_render->CommandPool;
+		_SwapChain::build(&p_render->SwapChain, &l_swapChainBuildInfo);
 	};
 
 	void freeSwapChain(Render* p_render)
@@ -345,35 +341,23 @@ namespace _GameEngine::_Render
 
 	/////// END COMMAND POOL
 
-	/////// COMMAND BUFFERS
-
-	void initCommandBuffers(Render* p_render)
-	{
-		_CommandBuffer::CommandBuffersDependencies l_commandBuffersDependencies{};
-		l_commandBuffersDependencies.CommandPool = &p_render->CommandPool;
-		l_commandBuffersDependencies.FrameBuffer = &p_render->GraphicsPipeline.FrameBuffer;
-		_CommandBuffer::CommandBuffers_init(&p_render->CommandBuffers, &l_commandBuffersDependencies);
-	};
-
-	/////// END COMMAND BUFFERS
-
 	/////// RENDER SEMAPHORE
 
 	void initRenderSemaphore(Render* p_render)
 	{
-		_Semaphore::RenderSemaphoreDependencies l_renderSemaphoreDependencies{ };
+		_Synchronisation::RenderSemaphoreDependencies l_renderSemaphoreDependencies{ };
 		l_renderSemaphoreDependencies.Device = &p_render->Device;
 
-		_Semaphore::RenderSemaphoreCreationInfo l_renderSemaphoreCreationInfo{};
+		_Synchronisation::RenderSemaphoreCreationInfo l_renderSemaphoreCreationInfo{};
 		l_renderSemaphoreCreationInfo.MaxFramesInParallel = 2;
 		l_renderSemaphoreCreationInfo.RenderSemaphoreDependencies = &l_renderSemaphoreDependencies;
 
-		_Semaphore::RenderSemaphore_init(&p_render->RenderSemaphore, &l_renderSemaphoreCreationInfo);
+		_Synchronisation::RenderSemaphore_init(&p_render->RenderSemaphore, &l_renderSemaphoreCreationInfo);
 	};
 
 	void freeRenderSemaphore(Render* p_render)
 	{
-		_Semaphore::RenderSemaphore_free(&p_render->RenderSemaphore);
+		_Synchronisation::RenderSemaphore_free(&p_render->RenderSemaphore);
 	};
 
 	/////// END RENDER SEMAPHORE
@@ -381,14 +365,16 @@ namespace _GameEngine::_Render
 	void startRenderPass(StartRenderPassInfo* p_startRenderPassInfo)
 	{
 		_GraphicsPipeline::RenderPass* RenderPass = &p_startRenderPassInfo->GraphicsPipeline->RenderPass;
-		_GraphicsPipeline::FrameBuffer* FrameBuffer = &p_startRenderPassInfo->GraphicsPipeline->FrameBuffer;
 
-		for (size_t i = 0; i < FrameBuffer->FrameBuffers.size(); i++)
+		std::vector<_SwapChainImage::SwapChainImage>* l_swapChainImages = &p_startRenderPassInfo->SwapChain->SwapChainImages;
+		std::vector<_GraphicsPipeline::FrameBuffer>* l_frameBuffers = &p_startRenderPassInfo->GraphicsPipeline->FrameBuffers;
+
+		for (size_t i = 0; i < l_frameBuffers->size(); i++)
 		{
 			VkRenderPassBeginInfo l_renderPassBeginInfo{};
 			l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			l_renderPassBeginInfo.renderPass = RenderPass->renderPass;
-			l_renderPassBeginInfo.framebuffer = FrameBuffer->FrameBuffers[i];
+			l_renderPassBeginInfo.framebuffer = l_frameBuffers->at(i).FrameBuffer;
 			l_renderPassBeginInfo.renderArea.offset = { 0,0 };
 			l_renderPassBeginInfo.renderArea.extent = p_startRenderPassInfo->SwapChain->SwapChainInfo.SwapExtend;
 
@@ -396,7 +382,7 @@ namespace _GameEngine::_Render
 			l_renderPassBeginInfo.clearValueCount = 1;
 			l_renderPassBeginInfo.pClearValues = &l_clearValue;
 
-			VkCommandBuffer l_commandBuffer = p_startRenderPassInfo->CommandBuffers->CommandBuffers[i];
+			VkCommandBuffer l_commandBuffer = l_swapChainImages->at(i).CommandBuffer.CommandBuffer;
 
 			vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_startRenderPassInfo->GraphicsPipeline->Pipeline);
@@ -412,8 +398,8 @@ namespace _GameEngine::_Render
 
 	void render(Render* p_render)
 	{
-		_Semaphore::RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
-		_Semaphore::CurrentSynchronisationObject l_synchronizationObject = _Semaphore::RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
+		_Synchronisation::RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
+		_Synchronisation::CurrentSynchronisationObject l_synchronizationObject = _Synchronisation::RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
 
 		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
 
@@ -446,7 +432,7 @@ namespace _GameEngine::_Render
 		l_submitInfo.pWaitSemaphores = l_waitSemaphore;
 		l_submitInfo.pWaitDstStageMask = l_waitStages;
 		l_submitInfo.commandBufferCount = 1;
-		l_submitInfo.pCommandBuffers = &p_render->CommandBuffers.CommandBuffers[l_imageIndex];
+		l_submitInfo.pCommandBuffers = &p_render->SwapChain.SwapChainImages[l_imageIndex].CommandBuffer.CommandBuffer;
 
 		VkSemaphore l_signalSemaphores[] = { l_synchronizationObject.RenderFinishedSemaphore };
 		l_submitInfo.signalSemaphoreCount = 1;

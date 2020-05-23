@@ -9,7 +9,7 @@
 #include "GraphcisPipeline/GraphicsPipeline.h"
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
-#include "Semaphore/Semaphore.h"
+#include "Synchronisation/Semaphore.h"
 
 namespace _GameEngine::_Render
 {
@@ -31,8 +31,8 @@ namespace _GameEngine::_Render
 		_SwapChain::SwapChain SwapChain;
 		_GraphicsPipeline::GraphicsPipeline GraphicsPipeline;
 		_CommandBuffer::CommandPool CommandPool;
-		_CommandBuffer::CommandBuffers CommandBuffers;
-		_Semaphore::RenderSemaphore RenderSemaphore;
+		_CommandBuffer::CommandBuffer CommandBuffers;
+		_Synchronisation::RenderSemaphore RenderSemaphore;
 	};
 
 	Render* alloc();
@@ -45,7 +45,7 @@ namespace _GameEngine::_Render
 	{
 		_GraphicsPipeline::GraphicsPipeline* GraphicsPipeline;
 		_SwapChain::SwapChain* SwapChain;
-		_CommandBuffer::CommandBuffers* CommandBuffers;
+		_CommandBuffer::CommandBuffer* CommandBuffers;
 	};
 
 	void startRenderPass(StartRenderPassInfo* p_startRenderPassInfo);

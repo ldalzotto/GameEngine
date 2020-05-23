@@ -1,8 +1,6 @@
-
-#include <vector>
+#pragma once
 
 #include "Render/CommandBuffer/CommandPool.h"
-#include "Render/GraphcisPipeline/FrameBuffer.h"
 
 namespace _GameEngine::_Render::_CommandBuffer
 {
@@ -10,23 +8,13 @@ namespace _GameEngine::_Render::_CommandBuffer
 	struct CommandBuffersDependencies
 	{
 		CommandPool* CommandPool;
-		_GraphicsPipeline::FrameBuffer* FrameBuffer;
 	};
 
-	struct CommandBuffers
+	struct CommandBuffer
 	{
 		CommandBuffersDependencies CommandBuffersDependencies;
-		std::vector<VkCommandBuffer> CommandBuffers;
+		VkCommandBuffer CommandBuffer;
 	};
 
-	void CommandBuffers_init(CommandBuffers* p_commandBuffers, CommandBuffersDependencies* p_commandBuffersDependencies);
-
-
-	struct GetFrameBufferInfo
-	{
-		size_t CommandBufferIndex;
-		CommandBuffers* CommandBuffers;
-	};
-
-	VkFramebuffer get_frameBuffer(GetFrameBufferInfo* p_getFrameBufferInfo);
+	void CommandBuffer_init(CommandBuffer* p_commandBuffers, CommandBuffersDependencies* p_commandBuffersDependencies);
 };

@@ -7,26 +7,26 @@
 #include "Render/SwapChain/SwapChainSharedStructures.h"
 #include "Render/Device/Device.h"
 
-namespace _GameEngine::_Render::_SwapChain
+namespace _GameEngine::_Render::_SwapChainImage
 {
 	struct ImageViewsDependencies
 	{
 		_Device::Device* Device;
 	};
 
-	struct ImageViews
+	struct ImageView
 	{
 		ImageViewsDependencies ImageViewsDependencies;
-		std::vector<VkImageView> ImageViews;
+		VkImageView ImageView;
 	};
 
 	struct ImageViewInitializationInfo
 	{
 		ImageViewsDependencies* ImageViewDependencies;
-		SwapChainInfo* SwapChainInfo;
-		std::vector<VkImage>* SwapChainImages;
+		_SwapChain::SwapChainInfo* SwapChainInfo;
+		VkImage SwapChainImage;
 	};
 
-	void ImageViews_init(ImageViews* p_imageViews, ImageViewInitializationInfo* p_imageViewInitializationInfo);
-	void ImageViews_free(ImageViews* p_imageViews);
+	void ImageView_init(ImageView* p_imageView, ImageViewInitializationInfo* p_imageViewInitializationInfo);
+	void ImageView_free(ImageView* p_imageView);
 }

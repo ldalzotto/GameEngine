@@ -80,16 +80,27 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		_Shader::freeShader(&l_fragmentShader);
 
 
-		FrameBufferDependencies l_frameBufferDependencies{};
-		l_frameBufferDependencies.RenderPass = &p_graphicsPipeline->RenderPass;
-		l_frameBufferDependencies.ImageViews = &p_graphicsPipelineDependencies.SwapChain->SwapChainImages.ImageViews;
-		FrameBuffer_init(&p_graphicsPipeline->FrameBuffer, &l_frameBufferDependencies);
+		std::vector<_SwapChainImage::SwapChainImage>* l_swapChainImages = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainImages;
+		p_graphicsPipeline->FrameBuffers.resize(l_swapChainImages->size());
 
+		for (size_t i = 0; i < p_graphicsPipeline->FrameBuffers.size(); i++)
+		{
+			FrameBufferDependencies l_frameBufferDependencies{};
+			l_frameBufferDependencies.RenderPass = &p_graphicsPipeline->RenderPass;
+			l_frameBufferDependencies.ImageView = &l_swapChainImages->at(i).ImageView;
+			l_frameBufferDependencies.Device = p_graphicsPipeline->GraphicsPipelineDependencies.Device;
+			l_frameBufferDependencies.SwapChainInfo = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo;
+			FrameBuffer_init(&p_graphicsPipeline->FrameBuffers[i], &l_frameBufferDependencies);
+		}
 	};
 
 	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline)
 	{
-		FrameBuffer_free(&p_graphicsPipeline->FrameBuffer);
+		for (size_t i = 0; i < p_graphicsPipeline->FrameBuffers.size(); i++)
+		{
+			FrameBuffer_free(&p_graphicsPipeline->FrameBuffers[i]);
+		}
+
 		vkDestroyPipeline(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->Pipeline, nullptr);
 		clearPipelineLayout(p_graphicsPipeline);
 		RenderPass_free(&p_graphicsPipeline->RenderPass);
