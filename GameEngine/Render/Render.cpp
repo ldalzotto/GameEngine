@@ -62,9 +62,9 @@ namespace _GameEngine::_Render
 		_Mesh::MeshAllocInfo l_meshAllocInfo{};
 		l_meshAllocInfo.Device = &l_render->Device;
 		std::vector<_Mesh::Vertex> l_vertices = {
-	{{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-	{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-	{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+			{{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
 		};
 		l_meshAllocInfo.Vertices = &l_vertices;
 		_Mesh::Mesh_alloc(&DrawnMeshForTest, &l_meshAllocInfo);

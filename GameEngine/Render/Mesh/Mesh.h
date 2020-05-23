@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "glm/glm.hpp"
-#include "Render/Mesh/VertexBuffer.h"
+#include "Render/Memory/VulkanBuffer.h"
 
 #include "Render/Hardware/Device/Device.h"
 using namespace _GameEngine::_Render::_Hardware;
@@ -18,7 +18,10 @@ namespace _GameEngine::_Render::_Mesh
 	struct Mesh
 	{
 		std::vector<Vertex> Vertices;
-		VertexBuffer VertexBuffer;
+
+		//TODO - As an optimisation, instead of allocating small VulkanBuffer, we can allocate a huge obect and the VulkanBuffer will
+		//		 refer to an already created memory address.
+		_Memory::VulkanBuffer VertexBuffer;
 	};
 
 	struct MeshAllocInfo
