@@ -5,7 +5,7 @@
 #include "vulkan/vulkan.h"
 #include "Render/SwapChain/SwapChainSharedStructures.h"
 #include "Render/GraphcisPipeline/RenderPass.h"
-#include "Render/SwapChainImage/ImageViews.h"
+#include "Render/SwapChain/Image/ImageViews.h"
 
 namespace _GameEngine::_Render::_GraphicsPipeline
 {

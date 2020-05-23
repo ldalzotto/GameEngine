@@ -8,7 +8,7 @@ using namespace _GameEngine::_Utils;
 #include <vector>
 #include <string>
 
-namespace _GameEngine::_Render::_Window
+namespace _GameEngine::_Render::_Hardware::_Window
 {
 	struct WindowSize
 	{

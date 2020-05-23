@@ -2,12 +2,14 @@
 
 #include <vector>
 
-#include "Render/Device/Device.h"
+#include "Render/Hardware/Device/Device.h"
+using namespace _GameEngine::_Render::_Hardware;
+
 #include "Render/SwapChain/SwapChain.h"
 
 #include "Render/GraphcisPipeline/RenderPass.h"
 #include "Render/GraphcisPipeline/FrameBuffer.h"
-#include "Render/Shader/Shader.h"
+#include "Render/GraphcisPipeline/Shader/Shader.h"
 
 namespace _GameEngine::_Render::_GraphicsPipeline
 {

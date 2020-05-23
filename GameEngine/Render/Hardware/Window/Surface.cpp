@@ -5,7 +5,7 @@
 #include "Surface.h"
 #include "Render/Includes/GLFWIncludes.h"
 
-namespace _GameEngine::_Render::_Surface
+namespace _GameEngine::_Render::_Hardware::_Surface
 {
 	void build(Surface* p_surface, VkInstance p_instance, _Window::Window* p_window)
 	{

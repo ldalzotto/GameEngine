@@ -8,7 +8,7 @@
 #include <vector>
 #include <set>
 
-namespace _GameEngine::_Render::_Device
+namespace _GameEngine::_Render::_Hardware::_Device
 {
 	std::vector<char*> _Device::DeviceExtensions = std::vector<char*>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 

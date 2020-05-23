@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <functional>
 
-namespace _GameEngine::_Render::_Device
+namespace _GameEngine::_Render::_Hardware::_Device
 {
 	/**
 		@brief QueueFamily are handles of vulkan queues associated to a @ref PhysicalDevice

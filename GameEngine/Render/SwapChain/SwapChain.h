@@ -3,14 +3,15 @@
 #include <vector>
 #include <functional>
 
-#include "Render/Device/Device.h"
-#include "Render/Window/Window.h"
-#include "Render/Window/Surface.h"
+#include "Render/Hardware/Device/Device.h"
+#include "Render/Hardware/Window/Window.h"
+#include "Render/Hardware/Window/Surface.h"
+using namespace _GameEngine::_Render::_Hardware;
 
 #include "Render/CommandBuffer/CommandPool.h"
 
 #include "Render/SwapChain/SwapChainSharedStructures.h"
-#include "Render/SwapChainImage/SwapChainImage.h"
+#include "Render/SwapChain/Image/SwapChainImage.h"
 
 #include "Utils/Observer/Observer.h"
 using namespace _GameEngine::_Utils;

@@ -7,7 +7,7 @@
 #include <vector>
 #include <functional>
 
-namespace _GameEngine::_Render::_Device
+namespace _GameEngine::_Render::_Hardware::_Device
 {
 	extern std::vector<char*> DeviceExtensions;
 

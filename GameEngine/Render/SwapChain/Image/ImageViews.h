@@ -5,7 +5,8 @@
 #include "vulkan/vulkan.h"
 
 #include "Render/SwapChain/SwapChainSharedStructures.h"
-#include "Render/Device/Device.h"
+#include "Render/Hardware/Device/Device.h"
+using namespace _GameEngine::_Render::_Hardware;
 
 namespace _GameEngine::_Render::_SwapChainImage
 {

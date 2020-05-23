@@ -4,7 +4,7 @@
 
 #include "Window.h"
 
-namespace _GameEngine::_Render::_Surface
+namespace _GameEngine::_Render::_Hardware::_Surface
 {
 	struct Surface
 	{

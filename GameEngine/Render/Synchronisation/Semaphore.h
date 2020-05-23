@@ -3,7 +3,8 @@
 #include <vector>
 
 #include "vulkan/vulkan.h"
-#include "Render/Device/Device.h"
+#include "Render/Hardware/Device/Device.h"
+using namespace _GameEngine::_Render::_Hardware;
 
 namespace _GameEngine::_Render::_Synchronisation
 {
@@ -18,6 +19,10 @@ namespace _GameEngine::_Render::_Synchronisation
 		int MaxFramesInParallel;
 	};
 
+	/**
+		This @ref RenderSemaphore is used by the render loop because we want to be sure
+		that the CPU is not faster than GPU. Thus, we wait for the end of the rendering before starting another one.
+	*/
 	struct RenderSemaphore
 	{
 		RenderSemaphoreDependencies RenderSemaphoreDependencies;

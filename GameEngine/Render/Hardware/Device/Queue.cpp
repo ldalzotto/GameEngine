@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace _GameEngine::_Render::_Device
+namespace _GameEngine::_Render::_Hardware::_Device
 {
 
 	void initQueueFamily(QueueFamily& p_queueFamily)

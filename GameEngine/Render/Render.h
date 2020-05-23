@@ -1,10 +1,12 @@
 #pragma once
 
-#include "Window/Window.h"
-#include "Window/Surface.h"
+#include "Render/Hardware/Window/Window.h"
+#include "Render/Hardware/Window/Surface.h"
+using namespace _GameEngine::_Render::_Hardware;
+
 #include "vulkan/vulkan.h"
 #include "ValidationLayers.h"
-#include "Device/Device.h"
+#include "Hardware/Device/Device.h"
 #include "SwapChain/SwapChain.h"
 #include "GraphcisPipeline/GraphicsPipeline.h"
 #include "CommandBuffer/CommandPool.h"
