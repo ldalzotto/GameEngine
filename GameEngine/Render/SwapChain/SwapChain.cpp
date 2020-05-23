@@ -95,7 +95,7 @@ namespace _GameEngine::_Render::_SwapChain
 		l_swapChainInfo->PresentMode = chooseSwapPresentMode(l_swapChainDetails.PresentModes);
 		l_swapChainInfo->SwapExtend = chooseSwapExtent(p_swapChain->SwapChainDependencies.Window, l_swapChainDetails.Capabilities);
 
-		uint32_t l_imageCount = l_swapChainDetails.Capabilities.minImageCount + 1;
+		uint32_t l_imageCount = l_swapChainDetails.Capabilities.minImageCount;
 		if (l_swapChainDetails.Capabilities.minImageCount > 0 && l_imageCount > l_swapChainDetails.Capabilities.maxImageCount)
 		{
 			l_imageCount = l_swapChainDetails.Capabilities.maxImageCount;

@@ -34,6 +34,9 @@ namespace _GameEngine::_Render
 
 	void initCommandBuffers(Render* p_render);
 
+	void initRenderSemaphore(Render* p_render);
+	void freeRenderSemaphore(Render* p_render);
+
 	Render* alloc()
 	{
 		Render* l_render = new Render();
@@ -49,7 +52,7 @@ namespace _GameEngine::_Render
 		initGraphicsPipeline(l_render);
 		initCommandPool(l_render);
 		initCommandBuffers(l_render);
-
+		initRenderSemaphore(l_render);
 
 		StartRenderPassInfo l_startRenderPassInfo;
 		l_startRenderPassInfo.CommandBuffers = &l_render->CommandBuffers;
@@ -62,6 +65,11 @@ namespace _GameEngine::_Render
 
 	void free(Render** p_render)
 	{
+		// We wait for the Queues to finish their curent operation before releasing memory.
+		// This is to ensure that no undefined behavior occurs while doing so.
+		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
+
+		freeRenderSemaphore(*p_render);
 		freeCommandPool(*p_render);
 		freeGraphicsPipeline(*p_render);
 		freeSwapChain(*p_render);
@@ -323,6 +331,27 @@ namespace _GameEngine::_Render
 
 	/////// END COMMAND BUFFERS
 
+	/////// RENDER SEMAPHORE
+
+	void initRenderSemaphore(Render* p_render)
+	{
+		_Semaphore::RenderSemaphoreDependencies l_renderSemaphoreDependencies{ };
+		l_renderSemaphoreDependencies.Device = &p_render->Device;
+
+		_Semaphore::RenderSemaphoreCreationInfo l_renderSemaphoreCreationInfo{};
+		l_renderSemaphoreCreationInfo.MaxFramesInParallel = 2;
+		l_renderSemaphoreCreationInfo.RenderSemaphoreDependencies = &l_renderSemaphoreDependencies;
+
+		_Semaphore::RenderSemaphore_init(&p_render->RenderSemaphore, &l_renderSemaphoreCreationInfo);
+	};
+
+	void freeRenderSemaphore(Render* p_render)
+	{
+		_Semaphore::RenderSemaphore_free(&p_render->RenderSemaphore);
+	};
+
+	/////// END RENDER SEMAPHORE
+
 	void startRenderPass(StartRenderPassInfo* p_startRenderPassInfo)
 	{
 		_GraphicsPipeline::RenderPass* RenderPass = &p_startRenderPassInfo->GraphicsPipeline->RenderPass;
@@ -357,9 +386,52 @@ namespace _GameEngine::_Render
 
 	void render(Render* p_render)
 	{
+		_Semaphore::RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
+		_Semaphore::CurrentSynchronisationObject l_synchronizationObject = _Semaphore::RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
 
+		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
+
+		uint32_t l_imageIndex;
+		vkAcquireNextImageKHR(p_render->Device.LogicalDevice.LogicalDevice, p_render->SwapChain.VkSwapchainKHR, UINT64_MAX, l_synchronizationObject.ImageAvailableSemaphore, VK_NULL_HANDLE, &l_imageIndex);
+
+		VkSubmitInfo l_submitInfo{};
+		l_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkSemaphore l_waitSemaphore[] = { l_synchronizationObject.ImageAvailableSemaphore };
+		VkPipelineStageFlags l_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+		l_submitInfo.waitSemaphoreCount = 1;
+		l_submitInfo.pWaitSemaphores = l_waitSemaphore;
+		l_submitInfo.pWaitDstStageMask = l_waitStages;
+		l_submitInfo.commandBufferCount = 1;
+		l_submitInfo.pCommandBuffers = &p_render->CommandBuffers.CommandBuffers[l_imageIndex];
+
+		VkSemaphore l_signalSemaphores[] = { l_synchronizationObject.RenderFinishedSemaphore };
+		l_submitInfo.signalSemaphoreCount = 1;
+		l_submitInfo.pSignalSemaphores = l_signalSemaphores;
+
+		if (vkQueueSubmit(p_render->Device.LogicalDevice.Queues.GraphicsQueue, 1, &l_submitInfo, l_synchronizationObject.WaitForGraphicsQueueFence) != VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to submit draw command buffer!"));
+		}
+
+		VkPresentInfoKHR l_presentInfo{ };
+		l_presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		l_presentInfo.waitSemaphoreCount = 1;
+		l_presentInfo.pWaitSemaphores = l_signalSemaphores;
+
+		VkSwapchainKHR l_swapChains[] = { p_render->SwapChain.VkSwapchainKHR };
+		l_presentInfo.swapchainCount = 1;
+		l_presentInfo.pSwapchains = l_swapChains;
+		l_presentInfo.pImageIndices = &l_imageIndex;
+
+		l_presentInfo.pResults = nullptr;
+
+		vkQueuePresentKHR(p_render->Device.LogicalDevice.Queues.PresentQueue, &l_presentInfo);
+
+		vkWaitForFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence, VK_FALSE, UINT64_MAX);
 	};
 
-	
+
 
 } // namespace _GameEngine

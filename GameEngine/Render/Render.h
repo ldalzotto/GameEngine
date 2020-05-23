@@ -9,6 +9,7 @@
 #include "GraphcisPipeline/GraphicsPipeline.h"
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
+#include "Semaphore/Semaphore.h"
 
 namespace _GameEngine::_Render
 {
@@ -31,6 +32,7 @@ namespace _GameEngine::_Render
 		_GraphicsPipeline::GraphicsPipeline GraphicsPipeline;
 		_CommandBuffer::CommandPool CommandPool;
 		_CommandBuffer::CommandBuffers CommandBuffers;
+		_Semaphore::RenderSemaphore RenderSemaphore;
 	};
 
 	Render* alloc();
