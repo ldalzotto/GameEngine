@@ -35,10 +35,7 @@ namespace _GameEngine::_Render::_SwapChain
 		SwapChainInfo SwapChainInfo;
 		std::vector<_SwapChainImage::SwapChainImage> SwapChainImages;
 
-		/**
-			If true, then the @ref SwapChain must be rebuilded.
-		*/
-		bool IsInvalid;
+		bool MustBeRebuilt;
 		_Observer::Subject* OnWindowSizeChangeCallback;
 	};
 

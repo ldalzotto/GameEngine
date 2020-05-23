@@ -33,4 +33,26 @@ namespace _GameEngine::_Render::_Shader
 	{
 		vkDestroyShaderModule(p_shader->ShaderDependencies.Device->LogicalDevice.LogicalDevice, p_shader->ShaderModule, nullptr);
 	};
+
+
+
+	VkPipelineShaderStageCreateInfo buildShaderStageCreate(Shader* p_shader)
+	{
+		VkPipelineShaderStageCreateInfo l_pipelineShaderStageCreate{};
+		l_pipelineShaderStageCreate.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+
+		if (p_shader->ShaderType == ShaderType::VERTEX)
+		{
+			l_pipelineShaderStageCreate.stage = VK_SHADER_STAGE_VERTEX_BIT;
+		}
+		else if (p_shader->ShaderType == ShaderType::FRAGMENT)
+		{
+			l_pipelineShaderStageCreate.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+		}
+
+		l_pipelineShaderStageCreate.module = p_shader->ShaderModule;
+		l_pipelineShaderStageCreate.pName = "main";
+
+		return l_pipelineShaderStageCreate;
+	};
 }

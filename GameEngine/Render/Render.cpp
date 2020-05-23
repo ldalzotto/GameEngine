@@ -99,7 +99,7 @@ namespace _GameEngine::_Render
 		startRenderPass(&l_startRenderPassInfo);
 
 		// The SwapChain has been recreated, thus no more invalid
-		p_render->SwapChain.IsInvalid = false;
+		p_render->SwapChain.MustBeRebuilt = false;
 	};
 
 	/////// VULKAN
@@ -412,7 +412,7 @@ namespace _GameEngine::_Render
 								VK_NULL_HANDLE,
 								&l_imageIndex);
 
-		if (l_acquireNextImageResult == VK_ERROR_OUT_OF_DATE_KHR || l_acquireNextImageResult == VK_SUBOPTIMAL_KHR || p_render->SwapChain.IsInvalid)
+		if (l_acquireNextImageResult == VK_ERROR_OUT_OF_DATE_KHR || l_acquireNextImageResult == VK_SUBOPTIMAL_KHR || p_render->SwapChain.MustBeRebuilt)
 		{
 			recreateSwapChain(p_render);
 			return;

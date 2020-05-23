@@ -9,7 +9,6 @@ using namespace _GameEngine::_Render::_Hardware;
 
 #include "Render/GraphcisPipeline/RenderPass.h"
 #include "Render/GraphcisPipeline/FrameBuffer.h"
-#include "Render/GraphcisPipeline/Shader/Shader.h"
 
 namespace _GameEngine::_Render::_GraphicsPipeline
 {
@@ -35,7 +34,5 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 
 	void build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies);
 	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline);
-
-	VkPipelineShaderStageCreateInfo buildShaderStageCreate(_Shader::Shader* p_shader);
 
 }

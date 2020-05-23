@@ -28,4 +28,6 @@ namespace _GameEngine::_Render::_Shader
 
 	Shader createShader(const ShaderDependencies& p_shaderDependencies, const ShaderType& p_shaderType, std::string p_compiledShaderFilePath);
 	void freeShader(Shader* p_shader);
+
+	VkPipelineShaderStageCreateInfo buildShaderStageCreate(Shader* p_shader);
 }

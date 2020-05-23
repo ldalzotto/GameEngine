@@ -2,12 +2,13 @@
 
 #include <stdexcept>
 
+#include "Render/GraphcisPipeline/Shader/Shader.h"
+
 #include "vulkan/vulkan.h"
 #include "Log/Log.h"
 
 namespace _GameEngine::_Render::_GraphicsPipeline
 {
-
 	VkPipelineVertexInputStateCreateInfo createVertexInputState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineInputAssemblyStateCreateInfo creteInputAssemblyState(GraphicsPipeline* p_graphcisPipeline);
 	VkViewport createViewport(GraphicsPipeline* p_graphicsPipeline);
@@ -104,26 +105,6 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		vkDestroyPipeline(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->Pipeline, nullptr);
 		clearPipelineLayout(p_graphicsPipeline);
 		RenderPass_free(&p_graphicsPipeline->RenderPass);
-	};
-
-	VkPipelineShaderStageCreateInfo buildShaderStageCreate(_Shader::Shader* p_shader)
-	{
-		VkPipelineShaderStageCreateInfo l_pipelineShaderStageCreate{};
-		l_pipelineShaderStageCreate.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-
-		if (p_shader->ShaderType == _Shader::ShaderType::VERTEX)
-		{
-			l_pipelineShaderStageCreate.stage = VK_SHADER_STAGE_VERTEX_BIT;
-		}
-		else if (p_shader->ShaderType == _Shader::ShaderType::FRAGMENT)
-		{
-			l_pipelineShaderStageCreate.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		}
-
-		l_pipelineShaderStageCreate.module = p_shader->ShaderModule;
-		l_pipelineShaderStageCreate.pName = "main";
-
-		return l_pipelineShaderStageCreate;
 	};
 
 	VkPipelineVertexInputStateCreateInfo createVertexInputState(GraphicsPipeline* p_graphicsPipeline)

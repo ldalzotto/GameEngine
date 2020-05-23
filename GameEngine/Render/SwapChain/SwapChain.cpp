@@ -9,7 +9,7 @@ namespace _GameEngine::_Render::_SwapChain
 {
 	void swapChainInavlidate(SwapChain* p_swapChain)
 	{
-		p_swapChain->IsInvalid = true;
+		p_swapChain->MustBeRebuilt = true;
 	};
 
 	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
