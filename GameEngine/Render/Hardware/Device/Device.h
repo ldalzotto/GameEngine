@@ -57,4 +57,6 @@ namespace _GameEngine::_Render::_Hardware::_Device
 	void Device_build(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);
 
 	void Device_free(Device* p_device);
+
+	uint32_t Device_findMemoryType(_Device::Device* p_device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 }

@@ -3,6 +3,8 @@
 #include "Extensions/Extensions.h"
 #include "Log/Log.h"
 
+#include "Render/Mesh/Mesh.h"
+
 #include <stdexcept>
 
 namespace _GameEngine::_Render
@@ -34,6 +36,8 @@ namespace _GameEngine::_Render
 	void initRenderSemaphore(Render* p_render);
 	void freeRenderSemaphore(Render* p_render);
 
+	_Mesh::Mesh DrawnMeshForTest;
+
 	Render* alloc()
 	{
 		Render* l_render = new Render();
@@ -54,6 +58,18 @@ namespace _GameEngine::_Render
 		l_startRenderPassInfo.CommandBuffers = &l_render->CommandBuffers;
 		l_startRenderPassInfo.GraphicsPipeline = &l_render->GraphicsPipeline;
 		l_startRenderPassInfo.SwapChain = &l_render->SwapChain;
+
+		_Mesh::MeshAllocInfo l_meshAllocInfo{};
+		l_meshAllocInfo.Device = &l_render->Device;
+		std::vector<_Mesh::Vertex> l_vertices = {
+	{{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+	{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+	{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+		};
+		l_meshAllocInfo.Vertices = &l_vertices;
+		_Mesh::Mesh_alloc(&DrawnMeshForTest, &l_meshAllocInfo);
+
+
 		startRenderPass(&l_startRenderPassInfo);
 
 		return l_render;
@@ -386,7 +402,12 @@ namespace _GameEngine::_Render
 
 			vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_startRenderPassInfo->GraphicsPipeline->Pipeline);
-			vkCmdDraw(l_commandBuffer, 3, 1, 0, 0);
+
+			VkBuffer l_vertexBuffers[] = { DrawnMeshForTest.VertexBuffer.Buffer };
+			VkDeviceSize l_offsets[] = { 0 };
+			vkCmdBindVertexBuffers(l_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
+
+			vkCmdDraw(l_commandBuffer, DrawnMeshForTest.Vertices.size(), 1, 0, 0);
 			vkCmdEndRenderPass(l_commandBuffer);
 
 			if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
@@ -405,19 +426,19 @@ namespace _GameEngine::_Render
 
 		uint32_t l_imageIndex;
 		VkResult l_acquireNextImageResult = vkAcquireNextImageKHR(
-								p_render->Device.LogicalDevice.LogicalDevice,
-								p_render->SwapChain.VkSwapchainKHR,
-								99999999,
-								l_synchronizationObject.ImageAvailableSemaphore,
-								VK_NULL_HANDLE,
-								&l_imageIndex);
+			p_render->Device.LogicalDevice.LogicalDevice,
+			p_render->SwapChain.VkSwapchainKHR,
+			99999999,
+			l_synchronizationObject.ImageAvailableSemaphore,
+			VK_NULL_HANDLE,
+			&l_imageIndex);
 
 		if (l_acquireNextImageResult == VK_ERROR_OUT_OF_DATE_KHR || l_acquireNextImageResult == VK_SUBOPTIMAL_KHR || p_render->SwapChain.MustBeRebuilt)
 		{
 			recreateSwapChain(p_render);
 			return;
 		}
-		else if(l_acquireNextImageResult != VK_SUCCESS)
+		else if (l_acquireNextImageResult != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
 		}

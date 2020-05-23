@@ -106,4 +106,21 @@ namespace _GameEngine::_Render::_Hardware::_Device
 		vkGetDeviceQueue(p_device->LogicalDevice.LogicalDevice, p_device->PhysicalDevice.QueueFamilies.Present.QueueIndex, 0, &p_device->LogicalDevice.Queues.PresentQueue);
 	};
 
+
+	uint32_t Device_findMemoryType(_Device::Device* p_device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
+	{
+		VkPhysicalDeviceMemoryProperties l_physicalDeviceMemoryproperties{};
+		vkGetPhysicalDeviceMemoryProperties(p_device->PhysicalDevice.PhysicalDevice, &l_physicalDeviceMemoryproperties);
+
+		for (uint32_t i = 0; i < l_physicalDeviceMemoryproperties.memoryTypeCount; i++)
+		{
+			if ((typeFilter & (1 << i)) && (l_physicalDeviceMemoryproperties.memoryTypes[i].propertyFlags & properties) == properties)
+			{
+				return i;
+			}
+		}
+
+		throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find suitable memory type!"));
+	};
+
 }

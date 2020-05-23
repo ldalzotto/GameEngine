@@ -7,12 +7,6 @@
 
 namespace _GameEngine::_Render::_Shader
 {
-	struct Vertex
-	{
-		glm::vec2 pos;
-		glm::vec3 color;
-	};
-
 	struct VertexInput
 	{
 		VkVertexInputBindingDescription VertexInputBinding;
