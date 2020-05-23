@@ -21,6 +21,14 @@ namespace _GameEngine::_Render::_Memory
 		vkDestroyBuffer(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->Buffer, nullptr);
 	};
 
+	void VertexBuffer_pushToGPU(VulkanBuffer* p_buffer, _Device::Device* p_device, void* p_source, size_t p_size)
+	{
+		void* data;
+		vkMapMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->BufferMemory, 0, p_size, 0, &data);
+		memcpy(data, p_source, p_size);
+		vkUnmapMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->BufferMemory);
+	};
+
 	void createEmptyBuffer(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device)
 	{
 		p_buffer->BufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

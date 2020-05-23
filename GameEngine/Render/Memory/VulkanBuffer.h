@@ -22,4 +22,5 @@ namespace _GameEngine::_Render::_Memory
 
 	void VertexBuffer_alloc(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device);
 	void VertexBuffer_free(VulkanBuffer* p_buffer, _Device::Device* p_device);
+	void VertexBuffer_pushToGPU(VulkanBuffer* p_buffer, _Device::Device* p_device, void* p_source, size_t p_size);
 }
