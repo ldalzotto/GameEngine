@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <unordered_map>
 #include <stdexcept>
 #include "Log/Log.h"
 
@@ -10,18 +11,25 @@ namespace _GameEngine::_Render::_Window
 
 	const std::string WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
+	void window_size_callback(GLFWwindow* window, int width, int height);
+
+	std::unordered_map<GLFWwindow*, Window*> WindowIndexedForGLFW{};
+
 	void Window_init(Window* p_window)
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 		p_window->Window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan", nullptr, nullptr);
+		WindowIndexedForGLFW.emplace(p_window->Window, p_window);
+		glfwSetWindowSizeCallback(p_window->Window, window_size_callback);
 	}
 
 	void Window_closeWindow(Window* p_window)
 	{
 		glfwDestroyWindow(p_window->Window);
 		glfwTerminate();
+		WindowIndexedForGLFW.erase(p_window->Window);
 		p_window->Window = nullptr;
 	};
 
@@ -47,9 +55,9 @@ namespace _GameEngine::_Render::_Window
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE(WINDOW_ERROR_NOT_INITIALIZED));
 		}
 #endif
-		
+
 		uint32_t l_extensionCount;
-		char** l_extensions = (char**) glfwGetRequiredInstanceExtensions(&l_extensionCount);
+		char** l_extensions = (char**)glfwGetRequiredInstanceExtensions(&l_extensionCount);
 
 		std::vector<char*> l_requiredExtensions(l_extensionCount);
 
@@ -60,4 +68,17 @@ namespace _GameEngine::_Render::_Window
 
 		return l_requiredExtensions;
 	};
+
+	void window_size_callback(GLFWwindow* window, int width, int height)
+	{
+		Window* l_window = WindowIndexedForGLFW.at(window);
+
+		/*
+		WindowSize l_newWindowSize{};
+		l_newWindowSize.Width = width;
+		l_newWindowSize.Height = height;
+		*/
+		_Observer::Observer_broadcast(&l_window->OnWindowSizeChanged, nullptr);
+	};
+
 } // namespace _GameEngine

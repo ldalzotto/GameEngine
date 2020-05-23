@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Utils/Observer/Observer.h"
+using namespace _GameEngine::_Utils;
+
 #include "Render/Includes/GLFWIncludes.h"
 
 #include <vector>
@@ -16,6 +19,7 @@ namespace _GameEngine::_Render::_Window
 	struct Window
 	{
 		GLFWwindow* Window;
+		_Observer::Observer OnWindowSizeChanged;
 	};
 
 	void Window_init(Window* p_window);

@@ -10,6 +10,9 @@
 #include "Render/SwapChain/SwapChainSharedStructures.h"
 #include "Render/SwapChain/ImageViews.h"
 
+#include "Utils/Observer/Observer.h"
+using namespace _GameEngine::_Utils;
+
 #include "vulkan/vulkan.h"
 
 namespace _GameEngine::_Render::_SwapChain
@@ -34,6 +37,12 @@ namespace _GameEngine::_Render::_SwapChain
 		SwapChainDependencies SwapChainDependencies;
 		SwapChainInfo SwapChainInfo;
 		SwapChainImages SwapChainImages;
+
+		/**
+			If true, then the @ref SwapChain must be rebuilded.
+		*/
+		bool IsInvalid;
+		_Observer::Subject* OnWindowSizeChangeCallback;
 	};
 
 	struct SwapChainSupportDetails
@@ -49,7 +58,6 @@ namespace _GameEngine::_Render::_SwapChain
 	void build(SwapChain* p_swapChain, const SwapChainDependencies& p_swapChainDependencies);
 	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface);
 	bool isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails);
-
 	void swapChain_free(SwapChain* p_swapChain);
 
 }

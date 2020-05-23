@@ -81,6 +81,32 @@ namespace _GameEngine::_Render
 		*p_render = nullptr;
 	};
 
+	void recreateSwapChain(Render* p_render)
+	{
+		// We wait for the Queues to finish their curent operation before releasing memory.
+		// This is to ensure that no undefined behavior occurs while doing so.
+		vkDeviceWaitIdle(p_render->Device.LogicalDevice.LogicalDevice);
+		freeRenderSemaphore(p_render);
+		freeCommandPool(p_render);
+		freeGraphicsPipeline(p_render);
+		freeSwapChain(p_render);
+
+		initSwapChain(p_render);
+		initGraphicsPipeline(p_render);
+		initCommandPool(p_render);
+		initCommandBuffers(p_render);
+		initRenderSemaphore(p_render);
+
+		StartRenderPassInfo l_startRenderPassInfo;
+		l_startRenderPassInfo.CommandBuffers = &p_render->CommandBuffers;
+		l_startRenderPassInfo.GraphicsPipeline = &p_render->GraphicsPipeline;
+		l_startRenderPassInfo.SwapChain = &p_render->SwapChain;
+		startRenderPass(&l_startRenderPassInfo);
+
+		// The SwapChain has been recreated, thus no more invalid
+		p_render->SwapChain.IsInvalid = false;
+	};
+
 	/////// VULKAN
 
 	void initializeVulkan(Render* p_render)
@@ -392,7 +418,23 @@ namespace _GameEngine::_Render
 		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
 
 		uint32_t l_imageIndex;
-		vkAcquireNextImageKHR(p_render->Device.LogicalDevice.LogicalDevice, p_render->SwapChain.VkSwapchainKHR, UINT64_MAX, l_synchronizationObject.ImageAvailableSemaphore, VK_NULL_HANDLE, &l_imageIndex);
+		VkResult l_acquireNextImageResult = vkAcquireNextImageKHR(
+								p_render->Device.LogicalDevice.LogicalDevice,
+								p_render->SwapChain.VkSwapchainKHR,
+								99999999,
+								l_synchronizationObject.ImageAvailableSemaphore,
+								VK_NULL_HANDLE,
+								&l_imageIndex);
+
+		if (l_acquireNextImageResult == VK_ERROR_OUT_OF_DATE_KHR || l_acquireNextImageResult == VK_SUBOPTIMAL_KHR || p_render->SwapChain.IsInvalid)
+		{
+			recreateSwapChain(p_render);
+			return;
+		}
+		else if(l_acquireNextImageResult != VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
+		}
 
 		VkSubmitInfo l_submitInfo{};
 		l_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

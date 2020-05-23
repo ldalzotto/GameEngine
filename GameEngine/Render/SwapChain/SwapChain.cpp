@@ -7,6 +7,11 @@
 
 namespace _GameEngine::_Render::_SwapChain
 {
+	void swapChainInavlidate(SwapChain* p_swapChain)
+	{
+		p_swapChain->IsInvalid = true;
+	};
+
 	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
 	{
 		SwapChainSupportDetails l_swapChainSupportDetails{};
@@ -84,6 +89,8 @@ namespace _GameEngine::_Render::_SwapChain
 	void build(SwapChain* p_swapChain, const SwapChainDependencies& p_swapChainDependencies)
 	{
 		p_swapChain->SwapChainDependencies = p_swapChainDependencies;
+		p_swapChain->OnWindowSizeChangeCallback = _Observer::Observer_register(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, [p_swapChain](void*) {swapChainInavlidate(p_swapChain); });
+
 		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
 		SwapChainImages* l_swapChainImages = &p_swapChain->SwapChainImages;
 
@@ -154,11 +161,13 @@ namespace _GameEngine::_Render::_SwapChain
 		l_imageViewInitializationInfo.SwapChainImages = &l_swapChainImages->SwapChainImages;
 		l_imageViewInitializationInfo.SwapChainInfo = &p_swapChain->SwapChainInfo;
 
+
 		ImageViews_init(&l_swapChainImages->ImageViews, &l_imageViewInitializationInfo);
 	};
 
 	void swapChain_free(SwapChain* p_swapChain)
 	{
+		_Observer::Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, p_swapChain->OnWindowSizeChangeCallback);
 		ImageViews_free(&p_swapChain->SwapChainImages.ImageViews);
 		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
 	};
