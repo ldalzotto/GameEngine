@@ -1,8 +1,9 @@
 #pragma once
 
+
 #include "Render/CommandBuffer/CommandPool.h"
 
-namespace _GameEngine::_Render::_CommandBuffer
+namespace _GameEngine::_Render
 {
 
 	struct CommandBuffersDependencies

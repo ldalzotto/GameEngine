@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_SwapChainImage
+namespace _GameEngine::_Render
 {
 
 	void ImageView_init(ImageView* p_imageView, ImageViewInitializationInfo* p_imageViewInitializationInfo)

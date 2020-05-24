@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <vector>
 
 #include "ImageViews.h"
@@ -9,23 +10,23 @@
 #include "Render/SwapChain/SwapChainSharedStructures.h"
 
 #include "Render/Hardware/Device/Device.h"
-using namespace _GameEngine::_Render::_Hardware;
 
-namespace _GameEngine::_Render::_SwapChainImage
+
+namespace _GameEngine::_Render
 {
 	struct SwapChainImage
 	{
 		VkImage SwapChainImage;
 		ImageView ImageView;
-		_CommandBuffer::CommandBuffer CommandBuffer;
+		CommandBuffer CommandBuffer;
 	};
 
 	struct SwapChainImageInitializationInfo
 	{
 		VkImage CreatedImage;
-		_SwapChain::SwapChainInfo* SwapChainInfo;
-		_Device::Device* Device;
-		_CommandBuffer::CommandPool* CommandPool;
+		SwapChainInfo* SwapChainInfo;
+		Device* Device;
+		CommandPool* CommandPool;
 	};
 
 	void SwapChainImage_init(SwapChainImage* p_swapChainImage, SwapChainImageInitializationInfo* p_swapChainImageInitializationInfo);

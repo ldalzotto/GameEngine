@@ -1,8 +1,9 @@
 #pragma once
 
+
 #include "Render/Hardware/Window/Window.h"
 #include "Render/Hardware/Window/Surface.h"
-using namespace _GameEngine::_Render::_Hardware;
+
 
 #include "vulkan/vulkan.h"
 #include "ValidationLayers.h"
@@ -24,23 +25,23 @@ namespace _GameEngine::_Render
 
 	struct Render
 	{
-		_Window::Window Window;
-		_Surface::Surface WindowSurface;
+		Window Window;
+		Surface WindowSurface;
 		VkInstance Instance;
-		_ValidationLayers::ValidationLayers ValidationLayers;
+		ValidationLayers ValidationLayers;
 		RenderDebug RenderDebug;
-		_Device::Device Device;
-		_SwapChain::SwapChain SwapChain;
-		_GraphicsPipeline::GraphicsPipeline GraphicsPipeline;
-		_CommandBuffer::CommandPool CommandPool;
-		_CommandBuffer::CommandBuffer CommandBuffers;
-		_Synchronisation::RenderSemaphore RenderSemaphore;
+		Device Device;
+		SwapChain SwapChain;
+		GraphicsPipeline GraphicsPipeline;
+		CommandPool CommandPool;
+		CommandBuffer CommandBuffers;
+		RenderSemaphore RenderSemaphore;
 	};
 
-	Render* alloc();
-	void free(Render** p_render);
-	void recreateSwapChain(Render* p_render);
+	Render* Render_alloc();
+	void Render_free(Render** p_render);
+	void Render_recreateSwapChain(Render* p_render);
 
-	void render(Render* p_render);
+	void Render_render(Render* p_render);
 
 } // namespace _GameEngine::_Render

@@ -1,21 +1,19 @@
 #pragma once
 
+
 #include <vector>
 #include <string>
 
-namespace _GameEngine
+namespace _GameEngine::_Render
 {
-	namespace _ValidationLayers {
-
 		struct ValidationLayers 
 		{
 			std::vector<const char*> ValidationLayers;
 			bool EnableValidationLayers;
 		};
 
-		void init(ValidationLayers* p_validationLayers);
+		void ValidationLayer_init(ValidationLayers* p_validationLayers);
 
-		void checkValidationLayerSupport(ValidationLayers* p_validationLayers);
-	} // namespace _ValidationLayers
+		void ValidationLayer_checkSupport(ValidationLayers* p_validationLayers);
 
 } // namespace _GameEngine 

@@ -1,16 +1,17 @@
 #pragma once
 
+
 #include <vector>
 
 #include "vulkan/vulkan.h"
 #include "Render/Hardware/Device/Device.h"
-using namespace _GameEngine::_Render::_Hardware;
 
-namespace _GameEngine::_Render::_Synchronisation
+
+namespace _GameEngine::_Render
 {
 	struct RenderSemaphoreDependencies
 	{
-		_Device::Device* Device;
+		Device* Device;
 	};
 
 	struct RenderSemaphoreCreationInfo

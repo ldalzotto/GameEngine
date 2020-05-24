@@ -1,11 +1,12 @@
 #pragma once
 
+
 #include <vector>
 
 #include "vulkan/vulkan.h"
 #include "glm/glm.hpp"
 
-namespace _GameEngine::_Render::_Shader
+namespace _GameEngine::_Render
 {
 	struct VertexInput
 	{

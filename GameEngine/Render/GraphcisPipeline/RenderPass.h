@@ -3,11 +3,11 @@
 #include "Render/SwapChain/SwapChain.h"
 #include "vulkan/vulkan.h"
 
-namespace _GameEngine::_Render::_GraphicsPipeline
+namespace _GameEngine::_Render
 {
 	struct RenderPassDependencies
 	{
-		_SwapChain::SwapChain* SwapChain;
+		SwapChain* SwapChain;
 	};
 
 	struct RenderPass

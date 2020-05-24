@@ -5,9 +5,9 @@
 #include "Surface.h"
 #include "Render/Includes/GLFWIncludes.h"
 
-namespace _GameEngine::_Render::_Hardware::_Surface
+namespace _GameEngine::_Render
 {
-	void build(Surface* p_surface, VkInstance p_instance, _Window::Window* p_window)
+	void Surface_build(Surface* p_surface, VkInstance p_instance, Window* p_window)
 	{
 		if (glfwCreateWindowSurface(p_instance, p_window->Window, nullptr, &p_surface->WindowSurface) != VK_SUCCESS)
 		{
@@ -15,7 +15,7 @@ namespace _GameEngine::_Render::_Hardware::_Surface
 		}
 	};
 
-	void release(Surface* p_surface, VkInstance p_instance)
+	void Surface_release(Surface* p_surface, VkInstance p_instance)
 	{
 		vkDestroySurfaceKHR(p_instance, p_surface->WindowSurface, nullptr);
 	};

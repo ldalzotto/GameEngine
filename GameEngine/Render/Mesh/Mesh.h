@@ -1,13 +1,14 @@
 #pragma once
 
+
 #include <vector>
 #include "glm/glm.hpp"
 #include "Render/Memory/VulkanBuffer.h"
 
 #include "Render/Hardware/Device/Device.h"
-using namespace _GameEngine::_Render::_Hardware;
 
-namespace _GameEngine::_Render::_Mesh
+
+namespace _GameEngine::_Render
 {
 	struct Vertex
 	{
@@ -18,21 +19,21 @@ namespace _GameEngine::_Render::_Mesh
 	struct Mesh
 	{
 		std::vector<Vertex> Vertices;
-		_Memory::VulkanBuffer VertexBuffer;
-		_Memory::VulkanBuffer VertexStaggingBuffer;
+		VulkanBuffer VertexBuffer;
+		VulkanBuffer VertexStaggingBuffer;
 		
 		std::vector<uint16_t> Indices;
-		_Memory::VulkanBuffer IndicesBuffer;
-		_Memory::VulkanBuffer IndicesStaggingBuffer;
+		VulkanBuffer IndicesBuffer;
+		VulkanBuffer IndicesStaggingBuffer;
 	};
 
 	struct MeshAllocInfo
 	{
 		std::vector<Vertex>* Vertices;
 		std::vector<uint16_t>* Indices;
-		_Device::Device* Device;
+		Device* Device;
 	};
 
 	void Mesh_alloc(Mesh* p_mesh, MeshAllocInfo* p_meshAllocInfo);
-	void Mesh_free(Mesh* p_mesh, _Device::Device* p_device);
+	void Mesh_free(Mesh* p_mesh, Device* p_device);
 }

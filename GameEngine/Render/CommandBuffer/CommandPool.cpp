@@ -4,13 +4,13 @@
 
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_CommandBuffer
+namespace _GameEngine::_Render
 {
     void CommandPool_Init(CommandPool* p_commandPool, CommandPoolDependencies* p_commandPoolDependencies)
     {
         p_commandPool->CommanPoolDependencies = *p_commandPoolDependencies;
 
-        _Device::QueueFamily p_graphicsQueueFamily = p_commandPool->CommanPoolDependencies.Device->PhysicalDevice.QueueFamilies.Graphics;
+        QueueFamily p_graphicsQueueFamily = p_commandPool->CommanPoolDependencies.Device->PhysicalDevice.QueueFamilies.Graphics;
 
         VkCommandPoolCreateInfo l_commandPoolCreateInfo{};
         l_commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;

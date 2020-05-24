@@ -1,11 +1,12 @@
 #pragma once
 
+
 #include <vulkan/vulkan.h>
 
 #include <cstdint>
 #include <functional>
 
-namespace _GameEngine::_Render::_Hardware::_Device
+namespace _GameEngine::_Render
 {
 	/**
 		@brief QueueFamily are handles of vulkan queues associated to a @ref PhysicalDevice
@@ -29,7 +30,7 @@ namespace _GameEngine::_Render::_Hardware::_Device
 		QueueFamily Present;
 	};
 
-	bool getQueue(VkPhysicalDevice p_physicalDevice, 
+	bool Queue_findDeviceQueues(VkPhysicalDevice p_physicalDevice, 
 			QueueFamilies* out_queueFamilies,
 			std::function<void(VkPhysicalDevice, uint32_t p_queueFamilyIndex, VkBool32*)> p_surfaceSupport);
 }

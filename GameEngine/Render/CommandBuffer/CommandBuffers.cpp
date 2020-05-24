@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_CommandBuffer
+namespace _GameEngine::_Render
 {
 	void CommandBuffer_init(CommandBuffer* p_commandBuffer, CommandBuffersDependencies* p_commandBuffersDependencies)
 	{

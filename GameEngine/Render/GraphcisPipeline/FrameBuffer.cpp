@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_GraphicsPipeline
+namespace _GameEngine::_Render
 {
 	void FrameBuffer_init(FrameBuffer* p_frameBuffer, FrameBufferDependencies* p_frameBufferDependencies)
 	{

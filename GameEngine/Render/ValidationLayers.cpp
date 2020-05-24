@@ -4,11 +4,9 @@
 #include <stdexcept>
 #include <cstring>
 
-namespace _GameEngine
+namespace _GameEngine::_Render
 {
-	namespace _ValidationLayers {
-
-		void init(ValidationLayers* p_validationLayers)
+		void ValidationLayer_init(ValidationLayers* p_validationLayers)
 		{
 
 #ifndef NDEBUG
@@ -22,7 +20,7 @@ namespace _GameEngine
 			};
 		}
 
-		void checkValidationLayerSupport(ValidationLayers* p_validationLayers) 
+		void ValidationLayer_checkSupport(ValidationLayers* p_validationLayers) 
 		{
 			if (p_validationLayers->EnableValidationLayers) 
 			{
@@ -51,7 +49,5 @@ namespace _GameEngine
 				}
 			}
 		}
-
-	} // namespace _ValidationLayers
 
 } // namespace _GameEngine

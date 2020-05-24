@@ -5,14 +5,14 @@
 
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_SwapChain
+namespace _GameEngine::_Render
 {
 	void swapChainInavlidate(SwapChain* p_swapChain)
 	{
 		p_swapChain->MustBeRebuilt = true;
 	};
 
-	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface)
+	SwapChainSupportDetails SwapChain_getSupportDetails(VkPhysicalDevice p_physicalDevice, Surface* p_surface)
 	{
 		SwapChainSupportDetails l_swapChainSupportDetails{};
 
@@ -38,7 +38,7 @@ namespace _GameEngine::_Render::_SwapChain
 		return l_swapChainSupportDetails;
 	};
 
-	bool isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails)
+	bool SwapChain_isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails)
 	{
 		return p_swapCahinSupportDetails.PresentModes.size() > 0 && p_swapCahinSupportDetails.SurfaceFormats.size() > 0;
 	};
@@ -68,7 +68,7 @@ namespace _GameEngine::_Render::_SwapChain
 		return VK_PRESENT_MODE_FIFO_KHR;
 	};
 
-	VkExtent2D chooseSwapExtent(_Window::Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities)
+	VkExtent2D chooseSwapExtent(Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities)
 	{
 		if (p_capabilities.currentExtent.width != UINT32_MAX)
 		{
@@ -76,7 +76,7 @@ namespace _GameEngine::_Render::_SwapChain
 		}
 		else
 		{
-			_Window::WindowSize l_currentWindowSize = _Window::getWindowSize(p_window);
+			WindowSize l_currentWindowSize = Window_getSize(p_window);
 			VkExtent2D l_actualExtent{ l_currentWindowSize.Width, l_currentWindowSize.Height };
 
 			l_actualExtent.width = std::max(p_capabilities.minImageExtent.width, std::min(p_capabilities.maxImageExtent.width, l_actualExtent.width));
@@ -86,14 +86,14 @@ namespace _GameEngine::_Render::_SwapChain
 		}
 	};
 
-	void build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo)
+	void SwapChain_build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo)
 	{
 		p_swapChain->SwapChainDependencies = p_swapChainBuildInfo->SwapChainDependencies;
-		p_swapChain->OnWindowSizeChangeCallback = _Observer::Observer_register(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, [p_swapChain](void*) {swapChainInavlidate(p_swapChain); });
+		p_swapChain->OnWindowSizeChangeCallback = Observer_register(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, [p_swapChain](void*) {swapChainInavlidate(p_swapChain); });
 
 		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
 
-		SwapChainSupportDetails l_swapChainDetails = getSwapChainSupportDetails(
+		SwapChainSupportDetails l_swapChainDetails = SwapChain_getSupportDetails(
 			p_swapChain->SwapChainDependencies.Device->PhysicalDevice.PhysicalDevice,
 			p_swapChain->SwapChainDependencies.Surface);
 
@@ -157,22 +157,22 @@ namespace _GameEngine::_Render::_SwapChain
 
 		for (size_t i = 0; i < l_imageCount; i++)
 		{
-			_SwapChainImage::SwapChainImageInitializationInfo l_swapChainImageInitializationInfo{};
+			SwapChainImageInitializationInfo l_swapChainImageInitializationInfo{};
 			l_swapChainImageInitializationInfo.CreatedImage = l_swapChainRawImages[i];
 			l_swapChainImageInitializationInfo.Device = p_swapChain->SwapChainDependencies.Device;
 			l_swapChainImageInitializationInfo.SwapChainInfo = &p_swapChain->SwapChainInfo;
 			l_swapChainImageInitializationInfo.CommandPool = p_swapChainBuildInfo->CommandPool;
-			_SwapChainImage::SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);
+			SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);
 		}
 	};
 
-	void swapChain_free(SwapChain* p_swapChain)
+	void SwapChain_free(SwapChain* p_swapChain)
 	{
-		_Observer::Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, p_swapChain->OnWindowSizeChangeCallback);
+		Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, p_swapChain->OnWindowSizeChangeCallback);
 
 		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)
 		{
-			_SwapChainImage::SwapChainImage_free(&p_swapChain->SwapChainImages[i]);
+			SwapChainImage_free(&p_swapChain->SwapChainImages[i]);
 		}
 
 		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);

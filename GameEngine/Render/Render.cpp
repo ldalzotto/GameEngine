@@ -36,9 +36,9 @@ namespace _GameEngine::_Render
 	void initRenderSemaphore(Render* p_render);
 	void freeRenderSemaphore(Render* p_render);
 
-	_Mesh::Mesh DrawnMeshForTest;
+	Mesh DrawnMeshForTest;
 
-	Render* alloc()
+	Render* Render_alloc()
 	{
 		Render* l_render = new Render();
 
@@ -54,7 +54,7 @@ namespace _GameEngine::_Render
 		initGraphicsPipeline(l_render);
 		initRenderSemaphore(l_render);
 
-		std::vector<_Mesh::Vertex> l_vertices = {
+		std::vector<Vertex> l_vertices = {
 			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
 			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
@@ -64,22 +64,22 @@ namespace _GameEngine::_Render
 			 0, 1, 2, 2, 3, 0
 		};
 
-		_Mesh::MeshAllocInfo l_meshAllocInfo{};
+		MeshAllocInfo l_meshAllocInfo{};
 		l_meshAllocInfo.Device = &l_render->Device;
 		l_meshAllocInfo.Vertices = &l_vertices;
 		l_meshAllocInfo.Indices = &l_inidces;
-		_Mesh::Mesh_alloc(&DrawnMeshForTest, &l_meshAllocInfo);
+		Mesh_alloc(&DrawnMeshForTest, &l_meshAllocInfo);
 
 		return l_render;
 	};
 
-	void free(Render** p_render)
+	void Render_free(Render** p_render)
 	{
 		// We wait for the Queues to finish their curent operation before releasing memory.
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
-		_Mesh::Mesh_free(&DrawnMeshForTest, &(*p_render)->Device);
+		Mesh_free(&DrawnMeshForTest, &(*p_render)->Device);
 
 
 		freeRenderSemaphore(*p_render);
@@ -94,7 +94,7 @@ namespace _GameEngine::_Render
 		*p_render = nullptr;
 	};
 
-	void recreateSwapChain(Render* p_render)
+	void Render_recreateSwapChain(Render* p_render)
 	{
 		// We wait for the Queues to finish their curent operation before releasing memory.
 		// This is to ensure that no undefined behavior occurs while doing so.
@@ -130,8 +130,8 @@ namespace _GameEngine::_Render
 		createInfo.pApplicationInfo = &appInfo;
 
 		std::vector<char*> l_requiredExtensions = Window_getRequiredExtensionsV2(&p_render->Window);
-		_Extensions::checkPresenceOfRequiredInstanceExtensions(l_requiredExtensions);
-		_Extensions::populateRequiredExtensions(&l_requiredExtensions, p_render->ValidationLayers.EnableValidationLayers);
+		Extensions_checkPresenceOfRequiredInstanceExtensions(l_requiredExtensions);
+		Extensions_populateRequiredExtensions(&l_requiredExtensions, p_render->ValidationLayers.EnableValidationLayers);
 
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(l_requiredExtensions.size());
 		createInfo.ppEnabledExtensionNames = l_requiredExtensions.data();
@@ -140,7 +140,7 @@ namespace _GameEngine::_Render
 		//	   It is placed outside the if because vulakn only accepts a pointer to it, so this is to avoid stack destruction.
 		VkDebugUtilsMessengerCreateInfoEXT l_debugUtlsMessengerCreateInfo{};
 
-		_ValidationLayers::ValidationLayers* l_validationLayers = &p_render->ValidationLayers;
+		ValidationLayers* l_validationLayers = &p_render->ValidationLayers;
 		if (l_validationLayers->EnableValidationLayers)
 		{
 			createInfo.enabledLayerCount = static_cast<uint32_t>(l_validationLayers->ValidationLayers.size());
@@ -171,8 +171,8 @@ namespace _GameEngine::_Render
 
 	void initValidationLayers(Render* p_render)
 	{
-		_ValidationLayers::init(&p_render->ValidationLayers);
-		_ValidationLayers::checkValidationLayerSupport(&p_render->ValidationLayers);
+		ValidationLayer_init(&p_render->ValidationLayers);
+		ValidationLayer_checkSupport(&p_render->ValidationLayers);
 	};
 
 	/////// END VALIDATION LAYERS
@@ -243,26 +243,26 @@ namespace _GameEngine::_Render
 
 	void initSurface(Render* p_render)
 	{
-		_Surface::build(&p_render->WindowSurface, p_render->Instance, &p_render->Window);
+		Surface_build(&p_render->WindowSurface, p_render->Instance, &p_render->Window);
 	};
 
 	void freeSurface(Render* p_render)
 	{
-		_Surface::release(&p_render->WindowSurface, p_render->Instance);
+		Surface_release(&p_render->WindowSurface, p_render->Instance);
 	};
 
 	/////// END SURFACE
 
 	/////// DEVICE
 
-	void setupLogicalDeviceValidation(_ValidationLayers::ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo);
+	void setupLogicalDeviceValidation(ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo);
 
 	void initDevice(Render* p_render)
 	{
-		_Device::DeviceBuildInfo l_deviceBuildInfo{};
+		DeviceBuildInfo l_deviceBuildInfo{};
 		l_deviceBuildInfo.Instance = p_render->Instance;
 
-		_Device::DeviceBuildCallbacks* l_deviceBuildCallbacks = &l_deviceBuildInfo.DeviceBuildCallbacks;
+		DeviceBuildCallbacks* l_deviceBuildCallbacks = &l_deviceBuildInfo.DeviceBuildCallbacks;
 
 		l_deviceBuildCallbacks->SetupValidation = [p_render](VkDeviceCreateInfo* p_deviceCreateInfo) {
 			setupLogicalDeviceValidation(&p_render->ValidationLayers, p_deviceCreateInfo);
@@ -273,13 +273,13 @@ namespace _GameEngine::_Render
 		};
 		l_deviceBuildCallbacks->IsSwapChainSupported = [p_render](VkPhysicalDevice p_physicalDevice)
 		{
-			return _SwapChain::isSwapChainSupported(_SwapChain::getSwapChainSupportDetails(p_physicalDevice, &p_render->WindowSurface));
+			return SwapChain_isSwapChainSupported(SwapChain_getSupportDetails(p_physicalDevice, &p_render->WindowSurface));
 		};
 
-		_Device::Device_build(&p_render->Device, &l_deviceBuildInfo);
+		Device_build(&p_render->Device, &l_deviceBuildInfo);
 	};
 
-	void setupLogicalDeviceValidation(_ValidationLayers::ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo)
+	void setupLogicalDeviceValidation(ValidationLayers* p_validationLayers, VkDeviceCreateInfo* p_deviceCreateInfo)
 	{
 		if (p_validationLayers->EnableValidationLayers)
 		{
@@ -294,7 +294,7 @@ namespace _GameEngine::_Render
 
 	void freeDevice(Render* p_render)
 	{
-		_Device::Device_free(&p_render->Device);
+		Device_free(&p_render->Device);
 	};
 
 	/////// END DEVICE
@@ -303,17 +303,17 @@ namespace _GameEngine::_Render
 
 	void initSwapChain(Render* p_render)
 	{
-		_SwapChain::SwapChainBuildInfo l_swapChainBuildInfo{};
+		SwapChainBuildInfo l_swapChainBuildInfo{};
 		l_swapChainBuildInfo.SwapChainDependencies.Device = &p_render->Device;
 		l_swapChainBuildInfo.SwapChainDependencies.Surface = &p_render->WindowSurface;
 		l_swapChainBuildInfo.SwapChainDependencies.Window = &p_render->Window;
 		l_swapChainBuildInfo.CommandPool = &p_render->CommandPool;
-		_SwapChain::build(&p_render->SwapChain, &l_swapChainBuildInfo);
+		SwapChain_build(&p_render->SwapChain, &l_swapChainBuildInfo);
 	};
 
 	void freeSwapChain(Render* p_render)
 	{
-		_SwapChain::swapChain_free(&p_render->SwapChain);
+		SwapChain_free(&p_render->SwapChain);
 	};
 
 	/////// END SWAP CHAIN
@@ -323,15 +323,15 @@ namespace _GameEngine::_Render
 
 	void initGraphicsPipeline(Render* p_render)
 	{
-		_GraphicsPipeline::GraphicsPipelineDependencies l_graphicsPipelineDependencies{};
+		GraphicsPipelineDependencies l_graphicsPipelineDependencies{};
 		l_graphicsPipelineDependencies.Device = &p_render->Device;
 		l_graphicsPipelineDependencies.SwapChain = &p_render->SwapChain;
-		_GraphicsPipeline::build(&p_render->GraphicsPipeline, l_graphicsPipelineDependencies);
+		GraphicsPipeline_build(&p_render->GraphicsPipeline, l_graphicsPipelineDependencies);
 	};
 
 	void freeGraphicsPipeline(Render* p_render)
 	{
-		_GraphicsPipeline::GraphicsPipeline_free(&p_render->GraphicsPipeline);
+		GraphicsPipeline_free(&p_render->GraphicsPipeline);
 	};
 
 	/////// END GRAPHICS PIPELINE
@@ -340,14 +340,14 @@ namespace _GameEngine::_Render
 
 	void initCommandPool(Render* p_render)
 	{
-		_CommandBuffer::CommandPoolDependencies l_commandPoolDependencies{};
+		CommandPoolDependencies l_commandPoolDependencies{};
 		l_commandPoolDependencies.Device = &p_render->Device;
-		_CommandBuffer::CommandPool_Init(&p_render->CommandPool, &l_commandPoolDependencies);
+		CommandPool_Init(&p_render->CommandPool, &l_commandPoolDependencies);
 	};
 
 	void freeCommandPool(Render* p_render)
 	{
-		_CommandBuffer::CommandPool_free(&p_render->CommandPool);
+		CommandPool_free(&p_render->CommandPool);
 	};
 
 	/////// END COMMAND POOL
@@ -356,19 +356,19 @@ namespace _GameEngine::_Render
 
 	void initRenderSemaphore(Render* p_render)
 	{
-		_Synchronisation::RenderSemaphoreDependencies l_renderSemaphoreDependencies{ };
+		RenderSemaphoreDependencies l_renderSemaphoreDependencies{ };
 		l_renderSemaphoreDependencies.Device = &p_render->Device;
 
-		_Synchronisation::RenderSemaphoreCreationInfo l_renderSemaphoreCreationInfo{};
+		RenderSemaphoreCreationInfo l_renderSemaphoreCreationInfo{};
 		l_renderSemaphoreCreationInfo.MaxFramesInParallel = 2;
 		l_renderSemaphoreCreationInfo.RenderSemaphoreDependencies = &l_renderSemaphoreDependencies;
 
-		_Synchronisation::RenderSemaphore_init(&p_render->RenderSemaphore, &l_renderSemaphoreCreationInfo);
+		RenderSemaphore_init(&p_render->RenderSemaphore, &l_renderSemaphoreCreationInfo);
 	};
 
 	void freeRenderSemaphore(Render* p_render)
 	{
-		_Synchronisation::RenderSemaphore_free(&p_render->RenderSemaphore);
+		RenderSemaphore_free(&p_render->RenderSemaphore);
 	};
 
 	/////// END RENDER SEMAPHORE
@@ -382,10 +382,10 @@ namespace _GameEngine::_Render
 
 	void createCommandBuffer(CreateCommandBufferInfo* p_startRenderPassInfo)
 	{
-		_GraphicsPipeline::RenderPass* RenderPass = &p_startRenderPassInfo->Render->GraphicsPipeline.RenderPass;
+		RenderPass* RenderPass = &p_startRenderPassInfo->Render->GraphicsPipeline.RenderPass;
 
-		std::vector<_SwapChainImage::SwapChainImage>* l_swapChainImages = &p_startRenderPassInfo->Render->SwapChain.SwapChainImages;
-		std::vector<_GraphicsPipeline::FrameBuffer>* l_frameBuffers = &p_startRenderPassInfo->Render->GraphicsPipeline.FrameBuffers;
+		std::vector<SwapChainImage>* l_swapChainImages = &p_startRenderPassInfo->Render->SwapChain.SwapChainImages;
+		std::vector<FrameBuffer>* l_frameBuffers = &p_startRenderPassInfo->Render->GraphicsPipeline.FrameBuffers;
 
 		VkCommandBuffer l_commandBuffer = p_startRenderPassInfo->Render->SwapChain.SwapChainImages.at(p_startRenderPassInfo->ImageIndex).CommandBuffer.CommandBuffer;
 
@@ -438,10 +438,10 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void render(Render* p_render)
+	void Render_render(Render* p_render)
 	{
-		_Synchronisation::RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
-		_Synchronisation::CurrentSynchronisationObject l_synchronizationObject = _Synchronisation::RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
+		RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
+		CurrentSynchronisationObject l_synchronizationObject = RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
 
 		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
 
@@ -456,7 +456,7 @@ namespace _GameEngine::_Render
 
 		if (l_acquireNextImageResult == VK_ERROR_OUT_OF_DATE_KHR || l_acquireNextImageResult == VK_SUBOPTIMAL_KHR || p_render->SwapChain.MustBeRebuilt)
 		{
-			recreateSwapChain(p_render);
+			Render_recreateSwapChain(p_render);
 			return;
 		}
 		else if (l_acquireNextImageResult != VK_SUCCESS)

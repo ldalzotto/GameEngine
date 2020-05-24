@@ -2,11 +2,10 @@
 
 #include <stdexcept>
 
-
 #include "vulkan/vulkan.h"
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_GraphicsPipeline
+namespace _GameEngine::_Render
 {
 	VkPipelineVertexInputStateCreateInfo createVertexInputState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineInputAssemblyStateCreateInfo creteInputAssemblyState(GraphicsPipeline* p_graphcisPipeline);
@@ -21,19 +20,19 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline);
 	void clearPipelineLayout(GraphicsPipeline* p_graphcisPipeline);
 
-	void build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies)
+	void GraphicsPipeline_build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies)
 	{
 		p_graphicsPipeline->GraphicsPipelineDependencies = p_graphicsPipelineDependencies;
 
-		_Shader::ShaderDependencies l_shaderDependencies;
+		ShaderDependencies l_shaderDependencies;
 		l_shaderDependencies.Device = p_graphicsPipelineDependencies.Device;
 
-		_Shader::Shader l_vertexShader = _Shader::createShader(l_shaderDependencies, _Shader::ShaderType::VERTEX, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv");
-		_Shader::VertexInput_buildInput(&p_graphicsPipeline->VertexShaderDescription.VertexInput);
+		Shader l_vertexShader = Shader_create(l_shaderDependencies, ShaderType::VERTEX, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv");
+		VertexInput_buildInput(&p_graphicsPipeline->VertexShaderDescription.VertexInput);
 
-		_Shader::Shader l_fragmentShader = _Shader::createShader(l_shaderDependencies, _Shader::ShaderType::FRAGMENT, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv");
+		Shader l_fragmentShader = Shader_create(l_shaderDependencies, ShaderType::FRAGMENT, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv");
 
-		VkPipelineShaderStageCreateInfo l_shaderStages[] = { buildShaderStageCreate(&l_vertexShader), buildShaderStageCreate(&l_fragmentShader) };
+		VkPipelineShaderStageCreateInfo l_shaderStages[] = { Shader_buildShaderStageCreate(&l_vertexShader), Shader_buildShaderStageCreate(&l_fragmentShader) };
 
 		VkGraphicsPipelineCreateInfo l_pipelineCreateInfo{};
 		l_pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -78,11 +77,11 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create graphics pipeline!"));
 		}
 
-		_Shader::freeShader(&l_vertexShader);
-		_Shader::freeShader(&l_fragmentShader);
+		Shader_free(&l_vertexShader);
+		Shader_free(&l_fragmentShader);
 
 
-		std::vector<_SwapChainImage::SwapChainImage>* l_swapChainImages = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainImages;
+		std::vector<SwapChainImage>* l_swapChainImages = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainImages;
 		p_graphicsPipeline->FrameBuffers.resize(l_swapChainImages->size());
 
 		for (size_t i = 0; i < p_graphicsPipeline->FrameBuffers.size(); i++)

@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <cstring>
 
-namespace _GameEngine::_Render::_Extensions
+namespace _GameEngine::_Render
 {
 	/**
 		@brief Query the Graphics API to get the supported extensions.
@@ -46,7 +46,7 @@ namespace _GameEngine::_Render::_Extensions
 		return l_extensionsName;
 	};
 
-	void populateRequiredExtensions(std::vector<char*>* p_requiredExtensions, bool p_includeDebugExtensions)
+	void Extensions_populateRequiredExtensions(std::vector<char*>* p_requiredExtensions, bool p_includeDebugExtensions)
 	{
 		if (p_includeDebugExtensions)
 		{
@@ -75,7 +75,7 @@ namespace _GameEngine::_Render::_Extensions
 		return true;
 	};
 
-	void checkPresenceOfRequiredInstanceExtensions(std::vector<char*>& p_requiredExtensions)
+	void Extensions_checkPresenceOfRequiredInstanceExtensions(std::vector<char*>& p_requiredExtensions)
 	{
 		if (!checkPresenceOrRequiredExtensions(p_requiredExtensions, getSupportedInstanceExtensionsV2()))
 		{
@@ -83,7 +83,7 @@ namespace _GameEngine::_Render::_Extensions
 		}
 	};
 
-	bool checkPresenceOfRequiredDeviceExtensions(std::vector<char*>& p_requiredExtensions, VkPhysicalDevice  p_device)
+	bool Extensions_checkPresenceOfRequiredDeviceExtensions(std::vector<char*>& p_requiredExtensions, VkPhysicalDevice  p_device)
 	{
 		return checkPresenceOrRequiredExtensions(p_requiredExtensions, getSupportedDeviceExtensions(p_device));
 	};

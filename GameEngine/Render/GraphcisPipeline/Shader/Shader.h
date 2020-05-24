@@ -1,18 +1,19 @@
 #pragma once
 
+
 #include "vulkan/vulkan.h"
 #include "Render/Hardware/Device/Device.h"
-using namespace _GameEngine::_Render::_Hardware;
+
 
 #include "Render/GraphcisPipeline/Shader/VertexInput.h"
 
 #include <string>
 
-namespace _GameEngine::_Render::_Shader
+namespace _GameEngine::_Render
 {
 	struct ShaderDependencies
 	{
-		_Device::Device* Device;
+		Device* Device;
 	};
 
 	enum class ShaderType
@@ -33,8 +34,8 @@ namespace _GameEngine::_Render::_Shader
 		ShaderType ShaderType;
 	};
 
-	Shader createShader(const ShaderDependencies& p_shaderDependencies, const ShaderType& p_shaderType, std::string p_compiledShaderFilePath);
-	void freeShader(Shader* p_shader);
+	Shader Shader_create(const ShaderDependencies& p_shaderDependencies, const ShaderType& p_shaderType, std::string p_compiledShaderFilePath);
+	void Shader_free(Shader* p_shader);
 
-	VkPipelineShaderStageCreateInfo buildShaderStageCreate(Shader* p_shader);
+	VkPipelineShaderStageCreateInfo Shader_buildShaderStageCreate(Shader* p_shader);
 }

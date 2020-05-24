@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_Synchronisation
+namespace _GameEngine::_Render
 {
 	void RenderSemaphore_init(RenderSemaphore* p_renderSemaphore, RenderSemaphoreCreationInfo* p_renderSemaphoreCreationInfo)
 	{

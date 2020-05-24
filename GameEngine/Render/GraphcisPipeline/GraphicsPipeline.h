@@ -1,9 +1,10 @@
 #pragma once
 
+
 #include <vector>
 
 #include "Render/Hardware/Device/Device.h"
-using namespace _GameEngine::_Render::_Hardware;
+
 
 #include "Render/SwapChain/SwapChain.h"
 
@@ -11,12 +12,12 @@ using namespace _GameEngine::_Render::_Hardware;
 #include "Render/GraphcisPipeline/FrameBuffer.h"
 #include "Render/GraphcisPipeline/Shader/Shader.h"
 
-namespace _GameEngine::_Render::_GraphicsPipeline
+namespace _GameEngine::_Render
 {
 	struct GraphicsPipelineDependencies
 	{
-		_Device::Device* Device;
-		_SwapChain::SwapChain* SwapChain;
+		Device* Device;
+		SwapChain* SwapChain;
 	};
 
 	struct GraphicsPipeline
@@ -25,7 +26,7 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		VkPipeline Pipeline;
 		VkPipelineLayout PipelineLayout;
 
-		_Shader::VertexShaderDescription VertexShaderDescription;
+		VertexShaderDescription VertexShaderDescription;
 
 		RenderPass RenderPass;
 
@@ -36,7 +37,7 @@ namespace _GameEngine::_Render::_GraphicsPipeline
 		std::vector<FrameBuffer> FrameBuffers;
 	};
 
-	void build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies);
+	void GraphicsPipeline_build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies);
 	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline);
 
 }

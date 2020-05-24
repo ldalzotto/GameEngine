@@ -1,6 +1,6 @@
 #include "Observer.h"
 
-namespace _GameEngine::_Utils::_Observer
+namespace _GameEngine::_Utils
 {
 	Subject* Observer_register(Observer* p_observer, std::function<void(void*)> p_callback)
 	{

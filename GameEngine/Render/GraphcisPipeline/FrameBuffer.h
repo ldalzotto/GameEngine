@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <vector>
 
 #include "vulkan/vulkan.h"
@@ -7,14 +8,14 @@
 #include "Render/GraphcisPipeline/RenderPass.h"
 #include "Render/SwapChain/Image/ImageViews.h"
 
-namespace _GameEngine::_Render::_GraphicsPipeline
+namespace _GameEngine::_Render
 {
 	struct FrameBufferDependencies
 	{
-		_GraphicsPipeline::RenderPass* RenderPass;
-		_SwapChain::SwapChainInfo* SwapChainInfo;
-		_SwapChainImage::ImageView* ImageView;
-		_Device::Device* Device;
+		RenderPass* RenderPass;
+		SwapChainInfo* SwapChainInfo;
+		ImageView* ImageView;
+		Device* Device;
 	};
 
 	struct FrameBuffer

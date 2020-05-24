@@ -1,15 +1,17 @@
 #pragma once
 
+
+
 #include "vulkan/vulkan.h"
 #include "Render/Hardware/Device/Device.h"
-using namespace _GameEngine::_Render::_Hardware;
 
-namespace _GameEngine::_Render::_CommandBuffer
+
+namespace _GameEngine::_Render
 {
 
 	struct CommandPoolDependencies
 	{
-		_Device::Device* Device;
+		Device* Device;
 	};
 
 	struct CommandPool

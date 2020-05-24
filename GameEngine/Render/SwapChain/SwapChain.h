@@ -1,12 +1,13 @@
 #pragma once
 
+
 #include <vector>
 #include <functional>
 
 #include "Render/Hardware/Device/Device.h"
 #include "Render/Hardware/Window/Window.h"
 #include "Render/Hardware/Window/Surface.h"
-using namespace _GameEngine::_Render::_Hardware;
+
 
 #include "Render/CommandBuffer/CommandPool.h"
 
@@ -14,18 +15,18 @@ using namespace _GameEngine::_Render::_Hardware;
 #include "Render/SwapChain/Image/SwapChainImage.h"
 
 #include "Utils/Observer/Observer.h"
-using namespace _GameEngine::_Utils;
+
 
 #include "vulkan/vulkan.h"
 
-namespace _GameEngine::_Render::_SwapChain
+namespace _GameEngine::_Render
 {
 
 	struct SwapChainDependencies
 	{
-		_Device::Device* Device;
-		_Window::Window* Window;
-		_Surface::Surface* Surface;
+		Device* Device;
+		Window* Window;
+		Surface* Surface;
 	};
 
 	struct SwapChain
@@ -33,10 +34,10 @@ namespace _GameEngine::_Render::_SwapChain
 		VkSwapchainKHR VkSwapchainKHR;
 		SwapChainDependencies SwapChainDependencies;
 		SwapChainInfo SwapChainInfo;
-		std::vector<_SwapChainImage::SwapChainImage> SwapChainImages;
+		std::vector<SwapChainImage> SwapChainImages;
 
 		bool MustBeRebuilt;
-		_Observer::Subject* OnWindowSizeChangeCallback;
+		_Utils::Subject* OnWindowSizeChangeCallback;
 	};
 
 	struct SwapChainSupportDetails
@@ -52,12 +53,12 @@ namespace _GameEngine::_Render::_SwapChain
 	struct SwapChainBuildInfo
 	{
 		SwapChainDependencies SwapChainDependencies;
-		_CommandBuffer::CommandPool* CommandPool;
+		CommandPool* CommandPool;
 	};
 
-	void build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo);
-	SwapChainSupportDetails getSwapChainSupportDetails(VkPhysicalDevice p_physicalDevice, _Surface::Surface* p_surface);
-	bool isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails);
-	void swapChain_free(SwapChain* p_swapChain);
+	void SwapChain_build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo);
+	SwapChainSupportDetails SwapChain_getSupportDetails(VkPhysicalDevice p_physicalDevice, Surface* p_surface);
+	bool SwapChain_isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails);
+	void SwapChain_free(SwapChain* p_swapChain);
 
 }

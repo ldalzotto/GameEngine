@@ -6,9 +6,9 @@
 #include <fstream>
 #include <ios>
 
-namespace _GameEngine::_Utils::_File
+namespace _GameEngine::_Utils
 {
-	std::vector<char> readFile(const std::string& p_absoluteFilePath)
+	std::vector<char> File_readFile(const std::string& p_absoluteFilePath)
 	{
 		std::ifstream file(p_absoluteFilePath, std::ios::ate | std::ios::binary);
 

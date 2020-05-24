@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_Hardware::_Window
+namespace _GameEngine::_Render
 {
 	const uint32_t WINDOW_WIDTH = 800;
 	const uint32_t WINDOW_HEIGHT = 600;
@@ -38,7 +38,7 @@ namespace _GameEngine::_Render::_Hardware::_Window
 		return glfwWindowShouldClose(p_window->Window);
 	};
 
-	WindowSize getWindowSize(Window* p_window)
+	WindowSize Window_getSize(Window* p_window)
 	{
 		WindowSize l_windowSize{};
 		l_windowSize.Width = WINDOW_WIDTH;
@@ -78,7 +78,7 @@ namespace _GameEngine::_Render::_Hardware::_Window
 		l_newWindowSize.Width = width;
 		l_newWindowSize.Height = height;
 		*/
-		_Observer::Observer_broadcast(&l_window->OnWindowSizeChanged, nullptr);
+		Observer_broadcast(&l_window->OnWindowSizeChanged, nullptr);
 	};
 
 } // namespace _GameEngine

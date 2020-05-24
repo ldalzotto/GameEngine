@@ -4,7 +4,7 @@
 
 #include "Log/Log.h"
 
-namespace _GameEngine::_Render::_GraphicsPipeline
+namespace _GameEngine::_Render
 {
 	void RenderPass_build(RenderPass* p_renderPass, RenderPassBuildInfo* p_renderPassBuildInfo)
 	{

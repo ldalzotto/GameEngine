@@ -8,9 +8,9 @@
 #include <vector>
 #include <set>
 
-namespace _GameEngine::_Render::_Hardware::_Device
+namespace _GameEngine::_Render
 {
-	std::vector<char*> _Device::DeviceExtensions = std::vector<char*>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<char*> DeviceExtensions = std::vector<char*>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	void buildPhysicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);
 	void buildLogicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);
@@ -28,8 +28,8 @@ namespace _GameEngine::_Render::_Hardware::_Device
 
 	bool isPhysicalDeviceElligible(VkPhysicalDevice l_physicalDevice, QueueFamilies* out_queueFamilies, DeviceBuildCallbacks* p_deviceBuildCallbacks)
 	{
-		return getQueue(l_physicalDevice, out_queueFamilies, p_deviceBuildCallbacks->GetPhysicalDeviceSurfaceSupport) &&
-			_Extensions::checkPresenceOfRequiredDeviceExtensions(_Device::DeviceExtensions, l_physicalDevice) &&
+		return Queue_findDeviceQueues(l_physicalDevice, out_queueFamilies, p_deviceBuildCallbacks->GetPhysicalDeviceSurfaceSupport) &&
+			Extensions_checkPresenceOfRequiredDeviceExtensions(DeviceExtensions, l_physicalDevice) &&
 			p_deviceBuildCallbacks->IsSwapChainSupported(l_physicalDevice);
 	}
 
@@ -86,8 +86,8 @@ namespace _GameEngine::_Render::_Hardware::_Device
 		l_deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		l_deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(l_graphicsQueueCreationArray.size());
 		l_deviceCreateInfo.pQueueCreateInfos = l_graphicsQueueCreationArray.data();
-		l_deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(_Device::DeviceExtensions.size());
-		l_deviceCreateInfo.ppEnabledExtensionNames = _Device::DeviceExtensions.data();
+		l_deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(DeviceExtensions.size());
+		l_deviceCreateInfo.ppEnabledExtensionNames = DeviceExtensions.data();
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
 		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
@@ -107,7 +107,7 @@ namespace _GameEngine::_Render::_Hardware::_Device
 	};
 
 
-	uint32_t Device_findMemoryType(_Device::Device* p_device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
+	uint32_t Device_findMemoryType(Device* p_device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
 	{
 		VkPhysicalDeviceMemoryProperties l_physicalDeviceMemoryproperties{};
 		vkGetPhysicalDeviceMemoryProperties(p_device->PhysicalDevice.PhysicalDevice, &l_physicalDeviceMemoryproperties);

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace _GameEngine::_Render::_Hardware::_Device
+namespace _GameEngine::_Render
 {
 
 	void initQueueFamily(QueueFamily& p_queueFamily)
@@ -11,7 +11,7 @@ namespace _GameEngine::_Render::_Hardware::_Device
 		p_queueFamily.QueueIndex = 0;
 	}
 
-	bool getQueue(VkPhysicalDevice p_physicalDevice,
+	bool Queue_findDeviceQueues(VkPhysicalDevice p_physicalDevice,
 		QueueFamilies* out_queueFamilies,
 		std::function<void(VkPhysicalDevice, uint32_t p_queueFamilyIndex, VkBool32*)> p_surfaceSupport)
 	{

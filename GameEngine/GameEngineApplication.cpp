@@ -16,7 +16,7 @@ namespace _GameEngine
 	void app_init(GameEngineApplication* p_app)
 	{
 		_Log::Log_alloc();
-		p_app->Render = _Render::alloc();
+		p_app->Render = _Render::Render_alloc();
 		p_app->GameLoop = _GameLoop::alloc(16000);
 		_GameLoop::set_updateCallback(p_app->GameLoop, app_update, p_app);
 		_GameLoop::set_renderCallback(p_app->GameLoop, app_render, p_app);
@@ -25,7 +25,7 @@ namespace _GameEngine
 	void app_free(GameEngineApplication* p_app)
 	{
 		_GameLoop::free(&p_app->GameLoop);
-		_Render::free(&p_app->Render);
+		_Render::Render_free(&p_app->Render);
 		_Log::Log_free(&_Log::LogInstance);
 		delete p_app;
 	}
@@ -49,7 +49,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		_Log::LogInstance->CoreLogger->info("Hello from render.");
-		render(l_app->Render);
+		Render_render(l_app->Render);
 	};
 
 	void app_cleanup(GameEngineApplication* p_app)

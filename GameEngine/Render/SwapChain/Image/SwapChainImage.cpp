@@ -1,6 +1,6 @@
 #include "SwapChainImage.h"
 
-namespace _GameEngine::_Render::_SwapChainImage
+namespace _GameEngine::_Render
 {
 	void SwapChainImage_init(SwapChainImage* p_swapChainImage, SwapChainImageInitializationInfo* p_swapChainImageInitializationInfo)
 	{
@@ -14,9 +14,9 @@ namespace _GameEngine::_Render::_SwapChainImage
 		l_imageViewInitializationInfo.ImageViewDependencies = &l_imageViewDependencies;
 		ImageView_init(&p_swapChainImage->ImageView, &l_imageViewInitializationInfo);
 
-		_CommandBuffer::CommandBuffersDependencies l_commandBufferDependencies{};
+		CommandBuffersDependencies l_commandBufferDependencies{};
 		l_commandBufferDependencies.CommandPool = p_swapChainImageInitializationInfo->CommandPool;
-		_CommandBuffer::CommandBuffer_init(&p_swapChainImage->CommandBuffer, &l_commandBufferDependencies);
+		CommandBuffer_init(&p_swapChainImage->CommandBuffer, &l_commandBufferDependencies);
 	};
 
 	void SwapChainImage_free(SwapChainImage* p_swapChainImage)

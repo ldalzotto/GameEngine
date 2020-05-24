@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "vulkan/vulkan.h"
 
 #include "Queue.h"
@@ -7,7 +8,7 @@
 #include <vector>
 #include <functional>
 
-namespace _GameEngine::_Render::_Hardware::_Device
+namespace _GameEngine::_Render
 {
 	extern std::vector<char*> DeviceExtensions;
 
@@ -58,5 +59,5 @@ namespace _GameEngine::_Render::_Hardware::_Device
 
 	void Device_free(Device* p_device);
 
-	uint32_t Device_findMemoryType(_Device::Device* p_device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
+	uint32_t Device_findMemoryType(Device* p_device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 }

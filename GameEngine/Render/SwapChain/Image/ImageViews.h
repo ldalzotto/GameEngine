@@ -1,18 +1,19 @@
 #pragma once
 
+
 #include <vector>
 
 #include "vulkan/vulkan.h"
 
 #include "Render/SwapChain/SwapChainSharedStructures.h"
 #include "Render/Hardware/Device/Device.h"
-using namespace _GameEngine::_Render::_Hardware;
 
-namespace _GameEngine::_Render::_SwapChainImage
+
+namespace _GameEngine::_Render
 {
 	struct ImageViewsDependencies
 	{
-		_Device::Device* Device;
+		Device* Device;
 	};
 
 	struct ImageView
@@ -24,7 +25,7 @@ namespace _GameEngine::_Render::_SwapChainImage
 	struct ImageViewInitializationInfo
 	{
 		ImageViewsDependencies* ImageViewDependencies;
-		_SwapChain::SwapChainInfo* SwapChainInfo;
+		SwapChainInfo* SwapChainInfo;
 		VkImage SwapChainImage;
 	};
 

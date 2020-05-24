@@ -3,7 +3,7 @@
 #include <vector>
 #include <functional>
 
-namespace _GameEngine::_Utils::_Observer
+namespace _GameEngine::_Utils
 {
 	struct Subject
 	{
