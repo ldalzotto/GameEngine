@@ -37,7 +37,7 @@ namespace _GameEngine::_Render
 		std::vector<SwapChainImage> SwapChainImages;
 
 		bool MustBeRebuilt;
-		_Utils::Subject* OnWindowSizeChangeCallback;
+		_Utils::Subject OnWindowSizeChangeCallback;
 	};
 
 	struct SwapChainSupportDetails

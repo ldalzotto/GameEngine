@@ -36,6 +36,9 @@ namespace _GameEngine::_Render
 	void initRenderSemaphore(Render* p_render);
 	void freeRenderSemaphore(Render* p_render);
 
+	void initPreRenderStaging(Render* p_render);
+	void freePreRenderStaging(Render* p_render);
+
 	Mesh DrawnMeshForTest;
 
 	Render* Render_alloc()
@@ -53,6 +56,7 @@ namespace _GameEngine::_Render
 		initSwapChain(l_render);
 		initGraphicsPipeline(l_render);
 		initRenderSemaphore(l_render);
+		initPreRenderStaging(l_render);
 
 		std::vector<Vertex> l_vertices = {
 			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -66,6 +70,7 @@ namespace _GameEngine::_Render
 
 		MeshAllocInfo l_meshAllocInfo{};
 		l_meshAllocInfo.Device = &l_render->Device;
+		l_meshAllocInfo.PreRenderStagging = &l_render->PreRenderStagging;
 		l_meshAllocInfo.Vertices = &l_vertices;
 		l_meshAllocInfo.Indices = &l_inidces;
 		Mesh_alloc(&DrawnMeshForTest, &l_meshAllocInfo);
@@ -81,7 +86,7 @@ namespace _GameEngine::_Render
 
 		Mesh_free(&DrawnMeshForTest, &(*p_render)->Device);
 
-
+		freePreRenderStaging(*p_render);
 		freeRenderSemaphore(*p_render);
 		freeGraphicsPipeline(*p_render);
 		freeSwapChain(*p_render);
@@ -102,9 +107,11 @@ namespace _GameEngine::_Render
 		freeRenderSemaphore(p_render);
 		freeGraphicsPipeline(p_render);
 		freeSwapChain(p_render);
+		freePreRenderStaging(p_render);
 		freeCommandPool(p_render);
 
 		initCommandPool(p_render);
+		initPreRenderStaging(p_render);
 		initSwapChain(p_render);
 		initGraphicsPipeline(p_render);
 		initRenderSemaphore(p_render);
@@ -373,6 +380,19 @@ namespace _GameEngine::_Render
 
 	/////// END RENDER SEMAPHORE
 
+	/////// PRE RENDER STAGGING
+
+	void initPreRenderStaging(Render* p_render)
+	{
+		PreRenderStagging_alloc(&p_render->PreRenderStagging, &p_render->CommandPool);
+	};
+
+	void freePreRenderStaging(Render* p_render)
+	{
+		PreRenderStagging_free(&p_render->PreRenderStagging, &p_render->Device);
+	};
+
+	/////// END PRE RENDER STAGGING
 
 	struct CreateCommandBufferInfo
 	{
@@ -380,16 +400,30 @@ namespace _GameEngine::_Render
 		size_t ImageIndex;
 	};
 
-	void createCommandBuffer(CreateCommandBufferInfo* p_startRenderPassInfo)
+	void preRenderStagginStep(Render* p_render)
 	{
-		RenderPass* RenderPass = &p_startRenderPassInfo->Render->GraphicsPipeline.RenderPass;
+		if (PreRenderStagging_buildCommandBuffer(&p_render->PreRenderStagging, &p_render->Device) & PreRenderStaggingCommandBufferBuildStatusBitFlag::CREATED)
+		{
+			VkSubmitInfo l_staginSubmit{};
+			l_staginSubmit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			l_staginSubmit.commandBufferCount = 1;
+			l_staginSubmit.pCommandBuffers = &p_render->PreRenderStagging.DedicatedCommandBuffer.CommandBuffer;
+			vkQueueSubmit(p_render->Device.LogicalDevice.Queues.GraphicsQueue, 1, &l_staginSubmit, p_render->PreRenderStagging.PreRenderStaggingFence);
 
-		std::vector<SwapChainImage>* l_swapChainImages = &p_startRenderPassInfo->Render->SwapChain.SwapChainImages;
-		std::vector<FrameBuffer>* l_frameBuffers = &p_startRenderPassInfo->Render->GraphicsPipeline.FrameBuffers;
+			PreRenderStagging_WaitForFence(&p_render->PreRenderStagging, &p_render->Device);
+		}
+	};
 
-		VkCommandBuffer l_commandBuffer = p_startRenderPassInfo->Render->SwapChain.SwapChainImages.at(p_startRenderPassInfo->ImageIndex).CommandBuffer.CommandBuffer;
+	void meshDrawBuildCommandBuffer(CreateCommandBufferInfo* p_startRenderPassInfo)
+	{
+		Render* l_render = p_startRenderPassInfo->Render;
+		RenderPass* RenderPass = &l_render->GraphicsPipeline.RenderPass;
 
-		// Starting reciring
+		std::vector<SwapChainImage>* l_swapChainImages = &l_render->SwapChain.SwapChainImages;
+		std::vector<FrameBuffer>* l_frameBuffers = &l_render->GraphicsPipeline.FrameBuffers;
+
+		VkCommandBuffer l_commandBuffer = l_render->SwapChain.SwapChainImages.at(p_startRenderPassInfo->ImageIndex).CommandBuffer.CommandBuffer;
+
 		VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
 		l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		l_commandBufferBeginInfo.flags = 0;
@@ -400,29 +434,19 @@ namespace _GameEngine::_Render
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
 		}
 
-		VkBufferCopy l_bufferCopyInfo{};
-		l_bufferCopyInfo.dstOffset = 0;
-		l_bufferCopyInfo.srcOffset = 0;
-		l_bufferCopyInfo.size = DrawnMeshForTest.VertexBuffer.BufferCreateInfo.size;
-		vkCmdCopyBuffer(l_commandBuffer, DrawnMeshForTest.VertexStaggingBuffer.Buffer, DrawnMeshForTest.VertexBuffer.Buffer, 1, &l_bufferCopyInfo);
-
-		l_bufferCopyInfo.size = DrawnMeshForTest.IndicesStaggingBuffer.BufferCreateInfo.size;
-		vkCmdCopyBuffer(l_commandBuffer, DrawnMeshForTest.IndicesStaggingBuffer.Buffer, DrawnMeshForTest.IndicesBuffer.Buffer, 1, &l_bufferCopyInfo);
-		// /!\ Staging buffer is always copied, this is not optimal
-
 		VkRenderPassBeginInfo l_renderPassBeginInfo{};
 		l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		l_renderPassBeginInfo.renderPass = RenderPass->renderPass;
 		l_renderPassBeginInfo.framebuffer = l_frameBuffers->at(p_startRenderPassInfo->ImageIndex).FrameBuffer;
 		l_renderPassBeginInfo.renderArea.offset = { 0,0 };
-		l_renderPassBeginInfo.renderArea.extent = p_startRenderPassInfo->Render->SwapChain.SwapChainInfo.SwapExtend;
+		l_renderPassBeginInfo.renderArea.extent = l_render->SwapChain.SwapChainInfo.SwapExtend;
 
 		VkClearValue l_clearValue = { 0.0f,0.0f,0.0f,1.0f };
 		l_renderPassBeginInfo.clearValueCount = 1;
 		l_renderPassBeginInfo.pClearValues = &l_clearValue;
 
 		vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-		vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_startRenderPassInfo->Render->GraphicsPipeline.Pipeline);
+		vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_render->GraphicsPipeline.Pipeline);
 
 		VkBuffer l_vertexBuffers[] = { DrawnMeshForTest.VertexBuffer.Buffer };
 		VkDeviceSize l_offsets[] = { 0 };
@@ -442,8 +466,9 @@ namespace _GameEngine::_Render
 	{
 		RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
 		CurrentSynchronisationObject l_synchronizationObject = RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
-
 		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
+
+		preRenderStagginStep(p_render);
 
 		uint32_t l_imageIndex;
 		VkResult l_acquireNextImageResult = vkAcquireNextImageKHR(
@@ -467,8 +492,8 @@ namespace _GameEngine::_Render
 		CreateCommandBufferInfo l_startRenderPassInfo{};
 		l_startRenderPassInfo.Render = p_render;
 		l_startRenderPassInfo.ImageIndex = l_imageIndex;
-		createCommandBuffer(&l_startRenderPassInfo);
 
+		meshDrawBuildCommandBuffer(&l_startRenderPassInfo);
 
 		VkSubmitInfo l_submitInfo{};
 		l_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

@@ -33,12 +33,15 @@ namespace _GameEngine::_Render
 
 	void createEmptyBuffer(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, Device* p_device)
 	{
-		p_buffer->BufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		p_buffer->BufferCreateInfo.size = p_bufferAllocInfo->Size;
-		p_buffer->BufferCreateInfo.usage = p_bufferAllocInfo->BufferUsageFlags;
-		p_buffer->BufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		p_buffer->BufferAllocInfo = *p_bufferAllocInfo;
 
-		if (vkCreateBuffer(p_device->LogicalDevice.LogicalDevice, &p_buffer->BufferCreateInfo, nullptr, &p_buffer->Buffer)
+		VkBufferCreateInfo l_bufferCreateInfo{};
+		l_bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		l_bufferCreateInfo.size = p_bufferAllocInfo->Size;
+		l_bufferCreateInfo.usage = p_bufferAllocInfo->BufferUsageFlags;
+		l_bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+		if (vkCreateBuffer(p_device->LogicalDevice.LogicalDevice, &l_bufferCreateInfo, nullptr, &p_buffer->Buffer)
 			!= VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create vertex buffer!"));

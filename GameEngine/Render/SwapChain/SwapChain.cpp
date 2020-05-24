@@ -7,10 +7,12 @@
 
 namespace _GameEngine::_Render
 {
-	void swapChainInavlidate(SwapChain* p_swapChain)
-	{
-		p_swapChain->MustBeRebuilt = true;
-	};
+
+	void swapChainInavlidate(SwapChain* p_swapChain);
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats);
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes);
+	VkExtent2D chooseSwapExtent(Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities);
+	void onWindowSizeChanged(void* p_swapChain, void* p_input);
 
 	SwapChainSupportDetails SwapChain_getSupportDetails(VkPhysicalDevice p_physicalDevice, Surface* p_surface)
 	{
@@ -43,53 +45,13 @@ namespace _GameEngine::_Render
 		return p_swapCahinSupportDetails.PresentModes.size() > 0 && p_swapCahinSupportDetails.SurfaceFormats.size() > 0;
 	};
 
-	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats)
-	{
-		for (auto&& l_surfaceFormat : p_surfaceFormats)
-		{
-			if (l_surfaceFormat.format == VK_FORMAT_B8G8R8A8_SRGB && l_surfaceFormat.colorSpace == VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT)
-			{
-				return l_surfaceFormat;
-			}
-		}
-
-		return p_surfaceFormats[0];
-	};
-
-	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes)
-	{
-		for (auto&& l_presentMode : p_availablePresentModes)
-		{
-			if (l_presentMode == VK_PRESENT_MODE_MAILBOX_KHR)
-			{
-				return l_presentMode;
-			}
-		}
-		return VK_PRESENT_MODE_FIFO_KHR;
-	};
-
-	VkExtent2D chooseSwapExtent(Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities)
-	{
-		if (p_capabilities.currentExtent.width != UINT32_MAX)
-		{
-			return p_capabilities.currentExtent;
-		}
-		else
-		{
-			WindowSize l_currentWindowSize = Window_getSize(p_window);
-			VkExtent2D l_actualExtent{ l_currentWindowSize.Width, l_currentWindowSize.Height };
-
-			l_actualExtent.width = std::max(p_capabilities.minImageExtent.width, std::min(p_capabilities.maxImageExtent.width, l_actualExtent.width));
-			l_actualExtent.height = std::max(p_capabilities.minImageExtent.height, std::min(p_capabilities.maxImageExtent.height, l_actualExtent.height));
-
-			return l_actualExtent;
-		}
-	};
-
 	void SwapChain_build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo)
 	{
 		p_swapChain->SwapChainDependencies = p_swapChainBuildInfo->SwapChainDependencies;
-		p_swapChain->OnWindowSizeChangeCallback = Observer_register(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, [p_swapChain](void*) {swapChainInavlidate(p_swapChain); });
+
+		p_swapChain->OnWindowSizeChangeCallback.Callback = onWindowSizeChanged;
+		p_swapChain->OnWindowSizeChangeCallback.Closure = p_swapChain;
+		_Utils::Observer_register(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
 
 		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
 
@@ -168,7 +130,7 @@ namespace _GameEngine::_Render
 
 	void SwapChain_free(SwapChain* p_swapChain)
 	{
-		Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, p_swapChain->OnWindowSizeChangeCallback);
+		Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
 
 		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)
 		{
@@ -176,5 +138,59 @@ namespace _GameEngine::_Render
 		}
 
 		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
+	};
+
+	void swapChainInavlidate(SwapChain* p_swapChain)
+	{
+		p_swapChain->MustBeRebuilt = true;
+	};
+
+	void onWindowSizeChanged(void* p_swapChain, void* p_input)
+	{
+		SwapChain* l_swapChain = (SwapChain*)p_swapChain;
+		swapChainInavlidate(l_swapChain); 
+	};
+
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats)
+	{
+		for (auto&& l_surfaceFormat : p_surfaceFormats)
+		{
+			if (l_surfaceFormat.format == VK_FORMAT_B8G8R8A8_SRGB && l_surfaceFormat.colorSpace == VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT)
+			{
+				return l_surfaceFormat;
+			}
+		}
+
+		return p_surfaceFormats[0];
+	};
+
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes)
+	{
+		for (auto&& l_presentMode : p_availablePresentModes)
+		{
+			if (l_presentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			{
+				return l_presentMode;
+			}
+		}
+		return VK_PRESENT_MODE_FIFO_KHR;
+	};
+
+	VkExtent2D chooseSwapExtent(Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities)
+	{
+		if (p_capabilities.currentExtent.width != UINT32_MAX)
+		{
+			return p_capabilities.currentExtent;
+		}
+		else
+		{
+			WindowSize l_currentWindowSize = Window_getSize(p_window);
+			VkExtent2D l_actualExtent{ l_currentWindowSize.Width, l_currentWindowSize.Height };
+
+			l_actualExtent.width = std::max(p_capabilities.minImageExtent.width, std::min(p_capabilities.maxImageExtent.width, l_actualExtent.width));
+			l_actualExtent.height = std::max(p_capabilities.minImageExtent.height, std::min(p_capabilities.maxImageExtent.height, l_actualExtent.height));
+
+			return l_actualExtent;
+		}
 	};
 }

@@ -8,6 +8,14 @@
 
 namespace _GameEngine::_Render
 {
+
+	struct BufferAllocInfo
+	{
+		size_t Size;
+		VkBufferUsageFlags BufferUsageFlags;
+		VkMemoryPropertyFlags MemoryPropertyFlags;
+	};
+
 	/**
 		As a performance improvement, it is better for Buffers to be allocated in chunks
 		see https://developer.nvidia.com/vulkan-memory-management for details.
@@ -16,14 +24,7 @@ namespace _GameEngine::_Render
 	{
 		VkBuffer Buffer;
 		VkDeviceMemory BufferMemory;
-		VkBufferCreateInfo BufferCreateInfo;
-	};
-
-	struct BufferAllocInfo
-	{
-		size_t Size;
-		VkBufferUsageFlags BufferUsageFlags;
-		VkMemoryPropertyFlags MemoryPropertyFlags;
+		BufferAllocInfo BufferAllocInfo;
 	};
 
 	void VulkanBuffer_alloc(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, Device* p_device);
