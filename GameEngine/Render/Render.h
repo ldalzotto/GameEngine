@@ -43,13 +43,4 @@ namespace _GameEngine::_Render
 
 	void render(Render* p_render);
 
-	struct StartRenderPassInfo
-	{
-		_GraphicsPipeline::GraphicsPipeline* GraphicsPipeline;
-		_SwapChain::SwapChain* SwapChain;
-		_CommandBuffer::CommandBuffer* CommandBuffers;
-	};
-
-	void startRenderPass(StartRenderPassInfo* p_startRenderPassInfo);
-
 } // namespace _GameEngine::_Render

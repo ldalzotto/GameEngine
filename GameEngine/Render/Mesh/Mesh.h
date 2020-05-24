@@ -18,14 +18,12 @@ namespace _GameEngine::_Render::_Mesh
 	struct Mesh
 	{
 		std::vector<Vertex> Vertices;
-
-		//TODO - As an optimisation, instead of allocating small VulkanBuffer, we can allocate a huge obect and the VulkanBuffer will
-		//		 refer to an already created memory address.
 		_Memory::VulkanBuffer VertexBuffer;
-
+		_Memory::VulkanBuffer VertexStaggingBuffer;
 		
 		std::vector<uint16_t> Indices;
 		_Memory::VulkanBuffer IndicesBuffer;
+		_Memory::VulkanBuffer IndicesStaggingBuffer;
 	};
 
 	struct MeshAllocInfo

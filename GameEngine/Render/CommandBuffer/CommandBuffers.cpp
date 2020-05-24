@@ -20,16 +20,5 @@ namespace _GameEngine::_Render::_CommandBuffer
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to allocate command buffers!"));
 		}
-
-		// Starting command buffer
-		VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
-		l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		l_commandBufferBeginInfo.flags = 0;
-		l_commandBufferBeginInfo.pInheritanceInfo = nullptr;
-
-		if (vkBeginCommandBuffer(p_commandBuffer->CommandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
-		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
-		}
 	};
 };

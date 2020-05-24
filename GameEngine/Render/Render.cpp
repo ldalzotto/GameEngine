@@ -54,11 +54,6 @@ namespace _GameEngine::_Render
 		initGraphicsPipeline(l_render);
 		initRenderSemaphore(l_render);
 
-		StartRenderPassInfo l_startRenderPassInfo;
-		l_startRenderPassInfo.CommandBuffers = &l_render->CommandBuffers;
-		l_startRenderPassInfo.GraphicsPipeline = &l_render->GraphicsPipeline;
-		l_startRenderPassInfo.SwapChain = &l_render->SwapChain;
-
 		std::vector<_Mesh::Vertex> l_vertices = {
 			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -74,9 +69,6 @@ namespace _GameEngine::_Render
 		l_meshAllocInfo.Vertices = &l_vertices;
 		l_meshAllocInfo.Indices = &l_inidces;
 		_Mesh::Mesh_alloc(&DrawnMeshForTest, &l_meshAllocInfo);
-
-
-		startRenderPass(&l_startRenderPassInfo);
 
 		return l_render;
 	};
@@ -116,12 +108,6 @@ namespace _GameEngine::_Render
 		initSwapChain(p_render);
 		initGraphicsPipeline(p_render);
 		initRenderSemaphore(p_render);
-
-		StartRenderPassInfo l_startRenderPassInfo;
-		l_startRenderPassInfo.CommandBuffers = &p_render->CommandBuffers;
-		l_startRenderPassInfo.GraphicsPipeline = &p_render->GraphicsPipeline;
-		l_startRenderPassInfo.SwapChain = &p_render->SwapChain;
-		startRenderPass(&l_startRenderPassInfo);
 
 		// The SwapChain has been recreated, thus no more invalid
 		p_render->SwapChain.MustBeRebuilt = false;
@@ -387,44 +373,68 @@ namespace _GameEngine::_Render
 
 	/////// END RENDER SEMAPHORE
 
-	void startRenderPass(StartRenderPassInfo* p_startRenderPassInfo)
+
+	struct CreateCommandBufferInfo
 	{
-		_GraphicsPipeline::RenderPass* RenderPass = &p_startRenderPassInfo->GraphicsPipeline->RenderPass;
+		Render* Render;
+		size_t ImageIndex;
+	};
 
-		std::vector<_SwapChainImage::SwapChainImage>* l_swapChainImages = &p_startRenderPassInfo->SwapChain->SwapChainImages;
-		std::vector<_GraphicsPipeline::FrameBuffer>* l_frameBuffers = &p_startRenderPassInfo->GraphicsPipeline->FrameBuffers;
+	void createCommandBuffer(CreateCommandBufferInfo* p_startRenderPassInfo)
+	{
+		_GraphicsPipeline::RenderPass* RenderPass = &p_startRenderPassInfo->Render->GraphicsPipeline.RenderPass;
 
-		for (size_t i = 0; i < l_frameBuffers->size(); i++)
+		std::vector<_SwapChainImage::SwapChainImage>* l_swapChainImages = &p_startRenderPassInfo->Render->SwapChain.SwapChainImages;
+		std::vector<_GraphicsPipeline::FrameBuffer>* l_frameBuffers = &p_startRenderPassInfo->Render->GraphicsPipeline.FrameBuffers;
+
+		VkCommandBuffer l_commandBuffer = p_startRenderPassInfo->Render->SwapChain.SwapChainImages.at(p_startRenderPassInfo->ImageIndex).CommandBuffer.CommandBuffer;
+
+		// Starting reciring
+		VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
+		l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		l_commandBufferBeginInfo.flags = 0;
+		l_commandBufferBeginInfo.pInheritanceInfo = nullptr;
+
+		if (vkBeginCommandBuffer(l_commandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
 		{
-			VkRenderPassBeginInfo l_renderPassBeginInfo{};
-			l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			l_renderPassBeginInfo.renderPass = RenderPass->renderPass;
-			l_renderPassBeginInfo.framebuffer = l_frameBuffers->at(i).FrameBuffer;
-			l_renderPassBeginInfo.renderArea.offset = { 0,0 };
-			l_renderPassBeginInfo.renderArea.extent = p_startRenderPassInfo->SwapChain->SwapChainInfo.SwapExtend;
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
+		}
 
-			VkClearValue l_clearValue = { 0.0f,0.0f,0.0f,1.0f };
-			l_renderPassBeginInfo.clearValueCount = 1;
-			l_renderPassBeginInfo.pClearValues = &l_clearValue;
+		VkBufferCopy l_bufferCopyInfo{};
+		l_bufferCopyInfo.dstOffset = 0;
+		l_bufferCopyInfo.srcOffset = 0;
+		l_bufferCopyInfo.size = DrawnMeshForTest.VertexBuffer.BufferCreateInfo.size;
+		vkCmdCopyBuffer(l_commandBuffer, DrawnMeshForTest.VertexStaggingBuffer.Buffer, DrawnMeshForTest.VertexBuffer.Buffer, 1, &l_bufferCopyInfo);
 
-			VkCommandBuffer l_commandBuffer = l_swapChainImages->at(i).CommandBuffer.CommandBuffer;
+		l_bufferCopyInfo.size = DrawnMeshForTest.IndicesStaggingBuffer.BufferCreateInfo.size;
+		vkCmdCopyBuffer(l_commandBuffer, DrawnMeshForTest.IndicesStaggingBuffer.Buffer, DrawnMeshForTest.IndicesBuffer.Buffer, 1, &l_bufferCopyInfo);
+		// /!\ Staging buffer is always copied, this is not optimal
 
-			vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_startRenderPassInfo->GraphicsPipeline->Pipeline);
+		VkRenderPassBeginInfo l_renderPassBeginInfo{};
+		l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		l_renderPassBeginInfo.renderPass = RenderPass->renderPass;
+		l_renderPassBeginInfo.framebuffer = l_frameBuffers->at(p_startRenderPassInfo->ImageIndex).FrameBuffer;
+		l_renderPassBeginInfo.renderArea.offset = { 0,0 };
+		l_renderPassBeginInfo.renderArea.extent = p_startRenderPassInfo->Render->SwapChain.SwapChainInfo.SwapExtend;
 
-			VkBuffer l_vertexBuffers[] = { DrawnMeshForTest.VertexBuffer.Buffer };
-			VkDeviceSize l_offsets[] = { 0 };
-			vkCmdBindVertexBuffers(l_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
-			vkCmdBindIndexBuffer(l_commandBuffer, DrawnMeshForTest.IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+		VkClearValue l_clearValue = { 0.0f,0.0f,0.0f,1.0f };
+		l_renderPassBeginInfo.clearValueCount = 1;
+		l_renderPassBeginInfo.pClearValues = &l_clearValue;
 
-			// vkCmdDraw(l_commandBuffer, DrawnMeshForTest.Vertices.size(), 1, 0, 0);
-			vkCmdDrawIndexed(l_commandBuffer, DrawnMeshForTest.Indices.size(), 1, 0, 0, 0);
-			vkCmdEndRenderPass(l_commandBuffer);
+		vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_startRenderPassInfo->Render->GraphicsPipeline.Pipeline);
 
-			if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
-			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
-			}
+		VkBuffer l_vertexBuffers[] = { DrawnMeshForTest.VertexBuffer.Buffer };
+		VkDeviceSize l_offsets[] = { 0 };
+		vkCmdBindVertexBuffers(l_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
+		vkCmdBindIndexBuffer(l_commandBuffer, DrawnMeshForTest.IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+
+		vkCmdDrawIndexed(l_commandBuffer, DrawnMeshForTest.Indices.size(), 1, 0, 0, 0);
+		vkCmdEndRenderPass(l_commandBuffer);
+
+		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
 		}
 	};
 
@@ -453,6 +463,12 @@ namespace _GameEngine::_Render
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
 		}
+
+		CreateCommandBufferInfo l_startRenderPassInfo{};
+		l_startRenderPassInfo.Render = p_render;
+		l_startRenderPassInfo.ImageIndex = l_imageIndex;
+		createCommandBuffer(&l_startRenderPassInfo);
+
 
 		VkSubmitInfo l_submitInfo{};
 		l_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

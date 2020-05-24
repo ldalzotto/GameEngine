@@ -6,12 +6,12 @@
 namespace _GameEngine::_Render::_Memory
 {
 	void createEmptyBuffer(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device);
-	void allocateBufferMemory(VulkanBuffer* p_buffer, _Device::Device* p_device);
+	void allocateBufferMemory(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device);
 
 	void VulkanBuffer_alloc(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device)
 	{
 		createEmptyBuffer(p_buffer, p_bufferAllocInfo, p_device);
-		allocateBufferMemory(p_buffer, p_device);
+		allocateBufferMemory(p_buffer, p_bufferAllocInfo, p_device);
 		vkBindBufferMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->Buffer, p_buffer->BufferMemory, 0);
 	};
 
@@ -19,6 +19,8 @@ namespace _GameEngine::_Render::_Memory
 	{
 		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->BufferMemory, nullptr);
 		vkDestroyBuffer(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->Buffer, nullptr);
+		p_vertexBuffer->BufferMemory = VK_NULL_HANDLE;
+		p_vertexBuffer->Buffer = VK_NULL_HANDLE;
 	};
 
 	void VulkanBuffer_pushToGPU(VulkanBuffer* p_buffer, _Device::Device* p_device, void* p_source, size_t p_size)
@@ -43,7 +45,7 @@ namespace _GameEngine::_Render::_Memory
 		}
 	};
 
-	void allocateBufferMemory(VulkanBuffer* p_buffer, _Device::Device* p_device)
+	void allocateBufferMemory(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device)
 	{
 		VkMemoryRequirements l_memoryRequirements{};
 		vkGetBufferMemoryRequirements(p_device->LogicalDevice.LogicalDevice, p_buffer->Buffer, &l_memoryRequirements);
@@ -53,7 +55,7 @@ namespace _GameEngine::_Render::_Memory
 		l_memoryAllocateInfo.allocationSize = l_memoryRequirements.size;
 
 		// VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT is to be able to write to the buffer from CPU
-		l_memoryAllocateInfo.memoryTypeIndex = _Device::Device_findMemoryType(p_device, l_memoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		l_memoryAllocateInfo.memoryTypeIndex = _Device::Device_findMemoryType(p_device, l_memoryRequirements.memoryTypeBits, p_bufferAllocInfo->MemoryPropertyFlags);
 
 		if (vkAllocateMemory(p_device->LogicalDevice.LogicalDevice, &l_memoryAllocateInfo, nullptr, &p_buffer->BufferMemory) != VK_SUCCESS)
 		{

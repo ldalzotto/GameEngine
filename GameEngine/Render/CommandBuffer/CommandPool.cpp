@@ -15,7 +15,7 @@ namespace _GameEngine::_Render::_CommandBuffer
         VkCommandPoolCreateInfo l_commandPoolCreateInfo{};
         l_commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         l_commandPoolCreateInfo.queueFamilyIndex = p_graphicsQueueFamily.QueueIndex;
-        l_commandPoolCreateInfo.flags = 0;
+        l_commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
         if (vkCreateCommandPool(p_commandPool->CommanPoolDependencies.Device->LogicalDevice.LogicalDevice, &l_commandPoolCreateInfo, nullptr, &p_commandPool->CommandPool)
             != VK_SUCCESS)

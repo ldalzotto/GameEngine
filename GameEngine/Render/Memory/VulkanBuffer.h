@@ -22,6 +22,7 @@ namespace _GameEngine::_Render::_Memory
 	{
 		size_t Size;
 		VkBufferUsageFlags BufferUsageFlags;
+		VkMemoryPropertyFlags MemoryPropertyFlags;
 	};
 
 	void VulkanBuffer_alloc(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, _Device::Device* p_device);
