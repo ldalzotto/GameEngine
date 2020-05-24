@@ -16,6 +16,7 @@ namespace _GameEngine
 	void app_init(GameEngineApplication* p_app)
 	{
 		_Log::Log_alloc();
+		p_app->EntityComponent = _ECS::EntityComponent_alloc();
 		p_app->Render = _Render::Render_alloc();
 		p_app->GameLoop = _GameLoop::alloc(16000);
 		_GameLoop::set_updateCallback(p_app->GameLoop, app_update, p_app);
@@ -26,6 +27,7 @@ namespace _GameEngine
 	{
 		_GameLoop::free(&p_app->GameLoop);
 		_Render::Render_free(&p_app->Render);
+		_ECS::EntityComponent_free(&p_app->EntityComponent);
 		_Log::Log_free(&_Log::LogInstance);
 		delete p_app;
 	}
