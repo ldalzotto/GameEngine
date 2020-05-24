@@ -8,9 +8,11 @@ namespace _GameEngine
 	void app_render(void* p_closure);
 	///
 
-	GameEngineApplication* app_alloc()
+	GameEngineApplication* app_alloc(const std::function<void(float)>& p_sandboxUpdateHook)
 	{
-		return new GameEngineApplication();
+		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
+		l_gameEngineApplication->SandboxUpdateHook = p_sandboxUpdateHook;
+		return l_gameEngineApplication;
 	}
 
 	void app_init(GameEngineApplication* p_app)
@@ -44,13 +46,14 @@ namespace _GameEngine
 	void app_update(void* p_closure, float p_delta)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		_Log::LogInstance->CoreLogger->info("Hello from update : " + std::to_string(p_delta));
+		l_app->SandboxUpdateHook(p_delta);
+		// _Log::LogInstance->CoreLogger->info("Hello from update : " + std::to_string(p_delta));
 	};
 
 	void app_render(void* p_closure)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		_Log::LogInstance->CoreLogger->info("Hello from render.");
+		// _Log::LogInstance->CoreLogger->info("Hello from render.");
 		Render_render(l_app->Render);
 	};
 

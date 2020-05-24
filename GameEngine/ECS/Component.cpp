@@ -4,11 +4,6 @@
 
 namespace _GameEngine::_ECS
 {
-	void Component_init(Component* p_component, ComponentType p_cType, size_t p_childSize)
-	{
-		p_component->ComponentType = p_cType;
-		p_component->Child = malloc(p_childSize);
-	};
 
 	void Component_free(Component* p_component)
 	{
@@ -16,6 +11,14 @@ namespace _GameEngine::_ECS
 		{
 			p_component->Component_freeCallback(p_component);
 		}
-		free(p_component->Child);
+		delete p_component->Child;
+	};
+
+	Component Component_Build(ComponentType p_type, void* p_child)
+	{
+		Component l_component{};
+		l_component.ComponentType = p_type;
+		l_component.Child = p_child;
+		return l_component;
 	};
 };

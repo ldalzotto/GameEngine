@@ -14,10 +14,7 @@ namespace _GameEngine::_ECS
 		void(*Component_freeCallback)(Component* p_component);
 	};
 
-	void Component_init(Component* p_component, ComponentType p_cType, size_t p_childSize);
 	void Component_free(Component* p_component);
-
-#define BUILD_COMPONENT(cName, cType) _GameEngine::_ECS::Component{ cType, malloc(sizeof(cName)) }
-
+	Component Component_Build(ComponentType p_type, void* p_child);
 
 };

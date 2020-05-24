@@ -2,9 +2,13 @@
 
 namespace _GameEngine::_ECS
 {
+	ComponentType MeshRendererType = "MeshRenderer";
+
+	void MeshRenderer_free(Component* p_meshRenderer);
+
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo)
 	{
-		p_meshRenderer->Component->Component_freeCallback = MeshRenderer_free;
+		p_mehsRendererInfo->AssociatedComponent->Component_freeCallback = MeshRenderer_free;
 
 		_Render::MeshAllocInfo l_meshAllocInfo{ };
 

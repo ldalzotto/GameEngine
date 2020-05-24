@@ -6,20 +6,19 @@
 
 namespace _GameEngine::_ECS
 {
-	ComponentType MeshRendererType = "MeshRenderer";
+	extern ComponentType MeshRendererType;
 
 	struct MeshRenderer
 	{
-		Component* Component;
 		_Render::Render* Render;
 		_Render::Mesh Mesh;
 	};
 
 	struct MeshRendererInitInfo
 	{
+		Component* AssociatedComponent;
 		_Render::Render* Render;
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo);
-	void MeshRenderer_free(Component* p_meshRenderer);
 }
