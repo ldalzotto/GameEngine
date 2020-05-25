@@ -4,6 +4,7 @@
 #include "ECS/Entity.h"
 #include "ECS/MeshRenderer/MeshRenderer.h"
 #include "ECS/Transform/Transform.h"
+#include "ECS/Systems/MeshDrawSystem.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -39,11 +40,14 @@ int main()
 };
 
 bool HasAlreadyUpdated = false;
+_ECS::MeshDrawSystem l_meshDrawSystem;
 
 void SandboxApplication_update(float p_delta)
 {
 	if (!HasAlreadyUpdated)
 	{
+		_ECS::MeshDrawSystem_init(&l_meshDrawSystem, &App->EntityComponent->ComponentEvents);
+
 		_ECS::Entity* l_testEntity = _ECS::Entity_alloc(&App->EntityComponent->EntityContainer);
 
 		{
@@ -55,7 +59,7 @@ void SandboxApplication_update(float p_delta)
 			l_meshRendererInitInfo.AssociatedComponent = l_component;
 			_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 
-			_ECS::Entity_addComponent(l_testEntity, l_component);
+			_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
 		}
 
 		{
@@ -68,8 +72,10 @@ void SandboxApplication_update(float p_delta)
 			l_transformInitInfo.LocalPosition = glm::vec3(1.0f);
 			_ECS::Transform_init(l_transform, &l_transformInitInfo);
 
-			_ECS::Entity_addComponent(l_testEntity, l_component);
+			_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
 		}
+
+		// _ECS::MeshDrawSystem_free(&l_meshDrawSystem, &App->EntityComponent->ComponentEvents);
 
 	}
 

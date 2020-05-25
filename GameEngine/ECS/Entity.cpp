@@ -3,10 +3,20 @@
 
 namespace _GameEngine::_ECS
 {
-	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent)
+	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent, ComponentEvents* p_componentEvents)
 	{
 		p_entity->Components[p_unlinkedComponent->ComponentType] = p_unlinkedComponent;
 		p_unlinkedComponent->AttachedEntity = p_entity;
+		ComponentEvents_onComponentAttached(p_componentEvents, p_unlinkedComponent);
+	};
+
+	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType)
+	{
+		if (p_entity->Components.contains(p_componentType))
+		{
+			return p_entity->Components[p_componentType];
+		}
+		return nullptr;
 	};
 
 	Entity* Entity_alloc(EntityContainer* p_entityContainer)

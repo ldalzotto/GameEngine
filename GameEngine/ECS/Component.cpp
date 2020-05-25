@@ -26,11 +26,7 @@ namespace _GameEngine::_ECS
 	{
 		if (p_componentEvents->ComponentAttachedEvents.contains(p_component->ComponentType))
 		{
-			std::vector<ComponentAttachedEvent>* l_componentAttachedEvents = &p_componentEvents->ComponentAttachedEvents[p_component->ComponentType];
-			for (size_t i = 0; i < l_componentAttachedEvents->size(); i++)
-			{
-				l_componentAttachedEvents->at(i)(p_component);
-			}
+			_Utils::Observer_broadcast(&p_componentEvents->ComponentAttachedEvents[p_component->ComponentType], p_component);
 		}
 	};
 
@@ -38,11 +34,14 @@ namespace _GameEngine::_ECS
 	{
 		if (p_componentEvents->ComponentDetachedEvents.contains(p_component->ComponentType))
 		{
+			_Utils::Observer_broadcast(&p_componentEvents->ComponentDetachedEvents[p_component->ComponentType], nullptr);
+			/*
 			std::vector<ComponentDetachedEvent>* l_componentDetachedEvents = &p_componentEvents->ComponentDetachedEvents[p_component->ComponentType];
 			for (size_t i = 0; i < l_componentDetachedEvents->size(); i++)
 			{
 				l_componentDetachedEvents->at(i)(p_component);
 			}
+			*/
 		}
 	};
 };

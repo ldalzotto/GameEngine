@@ -17,4 +17,17 @@ namespace _GameEngine::_Utils
 			}
 		}
 	};
+
+	template<class T>
+	size_t Vector_containsElementEquals(std::vector<T>& p_array, T p_element)
+	{
+		for (size_t i = 0; i < p_array.size(); i++)
+		{
+			if (p_array.at(i) == p_element)
+			{
+				return i;
+			}
+		}
+		return -1;
+	};
 }

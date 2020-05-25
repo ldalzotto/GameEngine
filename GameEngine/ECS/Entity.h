@@ -13,7 +13,8 @@ namespace _GameEngine::_ECS
 		std::unordered_map<ComponentType, Component*> Components;
 	};
 
-	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent);
+	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent, ComponentEvents* p_componentEvents);
+	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType);
 
 	struct EntityContainer
 	{

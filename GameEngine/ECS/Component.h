@@ -4,7 +4,8 @@
 #include <cstdlib>
 
 #include <unordered_map>
-#include <vector>
+
+#include "Utils/Observer/Observer.h"
 
 namespace _GameEngine::_ECS
 {
@@ -23,13 +24,13 @@ namespace _GameEngine::_ECS
 	Component* Component_alloc(ComponentType& p_type, void* p_child);
 	void Component_free(Component** p_component);
 
-	typedef void(*ComponentAttachedEvent)(Component* p_component);
-	typedef void(*ComponentDetachedEvent)(Component* p_component);
-
+	/**
+		@ref _Utils::Observer closure is nullptr
+	*/
 	struct ComponentEvents
 	{
-		std::unordered_map<ComponentType, std::vector<ComponentAttachedEvent>> ComponentAttachedEvents;
-		std::unordered_map<ComponentType, std::vector<ComponentDetachedEvent>> ComponentDetachedEvents;
+		std::unordered_map<ComponentType, _Utils::Observer> ComponentAttachedEvents;
+		std::unordered_map<ComponentType, _Utils::Observer> ComponentDetachedEvents;
 	};
 
 	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, Component* p_component);
