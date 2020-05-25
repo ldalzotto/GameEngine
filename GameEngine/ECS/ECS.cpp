@@ -1,13 +1,13 @@
-#include "EntityComponent.h"
+#include "ECS.h"
 
 namespace _GameEngine::_ECS
 {
-	EntityComponent* EntityComponent_alloc()
+	ECS* EntityComponent_alloc()
 	{
-		return new EntityComponent();
+		return new ECS();
 	};
 
-	void EntityComponent_free(EntityComponent** p_entityComponent)
+	void EntityComponent_free(ECS** p_entityComponent)
 	{
 		EntityContainer_free(&(*p_entityComponent)->EntityContainer, &(*p_entityComponent)->ComponentEvents);
 		delete (*p_entityComponent);

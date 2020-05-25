@@ -20,7 +20,7 @@ namespace _GameEngine
 		_Log::Log_alloc();
 		p_app->Render = _Render::Render_alloc();
 		p_app->GameLoop = _GameLoop::alloc(16000);
-		p_app->EntityComponent = _ECS::EntityComponent_alloc();
+		p_app->ECS = _ECS::EntityComponent_alloc();
 
 		_GameLoop::set_updateCallback(p_app->GameLoop, app_update, p_app);
 		_GameLoop::set_renderCallback(p_app->GameLoop, app_render, p_app);
@@ -28,7 +28,7 @@ namespace _GameEngine
 
 	void app_free(GameEngineApplication* p_app)
 	{
-		_ECS::EntityComponent_free(&p_app->EntityComponent);
+		_ECS::EntityComponent_free(&p_app->ECS);
 		_GameLoop::free(&p_app->GameLoop);
 		_Render::Render_free(&p_app->Render);
 

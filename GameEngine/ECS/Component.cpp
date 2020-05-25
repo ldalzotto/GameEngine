@@ -16,6 +16,8 @@ namespace _GameEngine::_ECS
 	{
 		_Utils::Observer_broadcast(&(*p_component)->ComponentFreeEvent, nullptr);
 		delete (*p_component)->Child;
+		(*p_component)->Child = nullptr;
+		(*p_component)->AttachedEntity = nullptr;
 		delete (*p_component);
 		*p_component = nullptr;
 	};

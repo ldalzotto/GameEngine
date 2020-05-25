@@ -2,9 +2,9 @@
 #include "SandboxApplication.h"
 #include "Log/Log.h"
 #include "ECS/Entity.h"
-#include "ECS/MeshRenderer/MeshRenderer.h"
-#include "ECS/Transform/Transform.h"
-#include "ECS/Systems/MeshDrawSystem.h"
+#include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
+#include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
 #include "Render/Includes/GLFWIncludes.h"
 
@@ -52,7 +52,7 @@ void SandboxApplication_update(float p_delta)
 	{
 		if (l_testEntity == nullptr)
 		{
-			l_testEntity = _ECS::EntityContainer_allocEntity(&App->EntityComponent->EntityContainer);
+			l_testEntity = _ECS::EntityContainer_allocEntity(App->ECS);
 
 			{
 				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
@@ -63,7 +63,7 @@ void SandboxApplication_update(float p_delta)
 				l_meshRendererInitInfo.AssociatedComponent = l_component;
 				_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 
-				_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
+				_ECS::Entity_addComponent(l_testEntity, l_component);
 			}
 
 			{
@@ -76,12 +76,12 @@ void SandboxApplication_update(float p_delta)
 				l_transformInitInfo.LocalScale = glm::vec3(1.0f);
 				_ECS::Transform_init(l_transform, &l_transformInitInfo);
 
-				_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
+				_ECS::Entity_addComponent(l_testEntity, l_component);
 			}
 		}
 		else
 		{
-			_ECS::EntityContainer_freeEntity(&l_testEntity, &App->EntityComponent->EntityContainer, &App->EntityComponent->ComponentEvents);
+			_ECS::EntityContainer_freeEntity(&l_testEntity);
 		}
 	}
 
@@ -90,14 +90,11 @@ void SandboxApplication_update(float p_delta)
 		if(l_meshDrawSystem == nullptr)
 		{ 
 			l_meshDrawSystem = new _ECS::MeshDrawSystem();
-			_ECS::MeshDrawSystemInitInfo l_meshDrawSystemInitInfo{};
-			l_meshDrawSystemInitInfo.ComponentEvents = &App->EntityComponent->ComponentEvents;
-			l_meshDrawSystemInitInfo.EntityContainer = &App->EntityComponent->EntityContainer;
-			_ECS::MeshDrawSystem_init(l_meshDrawSystem, &l_meshDrawSystemInitInfo);
+			_ECS::MeshDrawSystem_init(l_meshDrawSystem, App->ECS);
 		}
 		else
 		{
-			_ECS::MeshDrawSystem_free(l_meshDrawSystem, &App->EntityComponent->ComponentEvents);
+			_ECS::MeshDrawSystem_free(l_meshDrawSystem);
 			delete l_meshDrawSystem;
 			l_meshDrawSystem = nullptr;
 		}

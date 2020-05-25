@@ -5,12 +5,12 @@
 
 namespace _GameEngine::_ECS
 {
-	struct EntityComponent
+	struct ECS
 	{
 		EntityContainer EntityContainer;
 		ComponentEvents ComponentEvents;
 	};
 
-	EntityComponent* EntityComponent_alloc();
-	void EntityComponent_free(EntityComponent** p_entityComponent);
+	ECS* EntityComponent_alloc();
+	void EntityComponent_free(ECS** p_entityComponent);
 };

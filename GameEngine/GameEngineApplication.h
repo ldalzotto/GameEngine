@@ -5,7 +5,7 @@
 #include "Log/Log.h"
 #include "Render/Render.h"
 #include "GameLoop/GameLoop.h"
-#include "ECS/EntityComponent.h"
+#include "ECS/ECS.h"
 
 namespace _GameEngine
 {
@@ -15,7 +15,7 @@ namespace _GameEngine
 		std::function<void(float)> SandboxUpdateHook;
 		GameLoop* GameLoop;
 		_Render::Render* Render;
-		_ECS::EntityComponent* EntityComponent;
+		_ECS::ECS* ECS;
 	};
 
 	GameEngineApplication* app_alloc(const std::function<void(float)>& p_sandboxUpdateHook);
