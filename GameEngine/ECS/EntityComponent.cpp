@@ -9,7 +9,7 @@ namespace _GameEngine::_ECS
 
 	void EntityComponent_free(EntityComponent** p_entityComponent)
 	{
-		EntityContainer_free(&(*p_entityComponent)->EntityContainer);
+		EntityContainer_free(&(*p_entityComponent)->EntityContainer, &(*p_entityComponent)->ComponentEvents);
 		delete (*p_entityComponent);
 		*p_entityComponent = nullptr;
 	};

@@ -18,15 +18,12 @@ namespace _GameEngine::_ECS
 		Entity* AttachedEntity;
 		ComponentType ComponentType;
 		void* Child;
-		void(*Component_freeCallback)(Component* p_component);
+		_Utils::Observer ComponentFreeEvent;
 	};
 
 	Component* Component_alloc(ComponentType& p_type, void* p_child);
 	void Component_free(Component** p_component);
 
-	/**
-		@ref _Utils::Observer closure is nullptr
-	*/
 	struct ComponentEvents
 	{
 		std::unordered_map<ComponentType, _Utils::Observer> ComponentAttachedEvents;

@@ -9,18 +9,30 @@ namespace _GameEngine::_ECS
 
 	struct EntityComponentListener
 	{
-		std::vector<ComponentType> FilteredTypes;
-		_Utils::Subject ComponentAttachedEventListener;
-		_Utils::Subject ComponentDetachedEventListener;
+		std::vector<ComponentType> ListenedComponentTypes;
 		std::vector<Entity*> FilteredEntities;
-		void(*OnEntityAddedCallback)(Entity*);
+		void(*OnEntityThatMatchesComponentTypesAdded)(Entity*);
+		void(*OnEntityThatMatchesComponentTypesRemoved)(Entity*);
+
+		/**
+			Called when a @ref Component with type contained in @ref ListenedComponentTypes is attached.
+		*/
+		_Utils::Subject ComponentAttachedEventListener;
+
+		/**
+			Called when a @ref Component with type contained in @ref ListenedComponentTypes is detached.
+		*/
+		_Utils::Subject ComponentDetachedEventListener;
 	};
 
 	struct EntityComponentListenerInitInfo
 	{
-		std::vector<ComponentType> FilteredTypes;
+		std::vector<ComponentType> ListenedComponentTypes;
+		void(*OnEntityThatMatchesComponentTypesAdded)(Entity*);
+		void(*OnEntityThatMatchesComponentTypesRemoved)(Entity*);
+
 		ComponentEvents* ComponentEvents;
-		void(*OnEntityAddedCallback)(Entity*);
+		EntityContainer* EntityContainer;
 	};
 
 	void EntityComponentListener_init(EntityComponentListener* p_entityComponentListener, EntityComponentListenerInitInfo* p_entityComponentListenerInitInfo);

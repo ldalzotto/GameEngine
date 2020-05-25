@@ -14,12 +14,10 @@ namespace _GameEngine::_ECS
 
 	void Component_free(Component** p_component)
 	{
-		if ((*p_component)->Component_freeCallback)
-		{
-			(*p_component)->Component_freeCallback((*p_component));
-		}
+		_Utils::Observer_broadcast(&(*p_component)->ComponentFreeEvent, nullptr);
 		delete (*p_component)->Child;
 		delete (*p_component);
+		*p_component = nullptr;
 	};
 
 	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, Component* p_component)
@@ -34,14 +32,7 @@ namespace _GameEngine::_ECS
 	{
 		if (p_componentEvents->ComponentDetachedEvents.contains(p_component->ComponentType))
 		{
-			_Utils::Observer_broadcast(&p_componentEvents->ComponentDetachedEvents[p_component->ComponentType], nullptr);
-			/*
-			std::vector<ComponentDetachedEvent>* l_componentDetachedEvents = &p_componentEvents->ComponentDetachedEvents[p_component->ComponentType];
-			for (size_t i = 0; i < l_componentDetachedEvents->size(); i++)
-			{
-				l_componentDetachedEvents->at(i)(p_component);
-			}
-			*/
+			_Utils::Observer_broadcast(&p_componentEvents->ComponentDetachedEvents[p_component->ComponentType], p_component);
 		}
 	};
 };

@@ -12,6 +12,7 @@ namespace _GameEngine::_ECS
 	{
 		_Render::Render* Render;
 		_Render::Mesh Mesh;
+		_Utils::Subject OnComponentDetached;
 	};
 
 	struct MeshRendererInitInfo

@@ -6,6 +6,8 @@
 #include "ECS/Transform/Transform.h"
 #include "ECS/Systems/MeshDrawSystem.h"
 
+#include "Render/Includes/GLFWIncludes.h"
+
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
@@ -40,43 +42,65 @@ int main()
 };
 
 bool HasAlreadyUpdated = false;
-_ECS::MeshDrawSystem l_meshDrawSystem;
+
+_ECS::MeshDrawSystem* l_meshDrawSystem;
+_ECS::Entity* l_testEntity;
 
 void SandboxApplication_update(float p_delta)
 {
-	if (!HasAlreadyUpdated)
+	if (glfwGetKey(App->Render->Window.Window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		_ECS::MeshDrawSystem_init(&l_meshDrawSystem, &App->EntityComponent->ComponentEvents);
-
-		_ECS::Entity* l_testEntity = _ECS::Entity_alloc(&App->EntityComponent->EntityContainer);
-
+		if (l_testEntity == nullptr)
 		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
-			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
+			l_testEntity = _ECS::EntityContainer_allocEntity(&App->EntityComponent->EntityContainer);
 
-			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			l_meshRendererInitInfo.Render = App->Render;
-			l_meshRendererInitInfo.AssociatedComponent = l_component;
-			_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
+			{
+				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
+				_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
-			_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
+				_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
+				l_meshRendererInitInfo.Render = App->Render;
+				l_meshRendererInitInfo.AssociatedComponent = l_component;
+				_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
+
+				_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
+			}
+
+			{
+				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
+				_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
+
+				_ECS::TransformInitInfo l_transformInitInfo{};
+				l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
+				l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+				l_transformInitInfo.LocalScale = glm::vec3(1.0f);
+				_ECS::Transform_init(l_transform, &l_transformInitInfo);
+
+				_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
+			}
 		}
-
+		else
 		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
-			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
-
-			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
-			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-			l_transformInitInfo.LocalPosition = glm::vec3(1.0f);
-			_ECS::Transform_init(l_transform, &l_transformInitInfo);
-
-			_ECS::Entity_addComponent(l_testEntity, l_component, &App->EntityComponent->ComponentEvents);
+			_ECS::EntityContainer_freeEntity(&l_testEntity, &App->EntityComponent->EntityContainer, &App->EntityComponent->ComponentEvents);
 		}
+	}
 
-		// _ECS::MeshDrawSystem_free(&l_meshDrawSystem, &App->EntityComponent->ComponentEvents);
-
+	if (glfwGetKey(App->Render->Window.Window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		if(l_meshDrawSystem == nullptr)
+		{ 
+			l_meshDrawSystem = new _ECS::MeshDrawSystem();
+			_ECS::MeshDrawSystemInitInfo l_meshDrawSystemInitInfo{};
+			l_meshDrawSystemInitInfo.ComponentEvents = &App->EntityComponent->ComponentEvents;
+			l_meshDrawSystemInitInfo.EntityContainer = &App->EntityComponent->EntityContainer;
+			_ECS::MeshDrawSystem_init(l_meshDrawSystem, &l_meshDrawSystemInitInfo);
+		}
+		else
+		{
+			_ECS::MeshDrawSystem_free(l_meshDrawSystem, &App->EntityComponent->ComponentEvents);
+			delete l_meshDrawSystem;
+			l_meshDrawSystem = nullptr;
+		}
 	}
 
 	HasAlreadyUpdated = true;

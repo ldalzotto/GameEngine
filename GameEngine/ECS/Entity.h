@@ -14,6 +14,7 @@ namespace _GameEngine::_ECS
 	};
 
 	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent, ComponentEvents* p_componentEvents);
+	void Entity_freeComponent(Entity* p_entity, Component** p_component, ComponentEvents* p_componentEvents);
 	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType);
 
 	struct EntityContainer
@@ -21,8 +22,7 @@ namespace _GameEngine::_ECS
 		std::vector<Entity*> Entities;
 	};
 
-	Entity* Entity_alloc(EntityContainer* p_entityContainer);
-	void Entity_free(Entity** p_entity);
-
-	void EntityContainer_free(EntityContainer* p_entityContainer);
+	Entity* EntityContainer_allocEntity(EntityContainer* p_entityContainer);
+	void EntityContainer_freeEntity(Entity** p_entity, EntityContainer* p_entityContainer, ComponentEvents* p_componentEvents);
+	void EntityContainer_free(EntityContainer* p_entityContainer, ComponentEvents* p_componentEvents);
 };

@@ -10,6 +10,12 @@ namespace _GameEngine::_ECS
 		EntityComponentListener EntityComponentListener;
 	};
 
-	void MeshDrawSystem_init(MeshDrawSystem* p_meshDrawSystem, ComponentEvents* p_componentEvents);
+	struct MeshDrawSystemInitInfo
+	{
+		EntityContainer* EntityContainer;
+		ComponentEvents* ComponentEvents;
+	};
+
+	void MeshDrawSystem_init(MeshDrawSystem* p_meshDrawSystem, MeshDrawSystemInitInfo* p_meshDrawSystemInitInfo);
 	void MeshDrawSystem_free(MeshDrawSystem* p_meshDrawSystem, ComponentEvents* p_componentEvents);
 }
