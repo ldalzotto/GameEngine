@@ -1,24 +1,28 @@
 #include "Entity.h"
+#include "Utils/Algorithm/Algorithm.h"
 
 namespace _GameEngine::_ECS
 {
-	Component* Entity_addComponent(Entity* p_entity, Component& p_unlinkedComponent)
+	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent)
 	{
-		p_entity->Components[p_unlinkedComponent.ComponentType] = p_unlinkedComponent;
-		return &p_entity->Components.at(p_unlinkedComponent.ComponentType);
+		p_entity->Components[p_unlinkedComponent->ComponentType] = p_unlinkedComponent;
+		p_unlinkedComponent->AttachedEntity = p_entity;
 	};
 
-	void Entity_free(Entity* p_entity)
+	Entity* Entity_alloc(EntityContainer* p_entityContainer)
 	{
-		for (auto&& p_component : p_entity->Components)
+		Entity* l_instanciatedEntity = new Entity();
+		p_entityContainer->Entities.push_back(l_instanciatedEntity);
+		return l_instanciatedEntity;
+	};
+
+	void Entity_free(Entity** p_entity)
+	{
+		for (auto&& p_component : (*p_entity)->Components)
 		{
 			Component_free(&p_component.second);
 		}
-	};
-
-	void EntityContainer_pushEntity(EntityContainer* p_entityContainer, Entity* p_entity)
-	{
-		p_entityContainer->Entities.emplace_back(*p_entity);
+		delete (*p_entity);
 	};
 
 	void EntityContainer_free(EntityContainer* p_entityContainer)
@@ -31,8 +35,4 @@ namespace _GameEngine::_ECS
 		p_entityContainer->Entities.clear();
 	};
 
-	void EntityContainer_udpate(EntityContainer* p_entityContainer, float p_delta)
-	{
-	}
-	;
 };

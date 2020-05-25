@@ -4,21 +4,45 @@
 
 namespace _GameEngine::_ECS
 {
-
-	void Component_free(Component* p_component)
+	Component* Component_alloc(ComponentType& p_type, void* p_child)
 	{
-		if (p_component->Component_freeCallback)
-		{
-			p_component->Component_freeCallback(p_component);
-		}
-		delete p_component->Child;
+		Component* l_component = new Component();
+		l_component->ComponentType = p_type;
+		l_component->Child = p_child;
+		return l_component;
 	};
 
-	Component Component_Build(ComponentType p_type, void* p_child)
+	void Component_free(Component** p_component)
 	{
-		Component l_component{};
-		l_component.ComponentType = p_type;
-		l_component.Child = p_child;
-		return l_component;
+		if ((*p_component)->Component_freeCallback)
+		{
+			(*p_component)->Component_freeCallback((*p_component));
+		}
+		delete (*p_component)->Child;
+		delete (*p_component);
+	};
+
+	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, Component* p_component)
+	{
+		if (p_componentEvents->ComponentAttachedEvents.contains(p_component->ComponentType))
+		{
+			std::vector<ComponentAttachedEvent>* l_componentAttachedEvents = &p_componentEvents->ComponentAttachedEvents[p_component->ComponentType];
+			for (size_t i = 0; i < l_componentAttachedEvents->size(); i++)
+			{
+				l_componentAttachedEvents->at(i)(p_component);
+			}
+		}
+	};
+
+	void ComponentEvents_onComponentDetached(ComponentEvents* p_componentEvents, Component* p_component)
+	{
+		if (p_componentEvents->ComponentDetachedEvents.contains(p_component->ComponentType))
+		{
+			std::vector<ComponentDetachedEvent>* l_componentDetachedEvents = &p_componentEvents->ComponentDetachedEvents[p_component->ComponentType];
+			for (size_t i = 0; i < l_componentDetachedEvents->size(); i++)
+			{
+				l_componentDetachedEvents->at(i)(p_component);
+			}
+		}
 	};
 };

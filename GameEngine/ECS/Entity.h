@@ -10,17 +10,18 @@ namespace _GameEngine::_ECS
 
 	struct Entity
 	{
-		std::unordered_map<ComponentType, Component> Components;
+		std::unordered_map<ComponentType, Component*> Components;
 	};
 
-	Component* Entity_addComponent(Entity* p_entity, Component& p_unlinkedComponent);
-	void Entity_free(Entity* p_entity);
+	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent);
 
 	struct EntityContainer
 	{
-		std::vector<Entity> Entities;
+		std::vector<Entity*> Entities;
 	};
 
-	void EntityContainer_pushEntity(EntityContainer* p_entityContainer, Entity* p_entity);
+	Entity* Entity_alloc(EntityContainer* p_entityContainer);
+	void Entity_free(Entity** p_entity);
+
 	void EntityContainer_free(EntityContainer* p_entityContainer);
 };

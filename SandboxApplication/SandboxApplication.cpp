@@ -44,32 +44,33 @@ void SandboxApplication_update(float p_delta)
 {
 	if (!HasAlreadyUpdated)
 	{
-		_ECS::Entity l_testEntity{};
+		_ECS::Entity* l_testEntity = _ECS::Entity_alloc(&App->EntityComponent->EntityContainer);
 
 		{
-			_ECS::Component l_component = _ECS::Component_Build(_ECS::MeshRendererType, new _ECS::MeshRenderer());
-			_ECS::Component* l_instanciatedComponent = _ECS::Entity_addComponent(&l_testEntity, l_component);
-			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_instanciatedComponent->Child;
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
+			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.Render = App->Render;
-			l_meshRendererInitInfo.AssociatedComponent = l_instanciatedComponent;
+			l_meshRendererInitInfo.AssociatedComponent = l_component;
 			_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
+
+			_ECS::Entity_addComponent(l_testEntity, l_component);
 		}
 
 		{
-			_ECS::Component l_component = _ECS::Component_Build(_ECS::TransformType, new _ECS::Transform());
-			_ECS::Component* l_instanciatedComponent = _ECS::Entity_addComponent(&l_testEntity, l_component);
-			_ECS::Transform* l_transform = (_ECS::Transform*)l_instanciatedComponent->Child;
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
+			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
 			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 			l_transformInitInfo.LocalPosition = glm::vec3(1.0f);
 			_ECS::Transform_init(l_transform, &l_transformInitInfo);
+
+			_ECS::Entity_addComponent(l_testEntity, l_component);
 		}
 
-		_ECS::EntityContainer_pushEntity(&App->EntityComponent->EntityContainer, &l_testEntity);
 	}
 
 	HasAlreadyUpdated = true;
