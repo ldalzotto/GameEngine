@@ -13,8 +13,8 @@
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
 #include "Synchronisation/Semaphore.h"
-#include "Memory/Staging.h"
-#include "Mesh/MeshDrawStep.h"
+#include "LoopStep/PreRenderStagingStep.h"
+#include "LoopStep/MeshDrawStep.h"
 
 namespace _GameEngine::_Render
 {
@@ -38,7 +38,7 @@ namespace _GameEngine::_Render
 		CommandPool CommandPool;
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
-		PreRenderStagging PreRenderStagging;
+		PreRenderStagingStep PreRenderStagging;
 		MeshDrawStep MeshDrawStep;
 	};
 

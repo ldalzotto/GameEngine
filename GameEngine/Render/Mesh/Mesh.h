@@ -6,7 +6,7 @@
 
 #include "Render/Memory/VulkanBuffer.h"
 #include "Render/Hardware/Device/Device.h"
-#include "Render/Memory/Staging.h"
+#include "Render/LoopStep/PreRenderStagingStep.h"
 
 
 namespace _GameEngine::_Render
@@ -31,7 +31,7 @@ namespace _GameEngine::_Render
 		std::vector<Vertex>* Vertices;
 		std::vector<uint16_t>* Indices;
 		Device* Device;
-		PreRenderStagging* PreRenderStagging;
+		PreRenderStagingStep* PreRenderStagging;
 	};
 
 	void Mesh_alloc(Mesh* p_mesh, MeshAllocInfo* p_meshAllocInfo);

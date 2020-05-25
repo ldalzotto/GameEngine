@@ -16,7 +16,7 @@ namespace _GameEngine::_Render
 		VulkanBuffer* TargetBuffer;
 	};
 
-	struct PreRenderStagging
+	struct PreRenderStagingStep
 	{
 		CommandBuffer DedicatedCommandBuffer;
 		VkFence PreRenderStaggingFence;
@@ -29,8 +29,8 @@ namespace _GameEngine::_Render
 		NOTHING = 0x02
 	};
 
-	void PreRenderStagging_alloc(PreRenderStagging* p_preRenderStagging, CommandPool* p_commandPool);
-	void PreRenderStagging_free(PreRenderStagging* p_preRenderStagging, Device* p_device);
-	PreRenderStaggingCommandBufferBuildStatusBitFlag PreRenderStagging_buildCommandBuffer(PreRenderStagging* p_preRenderStagging, Device* p_device);
-	void PreRenderStagging_WaitForFence(PreRenderStagging* p_preRenderStagging, Device* p_device);
+	void PreRenderStagingStep_alloc(PreRenderStagingStep* p_preRenderStagging, CommandPool* p_commandPool);
+	void PreRenderStagingStep_free(PreRenderStagingStep* p_preRenderStagging, Device* p_device);
+	PreRenderStaggingCommandBufferBuildStatusBitFlag PreRenderStagingStep_buildCommandBuffer(PreRenderStagingStep* p_preRenderStagging, Device* p_device);
+	void PreRenderStagingStep_WaitForFence(PreRenderStagingStep* p_preRenderStagging, Device* p_device);
 }

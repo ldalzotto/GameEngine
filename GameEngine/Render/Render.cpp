@@ -361,12 +361,12 @@ namespace _GameEngine::_Render
 
 	void initPreRenderStaging(Render* p_render)
 	{
-		PreRenderStagging_alloc(&p_render->PreRenderStagging, &p_render->CommandPool);
+		PreRenderStagingStep_alloc(&p_render->PreRenderStagging, &p_render->CommandPool);
 	};
 
 	void freePreRenderStaging(Render* p_render)
 	{
-		PreRenderStagging_free(&p_render->PreRenderStagging, &p_render->Device);
+		PreRenderStagingStep_free(&p_render->PreRenderStagging, &p_render->Device);
 	};
 
 	/////// END PRE RENDER STAGGING
@@ -379,7 +379,7 @@ namespace _GameEngine::_Render
 
 	void preRenderStagginStep(Render* p_render)
 	{
-		if (PreRenderStagging_buildCommandBuffer(&p_render->PreRenderStagging, &p_render->Device) & PreRenderStaggingCommandBufferBuildStatusBitFlag::CREATED)
+		if (PreRenderStagingStep_buildCommandBuffer(&p_render->PreRenderStagging, &p_render->Device) & PreRenderStaggingCommandBufferBuildStatusBitFlag::CREATED)
 		{
 			VkSubmitInfo l_staginSubmit{};
 			l_staginSubmit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -387,7 +387,7 @@ namespace _GameEngine::_Render
 			l_staginSubmit.pCommandBuffers = &p_render->PreRenderStagging.DedicatedCommandBuffer.CommandBuffer;
 			vkQueueSubmit(p_render->Device.LogicalDevice.Queues.GraphicsQueue, 1, &l_staginSubmit, p_render->PreRenderStagging.PreRenderStaggingFence);
 
-			PreRenderStagging_WaitForFence(&p_render->PreRenderStagging, &p_render->Device);
+			PreRenderStagingStep_WaitForFence(&p_render->PreRenderStagging, &p_render->Device);
 		}
 	};
 

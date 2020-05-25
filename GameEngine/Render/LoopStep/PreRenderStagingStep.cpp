@@ -1,4 +1,4 @@
-#include "Staging.h"
+#include "PreRenderStagingStep.h"
 
 #include <stdexcept>
 #include "Log/Log.h"
@@ -8,14 +8,14 @@ namespace _GameEngine::_Render
 
 	void preRenderStaggingOperationValidation(PreRenderStaggingOperation* p_preRenderStagingOperation);
 
-	void PreRenderStagging_alloc(PreRenderStagging* p_preRenderStagging, CommandPool* p_commandPool)
+	void PreRenderStagingStep_alloc(PreRenderStagingStep* p_preRenderStagging, CommandPool* p_commandPool)
 	{
 		CommandBuffersDependencies l_commandBufferDependencies{};
 		l_commandBufferDependencies.CommandPool = p_commandPool;
 		CommandBuffer_init(&p_preRenderStagging->DedicatedCommandBuffer, &l_commandBufferDependencies);
 	};
 
-	void PreRenderStagging_free(PreRenderStagging* p_preRenderStagging, Device* p_device)
+	void PreRenderStagingStep_free(PreRenderStagingStep* p_preRenderStagging, Device* p_device)
 	{
 		if (p_preRenderStagging->PreRenderStaggingFence != VK_NULL_HANDLE)
 		{
@@ -23,7 +23,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	PreRenderStaggingCommandBufferBuildStatusBitFlag PreRenderStagging_buildCommandBuffer(PreRenderStagging* p_preRenderStagging, Device* p_device)
+	PreRenderStaggingCommandBufferBuildStatusBitFlag PreRenderStagingStep_buildCommandBuffer(PreRenderStagingStep* p_preRenderStagging, Device* p_device)
 	{
 		if (p_preRenderStagging->StaggingOprtations.size() > 0)
 		{
@@ -65,7 +65,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void PreRenderStagging_WaitForFence(PreRenderStagging* p_preRenderStagging, Device* p_device)
+	void PreRenderStagingStep_WaitForFence(PreRenderStagingStep* p_preRenderStagging, Device* p_device)
 	{
 		vkWaitForFences(p_device->LogicalDevice.LogicalDevice, 1, &p_preRenderStagging->PreRenderStaggingFence, VK_TRUE, UINT64_MAX);
 		vkDestroyFence(p_device->LogicalDevice.LogicalDevice, p_preRenderStagging->PreRenderStaggingFence, nullptr);
