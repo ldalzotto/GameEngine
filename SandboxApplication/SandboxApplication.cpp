@@ -44,16 +44,17 @@ void SandboxApplication_update(float p_delta)
 	if (!HasAlreadyUpdated)
 	{
 		_ECS::Entity l_testEntity{};
-	
+
 		_ECS::Component l_component = _ECS::Component_Build(_ECS::MeshRendererType, new _ECS::MeshRenderer());
 		_ECS::Component* l_instanciatedComponent = _ECS::Entity_addComponent(&l_testEntity, l_component);
 		_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_instanciatedComponent->Child;
-	
+
 		_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 		l_meshRendererInitInfo.Render = App->Render;
 		l_meshRendererInitInfo.AssociatedComponent = l_instanciatedComponent;
 		_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 		_ECS::EntityContainer_pushEntity(&App->EntityComponent->EntityContainer, &l_testEntity);
 	}
+
 	HasAlreadyUpdated = true;
 }

@@ -3,8 +3,6 @@
 #include "Extensions/Extensions.h"
 #include "Log/Log.h"
 
-#include "Render/Mesh/Mesh.h"
-
 #include <stdexcept>
 
 namespace _GameEngine::_Render
@@ -39,8 +37,6 @@ namespace _GameEngine::_Render
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
-	Mesh DrawnMeshForTest;
-
 	Render* Render_alloc()
 	{
 		Render* l_render = new Render();
@@ -58,23 +54,6 @@ namespace _GameEngine::_Render
 		initRenderSemaphore(l_render);
 		initPreRenderStaging(l_render);
 
-		std::vector<Vertex> l_vertices = {
-			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
-		};
-		std::vector<uint16_t> l_inidces = {
-			 0, 1, 2, 2, 3, 0
-		};
-
-		MeshAllocInfo l_meshAllocInfo{};
-		l_meshAllocInfo.Device = &l_render->Device;
-		l_meshAllocInfo.PreRenderStagging = &l_render->PreRenderStagging;
-		l_meshAllocInfo.Vertices = &l_vertices;
-		l_meshAllocInfo.Indices = &l_inidces;
-		Mesh_alloc(&DrawnMeshForTest, &l_meshAllocInfo);
-
 		return l_render;
 	};
 
@@ -83,8 +62,6 @@ namespace _GameEngine::_Render
 		// We wait for the Queues to finish their curent operation before releasing memory.
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
-
-		Mesh_free(&DrawnMeshForTest, &(*p_render)->Device);
 
 		freePreRenderStaging(*p_render);
 		freeRenderSemaphore(*p_render);
@@ -448,12 +425,8 @@ namespace _GameEngine::_Render
 		vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_render->GraphicsPipeline.Pipeline);
 
-		VkBuffer l_vertexBuffers[] = { DrawnMeshForTest.VertexBuffer.Buffer };
-		VkDeviceSize l_offsets[] = { 0 };
-		vkCmdBindVertexBuffers(l_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
-		vkCmdBindIndexBuffer(l_commandBuffer, DrawnMeshForTest.IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
-
-		vkCmdDrawIndexed(l_commandBuffer, DrawnMeshForTest.Indices.size(), 1, 0, 0, 0);
+		MeshDrawStep_buildCommandBuffer(&l_render->MeshDrawStep, l_commandBuffer);
+		
 		vkCmdEndRenderPass(l_commandBuffer);
 
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)

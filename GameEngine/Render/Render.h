@@ -14,6 +14,7 @@
 #include "CommandBuffer/CommandBuffers.h"
 #include "Synchronisation/Semaphore.h"
 #include "Memory/Staging.h"
+#include "Mesh/MeshDrawStep.h"
 
 namespace _GameEngine::_Render
 {
@@ -38,6 +39,7 @@ namespace _GameEngine::_Render
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
 		PreRenderStagging PreRenderStagging;
+		MeshDrawStep MeshDrawStep;
 	};
 
 	Render* Render_alloc();

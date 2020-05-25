@@ -1,5 +1,8 @@
 #include "MeshRenderer.h"
 
+#include <algorithm>
+#include "Utils/Algorithm/Algorithm.h"
+
 namespace _GameEngine::_ECS
 {
 	ComponentType MeshRendererType = "MeshRenderer";
@@ -8,6 +11,7 @@ namespace _GameEngine::_ECS
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo)
 	{
+		p_meshRenderer->Render = p_mehsRendererInfo->Render;
 		p_mehsRendererInfo->AssociatedComponent->Component_freeCallback = MeshRenderer_free;
 
 		_Render::MeshAllocInfo l_meshAllocInfo{ };
@@ -27,11 +31,14 @@ namespace _GameEngine::_ECS
 		l_meshAllocInfo.Vertices = &l_vertices;
 		l_meshAllocInfo.Indices = &l_inidces;
 		_Render::Mesh_alloc(&p_meshRenderer->Mesh, &l_meshAllocInfo);
+
+		p_mehsRendererInfo->Render->MeshDrawStep.MeshedToDraw.push_back(&p_meshRenderer->Mesh);
 	};
 
 	void MeshRenderer_free(Component* p_meshRenderer)
 	{
-		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
+		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer->Child;
+		_Utils::Vector_eraseElementEquals(l_meshRenderer->Render->MeshDrawStep.MeshedToDraw, &l_meshRenderer->Mesh);
 		_Render::Mesh_free(&l_meshRenderer->Mesh, &l_meshRenderer->Render->Device);
 	};
 }
