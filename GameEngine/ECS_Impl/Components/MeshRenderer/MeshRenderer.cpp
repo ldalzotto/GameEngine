@@ -31,11 +31,25 @@ namespace _GameEngine::_ECS
 		l_meshAllocInfo.Vertices = &l_vertices;
 		l_meshAllocInfo.Indices = &l_inidces;
 		_Render::Mesh_alloc(&p_meshRenderer->Mesh, &l_meshAllocInfo);
+
+		_Render::BufferAllocInfo l_bufferAllocInfo{};
+		l_bufferAllocInfo.Size = sizeof(_Render::MeshUniformObject);
+		l_bufferAllocInfo.BufferUsageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+		l_bufferAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		_Render::VulkanBuffer_alloc(&p_meshRenderer->MeshDrawCommand.MeshUniformBuffer, &l_bufferAllocInfo, &p_mehsRendererInfo->Render->Device);
+
+		p_meshRenderer->MeshDrawCommand.Mesh = &p_meshRenderer->Mesh;
+	};
+
+	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::MeshUniformObject& l_meshUniformObject)
+	{
+		_Render::VulkanBuffer_pushToGPU(&p_meshRenderer->MeshDrawCommand.MeshUniformBuffer, &p_meshRenderer->Render->Device, &l_meshUniformObject, sizeof(l_meshUniformObject));
 	};
 
 	void MeshRenderer_free(void* p_meshRenderer, void* p_null)
 	{
 		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
 		_Render::Mesh_free(&l_meshRenderer->Mesh, &l_meshRenderer->Render->Device);
+		_Render::VulkanBuffer_free(&l_meshRenderer->MeshDrawCommand.MeshUniformBuffer, &l_meshRenderer->Render->Device);
 	};
 }

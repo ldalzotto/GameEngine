@@ -24,6 +24,7 @@ namespace _GameEngine::_Render
 	{
 		GraphicsPipelineDependencies GraphicsPipelineDependencies;
 		VkPipeline Pipeline;
+		VkDescriptorSetLayout DescriptorSetLayout;
 		VkPipelineLayout PipelineLayout;
 
 		VertexShaderDescription VertexShaderDescription;

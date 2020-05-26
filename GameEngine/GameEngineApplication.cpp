@@ -49,13 +49,11 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		l_app->SandboxUpdateHook(p_delta);
-		// _Log::LogInstance->CoreLogger->info("Hello from update : " + std::to_string(p_delta));
 	};
 
 	void app_render(void* p_closure)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		// _Log::LogInstance->CoreLogger->info("Hello from render.");
 		Render_render(l_app->Render);
 	};
 

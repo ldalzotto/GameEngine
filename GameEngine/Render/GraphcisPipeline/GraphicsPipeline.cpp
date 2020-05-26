@@ -17,6 +17,10 @@ namespace _GameEngine::_Render
 	VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineColorBlendStateCreateInfo createColorBlendState(GraphicsPipeline* p_graphicsPipeline, VkPipelineColorBlendAttachmentState* p_colorBlendAttachmentState);
 
+	/* SHADER Relatives */
+	void createDescriptorSetLayout(GraphicsPipeline* p_grahicsPipeline);
+	void clearDescriptorSetLayout(GraphicsPipeline* p_graphicsPipeline);
+
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline);
 	void clearPipelineLayout(GraphicsPipeline* p_graphcisPipeline);
 
@@ -56,6 +60,7 @@ namespace _GameEngine::_Render
 		l_pipelineCreateInfo.pMultisampleState = &l_multisampleState;
 		l_pipelineCreateInfo.pColorBlendState = &l_colorBlendState;
 
+		createDescriptorSetLayout(p_graphicsPipeline);
 		createPipelineLayout(p_graphicsPipeline);
 		l_pipelineCreateInfo.layout = p_graphicsPipeline->PipelineLayout;
 
@@ -103,6 +108,7 @@ namespace _GameEngine::_Render
 		}
 
 		vkDestroyPipeline(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->Pipeline, nullptr);
+		clearDescriptorSetLayout(p_graphicsPipeline);
 		clearPipelineLayout(p_graphicsPipeline);
 		RenderPass_free(&p_graphicsPipeline->RenderPass);
 	};
@@ -217,12 +223,38 @@ namespace _GameEngine::_Render
 		return l_colorBlendStateCreate;
 	};
 
+	void createDescriptorSetLayout(GraphicsPipeline* p_grahicsPipeline)
+	{
+		VkDescriptorSetLayoutBinding l_descriptorSetLayoutBinding{};
+		l_descriptorSetLayoutBinding.binding = 0;
+		l_descriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		l_descriptorSetLayoutBinding.descriptorCount = 1;
+		l_descriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		l_descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+
+		VkDescriptorSetLayoutCreateInfo l_descriptorSetLayoutCreateInfo{};
+		l_descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		l_descriptorSetLayoutCreateInfo.bindingCount = 1;
+		l_descriptorSetLayoutCreateInfo.pBindings = &l_descriptorSetLayoutBinding;
+
+		if (vkCreateDescriptorSetLayout(p_grahicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, &l_descriptorSetLayoutCreateInfo, nullptr, &p_grahicsPipeline->DescriptorSetLayout)
+			!= VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create descriptor set layout!"));
+		}
+	};
+
+	void clearDescriptorSetLayout(GraphicsPipeline* p_graphicsPipeline)
+	{
+		vkDestroyDescriptorSetLayout(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->DescriptorSetLayout, nullptr);
+	};
+
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline)
 	{
 		VkPipelineLayoutCreateInfo l_pipelineLayoutCreateInfo{};
 		l_pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		l_pipelineLayoutCreateInfo.setLayoutCount = 0;
-		l_pipelineLayoutCreateInfo.pSetLayouts = nullptr;
+		l_pipelineLayoutCreateInfo.setLayoutCount = 1;
+		l_pipelineLayoutCreateInfo.pSetLayouts = &p_graphicsPipeline->DescriptorSetLayout;
 		l_pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		l_pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
@@ -237,4 +269,6 @@ namespace _GameEngine::_Render
 	{
 		vkDestroyPipelineLayout(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->PipelineLayout, nullptr);
 	};
+
+
 }

@@ -48,57 +48,41 @@ _ECS::Entity* l_testEntity;
 
 void SandboxApplication_update(float p_delta)
 {
-	if (glfwGetKey(App->Render->Window.Window, GLFW_KEY_A) == GLFW_PRESS)
+	if (!HasAlreadyUpdated)
 	{
-		if (l_testEntity == nullptr)
+		l_testEntity = _ECS::EntityContainer_allocEntity(App->ECS);
+
 		{
-			l_testEntity = _ECS::EntityContainer_allocEntity(App->ECS);
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
+			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
-			{
-				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
-				_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
+			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
+			l_meshRendererInitInfo.Render = App->Render;
+			l_meshRendererInitInfo.AssociatedComponent = l_component;
+			_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 
-				_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-				l_meshRendererInitInfo.Render = App->Render;
-				l_meshRendererInitInfo.AssociatedComponent = l_component;
-				_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
-
-				_ECS::Entity_addComponent(l_testEntity, l_component);
-			}
-
-			{
-				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
-				_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
-
-				_ECS::TransformInitInfo l_transformInitInfo{};
-				l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
-				l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-				l_transformInitInfo.LocalScale = glm::vec3(1.0f);
-				_ECS::Transform_init(l_transform, &l_transformInitInfo);
-
-				_ECS::Entity_addComponent(l_testEntity, l_component);
-			}
+			_ECS::Entity_addComponent(l_testEntity, l_component);
 		}
-		else
+
 		{
-			_ECS::EntityContainer_freeEntity(&l_testEntity);
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
+			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
+
+			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
+			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
+			_ECS::Transform_init(l_transform, &l_transformInitInfo);
+
+			_ECS::Entity_addComponent(l_testEntity, l_component);
 		}
+
+
+		l_meshDrawSystem = new _ECS::MeshDrawSystem();
+		_ECS::MeshDrawSystem_init(l_meshDrawSystem, App->ECS, App->Render);
 	}
-
-	if (glfwGetKey(App->Render->Window.Window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		if(l_meshDrawSystem == nullptr)
-		{ 
-			l_meshDrawSystem = new _ECS::MeshDrawSystem();
-			_ECS::MeshDrawSystem_init(l_meshDrawSystem, App->ECS);
-		}
-		else
-		{
-			_ECS::MeshDrawSystem_free(l_meshDrawSystem);
-			delete l_meshDrawSystem;
-			l_meshDrawSystem = nullptr;
-		}
-	}
+		
+	_ECS::MeshDrawSystem_update(l_meshDrawSystem, p_delta);
 
 	HasAlreadyUpdated = true;
 }
