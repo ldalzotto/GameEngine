@@ -17,10 +17,6 @@ namespace _GameEngine::_Render
 	VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineColorBlendStateCreateInfo createColorBlendState(GraphicsPipeline* p_graphicsPipeline, VkPipelineColorBlendAttachmentState* p_colorBlendAttachmentState);
 
-	/* SHADER Relatives */
-	void createDescriptorSetLayout(GraphicsPipeline* p_grahicsPipeline);
-	void clearDescriptorSetLayout(GraphicsPipeline* p_graphicsPipeline);
-
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline);
 	void clearPipelineLayout(GraphicsPipeline* p_graphcisPipeline);
 
@@ -32,7 +28,8 @@ namespace _GameEngine::_Render
 		l_shaderDependencies.Device = p_graphicsPipelineDependencies.Device;
 
 		Shader l_vertexShader = Shader_create(l_shaderDependencies, ShaderType::VERTEX, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv");
-		VertexInput_buildInput(&p_graphicsPipeline->VertexShaderDescription.VertexInput);
+		VertexInput_buildInput(&p_graphicsPipeline->ShaderInputDescription.VertexInput);
+		DescriptorSetLayout_alloc(&p_graphicsPipeline->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipelineDependencies.Device);
 
 		Shader l_fragmentShader = Shader_create(l_shaderDependencies, ShaderType::FRAGMENT, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv");
 
@@ -60,7 +57,6 @@ namespace _GameEngine::_Render
 		l_pipelineCreateInfo.pMultisampleState = &l_multisampleState;
 		l_pipelineCreateInfo.pColorBlendState = &l_colorBlendState;
 
-		createDescriptorSetLayout(p_graphicsPipeline);
 		createPipelineLayout(p_graphicsPipeline);
 		l_pipelineCreateInfo.layout = p_graphicsPipeline->PipelineLayout;
 
@@ -102,13 +98,14 @@ namespace _GameEngine::_Render
 
 	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline)
 	{
+		DescriptorSetLayout_free(&p_graphicsPipeline->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+
 		for (size_t i = 0; i < p_graphicsPipeline->FrameBuffers.size(); i++)
 		{
 			FrameBuffer_free(&p_graphicsPipeline->FrameBuffers[i]);
 		}
 
 		vkDestroyPipeline(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->Pipeline, nullptr);
-		clearDescriptorSetLayout(p_graphicsPipeline);
 		clearPipelineLayout(p_graphicsPipeline);
 		RenderPass_free(&p_graphicsPipeline->RenderPass);
 	};
@@ -118,9 +115,9 @@ namespace _GameEngine::_Render
 		VkPipelineVertexInputStateCreateInfo l_vertexInputStateCreate{};
 		l_vertexInputStateCreate.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		l_vertexInputStateCreate.vertexBindingDescriptionCount = 1;
-		l_vertexInputStateCreate.pVertexBindingDescriptions = &p_graphicsPipeline->VertexShaderDescription.VertexInput.VertexInputBinding;
-		l_vertexInputStateCreate.vertexAttributeDescriptionCount = static_cast<uint32_t>(p_graphicsPipeline->VertexShaderDescription.VertexInput.VertexInputAttributeDescriptions.size());
-		l_vertexInputStateCreate.pVertexAttributeDescriptions = p_graphicsPipeline->VertexShaderDescription.VertexInput.VertexInputAttributeDescriptions.data();
+		l_vertexInputStateCreate.pVertexBindingDescriptions = &p_graphicsPipeline->ShaderInputDescription.VertexInput.VertexInputBinding;
+		l_vertexInputStateCreate.vertexAttributeDescriptionCount = static_cast<uint32_t>(p_graphicsPipeline->ShaderInputDescription.VertexInput.VertexInputAttributeDescriptions.size());
+		l_vertexInputStateCreate.pVertexAttributeDescriptions = p_graphicsPipeline->ShaderInputDescription.VertexInput.VertexInputAttributeDescriptions.data();
 		return l_vertexInputStateCreate;
 	};
 
@@ -173,7 +170,7 @@ namespace _GameEngine::_Render
 		l_rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		l_rasterizationState.lineWidth = 1.0f;
 		l_rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
-		l_rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
+		l_rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		l_rasterizationState.depthBiasEnable = VK_FALSE;
 		l_rasterizationState.depthBiasConstantFactor = 0.0f;
 		l_rasterizationState.depthBiasClamp = 0.0f;
@@ -223,38 +220,12 @@ namespace _GameEngine::_Render
 		return l_colorBlendStateCreate;
 	};
 
-	void createDescriptorSetLayout(GraphicsPipeline* p_grahicsPipeline)
-	{
-		VkDescriptorSetLayoutBinding l_descriptorSetLayoutBinding{};
-		l_descriptorSetLayoutBinding.binding = 0;
-		l_descriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		l_descriptorSetLayoutBinding.descriptorCount = 1;
-		l_descriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		l_descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
-
-		VkDescriptorSetLayoutCreateInfo l_descriptorSetLayoutCreateInfo{};
-		l_descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		l_descriptorSetLayoutCreateInfo.bindingCount = 1;
-		l_descriptorSetLayoutCreateInfo.pBindings = &l_descriptorSetLayoutBinding;
-
-		if (vkCreateDescriptorSetLayout(p_grahicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, &l_descriptorSetLayoutCreateInfo, nullptr, &p_grahicsPipeline->DescriptorSetLayout)
-			!= VK_SUCCESS)
-		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create descriptor set layout!"));
-		}
-	};
-
-	void clearDescriptorSetLayout(GraphicsPipeline* p_graphicsPipeline)
-	{
-		vkDestroyDescriptorSetLayout(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->DescriptorSetLayout, nullptr);
-	};
-
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline)
 	{
 		VkPipelineLayoutCreateInfo l_pipelineLayoutCreateInfo{};
 		l_pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		l_pipelineLayoutCreateInfo.setLayoutCount = 1;
-		l_pipelineLayoutCreateInfo.pSetLayouts = &p_graphicsPipeline->DescriptorSetLayout;
+		l_pipelineLayoutCreateInfo.pSetLayouts = &p_graphicsPipeline->ShaderInputDescription.DescriptorSetLayout.DescriptorSetLayout;
 		l_pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		l_pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 

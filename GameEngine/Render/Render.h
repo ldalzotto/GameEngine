@@ -10,6 +10,7 @@
 #include "Hardware/Device/Device.h"
 #include "SwapChain/SwapChain.h"
 #include "GraphcisPipeline/GraphicsPipeline.h"
+#include "Descriptor/DescriptorPool.h"
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
 #include "Synchronisation/Semaphore.h"
@@ -38,6 +39,8 @@ namespace _GameEngine::_Render
 		CommandPool CommandPool;
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
+		DescriptorPool DescriptorPool;
+
 		PreRenderStagingStep PreRenderStagging;
 		MeshDrawStep MeshDrawStep;
 	};

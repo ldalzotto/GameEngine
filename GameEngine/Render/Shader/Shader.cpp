@@ -32,8 +32,6 @@ namespace _GameEngine::_Render
 		vkDestroyShaderModule(p_shader->ShaderDependencies.Device->LogicalDevice.LogicalDevice, p_shader->ShaderModule, nullptr);
 	};
 
-
-
 	VkPipelineShaderStageCreateInfo Shader_buildShaderStageCreate(Shader* p_shader)
 	{
 		VkPipelineShaderStageCreateInfo l_pipelineShaderStageCreate{};

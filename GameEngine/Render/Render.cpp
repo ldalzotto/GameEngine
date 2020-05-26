@@ -34,6 +34,9 @@ namespace _GameEngine::_Render
 	void initRenderSemaphore(Render* p_render);
 	void freeRenderSemaphore(Render* p_render);
 
+	void initDescriptorPool(Render* p_render);
+	void freeDescriptorPool(Render* p_render);
+
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
@@ -52,6 +55,7 @@ namespace _GameEngine::_Render
 		initSwapChain(l_render);
 		initGraphicsPipeline(l_render);
 		initRenderSemaphore(l_render);
+		initDescriptorPool(l_render);
 		initPreRenderStaging(l_render);
 
 		return l_render;
@@ -64,6 +68,7 @@ namespace _GameEngine::_Render
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
 		freePreRenderStaging(*p_render);
+		freeDescriptorPool(*p_render);
 		freeRenderSemaphore(*p_render);
 		freeGraphicsPipeline(*p_render);
 		freeSwapChain(*p_render);
@@ -85,10 +90,12 @@ namespace _GameEngine::_Render
 		freeGraphicsPipeline(p_render);
 		freeSwapChain(p_render);
 		freePreRenderStaging(p_render);
+		// freeDescriptorPool(p_render);
 		freeCommandPool(p_render);
 
 		initCommandPool(p_render);
 		initPreRenderStaging(p_render);
+		// initDescriptorPool(p_render);
 		initSwapChain(p_render);
 		initGraphicsPipeline(p_render);
 		initRenderSemaphore(p_render);
@@ -357,6 +364,20 @@ namespace _GameEngine::_Render
 
 	/////// END RENDER SEMAPHORE
 
+	/////// DESCRIPTOR POOL
+
+	void initDescriptorPool(Render* p_render)
+	{
+		DescriptorPool_buildUnique(&p_render->DescriptorPool, &p_render->Device);
+	};
+
+	void freeDescriptorPool(Render* p_render)
+	{
+		DescriptorPool_freeUnique(&p_render->DescriptorPool, &p_render->Device);
+	};
+
+	/////// END DESCRITPR POOL
+
 	/////// PRE RENDER STAGGING
 
 	void initPreRenderStaging(Render* p_render)
@@ -425,7 +446,7 @@ namespace _GameEngine::_Render
 		vkCmdBeginRenderPass(l_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdBindPipeline(l_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_render->GraphicsPipeline.Pipeline);
 
-		MeshDrawStep_buildCommandBuffer(&l_render->MeshDrawStep, l_commandBuffer);
+		MeshDrawStep_buildCommandBuffer(&l_render->MeshDrawStep, l_commandBuffer, &l_render->GraphicsPipeline);
 		
 		vkCmdEndRenderPass(l_commandBuffer);
 

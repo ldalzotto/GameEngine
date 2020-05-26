@@ -3,9 +3,8 @@
 
 #include "vulkan/vulkan.h"
 #include "Render/Hardware/Device/Device.h"
-
-
-#include "Render/GraphcisPipeline/Shader/VertexInput.h"
+#include "Render/Shader/VertexInput.h"
+#include "Render/Shader/DescriptorSetLayout.h"
 
 #include <string>
 
@@ -22,9 +21,10 @@ namespace _GameEngine::_Render
 		FRAGMENT = 0x02
 	};
 
-	struct VertexShaderDescription
+	struct ShaderInputDescription
 	{
 		VertexInput VertexInput;
+		DescriptorSetLayout DescriptorSetLayout;
 	};
 
 	struct Shader

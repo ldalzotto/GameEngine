@@ -6,6 +6,7 @@
 
 #include "vulkan/vulkan.h"
 #include "Render/Mesh/Mesh.h"
+#include "Render/GraphcisPipeline/GraphicsPipeline.h"
 
 namespace _GameEngine::_Render
 {
@@ -20,6 +21,7 @@ namespace _GameEngine::_Render
 	{
 		Mesh* Mesh;
 		VulkanBuffer MeshUniformBuffer;
+		VkDescriptorSet DescriptorSet;
 	};
 
 	struct MeshDrawStep
@@ -27,5 +29,5 @@ namespace _GameEngine::_Render
 		std::vector<MeshDrawCommand*> MeshDrawCommands;
 	};
 
-	void MeshDrawStep_buildCommandBuffer(MeshDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer);
+	void MeshDrawStep_buildCommandBuffer(MeshDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, GraphicsPipeline* p_bindedGraphicsPipeline);
 }

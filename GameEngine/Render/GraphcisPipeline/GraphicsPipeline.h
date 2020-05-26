@@ -10,7 +10,7 @@
 
 #include "Render/GraphcisPipeline/RenderPass.h"
 #include "Render/GraphcisPipeline/FrameBuffer.h"
-#include "Render/GraphcisPipeline/Shader/Shader.h"
+#include "Render/Shader/Shader.h"
 
 namespace _GameEngine::_Render
 {
@@ -24,10 +24,12 @@ namespace _GameEngine::_Render
 	{
 		GraphicsPipelineDependencies GraphicsPipelineDependencies;
 		VkPipeline Pipeline;
-		VkDescriptorSetLayout DescriptorSetLayout;
+
+
+		
 		VkPipelineLayout PipelineLayout;
 
-		VertexShaderDescription VertexShaderDescription;
+		ShaderInputDescription ShaderInputDescription;
 
 		RenderPass RenderPass;
 
