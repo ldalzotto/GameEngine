@@ -11,7 +11,7 @@ namespace _GameEngine::_Utils
 			glm::vec4(glm::column(l_rotation, 0) * p_scale.x, 0.0f),
 			glm::vec4(glm::column(l_rotation, 1) * p_scale.y, 0.0f),
 			glm::vec4(glm::column(l_rotation, 2) * p_scale.z, 0.0f),
-			glm::vec4(p_position, 0.0f)
+			glm::vec4(p_position, 1.0f)
 		);
 	};
 }

@@ -1,0 +1,4 @@
+[X] - # Fixing the Transform system to be able to retrieve the Model matrix correctly.
+# Setting up Camera BufferObject.
+	-> Single VulkanBuffer containing the view and perspective matrices.
+	-> Binded before binding the graphics pipeline

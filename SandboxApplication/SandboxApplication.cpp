@@ -5,6 +5,8 @@
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
+#include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
+#include "ECS_Impl/Components/Transform/TransformRotate.h"
 
 #include "Render/Includes/GLFWIncludes.h"
 
@@ -43,7 +45,9 @@ int main()
 
 bool HasAlreadyUpdated = false;
 
-_ECS::MeshDrawSystem* l_meshDrawSystem;
+_ECS::MeshDrawSystem l_meshDrawSystem;
+_ECS::TransformRotateSystem l_transformRotateSystem;
+
 _ECS::Entity* l_testEntity;
 _ECS::Entity* l_testEntity2;
 
@@ -63,6 +67,14 @@ void SandboxApplication_update(float p_delta)
 			l_meshRendererInitInfo.AssociatedComponent = l_component;
 			_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 
+			_ECS::Entity_addComponent(l_testEntity, l_component);
+		}
+
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, new _ECS::TransformRotate());
+			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
+			l_transformRotate->Speed = 1;
+			l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
 			_ECS::Entity_addComponent(l_testEntity, l_component);
 		}
 
@@ -106,12 +118,16 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Entity_addComponent(l_testEntity2, l_component);
 		}
 
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, new _ECS::TransformRotate());
+			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
+			l_transformRotate->Speed = 1.0f;
+			l_transformRotate->Axis = glm::vec3(1.0f, 0.0f, 0.0f);
+			_ECS::Entity_addComponent(l_testEntity2, l_component);
+		}
 
-		l_meshDrawSystem = new _ECS::MeshDrawSystem();
-		_ECS::MeshDrawSystem_init(l_meshDrawSystem, App->ECS, App->Render);
-
-
-
+		_ECS::MeshDrawSystem_init(&l_meshDrawSystem, App->ECS, App->Render);
+		_ECS::TransformRotateSystem_init(&l_transformRotateSystem, App->ECS);
 	}
 	/*
 	else
@@ -123,8 +139,9 @@ void SandboxApplication_update(float p_delta)
 		}
 	}
 	*/
-		
-	_ECS::MeshDrawSystem_update(l_meshDrawSystem, p_delta);
+
+	_ECS::TransformRotationSystem_update(&l_transformRotateSystem, p_delta);
+	_ECS::MeshDrawSystem_update(&l_meshDrawSystem, p_delta);
 
 	HasAlreadyUpdated = true;
 }

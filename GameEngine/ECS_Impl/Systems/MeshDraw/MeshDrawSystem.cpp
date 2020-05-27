@@ -1,14 +1,12 @@
 
 #include "MeshDrawSystem.h"
 
+#include <cstdlib>
 #include <ctime>
-
-#include "glm/gtx/quaternion.hpp"
 
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
 
-#include <cstdlib>
 
 namespace _GameEngine::_ECS
 {
@@ -38,23 +36,17 @@ namespace _GameEngine::_ECS
 		EntityConfigurableContainer_init(&p_meshDrawSystem->EntityConfigurableContainer, &l_entityComponentListenerInitInfo);
 	};
 
-	float AccumulatedTime = 0.0;
-
 	void MeshDrawSystem_update(MeshDrawSystem* p_meshDrawSystem, float p_delta)
 	{
-		AccumulatedTime += p_delta;
+	//	AccumulatedTime += p_delta;
 
 		for (Entity*& l_entity : p_meshDrawSystem->EntityConfigurableContainer.FilteredEntities)
 		{
 			MeshRenderer* l_mesRenderer = (MeshRenderer*)_ECS::Entity_getComponent(l_entity, MeshRendererType)->Child;
 			Transform* l_transform = (Transform*)_ECS::Entity_getComponent(l_entity, TransformType)->Child;
 
-			_ECS::Transform_setLocalRotation(l_transform, l_transform->LocalRotation * glm::angleAxis(100 * p_delta, glm::vec3(1.0f, 0.0f, 0.0f)));
-
 			_Render::MeshUniformObject l_meshUniform{};
-			
-			l_meshUniform.Model = glm::rotate(glm::mat4(1.0f), AccumulatedTime, glm::vec3(0.0f, 0.0f, 1.0f));
-				//*_ECS::Transform_getLocalToWorldMatrix(l_transform);
+			 l_meshUniform.Model = *_ECS::Transform_getLocalToWorldMatrix(l_transform);
 			l_meshUniform.View = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 			l_meshUniform.Project = glm::perspective(glm::radians(45.0f), p_meshDrawSystem->Render->SwapChain.SwapChainInfo.SwapExtend.width / (float)p_meshDrawSystem->Render->SwapChain.SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
 			l_meshUniform.Project[1][1] *= -1;

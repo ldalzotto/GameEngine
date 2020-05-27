@@ -38,6 +38,5 @@ namespace _GameEngine::_Render
 
 	void MeshDrawStep_addMeshDrawCommand(MeshDrawStep* p_meshDrawStep, MeshDrawCommand* p_meshDrawCommand);
 	void MeshDrawStep_removeMeshDrawCommand(MeshDrawStep* p_meshDrawStep, MeshDrawCommand* p_meshDrawCommand);
-
 	void MeshDrawStep_buildCommandBuffer(Render* p_render, MeshDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, size_t l_imageIndex);
 }

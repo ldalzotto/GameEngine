@@ -12,7 +12,6 @@ namespace _GameEngine::_Render
 
 		for (auto&& l_meshDrawCommandEntry : p_meshDrawStep->MeshDrawCommands)
 		{
-
 			GraphicsPipeline* l_graphicsPipeline = l_meshDrawCommandEntry.first;
 			std::vector<FrameBuffer>* l_frameBuffers = &l_graphicsPipeline->PipelineInternals.FrameBuffers;
 
