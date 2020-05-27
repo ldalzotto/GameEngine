@@ -10,7 +10,11 @@
 
 namespace _GameEngine::_Render
 {
-	std::vector<char*> DeviceExtensions = std::vector<char*>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<char*> DeviceExtensions = std::vector<char*>{ 
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME, 
+		// This is to allow the viewport to be flipped
+		VK_KHR_MAINTENANCE1_EXTENSION_NAME
+	};
 
 	void buildPhysicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);
 	void buildLogicalDevice(Device* p_device, DeviceBuildInfo* p_deviceBuildInfo);

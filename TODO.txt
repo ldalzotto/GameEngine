@@ -1,4 +1,9 @@
 [X] - # Fixing the Transform system to be able to retrieve the Model matrix correctly.
+
+# Creating the Camera component.
 # Setting up Camera BufferObject.
 	-> Single VulkanBuffer containing the view and perspective matrices.
 	-> Binded before binding the graphics pipeline
+
+-- ECS --
+# Provinding a uniquea and safe way to get the child component.
