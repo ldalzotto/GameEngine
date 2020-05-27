@@ -126,6 +126,8 @@ namespace _GameEngine::_Render
 			l_swapChainImageInitializationInfo.CommandPool = p_swapChainBuildInfo->CommandPool;
 			SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);
 		}
+
+		_Utils::Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_swapChain);
 	};
 
 	void SwapChain_free(SwapChain* p_swapChain)

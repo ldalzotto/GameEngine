@@ -38,6 +38,11 @@ namespace _GameEngine::_Render
 
 		bool MustBeRebuilt;
 		_Utils::Subject OnWindowSizeChangeCallback;
+
+		// The swap chain can be rebuild if the @ref MustBeRebuilt is set to true.
+		// This event notify when such an event has occured.
+		// Input parameter is (SwapChain*)
+		_Utils::Observer OnSwapChainBuilded;
 	};
 
 	struct SwapChainSupportDetails

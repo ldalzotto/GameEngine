@@ -1,8 +1,15 @@
 #pragma once
 
+#include "glm/glm.hpp"
+
+#include "Utils/Observer/Observer.h"
 #include "ECS/Component.h"
 
-#include "glm/glm.hpp"
+
+namespace _GameEngine::_Render
+{
+	struct SwapChain;
+}
 
 namespace _GameEngine::_ECS
 {
@@ -16,8 +23,13 @@ namespace _GameEngine::_ECS
 
 	struct Camera
 	{
+		_Render::SwapChain* SwapChain;
+		_Utils::Subject OnSwapChainBuilded;
 		CameraMatrices CameraMatrices;
+
+		_Utils::Subject OnComponentDetached;
 	};
 
-	void Camera_init(Camera* p_camera);
+	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::SwapChain* p_swapChain);
+	void Camera_buildProjectionMatrix(Camera* p_camera);
 }

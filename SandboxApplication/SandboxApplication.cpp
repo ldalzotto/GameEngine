@@ -2,6 +2,7 @@
 #include "SandboxApplication.h"
 #include "Log/Log.h"
 #include "ECS/Entity.h"
+#include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -48,6 +49,8 @@ bool HasAlreadyUpdated = false;
 _ECS::MeshDrawSystem l_meshDrawSystem;
 _ECS::TransformRotateSystem l_transformRotateSystem;
 
+_ECS::Entity* l_cameraEntity;
+
 _ECS::Entity* l_testEntity;
 _ECS::Entity* l_testEntity2;
 
@@ -55,6 +58,15 @@ void SandboxApplication_update(float p_delta)
 {
 	if (!HasAlreadyUpdated)
 	{
+
+		l_cameraEntity = _ECS::EntityContainer_allocEntity(App->ECS);
+
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::CameraType, new _ECS::Camera());
+			_ECS::Camera* l_camera = (_ECS::Camera*)l_component->Child;
+			_ECS::Camera_init(l_camera, l_component, &App->Render->SwapChain);
+			_ECS::Entity_addComponent(l_cameraEntity, l_component);
+		}
 
 		l_testEntity = _ECS::EntityContainer_allocEntity(App->ECS);
 
