@@ -51,7 +51,7 @@ namespace _GameEngine::_Render
 		initSwapChain(l_render);
 		initRenderSemaphore(l_render);
 		initPreRenderStaging(l_render);
-
+		CameraDrawStep_init(&l_render->CameraDrawStep, &l_render->Device);
 		return l_render;
 	};
 
@@ -61,6 +61,7 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
+		CameraDrawStep_free(&(*p_render)->CameraDrawStep, &(*p_render)->Device);
 		freePreRenderStaging(*p_render);
 		freeRenderSemaphore(*p_render);
 		freeSwapChain(*p_render);

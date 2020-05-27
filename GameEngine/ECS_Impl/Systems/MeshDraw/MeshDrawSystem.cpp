@@ -7,7 +7,6 @@
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
 
-
 namespace _GameEngine::_ECS
 {
 	void onMeshDrawSystemEntityAdded(Entity* p_entity)
@@ -45,11 +44,8 @@ namespace _GameEngine::_ECS
 			MeshRenderer* l_mesRenderer = (MeshRenderer*)_ECS::Entity_getComponent(l_entity, MeshRendererType)->Child;
 			Transform* l_transform = (Transform*)_ECS::Entity_getComponent(l_entity, TransformType)->Child;
 
-			_Render::MeshUniformObject l_meshUniform{};
+			_Render::ModelProjection l_meshUniform{};
 			l_meshUniform.Model = *_ECS::Transform_getLocalToWorldMatrix(l_transform);
-			l_meshUniform.View = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-			l_meshUniform.Project = glm::perspective(glm::radians(45.0f), p_meshDrawSystem->Render->SwapChain.SwapChainInfo.SwapExtend.width / (float)p_meshDrawSystem->Render->SwapChain.SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
-			// l_meshUniform.Project[1][1] *= -1;
 			MeshRenderer_updateMeshDrawUniform(l_mesRenderer, l_meshUniform);
 		}
 	};
