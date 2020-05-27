@@ -55,9 +55,9 @@ namespace _GameEngine::_ECS
 
 		VkDescriptorSetAllocateInfo l_descriptorSetAllocateInfo{};
 		l_descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		l_descriptorSetAllocateInfo.descriptorPool = p_meshRenderer->MeshDrawCommand.UsedRenderPipeline->DescriptorPool.DescriptorPool;
+		l_descriptorSetAllocateInfo.descriptorPool = p_meshRenderer->MeshDrawCommand.UsedRenderPipeline->ShaderRelated.DescriptorPool.DescriptorPool;
 		l_descriptorSetAllocateInfo.descriptorSetCount = 1;
-		l_descriptorSetAllocateInfo.pSetLayouts = &p_meshRenderer->MeshDrawCommand.UsedRenderPipeline->ShaderInputDescription.DescriptorSetLayout.DescriptorSetLayout;
+		l_descriptorSetAllocateInfo.pSetLayouts = &p_meshRenderer->MeshDrawCommand.UsedRenderPipeline->ShaderRelated.ShaderInputDescription.DescriptorSetLayout.DescriptorSetLayout;
 		vkAllocateDescriptorSets(p_meshRenderer->Render->Device.LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_meshRenderer->MeshDrawCommand.DescriptorSet);
 
 		VkDescriptorBufferInfo l_descriptorUniformBufferInfo{};

@@ -306,7 +306,7 @@ namespace _GameEngine::_Render
 	{
 		for (auto&& l_graphicsPipelineEntry : p_render->GraphcisPipelineContainer.GraphicsPipelines)
 		{
-			GraphicsPipeline_reallocatePiepeline(l_graphicsPipelineEntry.second, &p_render->SwapChain);
+			GraphicsPipeline_reallocatePipeline(l_graphicsPipelineEntry.second, &p_render->SwapChain);
 		}
 	};
 

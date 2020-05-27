@@ -14,9 +14,9 @@ namespace _GameEngine::_Render
 		{
 
 			GraphicsPipeline* l_graphicsPipeline = l_meshDrawCommandEntry.first;
-			std::vector<FrameBuffer>* l_frameBuffers = &l_graphicsPipeline->FrameBuffers;
+			std::vector<FrameBuffer>* l_frameBuffers = &l_graphicsPipeline->PipelineInternals.FrameBuffers;
 
-			RenderPass* RenderPass = &l_graphicsPipeline->RenderPass;
+			RenderPass* RenderPass = &l_graphicsPipeline->PipelineInternals.RenderPass;
 
 			VkRenderPassBeginInfo l_renderPassBeginInfo{};
 			l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -30,7 +30,7 @@ namespace _GameEngine::_Render
 			l_renderPassBeginInfo.pClearValues = &l_clearValue;
 
 			vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdBindPipeline(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_graphicsPipeline->Pipeline);
+			vkCmdBindPipeline(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_graphicsPipeline->PipelineInternals.Pipeline);
 
 			for (MeshDrawCommand* l_meshDraw : l_meshDrawCommandEntry.second)
 			{
@@ -38,7 +38,7 @@ namespace _GameEngine::_Render
 				VkDeviceSize l_offsets[] = { 0 };
 				vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
 				vkCmdBindIndexBuffer(p_commandBuffer, l_meshDraw->Mesh->IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
-				vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_meshDraw->UsedRenderPipeline->PipelineLayout, 0, 1, &l_meshDraw->DescriptorSet, 0, nullptr);
+				vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_meshDraw->UsedRenderPipeline->PipelineInternals.PipelineLayout, 0, 1, &l_meshDraw->DescriptorSet, 0, nullptr);
 				vkCmdDrawIndexed(p_commandBuffer, l_meshDraw->Mesh->Indices.size(), 1, 0, 0, 0);
 			}
 

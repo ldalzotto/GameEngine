@@ -27,6 +27,38 @@ namespace _GameEngine::_Render
 		ShaderContainer* ShaderContainer;
 	};
 
+	struct GraphicsPipeline
+	{
+		/** If < 0, this pipeline is not being used by the Render engine. */
+		int UsageCounter;
+		GraphicsPipelineDependencies GraphicsPipelineDependencies;
+
+		struct PipelineInternalsType
+		{
+			VkPipeline Pipeline;
+			VkPipelineLayout PipelineLayout;
+			RenderPass RenderPass;
+			/**
+				The number of @ref FrameBuffers is equivalent to the number of images contained in the @ref SwapChain.
+			*/
+			std::vector<FrameBuffer> FrameBuffers;
+		};
+
+		struct ShaderRelatedType
+		{
+			Shader* VertexShader;
+			Shader* FragmentShader;
+			ShaderInputDescription ShaderInputDescription;
+			DescriptorPool DescriptorPool;
+		};
+		
+		PipelineInternalsType PipelineInternals;
+		ShaderRelatedType ShaderRelated;
+	};
+
+
+
+
 	struct GraphicsPipelineKey
 	{
 		std::string VertexShaderPath;
@@ -50,26 +82,6 @@ namespace _GameEngine::_Render
 		}
 	};
 
-
-	struct GraphicsPipeline
-	{
-		Shader* VertexShader;
-		Shader* FragmentShader;
-
-		GraphicsPipelineDependencies GraphicsPipelineDependencies;
-		VkPipeline Pipeline;
-		VkPipelineLayout PipelineLayout;
-		ShaderInputDescription ShaderInputDescription;
-		DescriptorPool DescriptorPool;
-		RenderPass RenderPass;
-
-		/**
-			The number of @ref FrameBuffers is equivalent to the number of images contained in the @ref SwapChain.
-		*/
-		std::vector<FrameBuffer> FrameBuffers;
-		int UsageCounter;
-	};
-
 	struct GraphicsPipelineGetOrAllocInfo
 	{
 		GraphicsPipelineDependencies GraphicsPipelineDependencies;
@@ -79,5 +91,11 @@ namespace _GameEngine::_Render
 	GraphicsPipeline* GraphicsPipeline_getOrAlloc(GraphicsPipelineGetOrAllocInfo* p_graphicsPipelineGetOrAllocInfo);
 	void GraphicsPipeline_releaseOrFree(GraphicsPipeline** p_graphicsPipeline);
 
-	void GraphicsPipeline_reallocatePiepeline(GraphicsPipeline* p_graphicsPipeline, SwapChain* p_swapChain);
+	/**
+		Reallocate internal pipeline objects with the new input @ref SwapChain.
+		This method must be called when the @ref SwapChain has changed because the pipeline is bounded
+		to informations like texture size.
+		Thus, we reallocate the pipeline to reflect the changes.
+	*/
+	void GraphicsPipeline_reallocatePipeline(GraphicsPipeline* p_graphicsPipeline, SwapChain* p_swapChain);
 }
