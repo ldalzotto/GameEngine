@@ -33,6 +33,19 @@ namespace _GameEngine::_ECS
 		_Render::Mesh_alloc(&p_meshRenderer->Mesh, &l_meshAllocInfo);
 		p_meshRenderer->MeshDrawCommand.Mesh = &p_meshRenderer->Mesh;
 
+
+		{
+			_Render::GraphicsPipelineGetOrAllocInfo l_graphicsPipelineGetOrAllocInfo{};
+			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.Device = &p_meshRenderer->Render->Device;
+			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.GraphcisPipelineContainer = &p_meshRenderer->Render->GraphcisPipelineContainer;
+			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.ShaderContainer = &p_meshRenderer->Render->ShaderContainer;
+			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.SwapChain = &p_meshRenderer->Render->SwapChain;
+			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineKey.VertexShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
+			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineKey.FragmentShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
+
+			p_meshRenderer->MeshDrawCommand.UsedRenderPipeline = _Render::GraphicsPipeline_getOrAlloc(&l_graphicsPipelineGetOrAllocInfo);
+		}
+
 		// Descriptor set
 		_Render::BufferAllocInfo l_bufferAllocInfo{};
 		l_bufferAllocInfo.Size = sizeof(_Render::MeshUniformObject);
@@ -42,9 +55,9 @@ namespace _GameEngine::_ECS
 
 		VkDescriptorSetAllocateInfo l_descriptorSetAllocateInfo{};
 		l_descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		l_descriptorSetAllocateInfo.descriptorPool = p_meshRenderer->Render->DescriptorPool.DescriptorPool;
+		l_descriptorSetAllocateInfo.descriptorPool = p_meshRenderer->MeshDrawCommand.UsedRenderPipeline->DescriptorPool.DescriptorPool;
 		l_descriptorSetAllocateInfo.descriptorSetCount = 1;
-		l_descriptorSetAllocateInfo.pSetLayouts = &p_meshRenderer->Render->GraphicsPipeline.ShaderInputDescription.DescriptorSetLayout.DescriptorSetLayout;
+		l_descriptorSetAllocateInfo.pSetLayouts = &p_meshRenderer->MeshDrawCommand.UsedRenderPipeline->ShaderInputDescription.DescriptorSetLayout.DescriptorSetLayout;
 		vkAllocateDescriptorSets(p_meshRenderer->Render->Device.LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_meshRenderer->MeshDrawCommand.DescriptorSet);
 
 		VkDescriptorBufferInfo l_descriptorUniformBufferInfo{};
@@ -76,5 +89,6 @@ namespace _GameEngine::_ECS
 		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
 		_Render::Mesh_free(&l_meshRenderer->Mesh, &l_meshRenderer->Render->Device);
 		_Render::VulkanBuffer_free(&l_meshRenderer->MeshDrawCommand.MeshUniformBuffer, &l_meshRenderer->Render->Device);
+		_Render::GraphicsPipeline_releaseOrFree(&l_meshRenderer->MeshDrawCommand.UsedRenderPipeline);
 	};
 }

@@ -1,5 +1,7 @@
 #include "GraphicsPipeline.h"
 
+#include "Render/GraphcisPipeline/GraphicsPipelineContainer.h"
+
 #include <stdexcept>
 
 #include "vulkan/vulkan.h"
@@ -7,6 +9,9 @@
 
 namespace _GameEngine::_Render
 {
+	void GraphicsPipeline_build(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineGetOrAllocInfo* p_graphicsPipelineGetOrAllocInfo);
+	void GraphicsPipeline_free(GraphicsPipeline** p_graphicsPipeline);
+
 	VkPipelineVertexInputStateCreateInfo createVertexInputState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineInputAssemblyStateCreateInfo creteInputAssemblyState(GraphicsPipeline* p_graphcisPipeline);
 	VkViewport createViewport(GraphicsPipeline* p_graphicsPipeline);
@@ -17,23 +22,96 @@ namespace _GameEngine::_Render
 	VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineColorBlendStateCreateInfo createColorBlendState(GraphicsPipeline* p_graphicsPipeline, VkPipelineColorBlendAttachmentState* p_colorBlendAttachmentState);
 
+	void createDescriptorPool(GraphicsPipeline* p_graphicsPipeline);
+	void freeDescriptorPool(GraphicsPipeline* p_graphcisPipeline);
+
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline);
 	void clearPipelineLayout(GraphicsPipeline* p_graphcisPipeline);
 
-	void GraphicsPipeline_build(GraphicsPipeline* p_graphicsPipeline, const GraphicsPipelineDependencies& p_graphicsPipelineDependencies)
+
+	GraphicsPipeline* GraphicsPipeline_getOrAlloc(GraphicsPipelineGetOrAllocInfo* p_graphicsPipelineGetOrAllocInfo)
 	{
-		p_graphicsPipeline->GraphicsPipelineDependencies = p_graphicsPipelineDependencies;
+		GraphicsPipelineDependencies* l_graphicsPipelineDependencies = &p_graphicsPipelineGetOrAllocInfo->GraphicsPipelineDependencies;
+		if (!l_graphicsPipelineDependencies->GraphcisPipelineContainer->GraphicsPipelines.contains(p_graphicsPipelineGetOrAllocInfo->GraphicsPipelineKey))
+		{
+			GraphicsPipeline* l_instanciatedGraphicsPipeline = new GraphicsPipeline();
+			GraphicsPipeline_build(l_instanciatedGraphicsPipeline, p_graphicsPipelineGetOrAllocInfo);
+			l_graphicsPipelineDependencies->GraphcisPipelineContainer->GraphicsPipelines[p_graphicsPipelineGetOrAllocInfo->GraphicsPipelineKey] = l_instanciatedGraphicsPipeline;
+			l_instanciatedGraphicsPipeline->UsageCounter = 1;
+			return l_instanciatedGraphicsPipeline;
+		}
+		else
+		{
+			GraphicsPipeline* l_instanciatedGraphicsPipeline = l_graphicsPipelineDependencies->GraphcisPipelineContainer->GraphicsPipelines[p_graphicsPipelineGetOrAllocInfo->GraphicsPipelineKey];
+			l_instanciatedGraphicsPipeline->UsageCounter += 1;
+			return l_instanciatedGraphicsPipeline;
+		}
+	};
 
-		ShaderDependencies l_shaderDependencies;
-		l_shaderDependencies.Device = p_graphicsPipelineDependencies.Device;
+	void GraphicsPipeline_releaseOrFree(GraphicsPipeline** p_graphicsPipeline)
+	{
+		(*p_graphicsPipeline)->UsageCounter -= 1;
+		if ((*p_graphicsPipeline)->UsageCounter <= 0)
+		{
+			GraphicsPipeline_free(p_graphicsPipeline);
+		}
+	};
 
-		Shader l_vertexShader = Shader_create(l_shaderDependencies, ShaderType::VERTEX, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv");
+	void allocateShaderRelatedObjects(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineKey* p_graphicsPipelineKey)
+	{
+
+		{
+			ShaderAllocInfo l_shaderAllocInfo{};
+			ShaderDependencies l_shaderDependencies{};
+			l_shaderDependencies.ShaderContainer = p_graphicsPipeline->GraphicsPipelineDependencies.ShaderContainer;
+			l_shaderAllocInfo.ShaderDependencies = &l_shaderDependencies;
+			l_shaderAllocInfo.ShaderPath = p_graphicsPipelineKey->VertexShaderPath;
+			l_shaderAllocInfo.ShaderType = ShaderType::VERTEX;
+			p_graphicsPipeline->VertexShader = Shader_allocOrGet(&l_shaderAllocInfo);
+		}
+
+		VkShaderModule ShaderModule;
+
 		VertexInput_buildInput(&p_graphicsPipeline->ShaderInputDescription.VertexInput);
-		DescriptorSetLayout_alloc(&p_graphicsPipeline->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipelineDependencies.Device);
+		DescriptorSetLayout_alloc(&p_graphicsPipeline->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
 
-		Shader l_fragmentShader = Shader_create(l_shaderDependencies, ShaderType::FRAGMENT, "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv");
+		{
+			ShaderAllocInfo l_shaderAllocInfo{};
+			ShaderDependencies l_shaderDependencies{};
+			l_shaderDependencies.ShaderContainer = p_graphicsPipeline->GraphicsPipelineDependencies.ShaderContainer;
+			l_shaderAllocInfo.ShaderDependencies = &l_shaderDependencies;
+			l_shaderAllocInfo.ShaderPath = p_graphicsPipelineKey->FragmentShaderPath;
+			l_shaderAllocInfo.ShaderType = ShaderType::FRAGMENT;
+			p_graphicsPipeline->FragmentShader = Shader_allocOrGet(&l_shaderAllocInfo);
+		}
 
-		VkPipelineShaderStageCreateInfo l_shaderStages[] = { Shader_buildShaderStageCreate(&l_vertexShader), Shader_buildShaderStageCreate(&l_fragmentShader) };
+		createPipelineLayout(p_graphicsPipeline);
+		createDescriptorPool(p_graphicsPipeline);
+	};
+	
+	void freeShaderRelatedObject(GraphicsPipeline* p_graphicsPipeline)
+	{
+		clearPipelineLayout(p_graphicsPipeline);
+		freeDescriptorPool(p_graphicsPipeline);
+		DescriptorSetLayout_free(&p_graphicsPipeline->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+
+		Shader_releaseOrFree(&p_graphicsPipeline->FragmentShader);
+		p_graphicsPipeline->FragmentShader = nullptr;
+		Shader_releaseOrFree(&p_graphicsPipeline->VertexShader);
+		p_graphicsPipeline->VertexShader = nullptr;
+
+	}
+
+	void GraphicsPipeline_build(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineGetOrAllocInfo* p_graphicsPipelineGetOrAllocInfo)
+	{
+		p_graphicsPipeline->GraphicsPipelineDependencies = p_graphicsPipelineGetOrAllocInfo->GraphicsPipelineDependencies;
+
+		allocateShaderRelatedObjects(p_graphicsPipeline, &p_graphicsPipelineGetOrAllocInfo->GraphicsPipelineKey);
+
+		VkShaderModule l_vertexShaderModule = Shader_allocateShaderModule(p_graphicsPipeline->VertexShader, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+		VkShaderModule l_fragmentShaderModule = Shader_allocateShaderModule(p_graphicsPipeline->FragmentShader, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+
+		VkPipelineShaderStageCreateInfo l_shaderStages[] = { Shader_buildShaderStageCreate(p_graphicsPipeline->VertexShader, l_vertexShaderModule), Shader_buildShaderStageCreate(p_graphicsPipeline->FragmentShader, l_fragmentShaderModule) };
 
 		VkGraphicsPipelineCreateInfo l_pipelineCreateInfo{};
 		l_pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -57,13 +135,11 @@ namespace _GameEngine::_Render
 		l_pipelineCreateInfo.pMultisampleState = &l_multisampleState;
 		l_pipelineCreateInfo.pColorBlendState = &l_colorBlendState;
 
-		createPipelineLayout(p_graphicsPipeline);
 		l_pipelineCreateInfo.layout = p_graphicsPipeline->PipelineLayout;
-
 
 		RenderPassBuildInfo l_renderpassBuildInfo{};
 		RenderPassDependencies l_renderPassDependencies{};
-		l_renderPassDependencies.SwapChain = p_graphicsPipelineDependencies.SwapChain;
+		l_renderPassDependencies.SwapChain = p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain;
 		l_renderpassBuildInfo.RenderPassDependencies = &l_renderPassDependencies;
 		RenderPass_build(&p_graphicsPipeline->RenderPass, &l_renderpassBuildInfo);
 
@@ -78,8 +154,8 @@ namespace _GameEngine::_Render
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create graphics pipeline!"));
 		}
 
-		Shader_free(&l_vertexShader);
-		Shader_free(&l_fragmentShader);
+		Shader_freeShaderModule(l_vertexShaderModule, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+		Shader_freeShaderModule(l_fragmentShaderModule, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
 
 
 		std::vector<SwapChainImage>* l_swapChainImages = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainImages;
@@ -96,9 +172,29 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void GraphicsPipeline_free(GraphicsPipeline* p_graphicsPipeline)
+	void GraphicsPipeline_free(GraphicsPipeline** p_graphicsPipeline)
 	{
-		DescriptorSetLayout_free(&p_graphicsPipeline->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+		GraphicsPipeline* l_graphicsPipelinePtr = *p_graphicsPipeline;
+
+		for (size_t i = 0; i < l_graphicsPipelinePtr->FrameBuffers.size(); i++)
+		{
+			FrameBuffer_free(&l_graphicsPipelinePtr->FrameBuffers[i]);
+		}
+
+		vkDestroyPipeline(l_graphicsPipelinePtr->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, l_graphicsPipelinePtr->Pipeline, nullptr);
+		RenderPass_free(&l_graphicsPipelinePtr->RenderPass);
+
+		GraphicsPipelineKey l_graphicsPipelineKey{ (*p_graphicsPipeline)->VertexShader->ShaderPath, (*p_graphicsPipeline)->FragmentShader->ShaderPath };
+		l_graphicsPipelinePtr->GraphicsPipelineDependencies.GraphcisPipelineContainer->GraphicsPipelines.erase(l_graphicsPipelineKey);
+
+		freeShaderRelatedObject(l_graphicsPipelinePtr);
+
+		delete (*p_graphicsPipeline);
+		(*p_graphicsPipeline) = nullptr;
+	};
+
+	void GraphicsPipeline_reallocatePiepeline(GraphicsPipeline* p_graphicsPipeline, SwapChain* p_swapChain)
+	{
 
 		for (size_t i = 0; i < p_graphicsPipeline->FrameBuffers.size(); i++)
 		{
@@ -106,8 +202,86 @@ namespace _GameEngine::_Render
 		}
 
 		vkDestroyPipeline(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->Pipeline, nullptr);
-		clearPipelineLayout(p_graphicsPipeline);
 		RenderPass_free(&p_graphicsPipeline->RenderPass);
+
+
+
+
+	
+		p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain = p_swapChain;
+	
+
+
+
+
+
+		VkShaderModule l_vertexShaderModule = Shader_allocateShaderModule(p_graphicsPipeline->VertexShader, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+		VkShaderModule l_fragmentShaderModule = Shader_allocateShaderModule(p_graphicsPipeline->FragmentShader, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+
+		VkPipelineShaderStageCreateInfo l_shaderStages[] = { Shader_buildShaderStageCreate(p_graphicsPipeline->VertexShader, l_vertexShaderModule), Shader_buildShaderStageCreate(p_graphicsPipeline->FragmentShader, l_fragmentShaderModule) };
+
+		VkGraphicsPipelineCreateInfo l_pipelineCreateInfo{};
+		l_pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		l_pipelineCreateInfo.stageCount = 2;
+		l_pipelineCreateInfo.pStages = l_shaderStages;
+
+		auto l_vertexInputState = createVertexInputState(p_graphicsPipeline);
+		auto l_inputAssemblyState = creteInputAssemblyState(p_graphicsPipeline);
+		auto l_viewport = createViewport(p_graphicsPipeline);
+		auto l_scissor = createScissor(p_graphicsPipeline);
+		auto l_viewportState = createViewportState(p_graphicsPipeline, &l_viewport, &l_scissor);
+		auto l_rasterizationState = createRasterizationState(p_graphicsPipeline);
+		auto l_multisampleState = createMultisampleState(p_graphicsPipeline);
+		auto l_colorBlendAttachmentState = createColorBlendAttachmentState(p_graphicsPipeline);
+		auto l_colorBlendState = createColorBlendState(p_graphicsPipeline, &l_colorBlendAttachmentState);
+
+		l_pipelineCreateInfo.pVertexInputState = &l_vertexInputState;
+		l_pipelineCreateInfo.pInputAssemblyState = &l_inputAssemblyState;
+		l_pipelineCreateInfo.pViewportState = &l_viewportState;
+		l_pipelineCreateInfo.pRasterizationState = &l_rasterizationState;
+		l_pipelineCreateInfo.pMultisampleState = &l_multisampleState;
+		l_pipelineCreateInfo.pColorBlendState = &l_colorBlendState;
+
+		l_pipelineCreateInfo.layout = p_graphicsPipeline->PipelineLayout;
+
+		RenderPassBuildInfo l_renderpassBuildInfo{};
+		RenderPassDependencies l_renderPassDependencies{};
+		l_renderPassDependencies.SwapChain = p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain;
+		l_renderpassBuildInfo.RenderPassDependencies = &l_renderPassDependencies;
+		RenderPass_build(&p_graphicsPipeline->RenderPass, &l_renderpassBuildInfo);
+
+		l_pipelineCreateInfo.renderPass = p_graphicsPipeline->RenderPass.renderPass;
+		l_pipelineCreateInfo.subpass = 0;
+		l_pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
+		l_pipelineCreateInfo.basePipelineIndex = -1;
+
+		if (vkCreateGraphicsPipelines(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, VK_NULL_HANDLE, 1, &l_pipelineCreateInfo, nullptr, &p_graphicsPipeline->Pipeline)
+			!= VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create graphics pipeline!"));
+		}
+
+		Shader_freeShaderModule(l_vertexShaderModule, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+		Shader_freeShaderModule(l_fragmentShaderModule, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+
+
+		std::vector<SwapChainImage>* l_swapChainImages = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainImages;
+		p_graphicsPipeline->FrameBuffers.resize(l_swapChainImages->size());
+
+		for (size_t i = 0; i < p_graphicsPipeline->FrameBuffers.size(); i++)
+		{
+			FrameBufferDependencies l_frameBufferDependencies{};
+			l_frameBufferDependencies.RenderPass = &p_graphicsPipeline->RenderPass;
+			l_frameBufferDependencies.ImageView = &l_swapChainImages->at(i).ImageView;
+			l_frameBufferDependencies.Device = p_graphicsPipeline->GraphicsPipelineDependencies.Device;
+			l_frameBufferDependencies.SwapChainInfo = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo;
+			FrameBuffer_init(&p_graphicsPipeline->FrameBuffers[i], &l_frameBufferDependencies);
+		}
+
+
+	
+	
+	
 	};
 
 	VkPipelineVertexInputStateCreateInfo createVertexInputState(GraphicsPipeline* p_graphicsPipeline)
@@ -220,6 +394,16 @@ namespace _GameEngine::_Render
 		return l_colorBlendStateCreate;
 	};
 
+	void createDescriptorPool(GraphicsPipeline* p_graphicsPipeline)
+	{
+		DescriptorPool_buildUnique(&p_graphicsPipeline->DescriptorPool, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+	};
+
+	void freeDescriptorPool(GraphicsPipeline* p_graphcisPipeline)
+	{
+		DescriptorPool_freeUnique(&p_graphcisPipeline->DescriptorPool, p_graphcisPipeline->GraphicsPipelineDependencies.Device);
+	};
+
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline)
 	{
 		VkPipelineLayoutCreateInfo l_pipelineLayoutCreateInfo{};
@@ -240,6 +424,5 @@ namespace _GameEngine::_Render
 	{
 		vkDestroyPipelineLayout(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, p_graphicsPipeline->PipelineLayout, nullptr);
 	};
-
 
 }

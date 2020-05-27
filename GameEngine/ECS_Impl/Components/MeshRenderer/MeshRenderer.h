@@ -12,6 +12,7 @@ namespace _GameEngine::_ECS
 	struct MeshRenderer
 	{
 		_Render::Render* Render;
+
 		_Render::Mesh Mesh;
 		_Render::MeshDrawCommand MeshDrawCommand;
 		_Utils::Subject OnComponentDetached;

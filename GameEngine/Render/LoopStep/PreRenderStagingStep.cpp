@@ -44,7 +44,6 @@ namespace _GameEngine::_Render
 			for (PreRenderStaggingOperation& l_staggingOperation : p_preRenderStagging->StaggingOprtations)
 			{
 				preRenderStaggingOperationValidation(&l_staggingOperation);
-
 				VkBufferCopy l_bufferCopyInfo{};
 				l_bufferCopyInfo.dstOffset = 0;
 				l_bufferCopyInfo.srcOffset = 0;

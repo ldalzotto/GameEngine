@@ -2,7 +2,6 @@
 #include "MeshDrawSystem.h"
 
 #include <ctime>
-#include "Utils/Algorithm/Algorithm.h"
 
 #include "glm/gtx/quaternion.hpp"
 
@@ -16,14 +15,14 @@ namespace _GameEngine::_ECS
 	void onMeshDrawSystemEntityAdded(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = (MeshRenderer*)_ECS::Entity_getComponent(p_entity, MeshRendererType)->Child;
-		l_mesRenderer->Render->MeshDrawStep.MeshDrawCommands.emplace_back(&l_mesRenderer->MeshDrawCommand);
+		_Render::MeshDrawStep_addMeshDrawCommand(&l_mesRenderer->Render->MeshDrawStep, &l_mesRenderer->MeshDrawCommand);
 		
 	}
 
 	void onMeshDrawSystemEntityRemoved(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = (MeshRenderer*)_ECS::Entity_getComponent(p_entity, MeshRendererType)->Child;
-		_Utils::Vector_eraseElementEquals(l_mesRenderer->Render->MeshDrawStep.MeshDrawCommands, &l_mesRenderer->MeshDrawCommand);
+		_Render::MeshDrawStep_removeMeshDrawCommand(&l_mesRenderer->Render->MeshDrawStep, &l_mesRenderer->MeshDrawCommand);
 	}
 
 	void MeshDrawSystem_init(MeshDrawSystem* p_meshDrawSystem, ECS* p_ecs , _Render::Render* p_render)

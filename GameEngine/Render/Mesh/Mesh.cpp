@@ -38,6 +38,7 @@ namespace _GameEngine::_Render
 		l_indexBufferStagingAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 		VulkanBuffer_alloc(&l_indexStaggingBuffer, &l_indexBufferStagingAllocInfo, p_meshAllocInfo->Device);
 		VulkanBuffer_pushToGPU(&l_indexStaggingBuffer, p_meshAllocInfo->Device, p_mesh->Indices.data(), static_cast<size_t>(l_indexStaggingBuffer.BufferAllocInfo.Size));
+
 		PreRenderStaggingOperation l_indexStagingPushToGPU{};
 		l_indexStagingPushToGPU.StagingBuffer = l_indexStaggingBuffer;
 		l_indexStagingPushToGPU.TargetBuffer = &p_mesh->IndicesBuffer;

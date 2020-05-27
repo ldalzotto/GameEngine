@@ -17,10 +17,10 @@ namespace _GameEngine::_Render
 
 	void VulkanBuffer_free(VulkanBuffer* p_vertexBuffer, Device* p_device)
 	{
-		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->BufferMemory, nullptr);
-		vkDestroyBuffer(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->Buffer, nullptr);
-		p_vertexBuffer->BufferMemory = VK_NULL_HANDLE;
-		p_vertexBuffer->Buffer = VK_NULL_HANDLE;
+			vkFreeMemory(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->BufferMemory, nullptr);
+			vkDestroyBuffer(p_device->LogicalDevice.LogicalDevice, p_vertexBuffer->Buffer, nullptr);
+			p_vertexBuffer->BufferMemory = VK_NULL_HANDLE;
+			p_vertexBuffer->Buffer = VK_NULL_HANDLE;
 	};
 
 	void VulkanBuffer_pushToGPU(VulkanBuffer* p_buffer, Device* p_device, void* p_source, size_t p_size)

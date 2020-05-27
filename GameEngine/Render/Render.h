@@ -9,7 +9,8 @@
 #include "ValidationLayers.h"
 #include "Hardware/Device/Device.h"
 #include "SwapChain/SwapChain.h"
-#include "GraphcisPipeline/GraphicsPipeline.h"
+#include "GraphcisPipeline/GraphicsPipelineContainer.h"
+#include "Shader/ShaderContainer.h"
 #include "Descriptor/DescriptorPool.h"
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
@@ -35,11 +36,11 @@ namespace _GameEngine::_Render
 		RenderDebug RenderDebug;
 		Device Device;
 		SwapChain SwapChain;
-		GraphicsPipeline GraphicsPipeline;
+		GraphcisPipelineContainer GraphcisPipelineContainer;
+		ShaderContainer ShaderContainer;
 		CommandPool CommandPool;
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
-		DescriptorPool DescriptorPool;
 
 		PreRenderStagingStep PreRenderStagging;
 		MeshDrawStep MeshDrawStep;
