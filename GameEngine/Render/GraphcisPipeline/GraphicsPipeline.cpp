@@ -1,6 +1,7 @@
 #include "GraphicsPipeline.h"
 
 #include "Render/GraphcisPipeline/GraphicsPipelineContainer.h"
+#include "Render/LoopStep/CameraDrawStep.h"
 
 #include <stdexcept>
 
@@ -74,7 +75,10 @@ namespace _GameEngine::_Render
 		VkShaderModule ShaderModule;
 
 		VertexInput_buildInput(&l_shaderRelatedPipelineObjects->ShaderInputDescription.VertexInput);
-		DescriptorSetLayout_alloc(&l_shaderRelatedPipelineObjects->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipeline->GraphicsPipelineDependencies.Device);
+
+		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
+		l_descriptorSetLayoutAllocInfo.Binding = 0;
+		DescriptorSetLayout_alloc(&l_shaderRelatedPipelineObjects->ShaderInputDescription.DescriptorSetLayout, p_graphicsPipeline->GraphicsPipelineDependencies.Device, &l_descriptorSetLayoutAllocInfo);
 
 		{
 			ShaderAllocInfo l_shaderAllocInfo{};
@@ -339,10 +343,15 @@ namespace _GameEngine::_Render
 
 	void createPipelineLayout(GraphicsPipeline* p_graphicsPipeline)
 	{
+		VkDescriptorSetLayout l_descriptorSetLayouts[] = {
+				p_graphicsPipeline->GraphicsPipelineDependencies.CameraDrawStep->DescriptorSetLayout.DescriptorSetLayout, 
+				p_graphicsPipeline->ShaderRelated.ShaderInputDescription.DescriptorSetLayout.DescriptorSetLayout 
+		};
+
 		VkPipelineLayoutCreateInfo l_pipelineLayoutCreateInfo{};
 		l_pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		l_pipelineLayoutCreateInfo.setLayoutCount = 1;
-		l_pipelineLayoutCreateInfo.pSetLayouts = &p_graphicsPipeline->ShaderRelated.ShaderInputDescription.DescriptorSetLayout.DescriptorSetLayout;
+		l_pipelineLayoutCreateInfo.setLayoutCount = 2;
+		l_pipelineLayoutCreateInfo.pSetLayouts = l_descriptorSetLayouts;
 		l_pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		l_pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 

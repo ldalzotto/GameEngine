@@ -16,11 +16,9 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	struct MeshUniformObject
+	struct ModelProjection
 	{
 		glm::mat4x4 Model;
-		glm::mat4x4 View;
-		glm::mat4x4 Project;
 	};
 
 	struct MeshDrawCommand

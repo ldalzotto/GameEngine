@@ -9,7 +9,6 @@ namespace _GameEngine::_Render
 {
 	void MeshDrawStep_buildCommandBuffer(Render* p_render, MeshDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
 	{
-
 		for (auto&& l_meshDrawCommandEntry : p_meshDrawStep->MeshDrawCommands)
 		{
 			GraphicsPipeline* l_graphicsPipeline = l_meshDrawCommandEntry.first;
@@ -37,7 +36,8 @@ namespace _GameEngine::_Render
 				VkDeviceSize l_offsets[] = { 0 };
 				vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
 				vkCmdBindIndexBuffer(p_commandBuffer, l_meshDraw->Mesh->IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
-				vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_meshDraw->UsedRenderPipeline->PipelineInternals.PipelineLayout, 0, 1, &l_meshDraw->DescriptorSet, 0, nullptr);
+				vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_meshDraw->UsedRenderPipeline->PipelineInternals.PipelineLayout, 0, 1, &p_render->CameraDrawStep.DescriptorSet, 0, nullptr);
+				vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_meshDraw->UsedRenderPipeline->PipelineInternals.PipelineLayout, 1, 1, &l_meshDraw->DescriptorSet, 0, nullptr);
 				vkCmdDrawIndexed(p_commandBuffer, l_meshDraw->Mesh->Indices.size(), 1, 0, 0, 0);
 			}
 

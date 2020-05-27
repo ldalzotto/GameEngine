@@ -40,6 +40,7 @@ namespace _GameEngine::_ECS
 			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.GraphcisPipelineContainer = &p_meshRenderer->Render->GraphcisPipelineContainer;
 			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.ShaderContainer = &p_meshRenderer->Render->ShaderContainer;
 			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.SwapChain = &p_meshRenderer->Render->SwapChain;
+			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineDependencies.CameraDrawStep = &p_meshRenderer->Render->CameraDrawStep;
 			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineKey.VertexShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
 			l_graphicsPipelineGetOrAllocInfo.GraphicsPipelineKey.FragmentShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
 
@@ -48,7 +49,7 @@ namespace _GameEngine::_ECS
 
 		// Descriptor set
 		_Render::BufferAllocInfo l_bufferAllocInfo{};
-		l_bufferAllocInfo.Size = sizeof(_Render::MeshUniformObject);
+		l_bufferAllocInfo.Size = sizeof(_Render::ModelProjection);
 		l_bufferAllocInfo.BufferUsageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 		l_bufferAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 		_Render::VulkanBuffer_alloc(&p_meshRenderer->MeshDrawCommand.MeshUniformBuffer, &l_bufferAllocInfo, &p_mehsRendererInfo->Render->Device);
@@ -79,7 +80,7 @@ namespace _GameEngine::_ECS
 		vkUpdateDescriptorSets(p_meshRenderer->Render->Device.LogicalDevice.LogicalDevice, 1, &l_descriptorUniforBufferWrite, 0, nullptr);
 	};
 
-	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::MeshUniformObject& l_meshUniformObject)
+	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection& l_meshUniformObject)
 	{
 		_Render::VulkanBuffer_pushToGPU(&p_meshRenderer->MeshDrawCommand.MeshUniformBuffer, &p_meshRenderer->Render->Device, &l_meshUniformObject, p_meshRenderer->MeshDrawCommand.MeshUniformBuffer.BufferAllocInfo.Size);
 	};

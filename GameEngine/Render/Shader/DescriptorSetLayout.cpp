@@ -5,10 +5,10 @@
 
 namespace _GameEngine::_Render
 {
-	void DescriptorSetLayout_alloc(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device)
+	void DescriptorSetLayout_alloc(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device, DescriptorSetLayoutAllocInfo* p_descriptorSetLayoutAllocInfo)
 	{
 		VkDescriptorSetLayoutBinding l_descriptorSetLayoutBinding{};
-		l_descriptorSetLayoutBinding.binding = 0;
+		l_descriptorSetLayoutBinding.binding = p_descriptorSetLayoutAllocInfo->Binding;
 		l_descriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		l_descriptorSetLayoutBinding.descriptorCount = 1;
 		l_descriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;

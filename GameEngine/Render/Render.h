@@ -16,6 +16,7 @@
 #include "CommandBuffer/CommandBuffers.h"
 #include "Synchronisation/Semaphore.h"
 #include "LoopStep/PreRenderStagingStep.h"
+#include "LoopStep/CameraDrawStep.h"
 #include "LoopStep/MeshDrawStep.h"
 
 namespace _GameEngine::_Render
@@ -43,6 +44,7 @@ namespace _GameEngine::_Render
 		RenderSemaphore RenderSemaphore;
 
 		PreRenderStagingStep PreRenderStagging;
+		CameraDrawStep CameraDrawStep;
 		MeshDrawStep MeshDrawStep;
 	};
 

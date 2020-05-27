@@ -25,5 +25,5 @@ namespace _GameEngine::_ECS
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo);
-	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::MeshUniformObject& l_meshUniformObject);
+	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection& l_meshUniformObject);
 }

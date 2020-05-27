@@ -64,7 +64,7 @@ void SandboxApplication_update(float p_delta)
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::CameraType, new _ECS::Camera());
 			_ECS::Camera* l_camera = (_ECS::Camera*)l_component->Child;
-			_ECS::Camera_init(l_camera, l_component, &App->Render->SwapChain);
+			_ECS::Camera_init(l_camera, l_component, App->Render);
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
 

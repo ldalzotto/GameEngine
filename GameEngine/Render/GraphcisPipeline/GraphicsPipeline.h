@@ -15,6 +15,7 @@ namespace _GameEngine::_Render
 	struct SwapChain;
 	struct GraphcisPipelineContainer;
 	struct ShaderContainer;
+	struct CameraDrawStep;
 }
 
 namespace _GameEngine::_Render
@@ -25,6 +26,7 @@ namespace _GameEngine::_Render
 		SwapChain* SwapChain;
 		GraphcisPipelineContainer* GraphcisPipelineContainer;
 		ShaderContainer* ShaderContainer;
+		CameraDrawStep* CameraDrawStep;
 	};
 
 	struct GraphicsPipeline
@@ -36,6 +38,8 @@ namespace _GameEngine::_Render
 		struct PipelineInternalsType
 		{
 			VkPipeline Pipeline;
+
+			// TODO -> The pipeline layout is independant of the pipeline. It is in fact more related to the sahder than the pipeline.
 			VkPipelineLayout PipelineLayout;
 			RenderPass RenderPass;
 			/**
@@ -44,6 +48,7 @@ namespace _GameEngine::_Render
 			std::vector<FrameBuffer> FrameBuffers;
 		};
 
+		// TODO -> This object must me independendant of the graphics pipeline as it can be reused by other pipelines.
 		struct ShaderRelatedType
 		{
 			Shader* VertexShader;
