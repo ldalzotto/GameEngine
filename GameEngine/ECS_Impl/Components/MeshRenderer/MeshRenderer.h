@@ -14,7 +14,7 @@ namespace _GameEngine::_ECS
 		_Render::Render* Render;
 
 		_Render::Mesh Mesh;
-		_Render::MeshDrawCommand MeshDrawCommand;
+		_Render::DefaultMaterialDrawCommand DefaultMaterialDrawCommand;
 		_Utils::Subject OnComponentDetached;
 	};
 

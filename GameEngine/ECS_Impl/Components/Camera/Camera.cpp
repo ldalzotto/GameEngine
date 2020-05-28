@@ -13,7 +13,7 @@ namespace _GameEngine::_ECS
 	{
 		Camera* l_camera = (Camera*)p_camera;
 		Camera_buildProjectionMatrix(l_camera);
-		_Render::CameraDrawStep_pushCameraPorjectionValueToGPU(l_camera->CameraDrawStep, l_camera->SwapChain->SwapChainDependencies.Device);
+		_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(l_camera->CameraBufferSetupStep, l_camera->SwapChain->SwapChainDependencies.Device);
 	};
 
 	void camera_onDetached(void* p_camera, void* p_notUsed)
@@ -25,7 +25,7 @@ namespace _GameEngine::_ECS
 	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::Render* p_render)
 	{
 		p_camera->SwapChain = &p_render->SwapChain;
-		p_camera->CameraDrawStep = &p_render->CameraDrawStep;
+		p_camera->CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
 		p_camera->OnSwapChainBuilded.Closure = p_camera;
 		p_camera->OnSwapChainBuilded.Callback = camera_onSwapChainBuild;
 		_Utils::Observer_register(&p_camera->SwapChain->OnSwapChainBuilded, &p_camera->OnSwapChainBuilded);
@@ -34,14 +34,14 @@ namespace _GameEngine::_ECS
 		p_camera->OnComponentDetached.Callback = camera_onDetached;
 		_Utils::Observer_register(&p_associatedComponent->ComponentFreeEvent, &p_camera->OnComponentDetached);
 
-		p_camera->CameraDrawStep->CameraProjection.View = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		p_camera->CameraBufferSetupStep->CameraProjection.View = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 		Camera_buildProjectionMatrix(p_camera);
-		_Render::CameraDrawStep_pushCameraPorjectionValueToGPU(p_camera->CameraDrawStep, p_camera->SwapChain->SwapChainDependencies.Device);
+		_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(p_camera->CameraBufferSetupStep, p_camera->SwapChain->SwapChainDependencies.Device);
 	};
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
-		p_camera->CameraDrawStep->CameraProjection.Projection = glm::perspective(glm::radians(45.0f), p_camera->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
+		p_camera->CameraBufferSetupStep->CameraProjection.Projection = glm::perspective(glm::radians(45.0f), p_camera->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
 	};
 }

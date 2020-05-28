@@ -9,15 +9,14 @@
 #include "ValidationLayers.h"
 #include "Hardware/Device/Device.h"
 #include "SwapChain/SwapChain.h"
-#include "GraphcisPipeline/GraphicsPipelineContainer.h"
-#include "Shader/ShaderContainer.h"
 #include "Descriptor/DescriptorPool.h"
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
 #include "Synchronisation/Semaphore.h"
 #include "LoopStep/PreRenderStagingStep.h"
-#include "LoopStep/CameraDrawStep.h"
-#include "LoopStep/MeshDrawStep.h"
+#include "LoopStep/CameraBufferSetupStep.h"
+#include "LoopStep/DefaultMaterialDrawStep.h"
+#include "Materials/DefaultMaterial.h"
 
 namespace _GameEngine::_Render
 {
@@ -26,6 +25,11 @@ namespace _GameEngine::_Render
 		VkDebugUtilsMessengerEXT DebugMessenger;
 		PFN_vkCreateDebugUtilsMessengerEXT PfnCreateDebugUtilsMessengerEXT;
 		PFN_vkDestroyDebugUtilsMessengerEXT PfnDestroyDebugUtilsMessengerEXT;
+	};
+
+	struct RenderMaterials
+	{
+		DefaultMaterial DefaultMaterial;
 	};
 
 	struct Render
@@ -37,15 +41,14 @@ namespace _GameEngine::_Render
 		RenderDebug RenderDebug;
 		Device Device;
 		SwapChain SwapChain;
-		GraphcisPipelineContainer GraphcisPipelineContainer;
-		ShaderContainer ShaderContainer;
 		CommandPool CommandPool;
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
 
+		RenderMaterials RenderMaterials;
 		PreRenderStagingStep PreRenderStagging;
-		CameraDrawStep CameraDrawStep;
-		MeshDrawStep MeshDrawStep;
+		CameraBufferSetupStep CameraBufferSetupStep;
+		DefaultMaterialDrawStep DefaultMaterialDrawStep;
 	};
 
 	Render* Render_alloc();

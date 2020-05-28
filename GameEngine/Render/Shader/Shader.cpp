@@ -3,41 +3,12 @@
 #include <stdexcept>
 
 #include "Render/Hardware/Device/Device.h"
-#include "Render/Shader/ShaderContainer.h"
 
 #include "Log/Log.h"
 #include "Utils/File/File.h"
 
 namespace _GameEngine::_Render
 {
-	Shader* Shader_allocOrGet(ShaderAllocInfo* p_shaderInitInfo)
-	{
-		if (!p_shaderInitInfo->ShaderDependencies->ShaderContainer->Shaders.contains(p_shaderInitInfo->ShaderPath))
-		{
-			Shader* l_shader = new Shader();
-			l_shader->ShaderDependencies = *p_shaderInitInfo->ShaderDependencies;
-			l_shader->ShaderType = p_shaderInitInfo->ShaderType;
-			l_shader->ShaderPath = p_shaderInitInfo->ShaderPath;
-			l_shader->UsageCounter = 1;
-			l_shader->ShaderDependencies.ShaderContainer->Shaders[l_shader->ShaderPath] = l_shader;
-			return l_shader;
-		}
-		else
-		{
-			return p_shaderInitInfo->ShaderDependencies->ShaderContainer->Shaders[p_shaderInitInfo->ShaderPath];
-		}
-	};
-
-	void Shader_releaseOrFree(Shader** p_shader)
-	{
-		(*p_shader)->UsageCounter -= 1;
-		if ((*p_shader)->UsageCounter <= 0)
-		{
-			(*p_shader)->ShaderDependencies.ShaderContainer->Shaders.erase((*p_shader)->ShaderPath);
-			delete (*p_shader);
-			(*p_shader) = nullptr;
-		}
-	};
 
 	VkPipelineShaderStageCreateInfo Shader_buildShaderStageCreate(Shader* p_shader, VkShaderModule p_shaderModule)
 	{

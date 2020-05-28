@@ -8,7 +8,7 @@
 namespace _GameEngine::_Render
 {
 	struct Render;
-	struct CameraDrawStep;
+	struct CameraBufferSetupStep;
 	struct SwapChain;
 }
 
@@ -18,7 +18,7 @@ namespace _GameEngine::_ECS
 
 	struct Camera
 	{
-		_Render::CameraDrawStep* CameraDrawStep;
+		_Render::CameraBufferSetupStep* CameraBufferSetupStep;
 		_Render::SwapChain* SwapChain;
 		_Utils::Subject OnSwapChainBuilded;
 		_Utils::Subject OnComponentDetached;

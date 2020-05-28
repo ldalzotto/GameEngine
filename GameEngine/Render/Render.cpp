@@ -36,6 +36,13 @@ namespace _GameEngine::_Render
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
+	void allocMaterials(Render* p_render);
+	void freeMaterials(Render* p_render);
+
+	void allocDefaultMaterialRenderStep(Render* p_render);
+	void freeDefaultMaterialRenderStep(Render* p_render);
+
+
 	Render* Render_alloc()
 	{
 		Render* l_render = new Render();
@@ -51,7 +58,9 @@ namespace _GameEngine::_Render
 		initSwapChain(l_render);
 		initRenderSemaphore(l_render);
 		initPreRenderStaging(l_render);
-		CameraDrawStep_init(&l_render->CameraDrawStep, &l_render->Device);
+		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
+		allocMaterials(l_render);
+		allocDefaultMaterialRenderStep(l_render);
 		return l_render;
 	};
 
@@ -61,7 +70,9 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
-		CameraDrawStep_free(&(*p_render)->CameraDrawStep, &(*p_render)->Device);
+		freeDefaultMaterialRenderStep(*p_render);
+		freeMaterials(*p_render);
+		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
 		freePreRenderStaging(*p_render);
 		freeRenderSemaphore(*p_render);
 		freeSwapChain(*p_render);
@@ -305,10 +316,7 @@ namespace _GameEngine::_Render
 
 	void reAllocateGraphicsPipelineContainer(Render* p_render)
 	{
-		for (auto&& l_graphicsPipelineEntry : p_render->GraphcisPipelineContainer.GraphicsPipelines)
-		{
-			GraphicsPipeline_reallocatePipeline(l_graphicsPipelineEntry.second, &p_render->SwapChain);
-		}
+		DefaultMaterial_reAllocGraphicsPipeline(&p_render->RenderMaterials.DefaultMaterial, p_render);
 	};
 
 	/////// END GRAPHICS PIPELINE
@@ -365,6 +373,34 @@ namespace _GameEngine::_Render
 
 	/////// END PRE RENDER STAGGING
 
+	/////// MATERIALS
+
+	void allocMaterials(Render* p_render)
+	{
+		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, p_render);
+	};
+	
+	void freeMaterials(Render* p_render)
+	{
+		DefaultMaterial_free(&p_render->RenderMaterials.DefaultMaterial, p_render);
+	};
+
+	/////// END MATERIALS
+
+	/////// MESH RENDER STEP
+
+	void allocDefaultMaterialRenderStep(Render* p_render)
+	{
+		DefaultMaterialDrawStep_init(&p_render->DefaultMaterialDrawStep, p_render);
+	};
+	
+	void freeDefaultMaterialRenderStep(Render* p_render)
+	{
+		DefaultMaterialDrawStep_clear(&p_render->DefaultMaterialDrawStep, p_render);
+	};
+
+	/////// END MESH RENDER STEP
+
 	void preRenderStagginStep(Render* p_render)
 	{
 		if (PreRenderStagingStep_buildCommandBuffer(&p_render->PreRenderStagging, &p_render->Device) & PreRenderStaggingCommandBufferBuildStatusBitFlag::CREATED)
@@ -420,7 +456,9 @@ namespace _GameEngine::_Render
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
 		}
 
-		MeshDrawStep_buildCommandBuffer(p_render, &p_render->MeshDrawStep, l_commandBuffer, l_imageIndex);
+		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
+
+		DefaultMaterialDrawStep_buildCommandBuffer(p_render, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
 	
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
 		{
