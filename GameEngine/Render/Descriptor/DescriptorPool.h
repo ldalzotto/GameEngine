@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "Render/Hardware/Device/Device.h"
 #include "vulkan/vulkan.h"
 
@@ -12,9 +14,7 @@ namespace _GameEngine::_Render
 
 	struct DescriptorPoolBuildInfo
 	{
-		uint32_t MaxDescriptorCount;
-
-		// The set number is the number specified in the shader example : (layout(set = 1, binding = 0) uniform ModelProjectionBufferObject)
+		std::vector<VkDescriptorPoolSize>* DescriptorPoolSizes;
 		uint32_t MaxSet;
 		VkDescriptorPoolCreateFlags DescriptionPoolCreateFlags;
 	};

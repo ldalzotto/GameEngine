@@ -2,15 +2,24 @@
 
 namespace _GameEngine::_Render
 {
+	const uint32_t CAMERA_BUFFER_LAYOUT_BINDING = 0;
+
 	void CameraBufferSetupStep_init(CameraBufferSetupStep* p_cameraDrawStep, Device* p_device)
 	{
+		std::vector<VkDescriptorPoolSize> l_descriptorPoolSize(1);
+		memset(l_descriptorPoolSize.data(), 0, sizeof(VkDescriptorPoolSize) * l_descriptorPoolSize.size());
+
+		VkDescriptorPoolSize* l_cameraBufferDescriptorPooSize = &l_descriptorPoolSize.at(0);
+		l_cameraBufferDescriptorPooSize->type = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		l_cameraBufferDescriptorPooSize->descriptorCount = 1;
+
 		DescriptorPoolBuildInfo l_descriptorPoolBuildInfo{};
-		l_descriptorPoolBuildInfo.MaxDescriptorCount = 1;
+		l_descriptorPoolBuildInfo.DescriptorPoolSizes = &l_descriptorPoolSize;
 		l_descriptorPoolBuildInfo.MaxSet = 1;
 		DescriptorPool_buildUnique(&p_cameraDrawStep->DescriptorPool, p_device, &l_descriptorPoolBuildInfo);
 
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
-		l_descriptorSetLayoutAllocInfo.Binding = 0;
+		l_descriptorSetLayoutAllocInfo.Binding = CAMERA_BUFFER_LAYOUT_BINDING;
 		DescriptorSetLayout_alloc(&p_cameraDrawStep->DescriptorSetLayout, p_device, &l_descriptorSetLayoutAllocInfo);
 
 		VkPipelineLayoutCreateInfo l_pipelineLayoutCreateInfo{};
@@ -42,7 +51,7 @@ namespace _GameEngine::_Render
 		VkWriteDescriptorSet l_descriptorUniforBufferWrite{};
 		l_descriptorUniforBufferWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		l_descriptorUniforBufferWrite.dstSet = p_cameraDrawStep->ModelProjectionDescriptorSet;
-		l_descriptorUniforBufferWrite.dstBinding = 0;
+		l_descriptorUniforBufferWrite.dstBinding = CAMERA_BUFFER_LAYOUT_BINDING;
 		l_descriptorUniforBufferWrite.dstArrayElement = 0;
 		l_descriptorUniforBufferWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		l_descriptorUniforBufferWrite.descriptorCount = 1;
