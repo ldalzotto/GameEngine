@@ -316,7 +316,11 @@ namespace _GameEngine::_Render
 
 	void reAllocateGraphicsPipelineContainer(Render* p_render)
 	{
-		DefaultMaterial_reAllocGraphicsPipeline(&p_render->RenderMaterials.DefaultMaterial, p_render);
+		DefaultMaterialAllocInfo l_defaultMaterialAllocInfo{};
+		l_defaultMaterialAllocInfo.Device = &p_render->Device;
+		l_defaultMaterialAllocInfo.SwapChain = &p_render->SwapChain;
+		l_defaultMaterialAllocInfo.CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
+		DefaultMaterial_reAllocGraphicsPipeline(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
 	};
 
 	/////// END GRAPHICS PIPELINE
@@ -377,12 +381,16 @@ namespace _GameEngine::_Render
 
 	void allocMaterials(Render* p_render)
 	{
-		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, p_render);
+		DefaultMaterialAllocInfo l_defaultMaterialAllocInfo{};
+		l_defaultMaterialAllocInfo.Device = &p_render->Device;
+		l_defaultMaterialAllocInfo.SwapChain = &p_render->SwapChain;
+		l_defaultMaterialAllocInfo.CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
+		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
 	};
 	
 	void freeMaterials(Render* p_render)
 	{
-		DefaultMaterial_free(&p_render->RenderMaterials.DefaultMaterial, p_render);
+		DefaultMaterial_free(&p_render->RenderMaterials.DefaultMaterial, &p_render->Device);
 	};
 
 	/////// END MATERIALS
@@ -391,12 +399,12 @@ namespace _GameEngine::_Render
 
 	void allocDefaultMaterialRenderStep(Render* p_render)
 	{
-		DefaultMaterialDrawStep_init(&p_render->DefaultMaterialDrawStep, p_render);
+		DefaultMaterialDrawStep_init(&p_render->DefaultMaterialDrawStep, &p_render->RenderMaterials.DefaultMaterial);
 	};
 	
 	void freeDefaultMaterialRenderStep(Render* p_render)
 	{
-		DefaultMaterialDrawStep_clear(&p_render->DefaultMaterialDrawStep, p_render);
+		DefaultMaterialDrawStep_clear(&p_render->DefaultMaterialDrawStep);
 	};
 
 	/////// END MESH RENDER STEP
@@ -458,7 +466,7 @@ namespace _GameEngine::_Render
 
 		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
 
-		DefaultMaterialDrawStep_buildCommandBuffer(p_render, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
+		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->SwapChain, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
 	
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
 		{

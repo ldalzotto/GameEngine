@@ -9,8 +9,9 @@
 
 namespace _GameEngine::_Render
 {
-	struct Render;
+	struct SwapChain;
 	struct Mesh;
+	struct DefaultMaterial;
 }
 
 namespace _GameEngine::_Render
@@ -27,8 +28,8 @@ namespace _GameEngine::_Render
 		std::vector<DefaultMaterialDrawCommand*> MeshDrawCommands;
 	};
 
-	void DefaultMaterialDrawStep_init(DefaultMaterialDrawStep* p_meshDrawStep, Render* p_render);
-	void DefaultMaterialDrawStep_clear(DefaultMaterialDrawStep* p_meshDrawStep, Render* p_render);
+	void DefaultMaterialDrawStep_init(DefaultMaterialDrawStep* p_meshDrawStep, DefaultMaterial* p_defaultMaterial);
+	void DefaultMaterialDrawStep_clear(DefaultMaterialDrawStep* p_meshDrawStep);
 
-	void DefaultMaterialDrawStep_buildCommandBuffer(Render* p_render, DefaultMaterialDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, size_t l_imageIndex);
+	void DefaultMaterialDrawStep_buildCommandBuffer(SwapChain* p_swapChain, DefaultMaterialDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, size_t l_imageIndex);
 }

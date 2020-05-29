@@ -5,13 +5,12 @@
 
 #include <unordered_map>
 
+#include "ComponentType.h"
 #include "Utils/Observer/Observer.h"
 
 namespace _GameEngine::_ECS
 {
 	struct Entity;
-
-	typedef std::string ComponentType;
 
 	struct Component
 	{

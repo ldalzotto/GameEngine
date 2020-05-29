@@ -8,16 +8,27 @@
 
 namespace _GameEngine::_Render
 {
-	struct Render;
+	struct Device;
+	struct PreRenderStagingStep;
+	struct DefaultMaterial;
+	struct DefaultMaterialDrawStep;
 }
 
 namespace _GameEngine::_ECS
 {
 	extern ComponentType MeshRendererType;
 
+	struct MeshRendererDependencies
+	{
+		_Render::Device* Device;
+		_Render::PreRenderStagingStep* PreRenderStaggingStep;
+		_Render::DefaultMaterial* DefaultMaterial;
+		_Render::DefaultMaterialDrawStep* DefaultMaterialDrawStep;
+	};
+
 	struct MeshRenderer
 	{
-		_Render::Render* Render;
+		MeshRendererDependencies MeshRendererDependencies;
 
 		_Render::Mesh Mesh;
 		_Render::DefaultMaterialDrawCommand DefaultMaterialDrawCommand;
@@ -27,7 +38,7 @@ namespace _GameEngine::_ECS
 	struct MeshRendererInitInfo
 	{
 		Component* AssociatedComponent;
-		_Render::Render* Render;
+		MeshRendererDependencies MeshRendererDependencies;
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo);

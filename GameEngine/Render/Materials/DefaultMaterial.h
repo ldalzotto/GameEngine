@@ -12,7 +12,9 @@
 
 namespace _GameEngine::_Render
 {
-	struct Render;
+	struct Device;
+	struct SwapChain;
+	struct CameraBufferSetupStep;
 }
 
 namespace _GameEngine::_Render
@@ -35,9 +37,16 @@ namespace _GameEngine::_Render
 		DescriptorPool DescriptorPool;
 	};
 
-	void DefaultMaterial_alloc(DefaultMaterial* p_defaultMaterial, Render* p_render);
-	void DefaultMaterial_free(DefaultMaterial* p_defaultMaterial, Render* p_render);
-	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterial* p_defaultMaterial, Render* p_render);
+	struct DefaultMaterialAllocInfo
+	{
+		Device* Device;
+		SwapChain* SwapChain;
+		CameraBufferSetupStep* CameraBufferSetupStep;
+	};
+	
+	void DefaultMaterial_alloc(DefaultMaterial* p_defaultMaterial, DefaultMaterialAllocInfo* p_defaultMaterialAllocInfo);
+	void DefaultMaterial_free(DefaultMaterial* p_defaultMaterial, Device* p_device);
+	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterial* p_defaultMaterial, DefaultMaterialAllocInfo* p_defaultMaterialAllocInfo);
 
 	struct DefaultMaterialInstance
 	{
@@ -47,8 +56,8 @@ namespace _GameEngine::_Render
 		VkDescriptorSet ModelProjectionDescriptorSet;
 	};
 
-	void DefaultMaterialInstance_alloc(DefaultMaterialInstance* p_defaultMaterialInstance, DefaultMaterial* p_defaultMaterial, Render* p_render);
-	void DefaultMaterialInstance_free(DefaultMaterialInstance* p_defaultMaterialInstance, Render* p_render);
+	void DefaultMaterialInstance_alloc(DefaultMaterialInstance* p_defaultMaterialInstance, DefaultMaterial* p_defaultMaterial, Device* p_device);
+	void DefaultMaterialInstance_free(DefaultMaterialInstance* p_defaultMaterialInstance, Device* p_device);
 
-	void DefaultMaterialInsance_pushModelProjectionToGPU(DefaultMaterialInstance* p_defaultMaterialInstance, ModelProjection* p_modelProjection, Render* p_render);
+	void DefaultMaterialInsance_pushModelProjectionToGPU(DefaultMaterialInstance* p_defaultMaterialInstance, ModelProjection* p_modelProjection, Device* p_device);
 };

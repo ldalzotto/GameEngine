@@ -1,14 +1,14 @@
 #include "DefaultMaterialDrawStep.h"
 
-#include "Render/Render.h"
 #include "Render/Mesh/Mesh.h"
+#include "Render/SwapChain/SwapChain.h"
 
 #include "Utils/Algorithm/Algorithm.h"
 
 
 namespace _GameEngine::_Render
 {
-	void DefaultMaterialDrawStep_buildCommandBuffer(Render* p_render, DefaultMaterialDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
+	void DefaultMaterialDrawStep_buildCommandBuffer(SwapChain* p_swapChain, DefaultMaterialDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
 	{
 		GraphicsPipeline* l_graphicsPipeline = &p_meshDrawStep->DefaultMaterial->GraphicsPipeline;
 		std::vector<FrameBuffer>* l_frameBuffers = &l_graphicsPipeline->PipelineInternals.FrameBuffers;
@@ -20,7 +20,7 @@ namespace _GameEngine::_Render
 		l_renderPassBeginInfo.renderPass = RenderPass->renderPass;
 		l_renderPassBeginInfo.framebuffer = l_frameBuffers->at(l_imageIndex).FrameBuffer;
 		l_renderPassBeginInfo.renderArea.offset = { 0,0 };
-		l_renderPassBeginInfo.renderArea.extent = p_render->SwapChain.SwapChainInfo.SwapExtend;
+		l_renderPassBeginInfo.renderArea.extent = p_swapChain->SwapChainInfo.SwapExtend;
 
 		VkClearValue l_clearValue = { 0.0f,0.0f,0.0f,1.0f };
 		l_renderPassBeginInfo.clearValueCount = 1;
@@ -45,14 +45,13 @@ namespace _GameEngine::_Render
 		vkCmdEndRenderPass(p_commandBuffer);
 	}
 
-	void DefaultMaterialDrawStep_init(DefaultMaterialDrawStep* p_meshDrawStep, Render* p_render)
+	void DefaultMaterialDrawStep_init(DefaultMaterialDrawStep* p_meshDrawStep, DefaultMaterial* p_defaultMaterial)
 	{
-		p_meshDrawStep->DefaultMaterial = &p_render->RenderMaterials.DefaultMaterial;
+		p_meshDrawStep->DefaultMaterial = p_defaultMaterial;
 	};
 
-	void DefaultMaterialDrawStep_clear(DefaultMaterialDrawStep* p_meshDrawStep, Render* p_render)
+	void DefaultMaterialDrawStep_clear(DefaultMaterialDrawStep* p_meshDrawStep)
 	{
-		//DefaultMaterial_free(p_meshDrawStep->DefaultMaterial, p_render);
 		p_meshDrawStep->MeshDrawCommands.clear();
 	};
 }
