@@ -1,16 +1,15 @@
 #pragma once
 
-
 #include <vector>
-
-#include "ImageViews.h"
 #include "Render/CommandBuffer/CommandBuffers.h"
+#include "ImageViews.h"
 
-#include "Render/CommandBuffer/CommandPool.h"
-#include "Render/SwapChain/SwapChainSharedStructures.h"
-
-#include "Render/Hardware/Device/Device.h"
-
+namespace _GameEngine::_Render
+{
+	struct Device;
+	struct CommandPool;
+	struct SwapChainInfo;
+}
 
 namespace _GameEngine::_Render
 {

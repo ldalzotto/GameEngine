@@ -1,13 +1,13 @@
 #include "DefaultMaterialDrawStep.h"
 
 #include "Render/Render.h"
+#include "Render/Mesh/Mesh.h"
 
 #include "Utils/Algorithm/Algorithm.h"
 
 
 namespace _GameEngine::_Render
 {
-
 	void DefaultMaterialDrawStep_buildCommandBuffer(Render* p_render, DefaultMaterialDrawStep* p_meshDrawStep, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
 	{
 		GraphicsPipeline* l_graphicsPipeline = &p_meshDrawStep->DefaultMaterial->GraphicsPipeline;

@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+#include "Render/LoopStep/PreRenderStagingStep.h"
+
 namespace _GameEngine::_Render
 {
 	void Mesh_alloc(Mesh* p_mesh, MeshAllocInfo* p_meshAllocInfo)

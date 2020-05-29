@@ -4,9 +4,14 @@
 #include <vector>
 
 #include "vulkan/vulkan.h"
-#include "Render/SwapChain/SwapChainSharedStructures.h"
-#include "Render/GraphcisPipeline/RenderPass.h"
-#include "Render/SwapChain/Image/ImageViews.h"
+
+namespace _GameEngine::_Render
+{
+	struct RenderPass;
+	struct SwapChainInfo;
+	struct ImageView;
+	struct Device;
+};
 
 namespace _GameEngine::_Render
 {

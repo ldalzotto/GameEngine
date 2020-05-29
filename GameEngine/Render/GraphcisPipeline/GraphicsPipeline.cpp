@@ -2,8 +2,10 @@
 
 #include <stdexcept>
 
+#include "Render/SwapChain/SwapChain.h"
 #include "Render/Shader/Shader.h"
 #include "Render/Shader/VertexInput.h"
+#include "Render/Hardware/Device/Device.h"
 
 #include "vulkan/vulkan.h"
 #include "Log/Log.h"

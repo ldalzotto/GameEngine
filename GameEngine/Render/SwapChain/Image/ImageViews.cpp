@@ -3,6 +3,9 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
+#include "Render/Hardware/Device/Device.h"
+#include "Render/SwapChain/SwapChainSharedStructures.h"
+
 namespace _GameEngine::_Render
 {
 

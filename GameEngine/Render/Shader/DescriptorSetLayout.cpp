@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
+#include "Render/Hardware/Device/Device.h"
+
 namespace _GameEngine::_Render
 {
 	void DescriptorSetLayout_alloc(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device, DescriptorSetLayoutAllocInfo* p_descriptorSetLayoutAllocInfo)

@@ -2,6 +2,7 @@
 
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
+#include "ECS/ECS.h"
 
 namespace _GameEngine::_ECS
 {

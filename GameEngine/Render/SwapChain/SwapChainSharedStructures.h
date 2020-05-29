@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "vulkan/vulkan.h"
 
 namespace _GameEngine::_Render

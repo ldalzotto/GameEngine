@@ -4,8 +4,11 @@
 #include <vector>
 
 #include "vulkan/vulkan.h"
-#include "Render/Hardware/Device/Device.h"
 
+namespace _GameEngine::_Render
+{
+	struct	Device;
+}
 
 namespace _GameEngine::_Render
 {

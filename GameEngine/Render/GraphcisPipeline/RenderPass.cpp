@@ -1,5 +1,8 @@
 #include "RenderPass.h"
 
+#include "Render/SwapChain/SwapChain.h"
+#include "Render/Hardware/Device/Device.h"
+
 #include <stdexcept>
 
 #include "Log/Log.h"

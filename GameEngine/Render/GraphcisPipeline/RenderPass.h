@@ -1,7 +1,11 @@
 #pragma once
 
-#include "Render/SwapChain/SwapChain.h"
 #include "vulkan/vulkan.h"
+
+namespace _GameEngine::_Render
+{
+	struct SwapChain;
+}
 
 namespace _GameEngine::_Render
 {

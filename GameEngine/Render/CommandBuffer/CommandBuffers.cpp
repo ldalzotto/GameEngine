@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
+#include "Render/Hardware/Device/Device.h"
+
 namespace _GameEngine::_Render
 {
 	void CommandBuffer_init(CommandBuffer* p_commandBuffer, CommandBuffersDependencies* p_commandBuffersDependencies)

@@ -3,6 +3,11 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
+#include "Render/Hardware/Device/Device.h"
+#include "Render/SwapChain/SwapChainSharedStructures.h"
+#include "Render/GraphcisPipeline/RenderPass.h"
+#include "Render/SwapChain/Image/ImageViews.h"
+
 namespace _GameEngine::_Render
 {
 	void FrameBuffer_init(FrameBuffer* p_frameBuffer, FrameBufferDependencies* p_frameBufferDependencies)

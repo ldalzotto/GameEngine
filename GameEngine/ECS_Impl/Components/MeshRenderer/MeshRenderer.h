@@ -1,9 +1,15 @@
 #pragma once
 
-#include "Render/Render.h"
-#include "Render/Mesh/Mesh.h"
 #include "ECS/Component.h"
 #include "glm/glm.hpp"
+
+#include "Render/LoopStep/DefaultMaterialDrawStep.h"
+#include "Render/Mesh/Mesh.h"
+
+namespace _GameEngine::_Render
+{
+	struct Render;
+}
 
 namespace _GameEngine::_ECS
 {

@@ -1,5 +1,7 @@
 #include "MeshRenderer.h"
 
+#include "Render/Render.h"
+
 namespace _GameEngine::_ECS
 {
 	ComponentType MeshRendererType = "MeshRenderer";

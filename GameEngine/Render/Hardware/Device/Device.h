@@ -16,7 +16,7 @@ namespace _GameEngine::_Render
 		@brief The Physical GPU that has been selected for rendering.
 	*/
 	struct PhysicalDevice
-	{
+	{ 
 		VkPhysicalDevice PhysicalDevice;
 		QueueFamilies QueueFamilies;
 	};

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "Render/Render.h"
 #include "Utils/Algorithm/Algorithm.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"

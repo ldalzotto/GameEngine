@@ -5,17 +5,16 @@
 #include "glm/glm.hpp"
 
 #include "vulkan/vulkan.h"
-#include "Render/Mesh/Mesh.h"
 #include "Render/Materials/DefaultMaterial.h"
 
 namespace _GameEngine::_Render
 {
 	struct Render;
+	struct Mesh;
 }
 
 namespace _GameEngine::_Render
 {
-
 	struct DefaultMaterialDrawCommand
 	{
 		Mesh* Mesh;

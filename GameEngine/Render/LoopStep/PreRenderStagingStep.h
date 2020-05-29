@@ -6,10 +6,13 @@
 #include "Render/CommandBuffer/CommandBuffers.h"
 #include "Render/CommandBuffer/CommandPool.h"
 
-#include "Render/Hardware/Device/Device.h"
-
 namespace _GameEngine::_Render
 {
+	struct Device;
+}
+
+namespace _GameEngine::_Render
+{ 
 	struct PreRenderStaggingOperation
 	{
 		VulkanBuffer StagingBuffer;

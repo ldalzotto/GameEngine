@@ -1,5 +1,7 @@
 #include "CameraBufferSetupStep.h"
 
+#include "Render/Hardware/Device/Device.h"
+
 namespace _GameEngine::_Render
 {
 	const uint32_t CAMERA_BUFFER_LAYOUT_BINDING = 0;

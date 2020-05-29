@@ -5,9 +5,12 @@
 #include "glm/glm.hpp"
 
 #include "Render/Memory/VulkanBuffer.h"
-#include "Render/Hardware/Device/Device.h"
-#include "Render/LoopStep/PreRenderStagingStep.h"
 
+namespace _GameEngine::_Render
+{
+	struct Device;
+	struct PreRenderStagingStep;
+}
 
 namespace _GameEngine::_Render
 {

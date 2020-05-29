@@ -2,12 +2,13 @@
 
 
 #include <vector>
-
 #include "vulkan/vulkan.h"
 
-#include "Render/SwapChain/SwapChainSharedStructures.h"
-#include "Render/Hardware/Device/Device.h"
-
+namespace _GameEngine::_Render
+{
+	struct Device;
+	struct SwapChainInfo;
+}
 
 namespace _GameEngine::_Render
 {

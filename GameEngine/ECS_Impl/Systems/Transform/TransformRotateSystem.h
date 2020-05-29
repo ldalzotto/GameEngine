@@ -1,6 +1,10 @@
 
+#include "ECS/Entity.h"
 
-#include "ECS/ECS.h"
+namespace _GameEngine::_ECS
+{
+	struct ECS;
+}
 
 namespace _GameEngine::_ECS
 {

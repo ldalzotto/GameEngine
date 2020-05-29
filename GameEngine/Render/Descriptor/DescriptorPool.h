@@ -2,8 +2,12 @@
 
 #include <vector>
 
-#include "Render/Hardware/Device/Device.h"
 #include "vulkan/vulkan.h"
+
+namespace _GameEngine::_Render
+{
+	struct Device;
+}
 
 namespace _GameEngine::_Render
 {

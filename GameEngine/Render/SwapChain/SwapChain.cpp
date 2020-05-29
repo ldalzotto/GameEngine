@@ -5,9 +5,12 @@
 
 #include "Log/Log.h"
 
+#include "Render/Hardware/Device/Device.h"
+#include "Render/Hardware/Window/Window.h"
+#include "Render/Hardware/Window/Surface.h"
+
 namespace _GameEngine::_Render
 {
-
 	void swapChainInavlidate(SwapChain* p_swapChain);
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes);

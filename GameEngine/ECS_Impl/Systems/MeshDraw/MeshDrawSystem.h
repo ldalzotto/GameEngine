@@ -1,7 +1,11 @@
 #pragma once
 
 #include "ECS/ECS.h"
-#include "Render/Render.h"
+
+namespace _GameEngine::_Render
+{
+	struct Render;
+}
 
 namespace _GameEngine::_ECS
 {

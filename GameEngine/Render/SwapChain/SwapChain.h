@@ -1,23 +1,22 @@
 #pragma once
 
-
 #include <vector>
 #include <functional>
 
-#include "Render/Hardware/Device/Device.h"
-#include "Render/Hardware/Window/Window.h"
-#include "Render/Hardware/Window/Surface.h"
-
-
-#include "Render/CommandBuffer/CommandPool.h"
-
 #include "Render/SwapChain/SwapChainSharedStructures.h"
 #include "Render/SwapChain/Image/SwapChainImage.h"
-
 #include "Utils/Observer/Observer.h"
 
-
 #include "vulkan/vulkan.h"
+
+namespace _GameEngine::_Render
+{
+	struct Device;
+	struct Window;
+	struct Surface;
+
+	struct CommandPool;
+}
 
 namespace _GameEngine::_Render
 {
