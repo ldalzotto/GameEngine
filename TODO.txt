@@ -1,9 +1,15 @@
-[X] - # Fixing the Transform system to be able to retrieve the Model matrix correctly.
-
-[X] - # Creating the Camera component.
-# Setting up Camera BufferObject.
-	-> Single VulkanBuffer containing the view and perspective matrices.
-	-> Binded before binding the graphics pipeline
+-- Texture --
+# Cleaning and separating the dependency between MaterialInstance and Texture.
+# MaterialInstance source data are the same and not cached. (using the same instance for example ?)
 
 -- ECS --
 # Provinding a uniquea and safe way to get the child component.
+
+
+
+[X] - # Fixing the Transform system to be able to retrieve the Model matrix correctly.
+
+[X] - # Creating the Camera component.
+[X] - # Setting up Camera BufferObject.
+	-> Single VulkanBuffer containing the view and perspective matrices.
+	-> Binded before binding the graphics pipeline

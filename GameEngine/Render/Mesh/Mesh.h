@@ -19,6 +19,7 @@ namespace _GameEngine::_Render
 	{
 		glm::vec2 pos;
 		glm::vec3 color;
+		glm::vec2 TexCoord;
 	};
 
 	struct Mesh

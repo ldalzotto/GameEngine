@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <string.h>
 #include "vulkan/vulkan.h"
 
 #include "Render/Descriptor/DescriptorPool.h"
@@ -9,12 +10,14 @@
 #include "Render/Shader/VertexInput.h"
 #include "Render/Shader/DescriptorSetLayout.h"
 #include "Render/Memory/VulkanBuffer.h"
+#include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {
 	struct Device;
 	struct SwapChain;
 	struct CameraBufferSetupStep;
+	struct PreRenderDeferedCommandBufferStep;
 }
 
 namespace _GameEngine::_Render
@@ -53,10 +56,20 @@ namespace _GameEngine::_Render
 		DefaultMaterial* _DefaultMaterial;
 
 		VulkanBuffer ModelProjectionBuffer;
+		Texture Texture;
+
 		VkDescriptorSet ModelProjectionDescriptorSet;
 	};
 
-	void DefaultMaterialInstance_alloc(DefaultMaterialInstance* p_defaultMaterialInstance, DefaultMaterial* p_defaultMaterial, Device* p_device);
+	struct DefaultMaterialInstanceAllocInfo
+	{
+		std::string TexturePath;
+		VkSampler TextureSampler;
+		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
+	};
+
+	void DefaultMaterialInstance_alloc(DefaultMaterialInstance* p_defaultMaterialInstance, DefaultMaterialInstanceAllocInfo* l_defaultMaterialInstanceAllocInfo,
+				DefaultMaterial* p_defaultMaterial, Device* p_device);
 	void DefaultMaterialInstance_free(DefaultMaterialInstance* p_defaultMaterialInstance, Device* p_device);
 
 	void DefaultMaterialInsance_pushModelProjectionToGPU(DefaultMaterialInstance* p_defaultMaterialInstance, ModelProjection* p_modelProjection, Device* p_device);

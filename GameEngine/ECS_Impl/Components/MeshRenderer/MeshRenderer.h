@@ -12,6 +12,7 @@ namespace _GameEngine::_Render
 	struct PreRenderDeferedCommandBufferStep;
 	struct DefaultMaterial;
 	struct DefaultMaterialDrawStep;
+	struct TextureSamplers;
 }
 
 namespace _GameEngine::_ECS
@@ -39,6 +40,7 @@ namespace _GameEngine::_ECS
 	{
 		Component* AssociatedComponent;
 		MeshRendererDependencies MeshRendererDependencies;
+		_Render::TextureSamplers* TextureSamplers;
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo);

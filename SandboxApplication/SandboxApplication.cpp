@@ -54,8 +54,6 @@ _ECS::Entity* l_cameraEntity;
 
 std::vector<_ECS::Entity*> Entities;
 
-_Render::Texture TextureTest;
-
 void SandboxApplication_update(float p_delta)
 {
 	if (!HasAlreadyUpdated)
@@ -95,6 +93,7 @@ void SandboxApplication_update(float p_delta)
 				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialDrawStep = &App->Render->DefaultMaterialDrawStep;
 				l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;
 				l_meshRendererInitInfo.MeshRendererDependencies.PreRenderDeferedCommandBufferStep = &App->Render->PreRenderDeferedCommandBufferStep;
+				l_meshRendererInitInfo.TextureSamplers = &App->Render->TextureSamplers;
 				l_meshRendererInitInfo.AssociatedComponent = l_component;
 				_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 
@@ -125,17 +124,6 @@ void SandboxApplication_update(float p_delta)
 			Entities.push_back(l_instanciatedEntity);
 		}
 
-		_Render::TextureLoadInfo l_texTureLoadInfo{};
-		l_texTureLoadInfo.Device = &App->Render->Device;
-		l_texTureLoadInfo.PreRenderDeferedCommandBufferStep = &App->Render->PreRenderDeferedCommandBufferStep;
-		_Render::Texture_load(&TextureTest, "G:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg", &l_texTureLoadInfo);
-	}
-	else
-	{
-		if (TextureTest.Texture != VK_NULL_HANDLE)
-		{
-			_Render::Texture_free(&TextureTest, &App->Render->Device);
-		}
 	}
 	/*
 	else

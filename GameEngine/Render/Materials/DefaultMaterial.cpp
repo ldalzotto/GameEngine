@@ -10,7 +10,7 @@
 namespace _GameEngine::_Render
 {
 	const uint32_t DEFAULTMATERIAL_MODEL_LAYOUT_BINDING = 0;
-	const uint32_t DEFAULTMATERIAL_MODEL_SET_BINDING = 1;
+	const uint32_t DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING = 1;
 
 	void createDescriptorPool(DefaultMaterial* p_defaultMaterial, DefaultMaterialAllocInfo* p_defaultMaterialAllocInfo);
 	void freeDescriptorPool(DefaultMaterial* p_defaultMaterial, Device* p_device);
@@ -32,7 +32,8 @@ namespace _GameEngine::_Render
 
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
 
-		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings(1);
+		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings(2);
+
 		VkDescriptorSetLayoutBinding l_modelLayoutBinding{};
 		l_modelLayoutBinding.binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
 		l_modelLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -40,6 +41,16 @@ namespace _GameEngine::_Render
 		l_modelLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 		l_modelLayoutBinding.pImmutableSamplers = nullptr;
 		l_defaultMaterialDescriptorSetLayoutBindings.at(0) = l_modelLayoutBinding;
+
+		VkDescriptorSetLayoutBinding l_textureSamplerBinding{};
+		l_textureSamplerBinding.binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
+		l_textureSamplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		l_textureSamplerBinding.descriptorCount = 1;
+		l_textureSamplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		l_textureSamplerBinding.pImmutableSamplers = nullptr;
+		l_defaultMaterialDescriptorSetLayoutBindings.at(1) = l_textureSamplerBinding;
+
+
 		l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_defaultMaterialDescriptorSetLayoutBindings;
 
 		DescriptorSetLayout_alloc(&p_defaultMaterial->DescriptorSetLayout, p_defaultMaterialAllocInfo->Device, &l_descriptorSetLayoutAllocInfo);
@@ -67,12 +78,16 @@ namespace _GameEngine::_Render
 
 	void createDescriptorPool(DefaultMaterial* p_defaultMaterial, DefaultMaterialAllocInfo* p_defaultMaterialAllocInfo)
 	{
-		std::vector<VkDescriptorPoolSize> l_descriptorPoolSizes(1);
+		std::vector<VkDescriptorPoolSize> l_descriptorPoolSizes(2);
 		memset(l_descriptorPoolSizes.data(), 0, sizeof(VkDescriptorPoolSize) * l_descriptorPoolSizes.size());
 
 		VkDescriptorPoolSize* l_modelBufferDescriptorPoolSize = &l_descriptorPoolSizes.at(0);
 		l_modelBufferDescriptorPoolSize->descriptorCount = 1;
 		l_modelBufferDescriptorPoolSize->type = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+
+		VkDescriptorPoolSize* l_textureSamplerDescriptorPoolSize = &l_descriptorPoolSizes.at(1);
+		l_textureSamplerDescriptorPoolSize->descriptorCount = 1;
+		l_textureSamplerDescriptorPoolSize->type = VkDescriptorType::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 
 		DescriptorPoolBuildInfo l_descriptorPoolBuildInfo{};
 		l_descriptorPoolBuildInfo.DescriptionPoolCreateFlags = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
@@ -129,9 +144,15 @@ namespace _GameEngine::_Render
 
 
 
-	void DefaultMaterialInstance_alloc(DefaultMaterialInstance* p_defaultMaterialInstance, DefaultMaterial* p_defaultMaterial, Device* p_device)
+	void DefaultMaterialInstance_alloc(DefaultMaterialInstance* p_defaultMaterialInstance, DefaultMaterialInstanceAllocInfo* l_defaultMaterialInstanceAllocInfo, DefaultMaterial* p_defaultMaterial, Device* p_device)
 	{
 		p_defaultMaterialInstance->_DefaultMaterial = p_defaultMaterial;
+
+		// Allocate Texture
+		TextureLoadInfo l_textureLoadInfo{};
+		l_textureLoadInfo.Device = p_device;
+		l_textureLoadInfo.PreRenderDeferedCommandBufferStep = l_defaultMaterialInstanceAllocInfo->PreRenderDeferedCommandBufferStep;
+		Texture_load(&p_defaultMaterialInstance->Texture, l_defaultMaterialInstanceAllocInfo->TexturePath, &l_textureLoadInfo);
 
 		// Descriptor set
 		_Render::BufferAllocInfo l_bufferAllocInfo{};
@@ -150,29 +171,45 @@ namespace _GameEngine::_Render
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create description set."));
 		};
 
+		std::vector<VkWriteDescriptorSet> l_writeDescirptorSets(2);
+
+
 		VkDescriptorBufferInfo l_descriptorUniformBufferInfo{};
 		l_descriptorUniformBufferInfo.buffer = p_defaultMaterialInstance->ModelProjectionBuffer.Buffer;
 		l_descriptorUniformBufferInfo.offset = 0;
 		l_descriptorUniformBufferInfo.range = p_defaultMaterialInstance->ModelProjectionBuffer.BufferAllocInfo.Size;
+		VkWriteDescriptorSet* l_descriptorUniforBufferWrite = &l_writeDescirptorSets.at(0);
+		l_descriptorUniforBufferWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		l_descriptorUniforBufferWrite->dstSet = p_defaultMaterialInstance->ModelProjectionDescriptorSet;
+		l_descriptorUniforBufferWrite->dstBinding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
+		l_descriptorUniforBufferWrite->dstArrayElement = 0;
+		l_descriptorUniforBufferWrite->descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		l_descriptorUniforBufferWrite->descriptorCount = 1;
+		l_descriptorUniforBufferWrite->pBufferInfo = &l_descriptorUniformBufferInfo;
+		l_descriptorUniforBufferWrite->pImageInfo = nullptr;
+		l_descriptorUniforBufferWrite->pTexelBufferView = nullptr;
 
-		VkWriteDescriptorSet l_descriptorUniforBufferWrite{};
-		l_descriptorUniforBufferWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		l_descriptorUniforBufferWrite.dstSet = p_defaultMaterialInstance->ModelProjectionDescriptorSet;
-		l_descriptorUniforBufferWrite.dstBinding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
-		l_descriptorUniforBufferWrite.dstArrayElement = 0;
-		l_descriptorUniforBufferWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		l_descriptorUniforBufferWrite.descriptorCount = 1;
-		l_descriptorUniforBufferWrite.pBufferInfo = &l_descriptorUniformBufferInfo;
-		l_descriptorUniforBufferWrite.pImageInfo = nullptr;
-		l_descriptorUniforBufferWrite.pTexelBufferView = nullptr;
+		VkDescriptorImageInfo l_descriptorImageInfo{};
+		l_descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		l_descriptorImageInfo.imageView = p_defaultMaterialInstance->Texture.ImageView.ImageView;
+		l_descriptorImageInfo.sampler = l_defaultMaterialInstanceAllocInfo->TextureSampler;
+		VkWriteDescriptorSet* l_imageDescriptorSet = &l_writeDescirptorSets.at(1);
+		l_imageDescriptorSet->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		l_imageDescriptorSet->dstSet = p_defaultMaterialInstance->ModelProjectionDescriptorSet;
+		l_imageDescriptorSet->dstBinding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
+		l_imageDescriptorSet->dstArrayElement = 0;
+		l_imageDescriptorSet->descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		l_imageDescriptorSet->descriptorCount = 1;
+		l_imageDescriptorSet->pImageInfo = &l_descriptorImageInfo;
 
-		vkUpdateDescriptorSets(p_device->LogicalDevice.LogicalDevice, 1, &l_descriptorUniforBufferWrite, 0, nullptr);
+		vkUpdateDescriptorSets(p_device->LogicalDevice.LogicalDevice, l_writeDescirptorSets.size(), l_writeDescirptorSets.data(), 0, nullptr);
 	};
 
 	void DefaultMaterialInstance_free(DefaultMaterialInstance* p_defaultMaterialInstance, Device* p_device)
 	{
 		vkFreeDescriptorSets(p_device->LogicalDevice.LogicalDevice, p_defaultMaterialInstance->_DefaultMaterial->DescriptorPool.DescriptorPool, 1, &p_defaultMaterialInstance->ModelProjectionDescriptorSet);
 		_Render::VulkanBuffer_free(&p_defaultMaterialInstance->ModelProjectionBuffer, p_device);
+		Texture_free(&p_defaultMaterialInstance->Texture, p_device);
 	};
 
 	void DefaultMaterialInsance_pushModelProjectionToGPU(DefaultMaterialInstance* p_defaultMaterialInstance, ModelProjection* p_modelProjection, Device* p_device)

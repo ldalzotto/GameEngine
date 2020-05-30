@@ -1,5 +1,7 @@
 #include "MeshRenderer.h"
 
+#include "Render/Texture/TextureSamplers.h"
+
 namespace _GameEngine::_ECS
 {
 	ComponentType MeshRendererType = "MeshRenderer";
@@ -19,10 +21,10 @@ namespace _GameEngine::_ECS
 		l_meshAllocInfo.PreRenderDeferedCommandBufferStep = p_meshRenderer->MeshRendererDependencies.PreRenderDeferedCommandBufferStep;
 
 		p_meshRenderer->Mesh.Vertices = {
-			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+		   {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
 		};
 		p_meshRenderer->Mesh.Indices = {
 			 0, 1, 2, 2, 3, 0
@@ -31,7 +33,12 @@ namespace _GameEngine::_ECS
 		_Render::Mesh_alloc(&p_meshRenderer->Mesh, &l_meshAllocInfo);
 		p_meshRenderer->DefaultMaterialDrawCommand.Mesh = &p_meshRenderer->Mesh;
 
-		_Render::DefaultMaterialInstance_alloc(&p_meshRenderer->DefaultMaterialDrawCommand.DefaultMaterialInstance, p_meshRenderer->MeshRendererDependencies.DefaultMaterial, p_meshRenderer->MeshRendererDependencies.Device);
+		_Render::DefaultMaterialInstanceAllocInfo l_defaultMaterialInstanceAllocInfo{};
+		l_defaultMaterialInstanceAllocInfo.TexturePath = "G:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg";
+		l_defaultMaterialInstanceAllocInfo.PreRenderDeferedCommandBufferStep = p_meshRenderer->MeshRendererDependencies.PreRenderDeferedCommandBufferStep;
+		l_defaultMaterialInstanceAllocInfo.TextureSampler = p_mehsRendererInfo->TextureSamplers->DefaultSampler;
+		_Render::DefaultMaterialInstance_alloc(&p_meshRenderer->DefaultMaterialDrawCommand.DefaultMaterialInstance, &l_defaultMaterialInstanceAllocInfo,
+				p_meshRenderer->MeshRendererDependencies.DefaultMaterial, p_meshRenderer->MeshRendererDependencies.Device);
 	};
 
 	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection& l_meshUniformObject)
