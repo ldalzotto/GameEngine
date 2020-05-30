@@ -139,7 +139,7 @@ namespace _GameEngine::_Render
 
 		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)
 		{
-			SwapChainImage_free(&p_swapChain->SwapChainImages[i]);
+			SwapChainImage_free(&p_swapChain->SwapChainImages[i], p_swapChain->SwapChainDependencies.Device);
 		}
 
 		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);

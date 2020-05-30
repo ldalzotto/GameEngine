@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "Render/CommandBuffer/CommandBuffers.h"
-#include "Render/Mesh/Texture.h"
+#include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {

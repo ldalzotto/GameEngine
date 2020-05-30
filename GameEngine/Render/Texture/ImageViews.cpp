@@ -4,20 +4,17 @@
 #include "Log/Log.h"
 
 #include "Render/Hardware/Device/Device.h"
-#include "Render/SwapChain/SwapChainSharedStructures.h"
 
 namespace _GameEngine::_Render
 {
 
 	void ImageView_init(ImageView* p_imageView, ImageViewInitializationInfo* p_imageViewInitializationInfo)
 	{
-		p_imageView->ImageViewsDependencies = *p_imageViewInitializationInfo->ImageViewDependencies;
-
 		VkImageViewCreateInfo l_imageCreate{};
 		l_imageCreate.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		l_imageCreate.image = p_imageViewInitializationInfo->SwapChainImage;
+		l_imageCreate.image = p_imageViewInitializationInfo->Texture;
 		l_imageCreate.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		l_imageCreate.format = p_imageViewInitializationInfo->SwapChainInfo->SurfaceFormat.format;
+		l_imageCreate.format = p_imageViewInitializationInfo->TextureFormat;
 		l_imageCreate.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
 		l_imageCreate.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
 		l_imageCreate.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -28,15 +25,15 @@ namespace _GameEngine::_Render
 		l_imageCreate.subresourceRange.baseArrayLayer = 0;
 		l_imageCreate.subresourceRange.layerCount = 1;
 
-		if (vkCreateImageView(p_imageView->ImageViewsDependencies.Device->LogicalDevice.LogicalDevice, &l_imageCreate, nullptr, &(p_imageView->ImageView))
+		if (vkCreateImageView(p_imageViewInitializationInfo->Device->LogicalDevice.LogicalDevice, &l_imageCreate, nullptr, &(p_imageView->ImageView))
 			!= VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create image views!"));
 		}
 	};
 
-	void ImageView_free(ImageView* p_imageView)
+	void ImageView_free(ImageView* p_imageView, Device* p_device)
 	{
-		vkDestroyImageView(p_imageView->ImageViewsDependencies.Device->LogicalDevice.LogicalDevice, p_imageView->ImageView, nullptr);
+		vkDestroyImageView(p_device->LogicalDevice.LogicalDevice, p_imageView->ImageView, nullptr);
 	};
 }

@@ -6,7 +6,7 @@
 #include "Render/Hardware/Device/Device.h"
 #include "Render/SwapChain/SwapChainSharedStructures.h"
 #include "Render/GraphcisPipeline/RenderPass.h"
-#include "Render/SwapChain/Image/ImageViews.h"
+#include "Render/Texture/ImageViews.h"
 
 namespace _GameEngine::_Render
 {

@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Render/CommandBuffer/CommandBuffers.h"
-#include "ImageViews.h"
+#include "Render/Texture/ImageViews.h"
 
 namespace _GameEngine::_Render
 {
@@ -29,5 +29,5 @@ namespace _GameEngine::_Render
 	};
 
 	void SwapChainImage_init(SwapChainImage* p_swapChainImage, SwapChainImageInitializationInfo* p_swapChainImageInitializationInfo);
-	void SwapChainImage_free(SwapChainImage* p_swapChainImage);
+	void SwapChainImage_free(SwapChainImage* p_swapChainImage, Device* p_device);
 };

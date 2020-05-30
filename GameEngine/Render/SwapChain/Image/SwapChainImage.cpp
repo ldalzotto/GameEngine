@@ -1,5 +1,7 @@
 #include "SwapChainImage.h"
 
+#include "Render/SwapChain/SwapChainSharedStructures.h"
+
 namespace _GameEngine::_Render
 {
 	void SwapChainImage_init(SwapChainImage* p_swapChainImage, SwapChainImageInitializationInfo* p_swapChainImageInitializationInfo)
@@ -7,11 +9,9 @@ namespace _GameEngine::_Render
 		p_swapChainImage->SwapChainImage = p_swapChainImageInitializationInfo->CreatedImage;
 
 		ImageViewInitializationInfo l_imageViewInitializationInfo{};
-		l_imageViewInitializationInfo.SwapChainImage = p_swapChainImage->SwapChainImage;
-		l_imageViewInitializationInfo.SwapChainInfo = p_swapChainImageInitializationInfo->SwapChainInfo;
-		ImageViewsDependencies l_imageViewDependencies{};
-		l_imageViewDependencies.Device = p_swapChainImageInitializationInfo->Device;
-		l_imageViewInitializationInfo.ImageViewDependencies = &l_imageViewDependencies;
+		l_imageViewInitializationInfo.Texture = p_swapChainImage->SwapChainImage;
+		l_imageViewInitializationInfo.TextureFormat = p_swapChainImageInitializationInfo->SwapChainInfo->SurfaceFormat.format;
+		l_imageViewInitializationInfo.Device = p_swapChainImageInitializationInfo->Device;
 		ImageView_init(&p_swapChainImage->ImageView, &l_imageViewInitializationInfo);
 
 		CommandBuffersDependencies l_commandBufferDependencies{};
@@ -19,8 +19,8 @@ namespace _GameEngine::_Render
 		CommandBuffer_init(&p_swapChainImage->CommandBuffer, &l_commandBufferDependencies);
 	};
 
-	void SwapChainImage_free(SwapChainImage* p_swapChainImage)
+	void SwapChainImage_free(SwapChainImage* p_swapChainImage, Device* p_device)
 	{
-		ImageView_free(&p_swapChainImage->ImageView);
+		ImageView_free(&p_swapChainImage->ImageView, p_device);
 	};
 };

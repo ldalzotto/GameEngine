@@ -10,7 +10,7 @@
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 
 #include "Render/Includes/GLFWIncludes.h"
-#include "Render/Mesh/Texture.h"
+#include "Render/Texture/Texture.h"
 
 #include <iostream>
 #include <stdexcept>
