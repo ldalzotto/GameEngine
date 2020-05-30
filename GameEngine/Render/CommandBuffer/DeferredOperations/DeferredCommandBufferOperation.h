@@ -7,6 +7,10 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
+	/**
+		Completion tokens are automatically destroyed when the operation is either completed or aborted.
+		See @ref DeferredCommandBufferOperation_free method.
+	*/
 	struct DeferredCommandBufferCompletionToken
 	{
 		bool IsCompleted;

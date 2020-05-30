@@ -8,6 +8,7 @@ namespace _GameEngine::_Render
 {
 	struct Device;
 	struct PreRenderDeferedCommandBufferStep;
+	struct DeferredCommandBufferCompletionToken;
 }
 
 namespace _GameEngine::_Render
@@ -19,6 +20,7 @@ namespace _GameEngine::_Render
 		VkFormat Format;
 		uint32_t Width;
 		uint32_t Height;
+		uint32_t Depth;
 	};
 
 	struct Texture
@@ -26,6 +28,8 @@ namespace _GameEngine::_Render
 		TextureInfo TextureInfo;
 		VkImage Texture;
 		VkDeviceMemory TextureMemory;
+
+		DeferredCommandBufferCompletionToken* TextureInitializationBufferCompletionToken;
 	};
 
 	struct TextureLoadInfo
@@ -35,4 +39,5 @@ namespace _GameEngine::_Render
 	};
 
 	void Texture_load(Texture* p_texture,const std::string& l_texturePath, TextureLoadInfo* l_textureLoadInfo);
+	void Texture_free(Texture* p_texture, Device* p_device);
 }

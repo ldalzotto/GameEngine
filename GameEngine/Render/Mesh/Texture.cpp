@@ -57,6 +57,7 @@ namespace _GameEngine::_Render
 		p_texture->TextureInfo.Format = l_imageCreateInfo.format;
 		p_texture->TextureInfo.Width = l_imageCreateInfo.extent.width;
 		p_texture->TextureInfo.Height = l_imageCreateInfo.extent.height;
+		p_texture->TextureInfo.Depth = l_imageCreateInfo.extent.depth;
 		p_texture->TextureInfo.MipLevels = l_imageCreateInfo.mipLevels;
 		p_texture->TextureInfo.ArrayLayers = l_imageCreateInfo.arrayLayers;
 
@@ -75,11 +76,21 @@ namespace _GameEngine::_Render
 
 		vkBindImageMemory(l_textureLoadInfo->Device->LogicalDevice.LogicalDevice, p_texture->Texture, p_texture->TextureMemory, 0);
 
+		p_texture->TextureInitializationBufferCompletionToken = new DeferredCommandBufferCompletionToken();
 		TextureLoadDeferredOperation* l_textureDeferredOperation = new TextureLoadDeferredOperation();
 		l_textureDeferredOperation->Device = l_textureLoadInfo->Device;
 		l_textureDeferredOperation->Texture = p_texture;
 		l_textureDeferredOperation->SourceBuffer = l_stagingBuffer;
-		DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation);
+		DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation, &p_texture->TextureInitializationBufferCompletionToken);
 		l_textureLoadInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_commandDeferredOperation));
+	};
+
+	void Texture_free(Texture* p_texture, Device* p_device)
+	{
+		vkDestroyImage(p_device->LogicalDevice.LogicalDevice, p_texture->Texture, nullptr);
+		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, p_texture->TextureMemory, nullptr);
+		p_texture->Texture = VK_NULL_HANDLE;
+		p_texture->TextureMemory = VK_NULL_HANDLE;
+		p_texture->TextureInitializationBufferCompletionToken->IsCancelled = true;
 	};
 }

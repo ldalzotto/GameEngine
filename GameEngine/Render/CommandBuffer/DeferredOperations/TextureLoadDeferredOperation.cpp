@@ -1,5 +1,8 @@
 #include "TextureLoadDeferredOperation.h"
 
+#include "Log/Log.h"
+#include <stdexcept>
+
 #include "Render/CommandBuffer/CommandBuffers.h"
 #include "Render/Mesh/Texture.h"
 
@@ -11,13 +14,13 @@ namespace _GameEngine::_Render
 	void texureLayoutTransition(CommandBuffer* p_commandBuffer, Texture* p_texture, VkImageLayout p_oldLayout, VkImageLayout p_newLayout);
 	void copyBufferToImage(CommandBuffer* p_commandBuffer, VulkanBuffer* p_sourceBuffer, Texture* p_texture);
 
-	DeferredCommandBufferOperation TextureLoadDeferredOperation_build(TextureLoadDeferredOperation** p_textureLoadDeferredOperation)
+	DeferredCommandBufferOperation TextureLoadDeferredOperation_build(TextureLoadDeferredOperation** p_textureLoadDeferredOperation, DeferredCommandBufferCompletionToken** p_deferredCommandBufferCompletionToken)
 	{
 		DeferredCommandBufferOperation l_deferredCommandBufferOperation{};
 		l_deferredCommandBufferOperation.UserObject = *p_textureLoadDeferredOperation;
 		l_deferredCommandBufferOperation.BuildCommandBuffer = TextureLoadDeferredOperation_buildCommandBuffer;
 		l_deferredCommandBufferOperation.OnOperationExecuted = TextureLoadDeferredOperation_onCompleted;
-		l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken = nullptr;
+		l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken = *p_deferredCommandBufferCompletionToken;
 		return l_deferredCommandBufferOperation;
 	}
 
@@ -53,10 +56,31 @@ namespace _GameEngine::_Render
 		l_barrier.subresourceRange.baseArrayLayer = p_texture->TextureInfo.ArrayLayers - 1;
 		l_barrier.subresourceRange.layerCount = p_texture->TextureInfo.ArrayLayers;
 
-		l_barrier.srcAccessMask = 0;
-		l_barrier.dstAccessMask = 0;
+		VkPipelineStageFlags l_sourceStage;
+		VkPipelineStageFlags l_destinationStage;
 
-		vkCmdPipelineBarrier(p_commandBuffer->CommandBuffer, 0, 0, 0, 0, nullptr, 0, nullptr, 1, &l_barrier);
+		if (p_oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && p_newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+		{
+			l_barrier.srcAccessMask = 0;
+			l_barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+			l_sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			l_destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
+		else if (p_oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && p_newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		{
+			l_barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			l_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			l_sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+			l_destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+		else
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Unsupported layout transition!"));
+		}
+
+		vkCmdPipelineBarrier(p_commandBuffer->CommandBuffer, l_sourceStage, l_destinationStage, 0, 0, nullptr, 0, nullptr, 1, &l_barrier);
 	};
 
 	void copyBufferToImage(CommandBuffer* p_commandBuffer, VulkanBuffer* p_sourceBuffer, Texture* p_texture)
@@ -74,7 +98,8 @@ namespace _GameEngine::_Render
 		l_bufferImageCopy.imageOffset = { 0,0,0 };
 		l_bufferImageCopy.imageExtent = {
 			p_texture->TextureInfo.Width,
-			p_texture->TextureInfo.Height
+			p_texture->TextureInfo.Height,
+			p_texture->TextureInfo.Depth
 		};
 
 		vkCmdCopyBufferToImage(p_commandBuffer->CommandBuffer, p_sourceBuffer->Buffer, p_texture->Texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &l_bufferImageCopy);

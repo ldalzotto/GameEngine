@@ -20,5 +20,5 @@ namespace _GameEngine::_Render
 		Device* Device;
 	};
 
-	DeferredCommandBufferOperation TextureLoadDeferredOperation_build(TextureLoadDeferredOperation** p_textureLoadDeferredOperation);
+	DeferredCommandBufferOperation TextureLoadDeferredOperation_build(TextureLoadDeferredOperation** p_textureLoadDeferredOperation, DeferredCommandBufferCompletionToken** p_deferredCommandBufferCompletionToken);
 };

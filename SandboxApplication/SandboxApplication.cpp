@@ -129,7 +129,13 @@ void SandboxApplication_update(float p_delta)
 		l_texTureLoadInfo.Device = &App->Render->Device;
 		l_texTureLoadInfo.PreRenderDeferedCommandBufferStep = &App->Render->PreRenderDeferedCommandBufferStep;
 		_Render::Texture_load(&TextureTest, "G:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg", &l_texTureLoadInfo);
-
+	}
+	else
+	{
+		if (TextureTest.Texture != VK_NULL_HANDLE)
+		{
+			_Render::Texture_free(&TextureTest, &App->Render->Device);
+		}
 	}
 	/*
 	else
