@@ -1,24 +1,14 @@
 #include "Mesh.h"
 
 #include "Utils/Algorithm/Algorithm.h"
-#include "Render/LoopStep/PreRenderStagingStep.h"
+
+#include "Render/LoopStep/PreRenderDeferedCommandBufferStep.h"
+#include "Render/CommandBuffer/DeferredOperations/BufferCopyDeferredOperation.h"
 
 namespace _GameEngine::_Render
 {
-	/**
-		Called when the @ref PreRenderStagging step has been completed.
-	*/
-	void meshOnPreRenderStagingCompleted(void* p_mesh)
-	{
-		Mesh* l_mesh = (Mesh*)p_mesh;
-		l_mesh->PreRenderStagingCompleted = true;
-	};
-
 	void Mesh_alloc(Mesh* p_mesh, MeshAllocInfo* p_meshAllocInfo)
 	{
-		p_mesh->PreRenderStagingCompleted = false;
-		p_mesh->PreRenderStagging = p_meshAllocInfo->PreRenderStagging;
-
 		{
 			BufferAllocInfo l_vertexBufferAllocInfo{};
 			l_vertexBufferAllocInfo.Size = sizeof(p_mesh->Vertices[0]) * p_mesh->Vertices.size();
@@ -34,14 +24,14 @@ namespace _GameEngine::_Render
 			VulkanBuffer_alloc(&l_vertexStagingBuffer, &l_vertexStaggingBufferAllocInfo, p_meshAllocInfo->Device);
 			VulkanBuffer_pushToGPU(&l_vertexStagingBuffer, p_meshAllocInfo->Device, p_mesh->Vertices.data(), static_cast<size_t>(l_vertexStagingBuffer.BufferAllocInfo.Size));
 
-			PreRenderStaggingOperation l_vertexStagingPushToGPU{};
-			l_vertexStagingPushToGPU.StagingBuffer = l_vertexStagingBuffer;
-			l_vertexStagingPushToGPU.TargetBuffer = &p_mesh->VertexBuffer;
-			l_vertexStagingPushToGPU.StaggingOperationCancelled = false;
-			l_vertexStagingPushToGPU.PrerenderStaggingOperationCompleted.Closure = p_mesh;
-			l_vertexStagingPushToGPU.PrerenderStaggingOperationCompleted.OnStaggingDone = meshOnPreRenderStagingCompleted;
+			BufferCopyOperation* l_bufferCopyOperation = new BufferCopyOperation();
+			l_bufferCopyOperation->Device = p_meshAllocInfo->Device;
+			l_bufferCopyOperation->SourceBuffer = l_vertexStagingBuffer;
+			l_bufferCopyOperation->TargetBuffer = &p_mesh->VertexBuffer;
+			DeferredCommandBufferOperation l_vertexStagingCopyOperation = BufferCopyDeferredOperation_build(&l_bufferCopyOperation);
+			p_mesh->VerticesStagingBufferCompletionToken = l_vertexStagingCopyOperation.DeferredCommandBufferCompletionToken;
+			p_meshAllocInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_vertexStagingCopyOperation));
 
-			p_meshAllocInfo->PreRenderStagging->StaggingOperations.emplace_back(l_vertexStagingPushToGPU);
 		}
 
 		{
@@ -59,33 +49,22 @@ namespace _GameEngine::_Render
 			VulkanBuffer_alloc(&l_indexStaggingBuffer, &l_indexBufferStagingAllocInfo, p_meshAllocInfo->Device);
 			VulkanBuffer_pushToGPU(&l_indexStaggingBuffer, p_meshAllocInfo->Device, p_mesh->Indices.data(), static_cast<size_t>(l_indexStaggingBuffer.BufferAllocInfo.Size));
 
-			PreRenderStaggingOperation l_indexStagingPushToGPU{};
-			l_indexStagingPushToGPU.StagingBuffer = l_indexStaggingBuffer;
-			l_indexStagingPushToGPU.TargetBuffer = &p_mesh->IndicesBuffer;
-			l_indexStagingPushToGPU.StaggingOperationCancelled = false;
-			l_indexStagingPushToGPU.PrerenderStaggingOperationCompleted.Closure = p_mesh;
-			l_indexStagingPushToGPU.PrerenderStaggingOperationCompleted.OnStaggingDone = meshOnPreRenderStagingCompleted;
-
-			p_meshAllocInfo->PreRenderStagging->StaggingOperations.emplace_back(l_indexStagingPushToGPU);
+			BufferCopyOperation* l_bufferCopyOperation = new BufferCopyOperation();
+			l_bufferCopyOperation->Device = p_meshAllocInfo->Device;
+			l_bufferCopyOperation->SourceBuffer = l_indexStaggingBuffer;
+			l_bufferCopyOperation->TargetBuffer = &p_mesh->IndicesBuffer;
+			p_mesh->IndicesStagingBufferCompletionToken = new DeferredCommandBufferCompletionToken();
+			DeferredCommandBufferOperation l_indexStagingCopyOperation = BufferCopyDeferredOperation_build(&l_bufferCopyOperation);
+			p_mesh->IndicesStagingBufferCompletionToken = l_indexStagingCopyOperation.DeferredCommandBufferCompletionToken;
+			p_meshAllocInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_indexStagingCopyOperation));
 		}
 
 	};
 
 	void Mesh_free(Mesh* p_mesh, Device* p_device)
 	{
-		// If the pre render staging is not completed, this means that the mesh has been created and destroyed within a single update frame before the render stap has been called
-		if (!p_mesh->PreRenderStagingCompleted)
-		{
-			for (PreRenderStaggingOperation& l_preRenderStaggingOpertion : p_mesh->PreRenderStagging->StaggingOperations)
-			{
-				if (l_preRenderStaggingOpertion.TargetBuffer == &p_mesh->IndicesBuffer
-					|| l_preRenderStaggingOpertion.TargetBuffer == &p_mesh->VertexBuffer)
-				{
-					l_preRenderStaggingOpertion.StaggingOperationCancelled = true;
-				}
-			}
-		}
-
+		p_mesh->IndicesStagingBufferCompletionToken->IsCancelled = true;
+		p_mesh->VerticesStagingBufferCompletionToken->IsCancelled = true;
 		VulkanBuffer_free(&p_mesh->VertexBuffer, p_device);
 		VulkanBuffer_free(&p_mesh->IndicesBuffer, p_device);
 	};

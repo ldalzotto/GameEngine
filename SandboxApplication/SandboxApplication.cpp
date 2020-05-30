@@ -74,10 +74,11 @@ void SandboxApplication_update(float p_delta)
 		_ECS::TransformRotateSystem_init(&l_transformRotateSystem, App->ECS);
 	}
 
+	int COUNT = 10;
 
 	if (Entities.size() == 0)
 	{
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < COUNT; i++)
 		{
 
 			_ECS::Entity* l_instanciatedEntity = _ECS::EntityContainer_allocEntity(App->ECS);
@@ -90,7 +91,7 @@ void SandboxApplication_update(float p_delta)
 				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterial = &App->Render->RenderMaterials.DefaultMaterial;
 				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialDrawStep = &App->Render->DefaultMaterialDrawStep;
 				l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;
-				l_meshRendererInitInfo.MeshRendererDependencies.PreRenderStaggingStep = &App->Render->PreRenderStagging;
+				l_meshRendererInitInfo.MeshRendererDependencies.PreRenderDeferedCommandBufferStep = &App->Render->PreRenderDeferedCommandBufferStep;
 				l_meshRendererInitInfo.AssociatedComponent = l_component;
 				_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 
@@ -123,7 +124,7 @@ void SandboxApplication_update(float p_delta)
 	}
 	else
 	{
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < COUNT; i++)
 		{
 			_ECS::EntityContainer_freeEntity(&Entities.at(i));
 		}

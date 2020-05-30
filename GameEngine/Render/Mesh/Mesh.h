@@ -5,11 +5,12 @@
 #include "glm/glm.hpp"
 
 #include "Render/Memory/VulkanBuffer.h"
+#include "Render/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
 
 namespace _GameEngine::_Render
 {
 	struct Device;
-	struct PreRenderStagingStep;
+	struct PreRenderDeferedCommandBufferStep;
 }
 
 namespace _GameEngine::_Render
@@ -27,15 +28,15 @@ namespace _GameEngine::_Render
 		
 		std::vector<uint16_t> Indices;
 		VulkanBuffer IndicesBuffer;
-
-		PreRenderStagingStep* PreRenderStagging;
-		bool PreRenderStagingCompleted;
+		
+		DeferredCommandBufferCompletionToken* VerticesStagingBufferCompletionToken;
+		DeferredCommandBufferCompletionToken* IndicesStagingBufferCompletionToken;
 	};
 
 	struct MeshAllocInfo
 	{
 		Device* Device;
-		PreRenderStagingStep* PreRenderStagging;
+		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 	};
 
 	void Mesh_alloc(Mesh* p_mesh, MeshAllocInfo* p_meshAllocInfo);

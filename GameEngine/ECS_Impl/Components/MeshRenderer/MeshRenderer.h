@@ -9,7 +9,7 @@
 namespace _GameEngine::_Render
 {
 	struct Device;
-	struct PreRenderStagingStep;
+	struct PreRenderDeferedCommandBufferStep;
 	struct DefaultMaterial;
 	struct DefaultMaterialDrawStep;
 }
@@ -21,7 +21,7 @@ namespace _GameEngine::_ECS
 	struct MeshRendererDependencies
 	{
 		_Render::Device* Device;
-		_Render::PreRenderStagingStep* PreRenderStaggingStep;
+		_Render::PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 		_Render::DefaultMaterial* DefaultMaterial;
 		_Render::DefaultMaterialDrawStep* DefaultMaterialDrawStep;
 	};
