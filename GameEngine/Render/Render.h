@@ -13,7 +13,7 @@
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
 #include "Synchronisation/Semaphore.h"
-#include "LoopStep/PreRenderStagingStep.h"
+#include "LoopStep/PreRenderDeferedCommandBufferStep.h"
 #include "LoopStep/CameraBufferSetupStep.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
 #include "Materials/DefaultMaterial.h"
@@ -46,7 +46,7 @@ namespace _GameEngine::_Render
 		RenderSemaphore RenderSemaphore;
 
 		RenderMaterials RenderMaterials;
-		PreRenderStagingStep PreRenderStagging;
+		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;
 		CameraBufferSetupStep CameraBufferSetupStep;
 		DefaultMaterialDrawStep DefaultMaterialDrawStep;
 	};

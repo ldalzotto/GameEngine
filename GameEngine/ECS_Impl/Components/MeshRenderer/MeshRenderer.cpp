@@ -16,7 +16,7 @@ namespace _GameEngine::_ECS
 
 		_Render::MeshAllocInfo l_meshAllocInfo{ };
 		l_meshAllocInfo.Device = p_meshRenderer->MeshRendererDependencies.Device;
-		l_meshAllocInfo.PreRenderStagging = p_meshRenderer->MeshRendererDependencies.PreRenderStaggingStep;
+		l_meshAllocInfo.PreRenderDeferedCommandBufferStep = p_meshRenderer->MeshRendererDependencies.PreRenderDeferedCommandBufferStep;
 
 		p_meshRenderer->Mesh.Vertices = {
 			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
