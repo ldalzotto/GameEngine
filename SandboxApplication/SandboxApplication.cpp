@@ -61,7 +61,7 @@ void SandboxApplication_update(float p_delta)
 		l_cameraEntity = _ECS::EntityContainer_allocEntity(App->ECS);
 
 		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::CameraType, new _ECS::Camera());
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::CameraType, sizeof(_ECS::Camera));
 			_ECS::Camera* l_camera = (_ECS::Camera*)l_component->Child;
 			_ECS::CameraDependencies l_cameraDependencies{};
 			l_cameraDependencies.SwapChain = &App->Render->SwapChain;
@@ -83,7 +83,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Entity* l_instanciatedEntity = _ECS::EntityContainer_allocEntity(App->ECS);
 
 			{
-				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
+				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, sizeof(_ECS::MeshRenderer));
 				_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
 				_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
@@ -98,7 +98,7 @@ void SandboxApplication_update(float p_delta)
 			}
 
 			{
-				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
+				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 				_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
@@ -111,7 +111,7 @@ void SandboxApplication_update(float p_delta)
 			}
 
 			{
-				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, new _ECS::TransformRotate());
+				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 				_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 				l_transformRotate->Speed = 1.0f + i;
 				l_transformRotate->Axis = glm::vec3(1.0f, 0.0f, 0.0f);

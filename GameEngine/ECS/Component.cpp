@@ -4,18 +4,18 @@
 
 namespace _GameEngine::_ECS
 {
-	Component* Component_alloc(ComponentType& p_type, void* p_child)
+	Component* Component_alloc(ComponentType& p_type, size_t p_componentChildSize)
 	{
 		Component* l_component = new Component();
 		l_component->ComponentType = p_type;
-		l_component->Child = p_child;
+		l_component->Child = calloc(1, p_componentChildSize);
 		return l_component;
 	};
 
 	void Component_free(Component** p_component)
 	{
 		_Utils::Observer_broadcast(&(*p_component)->ComponentFreeEvent, nullptr);
-		delete (*p_component)->Child;
+		free((*p_component)->Child);
 		(*p_component)->Child = nullptr;
 		(*p_component)->AttachedEntity = nullptr;
 		delete (*p_component);

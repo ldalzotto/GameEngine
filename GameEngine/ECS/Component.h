@@ -20,7 +20,7 @@ namespace _GameEngine::_ECS
 		_Utils::Observer ComponentFreeEvent;
 	};
 
-	Component* Component_alloc(ComponentType& p_type, void* p_child);
+	Component* Component_alloc(ComponentType& p_type, size_t p_componentChildSize);
 	void Component_free(Component** p_component);
 
 	struct ComponentEvents
