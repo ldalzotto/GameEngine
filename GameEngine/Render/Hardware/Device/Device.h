@@ -19,6 +19,7 @@ namespace _GameEngine::_Render
 	{ 
 		VkPhysicalDevice PhysicalDevice;
 		QueueFamilies QueueFamilies;
+		VkPhysicalDeviceFeatures DeviceAvailableFeatures;
 	};
 
 	struct LogicalDeviceQueues

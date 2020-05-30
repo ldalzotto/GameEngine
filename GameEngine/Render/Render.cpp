@@ -33,6 +33,9 @@ namespace _GameEngine::_Render
 	void initRenderSemaphore(Render* p_render);
 	void freeRenderSemaphore(Render* p_render);
 
+	void initTextureSamplers(Render* p_render);
+	void freeTextureSamplers(Render* p_render);
+
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
@@ -57,6 +60,7 @@ namespace _GameEngine::_Render
 		initCommandPool(l_render);
 		initSwapChain(l_render);
 		initRenderSemaphore(l_render);
+		initTextureSamplers(l_render);
 		initPreRenderStaging(l_render);
 		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
 		allocMaterials(l_render);
@@ -74,6 +78,7 @@ namespace _GameEngine::_Render
 		freeMaterials(*p_render);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
 		freePreRenderStaging(*p_render);
+		freeTextureSamplers(*p_render);
 		freeRenderSemaphore(*p_render);
 		freeSwapChain(*p_render);
 		freeCommandPool(*p_render);
@@ -362,6 +367,19 @@ namespace _GameEngine::_Render
 
 	/////// END RENDER SEMAPHORE
 
+	/////// TEXTURE SAMPLERS
+
+	void initTextureSamplers(Render* p_render)
+	{
+		TextureSamplers_alloc(&p_render->TextureSamplers, &p_render->Device);
+	};
+
+	void freeTextureSamplers(Render* p_render)
+	{
+		TextureSamplers_free(&p_render->TextureSamplers, &p_render->Device);
+	};
+
+	/////// END TEXTURE SAMPLERS
 
 	/////// PRE RENDER STAGGING
 

@@ -3,6 +3,7 @@
 #include <string>
 
 #include "vulkan/vulkan.h"
+#include "ImageViews.h"
 
 namespace _GameEngine::_Render
 {
@@ -28,6 +29,7 @@ namespace _GameEngine::_Render
 		TextureInfo TextureInfo;
 		VkImage Texture;
 		VkDeviceMemory TextureMemory;
+		ImageView ImageView;
 
 		DeferredCommandBufferCompletionToken* TextureInitializationBufferCompletionToken;
 	};

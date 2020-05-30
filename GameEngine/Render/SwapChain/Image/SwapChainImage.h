@@ -8,7 +8,7 @@ namespace _GameEngine::_Render
 {
 	struct Device;
 	struct CommandPool;
-	struct SwapChainInfo;
+	struct TextureInfo;
 }
 
 namespace _GameEngine::_Render
@@ -23,7 +23,7 @@ namespace _GameEngine::_Render
 	struct SwapChainImageInitializationInfo
 	{
 		VkImage CreatedImage;
-		SwapChainInfo* SwapChainInfo;
+		TextureInfo* TextureInfo;
 		Device* Device;
 		CommandPool* CommandPool;
 	};

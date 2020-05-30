@@ -1,6 +1,6 @@
 #include "SwapChainImage.h"
 
-#include "Render/SwapChain/SwapChainSharedStructures.h"
+#include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {
@@ -10,7 +10,7 @@ namespace _GameEngine::_Render
 
 		ImageViewInitializationInfo l_imageViewInitializationInfo{};
 		l_imageViewInitializationInfo.Texture = p_swapChainImage->SwapChainImage;
-		l_imageViewInitializationInfo.TextureFormat = p_swapChainImageInitializationInfo->SwapChainInfo->SurfaceFormat.format;
+		l_imageViewInitializationInfo.TextureInfo = p_swapChainImageInitializationInfo->TextureInfo;
 		l_imageViewInitializationInfo.Device = p_swapChainImageInitializationInfo->Device;
 		ImageView_init(&p_swapChainImage->ImageView, &l_imageViewInitializationInfo);
 

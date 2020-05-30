@@ -13,6 +13,7 @@
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
 #include "Synchronisation/Semaphore.h"
+#include "Texture/TextureSamplers.h"
 #include "LoopStep/PreRenderDeferedCommandBufferStep.h"
 #include "LoopStep/CameraBufferSetupStep.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
@@ -44,6 +45,7 @@ namespace _GameEngine::_Render
 		CommandPool CommandPool;
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
+		TextureSamplers TextureSamplers;
 
 		RenderMaterials RenderMaterials;
 		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;

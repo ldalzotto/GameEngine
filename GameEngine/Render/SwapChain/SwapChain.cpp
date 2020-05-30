@@ -8,6 +8,7 @@
 #include "Render/Hardware/Device/Device.h"
 #include "Render/Hardware/Window/Window.h"
 #include "Render/Hardware/Window/Surface.h"
+#include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {
@@ -20,7 +21,6 @@ namespace _GameEngine::_Render
 	SwapChainSupportDetails SwapChain_getSupportDetails(VkPhysicalDevice p_physicalDevice, Surface* p_surface)
 	{
 		SwapChainSupportDetails l_swapChainSupportDetails{};
-
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(p_physicalDevice, p_surface->WindowSurface, &l_swapChainSupportDetails.Capabilities);
 
 		uint32_t l_deviceSurfaceFormatCount;
@@ -120,13 +120,19 @@ namespace _GameEngine::_Render
 		
 		p_swapChain->SwapChainImages.resize(l_imageCount);
 
+		TextureInfo l_textureInfo{};
+		l_textureInfo.Format = p_swapChain->SwapChainInfo.SurfaceFormat.format;
+		l_textureInfo.MipLevels = 1;
+		l_textureInfo.ArrayLayers = 1;
+
 		for (size_t i = 0; i < l_imageCount; i++)
 		{
 			SwapChainImageInitializationInfo l_swapChainImageInitializationInfo{};
 			l_swapChainImageInitializationInfo.CreatedImage = l_swapChainRawImages[i];
 			l_swapChainImageInitializationInfo.Device = p_swapChain->SwapChainDependencies.Device;
-			l_swapChainImageInitializationInfo.SwapChainInfo = &p_swapChain->SwapChainInfo;
+			l_swapChainImageInitializationInfo.TextureInfo = &l_textureInfo;
 			l_swapChainImageInitializationInfo.CommandPool = p_swapChainBuildInfo->CommandPool;
+			
 			SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);
 		}
 

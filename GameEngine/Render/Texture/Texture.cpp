@@ -76,6 +76,14 @@ namespace _GameEngine::_Render
 
 		vkBindImageMemory(l_textureLoadInfo->Device->LogicalDevice.LogicalDevice, p_texture->Texture, p_texture->TextureMemory, 0);
 
+
+		ImageViewInitializationInfo l_imageViewInitializationInfo{};
+		l_imageViewInitializationInfo.Device = l_textureLoadInfo->Device;
+		l_imageViewInitializationInfo.Texture = p_texture->Texture;
+		l_imageViewInitializationInfo.TextureInfo = &p_texture->TextureInfo;
+		ImageView_init(&p_texture->ImageView, &l_imageViewInitializationInfo);
+
+
 		p_texture->TextureInitializationBufferCompletionToken = new DeferredCommandBufferCompletionToken();
 		TextureLoadDeferredOperation* l_textureDeferredOperation = new TextureLoadDeferredOperation();
 		l_textureDeferredOperation->Device = l_textureLoadInfo->Device;
@@ -87,6 +95,7 @@ namespace _GameEngine::_Render
 
 	void Texture_free(Texture* p_texture, Device* p_device)
 	{
+		ImageView_free(&p_texture->ImageView, p_device);
 		vkDestroyImage(p_device->LogicalDevice.LogicalDevice, p_texture->Texture, nullptr);
 		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, p_texture->TextureMemory, nullptr);
 		p_texture->Texture = VK_NULL_HANDLE;

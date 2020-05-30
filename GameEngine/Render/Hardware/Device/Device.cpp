@@ -58,6 +58,7 @@ namespace _GameEngine::_Render
 					&p_device->PhysicalDevice.QueueFamilies, &p_deviceBuildInfo->DeviceBuildCallbacks))
 			{
 				p_device->PhysicalDevice.PhysicalDevice = l_physicalDevice;
+				vkGetPhysicalDeviceFeatures(l_physicalDevice, &p_device->PhysicalDevice.DeviceAvailableFeatures);
 				break;
 			}
 		}
@@ -93,9 +94,15 @@ namespace _GameEngine::_Render
 		l_deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(DeviceExtensions.size());
 		l_deviceCreateInfo.ppEnabledExtensionNames = DeviceExtensions.data();
 
-		VkPhysicalDeviceFeatures deviceFeatures{};
-		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
+		VkPhysicalDeviceFeatures deviceFeatures{};
+		if (p_device->PhysicalDevice.DeviceAvailableFeatures.samplerAnisotropy)
+		{
+			deviceFeatures.samplerAnisotropy = VK_TRUE;
+		}
+
+		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
+	
 		if (p_deviceBuildInfo->DeviceBuildCallbacks.SetupValidation)
 		{
 			p_deviceBuildInfo->DeviceBuildCallbacks.SetupValidation(&l_deviceCreateInfo);

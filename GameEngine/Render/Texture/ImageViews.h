@@ -7,6 +7,7 @@
 namespace _GameEngine::_Render
 {
 	struct Device;
+	struct TextureInfo;
 }
 
 namespace _GameEngine::_Render
@@ -20,7 +21,7 @@ namespace _GameEngine::_Render
 	{
 		Device* Device;
 		VkImage Texture;
-		VkFormat TextureFormat;
+		TextureInfo* TextureInfo;
 	};
 
 	void ImageView_init(ImageView* p_imageView, ImageViewInitializationInfo* p_imageViewInitializationInfo);
