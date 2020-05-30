@@ -27,12 +27,13 @@ namespace _GameEngine::_Render
 		
 		std::vector<uint16_t> Indices;
 		VulkanBuffer IndicesBuffer;
+
+		PreRenderStagingStep* PreRenderStagging;
+		bool PreRenderStagingCompleted;
 	};
 
 	struct MeshAllocInfo
 	{
-		std::vector<Vertex>* Vertices;
-		std::vector<uint16_t>* Indices;
 		Device* Device;
 		PreRenderStagingStep* PreRenderStagging;
 	};

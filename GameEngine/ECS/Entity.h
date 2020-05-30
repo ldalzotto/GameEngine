@@ -14,7 +14,7 @@ namespace _GameEngine::_ECS
 		ECS* ECS;
 		std::unordered_map<ComponentType, Component*> Components;
 	};
-
+	 
 	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent);
 	void Entity_freeComponent(Entity* p_entity, Component** p_component);
 

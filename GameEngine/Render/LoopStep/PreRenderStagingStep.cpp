@@ -27,7 +27,7 @@ namespace _GameEngine::_Render
 
 	PreRenderStaggingCommandBufferBuildStatusBitFlag PreRenderStagingStep_buildCommandBuffer(PreRenderStagingStep* p_preRenderStagging, Device* p_device)
 	{
-		if (p_preRenderStagging->StaggingOprtations.size() > 0)
+		if (p_preRenderStagging->StaggingOperations.size() > 0)
 		{
 			VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
 			l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -43,14 +43,17 @@ namespace _GameEngine::_Render
 			l_staginFenceCreate.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 			vkCreateFence(p_device->LogicalDevice.LogicalDevice, &l_staginFenceCreate, nullptr, &p_preRenderStagging->PreRenderStaggingFence);
 
-			for (PreRenderStaggingOperation& l_staggingOperation : p_preRenderStagging->StaggingOprtations)
+			for (PreRenderStaggingOperation& l_staggingOperation : p_preRenderStagging->StaggingOperations)
 			{
-				preRenderStaggingOperationValidation(&l_staggingOperation);
-				VkBufferCopy l_bufferCopyInfo{};
-				l_bufferCopyInfo.dstOffset = 0;
-				l_bufferCopyInfo.srcOffset = 0;
-				l_bufferCopyInfo.size = l_staggingOperation.TargetBuffer->BufferAllocInfo.Size;
-				vkCmdCopyBuffer(p_preRenderStagging->DedicatedCommandBuffer.CommandBuffer, l_staggingOperation.StagingBuffer.Buffer, l_staggingOperation.TargetBuffer->Buffer, 1, &l_bufferCopyInfo);
+				if (!l_staggingOperation.StaggingOperationCancelled)
+				{
+					preRenderStaggingOperationValidation(&l_staggingOperation);
+					VkBufferCopy l_bufferCopyInfo{};
+					l_bufferCopyInfo.dstOffset = 0;
+					l_bufferCopyInfo.srcOffset = 0;
+					l_bufferCopyInfo.size = l_staggingOperation.TargetBuffer->BufferAllocInfo.Size;
+					vkCmdCopyBuffer(p_preRenderStagging->DedicatedCommandBuffer.CommandBuffer, l_staggingOperation.StagingBuffer.Buffer, l_staggingOperation.TargetBuffer->Buffer, 1, &l_bufferCopyInfo);
+				}
 			}
 
 			if (vkEndCommandBuffer(p_preRenderStagging->DedicatedCommandBuffer.CommandBuffer) != VK_SUCCESS)
@@ -72,12 +75,16 @@ namespace _GameEngine::_Render
 		vkDestroyFence(p_device->LogicalDevice.LogicalDevice, p_preRenderStagging->PreRenderStaggingFence, nullptr);
 		p_preRenderStagging->PreRenderStaggingFence = VK_NULL_HANDLE;
 
-		for (PreRenderStaggingOperation& l_staggingOperation : p_preRenderStagging->StaggingOprtations)
+		for (PreRenderStaggingOperation& l_staggingOperation : p_preRenderStagging->StaggingOperations)
 		{
 			VulkanBuffer_free(&l_staggingOperation.StagingBuffer, p_device);
+			if (l_staggingOperation.PrerenderStaggingOperationCompleted.OnStaggingDone)
+			{
+				l_staggingOperation.PrerenderStaggingOperationCompleted.OnStaggingDone(l_staggingOperation.PrerenderStaggingOperationCompleted.Closure);
+			}
 		}
 
-		p_preRenderStagging->StaggingOprtations.clear();
+		p_preRenderStagging->StaggingOperations.clear();
 	};
 
 	void preRenderStaggingOperationValidation(PreRenderStaggingOperation* p_preRenderStagingOperation)

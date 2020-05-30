@@ -13,17 +13,26 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 { 
+
+	struct PrerenderStaggingOperationCompleted
+	{
+		void(*OnStaggingDone)(void*);
+		void* Closure;
+	};
+
 	struct PreRenderStaggingOperation
 	{
 		VulkanBuffer StagingBuffer;
 		VulkanBuffer* TargetBuffer;
+		bool StaggingOperationCancelled;
+		PrerenderStaggingOperationCompleted PrerenderStaggingOperationCompleted;
 	};
 
 	struct PreRenderStagingStep
 	{
 		CommandBuffer DedicatedCommandBuffer;
 		VkFence PreRenderStaggingFence;
-		std::vector<PreRenderStaggingOperation> StaggingOprtations;
+		std::vector<PreRenderStaggingOperation> StaggingOperations;
 	};
 
 	enum PreRenderStaggingCommandBufferBuildStatusBitFlag

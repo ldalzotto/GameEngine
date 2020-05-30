@@ -51,8 +51,7 @@ _ECS::TransformRotateSystem l_transformRotateSystem;
 
 _ECS::Entity* l_cameraEntity;
 
-_ECS::Entity* l_testEntity;
-_ECS::Entity* l_testEntity2;
+std::vector<_ECS::Entity*> Entities;
 
 void SandboxApplication_update(float p_delta)
 {
@@ -71,86 +70,17 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
 
-		l_testEntity = _ECS::EntityContainer_allocEntity(App->ECS);
+		_ECS::MeshDrawSystem_init(&l_meshDrawSystem, App->ECS);
+		_ECS::TransformRotateSystem_init(&l_transformRotateSystem, App->ECS);
+	}
 
-		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
-			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
-			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterial = &App->Render->RenderMaterials.DefaultMaterial;
-			l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialDrawStep = &App->Render->DefaultMaterialDrawStep;
-			l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;
-			l_meshRendererInitInfo.MeshRendererDependencies.PreRenderStaggingStep = &App->Render->PreRenderStagging;
-			l_meshRendererInitInfo.AssociatedComponent = l_component;
-			_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
-
-			_ECS::Entity_addComponent(l_testEntity, l_component);
-		}
-
-		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, new _ECS::TransformRotate());
-			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
-			l_transformRotate->Speed = 1;
-			l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
-			_ECS::Entity_addComponent(l_testEntity, l_component);
-		}
-
-		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
-			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
-
-			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
-			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
-			_ECS::Transform_init(l_transform, &l_transformInitInfo);
-
-			_ECS::Entity_addComponent(l_testEntity, l_component);
-		}
-
-		l_testEntity2 = _ECS::EntityContainer_allocEntity(App->ECS);
-
-		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
-			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
-
-			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterial = &App->Render->RenderMaterials.DefaultMaterial;
-			l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialDrawStep = &App->Render->DefaultMaterialDrawStep;
-			l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;
-			l_meshRendererInitInfo.MeshRendererDependencies.PreRenderStaggingStep = &App->Render->PreRenderStagging;
-			l_meshRendererInitInfo.AssociatedComponent = l_component;
-			_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
-
-			_ECS::Entity_addComponent(l_testEntity2, l_component);
-		}
-
-		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, new _ECS::Transform());
-			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
-
-			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
-			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
-			_ECS::Transform_init(l_transform, &l_transformInitInfo);
-
-			_ECS::Entity_addComponent(l_testEntity2, l_component);
-		}
-
-		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, new _ECS::TransformRotate());
-			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
-			l_transformRotate->Speed = 1.0f;
-			l_transformRotate->Axis = glm::vec3(1.0f, 0.0f, 0.0f);
-			_ECS::Entity_addComponent(l_testEntity2, l_component);
-		}
-
+	if (Entities.size() == 0)
+	{
 		for (int i = 0; i < 10; i++)
 		{
 
-		_ECS::Entity* l_instanciatedEntity = _ECS::EntityContainer_allocEntity(App->ECS);
+			_ECS::Entity* l_instanciatedEntity = _ECS::EntityContainer_allocEntity(App->ECS);
 
 			{
 				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, new _ECS::MeshRenderer());
@@ -187,21 +117,19 @@ void SandboxApplication_update(float p_delta)
 				l_transformRotate->Axis = glm::vec3(1.0f, 0.0f, 0.0f);
 				_ECS::Entity_addComponent(l_instanciatedEntity, l_component);
 			}
-		}
 
-		_ECS::MeshDrawSystem_init(&l_meshDrawSystem, App->ECS);
-		_ECS::TransformRotateSystem_init(&l_transformRotateSystem, App->ECS);
+			Entities.push_back(l_instanciatedEntity);
+		}
 	}
-	/*
 	else
 	{
-		if (l_testEntity)
+		for (int i = 0; i < 10; i++)
 		{
-			_ECS::EntityContainer_freeEntity(&l_testEntity);
-			l_testEntity = nullptr;
+			_ECS::EntityContainer_freeEntity(&Entities.at(i));
 		}
+		Entities.clear();
 	}
-	*/
+
 
 	_ECS::TransformRotationSystem_update(&l_transformRotateSystem, p_delta);
 	_ECS::MeshDrawSystem_update(&l_meshDrawSystem, p_delta);

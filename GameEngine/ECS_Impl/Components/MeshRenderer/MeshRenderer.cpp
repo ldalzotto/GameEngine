@@ -15,21 +15,19 @@ namespace _GameEngine::_ECS
 		_Utils::Observer_register(&p_mehsRendererInfo->AssociatedComponent->ComponentFreeEvent, &p_meshRenderer->OnComponentDetached);
 
 		_Render::MeshAllocInfo l_meshAllocInfo{ };
+		l_meshAllocInfo.Device = p_meshRenderer->MeshRendererDependencies.Device;
+		l_meshAllocInfo.PreRenderStagging = p_meshRenderer->MeshRendererDependencies.PreRenderStaggingStep;
 
-		std::vector<_Render::Vertex> l_vertices = {
+		p_meshRenderer->Mesh.Vertices = {
 			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
 			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
 			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
 		};
-		std::vector<uint16_t> l_inidces = {
+		p_meshRenderer->Mesh.Indices = {
 			 0, 1, 2, 2, 3, 0
 		};
 
-		l_meshAllocInfo.Device = p_meshRenderer->MeshRendererDependencies.Device;
-		l_meshAllocInfo.PreRenderStagging = p_meshRenderer->MeshRendererDependencies.PreRenderStaggingStep;
-		l_meshAllocInfo.Vertices = &l_vertices;
-		l_meshAllocInfo.Indices = &l_inidces;
 		_Render::Mesh_alloc(&p_meshRenderer->Mesh, &l_meshAllocInfo);
 		p_meshRenderer->DefaultMaterialDrawCommand.Mesh = &p_meshRenderer->Mesh;
 
