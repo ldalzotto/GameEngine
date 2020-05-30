@@ -10,6 +10,7 @@
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 
 #include "Render/Includes/GLFWIncludes.h"
+#include "Render/Mesh/Texture.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -52,6 +53,8 @@ _ECS::TransformRotateSystem l_transformRotateSystem;
 _ECS::Entity* l_cameraEntity;
 
 std::vector<_ECS::Entity*> Entities;
+
+_Render::Texture TextureTest;
 
 void SandboxApplication_update(float p_delta)
 {
@@ -121,7 +124,14 @@ void SandboxApplication_update(float p_delta)
 
 			Entities.push_back(l_instanciatedEntity);
 		}
+
+		_Render::TextureLoadInfo l_texTureLoadInfo{};
+		l_texTureLoadInfo.Device = &App->Render->Device;
+		l_texTureLoadInfo.PreRenderDeferedCommandBufferStep = &App->Render->PreRenderDeferedCommandBufferStep;
+		_Render::Texture_load(&TextureTest, "G:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg", &l_texTureLoadInfo);
+
 	}
+	/*
 	else
 	{
 		for (int i = 0; i < COUNT; i++)
@@ -130,6 +140,7 @@ void SandboxApplication_update(float p_delta)
 		}
 		Entities.clear();
 	}
+	*/
 
 
 	_ECS::TransformRotationSystem_update(&l_transformRotateSystem, p_delta);

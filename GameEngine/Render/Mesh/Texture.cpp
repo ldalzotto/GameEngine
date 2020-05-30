@@ -7,10 +7,12 @@
 
 #include "Render/Hardware/Device/Device.h"
 #include "Render/Memory/VulkanBuffer.h"
+#include "Render/LoopStep/PreRenderDeferedCommandBufferStep.h"
+#include "Render/CommandBuffer/DeferredOperations/TextureLoadDeferredOperation.h"
 
 namespace _GameEngine::_Render
 {
-	void Texture_load(Texture* p_texture, std::string& l_texturePath, TextureLoadInfo* l_textureLoadInfo)
+	void Texture_load(Texture* p_texture, const std::string& l_texturePath, TextureLoadInfo* l_textureLoadInfo)
 	{
 		int l_texWidth, l_texHeight, l_texChannels;
 		stbi_uc* l_pixels = stbi_load(l_texturePath.data(), &l_texWidth, &l_texHeight, &l_texChannels, STBI_rgb_alpha);
@@ -52,6 +54,11 @@ namespace _GameEngine::_Render
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create image!"));
 		}
 
+		p_texture->TextureInfo.Format = l_imageCreateInfo.format;
+		p_texture->TextureInfo.Width = l_imageCreateInfo.extent.width;
+		p_texture->TextureInfo.Height = l_imageCreateInfo.extent.height;
+		p_texture->TextureInfo.MipLevels = l_imageCreateInfo.mipLevels;
+		p_texture->TextureInfo.ArrayLayers = l_imageCreateInfo.arrayLayers;
 
 		VkMemoryRequirements l_memoryRequiremens;
 		vkGetImageMemoryRequirements(l_textureLoadInfo->Device->LogicalDevice.LogicalDevice, p_texture->Texture, &l_memoryRequiremens);
@@ -67,5 +74,12 @@ namespace _GameEngine::_Render
 		}
 
 		vkBindImageMemory(l_textureLoadInfo->Device->LogicalDevice.LogicalDevice, p_texture->Texture, p_texture->TextureMemory, 0);
+
+		TextureLoadDeferredOperation* l_textureDeferredOperation = new TextureLoadDeferredOperation();
+		l_textureDeferredOperation->Device = l_textureLoadInfo->Device;
+		l_textureDeferredOperation->Texture = p_texture;
+		l_textureDeferredOperation->SourceBuffer = l_stagingBuffer;
+		DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation);
+		l_textureLoadInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_commandDeferredOperation));
 	};
 }

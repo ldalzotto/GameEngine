@@ -43,11 +43,19 @@ namespace _GameEngine::_Render
 
 			for (DeferredCommandBufferOperation& l_deferredCommandBufferOperation : p_preRenderDeferedCommandBufferStep->DefferedOperations)
 			{
-				if (!l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken->IsCancelled)
+				if (l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken)
+				{
+					if (!l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken->IsCancelled)
+					{
+						l_deferredCommandBufferOperation.BuildCommandBuffer(&p_preRenderDeferedCommandBufferStep->DedicatedCommandBuffer, &l_deferredCommandBufferOperation);
+						l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken->IsCompleted = true;
+					}
+				}
+				else
 				{
 					l_deferredCommandBufferOperation.BuildCommandBuffer(&p_preRenderDeferedCommandBufferStep->DedicatedCommandBuffer, &l_deferredCommandBufferOperation);
-					l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken->IsCompleted = true;
 				}
+				
 			}
 
 			if (vkEndCommandBuffer(p_preRenderDeferedCommandBufferStep->DedicatedCommandBuffer.CommandBuffer) != VK_SUCCESS)
