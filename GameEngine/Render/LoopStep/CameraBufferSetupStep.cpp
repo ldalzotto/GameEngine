@@ -20,8 +20,18 @@ namespace _GameEngine::_Render
 		l_descriptorPoolBuildInfo.MaxSet = 1;
 		DescriptorPool_buildUnique(&p_cameraDrawStep->DescriptorPool, p_device, &l_descriptorPoolBuildInfo);
 
+
+		std::vector<VkDescriptorSetLayoutBinding> l_descriptorSetLayoutBindings(1);
+		VkDescriptorSetLayoutBinding l_cameraBufferLayoutBinding{};
+		l_cameraBufferLayoutBinding.binding = CAMERA_BUFFER_LAYOUT_BINDING;
+		l_cameraBufferLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		l_cameraBufferLayoutBinding.descriptorCount = 1;
+		l_cameraBufferLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		l_cameraBufferLayoutBinding.pImmutableSamplers = nullptr;
+		l_descriptorSetLayoutBindings.at(0) = l_cameraBufferLayoutBinding;
+
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
-		l_descriptorSetLayoutAllocInfo.Binding = CAMERA_BUFFER_LAYOUT_BINDING;
+		l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_descriptorSetLayoutBindings;
 		DescriptorSetLayout_alloc(&p_cameraDrawStep->DescriptorSetLayout, p_device, &l_descriptorSetLayoutAllocInfo);
 
 		VkPipelineLayoutCreateInfo l_pipelineLayoutCreateInfo{};

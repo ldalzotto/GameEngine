@@ -31,7 +31,17 @@ namespace _GameEngine::_Render
 		VertexInput_buildInput(&p_defaultMaterial->VertexInput);
 
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
-		l_descriptorSetLayoutAllocInfo.Binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
+
+		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings(1);
+		VkDescriptorSetLayoutBinding l_modelLayoutBinding{};
+		l_modelLayoutBinding.binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
+		l_modelLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		l_modelLayoutBinding.descriptorCount = 1;
+		l_modelLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		l_modelLayoutBinding.pImmutableSamplers = nullptr;
+		l_defaultMaterialDescriptorSetLayoutBindings.at(0) = l_modelLayoutBinding;
+		l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_defaultMaterialDescriptorSetLayoutBindings;
+
 		DescriptorSetLayout_alloc(&p_defaultMaterial->DescriptorSetLayout, p_defaultMaterialAllocInfo->Device, &l_descriptorSetLayoutAllocInfo);
 
 		createDescriptorPool(p_defaultMaterial, p_defaultMaterialAllocInfo);
