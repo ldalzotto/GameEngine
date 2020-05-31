@@ -3,6 +3,8 @@
 #include "Render/Hardware/Device/Device.h"
 #include "Render/Shader/DescriptorSetLayout.h"
 
+#include "Render/Shader/DescriptorSetLayout.h"
+
 #include <stdexcept>
 #include "Log/Log.h"
 

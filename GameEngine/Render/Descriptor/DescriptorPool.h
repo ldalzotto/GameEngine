@@ -17,13 +17,6 @@ namespace _GameEngine::_Render
 		VkDescriptorPool DescriptorPool;
 	};
 
-	struct DescriptorPoolBuildInfo
-	{
-		std::vector<VkDescriptorPoolSize>* DescriptorPoolSizes;
-		uint32_t MaxSet;
-		VkDescriptorPoolCreateFlags DescriptionPoolCreateFlags;
-	};
-
 	struct DescriptorPoolAllocInfo
 	{
 		uint32_t MaxSet;
