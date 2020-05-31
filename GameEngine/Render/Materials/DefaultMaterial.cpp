@@ -166,7 +166,7 @@ namespace _GameEngine::_Render
 		l_descriptorSetAllocateInfo.descriptorPool = p_defaultMaterialInstance->_DefaultMaterial->DescriptorPool.DescriptorPool;
 		l_descriptorSetAllocateInfo.descriptorSetCount = 1;
 		l_descriptorSetAllocateInfo.pSetLayouts = &p_defaultMaterialInstance->_DefaultMaterial->DescriptorSetLayout.DescriptorSetLayout;
-		if (vkAllocateDescriptorSets(p_device->LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_defaultMaterialInstance->ModelProjectionDescriptorSet) != VK_SUCCESS)
+		if (vkAllocateDescriptorSets(p_device->LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_defaultMaterialInstance->MaterialDescriptorSet) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create description set."));
 		};
@@ -180,7 +180,7 @@ namespace _GameEngine::_Render
 		l_descriptorUniformBufferInfo.range = p_defaultMaterialInstance->ModelProjectionBuffer.BufferAllocInfo.Size;
 		VkWriteDescriptorSet* l_descriptorUniforBufferWrite = &l_writeDescirptorSets.at(0);
 		l_descriptorUniforBufferWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		l_descriptorUniforBufferWrite->dstSet = p_defaultMaterialInstance->ModelProjectionDescriptorSet;
+		l_descriptorUniforBufferWrite->dstSet = p_defaultMaterialInstance->MaterialDescriptorSet;
 		l_descriptorUniforBufferWrite->dstBinding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
 		l_descriptorUniforBufferWrite->dstArrayElement = 0;
 		l_descriptorUniforBufferWrite->descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -195,7 +195,7 @@ namespace _GameEngine::_Render
 		l_descriptorImageInfo.sampler = l_defaultMaterialInstanceAllocInfo->TextureSampler;
 		VkWriteDescriptorSet* l_imageDescriptorSet = &l_writeDescirptorSets.at(1);
 		l_imageDescriptorSet->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		l_imageDescriptorSet->dstSet = p_defaultMaterialInstance->ModelProjectionDescriptorSet;
+		l_imageDescriptorSet->dstSet = p_defaultMaterialInstance->MaterialDescriptorSet;
 		l_imageDescriptorSet->dstBinding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
 		l_imageDescriptorSet->dstArrayElement = 0;
 		l_imageDescriptorSet->descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -207,7 +207,7 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterialInstance_free(DefaultMaterialInstance* p_defaultMaterialInstance, Device* p_device)
 	{
-		vkFreeDescriptorSets(p_device->LogicalDevice.LogicalDevice, p_defaultMaterialInstance->_DefaultMaterial->DescriptorPool.DescriptorPool, 1, &p_defaultMaterialInstance->ModelProjectionDescriptorSet);
+		vkFreeDescriptorSets(p_device->LogicalDevice.LogicalDevice, p_defaultMaterialInstance->_DefaultMaterial->DescriptorPool.DescriptorPool, 1, &p_defaultMaterialInstance->MaterialDescriptorSet);
 		_Render::VulkanBuffer_free(&p_defaultMaterialInstance->ModelProjectionBuffer, p_device);
 		Texture_free(&p_defaultMaterialInstance->Texture, p_device);
 	};
