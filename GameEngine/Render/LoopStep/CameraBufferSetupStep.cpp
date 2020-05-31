@@ -77,7 +77,7 @@ namespace _GameEngine::_Render
 		VulkanBuffer_free(&p_cameraDrawStep->CameraProjectionBuffer, p_device);
 		vkDestroyPipelineLayout(p_device->LogicalDevice.LogicalDevice, p_cameraDrawStep->PipelineLayout, nullptr);
 		DescriptorSetLayout_free(&p_cameraDrawStep->DescriptorSetLayout, p_device);
-		DescriptorPool_freeUnique(&p_cameraDrawStep->DescriptorPool, p_device);
+		DescriptorPool_free(&p_cameraDrawStep->DescriptorPool, p_device);
 	};
 
 	void CameraBufferSetupStep_pushCameraPorjectionValueToGPU(CameraBufferSetupStep* p_cameraDrawStep, Device* p_device)

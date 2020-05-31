@@ -26,7 +26,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void DescriptorPool_freeUnique(DescriptorPool* p_descriptorPool, Device* p_device)
+	void DescriptorPool_free(DescriptorPool* p_descriptorPool, Device* p_device)
 	{
 		vkDestroyDescriptorPool(p_device->LogicalDevice.LogicalDevice, p_descriptorPool->DescriptorPool, nullptr);
 	};

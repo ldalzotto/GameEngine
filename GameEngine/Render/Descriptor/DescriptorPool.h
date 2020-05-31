@@ -25,6 +25,6 @@ namespace _GameEngine::_Render
 	};
 
 	void DescriptorPool_alloc(DescriptorPool* p_descriptorPool, Device* p_device, DescriptorPoolAllocInfo* p_descriptorPoolAllocInfo);
-	void DescriptorPool_freeUnique(DescriptorPool* p_descriptorPool, Device* p_device);
+	void DescriptorPool_free(DescriptorPool* p_descriptorPool, Device* p_device);
 	std::vector<VkDescriptorPoolSize> DescriptorPool_buildDescriptorPoolSizeFromDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout);
 }

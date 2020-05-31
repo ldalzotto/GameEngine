@@ -89,7 +89,7 @@ namespace _GameEngine::_Render
 
 	void freeDescriptorPool(DefaultMaterial* p_defaultMaterial, Device* p_device)
 	{
-		DescriptorPool_freeUnique(&p_defaultMaterial->DescriptorPool, p_device);
+		DescriptorPool_free(&p_defaultMaterial->DescriptorPool, p_device);
 	};
 
 	void createPipelineLayout(DefaultMaterial* p_defaultMaterial, DefaultMaterialAllocInfo* p_defaultMaterialAllocInfo)

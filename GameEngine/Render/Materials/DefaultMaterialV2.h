@@ -19,14 +19,14 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
+	struct DefaultMaterialV2_ExternalResources
+	{
+		Shader VertexShader;
+		Shader FragmentShader;
+	};
+
 	struct DefaultMaterialV2
 	{
-		struct ExternalResources
-		{
-			Shader VertexShader;
-			Shader FragmentShader;
-		};
-
 		struct LocalInputParameters
 		{
 			VertexInput VertexInput;
@@ -40,7 +40,7 @@ namespace _GameEngine::_Render
 			GraphicsPipeline GraphicsPipeline;
 		};
 
-		ExternalResources ExternalResources;
+		DefaultMaterialV2_ExternalResources ExternalResources;
 		LocalInputParameters LocalInputParameters;
 		FinalDrawObjects FinalDrawObjects;
 	};

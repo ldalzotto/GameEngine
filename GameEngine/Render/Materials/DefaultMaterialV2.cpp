@@ -12,60 +12,33 @@ namespace _GameEngine::_Render
 	const uint32_t DEFAULTMATERIAL_MODEL_LAYOUT_BINDING = 0;
 	const uint32_t DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING = 1;
 
+	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources);
+
+	void createDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
+	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device);
+
 	void createDescriptorPool(DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
 	void freeDescriptorPool(DefaultMaterialV2* p_defaultMaterial, Device* p_device);
 
 	void createPipelineLayout(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
-	void clearPipelineLayout(DefaultMaterialV2* p_defaultMaterial, Device* p_device);
+	void freePipelineLayout(DefaultMaterialV2* p_defaultMaterial, Device* p_device);
 
 	GraphicsPipelineAllocInfo buildPipelineAllocInfo(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
 
 	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
 	{
-		auto l_externalResources = &p_defaultMaterial->ExternalResources;
-		{
-			l_externalResources->VertexShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
-			l_externalResources->VertexShader.ShaderType = ShaderType::VERTEX;
-
-			l_externalResources->FragmentShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
-			l_externalResources->FragmentShader.ShaderType = ShaderType::FRAGMENT;
-		}
+		setupExternalResources(&p_defaultMaterial->ExternalResources);
 
 		auto l_localInputParameters = &p_defaultMaterial->LocalInputParameters;
 		{
 			VertexInput_buildInput(&l_localInputParameters->VertexInput);
-
-			DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
-
-			std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings(2);
-
-			VkDescriptorSetLayoutBinding l_modelLayoutBinding{};
-			l_modelLayoutBinding.binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
-			l_modelLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			l_modelLayoutBinding.descriptorCount = 1;
-			l_modelLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-			l_modelLayoutBinding.pImmutableSamplers = nullptr;
-			l_defaultMaterialDescriptorSetLayoutBindings.at(0) = l_modelLayoutBinding;
-
-			VkDescriptorSetLayoutBinding l_textureSamplerBinding{};
-			l_textureSamplerBinding.binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
-			l_textureSamplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			l_textureSamplerBinding.descriptorCount = 1;
-			l_textureSamplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-			l_textureSamplerBinding.pImmutableSamplers = nullptr;
-			l_defaultMaterialDescriptorSetLayoutBindings.at(1) = l_textureSamplerBinding;
-
-
-			l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_defaultMaterialDescriptorSetLayoutBindings;
-
-			DescriptorSetLayout_alloc(&l_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo->Device, &l_descriptorSetLayoutAllocInfo);
+			createDescriptorSetLayout(&l_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo);
 			createDescriptorPool(&l_localInputParameters->DescriptorPool, &l_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo);
 		}
 
 		auto l_finalDrawObjects = &p_defaultMaterial->FinalDrawObjects;
 		{
 			createPipelineLayout(p_defaultMaterial, p_defaultMaterialAllocInfo);
-
 			GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_defaultMaterialAllocInfo);
 			GraphicsPipeline_alloc(&l_finalDrawObjects->GraphicsPipeline, &l_graphicsPipelineAllocInfo);
 		}
@@ -74,15 +47,57 @@ namespace _GameEngine::_Render
 	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterial, Device* p_device)
 	{
 		GraphicsPipeline_free(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline);
-		clearPipelineLayout(p_defaultMaterial, p_device);
+		freePipelineLayout(p_defaultMaterial, p_device);
 		freeDescriptorPool(p_defaultMaterial, p_device);
-		DescriptorSetLayout_free(&p_defaultMaterial->LocalInputParameters.DescriptorSetLayout, p_device);
+		freeDescriptorSetLayout(&p_defaultMaterial->LocalInputParameters.DescriptorSetLayout, p_device);
 	};
 
 	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
 	{
 		GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_defaultMaterialAllocInfo);
 		GraphicsPipeline_reallocatePipeline(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline, &l_graphicsPipelineAllocInfo);
+	};
+
+	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources)
+	{
+		p_externalResources->VertexShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
+		p_externalResources->VertexShader.ShaderType = ShaderType::VERTEX;
+
+		p_externalResources->FragmentShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
+		p_externalResources->FragmentShader.ShaderType = ShaderType::FRAGMENT;
+	};
+
+	void createDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	{
+		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
+
+		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings(2);
+
+		VkDescriptorSetLayoutBinding l_modelLayoutBinding{};
+		l_modelLayoutBinding.binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
+		l_modelLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		l_modelLayoutBinding.descriptorCount = 1;
+		l_modelLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		l_modelLayoutBinding.pImmutableSamplers = nullptr;
+		l_defaultMaterialDescriptorSetLayoutBindings.at(0) = l_modelLayoutBinding;
+
+		VkDescriptorSetLayoutBinding l_textureSamplerBinding{};
+		l_textureSamplerBinding.binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
+		l_textureSamplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		l_textureSamplerBinding.descriptorCount = 1;
+		l_textureSamplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		l_textureSamplerBinding.pImmutableSamplers = nullptr;
+		l_defaultMaterialDescriptorSetLayoutBindings.at(1) = l_textureSamplerBinding;
+
+
+		l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_defaultMaterialDescriptorSetLayoutBindings;
+
+		DescriptorSetLayout_alloc(p_descriptorSetLayout, p_defaultMaterialAllocInfo->Device, &l_descriptorSetLayoutAllocInfo);
+	};
+
+	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device)
+	{
+		DescriptorSetLayout_free(p_descriptorSetLayout, p_device);
 	};
 
 	void createDescriptorPool(DescriptorPool* p_descritptorPool, DescriptorSetLayout* p_descriptorSetLayout,  DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
@@ -98,7 +113,7 @@ namespace _GameEngine::_Render
 
 	void freeDescriptorPool(DefaultMaterialV2* p_defaultMaterial, Device* p_device)
 	{
-		DescriptorPool_freeUnique(&p_defaultMaterial->LocalInputParameters.DescriptorPool, p_device);
+		DescriptorPool_free(&p_defaultMaterial->LocalInputParameters.DescriptorPool, p_device);
 	};
 
 	void createPipelineLayout(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
@@ -122,7 +137,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void clearPipelineLayout(DefaultMaterialV2* p_defaultMaterial, Device* p_device)
+	void freePipelineLayout(DefaultMaterialV2* p_defaultMaterial, Device* p_device)
 	{
 		vkDestroyPipelineLayout(p_device->LogicalDevice.LogicalDevice, p_defaultMaterial->FinalDrawObjects.PipelineLayout, nullptr);
 	};
