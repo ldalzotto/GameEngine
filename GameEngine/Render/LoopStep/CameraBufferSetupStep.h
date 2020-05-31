@@ -28,7 +28,7 @@ namespace _GameEngine::_Render
 		DescriptorPool DescriptorPool;
 		VkPipelineLayout PipelineLayout;
 		DescriptorSetLayout DescriptorSetLayout;
-		VkDescriptorSet ModelProjectionDescriptorSet;
+		VkDescriptorSet MaterialDescriptorSet;
 	};
 
 	void CameraBufferSetupStep_init(CameraBufferSetupStep* p_cameraDrawStep, Device* p_device);

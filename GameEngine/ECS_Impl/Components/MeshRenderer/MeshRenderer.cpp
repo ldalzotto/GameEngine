@@ -34,7 +34,7 @@ namespace _GameEngine::_ECS
 		p_meshRenderer->DefaultMaterialDrawCommand.Mesh = &p_meshRenderer->Mesh;
 
 		_Render::DefaultMaterialInstanceAllocInfo l_defaultMaterialInstanceAllocInfo{};
-		l_defaultMaterialInstanceAllocInfo.TexturePath = "G:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg";
+		l_defaultMaterialInstanceAllocInfo.TexturePath = "E:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg";
 		l_defaultMaterialInstanceAllocInfo.PreRenderDeferedCommandBufferStep = p_meshRenderer->MeshRendererDependencies.PreRenderDeferedCommandBufferStep;
 		l_defaultMaterialInstanceAllocInfo.TextureSampler = p_mehsRendererInfo->TextureSamplers->DefaultSampler;
 		_Render::DefaultMaterialInstance_alloc(&p_meshRenderer->DefaultMaterialDrawCommand.DefaultMaterialInstance, &l_defaultMaterialInstanceAllocInfo,

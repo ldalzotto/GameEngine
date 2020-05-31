@@ -38,7 +38,7 @@ namespace _GameEngine::_Render
 			VkDeviceSize l_offsets[] = { 0 };
 			vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
 			vkCmdBindIndexBuffer(p_commandBuffer, l_meshDrawCommand->Mesh->IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
-			vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_defaultMaterialInstance->_DefaultMaterial->PipelineLayout, 1, 1, &l_defaultMaterialInstance->ModelProjectionDescriptorSet, 0, nullptr);
+			vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_defaultMaterialInstance->_DefaultMaterial->PipelineLayout, 1, 1, &l_defaultMaterialInstance->MaterialDescriptorSet, 0, nullptr);
 			vkCmdDrawIndexed(p_commandBuffer, l_meshDrawCommand->Mesh->Indices.size(), 1, 0, 0, 0);
 		}
 

@@ -22,11 +22,6 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	struct ModelProjection
-	{
-		glm::mat4x4 Model;
-	};
-
 	struct DefaultMaterial
 	{
 		Shader VertexShader;
@@ -58,7 +53,7 @@ namespace _GameEngine::_Render
 		VulkanBuffer ModelProjectionBuffer;
 		Texture Texture;
 
-		VkDescriptorSet ModelProjectionDescriptorSet;
+		VkDescriptorSet MaterialDescriptorSet;
 	};
 
 	struct DefaultMaterialInstanceAllocInfo
@@ -66,6 +61,11 @@ namespace _GameEngine::_Render
 		std::string TexturePath;
 		VkSampler TextureSampler;
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
+	};
+
+	struct ModelProjection
+	{
+		glm::mat4x4 Model;
 	};
 
 	void DefaultMaterialInstance_alloc(DefaultMaterialInstance* p_defaultMaterialInstance, DefaultMaterialInstanceAllocInfo* l_defaultMaterialInstanceAllocInfo,

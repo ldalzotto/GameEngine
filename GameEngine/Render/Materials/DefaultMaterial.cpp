@@ -22,10 +22,10 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterial_alloc(DefaultMaterial* p_defaultMaterial, DefaultMaterialAllocInfo* p_defaultMaterialAllocInfo)
 	{
-		p_defaultMaterial->VertexShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
+		p_defaultMaterial->VertexShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
 		p_defaultMaterial->VertexShader.ShaderType = ShaderType::VERTEX;
 
-		p_defaultMaterial->FragmentShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
+		p_defaultMaterial->FragmentShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
 		p_defaultMaterial->FragmentShader.ShaderType = ShaderType::FRAGMENT;
 
 		VertexInput_buildInput(&p_defaultMaterial->VertexInput);
@@ -78,22 +78,13 @@ namespace _GameEngine::_Render
 
 	void createDescriptorPool(DefaultMaterial* p_defaultMaterial, DefaultMaterialAllocInfo* p_defaultMaterialAllocInfo)
 	{
-		std::vector<VkDescriptorPoolSize> l_descriptorPoolSizes(2);
-		memset(l_descriptorPoolSizes.data(), 0, sizeof(VkDescriptorPoolSize) * l_descriptorPoolSizes.size());
+		std::vector<VkDescriptorPoolSize> l_descriptorPoolSizes = DescriptorPool_buildDescriptorPoolSizeFromDescriptorSetLayout(&p_defaultMaterial->DescriptorSetLayout);
 
-		VkDescriptorPoolSize* l_modelBufferDescriptorPoolSize = &l_descriptorPoolSizes.at(0);
-		l_modelBufferDescriptorPoolSize->descriptorCount = 1;
-		l_modelBufferDescriptorPoolSize->type = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-
-		VkDescriptorPoolSize* l_textureSamplerDescriptorPoolSize = &l_descriptorPoolSizes.at(1);
-		l_textureSamplerDescriptorPoolSize->descriptorCount = 1;
-		l_textureSamplerDescriptorPoolSize->type = VkDescriptorType::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-
-		DescriptorPoolBuildInfo l_descriptorPoolBuildInfo{};
-		l_descriptorPoolBuildInfo.DescriptionPoolCreateFlags = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		l_descriptorPoolBuildInfo.DescriptorPoolSizes = &l_descriptorPoolSizes;
-		l_descriptorPoolBuildInfo.MaxSet = 20;
-		DescriptorPool_buildUnique(&p_defaultMaterial->DescriptorPool, p_defaultMaterialAllocInfo->Device, &l_descriptorPoolBuildInfo);
+		DescriptorPoolAllocInfo l_descriptorPoolAllocInfo{};
+		l_descriptorPoolAllocInfo.DescriptionPoolCreateFlags = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		l_descriptorPoolAllocInfo.SourceDescriptorPoolSize = &l_descriptorPoolSizes;
+		l_descriptorPoolAllocInfo.MaxSet = 20;
+		DescriptorPool_alloc(&p_defaultMaterial->DescriptorPool, p_defaultMaterialAllocInfo->Device, &l_descriptorPoolAllocInfo);
 	};
 
 	void freeDescriptorPool(DefaultMaterial* p_defaultMaterial, Device* p_device)
@@ -166,7 +157,7 @@ namespace _GameEngine::_Render
 		l_descriptorSetAllocateInfo.descriptorPool = p_defaultMaterialInstance->_DefaultMaterial->DescriptorPool.DescriptorPool;
 		l_descriptorSetAllocateInfo.descriptorSetCount = 1;
 		l_descriptorSetAllocateInfo.pSetLayouts = &p_defaultMaterialInstance->_DefaultMaterial->DescriptorSetLayout.DescriptorSetLayout;
-		if (vkAllocateDescriptorSets(p_device->LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_defaultMaterialInstance->ModelProjectionDescriptorSet) != VK_SUCCESS)
+		if (vkAllocateDescriptorSets(p_device->LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_defaultMaterialInstance->MaterialDescriptorSet) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create description set."));
 		};
@@ -180,7 +171,7 @@ namespace _GameEngine::_Render
 		l_descriptorUniformBufferInfo.range = p_defaultMaterialInstance->ModelProjectionBuffer.BufferAllocInfo.Size;
 		VkWriteDescriptorSet* l_descriptorUniforBufferWrite = &l_writeDescirptorSets.at(0);
 		l_descriptorUniforBufferWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		l_descriptorUniforBufferWrite->dstSet = p_defaultMaterialInstance->ModelProjectionDescriptorSet;
+		l_descriptorUniforBufferWrite->dstSet = p_defaultMaterialInstance->MaterialDescriptorSet;
 		l_descriptorUniforBufferWrite->dstBinding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
 		l_descriptorUniforBufferWrite->dstArrayElement = 0;
 		l_descriptorUniforBufferWrite->descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -195,7 +186,7 @@ namespace _GameEngine::_Render
 		l_descriptorImageInfo.sampler = l_defaultMaterialInstanceAllocInfo->TextureSampler;
 		VkWriteDescriptorSet* l_imageDescriptorSet = &l_writeDescirptorSets.at(1);
 		l_imageDescriptorSet->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		l_imageDescriptorSet->dstSet = p_defaultMaterialInstance->ModelProjectionDescriptorSet;
+		l_imageDescriptorSet->dstSet = p_defaultMaterialInstance->MaterialDescriptorSet;
 		l_imageDescriptorSet->dstBinding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
 		l_imageDescriptorSet->dstArrayElement = 0;
 		l_imageDescriptorSet->descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -207,7 +198,7 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterialInstance_free(DefaultMaterialInstance* p_defaultMaterialInstance, Device* p_device)
 	{
-		vkFreeDescriptorSets(p_device->LogicalDevice.LogicalDevice, p_defaultMaterialInstance->_DefaultMaterial->DescriptorPool.DescriptorPool, 1, &p_defaultMaterialInstance->ModelProjectionDescriptorSet);
+		vkFreeDescriptorSets(p_device->LogicalDevice.LogicalDevice, p_defaultMaterialInstance->_DefaultMaterial->DescriptorPool.DescriptorPool, 1, &p_defaultMaterialInstance->MaterialDescriptorSet);
 		_Render::VulkanBuffer_free(&p_defaultMaterialInstance->ModelProjectionBuffer, p_device);
 		Texture_free(&p_defaultMaterialInstance->Texture, p_device);
 	};

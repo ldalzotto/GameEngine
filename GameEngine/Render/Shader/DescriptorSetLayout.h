@@ -13,6 +13,7 @@ namespace _GameEngine::_Render
 	struct DescriptorSetLayout
 	{
 		VkDescriptorSetLayout DescriptorSetLayout;
+		std::vector<VkDescriptorSetLayoutBinding> LayoutBindings;
 	};
 
 	struct DescriptorSetLayoutAllocInfo

@@ -9,6 +9,8 @@ namespace _GameEngine::_Render
 {
 	void DescriptorSetLayout_alloc(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device, DescriptorSetLayoutAllocInfo* p_descriptorSetLayoutAllocInfo)
 	{
+		p_descriptorSetLayout->LayoutBindings = *p_descriptorSetLayoutAllocInfo->LayoutBindings;
+
 		VkDescriptorSetLayoutCreateInfo l_descriptorSetLayoutCreateInfo{};
 		l_descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		l_descriptorSetLayoutCreateInfo.bindingCount = p_descriptorSetLayoutAllocInfo->LayoutBindings->size();
