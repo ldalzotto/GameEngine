@@ -18,6 +18,7 @@
 #include "LoopStep/CameraBufferSetupStep.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
 #include "Materials/DefaultMaterialV2.h"
+#include "Resources/TextureResourceProvider.h"
 
 namespace _GameEngine::_Render
 {
@@ -33,6 +34,11 @@ namespace _GameEngine::_Render
 		DefaultMaterialV2 DefaultMaterial;
 	};
 
+	struct ResourceProviders
+	{
+		TextureResourceProvider TextureResourceProvider;
+	};
+
 	struct Render
 	{
 		Window Window;
@@ -46,6 +52,7 @@ namespace _GameEngine::_Render
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
 		TextureSamplers TextureSamplers;
+		ResourceProviders ResourceProviders;
 
 		RenderMaterials RenderMaterials;
 		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;

@@ -19,5 +19,5 @@ namespace _GameEngine::_Utils
 
 	void Observer_register(Observer* p_observer, Subject* p_subject);
 	void Observer_unRegister(Observer* p_observer, Subject* p_subject);
-	void Observer_broadcast(Observer* p_observer, void* p_closure);
+	void Observer_broadcast(Observer* p_observer, void* p_input);
 };

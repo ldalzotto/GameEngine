@@ -36,6 +36,9 @@ namespace _GameEngine::_Render
 	void initTextureSamplers(Render* p_render);
 	void freeTextureSamplers(Render* p_render);
 
+	void initResourcesProvider(Render* p_render);
+	void freeResourcesProvider(Render* p_render);
+
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
@@ -62,6 +65,7 @@ namespace _GameEngine::_Render
 		initRenderSemaphore(l_render);
 		initTextureSamplers(l_render);
 		initPreRenderStaging(l_render);
+		initResourcesProvider(l_render);
 		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
 		allocMaterials(l_render);
 		allocDefaultMaterialRenderStep(l_render);
@@ -77,6 +81,7 @@ namespace _GameEngine::_Render
 		freeDefaultMaterialRenderStep(*p_render);
 		freeMaterials(*p_render);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
+		freeResourcesProvider(*p_render);
 		freePreRenderStaging(*p_render);
 		freeTextureSamplers(*p_render);
 		freeRenderSemaphore(*p_render);
@@ -381,6 +386,21 @@ namespace _GameEngine::_Render
 	};
 
 	/////// END TEXTURE SAMPLERS
+
+	/////// RESOURCES PROVIDER
+
+	void initResourcesProvider(Render* p_render)
+	{
+		p_render->ResourceProviders.TextureResourceProvider.TextureResourceProviderDependencies.Device = &p_render->Device;
+		p_render->ResourceProviders.TextureResourceProvider.TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
+	};
+
+	void freeResourcesProvider(Render* p_render)
+	{
+		TextureResourceProvider_Clear(&p_render->ResourceProviders.TextureResourceProvider);
+	};
+
+	/////// END RESOURCES PROVIDER
 
 	/////// PRE RENDER STAGGING
 

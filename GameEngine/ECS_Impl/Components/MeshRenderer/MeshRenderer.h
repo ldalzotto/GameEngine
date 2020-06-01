@@ -6,7 +6,6 @@
 #include "Render/LoopStep/DefaultMaterialDrawStep.h"
 #include "Render/Materials/DefaultMaterialV2Instance.h"
 #include "Render/Mesh/Mesh.h"
-#include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {
@@ -15,6 +14,8 @@ namespace _GameEngine::_Render
 	struct DefaultMaterialV2;
 	struct DefaultMaterialDrawStep;
 	struct TextureSamplers;
+	struct TextureResourceProvider;
+	struct Texture;
 }
 
 namespace _GameEngine::_ECS
@@ -27,6 +28,7 @@ namespace _GameEngine::_ECS
 		_Render::PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 		_Render::DefaultMaterialV2* DefaultMaterialV2;
 		_Render::DefaultMaterialDrawStep* DefaultMaterialDrawStep;
+		_Render::TextureResourceProvider* TextureResourceProvider;
 	};
 
 	struct MeshRenderer
@@ -34,7 +36,7 @@ namespace _GameEngine::_ECS
 		MeshRendererDependencies MeshRendererDependencies;
 
 		_Render::Mesh Mesh;
-		_Render::Texture Texture;
+		_Render::Texture* Texture;
 
 		_Render::DefaultMaterialV2Instance DefaultMaterialV2Instance;
 		_Utils::Subject OnComponentDetached;

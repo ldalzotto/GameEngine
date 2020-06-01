@@ -14,6 +14,12 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
+
+	struct TextureUniqueKey
+	{
+		std::string TexturePath;
+	};
+
 	struct TextureInfo
 	{
 		uint32_t MipLevels;
@@ -26,6 +32,7 @@ namespace _GameEngine::_Render
 
 	struct Texture
 	{
+		TextureUniqueKey TextureUniqueKey;
 		TextureInfo TextureInfo;
 		VkImage Texture;
 		VkDeviceMemory TextureMemory;
@@ -36,10 +43,11 @@ namespace _GameEngine::_Render
 
 	struct TextureLoadInfo
 	{
+		TextureUniqueKey* TextureKey;
 		Device* Device;
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 	};
-
-	void Texture_load(Texture* p_texture,const std::string& l_texturePath, TextureLoadInfo* l_textureLoadInfo);
-	void Texture_free(Texture* p_texture, Device* p_device);
+	
+	Texture* Texture_alloc(TextureLoadInfo* l_textureLoadInfo);
+	void Texture_free(Texture** p_texture, Device* p_device);
 }
