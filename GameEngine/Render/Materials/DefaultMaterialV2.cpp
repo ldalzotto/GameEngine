@@ -6,6 +6,8 @@
 #include "Log/Log.h"
 #include "Render/Hardware/Device/Device.h"
 #include "Render/LoopStep/CameraBufferSetupStep.h"
+#include "Render/Mesh/Mesh.h"
+#include "Render/Texture/TextureSamplers.h"
 
 namespace _GameEngine::_Render
 {
@@ -14,7 +16,7 @@ namespace _GameEngine::_Render
 
 	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources);
 
-	void createDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
+	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
 	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device);
 
 	void createDescriptorPool(DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
@@ -27,17 +29,27 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
 	{
-		setupExternalResources(&p_defaultMaterial->ExternalResources);
+		p_defaultMaterial->LocalInputParameters.ModelMatrix.Binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
+		p_defaultMaterial->LocalInputParameters.ModelMatrix.BufferSize = sizeof(Vertex);
+		p_defaultMaterial->LocalInputParameters.ModelMatrix.StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
 
-		auto l_localInputParameters = &p_defaultMaterial->LocalInputParameters;
+		p_defaultMaterial->LocalInputParameters.BaseTexture.Binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
+		p_defaultMaterial->LocalInputParameters.BaseTexture.TextureSampler = p_defaultMaterialAllocInfo->TextureSamplers->DefaultSampler;
+		p_defaultMaterial->LocalInputParameters.BaseTexture.StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
+
 		{
+			setupExternalResources(&p_defaultMaterial->ExternalResources);
+		}
+
+		{
+			auto l_localInputParameters = &p_defaultMaterial->LocalInputParameters;
 			VertexInput_buildInput(&l_localInputParameters->VertexInput);
-			createDescriptorSetLayout(&l_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo);
+			createDescriptorSetLayout(l_localInputParameters, p_defaultMaterialAllocInfo);
 			createDescriptorPool(&l_localInputParameters->DescriptorPool, &l_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo);
 		}
 
-		auto l_finalDrawObjects = &p_defaultMaterial->FinalDrawObjects;
 		{
+			auto l_finalDrawObjects = &p_defaultMaterial->FinalDrawObjects;
 			createPipelineLayout(p_defaultMaterial, p_defaultMaterialAllocInfo);
 			GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_defaultMaterialAllocInfo);
 			GraphicsPipeline_alloc(&l_finalDrawObjects->GraphicsPipeline, &l_graphicsPipelineAllocInfo);
@@ -60,39 +72,26 @@ namespace _GameEngine::_Render
 
 	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources)
 	{
-		p_externalResources->VertexShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
+		p_externalResources->VertexShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
 		p_externalResources->VertexShader.ShaderType = ShaderType::VERTEX;
 
-		p_externalResources->FragmentShader.ShaderPath = "G:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
+		p_externalResources->FragmentShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
 		p_externalResources->FragmentShader.ShaderType = ShaderType::FRAGMENT;
 	};
 
-	void createDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
 	{
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
 
-		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings(2);
-
-		VkDescriptorSetLayoutBinding l_modelLayoutBinding{};
-		l_modelLayoutBinding.binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
-		l_modelLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		l_modelLayoutBinding.descriptorCount = 1;
-		l_modelLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		l_modelLayoutBinding.pImmutableSamplers = nullptr;
-		l_defaultMaterialDescriptorSetLayoutBindings.at(0) = l_modelLayoutBinding;
-
-		VkDescriptorSetLayoutBinding l_textureSamplerBinding{};
-		l_textureSamplerBinding.binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
-		l_textureSamplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		l_textureSamplerBinding.descriptorCount = 1;
-		l_textureSamplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-		l_textureSamplerBinding.pImmutableSamplers = nullptr;
-		l_defaultMaterialDescriptorSetLayoutBindings.at(1) = l_textureSamplerBinding;
-
+		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings
+		{
+			UniformBufferParameter_buildLayoutBinding(&p_localInputParameters->ModelMatrix),
+			ImageSampleParameter_buildLayoutBinding(&p_localInputParameters->BaseTexture)
+		};
 
 		l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_defaultMaterialDescriptorSetLayoutBindings;
 
-		DescriptorSetLayout_alloc(p_descriptorSetLayout, p_defaultMaterialAllocInfo->Device, &l_descriptorSetLayoutAllocInfo);
+		DescriptorSetLayout_alloc(&p_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo->Device, &l_descriptorSetLayoutAllocInfo);
 	};
 
 	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device)
@@ -100,7 +99,7 @@ namespace _GameEngine::_Render
 		DescriptorSetLayout_free(p_descriptorSetLayout, p_device);
 	};
 
-	void createDescriptorPool(DescriptorPool* p_descritptorPool, DescriptorSetLayout* p_descriptorSetLayout,  DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	void createDescriptorPool(DescriptorPool* p_descritptorPool, DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
 	{
 		std::vector<VkDescriptorPoolSize> l_descriptorPoolSizes = DescriptorPool_buildDescriptorPoolSizeFromDescriptorSetLayout(p_descriptorSetLayout);
 

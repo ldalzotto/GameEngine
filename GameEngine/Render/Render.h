@@ -17,7 +17,7 @@
 #include "LoopStep/PreRenderDeferedCommandBufferStep.h"
 #include "LoopStep/CameraBufferSetupStep.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
-#include "Materials/DefaultMaterial.h"
+#include "Materials/DefaultMaterialV2.h"
 
 namespace _GameEngine::_Render
 {
@@ -30,7 +30,7 @@ namespace _GameEngine::_Render
 
 	struct RenderMaterials
 	{
-		DefaultMaterial DefaultMaterial;
+		DefaultMaterialV2 DefaultMaterial;
 	};
 
 	struct Render

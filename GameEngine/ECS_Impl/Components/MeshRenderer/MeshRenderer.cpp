@@ -31,25 +31,38 @@ namespace _GameEngine::_ECS
 		};
 
 		_Render::Mesh_alloc(&p_meshRenderer->Mesh, &l_meshAllocInfo);
-		p_meshRenderer->DefaultMaterialDrawCommand.Mesh = &p_meshRenderer->Mesh;
+//		p_meshRenderer->->DefaultMaterialDrawCommand.Mesh = &p_meshRenderer->Mesh;
 
-		_Render::DefaultMaterialInstanceAllocInfo l_defaultMaterialInstanceAllocInfo{};
-		l_defaultMaterialInstanceAllocInfo.TexturePath = "E:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg";
-		l_defaultMaterialInstanceAllocInfo.PreRenderDeferedCommandBufferStep = p_meshRenderer->MeshRendererDependencies.PreRenderDeferedCommandBufferStep;
-		l_defaultMaterialInstanceAllocInfo.TextureSampler = p_mehsRendererInfo->TextureSamplers->DefaultSampler;
-		_Render::DefaultMaterialInstance_alloc(&p_meshRenderer->DefaultMaterialDrawCommand.DefaultMaterialInstance, &l_defaultMaterialInstanceAllocInfo,
-				p_meshRenderer->MeshRendererDependencies.DefaultMaterial, p_meshRenderer->MeshRendererDependencies.Device);
+		_Render::TextureLoadInfo l_textureLoadInfo{};
+		l_textureLoadInfo.Device = p_mehsRendererInfo->MeshRendererDependencies.Device;
+		l_textureLoadInfo.PreRenderDeferedCommandBufferStep = p_mehsRendererInfo->MeshRendererDependencies.PreRenderDeferedCommandBufferStep;
+		_Render::Texture_load(&p_meshRenderer->Texture, "E:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg", &l_textureLoadInfo);
+
+
+		_Render::DefaultMaterialV2Drawer_ExternalResources l_externalResources{};
+		l_externalResources.Mesh = &p_meshRenderer->Mesh;
+		l_externalResources.Texture = &p_meshRenderer->Texture;
+
+		_Render::DefaultMaterialV2DrawerAllocInfo l_defaultMaterialV2DrawerAllocInfo{};
+		l_defaultMaterialV2DrawerAllocInfo.DefaultMaterial = p_meshRenderer->MeshRendererDependencies.DefaultMaterialV2;
+		l_defaultMaterialV2DrawerAllocInfo.Device = p_meshRenderer->MeshRendererDependencies.Device;
+		l_defaultMaterialV2DrawerAllocInfo.ExternalResource = &l_externalResources;
+
+		_Render::DefaultMaterialV2Instance_alloc(&p_meshRenderer->DefaultMaterialV2Instance, &l_defaultMaterialV2DrawerAllocInfo);
+
 	};
 
-	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection& l_meshUniformObject)
+	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection* l_meshUniformObject)
 	{
-		_Render::DefaultMaterialInsance_pushModelProjectionToGPU(&p_meshRenderer->DefaultMaterialDrawCommand.DefaultMaterialInstance, &l_meshUniformObject, p_meshRenderer->MeshRendererDependencies.Device);
+		_Render::DefaultMaterialV2Instance_setModelMatrix(&p_meshRenderer->DefaultMaterialV2Instance, l_meshUniformObject, p_meshRenderer->MeshRendererDependencies.Device);
 	};
 
 	void MeshRenderer_free(void* p_meshRenderer, void* p_null)
 	{
 		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
 		_Render::Mesh_free(&l_meshRenderer->Mesh, l_meshRenderer->MeshRendererDependencies.Device);
-		_Render::DefaultMaterialInstance_free(&l_meshRenderer->DefaultMaterialDrawCommand.DefaultMaterialInstance, l_meshRenderer->MeshRendererDependencies.Device);
+		_Render::Texture_free(&l_meshRenderer->Texture, l_meshRenderer->MeshRendererDependencies.Device);
+
+		_Render::DefaultMaterialV2Instance_free(&l_meshRenderer->DefaultMaterialV2Instance, l_meshRenderer->MeshRendererDependencies.Device);
 	};
 }

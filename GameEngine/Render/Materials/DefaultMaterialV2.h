@@ -9,12 +9,14 @@
 #include "Render/Shader/Shader.h"
 #include "Render/Shader/VertexInput.h"
 #include "Render/Shader/DescriptorSetLayout.h"
+#include "Render/Shader/ShaderParameter.h"
 
 namespace _GameEngine::_Render
 {
 	struct Device;
 	struct SwapChain;
 	struct CameraBufferSetupStep;
+	struct TextureSamplers;
 }
 
 namespace _GameEngine::_Render
@@ -25,15 +27,18 @@ namespace _GameEngine::_Render
 		Shader FragmentShader;
 	};
 
+	struct DefaultMaterialV2_LocalInputParameters
+	{
+		VertexInput VertexInput;
+		UniformBufferParameter ModelMatrix;
+		ImageSampleParameter BaseTexture;
+
+		DescriptorSetLayout DescriptorSetLayout;
+		DescriptorPool DescriptorPool;
+	};
+
 	struct DefaultMaterialV2
 	{
-		struct LocalInputParameters
-		{
-			VertexInput VertexInput;
-			DescriptorSetLayout DescriptorSetLayout;
-			DescriptorPool DescriptorPool;
-		};
-
 		struct FinalDrawObjects
 		{
 			VkPipelineLayout PipelineLayout;
@@ -41,7 +46,8 @@ namespace _GameEngine::_Render
 		};
 
 		DefaultMaterialV2_ExternalResources ExternalResources;
-		LocalInputParameters LocalInputParameters;
+
+		DefaultMaterialV2_LocalInputParameters LocalInputParameters;
 		FinalDrawObjects FinalDrawObjects;
 	};
 
@@ -50,6 +56,7 @@ namespace _GameEngine::_Render
 		Device* Device;
 		SwapChain* SwapChain;
 		CameraBufferSetupStep* CameraBufferSetupStep;
+		TextureSamplers* TextureSamplers;
 	};
 
 	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterialV2, DefaultMaterialV2AllocInfo* p_defaultMaterialV2AllocInfo);

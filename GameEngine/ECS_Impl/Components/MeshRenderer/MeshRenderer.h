@@ -4,13 +4,15 @@
 #include "glm/glm.hpp"
 
 #include "Render/LoopStep/DefaultMaterialDrawStep.h"
+#include "Render/Materials/DefaultMaterialV2Instance.h"
 #include "Render/Mesh/Mesh.h"
+#include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {
 	struct Device;
 	struct PreRenderDeferedCommandBufferStep;
-	struct DefaultMaterial;
+	struct DefaultMaterialV2;
 	struct DefaultMaterialDrawStep;
 	struct TextureSamplers;
 }
@@ -23,7 +25,7 @@ namespace _GameEngine::_ECS
 	{
 		_Render::Device* Device;
 		_Render::PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
-		_Render::DefaultMaterial* DefaultMaterial;
+		_Render::DefaultMaterialV2* DefaultMaterialV2;
 		_Render::DefaultMaterialDrawStep* DefaultMaterialDrawStep;
 	};
 
@@ -32,7 +34,9 @@ namespace _GameEngine::_ECS
 		MeshRendererDependencies MeshRendererDependencies;
 
 		_Render::Mesh Mesh;
-		_Render::DefaultMaterialDrawCommand DefaultMaterialDrawCommand;
+		_Render::Texture Texture;
+
+		_Render::DefaultMaterialV2Instance DefaultMaterialV2Instance;
 		_Utils::Subject OnComponentDetached;
 	};
 
@@ -44,5 +48,5 @@ namespace _GameEngine::_ECS
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo);
-	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection& l_meshUniformObject);
+	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection* l_meshUniformObject);
 }

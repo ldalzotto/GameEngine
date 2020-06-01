@@ -321,10 +321,11 @@ namespace _GameEngine::_Render
 
 	void reAllocateGraphicsPipelineContainer(Render* p_render)
 	{
-		DefaultMaterialAllocInfo l_defaultMaterialAllocInfo{};
+		DefaultMaterialV2AllocInfo l_defaultMaterialAllocInfo{};
 		l_defaultMaterialAllocInfo.Device = &p_render->Device;
 		l_defaultMaterialAllocInfo.SwapChain = &p_render->SwapChain;
 		l_defaultMaterialAllocInfo.CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
+		l_defaultMaterialAllocInfo.TextureSamplers = &p_render->TextureSamplers;
 		DefaultMaterial_reAllocGraphicsPipeline(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
 	};
 
@@ -399,10 +400,11 @@ namespace _GameEngine::_Render
 
 	void allocMaterials(Render* p_render)
 	{
-		DefaultMaterialAllocInfo l_defaultMaterialAllocInfo{};
+		DefaultMaterialV2AllocInfo l_defaultMaterialAllocInfo{};
 		l_defaultMaterialAllocInfo.Device = &p_render->Device;
 		l_defaultMaterialAllocInfo.SwapChain = &p_render->SwapChain;
 		l_defaultMaterialAllocInfo.CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
+		l_defaultMaterialAllocInfo.TextureSamplers = &p_render->TextureSamplers;
 		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
 	};
 	

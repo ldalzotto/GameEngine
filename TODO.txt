@@ -1,5 +1,5 @@
 -- Texture --
-# Cleaning and separating the dependency between MaterialInstance and Texture.
+[X] # Cleaning and separating the dependency between MaterialInstance and Texture.
 # MaterialInstance source data are the same and not cached. (using the same instance for example ?)
 
 -- ECS --

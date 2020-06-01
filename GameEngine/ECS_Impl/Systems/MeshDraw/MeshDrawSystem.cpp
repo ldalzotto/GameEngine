@@ -13,13 +13,13 @@ namespace _GameEngine::_ECS
 	void onMeshDrawSystemEntityAdded(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = (MeshRenderer*)_ECS::Entity_getComponent(p_entity, MeshRendererType)->Child;
-		l_mesRenderer->MeshRendererDependencies.DefaultMaterialDrawStep->MeshDrawCommands.emplace_back(&l_mesRenderer->DefaultMaterialDrawCommand);
+		l_mesRenderer->MeshRendererDependencies.DefaultMaterialDrawStep->DefaultMaterialV2Instance.emplace_back(&l_mesRenderer->DefaultMaterialV2Instance);
 	}
 
 	void onMeshDrawSystemEntityRemoved(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = (MeshRenderer*)_ECS::Entity_getComponent(p_entity, MeshRendererType)->Child;
-		_Utils::Vector_eraseElementEquals(l_mesRenderer->MeshRendererDependencies.DefaultMaterialDrawStep->MeshDrawCommands, &l_mesRenderer->DefaultMaterialDrawCommand);
+		_Utils::Vector_eraseElementEquals(l_mesRenderer->MeshRendererDependencies.DefaultMaterialDrawStep->DefaultMaterialV2Instance, &l_mesRenderer->DefaultMaterialV2Instance);
 	}
 
 	void MeshDrawSystem_init(MeshDrawSystem* p_meshDrawSystem, ECS* p_ecs)
@@ -45,7 +45,7 @@ namespace _GameEngine::_ECS
 
 			_Render::ModelProjection l_meshUniform{};
 			l_meshUniform.Model = *_ECS::Transform_getLocalToWorldMatrix(l_transform);
-			MeshRenderer_updateMeshDrawUniform(l_mesRenderer, l_meshUniform);
+			MeshRenderer_updateMeshDrawUniform(l_mesRenderer, &l_meshUniform);
 		}
 	};
 

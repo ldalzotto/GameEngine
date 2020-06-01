@@ -89,7 +89,7 @@ void SandboxApplication_update(float p_delta)
 				_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
 				_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterial = &App->Render->RenderMaterials.DefaultMaterial;
+				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialV2 = &App->Render->RenderMaterials.DefaultMaterial;
 				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialDrawStep = &App->Render->DefaultMaterialDrawStep;
 				l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;
 				l_meshRendererInitInfo.MeshRendererDependencies.PreRenderDeferedCommandBufferStep = &App->Render->PreRenderDeferedCommandBufferStep;
