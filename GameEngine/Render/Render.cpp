@@ -393,11 +393,15 @@ namespace _GameEngine::_Render
 	{
 		p_render->ResourceProviders.TextureResourceProvider.TextureResourceProviderDependencies.Device = &p_render->Device;
 		p_render->ResourceProviders.TextureResourceProvider.TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
+
+		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.Device = &p_render->Device;
+		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
 	};
 
 	void freeResourcesProvider(Render* p_render)
 	{
 		TextureResourceProvider_Clear(&p_render->ResourceProviders.TextureResourceProvider);
+		MeshResourceProvider_Clear(&p_render->ResourceProviders.MeshResourceProvider);
 	};
 
 	/////// END RESOURCES PROVIDER

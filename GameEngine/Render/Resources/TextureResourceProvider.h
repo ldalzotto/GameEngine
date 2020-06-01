@@ -12,7 +12,7 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	struct ResourceWithCounter
+	struct TextureResourceWithCounter
 	{
 		Texture* Texture;
 		_Utils::UsageCounter UsageCounter;
@@ -27,7 +27,7 @@ namespace _GameEngine::_Render
 	struct TextureResourceProvider
 	{
 		TextureResourceProviderDependencies TextureResourceProviderDependencies;
-		std::unordered_map<size_t, ResourceWithCounter> TextureResources;
+		std::unordered_map<size_t, TextureResourceWithCounter> TextureResources;
 	};
 
 	void TextureResourceProvider_Clear(TextureResourceProvider* p_textureResourceProvider);

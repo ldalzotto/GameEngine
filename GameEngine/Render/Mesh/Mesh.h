@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <string>
 #include <vector>
 #include "glm/glm.hpp"
 
@@ -22,8 +22,15 @@ namespace _GameEngine::_Render
 		glm::vec2 TexCoord;
 	};
 
+	struct MeshUniqueKey
+	{
+		std::string MeshAssetPath;
+	};
+
 	struct Mesh
 	{
+		MeshUniqueKey MeshUniqueKey;
+
 		std::vector<Vertex> Vertices;
 		VulkanBuffer VertexBuffer;
 		
@@ -36,10 +43,14 @@ namespace _GameEngine::_Render
 
 	struct MeshAllocInfo
 	{
+		MeshUniqueKey* MeshUniqueKey;
+		std::vector<Vertex>* Vertices;
+		std::vector<uint16_t>* Indices;
+
 		Device* Device;
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 	};
 
-	void Mesh_alloc(Mesh* p_mesh, MeshAllocInfo* p_meshAllocInfo);
-	void Mesh_free(Mesh* p_mesh, Device* p_device);
+	Mesh* Mesh_alloc(MeshAllocInfo* p_meshAllocInfo);
+	void Mesh_free(Mesh** p_mesh, Device* p_device);
 }

@@ -5,17 +5,17 @@
 
 #include "Render/LoopStep/DefaultMaterialDrawStep.h"
 #include "Render/Materials/DefaultMaterialV2Instance.h"
-#include "Render/Mesh/Mesh.h"
 
 namespace _GameEngine::_Render
 {
 	struct Device;
-	struct PreRenderDeferedCommandBufferStep;
 	struct DefaultMaterialV2;
 	struct DefaultMaterialDrawStep;
 	struct TextureSamplers;
 	struct TextureResourceProvider;
+	struct MeshResourceProvider;
 	struct Texture;
+	struct Mesh;
 }
 
 namespace _GameEngine::_ECS
@@ -25,17 +25,17 @@ namespace _GameEngine::_ECS
 	struct MeshRendererDependencies
 	{
 		_Render::Device* Device;
-		_Render::PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 		_Render::DefaultMaterialV2* DefaultMaterialV2;
 		_Render::DefaultMaterialDrawStep* DefaultMaterialDrawStep;
 		_Render::TextureResourceProvider* TextureResourceProvider;
+		_Render::MeshResourceProvider* MeshResourceProvider;
 	};
 
 	struct MeshRenderer
 	{
 		MeshRendererDependencies MeshRendererDependencies;
 
-		_Render::Mesh Mesh;
+		_Render::Mesh* Mesh;
 		_Render::Texture* Texture;
 
 		_Render::DefaultMaterialV2Instance DefaultMaterialV2Instance;

@@ -1,6 +1,6 @@
 -- Texture --
 [X] # Cleaning and separating the dependency between MaterialInstance and Texture.
-# MaterialInstance source data are the same and not cached. (using the same instance for example ?)
+[X] # MaterialInstance source data are the same and not cached. (using the same instance for example ?)
 
 -- ECS --
 # Provinding a uniquea and safe way to get the child component.

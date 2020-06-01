@@ -19,6 +19,7 @@
 #include "LoopStep/DefaultMaterialDrawStep.h"
 #include "Materials/DefaultMaterialV2.h"
 #include "Resources/TextureResourceProvider.h"
+#include "Resources/MeshResourceProvider.h"
 
 namespace _GameEngine::_Render
 {
@@ -37,6 +38,7 @@ namespace _GameEngine::_Render
 	struct ResourceProviders
 	{
 		TextureResourceProvider TextureResourceProvider;
+		MeshResourceProvider MeshResourceProvider;
 	};
 
 	struct Render

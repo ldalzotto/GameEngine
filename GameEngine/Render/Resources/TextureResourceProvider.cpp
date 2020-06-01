@@ -26,14 +26,14 @@ namespace _GameEngine::_Render
 			l_textureLoadInfo.TextureKey = p_key;
 
 			Texture* l_texture = Texture_alloc(&l_textureLoadInfo);
-			ResourceWithCounter l_resouceWithCounter{};
+			TextureResourceWithCounter l_resouceWithCounter{};
 
 			l_resouceWithCounter.Texture = l_texture;
 			l_resouceWithCounter.UsageCounter.UsageCount = 0;
 			p_textureResourceProvider->TextureResources.emplace(l_hash, l_resouceWithCounter);
 		}
 
-		ResourceWithCounter* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
+		TextureResourceWithCounter* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
 		_Utils::UsageCounter_use(&l_resourceWithCounter->UsageCounter);
 		return l_resourceWithCounter->Texture;
 	};
@@ -42,7 +42,7 @@ namespace _GameEngine::_Render
 	void TextureResourceProvider_ReleaseResource(TextureResourceProvider* p_textureResourceProvider, TextureUniqueKey* p_key)
 	{
 		size_t l_hash = TextureUniqueKey_buildHash(p_key);
-		ResourceWithCounter* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
+		TextureResourceWithCounter* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
 		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)
 		{
