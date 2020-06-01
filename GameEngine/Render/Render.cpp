@@ -3,6 +3,8 @@
 #include "Extensions/Extensions.h"
 #include "Log/Log.h"
 
+#include "Render/Texture/InitializationConfigurations/TCDepth.h"
+
 #include <stdexcept>
 
 namespace _GameEngine::_Render
@@ -24,6 +26,9 @@ namespace _GameEngine::_Render
 
 	void initSwapChain(Render* p_render);
 	void freeSwapChain(Render* p_render);
+
+	void initDepthTexture(Render* p_render);
+	void freeDepthTexture(Render* p_render);
 
 	void reAllocateGraphicsPipelineContainer(Render* p_render);
 
@@ -65,6 +70,7 @@ namespace _GameEngine::_Render
 		initRenderSemaphore(l_render);
 		initTextureSamplers(l_render);
 		initPreRenderStaging(l_render);
+		initDepthTexture(l_render);
 		initResourcesProvider(l_render);
 		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
 		allocMaterials(l_render);
@@ -82,6 +88,7 @@ namespace _GameEngine::_Render
 		freeMaterials(*p_render);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
 		freeResourcesProvider(*p_render);
+		freeDepthTexture(*p_render);
 		freePreRenderStaging(*p_render);
 		freeTextureSamplers(*p_render);
 		freeRenderSemaphore(*p_render);
@@ -103,11 +110,13 @@ namespace _GameEngine::_Render
 
 		freeRenderSemaphore(p_render);
 		freeSwapChain(p_render);
+		freeDepthTexture(p_render);
 		freePreRenderStaging(p_render);
 		freeCommandPool(p_render);
 
 		initCommandPool(p_render);
 		initPreRenderStaging(p_render);
+		initDepthTexture(p_render);
 		initSwapChain(p_render);
 		reAllocateGraphicsPipelineContainer(p_render);
 		initRenderSemaphore(p_render);
@@ -321,6 +330,28 @@ namespace _GameEngine::_Render
 
 	/////// END SWAP CHAIN
 
+	/////// DEPTH TEXTURE
+
+	void initDepthTexture(Render* p_render)
+	{
+		TextureUniqueKey l_textureKey{ "DEPTH" };
+
+		TextureProceduralInstanceInfo l_textureProceduralInstanceInfo{};
+		l_textureProceduralInstanceInfo.TextureKey = &l_textureKey;
+		l_textureProceduralInstanceInfo.Device = &p_render->Device;
+		l_textureProceduralInstanceInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
+		l_textureProceduralInstanceInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
+		l_textureProceduralInstanceInfo.ImageCreateInfoProvider = TCDepth_BuildVkImageCreateInfo;
+		l_textureProceduralInstanceInfo.ImageViewCreationInfoProvider = TCDepth_BuildVkImageViewCreateInfo;
+		p_render->DepthTexture = Texture_porceduralInstance(&l_textureProceduralInstanceInfo);
+	};
+
+	void freeDepthTexture(Render* p_render)
+	{
+		Texture_free(&p_render->DepthTexture, &p_render->Device);
+	};
+
+	/////// END DEPTH TEXTURE
 
 	/////// GRAPHICS PIPELINE
 
@@ -431,7 +462,7 @@ namespace _GameEngine::_Render
 		l_defaultMaterialAllocInfo.TextureSamplers = &p_render->TextureSamplers;
 		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
 	};
-	
+
 	void freeMaterials(Render* p_render)
 	{
 		DefaultMaterial_free(&p_render->RenderMaterials.DefaultMaterial, &p_render->Device);
@@ -445,7 +476,7 @@ namespace _GameEngine::_Render
 	{
 		DefaultMaterialDrawStep_init(&p_render->DefaultMaterialDrawStep, &p_render->RenderMaterials.DefaultMaterial);
 	};
-	
+
 	void freeDefaultMaterialRenderStep(Render* p_render)
 	{
 		DefaultMaterialDrawStep_clear(&p_render->DefaultMaterialDrawStep);
@@ -512,7 +543,7 @@ namespace _GameEngine::_Render
 		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
 
 		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->SwapChain, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
-	
+
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));

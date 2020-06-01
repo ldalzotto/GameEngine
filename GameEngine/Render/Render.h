@@ -9,6 +9,7 @@
 #include "ValidationLayers.h"
 #include "Hardware/Device/Device.h"
 #include "SwapChain/SwapChain.h"
+#include "Texture/Texture.h"
 #include "Descriptor/DescriptorPool.h"
 #include "CommandBuffer/CommandPool.h"
 #include "CommandBuffer/CommandBuffers.h"
@@ -50,6 +51,7 @@ namespace _GameEngine::_Render
 		RenderDebug RenderDebug;
 		Device Device;
 		SwapChain SwapChain;
+		Texture* DepthTexture;
 		CommandPool CommandPool;
 		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;

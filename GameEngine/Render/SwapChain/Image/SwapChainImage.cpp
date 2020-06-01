@@ -1,6 +1,7 @@
 #include "SwapChainImage.h"
 
 #include "Render/Texture/Texture.h"
+#include "Render/Texture/InitializationConfigurations/TCColorShader.h"
 
 namespace _GameEngine::_Render
 {
@@ -12,6 +13,7 @@ namespace _GameEngine::_Render
 		l_imageViewInitializationInfo.Texture = p_swapChainImage->SwapChainImage;
 		l_imageViewInitializationInfo.TextureInfo = p_swapChainImageInitializationInfo->TextureInfo;
 		l_imageViewInitializationInfo.Device = p_swapChainImageInitializationInfo->Device;
+		l_imageViewInitializationInfo.ImageViewCreateInfoProvider = TCColorShader_BuildVkImageViewCreateInfo;
 		ImageView_init(&p_swapChainImage->ImageView, &l_imageViewInitializationInfo);
 
 		CommandBuffersDependencies l_commandBufferDependencies{};

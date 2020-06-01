@@ -15,6 +15,7 @@ namespace _GameEngine::_Render
 namespace _GameEngine::_Render
 {
 
+
 	struct TextureUniqueKey
 	{
 		std::string TexturePath;
@@ -38,8 +39,11 @@ namespace _GameEngine::_Render
 		VkDeviceMemory TextureMemory;
 		ImageView ImageView;
 
+		// Disposed by it's owner @ref DeferredCommandBufferOperation
 		DeferredCommandBufferCompletionToken* TextureInitializationBufferCompletionToken;
 	};
+
+	typedef VkImageCreateInfo(*VkImageCreateInfoProvider)(uint32_t p_width, uint32_t p_height);
 
 	struct TextureLoadInfo
 	{
@@ -48,6 +52,19 @@ namespace _GameEngine::_Render
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 	};
 	
-	Texture* Texture_alloc(TextureLoadInfo* l_textureLoadInfo);
+	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo);
+
+	struct TextureProceduralInstanceInfo
+	{
+		TextureUniqueKey* TextureKey;
+		Device* Device;
+		uint32_t Width;
+		uint32_t Height;
+		VkImageCreateInfoProvider ImageCreateInfoProvider;
+		ImageViewCreationInfoProvider ImageViewCreationInfoProvider;
+	};
+
+	Texture* Texture_porceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo);
+
 	void Texture_free(Texture** p_texture, Device* p_device);
 }

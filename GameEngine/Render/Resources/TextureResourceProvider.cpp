@@ -25,7 +25,7 @@ namespace _GameEngine::_Render
 			l_textureLoadInfo.PreRenderDeferedCommandBufferStep = p_textureResourceProvider->TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep;
 			l_textureLoadInfo.TextureKey = p_key;
 
-			Texture* l_texture = Texture_alloc(&l_textureLoadInfo);
+			Texture* l_texture = Texture_loadFromFile(&l_textureLoadInfo);
 			TextureResourceWithCounter l_resouceWithCounter{};
 
 			l_resouceWithCounter.Texture = l_texture;
