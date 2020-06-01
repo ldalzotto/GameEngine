@@ -1,11 +1,15 @@
--- Texture --
-[X] # Cleaning and separating the dependency between MaterialInstance and Texture.
-[X] # MaterialInstance source data are the same and not cached. (using the same instance for example ?)
+
 
 -- ECS --
 # Provinding a uniquea and safe way to get the child component.
 
+-- Log term improvements --
 
+# The material definition is hard coded (vertex buffer type, input shader parameters).
+  We could potentially implement a system that read a single configuration object and create the material and it's instances accordingly.
+  That would require much more work (finding a generic way to define parameters, createing appropriate structures from it).
+  For now, such a system is not needed.
+# The same goes for the GraphicsPipeline associated to the shader.
 
 [X] - # Fixing the Transform system to be able to retrieve the Model matrix correctly.
 
@@ -13,3 +17,7 @@
 [X] - # Setting up Camera BufferObject.
 	-> Single VulkanBuffer containing the view and perspective matrices.
 	-> Binded before binding the graphics pipeline
+
+-- Texture --
+[X] # Cleaning and separating the dependency between MaterialInstance and Texture.
+[X] # MaterialInstance source data are the same and not cached. (using the same instance for example ?)
