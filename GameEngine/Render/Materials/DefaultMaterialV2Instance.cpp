@@ -8,9 +8,8 @@
 #include "Render/Hardware/Device/Device.h"
 #include "Render/LoopStep/DefaultMaterialDrawStep.h"
 
-
-#include "Render/Texture/Texture.h"
-#include "Render/Mesh/Mesh.h"
+#include "Render/Resources/MeshResourceProvider.h"
+#include "Render/Resources/TextureResourceProvider.h"
 
 namespace _GameEngine::_Render
 {
@@ -25,17 +24,24 @@ namespace _GameEngine::_Render
 	void DefaultMaterialV2Instance_alloc(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, DefaultMaterialV2DrawerAllocInfo* p_defaultMaterialV2InstanceAllocInfo)
 	{
 		p_defaultMaterialV2Instance->_DefaultMaterial = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial;
-		p_defaultMaterialV2Instance->ExternalResources = *p_defaultMaterialV2InstanceAllocInfo->ExternalResource;
+
+		p_defaultMaterialV2Instance->ExternalResources.Mesh =
+			MeshResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->MeshResourceProvider, &p_defaultMaterialV2InstanceAllocInfo->MeshUniqueKey);
+		p_defaultMaterialV2Instance->ExternalResources.Texture =
+			TextureResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->TextureResourceProvider, &p_defaultMaterialV2InstanceAllocInfo->TextureUniqueKey);
+
 		createModelMatrixBuffer(p_defaultMaterialV2Instance, p_defaultMaterialV2InstanceAllocInfo->Device);
 
 		createDescriptorSet(p_defaultMaterialV2Instance, p_defaultMaterialV2InstanceAllocInfo->Device);
 		updateDescriptorSet(p_defaultMaterialV2Instance, p_defaultMaterialV2InstanceAllocInfo->Device);
 	};
 
-	void DefaultMaterialV2Instance_free(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device)
+	void DefaultMaterialV2Instance_free(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, DefaultMaterialV2InstanceFreeInfo* p_defaultMaterialFreeInfo)
 	{
-		freeModelMatrixBuffer(p_defaultMaterialV2Instance, p_device);
-		freeDescriptorSet(p_defaultMaterialV2Instance, p_device);
+		freeModelMatrixBuffer(p_defaultMaterialV2Instance, p_defaultMaterialFreeInfo->Device);
+		freeDescriptorSet(p_defaultMaterialV2Instance, p_defaultMaterialFreeInfo->Device);
+		MeshResourceProvider_ReleaseResource(p_defaultMaterialFreeInfo->ResourceProviderDependencies->MeshResourceProvider, &p_defaultMaterialV2Instance->ExternalResources.Mesh->MeshUniqueKey);
+		TextureResourceProvider_ReleaseResource(p_defaultMaterialFreeInfo->ResourceProviderDependencies->TextureResourceProvider, &p_defaultMaterialV2Instance->ExternalResources.Texture->TextureUniqueKey);
 	};
 
 	void DefaultMaterialV2Instance_setModelMatrix(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, ModelProjection* p_modelProjection, Device* p_device)
@@ -67,7 +73,7 @@ namespace _GameEngine::_Render
 		VkDescriptorImageInfo l_descriptorImageInfo{};
 		l_writeDescirptorSets[1] = ImageSampleParameter_buildWriteDescriptorSet(
 			&p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.BaseTexture,
-			p_defaultMaterialV2Instance->ExternalResources.Texture, 
+			p_defaultMaterialV2Instance->ExternalResources.Texture,
 			&l_descriptorImageInfo,
 			p_defaultMaterialV2Instance->MaterialDescriptorSet);
 

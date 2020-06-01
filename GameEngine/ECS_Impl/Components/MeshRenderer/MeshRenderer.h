@@ -11,11 +11,8 @@ namespace _GameEngine::_Render
 	struct Device;
 	struct DefaultMaterialV2;
 	struct DefaultMaterialDrawStep;
-	struct TextureSamplers;
 	struct TextureResourceProvider;
 	struct MeshResourceProvider;
-	struct Texture;
-	struct Mesh;
 }
 
 namespace _GameEngine::_ECS
@@ -35,9 +32,6 @@ namespace _GameEngine::_ECS
 	{
 		MeshRendererDependencies MeshRendererDependencies;
 
-		_Render::Mesh* Mesh;
-		_Render::Texture* Texture;
-
 		_Render::DefaultMaterialV2Instance DefaultMaterialV2Instance;
 		_Utils::Subject OnComponentDetached;
 	};
@@ -46,7 +40,6 @@ namespace _GameEngine::_ECS
 	{
 		Component* AssociatedComponent;
 		MeshRendererDependencies MeshRendererDependencies;
-		_Render::TextureSamplers* TextureSamplers;
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo);

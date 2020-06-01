@@ -1,10 +1,5 @@
 #include "MeshRenderer.h"
 
-#include "Render/Texture/TextureSamplers.h"
-#include "Render/Resources/TextureResourceProvider.h"
-#include "Render/Resources/MeshResourceProvider.h"
-#include "Render/Mesh/Mesh.h"
-
 namespace _GameEngine::_ECS
 {
 	ComponentType MeshRendererType = "MeshRenderer";
@@ -19,21 +14,17 @@ namespace _GameEngine::_ECS
 		p_meshRenderer->OnComponentDetached.Callback = MeshRenderer_free;
 		_Utils::Observer_register(&p_mehsRendererInfo->AssociatedComponent->ComponentFreeEvent, &p_meshRenderer->OnComponentDetached);
 
-		_Render::MeshUniqueKey l_meshUniqueKey{ "TEST" };
-		p_meshRenderer->Mesh = _Render::MeshResourceProvider_UseResource(p_mehsRendererInfo->MeshRendererDependencies.MeshResourceProvider, &l_meshUniqueKey);
 
-		_Render::TextureUniqueKey l_textureUniqueKey{};
-		l_textureUniqueKey.TexturePath = "E:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg";
-		p_meshRenderer->Texture = _Render::TextureResourceProvider_UseResource(p_mehsRendererInfo->MeshRendererDependencies.TextureResourceProvider, &l_textureUniqueKey);
-
-		_Render::DefaultMaterialV2Drawer_ExternalResources l_externalResources{};
-		l_externalResources.Mesh = p_meshRenderer->Mesh;
-		l_externalResources.Texture = p_meshRenderer->Texture;
+		_Render::DefaultMaterialV2DrawerResourceProviderDependencies l_resourceProviderDependencies{};
+		l_resourceProviderDependencies.MeshResourceProvider = p_mehsRendererInfo->MeshRendererDependencies.MeshResourceProvider;
+		l_resourceProviderDependencies.TextureResourceProvider = p_mehsRendererInfo->MeshRendererDependencies.TextureResourceProvider;
 
 		_Render::DefaultMaterialV2DrawerAllocInfo l_defaultMaterialV2DrawerAllocInfo{};
 		l_defaultMaterialV2DrawerAllocInfo.DefaultMaterial = p_meshRenderer->MeshRendererDependencies.DefaultMaterialV2;
 		l_defaultMaterialV2DrawerAllocInfo.Device = p_meshRenderer->MeshRendererDependencies.Device;
-		l_defaultMaterialV2DrawerAllocInfo.ExternalResource = &l_externalResources;
+		l_defaultMaterialV2DrawerAllocInfo.MeshUniqueKey = { "TEST" };
+		l_defaultMaterialV2DrawerAllocInfo.TextureUniqueKey = { "E:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg" };
+		l_defaultMaterialV2DrawerAllocInfo.ResourceProviderDependencies = &l_resourceProviderDependencies;
 
 		_Render::DefaultMaterialV2Instance_alloc(&p_meshRenderer->DefaultMaterialV2Instance, &l_defaultMaterialV2DrawerAllocInfo);
 
@@ -48,9 +39,14 @@ namespace _GameEngine::_ECS
 	{
 		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
 
-		_Render::TextureResourceProvider_ReleaseResource(l_meshRenderer->MeshRendererDependencies.TextureResourceProvider, &l_meshRenderer->Texture->TextureUniqueKey);
-		_Render::MeshResourceProvider_ReleaseResource(l_meshRenderer->MeshRendererDependencies.MeshResourceProvider, &l_meshRenderer->Mesh->MeshUniqueKey);
+		_Render::DefaultMaterialV2DrawerResourceProviderDependencies l_resourceProviderDependencies{};
+		l_resourceProviderDependencies.MeshResourceProvider = l_meshRenderer->MeshRendererDependencies.MeshResourceProvider;
+		l_resourceProviderDependencies.TextureResourceProvider = l_meshRenderer->MeshRendererDependencies.TextureResourceProvider;
 
-		_Render::DefaultMaterialV2Instance_free(&l_meshRenderer->DefaultMaterialV2Instance, l_meshRenderer->MeshRendererDependencies.Device);
+		_Render::DefaultMaterialV2InstanceFreeInfo l_defaultMaterialV2InstanceFreeInfo{};
+		l_defaultMaterialV2InstanceFreeInfo.Device = l_meshRenderer->MeshRendererDependencies.Device;
+		l_defaultMaterialV2InstanceFreeInfo.ResourceProviderDependencies = &l_resourceProviderDependencies;
+
+		_Render::DefaultMaterialV2Instance_free(&l_meshRenderer->DefaultMaterialV2Instance, &l_defaultMaterialV2InstanceFreeInfo);
 	};
 }
