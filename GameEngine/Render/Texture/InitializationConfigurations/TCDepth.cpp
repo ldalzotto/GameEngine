@@ -82,7 +82,7 @@ namespace _GameEngine::_Render
 	void tCDepth_initializationCommandBufferOperation_buildCommandBuffer(CommandBuffer* p_commandBuffer, DeferredCommandBufferOperation* p_commentBufferOperation)
 	{
 		Texture* l_texture = (Texture*)p_commentBufferOperation->UserObject;
-		// TextureLayoutTransition_executeTransition(p_commandBuffer, l_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+		TextureLayoutTransition_executeTransition(p_commandBuffer, l_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 	};
 
 	void TCDepth_InitializationCommandBufferOperation_build(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture)

@@ -17,11 +17,23 @@ namespace _GameEngine::_Render
 		l_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		l_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		l_barrier.image = p_texture->Texture;
-		l_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+		if (p_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		{
+			l_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		}
+		else
+		{
+			l_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		}
+
+		
 		l_barrier.subresourceRange.baseMipLevel = p_texture->TextureInfo.MipLevels - 1;
 		l_barrier.subresourceRange.levelCount = p_texture->TextureInfo.MipLevels;
 		l_barrier.subresourceRange.baseArrayLayer = p_texture->TextureInfo.ArrayLayers - 1;
 		l_barrier.subresourceRange.layerCount = p_texture->TextureInfo.ArrayLayers;
+
+		
 
 		VkPipelineStageFlags l_sourceStage;
 		VkPipelineStageFlags l_destinationStage;
@@ -42,11 +54,13 @@ namespace _GameEngine::_Render
 			l_sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 			l_destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		}
-		else if (p_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		else if (p_oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && p_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 		{
-			// l_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-			// l_barrier.subresourceRange.aspectMask 
-			// if(p_texture->Texture)
+			l_barrier.srcAccessMask = 0;
+			l_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+			l_sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			l_destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 		}
 		else
 		{
