@@ -53,7 +53,7 @@ namespace _GameEngine::_Render
 
 			VkAttachmentReference* l_depthAttachmentReference = &l_attachmentReferences.at(1);
 			l_depthAttachmentReference->attachment = 1;
-			l_depthAttachmentReference->layout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+			l_depthAttachmentReference->layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 		}
 
 		VkSubpassDescription l_subpass{};

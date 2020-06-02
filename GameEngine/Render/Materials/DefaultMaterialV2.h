@@ -17,7 +17,6 @@ namespace _GameEngine::_Render
 	struct SwapChain;
 	struct CameraBufferSetupStep;
 	struct TextureSamplers;
-	struct Texture;
 }
 
 namespace _GameEngine::_Render

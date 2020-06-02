@@ -68,6 +68,8 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
 	{
+		p_defaultMaterial->InternalResources.DepthBufferTexture = p_defaultMaterialAllocInfo->DepthBufferTexture;
+
 		GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_defaultMaterialAllocInfo);
 		GraphicsPipeline_reallocatePipeline(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline, &l_graphicsPipelineAllocInfo);
 	};
