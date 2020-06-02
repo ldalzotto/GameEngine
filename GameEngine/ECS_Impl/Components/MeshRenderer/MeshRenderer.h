@@ -3,7 +3,6 @@
 #include "ECS/Component.h"
 #include "glm/glm.hpp"
 
-#include "Render/LoopStep/DefaultMaterialDrawStep.h"
 #include "Render/Materials/DefaultMaterialV2Instance.h"
 
 namespace _GameEngine::_Render
@@ -40,6 +39,7 @@ namespace _GameEngine::_ECS
 	{
 		Component* AssociatedComponent;
 		MeshRendererDependencies MeshRendererDependencies;
+		_Render::DefaultMaterialV2Instance_InputAssets* DefaultMaterialV2Instance_InputAssets;
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, MeshRendererInitInfo* p_mehsRendererInfo);

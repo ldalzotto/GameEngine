@@ -23,12 +23,24 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterialV2Instance_alloc(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, DefaultMaterialV2DrawerAllocInfo* p_defaultMaterialV2InstanceAllocInfo)
 	{
-		p_defaultMaterialV2Instance->_DefaultMaterial = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial;
-		p_defaultMaterialV2Instance->ExternalResources.Mesh =
-			MeshResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->MeshResourceProvider, p_defaultMaterialV2InstanceAllocInfo->MeshResourceProviderUseResourceInfo);
-		p_defaultMaterialV2Instance->ExternalResources.Texture =
-			TextureResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->TextureResourceProvider, &p_defaultMaterialV2InstanceAllocInfo->TextureUniqueKey);
+		{
+			p_defaultMaterialV2Instance->_DefaultMaterial = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial;
+		}
+		
+		{
+			MeshResourceProviderUseResourceInfo l_meshResourceProviderUserResource{};
+			l_meshResourceProviderUserResource.Meshpath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->MeshPath;
+			p_defaultMaterialV2Instance->ExternalResources.Mesh =
+				MeshResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->MeshResourceProvider, &l_meshResourceProviderUserResource);
+		}
 
+		{
+			TextureUniqueKey l_textureUniqueKey{};
+			l_textureUniqueKey.TexturePath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->Texturepath;
+			p_defaultMaterialV2Instance->ExternalResources.Texture =
+				TextureResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->TextureResourceProvider, &l_textureUniqueKey);
+		}
+		
 		createModelMatrixBuffer(p_defaultMaterialV2Instance, p_defaultMaterialV2InstanceAllocInfo->Device);
 
 		createDescriptorSet(p_defaultMaterialV2Instance, p_defaultMaterialV2InstanceAllocInfo->Device);

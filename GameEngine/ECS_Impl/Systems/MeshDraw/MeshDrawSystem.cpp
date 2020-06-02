@@ -7,6 +7,7 @@
 #include "Utils/Algorithm/Algorithm.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
+#include "Render/LoopStep/DefaultMaterialDrawStep.h"
 
 namespace _GameEngine::_ECS
 {

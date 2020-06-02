@@ -166,7 +166,8 @@ namespace _GameEngine::_Render
 	{
 		for (auto&& l_surfaceFormat : p_surfaceFormats)
 		{
-			if (l_surfaceFormat.format == VK_FORMAT_B8G8R8A8_SRGB && l_surfaceFormat.colorSpace == VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT)
+			// TODO -> We only check the format here ? Why not adding logici for the colorspace too.
+			if (l_surfaceFormat.format == VK_FORMAT_B8G8R8A8_SRGB)
 			{
 				return l_surfaceFormat;
 			}

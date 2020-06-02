@@ -89,7 +89,12 @@ void SandboxApplication_update(float p_delta)
 				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, sizeof(_ECS::MeshRenderer));
 				_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
+				_Render::DefaultMaterialV2Instance_InputAssets l_defaultMaterialAsset{};
+				l_defaultMaterialAsset.MeshPath = "E:/GameProjects/VulkanTutorial/Assets/Models/VikingRoom.obj";
+				l_defaultMaterialAsset.Texturepath = "E:/GameProjects/VulkanTutorial/Assets/Textures/viking_room.png";
+
 				_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
+				l_meshRendererInitInfo.DefaultMaterialV2Instance_InputAssets = &l_defaultMaterialAsset;
 				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialV2 = &App->Render->RenderMaterials.DefaultMaterial;
 				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialDrawStep = &App->Render->DefaultMaterialDrawStep;
 				l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;

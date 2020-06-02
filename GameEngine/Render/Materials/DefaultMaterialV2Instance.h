@@ -1,11 +1,11 @@
 #pragma once
 
+#include <string>
+
 #include "glm/glm.hpp"
 #include "vulkan/vulkan.h"
 
 #include "Render/Memory/VulkanBuffer.h"
-
-#include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {
@@ -13,8 +13,8 @@ namespace _GameEngine::_Render
 	struct Device;
 	struct TextureResourceProvider;
 	struct MeshResourceProvider;
-	struct MeshResourceProviderUseResourceInfo;
 	struct Mesh;
+	struct Texture;
 }
 
 namespace _GameEngine::_Render
@@ -40,11 +40,16 @@ namespace _GameEngine::_Render
 		MeshResourceProvider* MeshResourceProvider;
 	};
 
+	struct DefaultMaterialV2Instance_InputAssets
+	{
+		std::string MeshPath;
+		std::string Texturepath;
+	};
+
 	struct DefaultMaterialV2DrawerAllocInfo
 	{
 		DefaultMaterialV2* DefaultMaterial;
-		MeshResourceProviderUseResourceInfo* MeshResourceProviderUseResourceInfo;
-		TextureUniqueKey TextureUniqueKey;
+		DefaultMaterialV2Instance_InputAssets* DefaultMaterialV2Instance_InputAssets;
 		DefaultMaterialV2DrawerResourceProviderDependencies* ResourceProviderDependencies;
 		Device* Device;
 	};

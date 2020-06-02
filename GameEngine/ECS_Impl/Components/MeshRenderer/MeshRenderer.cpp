@@ -1,7 +1,5 @@
 #include "MeshRenderer.h"
 
-#include "Render/Resources/MeshResourceProvider.h"
-
 namespace _GameEngine::_ECS
 {
 	ComponentType MeshRendererType = "MeshRenderer";
@@ -21,14 +19,10 @@ namespace _GameEngine::_ECS
 		l_resourceProviderDependencies.MeshResourceProvider = p_mehsRendererInfo->MeshRendererDependencies.MeshResourceProvider;
 		l_resourceProviderDependencies.TextureResourceProvider = p_mehsRendererInfo->MeshRendererDependencies.TextureResourceProvider;
 
-		_Render::MeshResourceProviderUseResourceInfo l_meshResourceProviderInfo{};
-		l_meshResourceProviderInfo.Meshpath = "E:/GameProjects/VulkanTutorial/Assets/Models/VikingRoom.obj";
-
 		_Render::DefaultMaterialV2DrawerAllocInfo l_defaultMaterialV2DrawerAllocInfo{};
 		l_defaultMaterialV2DrawerAllocInfo.DefaultMaterial = p_meshRenderer->MeshRendererDependencies.DefaultMaterialV2;
 		l_defaultMaterialV2DrawerAllocInfo.Device = p_meshRenderer->MeshRendererDependencies.Device;
-		l_defaultMaterialV2DrawerAllocInfo.MeshResourceProviderUseResourceInfo = &l_meshResourceProviderInfo;
-		l_defaultMaterialV2DrawerAllocInfo.TextureUniqueKey = { "E:/GameProjects/VulkanTutorial/Assets/Textures/texture.jpg" };
+		l_defaultMaterialV2DrawerAllocInfo.DefaultMaterialV2Instance_InputAssets = p_mehsRendererInfo->DefaultMaterialV2Instance_InputAssets;
 		l_defaultMaterialV2DrawerAllocInfo.ResourceProviderDependencies = &l_resourceProviderDependencies;
 
 		_Render::DefaultMaterialV2Instance_alloc(&p_meshRenderer->DefaultMaterialV2Instance, &l_defaultMaterialV2DrawerAllocInfo);
