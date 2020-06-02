@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <string>
 #include "Utils/Resource/UsageCounter.h"
 #include "Render/Mesh/Mesh.h"
 
@@ -25,6 +26,12 @@ namespace _GameEngine::_Render
 	};
 
 	void MeshResourceProvider_Clear(MeshResourceProvider* p_meshResourceProvider);
-	Mesh* MeshResourceProvider_UseResource(MeshResourceProvider* p_meshResourceProvider, MeshUniqueKey* p_key);
+
+	struct MeshResourceProviderUseResourceInfo
+	{
+		std::string Meshpath;
+	};
+
+	Mesh* MeshResourceProvider_UseResource(MeshResourceProvider* p_meshResourceProvider, MeshResourceProviderUseResourceInfo* p_meshResourceProviderResourceInfo);
 	void MeshResourceProvider_ReleaseResource(MeshResourceProvider* p_meshResourceProvider, MeshUniqueKey* p_key);
 }

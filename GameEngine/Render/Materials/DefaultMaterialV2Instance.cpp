@@ -24,9 +24,8 @@ namespace _GameEngine::_Render
 	void DefaultMaterialV2Instance_alloc(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, DefaultMaterialV2DrawerAllocInfo* p_defaultMaterialV2InstanceAllocInfo)
 	{
 		p_defaultMaterialV2Instance->_DefaultMaterial = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial;
-
 		p_defaultMaterialV2Instance->ExternalResources.Mesh =
-			MeshResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->MeshResourceProvider, &p_defaultMaterialV2InstanceAllocInfo->MeshUniqueKey);
+			MeshResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->MeshResourceProvider, p_defaultMaterialV2InstanceAllocInfo->MeshResourceProviderUseResourceInfo);
 		p_defaultMaterialV2Instance->ExternalResources.Texture =
 			TextureResourceProvider_UseResource(p_defaultMaterialV2InstanceAllocInfo->ResourceProviderDependencies->TextureResourceProvider, &p_defaultMaterialV2InstanceAllocInfo->TextureUniqueKey);
 

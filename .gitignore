@@ -13,4 +13,6 @@ build
 .vscode
 .vs
 
+Assets/Models
+Assets/Textures
 Assets/Shader/out

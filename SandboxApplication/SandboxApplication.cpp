@@ -54,17 +54,6 @@ _ECS::Entity* l_cameraEntity;
 
 std::vector<_ECS::Entity*> Entities;
 
-/*
-#include "Render/Mesh/MeshLoader.h"
-		std::vector<_Render::Vertex> l_vertices;
-		std::vector<uint16_t> l_indices;
-		_Render::ReadMeshFromFileInfo l_readMeshFromFileInfo{};
-		l_readMeshFromFileInfo.Path = "E:/GameProjects/VulkanTutorial/Assets/Models/VikingRoom.obj";
-		l_readMeshFromFileInfo.Vertices = &l_vertices;
-		l_readMeshFromFileInfo.Indices = &l_indices;
-		_Render::MeshLoader_readMeshFromFile(&l_readMeshFromFileInfo);
-
-*/
 
 
 void SandboxApplication_update(float p_delta)
@@ -87,7 +76,7 @@ void SandboxApplication_update(float p_delta)
 		_ECS::TransformRotateSystem_init(&l_transformRotateSystem, App->ECS);
 	}
 
-	int COUNT = 10;
+	int COUNT = 1;
 
 	if (Entities.size() == 0)
 	{
@@ -106,7 +95,6 @@ void SandboxApplication_update(float p_delta)
 				l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;
 				l_meshRendererInitInfo.MeshRendererDependencies.TextureResourceProvider = &App->Render->ResourceProviders.TextureResourceProvider;
 				l_meshRendererInitInfo.MeshRendererDependencies.MeshResourceProvider = &App->Render->ResourceProviders.MeshResourceProvider;
-			//	l_meshRendererInitInfo.TextureSamplers = &App->Render->TextureSamplers;
 				l_meshRendererInitInfo.AssociatedComponent = l_component;
 				_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
 
@@ -130,7 +118,7 @@ void SandboxApplication_update(float p_delta)
 				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 				_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 				l_transformRotate->Speed = 1.0f + i;
-				l_transformRotate->Axis = glm::vec3(1.0f, 0.0f, 0.0f);
+				l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
 				_ECS::Entity_addComponent(l_instanciatedEntity, l_component);
 			}
 

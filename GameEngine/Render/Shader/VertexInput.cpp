@@ -16,7 +16,7 @@ namespace _GameEngine::_Render
 		VkVertexInputAttributeDescription l_positionAttribute{};
 		l_positionAttribute.binding = 0;
 		l_positionAttribute.location = 0;
-		l_positionAttribute.format = VK_FORMAT_R32G32_SFLOAT;
+		l_positionAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
 		l_positionAttribute.offset = offsetof(Vertex, pos);
 
 		VkVertexInputAttributeDescription l_colorAttribute{};

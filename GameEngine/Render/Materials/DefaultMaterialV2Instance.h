@@ -5,7 +5,6 @@
 
 #include "Render/Memory/VulkanBuffer.h"
 
-#include "Render/Mesh/Mesh.h"
 #include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render
@@ -14,6 +13,8 @@ namespace _GameEngine::_Render
 	struct Device;
 	struct TextureResourceProvider;
 	struct MeshResourceProvider;
+	struct MeshResourceProviderUseResourceInfo;
+	struct Mesh;
 }
 
 namespace _GameEngine::_Render
@@ -42,7 +43,7 @@ namespace _GameEngine::_Render
 	struct DefaultMaterialV2DrawerAllocInfo
 	{
 		DefaultMaterialV2* DefaultMaterial;
-		MeshUniqueKey MeshUniqueKey;
+		MeshResourceProviderUseResourceInfo* MeshResourceProviderUseResourceInfo;
 		TextureUniqueKey TextureUniqueKey;
 		DefaultMaterialV2DrawerResourceProviderDependencies* ResourceProviderDependencies;
 		Device* Device;

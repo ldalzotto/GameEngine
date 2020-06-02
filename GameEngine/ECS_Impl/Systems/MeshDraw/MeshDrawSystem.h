@@ -11,7 +11,7 @@ namespace _GameEngine::_Render
 namespace _GameEngine::_ECS
 {
 
-	struct MeshDrawSystem
+	struct  MeshDrawSystem
 	{
 		ECS* ECS;
 		EntityConfigurableContainer EntityConfigurableContainer;

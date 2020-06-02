@@ -3,6 +3,7 @@
 #include "Log/Log.h"
 
 #include "Utils/Algorithm/Algorithm.h"
+#include "Render/Mesh/MeshLoader.h"
 
 namespace _GameEngine::_Render
 {
@@ -14,26 +15,25 @@ namespace _GameEngine::_Render
 		return l_hash;
 	};
 
-	Mesh* MeshResourceProvider_UseResource(MeshResourceProvider* p_meshResourceProvider, MeshUniqueKey* p_key)
+	Mesh* MeshResourceProvider_UseResource(MeshResourceProvider* p_meshResourceProvider, MeshResourceProviderUseResourceInfo* p_meshResourceProviderResourceInfo)
 	{
-		size_t l_hash = MeshUniqueKey_buildHash(p_key);
+		MeshUniqueKey l_meshUniqueKey{};
+		l_meshUniqueKey.MeshAssetPath = p_meshResourceProviderResourceInfo->Meshpath;
+		size_t l_hash = MeshUniqueKey_buildHash(&l_meshUniqueKey);
 
 		if (!p_meshResourceProvider->MeshResources.contains(l_hash))
 		{
-			std::vector<_Render::Vertex> l_vertices = {
-			    {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-				{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-				{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-				{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-			};
+			std::vector<_Render::Vertex> l_vertices = {};
+			std::vector<uint16_t> l_indices = {};
 
-			std::vector<uint16_t> l_indices = {
-				 0, 1, 2, 2, 3, 0
-			};
-
+			ReadMeshFromFileInfo l_readMeshFromFileInfo{};
+			l_readMeshFromFileInfo.Path = p_meshResourceProviderResourceInfo->Meshpath;
+			l_readMeshFromFileInfo.Vertices = &l_vertices;
+			l_readMeshFromFileInfo.Indices = &l_indices;
+			MeshLoader_readMeshFromFile(&l_readMeshFromFileInfo);
 
 			MeshAllocProceduralInfo l_meshAllocInfo{};
-			l_meshAllocInfo.MeshUniqueKey = p_key;
+			l_meshAllocInfo.MeshUniqueKey = &l_meshUniqueKey;
 			l_meshAllocInfo.Device = p_meshResourceProvider->MeshResourceProviderDependencies.Device;
 			l_meshAllocInfo.PreRenderDeferedCommandBufferStep = p_meshResourceProvider->MeshResourceProviderDependencies.PreRenderDeferedCommandBufferStep;
 			l_meshAllocInfo.Vertices = &l_vertices;
