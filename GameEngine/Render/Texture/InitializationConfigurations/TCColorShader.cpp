@@ -5,7 +5,7 @@
 
 namespace _GameEngine::_Render
 {
-	VkImageCreateInfo TCColorShader_BuildVkImageCreateInfo(uint32_t p_width, uint32_t p_height)
+	VkImageCreateInfo TCColorShader_BuildVkImageCreateInfo(uint32_t p_width, uint32_t p_height, Device* p_device)
 	{
 		VkImageCreateInfo l_imageCreateInfo{};
 		l_imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;

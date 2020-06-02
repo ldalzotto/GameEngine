@@ -120,7 +120,7 @@ namespace _GameEngine::_Render
 		ImageViewCreationInfoProvider imageViewCreationProvider,
 		Device* p_device)
 	{
-		VkImageCreateInfo l_imageCreateInfo = p_imageCreateInfoProvider(p_width, p_height);
+		VkImageCreateInfo l_imageCreateInfo = p_imageCreateInfoProvider(p_width, p_height, p_device);
 
 		if (vkCreateImage(p_device->LogicalDevice.LogicalDevice, &l_imageCreateInfo, nullptr, &p_texture->Texture) != VK_SUCCESS)
 		{

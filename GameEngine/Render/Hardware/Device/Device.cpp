@@ -3,6 +3,7 @@
 #include "Log/Log.h"
 #include "Render/Extensions/Extensions.h"
 #include "Queue.h"
+#include "Utils/Algorithm/Algorithm.h"
 
 #include <stdexcept>
 #include <vector>
@@ -10,8 +11,8 @@
 
 namespace _GameEngine::_Render
 {
-	std::vector<char*> DeviceExtensions = std::vector<char*>{ 
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME, 
+	std::vector<char*> DeviceExtensions = std::vector<char*>{
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 		// This is to allow the viewport to be flipped
 		VK_KHR_MAINTENANCE1_EXTENSION_NAME
 	};
@@ -54,8 +55,8 @@ namespace _GameEngine::_Render
 
 		for (auto&& l_physicalDevice : l_physicalDevices)
 		{
-			if (isPhysicalDeviceElligible(l_physicalDevice, 
-					&p_device->PhysicalDevice.QueueFamilies, &p_deviceBuildInfo->DeviceBuildCallbacks))
+			if (isPhysicalDeviceElligible(l_physicalDevice,
+				&p_device->PhysicalDevice.QueueFamilies, &p_deviceBuildInfo->DeviceBuildCallbacks))
 			{
 				p_device->PhysicalDevice.PhysicalDevice = l_physicalDevice;
 				vkGetPhysicalDeviceFeatures(l_physicalDevice, &p_device->PhysicalDevice.DeviceAvailableFeatures);
@@ -102,7 +103,7 @@ namespace _GameEngine::_Render
 		}
 
 		l_deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
-	
+
 		if (p_deviceBuildInfo->DeviceBuildCallbacks.SetupValidation)
 		{
 			p_deviceBuildInfo->DeviceBuildCallbacks.SetupValidation(&l_deviceCreateInfo);
@@ -134,4 +135,36 @@ namespace _GameEngine::_Render
 		throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find suitable memory type!"));
 	};
 
+	size_t FormatSupportKey_buildHashKey(FormatSupportKey* p_formatSupportKey)
+	{
+		size_t l_hash = 0;
+		_Utils::Hash_combine(l_hash, p_formatSupportKey->Format);
+		_Utils::Hash_combine(l_hash, p_formatSupportKey->FormatFeature);
+		_Utils::Hash_combine(l_hash, p_formatSupportKey->ImageTiling);
+		return l_hash;
+	};
+
+	bool Device_isFormatSupported(Device* p_device, FormatSupportKey* p_formatSupportKey)
+	{
+		size_t p_formatSupportHash = FormatSupportKey_buildHashKey(p_formatSupportKey);
+
+		if (!p_device->PhysicalDevice.ImageFormatSupportCache.contains(p_formatSupportHash))
+		{
+			if (p_formatSupportKey->ImageTiling == VK_IMAGE_TILING_OPTIMAL)
+			{
+				VkFormatProperties l_formatProperties{};
+				vkGetPhysicalDeviceFormatProperties(p_device->PhysicalDevice.PhysicalDevice, p_formatSupportKey->Format, &l_formatProperties);
+				p_device->PhysicalDevice.ImageFormatSupportCache[p_formatSupportHash] = l_formatProperties.optimalTilingFeatures & p_formatSupportKey->FormatFeature;
+			}
+			else if (p_formatSupportKey->ImageTiling == VK_IMAGE_TILING_LINEAR)
+			{
+				VkFormatProperties l_formatProperties{};
+				vkGetPhysicalDeviceFormatProperties(p_device->PhysicalDevice.PhysicalDevice, p_formatSupportKey->Format, &l_formatProperties);
+				p_device->PhysicalDevice.ImageFormatSupportCache[p_formatSupportHash] = l_formatProperties.linearTilingFeatures & p_formatSupportKey->FormatFeature;
+			}
+
+		}
+
+		return p_device->PhysicalDevice.ImageFormatSupportCache[p_formatSupportHash];
+	};
 }

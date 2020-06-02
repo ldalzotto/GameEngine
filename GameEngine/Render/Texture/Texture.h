@@ -55,7 +55,7 @@ namespace _GameEngine::_Render
 	
 	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo);
 
-	typedef VkImageCreateInfo(*VkImageCreateInfoProvider)(uint32_t p_width, uint32_t p_height);
+	typedef VkImageCreateInfo(*VkImageCreateInfoProvider)(uint32_t p_width, uint32_t p_height, Device* p_device);
 	typedef void(*AllocDeferredCommandBufferOperation)(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture);
 
 	struct TextureProceduralInstanceInfo

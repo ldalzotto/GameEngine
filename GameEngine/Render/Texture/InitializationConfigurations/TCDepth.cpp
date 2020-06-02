@@ -1,13 +1,45 @@
 #include "TCDepth.h"
 
+#include "Render/Hardware/Device/Device.h"
+
 #include "Render/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
+#include "Render/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
+
 #include "Render/Texture/ImageViews.h"
 #include "Render/Texture/Texture.h"
-#include "Render/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
 namespace _GameEngine::_Render
 {
-	VkImageCreateInfo TCDepth_BuildVkImageCreateInfo(uint32_t p_width, uint32_t p_height)
+	VkFormat findDepthTextureFormat(Device* p_device)
+	{
+		FormatSupportKey p_testedFormat{};
+		p_testedFormat.ImageTiling = VK_IMAGE_TILING_OPTIMAL;
+		p_testedFormat.FormatFeature = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		p_testedFormat.Format = VK_FORMAT_D32_SFLOAT;
+		if (Device_isFormatSupported(p_device, &p_testedFormat))
+		{
+			return p_testedFormat.Format;
+		}
+		else
+		{
+			p_testedFormat.Format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+			if (Device_isFormatSupported(p_device, &p_testedFormat))
+			{
+				return p_testedFormat.Format;
+			}
+			else
+			{
+				p_testedFormat.Format = VK_FORMAT_D24_UNORM_S8_UINT;
+				if (Device_isFormatSupported(p_device, &p_testedFormat))
+				{
+					return p_testedFormat.Format;
+				}
+			}
+		}
+
+	};
+
+	VkImageCreateInfo TCDepth_BuildVkImageCreateInfo(uint32_t p_width, uint32_t p_height, Device* p_device)
 	{
 		VkImageCreateInfo l_imageCreateInfo{};
 		l_imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -17,7 +49,7 @@ namespace _GameEngine::_Render
 		l_imageCreateInfo.extent.depth = 1;
 		l_imageCreateInfo.mipLevels = 1;
 		l_imageCreateInfo.arrayLayers = 1;
-		l_imageCreateInfo.format = VK_FORMAT_D32_SFLOAT;
+		l_imageCreateInfo.format = findDepthTextureFormat(p_device);
 		l_imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 		l_imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		l_imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;

@@ -44,7 +44,7 @@ namespace _GameEngine::_Render
 		}
 		else if (p_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 		{
-			//l_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			// l_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 			// l_barrier.subresourceRange.aspectMask 
 			// if(p_texture->Texture)
 		}
