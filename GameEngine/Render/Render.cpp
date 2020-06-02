@@ -338,12 +338,18 @@ namespace _GameEngine::_Render
 
 		TextureProceduralInstanceInfo l_textureProceduralInstanceInfo{};
 		l_textureProceduralInstanceInfo.TextureKey = &l_textureKey;
-		l_textureProceduralInstanceInfo.Device = &p_render->Device;
 		l_textureProceduralInstanceInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
 		l_textureProceduralInstanceInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
 		l_textureProceduralInstanceInfo.ImageCreateInfoProvider = TCDepth_BuildVkImageCreateInfo;
 		l_textureProceduralInstanceInfo.ImageViewCreationInfoProvider = TCDepth_BuildVkImageViewCreateInfo;
-		p_render->DepthTexture = Texture_porceduralInstance(&l_textureProceduralInstanceInfo);
+		l_textureProceduralInstanceInfo.AllocDeferredCommandBufferOperation = TCDepth_InitializationCommandBufferOperation_build;
+
+		l_textureProceduralInstanceInfo.Device = &p_render->Device;
+		l_textureProceduralInstanceInfo.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
+
+		p_render->DepthTexture = Texture_proceduralInstance(&l_textureProceduralInstanceInfo);
+
+		// Texture_free(&p_render->DepthTexture, &p_render->Device);
 	};
 
 	void freeDepthTexture(Render* p_render)

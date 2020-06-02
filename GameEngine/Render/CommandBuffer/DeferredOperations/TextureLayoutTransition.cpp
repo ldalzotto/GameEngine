@@ -42,6 +42,12 @@ namespace _GameEngine::_Render
 			l_sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 			l_destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		}
+		else if (p_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		{
+			//l_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			// l_barrier.subresourceRange.aspectMask 
+			// if(p_texture->Texture)
+		}
 		else
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Unsupported layout transition!"));

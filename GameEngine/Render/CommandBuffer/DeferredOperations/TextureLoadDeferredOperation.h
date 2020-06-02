@@ -12,7 +12,6 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-
 	struct TextureLoadDeferredOperation
 	{
 		VulkanBuffer SourceBuffer;
@@ -20,5 +19,9 @@ namespace _GameEngine::_Render
 		Device* Device;
 	};
 
-	DeferredCommandBufferOperation TextureLoadDeferredOperation_build(TextureLoadDeferredOperation** p_textureLoadDeferredOperation, DeferredCommandBufferCompletionToken** p_deferredCommandBufferCompletionToken);
+	/**
+		The @ref p_textureLoadDeferredOperation will be deleted when the @ref DeferredCommandBufferOperation is completed.
+		See @ref TextureLoadDeferredOperation_onCompleted.
+	*/
+	DeferredCommandBufferOperation TextureLoadDeferredOperation_build(TextureLoadDeferredOperation** p_textureLoadDeferredOperation);
 };

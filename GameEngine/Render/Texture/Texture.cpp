@@ -15,10 +15,10 @@ namespace _GameEngine::_Render
 {
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
-				uint32_t p_width, uint32_t p_height,
-				VkImageCreateInfoProvider p_imageCreateInfoProvider,
-				ImageViewCreationInfoProvider imageViewCreationProvider,
-				Device* p_device);
+		uint32_t p_width, uint32_t p_height,
+		VkImageCreateInfoProvider p_imageCreateInfoProvider,
+		ImageViewCreationInfoProvider imageViewCreationProvider,
+		Device* p_device);
 
 	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo)
 	{
@@ -54,12 +54,12 @@ namespace _GameEngine::_Render
 		VulkanBuffer_pushToGPU(&l_stagingBuffer, l_textureLoadInfo->Device, l_pixels, l_imageSize);
 
 
-		l_texture->TextureInitializationBufferCompletionToken = new DeferredCommandBufferCompletionToken();
 		TextureLoadDeferredOperation* l_textureDeferredOperation = new TextureLoadDeferredOperation();
 		l_textureDeferredOperation->Device = l_textureLoadInfo->Device;
 		l_textureDeferredOperation->Texture = l_texture;
 		l_textureDeferredOperation->SourceBuffer = l_stagingBuffer;
-		DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation, &l_texture->TextureInitializationBufferCompletionToken);
+		DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation);
+		l_texture->TextureInitializationBufferCompletionToken = l_commandDeferredOperation.DeferredCommandBufferCompletionToken;
 		l_textureLoadInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_commandDeferredOperation));
 
 
@@ -68,9 +68,11 @@ namespace _GameEngine::_Render
 		return l_texture;
 	};
 
-	Texture* Texture_porceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo)
+	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo)
 	{
 		Texture* l_texture = new Texture();
+		
+		l_texture->TextureUniqueKey = *p_textureProceduralInstanceInfo->TextureKey;
 
 		texture_AllocateVulkanObjects(l_texture,
 			p_textureProceduralInstanceInfo->Width,
@@ -80,7 +82,10 @@ namespace _GameEngine::_Render
 			p_textureProceduralInstanceInfo->Device
 		);
 
-		l_texture->TextureInitializationBufferCompletionToken = new DeferredCommandBufferCompletionToken();
+		DeferredCommandBufferOperation l_deferredCommandBufferOperation{};
+		p_textureProceduralInstanceInfo->AllocDeferredCommandBufferOperation(&l_deferredCommandBufferOperation, l_texture);
+		l_texture->TextureInitializationBufferCompletionToken = l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken;
+		p_textureProceduralInstanceInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_deferredCommandBufferOperation));
 
 		return l_texture;
 	};
@@ -93,12 +98,18 @@ namespace _GameEngine::_Render
 		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, l_texture->TextureMemory, nullptr);
 		l_texture->Texture = VK_NULL_HANDLE;
 		l_texture->TextureMemory = VK_NULL_HANDLE;
-		if (l_texture->TextureInitializationBufferCompletionToken)
+
+		if (l_texture->TextureInitializationBufferCompletionToken != nullptr)
 		{
 			l_texture->TextureInitializationBufferCompletionToken->IsCancelled = true;
+			delete l_texture;
+			l_texture = nullptr;
 		}
-		delete l_texture;
-		l_texture = nullptr;
+	};
+
+	void Texture_nullifyInitalizationBufferCompletionToken(Texture* p_texture)
+	{
+		p_texture->TextureInitializationBufferCompletionToken = nullptr;
 	};
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
@@ -108,7 +119,7 @@ namespace _GameEngine::_Render
 		Device* p_device)
 	{
 		VkImageCreateInfo l_imageCreateInfo = p_imageCreateInfoProvider(p_width, p_height);
-			
+
 		if (vkCreateImage(p_device->LogicalDevice.LogicalDevice, &l_imageCreateInfo, nullptr, &p_texture->Texture) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create image!"));
@@ -138,7 +149,7 @@ namespace _GameEngine::_Render
 
 
 		ImageViewInitializationInfo l_imageViewInitializationInfo{};
-		l_imageViewInitializationInfo.Device = p_device ;
+		l_imageViewInitializationInfo.Device = p_device;
 		l_imageViewInitializationInfo.Texture = p_texture->Texture;
 		l_imageViewInitializationInfo.TextureInfo = &p_texture->TextureInfo;
 		l_imageViewInitializationInfo.ImageViewCreateInfoProvider = imageViewCreationProvider;

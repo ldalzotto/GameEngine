@@ -10,6 +10,7 @@ namespace _GameEngine::_Render
 	struct Device;
 	struct PreRenderDeferedCommandBufferStep;
 	struct DeferredCommandBufferCompletionToken;
+	struct DeferredCommandBufferOperation;
 }
 
 namespace _GameEngine::_Render
@@ -39,11 +40,10 @@ namespace _GameEngine::_Render
 		VkDeviceMemory TextureMemory;
 		ImageView ImageView;
 
-		// Disposed by it's owner @ref DeferredCommandBufferOperation
+		// /!\ This token must be nullified when the associated deferred command buffer completion operation is finished
 		DeferredCommandBufferCompletionToken* TextureInitializationBufferCompletionToken;
 	};
 
-	typedef VkImageCreateInfo(*VkImageCreateInfoProvider)(uint32_t p_width, uint32_t p_height);
 
 	struct TextureLoadInfo
 	{
@@ -54,17 +54,24 @@ namespace _GameEngine::_Render
 	
 	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo);
 
+	typedef VkImageCreateInfo(*VkImageCreateInfoProvider)(uint32_t p_width, uint32_t p_height);
+	typedef void(*AllocDeferredCommandBufferOperation)(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture);
+
 	struct TextureProceduralInstanceInfo
 	{
 		TextureUniqueKey* TextureKey;
-		Device* Device;
 		uint32_t Width;
 		uint32_t Height;
 		VkImageCreateInfoProvider ImageCreateInfoProvider;
 		ImageViewCreationInfoProvider ImageViewCreationInfoProvider;
+		AllocDeferredCommandBufferOperation AllocDeferredCommandBufferOperation;
+
+		Device* Device;
+		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 	};
 
-	Texture* Texture_porceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo);
-
+	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo);
 	void Texture_free(Texture** p_texture, Device* p_device);
+
+	void Texture_nullifyInitalizationBufferCompletionToken(Texture* p_texture);
 }

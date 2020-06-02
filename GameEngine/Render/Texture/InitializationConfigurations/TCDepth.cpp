@@ -1,7 +1,9 @@
 #include "TCDepth.h"
 
+#include "Render/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
 #include "Render/Texture/ImageViews.h"
 #include "Render/Texture/Texture.h"
+#include "Render/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
 namespace _GameEngine::_Render
 {
@@ -42,5 +44,26 @@ namespace _GameEngine::_Render
 		l_imageCreate.subresourceRange.baseArrayLayer = p_imageViewInitializationInfo->TextureInfo->ArrayLayers - 1;
 		l_imageCreate.subresourceRange.layerCount = p_imageViewInitializationInfo->TextureInfo->ArrayLayers;
 		return l_imageCreate;
+	};
+
+
+	void tCDepth_initializationCommandBufferOperation_buildCommandBuffer(CommandBuffer* p_commandBuffer, DeferredCommandBufferOperation* p_commentBufferOperation)
+	{
+		Texture* l_texture = (Texture*)p_commentBufferOperation->UserObject;
+		// TextureLayoutTransition_executeTransition(p_commandBuffer, l_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+	};
+
+	void tCDepth_initializationCommandBufferOperation_onCompleration(DeferredCommandBufferOperation* p_commentBufferOperation)
+	{
+		Texture* l_texture = (Texture*)p_commentBufferOperation->UserObject;
+		Texture_nullifyInitalizationBufferCompletionToken(l_texture);
+	};
+	
+	void TCDepth_InitializationCommandBufferOperation_build(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture)
+	{
+		DeferredCommandBufferOperation_alloc(p_deferredCommandBufferOperation);
+		p_deferredCommandBufferOperation->UserObject = p_texture;
+		p_deferredCommandBufferOperation->BuildCommandBuffer = tCDepth_initializationCommandBufferOperation_buildCommandBuffer;
+		p_deferredCommandBufferOperation->OnOperationExecuted = tCDepth_initializationCommandBufferOperation_onCompleration;
 	};
 }
