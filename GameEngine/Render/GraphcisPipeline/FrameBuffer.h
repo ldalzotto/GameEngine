@@ -19,8 +19,10 @@ namespace _GameEngine::_Render
 	{
 		RenderPass* RenderPass;
 		SwapChainInfo* SwapChainInfo;
-		ImageView* ImageView;
 		Device* Device;
+
+		ImageView* ColorImageView;
+		ImageView* DepthBufferImageView;
 	};
 
 	struct FrameBuffer

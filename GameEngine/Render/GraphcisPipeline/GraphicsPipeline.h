@@ -14,6 +14,7 @@ namespace _GameEngine::_Render
 	struct SwapChain;
 	struct Shader;
 	struct VertexInput;
+	struct Texture;
 }
 
 namespace _GameEngine::_Render
@@ -42,6 +43,11 @@ namespace _GameEngine::_Render
 		PipelineInternalsType PipelineInternals;
 	};
 
+	struct GraphicsPipeline_DepthTest
+	{
+		Texture* DepthTexture;
+	};
+
 	struct GraphicsPipelineAllocInfo
 	{
 		GraphicsPipelineDependencies GraphicsPipelineDependencies;
@@ -49,6 +55,7 @@ namespace _GameEngine::_Render
 		Shader* FragmentShader;
 		VertexInput* VertexInput;
 		VkPipelineLayout PipelineLayout;
+		GraphicsPipeline_DepthTest GraphicsPipeline_DepthTest;
 	};
 
 	void GraphicsPipeline_alloc(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineAllocInfo* p_graphicsPipelineGetOrAllocInfo);

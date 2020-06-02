@@ -23,6 +23,9 @@ namespace _GameEngine::_Render
 	struct RenderPassBuildInfo
 	{
 		RenderPassDependencies* RenderPassDependencies;
+
+		/** If null, the depth testing is not enabled. */
+		VkFormat* DepthTextureFormat;
 	};
 
 	void RenderPass_build(RenderPass* p_renderPass, RenderPassBuildInfo* p_renderPassBuildInfo);

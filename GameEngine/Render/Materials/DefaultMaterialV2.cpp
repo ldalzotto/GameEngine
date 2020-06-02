@@ -37,6 +37,8 @@ namespace _GameEngine::_Render
 		p_defaultMaterial->LocalInputParameters.BaseTexture.TextureSampler = p_defaultMaterialAllocInfo->TextureSamplers->DefaultSampler;
 		p_defaultMaterial->LocalInputParameters.BaseTexture.StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 
+		p_defaultMaterial->InternalResources.DepthBufferTexture = p_defaultMaterialAllocInfo->DepthBufferTexture;
+
 		{
 			setupExternalResources(&p_defaultMaterial->ExternalResources);
 		}
@@ -150,6 +152,12 @@ namespace _GameEngine::_Render
 		l_graphicsPipelineAllocInfo.VertexInput = &p_defaultMaterial->LocalInputParameters.VertexInput;
 		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.Device = p_defaultMaterialAllocInfo->Device;
 		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.SwapChain = p_defaultMaterialAllocInfo->SwapChain;
+	
+		if (p_defaultMaterial->InternalResources.DepthBufferTexture != nullptr)
+		{
+			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.DepthTexture = p_defaultMaterial->InternalResources.DepthBufferTexture;
+		}
+
 		return l_graphicsPipelineAllocInfo;
 	};
 

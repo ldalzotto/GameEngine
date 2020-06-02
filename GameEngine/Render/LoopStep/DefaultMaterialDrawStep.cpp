@@ -25,9 +25,21 @@ namespace _GameEngine::_Render
 		l_renderPassBeginInfo.renderArea.offset = { 0,0 };
 		l_renderPassBeginInfo.renderArea.extent = p_swapChain->SwapChainInfo.SwapExtend;
 
-		VkClearValue l_clearValue = { 0.0f,0.0f,0.0f,1.0f };
-		l_renderPassBeginInfo.clearValueCount = 1;
-		l_renderPassBeginInfo.pClearValues = &l_clearValue;
+		int l_clearValuesNumber = 1;
+		if (p_meshDrawStep->DefaultMaterial->InternalResources.DepthBufferTexture)
+		{
+			l_clearValuesNumber += 1;
+		}
+		std::vector<VkClearValue> l_clearValues(l_clearValuesNumber);
+		l_clearValues.at(0) = { 0.0f,0.0f,0.0f,1.0f };
+		
+		if (p_meshDrawStep->DefaultMaterial->InternalResources.DepthBufferTexture)
+		{
+			l_clearValues.at(1) = { 1.0f, 0.0f };
+		}
+
+		l_renderPassBeginInfo.clearValueCount = l_clearValues.size();
+		l_renderPassBeginInfo.pClearValues = l_clearValues.data();
 
 		vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdBindPipeline(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_graphicsPipeline->PipelineInternals.Pipeline);

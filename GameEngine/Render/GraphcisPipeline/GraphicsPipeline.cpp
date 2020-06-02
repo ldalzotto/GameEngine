@@ -6,6 +6,7 @@
 #include "Render/Shader/Shader.h"
 #include "Render/Shader/VertexInput.h"
 #include "Render/Hardware/Device/Device.h"
+#include "Render/Texture/Texture.h"
 
 #include "vulkan/vulkan.h"
 #include "Log/Log.h"
@@ -24,7 +25,7 @@ namespace _GameEngine::_Render
 	VkPipelineMultisampleStateCreateInfo createMultisampleState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineColorBlendStateCreateInfo createColorBlendState(GraphicsPipeline* p_graphicsPipeline, VkPipelineColorBlendAttachmentState* p_colorBlendAttachmentState);
-
+	void createDepthStencilState(VkPipelineDepthStencilStateCreateInfo* p_depthStencilState, GraphicsPipeline* p_graphicsPipeline);
 
 	void allocatePipelineInternalObjects(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineAllocInfo* p_graphicsPipelineGetOrAllocInfo)
 	{
@@ -50,6 +51,11 @@ namespace _GameEngine::_Render
 		auto l_multisampleState = createMultisampleState(p_graphicsPipeline);
 		auto l_colorBlendAttachmentState = createColorBlendAttachmentState(p_graphicsPipeline);
 		auto l_colorBlendState = createColorBlendState(p_graphicsPipeline, &l_colorBlendAttachmentState);
+		VkPipelineDepthStencilStateCreateInfo l_depthStencilState{};
+		if (p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture)
+		{
+			createDepthStencilState(&l_depthStencilState, p_graphicsPipeline);
+		}
 
 		l_pipelineCreateInfo.pVertexInputState = &l_vertexInputState;
 		l_pipelineCreateInfo.pInputAssemblyState = &l_inputAssemblyState;
@@ -57,6 +63,8 @@ namespace _GameEngine::_Render
 		l_pipelineCreateInfo.pRasterizationState = &l_rasterizationState;
 		l_pipelineCreateInfo.pMultisampleState = &l_multisampleState;
 		l_pipelineCreateInfo.pColorBlendState = &l_colorBlendState;
+		l_pipelineCreateInfo.pDepthStencilState = &l_depthStencilState;
+	
 
 		l_pipelineCreateInfo.layout = p_graphicsPipelineGetOrAllocInfo->PipelineLayout;
 
@@ -64,6 +72,10 @@ namespace _GameEngine::_Render
 		RenderPassDependencies l_renderPassDependencies{};
 		l_renderPassDependencies.SwapChain = p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain;
 		l_renderpassBuildInfo.RenderPassDependencies = &l_renderPassDependencies;
+		if (p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture)
+		{
+			l_renderpassBuildInfo.DepthTextureFormat = &p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture->TextureInfo.Format;
+		}
 		RenderPass_build(&l_pipelineInernalObjects->RenderPass, &l_renderpassBuildInfo);
 
 		l_pipelineCreateInfo.renderPass = l_pipelineInernalObjects->RenderPass.renderPass;
@@ -88,7 +100,13 @@ namespace _GameEngine::_Render
 		{
 			FrameBufferDependencies l_frameBufferDependencies{};
 			l_frameBufferDependencies.RenderPass = &l_pipelineInernalObjects->RenderPass;
-			l_frameBufferDependencies.ImageView = &l_swapChainImages->at(i).ImageView;
+			l_frameBufferDependencies.ColorImageView = &l_swapChainImages->at(i).ImageView;
+
+			if (p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture)
+			{
+				l_frameBufferDependencies.DepthBufferImageView = &p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture->ImageView;
+			}
+
 			l_frameBufferDependencies.Device = p_graphicsPipeline->GraphicsPipelineDependencies.Device;
 			l_frameBufferDependencies.SwapChainInfo = &p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo;
 			FrameBuffer_init(&l_pipelineInernalObjects->FrameBuffers[i], &l_frameBufferDependencies);
@@ -242,6 +260,20 @@ namespace _GameEngine::_Render
 		l_colorBlendStateCreate.blendConstants[2] = 0.0f;
 		l_colorBlendStateCreate.blendConstants[3] = 0.0f;
 		return l_colorBlendStateCreate;
+	};
+
+	void createDepthStencilState(VkPipelineDepthStencilStateCreateInfo* p_depthStencilState, GraphicsPipeline* p_graphicsPipeline)
+	{
+		p_depthStencilState->sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		p_depthStencilState->depthTestEnable = VK_TRUE;
+		p_depthStencilState->depthWriteEnable = VK_TRUE;
+		p_depthStencilState->depthCompareOp = VK_COMPARE_OP_LESS;
+		p_depthStencilState->depthBoundsTestEnable = VK_FALSE;
+		p_depthStencilState->minDepthBounds = 0.0f;
+		p_depthStencilState->maxDepthBounds = 0.0f;
+		p_depthStencilState->stencilTestEnable = VK_FALSE;
+		p_depthStencilState->front = {};
+		p_depthStencilState->back = {};
 	};
 
 }

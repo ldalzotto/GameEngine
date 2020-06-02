@@ -465,6 +465,7 @@ namespace _GameEngine::_Render
 		l_defaultMaterialAllocInfo.SwapChain = &p_render->SwapChain;
 		l_defaultMaterialAllocInfo.CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
 		l_defaultMaterialAllocInfo.TextureSamplers = &p_render->TextureSamplers;
+		l_defaultMaterialAllocInfo.DepthBufferTexture = p_render->DepthTexture;
 		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
 	};
 

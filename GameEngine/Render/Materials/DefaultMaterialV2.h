@@ -17,6 +17,7 @@ namespace _GameEngine::_Render
 	struct SwapChain;
 	struct CameraBufferSetupStep;
 	struct TextureSamplers;
+	struct Texture;
 }
 
 namespace _GameEngine::_Render
@@ -25,6 +26,11 @@ namespace _GameEngine::_Render
 	{
 		Shader VertexShader;
 		Shader FragmentShader;
+	};
+
+	struct DefaultMaterialV2_InternalResources
+	{
+		Texture* DepthBufferTexture;
 	};
 
 	struct DefaultMaterialV2_LocalInputParameters
@@ -46,7 +52,7 @@ namespace _GameEngine::_Render
 		};
 
 		DefaultMaterialV2_ExternalResources ExternalResources;
-
+		DefaultMaterialV2_InternalResources InternalResources;
 		DefaultMaterialV2_LocalInputParameters LocalInputParameters;
 		FinalDrawObjects FinalDrawObjects;
 	};
@@ -57,6 +63,7 @@ namespace _GameEngine::_Render
 		SwapChain* SwapChain;
 		CameraBufferSetupStep* CameraBufferSetupStep;
 		TextureSamplers* TextureSamplers;
+		Texture* DepthBufferTexture;
 	};
 
 	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterialV2, DefaultMaterialV2AllocInfo* p_defaultMaterialV2AllocInfo);
