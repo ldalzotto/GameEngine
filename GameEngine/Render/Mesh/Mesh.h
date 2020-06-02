@@ -41,7 +41,7 @@ namespace _GameEngine::_Render
 		DeferredCommandBufferCompletionToken* IndicesStagingBufferCompletionToken;
 	};
 
-	struct MeshAllocInfo
+	struct MeshAllocProceduralInfo
 	{
 		MeshUniqueKey* MeshUniqueKey;
 		std::vector<Vertex>* Vertices;
@@ -51,6 +51,6 @@ namespace _GameEngine::_Render
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 	};
 
-	Mesh* Mesh_alloc(MeshAllocInfo* p_meshAllocInfo);
+	Mesh* Mesh_allocProcedural(MeshAllocProceduralInfo* p_meshAllocProceduralInfo);
 	void Mesh_free(Mesh** p_mesh, Device* p_device);
 }

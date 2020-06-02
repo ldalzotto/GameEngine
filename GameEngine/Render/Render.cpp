@@ -348,7 +348,6 @@ namespace _GameEngine::_Render
 		l_textureProceduralInstanceInfo.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
 
 		p_render->DepthTexture = Texture_proceduralInstance(&l_textureProceduralInstanceInfo);
-
 	};
 
 	void freeDepthTexture(Render* p_render)

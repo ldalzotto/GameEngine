@@ -54,11 +54,23 @@ _ECS::Entity* l_cameraEntity;
 
 std::vector<_ECS::Entity*> Entities;
 
+/*
+#include "Render/Mesh/MeshLoader.h"
+		std::vector<_Render::Vertex> l_vertices;
+		std::vector<uint16_t> l_indices;
+		_Render::ReadMeshFromFileInfo l_readMeshFromFileInfo{};
+		l_readMeshFromFileInfo.Path = "E:/GameProjects/VulkanTutorial/Assets/Models/VikingRoom.obj";
+		l_readMeshFromFileInfo.Vertices = &l_vertices;
+		l_readMeshFromFileInfo.Indices = &l_indices;
+		_Render::MeshLoader_readMeshFromFile(&l_readMeshFromFileInfo);
+
+*/
+
+
 void SandboxApplication_update(float p_delta)
 {
 	if (!HasAlreadyUpdated)
 	{
-
 		l_cameraEntity = _ECS::EntityContainer_allocEntity(App->ECS);
 
 		{

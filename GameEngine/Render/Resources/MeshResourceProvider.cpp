@@ -32,14 +32,14 @@ namespace _GameEngine::_Render
 			};
 
 
-			MeshAllocInfo l_meshAllocInfo{};
+			MeshAllocProceduralInfo l_meshAllocInfo{};
 			l_meshAllocInfo.MeshUniqueKey = p_key;
 			l_meshAllocInfo.Device = p_meshResourceProvider->MeshResourceProviderDependencies.Device;
 			l_meshAllocInfo.PreRenderDeferedCommandBufferStep = p_meshResourceProvider->MeshResourceProviderDependencies.PreRenderDeferedCommandBufferStep;
 			l_meshAllocInfo.Vertices = &l_vertices;
 			l_meshAllocInfo.Indices = &l_indices;
 		
-			Mesh* l_mesh = Mesh_alloc(&l_meshAllocInfo);
+			Mesh* l_mesh = Mesh_allocProcedural(&l_meshAllocInfo);
 			MeshResourceWithCounter l_resouceWithCounter{};
 
 			l_resouceWithCounter.Mesh = l_mesh;
