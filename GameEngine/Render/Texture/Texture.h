@@ -5,6 +5,8 @@
 #include "vulkan/vulkan.h"
 #include "ImageViews.h"
 
+#include "Render/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
+
 namespace _GameEngine::_Render
 {
 	struct Device;
@@ -40,8 +42,7 @@ namespace _GameEngine::_Render
 		VkDeviceMemory TextureMemory;
 		ImageView ImageView;
 
-		// /!\ This token must be nullified when the associated deferred command buffer completion operation is finished
-		DeferredCommandBufferCompletionToken* TextureInitializationBufferCompletionToken;
+		SmartDeferredCommandBufferCompletionToken TextureInitializationBufferCompletionToken;
 	};
 
 
@@ -71,8 +72,6 @@ namespace _GameEngine::_Render
 	};
 
 	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo);
-	void validateUsabiityOfTextureInitializationCompletionToken(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
+	void check_textureValidationToken_undefinedBehavior(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
 	void Texture_free(Texture** p_texture, Device* p_device, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
-
-	void Texture_nullifyInitalizationBufferCompletionToken(Texture* p_texture);
 }

@@ -14,7 +14,7 @@
 namespace _GameEngine::_Render
 {
 	/// Validation
-	void validateUsabiityOfTextureInitializationCompletionToken(Texture* l_texture, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
+	void check_textureValidationToken_undefinedBehavior(Texture* l_texture, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
 	///
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
@@ -62,7 +62,8 @@ namespace _GameEngine::_Render
 		l_textureDeferredOperation->Texture = l_texture;
 		l_textureDeferredOperation->SourceBuffer = l_stagingBuffer;
 		DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation);
-		l_texture->TextureInitializationBufferCompletionToken = l_commandDeferredOperation.DeferredCommandBufferCompletionToken;
+		SmartDeferredCommandBufferCompletionToken_build(&l_texture->TextureInitializationBufferCompletionToken, &l_commandDeferredOperation.DeferredCommandBufferCompletionToken);
+		
 		l_textureLoadInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_commandDeferredOperation));
 
 
@@ -87,7 +88,7 @@ namespace _GameEngine::_Render
 
 		DeferredCommandBufferOperation l_deferredCommandBufferOperation{};
 		p_textureProceduralInstanceInfo->AllocDeferredCommandBufferOperation(&l_deferredCommandBufferOperation, l_texture);
-		l_texture->TextureInitializationBufferCompletionToken = l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken;
+		SmartDeferredCommandBufferCompletionToken_build(&l_texture->TextureInitializationBufferCompletionToken, &l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken);
 		p_textureProceduralInstanceInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_deferredCommandBufferOperation));
 
 		return l_texture;
@@ -102,19 +103,15 @@ namespace _GameEngine::_Render
 		l_texture->Texture = VK_NULL_HANDLE;
 		l_texture->TextureMemory = VK_NULL_HANDLE;
 
-		validateUsabiityOfTextureInitializationCompletionToken(l_texture, p_preRenderDeferedCommandBufferStep);
+        check_textureValidationToken_undefinedBehavior(l_texture, p_preRenderDeferedCommandBufferStep);
 
-		if (l_texture->TextureInitializationBufferCompletionToken != nullptr)
+		if (!SmartDeferredCommandBufferCompletionToken_isNull(&l_texture->TextureInitializationBufferCompletionToken))
 		{
-			l_texture->TextureInitializationBufferCompletionToken->IsCancelled = true;
-			delete l_texture;
-			l_texture = nullptr;
+			l_texture->TextureInitializationBufferCompletionToken.TokenReference->IsCancelled = true;
 		}
-	};
 
-	void Texture_nullifyInitalizationBufferCompletionToken(Texture* p_texture)
-	{
-		p_texture->TextureInitializationBufferCompletionToken = nullptr;
+		delete l_texture;
+		l_texture = nullptr;
 	};
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
@@ -164,15 +161,15 @@ namespace _GameEngine::_Render
 
 
 
-	void validateUsabiityOfTextureInitializationCompletionToken(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep)
+	void check_textureValidationToken_undefinedBehavior(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep)
 	{
 #ifndef NDEBUG
-		if (l_texture->TextureInitializationBufferCompletionToken)
+		if (!SmartDeferredCommandBufferCompletionToken_isNull(&l_texture->TextureInitializationBufferCompletionToken))
 		{
 			bool l_tokenFoundInDeferrendOperations = false;
-			for (auto&& l_defferendInitializationOperation : p_preRenderDeferedCommandBufferStep->DefferedOperations)
+			for (auto&& l_defferedInitializationOperation : p_preRenderDeferedCommandBufferStep->DefferedOperations)
 			{
-				if (l_defferendInitializationOperation.DeferredCommandBufferCompletionToken == l_texture->TextureInitializationBufferCompletionToken)
+				if (l_defferedInitializationOperation.DeferredCommandBufferCompletionToken == l_texture->TextureInitializationBufferCompletionToken.TokenReference)
 				{
 					l_tokenFoundInDeferrendOperations = true;
 					break;
@@ -184,7 +181,7 @@ namespace _GameEngine::_Render
 				_Log::LogInstance->CoreLogger->warn(
 					"The local reference of DeferredCommandBufferCompletionToken is not null. However, it's reference is not found inside the PreRenderDeferedCommandBufferStep."
 					" Because it is up to the PreRenderDeferedCommandBufferStep to dispose the token, this means that it's duplicated reference has not been cleared on completion. This may lead to undefined behavior."
-					" Be sure to call Texture_nullifyInitalizationBufferCompletionToken."
+					" Be sure that the token reference is nullified when destroyed."
 				);
 			}
 		}

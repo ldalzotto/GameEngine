@@ -1,9 +1,6 @@
 #include "GameLoop.h"
 
-#include <math.h>
 #include "Utils/Time/Time.h"
-
-#include "Log/Log.h"
 
 namespace _GameEngine
 {
@@ -58,12 +55,10 @@ namespace _GameEngine
 
 				while (p_gameLoop->AccumulatedElapsedTime_mics >= p_gameLoop->TimeBetweenUpdates_mics)
 				{
-					// _Log::LogInstance->CoreLogger->info("Update");
 					p_gameLoop->UpdateCallback(p_gameLoop->UpdateCallbackClosure, p_gameLoop->TimeBetweenUpdates_mics * 0.000001f);
 					p_gameLoop->AccumulatedElapsedTime_mics -= p_gameLoop->TimeBetweenUpdates_mics;
 				}
 
-				// _Log::LogInstance->CoreLogger->info("Render");
 				p_gameLoop->RenderCallback(p_gameLoop->RenderCallbackClosure);
 
 			}

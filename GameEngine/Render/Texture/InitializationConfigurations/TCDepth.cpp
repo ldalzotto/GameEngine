@@ -53,17 +53,10 @@ namespace _GameEngine::_Render
 		// TextureLayoutTransition_executeTransition(p_commandBuffer, l_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 	};
 
-	void tCDepth_initializationCommandBufferOperation_onCompleration(DeferredCommandBufferOperation* p_commentBufferOperation)
-	{
-		Texture* l_texture = (Texture*)p_commentBufferOperation->UserObject;
-		Texture_nullifyInitalizationBufferCompletionToken(l_texture);
-	};
-
 	void TCDepth_InitializationCommandBufferOperation_build(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture)
 	{
 		DeferredCommandBufferOperation_alloc(p_deferredCommandBufferOperation);
 		p_deferredCommandBufferOperation->UserObject = p_texture;
 		p_deferredCommandBufferOperation->BuildCommandBuffer = tCDepth_initializationCommandBufferOperation_buildCommandBuffer;
-		p_deferredCommandBufferOperation->OnOperationExecuted = tCDepth_initializationCommandBufferOperation_onCompleration;
 	};
 }

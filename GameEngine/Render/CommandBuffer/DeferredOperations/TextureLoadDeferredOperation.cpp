@@ -35,7 +35,6 @@ namespace _GameEngine::_Render
 	{
 		TextureLoadDeferredOperation* l_textureLoadDeferredOperation = (TextureLoadDeferredOperation*)p_commentBufferOperation->UserObject;
 		VulkanBuffer_free(&l_textureLoadDeferredOperation->SourceBuffer, l_textureLoadDeferredOperation->Device);
-		Texture_nullifyInitalizationBufferCompletionToken(l_textureLoadDeferredOperation->Texture);
 		delete l_textureLoadDeferredOperation;
 	};
 

@@ -12,7 +12,7 @@
 
 namespace _GameEngine::_Render
 {
-	void swapChainInavlidate(SwapChain* p_swapChain);
+	void swapChainInvalidate(SwapChain* p_swapChain);
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes);
 	VkExtent2D chooseSwapExtent(Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities);
@@ -151,7 +151,7 @@ namespace _GameEngine::_Render
 		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
 	};
 
-	void swapChainInavlidate(SwapChain* p_swapChain)
+	void swapChainInvalidate(SwapChain* p_swapChain)
 	{
 		p_swapChain->MustBeRebuilt = true;
 	};
@@ -159,7 +159,7 @@ namespace _GameEngine::_Render
 	void onWindowSizeChanged(void* p_swapChain, void* p_input)
 	{
 		SwapChain* l_swapChain = (SwapChain*)p_swapChain;
-		swapChainInavlidate(l_swapChain); 
+        swapChainInvalidate(l_swapChain);
 	};
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats)
