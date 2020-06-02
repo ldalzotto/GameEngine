@@ -5,7 +5,7 @@
 namespace _GameEngine::_ECS
 {
 
-	ComponentType TransformType = "TransformType";
+	ComponentType TransformType = "Transform";
 
     void transform_updateMatricesIfNecessary(Transform* p_transform);
 

@@ -9,7 +9,7 @@
 
 namespace _GameEngine::_ECS
 {
-	ComponentType CameraType = "CameraType";
+	ComponentType CameraType = "Camera";
 
 	void camera_onSwapChainBuild(void* p_camera, void* p_swapChain)
 	{

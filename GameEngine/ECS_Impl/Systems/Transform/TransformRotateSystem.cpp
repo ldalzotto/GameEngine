@@ -23,8 +23,8 @@ namespace _GameEngine::_ECS
 	{
 		for (Entity* l_entity : p_transformRotateSystem->EntityConfigurableContainer.FilteredEntities)
 		{
-			Transform* l_transform = (Transform*)Entity_getComponent(l_entity, TransformType)->Child;
-			TransformRotate* l_transformRotate = (TransformRotate*)Entity_getComponent(l_entity, TransformRotateType)->Child;
+			Transform* l_transform = GET_COMPONENT(Transform, l_entity);
+			TransformRotate* l_transformRotate = GET_COMPONENT(TransformRotate, l_entity);
 			Transform_setLocalRotation(l_transform, l_transform->LocalRotation * glm::quat(l_transformRotate->Axis * l_transformRotate->Speed * p_delta));
 		}
 	};

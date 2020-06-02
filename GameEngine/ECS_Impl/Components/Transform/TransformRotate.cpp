@@ -2,5 +2,5 @@
 
 namespace _GameEngine::_ECS
 {
-	ComponentType TransformRotateType = "TransformRotateType";
+	ComponentType TransformRotateType = "TransformRotate";
 }

@@ -20,6 +20,8 @@ namespace _GameEngine::_ECS
 
 	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType);
 
+#define GET_COMPONENT(ComponentTypeName, EntityPointer) (ComponentTypeName*) Entity_getComponent(EntityPointer, #ComponentTypeName)->Child
+
 	struct EntityContainer
 	{
 		std::vector<Entity*> Entities;
