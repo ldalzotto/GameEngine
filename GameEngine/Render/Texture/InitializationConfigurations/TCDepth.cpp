@@ -26,7 +26,7 @@ namespace _GameEngine::_Render
 		l_imageCreateInfo.flags = 0;
 		return l_imageCreateInfo;
 	};
-	
+
 	VkImageViewCreateInfo TCDepth_BuildVkImageViewCreateInfo(ImageViewInitializationInfo* p_imageViewInitializationInfo)
 	{
 		VkImageViewCreateInfo l_imageCreate{};
@@ -58,7 +58,7 @@ namespace _GameEngine::_Render
 		Texture* l_texture = (Texture*)p_commentBufferOperation->UserObject;
 		Texture_nullifyInitalizationBufferCompletionToken(l_texture);
 	};
-	
+
 	void TCDepth_InitializationCommandBufferOperation_build(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture)
 	{
 		DeferredCommandBufferOperation_alloc(p_deferredCommandBufferOperation);

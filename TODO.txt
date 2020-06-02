@@ -1,5 +1,3 @@
-
-
 -- ECS --
 # Provinding a uniquea and safe way to get the child component.
 

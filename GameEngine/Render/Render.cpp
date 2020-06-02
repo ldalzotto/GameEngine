@@ -349,12 +349,11 @@ namespace _GameEngine::_Render
 
 		p_render->DepthTexture = Texture_proceduralInstance(&l_textureProceduralInstanceInfo);
 
-		// Texture_free(&p_render->DepthTexture, &p_render->Device);
 	};
 
 	void freeDepthTexture(Render* p_render)
 	{
-		Texture_free(&p_render->DepthTexture, &p_render->Device);
+		Texture_free(&p_render->DepthTexture, &p_render->Device, &p_render->PreRenderDeferedCommandBufferStep);
 	};
 
 	/////// END DEPTH TEXTURE

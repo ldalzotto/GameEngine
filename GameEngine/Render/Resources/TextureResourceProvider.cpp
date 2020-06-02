@@ -46,7 +46,7 @@ namespace _GameEngine::_Render
 		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)
 		{
-			Texture_free(&l_resourceWithCounter->Texture, p_textureResourceProvider->TextureResourceProviderDependencies.Device);
+			Texture_free(&l_resourceWithCounter->Texture, p_textureResourceProvider->TextureResourceProviderDependencies.Device, p_textureResourceProvider->TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep);
 			p_textureResourceProvider->TextureResources.erase(l_hash);
 		}
 	};
@@ -68,7 +68,7 @@ namespace _GameEngine::_Render
 
 			for (auto&& l_textureResourceEntry : p_textureResourceProvider->TextureResources)
 			{
-				Texture_free(&l_textureResourceEntry.second.Texture, p_textureResourceProvider->TextureResourceProviderDependencies.Device);
+				Texture_free(&l_textureResourceEntry.second.Texture, p_textureResourceProvider->TextureResourceProviderDependencies.Device, p_textureResourceProvider->TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep);
 			}
 			p_textureResourceProvider->TextureResources.clear();
 		}

@@ -71,7 +71,8 @@ namespace _GameEngine::_Render
 	};
 
 	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo);
-	void Texture_free(Texture** p_texture, Device* p_device);
+	void validateUsabiityOfTextureInitializationCompletionToken(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
+	void Texture_free(Texture** p_texture, Device* p_device, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
 
 	void Texture_nullifyInitalizationBufferCompletionToken(Texture* p_texture);
 }

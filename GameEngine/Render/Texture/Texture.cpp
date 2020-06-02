@@ -13,6 +13,9 @@
 
 namespace _GameEngine::_Render
 {
+	/// Validation
+	void validateUsabiityOfTextureInitializationCompletionToken(Texture* l_texture, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
+	///
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
 		uint32_t p_width, uint32_t p_height,
@@ -71,7 +74,7 @@ namespace _GameEngine::_Render
 	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo)
 	{
 		Texture* l_texture = new Texture();
-		
+
 		l_texture->TextureUniqueKey = *p_textureProceduralInstanceInfo->TextureKey;
 
 		texture_AllocateVulkanObjects(l_texture,
@@ -90,7 +93,7 @@ namespace _GameEngine::_Render
 		return l_texture;
 	};
 
-	void Texture_free(Texture** p_texture, Device* p_device)
+	void Texture_free(Texture** p_texture, Device* p_device, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep)
 	{
 		Texture* l_texture = *p_texture;
 		ImageView_free(&l_texture->ImageView, p_device);
@@ -98,6 +101,8 @@ namespace _GameEngine::_Render
 		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, l_texture->TextureMemory, nullptr);
 		l_texture->Texture = VK_NULL_HANDLE;
 		l_texture->TextureMemory = VK_NULL_HANDLE;
+
+		validateUsabiityOfTextureInitializationCompletionToken(l_texture, p_preRenderDeferedCommandBufferStep);
 
 		if (l_texture->TextureInitializationBufferCompletionToken != nullptr)
 		{
@@ -155,4 +160,34 @@ namespace _GameEngine::_Render
 		l_imageViewInitializationInfo.ImageViewCreateInfoProvider = imageViewCreationProvider;
 		ImageView_init(&p_texture->ImageView, &l_imageViewInitializationInfo);
 	};
+
+
+
+
+	void validateUsabiityOfTextureInitializationCompletionToken(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep)
+	{
+#ifndef NDEBUG
+		if (l_texture->TextureInitializationBufferCompletionToken)
+		{
+			bool l_tokenFoundInDeferrendOperations = false;
+			for (auto&& l_defferendInitializationOperation : p_preRenderDeferedCommandBufferStep->DefferedOperations)
+			{
+				if (l_defferendInitializationOperation.DeferredCommandBufferCompletionToken == l_texture->TextureInitializationBufferCompletionToken)
+				{
+					l_tokenFoundInDeferrendOperations = true;
+					break;
+				}
+			}
+
+			if (!l_tokenFoundInDeferrendOperations)
+			{
+				_Log::LogInstance->CoreLogger->warn(
+					"The local reference of DeferredCommandBufferCompletionToken is not null. However, it's reference is not found inside the PreRenderDeferedCommandBufferStep."
+					" Because it is up to the PreRenderDeferedCommandBufferStep to dispose the token, this means that it's duplicated reference has not been cleared on completion. This may lead to undefined behavior."
+					" Be sure to call Texture_nullifyInitalizationBufferCompletionToken."
+				);
+			}
+		}
+#endif
+	}
 }
