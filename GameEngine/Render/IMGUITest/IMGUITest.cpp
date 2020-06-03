@@ -5,11 +5,11 @@
 #include "imgui_impl_vulkan.h"
 #include "imgui_impl_glfw.h"
 #include "Render/RenderInterface.h"
-#include "Render/Hardware/Device/Device.h"
-#include "Render/SwapChain/SwapChain.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/SwapChain/SwapChain.h"
 #include "Render/Texture/Texture.h"
-#include "Render/Hardware/Window/Window.h"
-#include "Render/Descriptor/DescriptorPool.h"
+#include "Render/VulkanObjects/Hardware/Window/Window.h"
+#include "Render/VulkanObjects/Descriptor/DescriptorPool.h"
 
 namespace _GameEngine::_Render
 {

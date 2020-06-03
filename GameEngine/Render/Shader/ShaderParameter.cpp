@@ -1,6 +1,6 @@
 #include "ShaderParameter.h"
 
-#include "Render/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
 #include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render

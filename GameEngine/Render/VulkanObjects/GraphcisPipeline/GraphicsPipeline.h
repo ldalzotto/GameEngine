@@ -4,9 +4,9 @@
 #include <string>
 #include "Utils/Algorithm/Algorithm.h"
 
-#include "Render/GraphcisPipeline/RenderPass.h"
-#include "Render/GraphcisPipeline/FrameBuffer.h"
-#include "Render/Descriptor/DescriptorPool.h"
+#include "Render/VulkanObjects/GraphcisPipeline/RenderPass.h"
+#include "Render/VulkanObjects/GraphcisPipeline/FrameBuffer.h"
+#include "Render/VulkanObjects/Descriptor/DescriptorPool.h"
 
 namespace _GameEngine::_Render
 {

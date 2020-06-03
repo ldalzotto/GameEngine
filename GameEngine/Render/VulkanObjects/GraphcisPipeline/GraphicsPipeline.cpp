@@ -2,10 +2,10 @@
 
 #include <stdexcept>
 
-#include "Render/SwapChain/SwapChain.h"
+#include "Render/VulkanObjects/SwapChain/SwapChain.h"
 #include "Render/Shader/Shader.h"
 #include "Render/Shader/VertexInput.h"
-#include "Render/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
 #include "Render/Texture/Texture.h"
 
 #include "vulkan/vulkan.h"

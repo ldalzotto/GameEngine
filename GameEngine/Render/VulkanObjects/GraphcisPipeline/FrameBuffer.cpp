@@ -4,9 +4,9 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-#include "Render/Hardware/Device/Device.h"
-#include "Render/SwapChain/SwapChainSharedStructures.h"
-#include "Render/GraphcisPipeline/RenderPass.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/SwapChain/SwapChainSharedStructures.h"
+#include "Render/VulkanObjects/GraphcisPipeline/RenderPass.h"
 #include "Render/Texture/ImageViews.h"
 
 namespace _GameEngine::_Render

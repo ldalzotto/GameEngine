@@ -6,7 +6,7 @@
 #include "Log/Log.h"
 
 #include "Render/RenderInterface.h"
-#include "Render/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
 #include "Render/LoopStep/CameraBufferSetupStep.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Texture/TextureSamplers.h"

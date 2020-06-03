@@ -4,8 +4,8 @@
 #include <string.h>
 #include "vulkan/vulkan.h"
 
-#include "Render/Descriptor/DescriptorPool.h"
-#include "Render/GraphcisPipeline/GraphicsPipeline.h"
+#include "Render/VulkanObjects/Descriptor/DescriptorPool.h"
+#include "Render/VulkanObjects/GraphcisPipeline/GraphicsPipeline.h"
 #include "Render/Shader/Shader.h"
 #include "Render/Shader/VertexInput.h"
 #include "Render/Shader/DescriptorSetLayout.h"

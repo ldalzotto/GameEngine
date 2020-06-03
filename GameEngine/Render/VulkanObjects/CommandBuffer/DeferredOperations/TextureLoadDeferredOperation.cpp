@@ -1,9 +1,9 @@
 #include "TextureLoadDeferredOperation.h"
 
-#include "Render/CommandBuffer/CommandBuffers.h"
+#include "Render/VulkanObjects/CommandBuffer/CommandBuffers.h"
 #include "Render/Texture/Texture.h"
 
-#include "Render/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
+#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
 namespace _GameEngine::_Render
 {

@@ -7,7 +7,7 @@
 
 #include "DefaultMaterialV2.h"
 
-#include "Render/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
 #include "Render/LoopStep/DefaultMaterialDrawStep.h"
 
 #include "Render/Resources/MeshResourceProvider.h"

@@ -5,9 +5,9 @@
 
 #include "Log/Log.h"
 
-#include "Render/Hardware/Device/Device.h"
-#include "Render/Hardware/Window/Window.h"
-#include "Render/Hardware/Window/Surface.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Hardware/Window/Window.h"
+#include "Render/VulkanObjects/Hardware/Window/Surface.h"
 #include "Render/Texture/Texture.h"
 
 namespace _GameEngine::_Render

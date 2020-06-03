@@ -1,9 +1,9 @@
 #include "TCDepth.h"
 
-#include "Render/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
 
-#include "Render/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
-#include "Render/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
+#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
+#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
 #include "Render/Texture/ImageViews.h"
 #include "Render/Texture/Texture.h"

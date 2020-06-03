@@ -5,10 +5,10 @@
 #include "stb_image.h"
 #include "Log/Log.h"
 
-#include "Render/Hardware/Device/Device.h"
-#include "Render/Memory/VulkanBuffer.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Memory/VulkanBuffer.h"
 #include "Render/LoopStep/PreRenderDeferedCommandBufferStep.h"
-#include "Render/CommandBuffer/DeferredOperations/TextureLoadDeferredOperation.h"
+#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/TextureLoadDeferredOperation.h"
 #include "Render/Texture/InitializationConfigurations/TCColorShader.h"
 
 namespace _GameEngine::_Render

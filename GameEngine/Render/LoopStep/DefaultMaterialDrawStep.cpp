@@ -1,7 +1,7 @@
 #include "DefaultMaterialDrawStep.h"
 
 #include "Render/Mesh/Mesh.h"
-#include "Render/SwapChain/SwapChain.h"
+#include "Render/VulkanObjects/SwapChain/SwapChain.h"
 
 #include "Render/Materials/DefaultMaterialV2.h"
 #include "Render/Materials/DefaultMaterialV2Instance.h"

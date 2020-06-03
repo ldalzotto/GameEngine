@@ -3,7 +3,7 @@
 #include <cstdint>
 #include "vulkan/vulkan.h"
 
-#include "Render/Memory/VulkanBuffer.h"
+#include "Render/VulkanObjects/Memory/VulkanBuffer.h"
 
 namespace _GameEngine::_Render
 {

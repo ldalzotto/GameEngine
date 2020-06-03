@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "Render/Hardware/Device/Device.h"
+#include "Render/VulkanObjects/Hardware/Device/Device.h"
 
 #include "Log/Log.h"
 #include "Utils/File/File.h"
