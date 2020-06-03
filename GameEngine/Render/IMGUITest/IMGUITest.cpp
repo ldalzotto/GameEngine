@@ -2,8 +2,8 @@
 
 #include "glm/glm.hpp"
 
-#include "Render/IMGUITest/lib/public/imgui_impl_vulkan.h"
-#include "Render/IMGUITest/lib/public/imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
+#include "imgui_impl_glfw.h"
 #include "Render/RenderInterface.h"
 #include "Render/Hardware/Device/Device.h"
 #include "Render/SwapChain/SwapChain.h"
