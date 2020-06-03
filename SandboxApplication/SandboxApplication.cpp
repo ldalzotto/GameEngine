@@ -95,13 +95,8 @@ void SandboxApplication_update(float p_delta)
 
 				_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 				l_meshRendererInitInfo.DefaultMaterialV2Instance_InputAssets = &l_defaultMaterialAsset;
-				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialV2 = &App->Render->RenderMaterials.DefaultMaterial;
-				l_meshRendererInitInfo.MeshRendererDependencies.DefaultMaterialDrawStep = &App->Render->DefaultMaterialDrawStep;
-				l_meshRendererInitInfo.MeshRendererDependencies.Device = &App->Render->Device;
-				l_meshRendererInitInfo.MeshRendererDependencies.TextureResourceProvider = &App->Render->ResourceProviders.TextureResourceProvider;
-				l_meshRendererInitInfo.MeshRendererDependencies.MeshResourceProvider = &App->Render->ResourceProviders.MeshResourceProvider;
 				l_meshRendererInitInfo.AssociatedComponent = l_component;
-				_ECS::MeshRenderer_init(l_meshRenderer, &l_meshRendererInitInfo);
+				_ECS::MeshRenderer_init(l_meshRenderer, &App->Render->RenderInterface, &l_meshRendererInitInfo);
 
 				_ECS::Entity_addComponent(l_instanciatedEntity, l_component);
 			}

@@ -1,23 +1,25 @@
+#include "Surface.h"
+#include "Render/RenderInterface.h"
+
+#include "Window.h"
 
 #include <stdexcept>
-
 #include "Log/Log.h"
-#include "Surface.h"
 #include "Render/Includes/GLFWIncludes.h"
 
 namespace _GameEngine::_Render
 {
-	void Surface_build(Surface* p_surface, VkInstance p_instance, Window* p_window)
+	void Surface_build(Surface* p_surface, RenderInterface* p_renderInterface)
 	{
-		if (glfwCreateWindowSurface(p_instance, p_window->Window, nullptr, &p_surface->WindowSurface) != VK_SUCCESS)
+		if (glfwCreateWindowSurface(*p_renderInterface->Instance, p_renderInterface->Window->Window, nullptr, &p_surface->WindowSurface) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create window surface!"));
 		}
 	};
 
-	void Surface_release(Surface* p_surface, VkInstance p_instance)
+	void Surface_release(Surface* p_surface, RenderInterface* p_renderInterface)
 	{
-		vkDestroySurfaceKHR(p_instance, p_surface->WindowSurface, nullptr);
+		vkDestroySurfaceKHR(*p_renderInterface->Instance, p_surface->WindowSurface, nullptr);
 	};
 
 }

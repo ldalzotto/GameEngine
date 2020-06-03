@@ -9,10 +9,8 @@
 
 namespace _GameEngine::_Render
 {
+	struct RenderInterface;
 	struct DefaultMaterialV2;
-	struct Device;
-	struct TextureResourceProvider;
-	struct MeshResourceProvider;
 	struct Mesh;
 	struct Texture;
 }
@@ -34,12 +32,6 @@ namespace _GameEngine::_Render
 		VkDescriptorSet MaterialDescriptorSet;
 	};
 
-	struct DefaultMaterialV2DrawerResourceProviderDependencies
-	{
-		TextureResourceProvider* TextureResourceProvider;
-		MeshResourceProvider* MeshResourceProvider;
-	};
-
 	struct DefaultMaterialV2Instance_InputAssets
 	{
 		std::string MeshPath;
@@ -50,8 +42,6 @@ namespace _GameEngine::_Render
 	{
 		DefaultMaterialV2* DefaultMaterial;
 		DefaultMaterialV2Instance_InputAssets* DefaultMaterialV2Instance_InputAssets;
-		DefaultMaterialV2DrawerResourceProviderDependencies* ResourceProviderDependencies;
-		Device* Device;
 	};
 
 	struct ModelProjection
@@ -59,15 +49,9 @@ namespace _GameEngine::_Render
 		glm::mat4x4 Model;
 	};
 
-	void DefaultMaterialV2Instance_alloc(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, DefaultMaterialV2DrawerAllocInfo* p_defaultMaterialV2InstanceAllocInfo);
+	void DefaultMaterialV2Instance_alloc(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, RenderInterface* p_renderInterface, DefaultMaterialV2DrawerAllocInfo* p_defaultMaterialV2InstanceAllocInfo);
 
-	struct DefaultMaterialV2InstanceFreeInfo
-	{
-		Device* Device;
-		DefaultMaterialV2DrawerResourceProviderDependencies* ResourceProviderDependencies;
-	};
+	void DefaultMaterialV2Instance_free(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, RenderInterface* p_renderInterface);
 
-	void DefaultMaterialV2Instance_free(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, DefaultMaterialV2InstanceFreeInfo* p_defaultMaterialFreeInfo);
-
-	void DefaultMaterialV2Instance_setModelMatrix(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, ModelProjection* p_modelProjection, Device* p_device);
+	void DefaultMaterialV2Instance_setModelMatrix(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, RenderInterface* p_renderInterface, ModelProjection* p_modelProjection);
 };

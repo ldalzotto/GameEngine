@@ -7,6 +7,8 @@
 #include "Utils/Algorithm/Algorithm.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
+
+#include "Render/RenderInterface.h"
 #include "Render/LoopStep/DefaultMaterialDrawStep.h"
 
 namespace _GameEngine::_ECS
@@ -14,13 +16,13 @@ namespace _GameEngine::_ECS
 	void onMeshDrawSystemEntityAdded(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
-		l_mesRenderer->MeshRendererDependencies.DefaultMaterialDrawStep->DefaultMaterialV2Instance.emplace_back(&l_mesRenderer->DefaultMaterialV2Instance);
+		l_mesRenderer->RenderInterface->DefaultMaterialDrawStep->DefaultMaterialV2Instance.emplace_back(&l_mesRenderer->DefaultMaterialV2Instance);
 	}
 
 	void onMeshDrawSystemEntityRemoved(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
-		_Utils::Vector_eraseElementEquals(l_mesRenderer->MeshRendererDependencies.DefaultMaterialDrawStep->DefaultMaterialV2Instance, &l_mesRenderer->DefaultMaterialV2Instance);
+		_Utils::Vector_eraseElementEquals(l_mesRenderer->RenderInterface->DefaultMaterialDrawStep->DefaultMaterialV2Instance, &l_mesRenderer->DefaultMaterialV2Instance);
 	}
 
 	void MeshDrawSystem_init(MeshDrawSystem* p_meshDrawSystem, ECS* p_ecs)

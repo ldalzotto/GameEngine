@@ -57,7 +57,8 @@ namespace _GameEngine::_Render
 	Render* Render_alloc()
 	{
 		Render* l_render = new Render();
-
+		RenderInterface_initialize(l_render);
+		
 		Window_init(&l_render->Window);
 
 		initValidationLayers(l_render);
@@ -255,12 +256,12 @@ namespace _GameEngine::_Render
 
 	void initSurface(Render* p_render)
 	{
-		Surface_build(&p_render->WindowSurface, p_render->Instance, &p_render->Window);
+		Surface_build(&p_render->WindowSurface, &p_render->RenderInterface);
 	};
 
 	void freeSurface(Render* p_render)
 	{
-		Surface_release(&p_render->WindowSurface, p_render->Instance);
+		Surface_release(&p_render->WindowSurface, &p_render->RenderInterface);
 	};
 
 	/////// END SURFACE

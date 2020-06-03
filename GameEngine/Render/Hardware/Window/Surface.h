@@ -1,9 +1,11 @@
 #pragma once
 
-
 #include "vulkan/vulkan.h"
 
-#include "Window.h"
+namespace _GameEngine::_Render
+{
+	struct RenderInterface;
+}
 
 namespace _GameEngine::_Render
 {
@@ -12,6 +14,6 @@ namespace _GameEngine::_Render
 		VkSurfaceKHR WindowSurface;
 	};
 
-	void Surface_build(Surface* p_surface, VkInstance p_instance, Window* p_window);
-	void Surface_release(Surface* p_surface, VkInstance p_instance);
+	void Surface_build(Surface* p_surface, RenderInterface* p_renderInterface);
+	void Surface_release(Surface* p_surface, RenderInterface* p_renderInterface);
 }

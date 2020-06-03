@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "Render/Hardware/Window/Window.h"
 #include "Render/Hardware/Window/Surface.h"
 
@@ -21,6 +19,8 @@
 #include "Materials/DefaultMaterialV2.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Resources/MeshResourceProvider.h"
+
+#include "Render/RenderInterface.h"
 
 namespace _GameEngine::_Render
 {
@@ -44,6 +44,8 @@ namespace _GameEngine::_Render
 
 	struct Render
 	{
+		RenderInterface RenderInterface;
+
 		Window Window;
 		Surface WindowSurface;
 		VkInstance Instance;
@@ -67,7 +69,7 @@ namespace _GameEngine::_Render
 	Render* Render_alloc();
 	void Render_free(Render** p_render);
 	void Render_recreateSwapChain(Render* p_render);
-
+	
 	void Render_render(Render* p_render);
 
 } // namespace _GameEngine::_Render
