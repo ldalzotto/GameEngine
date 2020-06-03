@@ -51,7 +51,7 @@ namespace _GameEngine::_Render
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
-		
+
 		RenderPass_free(&p_imguiTest->Renderpass);
 		for (size_t i = 0; i < p_imguiTest->FrameBuffers.size(); i++)
 		{
@@ -92,7 +92,6 @@ namespace _GameEngine::_Render
 			ImGui_ImplVulkan_CreateFontsTexture(p_commandBuffer);
 			p_imguiTest->FontInitialized = true;
 		}
-
 
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -180,8 +179,9 @@ namespace _GameEngine::_Render
 
 	void drawImguiElements()
 	{
-		// Create a window called "My First Tool", with a menu bar.
+		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
 		ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
+
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -205,7 +205,9 @@ namespace _GameEngine::_Render
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
 		ImGui::BeginChild("Scrolling");
 		for (int n = 0; n < 50; n++)
+		{
 			ImGui::Text("%04d: Some text", n);
+		}
 		ImGui::EndChild();
 		ImGui::End();
 	}

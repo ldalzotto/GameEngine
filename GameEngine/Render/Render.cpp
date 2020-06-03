@@ -89,7 +89,7 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
-		IMGUITest_onSwapChainRebuilded(&(*p_render)->IMGUITest, &(*p_render)->RenderInterface);
+		IMGUITest_free(&(*p_render)->IMGUITest, &(*p_render)->RenderInterface);
 		freeDefaultMaterialRenderStep(*p_render);
 		freeMaterials(*p_render);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
@@ -545,7 +545,7 @@ namespace _GameEngine::_Render
 
 		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->SwapChain, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
 
-		IMGUITest_drawFrame(&p_render->IMGUITest, l_commandBuffer, l_imageIndex, &p_render->RenderInterface);
+		 IMGUITest_drawFrame(&p_render->IMGUITest, l_commandBuffer, l_imageIndex, &p_render->RenderInterface);
 
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
 		{
