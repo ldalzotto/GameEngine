@@ -3,10 +3,12 @@
 #include "glm/glm.hpp"
 
 #include "Render/IMGUITest/lib/public/imgui_impl_vulkan.h"
+#include "Render/IMGUITest/lib/public/imgui_impl_glfw.h"
 #include "Render/RenderInterface.h"
 #include "Render/Hardware/Device/Device.h"
 #include "Render/SwapChain/SwapChain.h"
 #include "Render/Texture/Texture.h"
+#include "Render/Hardware/Window/Window.h"
 #include "Render/Descriptor/DescriptorPool.h"
 
 namespace _GameEngine::_Render
@@ -17,17 +19,7 @@ namespace _GameEngine::_Render
 	{
 		ImGuiContext* l_imGuicontext = ImGui::CreateContext();
 		ImGui::SetCurrentContext(l_imGuicontext);
-
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.WantCaptureMouse = true;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-		// Setup Dear ImGui style
-
-		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsClassic();
+		ImGui::StyleColorsClassic();
 
 		std::vector<VkDescriptorPoolSize > pool_sizes =
 		{
@@ -57,6 +49,8 @@ namespace _GameEngine::_Render
 	void IMGUITest_free(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
 		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 		
 		RenderPass_free(&p_imguiTest->Renderpass);
 		for (size_t i = 0; i < p_imguiTest->FrameBuffers.size(); i++)
@@ -67,11 +61,14 @@ namespace _GameEngine::_Render
 
 		DescriptorPool_free(&p_imguiTest->DescriptorPool, p_renderInterface->Device);
 		p_imguiTest->FontInitialized = false;
+
+
 	};
 
 	void IMGUITest_onSwapChainRebuilded(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
 		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
 
 		RenderPass_free(&p_imguiTest->Renderpass);
 		for (size_t i = 0; i < p_imguiTest->FrameBuffers.size(); i++)
@@ -98,6 +95,7 @@ namespace _GameEngine::_Render
 
 
 		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		drawImguiElements();
@@ -158,6 +156,8 @@ namespace _GameEngine::_Render
 		}
 
 		{
+			ImGui_ImplGlfw_InitForVulkan(p_renderInterface->Window->Window, true);
+
 			ImGui_ImplVulkan_InitInfo l_imguiImplInfo{};
 			l_imguiImplInfo.DescriptorPool = p_imguiTest->DescriptorPool.DescriptorPool;
 			l_imguiImplInfo.Device = p_renderInterface->Device->LogicalDevice.LogicalDevice;
@@ -173,7 +173,6 @@ namespace _GameEngine::_Render
 		ImGuiIO& l_io = ImGui::GetIO();
 		l_io.DisplaySize.x = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.width;
 		l_io.DisplaySize.y = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.height;
-		l_io.WantCaptureMouse = true;	
 	};
 
 	bool my_tool_active;
