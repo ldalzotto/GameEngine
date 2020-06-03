@@ -4,10 +4,13 @@
 #include <stdexcept>
 
 #include "Log/Log.h"
+
+#include "Render/RenderInterface.h"
 #include "Render/Hardware/Device/Device.h"
 #include "Render/LoopStep/CameraBufferSetupStep.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Texture/TextureSamplers.h"
+
 
 namespace _GameEngine::_Render
 {
@@ -16,28 +19,28 @@ namespace _GameEngine::_Render
 
 	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources);
 
-	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
-	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device);
+	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, RenderInterface* p_renderInterface);
+	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface);
 
-	void createDescriptorPool(DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
-	void freeDescriptorPool(DefaultMaterialV2* p_defaultMaterial, Device* p_device);
+	void createDescriptorPool(DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface);
+	void freeDescriptorPool(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface);
 
-	void createPipelineLayout(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
-	void freePipelineLayout(DefaultMaterialV2* p_defaultMaterial, Device* p_device);
+	void createPipelineLayout(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface);
+	void freePipelineLayout(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface);
 
-	GraphicsPipelineAllocInfo buildPipelineAllocInfo(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo);
+	GraphicsPipelineAllocInfo buildPipelineAllocInfo(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface);
 
-	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
 		p_defaultMaterial->LocalInputParameters.ModelMatrix.Binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
 		p_defaultMaterial->LocalInputParameters.ModelMatrix.BufferSize = sizeof(Vertex);
 		p_defaultMaterial->LocalInputParameters.ModelMatrix.StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
 
 		p_defaultMaterial->LocalInputParameters.BaseTexture.Binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
-		p_defaultMaterial->LocalInputParameters.BaseTexture.TextureSampler = p_defaultMaterialAllocInfo->TextureSamplers->DefaultSampler;
+		p_defaultMaterial->LocalInputParameters.BaseTexture.TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
 		p_defaultMaterial->LocalInputParameters.BaseTexture.StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-		p_defaultMaterial->InternalResources.DepthBufferTexture = p_defaultMaterialAllocInfo->DepthBufferTexture;
+		p_defaultMaterial->InternalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
 
 		{
 			setupExternalResources(&p_defaultMaterial->ExternalResources);
@@ -46,31 +49,31 @@ namespace _GameEngine::_Render
 		{
 			auto l_localInputParameters = &p_defaultMaterial->LocalInputParameters;
 			VertexInput_buildInput(&l_localInputParameters->VertexInput);
-			createDescriptorSetLayout(l_localInputParameters, p_defaultMaterialAllocInfo);
-			createDescriptorPool(&l_localInputParameters->DescriptorPool, &l_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo);
+			createDescriptorSetLayout(l_localInputParameters, p_renderInterface);
+			createDescriptorPool(&l_localInputParameters->DescriptorPool, &l_localInputParameters->DescriptorSetLayout, p_renderInterface);
 		}
 
 		{
 			auto l_finalDrawObjects = &p_defaultMaterial->FinalDrawObjects;
-			createPipelineLayout(p_defaultMaterial, p_defaultMaterialAllocInfo);
-			GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_defaultMaterialAllocInfo);
+			createPipelineLayout(p_defaultMaterial, p_renderInterface);
+			GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_renderInterface);
 			GraphicsPipeline_alloc(&l_finalDrawObjects->GraphicsPipeline, &l_graphicsPipelineAllocInfo);
 		}
 	}
 
-	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterial, Device* p_device)
+	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
 		GraphicsPipeline_free(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline);
-		freePipelineLayout(p_defaultMaterial, p_device);
-		freeDescriptorPool(p_defaultMaterial, p_device);
-		freeDescriptorSetLayout(&p_defaultMaterial->LocalInputParameters.DescriptorSetLayout, p_device);
+		freePipelineLayout(p_defaultMaterial, p_renderInterface);
+		freeDescriptorPool(p_defaultMaterial, p_renderInterface);
+		freeDescriptorSetLayout(&p_defaultMaterial->LocalInputParameters.DescriptorSetLayout, p_renderInterface);
 	};
 
-	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
-		p_defaultMaterial->InternalResources.DepthBufferTexture = p_defaultMaterialAllocInfo->DepthBufferTexture;
+		p_defaultMaterial->InternalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
 
-		GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_defaultMaterialAllocInfo);
+		GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_renderInterface);
 		GraphicsPipeline_reallocatePipeline(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline, &l_graphicsPipelineAllocInfo);
 	};
 
@@ -83,7 +86,7 @@ namespace _GameEngine::_Render
 		p_externalResources->FragmentShader.ShaderType = ShaderType::FRAGMENT;
 	};
 
-	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, RenderInterface* p_renderInterface)
 	{
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
 
@@ -95,15 +98,15 @@ namespace _GameEngine::_Render
 
 		l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_defaultMaterialDescriptorSetLayoutBindings;
 
-		DescriptorSetLayout_alloc(&p_localInputParameters->DescriptorSetLayout, p_defaultMaterialAllocInfo->Device, &l_descriptorSetLayoutAllocInfo);
+		DescriptorSetLayout_alloc(&p_localInputParameters->DescriptorSetLayout, p_renderInterface->Device, &l_descriptorSetLayoutAllocInfo);
 	};
 
-	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, Device* p_device)
+	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface)
 	{
-		DescriptorSetLayout_free(p_descriptorSetLayout, p_device);
+		DescriptorSetLayout_free(p_descriptorSetLayout, p_renderInterface->Device);
 	};
 
-	void createDescriptorPool(DescriptorPool* p_descritptorPool, DescriptorSetLayout* p_descriptorSetLayout, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	void createDescriptorPool(DescriptorPool* p_descritptorPool, DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface)
 	{
 		std::vector<VkDescriptorPoolSize> l_descriptorPoolSizes = DescriptorPool_buildDescriptorPoolSizeFromDescriptorSetLayout(p_descriptorSetLayout);
 
@@ -111,18 +114,18 @@ namespace _GameEngine::_Render
 		l_descriptorPoolAllocInfo.DescriptionPoolCreateFlags = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		l_descriptorPoolAllocInfo.SourceDescriptorPoolSize = &l_descriptorPoolSizes;
 		l_descriptorPoolAllocInfo.MaxSet = 20;
-		DescriptorPool_alloc(p_descritptorPool, p_defaultMaterialAllocInfo->Device, &l_descriptorPoolAllocInfo);
+		DescriptorPool_alloc(p_descritptorPool, p_renderInterface->Device, &l_descriptorPoolAllocInfo);
 	};
 
-	void freeDescriptorPool(DefaultMaterialV2* p_defaultMaterial, Device* p_device)
+	void freeDescriptorPool(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
-		DescriptorPool_free(&p_defaultMaterial->LocalInputParameters.DescriptorPool, p_device);
+		DescriptorPool_free(&p_defaultMaterial->LocalInputParameters.DescriptorPool, p_renderInterface->Device);
 	};
 
-	void createPipelineLayout(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	void createPipelineLayout(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
 		std::array<VkDescriptorSetLayout, 2> l_descriptorSetLayouts = {
-					p_defaultMaterialAllocInfo->CameraBufferSetupStep->DescriptorSetLayout.DescriptorSetLayout,
+					p_renderInterface->CameraBufferSetupStep->DescriptorSetLayout.DescriptorSetLayout,
 					p_defaultMaterial->LocalInputParameters.DescriptorSetLayout.DescriptorSetLayout
 		};
 
@@ -133,27 +136,27 @@ namespace _GameEngine::_Render
 		l_pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 		l_pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
-		if (vkCreatePipelineLayout(p_defaultMaterialAllocInfo->Device->LogicalDevice.LogicalDevice, &l_pipelineLayoutCreateInfo, nullptr, &p_defaultMaterial->FinalDrawObjects.PipelineLayout)
+		if (vkCreatePipelineLayout(p_renderInterface->Device->LogicalDevice.LogicalDevice, &l_pipelineLayoutCreateInfo, nullptr, &p_defaultMaterial->FinalDrawObjects.PipelineLayout)
 			!= VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create pipeline layout!"));
 		}
 	};
 
-	void freePipelineLayout(DefaultMaterialV2* p_defaultMaterial, Device* p_device)
+	void freePipelineLayout(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
-		vkDestroyPipelineLayout(p_device->LogicalDevice.LogicalDevice, p_defaultMaterial->FinalDrawObjects.PipelineLayout, nullptr);
+		vkDestroyPipelineLayout(p_renderInterface->Device->LogicalDevice.LogicalDevice, p_defaultMaterial->FinalDrawObjects.PipelineLayout, nullptr);
 	};
 
-	GraphicsPipelineAllocInfo buildPipelineAllocInfo(DefaultMaterialV2* p_defaultMaterial, DefaultMaterialV2AllocInfo* p_defaultMaterialAllocInfo)
+	GraphicsPipelineAllocInfo buildPipelineAllocInfo(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
 		GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo{};
 		l_graphicsPipelineAllocInfo.VertexShader = &p_defaultMaterial->ExternalResources.VertexShader;
 		l_graphicsPipelineAllocInfo.FragmentShader = &p_defaultMaterial->ExternalResources.FragmentShader;
 		l_graphicsPipelineAllocInfo.PipelineLayout = p_defaultMaterial->FinalDrawObjects.PipelineLayout;
 		l_graphicsPipelineAllocInfo.VertexInput = &p_defaultMaterial->LocalInputParameters.VertexInput;
-		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.Device = p_defaultMaterialAllocInfo->Device;
-		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.SwapChain = p_defaultMaterialAllocInfo->SwapChain;
+		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.Device = p_renderInterface->Device;
+		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.SwapChain = p_renderInterface->SwapChain;
 	
 		if (p_defaultMaterial->InternalResources.DepthBufferTexture != nullptr)
 		{

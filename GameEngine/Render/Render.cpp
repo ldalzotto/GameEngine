@@ -362,13 +362,7 @@ namespace _GameEngine::_Render
 
 	void reAllocateGraphicsPipelineContainer(Render* p_render)
 	{
-		DefaultMaterialV2AllocInfo l_defaultMaterialAllocInfo{};
-		l_defaultMaterialAllocInfo.Device = &p_render->Device;
-		l_defaultMaterialAllocInfo.SwapChain = &p_render->SwapChain;
-		l_defaultMaterialAllocInfo.CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
-		l_defaultMaterialAllocInfo.TextureSamplers = &p_render->TextureSamplers;		
-		l_defaultMaterialAllocInfo.DepthBufferTexture = p_render->DepthTexture;
-		DefaultMaterial_reAllocGraphicsPipeline(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
+		DefaultMaterial_reAllocGraphicsPipeline(&p_render->RenderMaterials.DefaultMaterial, &p_render->RenderInterface);
 	};
 
 	/////// END GRAPHICS PIPELINE
@@ -461,18 +455,12 @@ namespace _GameEngine::_Render
 
 	void allocMaterials(Render* p_render)
 	{
-		DefaultMaterialV2AllocInfo l_defaultMaterialAllocInfo{};
-		l_defaultMaterialAllocInfo.Device = &p_render->Device;
-		l_defaultMaterialAllocInfo.SwapChain = &p_render->SwapChain;
-		l_defaultMaterialAllocInfo.CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
-		l_defaultMaterialAllocInfo.TextureSamplers = &p_render->TextureSamplers;
-		l_defaultMaterialAllocInfo.DepthBufferTexture = p_render->DepthTexture;
-		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, &l_defaultMaterialAllocInfo);
+		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, &p_render->RenderInterface);
 	};
 
 	void freeMaterials(Render* p_render)
 	{
-		DefaultMaterial_free(&p_render->RenderMaterials.DefaultMaterial, &p_render->Device);
+		DefaultMaterial_free(&p_render->RenderMaterials.DefaultMaterial, &p_render->RenderInterface);
 	};
 
 	/////// END MATERIALS

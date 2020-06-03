@@ -13,10 +13,7 @@
 
 namespace _GameEngine::_Render
 {
-	struct Device;
-	struct SwapChain;
-	struct CameraBufferSetupStep;
-	struct TextureSamplers;
+	struct RenderInterface;
 }
 
 namespace _GameEngine::_Render
@@ -56,16 +53,7 @@ namespace _GameEngine::_Render
 		FinalDrawObjects FinalDrawObjects;
 	};
 
-	struct DefaultMaterialV2AllocInfo
-	{
-		Device* Device;
-		SwapChain* SwapChain;
-		CameraBufferSetupStep* CameraBufferSetupStep;
-		TextureSamplers* TextureSamplers;
-		Texture* DepthBufferTexture;
-	};
-
-	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterialV2, DefaultMaterialV2AllocInfo* p_defaultMaterialV2AllocInfo);
-	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterialV2, Device* p_device);
-	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterialV2, DefaultMaterialV2AllocInfo* p_defaultMaterialV2AllocInfo);
+	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
+	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
+	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
 };
