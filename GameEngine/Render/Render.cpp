@@ -3,6 +3,7 @@
 #include "Extensions/Extensions.h"
 #include "Log/Log.h"
 
+#include "Render/IMGUITest/IMGUITest.h"
 #include "Render/Texture/InitializationConfigurations/TCDepth.h"
 
 #include <stdexcept>
@@ -76,6 +77,9 @@ namespace _GameEngine::_Render
 		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
 		allocMaterials(l_render);
 		allocDefaultMaterialRenderStep(l_render);
+
+		IMGUITest_init(&l_render->IMGUITest, &l_render->RenderInterface);
+
 		return l_render;
 	};
 
@@ -85,6 +89,7 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
+		IMGUITest_onSwapChainRebuilded(&(*p_render)->IMGUITest, &(*p_render)->RenderInterface);
 		freeDefaultMaterialRenderStep(*p_render);
 		freeMaterials(*p_render);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
@@ -119,6 +124,7 @@ namespace _GameEngine::_Render
 		initPreRenderStaging(p_render);
 		initSwapChain(p_render);
 		initDepthTexture(p_render);
+		IMGUITest_onSwapChainRebuilded(&p_render->IMGUITest, &p_render->RenderInterface);
 		reAllocateGraphicsPipelineContainer(p_render);
 		initRenderSemaphore(p_render);
 
@@ -538,6 +544,8 @@ namespace _GameEngine::_Render
 		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
 
 		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->SwapChain, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
+
+		IMGUITest_drawFrame(&p_render->IMGUITest, l_commandBuffer, l_imageIndex, &p_render->RenderInterface);
 
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
 		{

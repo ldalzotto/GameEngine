@@ -26,15 +26,22 @@ namespace _GameEngine::_Render
 		std::vector<VkAttachmentReference> l_attachmentReferences(l_numberOfAttachments);
 
 		VkAttachmentDescription* l_colorAttachment = &l_attachments.at(0);
-		l_colorAttachment->format = p_renderPass->RenderPassDependencies.SwapChain->SwapChainInfo.SurfaceFormat.format;
-		l_colorAttachment->samples = VK_SAMPLE_COUNT_1_BIT;
-		l_colorAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		l_colorAttachment->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		l_colorAttachment->stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		l_colorAttachment->stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		l_colorAttachment->initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		l_colorAttachment->finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
+		if (p_renderPassBuildInfo->ColorAttachmentDescription)
+		{
+			*l_colorAttachment = *p_renderPassBuildInfo->ColorAttachmentDescription;
+		}
+		else
+		{
+			l_colorAttachment->format = p_renderPass->RenderPassDependencies.SwapChain->SwapChainInfo.SurfaceFormat.format;
+			l_colorAttachment->samples = VK_SAMPLE_COUNT_1_BIT;
+			l_colorAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			l_colorAttachment->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			l_colorAttachment->stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			l_colorAttachment->stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			l_colorAttachment->initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			l_colorAttachment->finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		}
+		
 		VkAttachmentReference* l_colorAttachmentReference = &l_attachmentReferences.at(0);
 		l_colorAttachmentReference->attachment = 0;
 		l_colorAttachmentReference->layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;

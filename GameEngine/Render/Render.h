@@ -19,6 +19,7 @@
 #include "Materials/DefaultMaterialV2.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Resources/MeshResourceProvider.h"
+#include "Render/IMGUITest/IMGUITest.h"
 
 #include "Render/RenderInterface.h"
 
@@ -64,6 +65,8 @@ namespace _GameEngine::_Render
 		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;
 		CameraBufferSetupStep CameraBufferSetupStep;
 		DefaultMaterialDrawStep DefaultMaterialDrawStep;
+		IMGUITest IMGUITest;
+
 	};
 
 	Render* Render_alloc();

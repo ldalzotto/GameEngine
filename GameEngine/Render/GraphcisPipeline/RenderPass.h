@@ -24,6 +24,7 @@ namespace _GameEngine::_Render
 	{
 		RenderPassDependencies* RenderPassDependencies;
 
+		VkAttachmentDescription* ColorAttachmentDescription;
 		/** If null, the depth testing is not enabled. */
 		VkFormat* DepthTextureFormat;
 	};
