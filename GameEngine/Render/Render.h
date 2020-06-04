@@ -56,7 +56,6 @@ namespace _GameEngine::_Render
 		SwapChain SwapChain;
 		Texture* DepthTexture;
 		CommandPool CommandPool;
-		CommandBuffer CommandBuffers;
 		RenderSemaphore RenderSemaphore;
 		TextureSamplers TextureSamplers;
 		ResourceProviders ResourceProviders;
@@ -73,6 +72,7 @@ namespace _GameEngine::_Render
 	void Render_free(Render** p_render);
 	void Render_recreateSwapChain(Render* p_render);
 	
+	void Render_beforeEverything(Render* p_render);
 	void Render_render(Render* p_render);
 
 } // namespace _GameEngine::_Render

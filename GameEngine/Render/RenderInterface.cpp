@@ -17,7 +17,6 @@ namespace _GameEngine::_Render
 		l_renderInterface->SwapChain = &p_render->SwapChain;
 		l_renderInterface->DepthTexture = &p_render->DepthTexture;
 		l_renderInterface->CommandPool = &p_render->CommandPool;
-		l_renderInterface->CommandBuffers = &p_render->CommandBuffers;
 		l_renderInterface->RenderSemaphore = &p_render->RenderSemaphore;
 		l_renderInterface->TextureSamplers = &p_render->TextureSamplers;
 		

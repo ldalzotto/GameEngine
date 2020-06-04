@@ -500,6 +500,11 @@ namespace _GameEngine::_Render
 		}
 	};
 
+	void Render_beforeEverything(Render* p_render)
+	{
+		IMGUITest_newFrame(&p_render->IMGUITest, &p_render->RenderInterface);
+	};
+
 	void Render_render(Render* p_render)
 	{
 		RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
@@ -522,7 +527,8 @@ namespace _GameEngine::_Render
 			Render_recreateSwapChain(p_render);
 			return;
 		}
-		else if (l_acquireNextImageResult != VK_SUCCESS)
+		
+		if (l_acquireNextImageResult != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
 		}

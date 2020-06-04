@@ -5,7 +5,6 @@ file(GLOB_RECURSE GAME_ENGINE_PRIVATE
 	"./ECS/*.cpp"
 	"./ECS_Impl/*.cpp"
 	"./GameLoop/*.cpp"
-	"./*.cpp"
 )
 SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.cpp)
 
@@ -13,7 +12,6 @@ file(GLOB_RECURSE GAME_ENGINE_PUBLIC
 	"./ECS/*.h"
 	"./ECS_Impl/*.h"
 	"./GameLoop/*.h"
-	"./*.h"
 )
 SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine.h)
 
@@ -21,7 +19,6 @@ include_directories(
 	"./ECS"
 	"./ECS_Impl"
 	"./GameLoop"
-	"./Render"
 )
 
 add_library(GameEngine STATIC ${GAME_ENGINE_PUBLIC} ${GAME_ENGINE_PRIVATE})

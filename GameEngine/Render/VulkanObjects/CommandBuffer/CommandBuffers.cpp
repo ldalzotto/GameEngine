@@ -4,6 +4,7 @@
 #include "Log/Log.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
 
 namespace _GameEngine::_Render
 {
@@ -22,5 +23,10 @@ namespace _GameEngine::_Render
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to allocate command buffers!"));
 		}
+	};
+
+	void CommandBuffer_free(CommandBuffer* p_commandBuffer, Device* p_device)
+	{
+		vkFreeCommandBuffers(p_device->LogicalDevice.LogicalDevice, p_commandBuffer->CommandBuffersDependencies.CommandPool->CommandPool, 1, &p_commandBuffer->CommandBuffer);
 	};
 };

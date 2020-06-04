@@ -53,7 +53,6 @@ namespace _GameEngine::_Render
 		SwapChain* SwapChain;
 		Texture** DepthTexture;
 		CommandPool* CommandPool;
-		CommandBuffer* CommandBuffers;
 		RenderSemaphore* RenderSemaphore;
 		TextureSamplers* TextureSamplers;
 

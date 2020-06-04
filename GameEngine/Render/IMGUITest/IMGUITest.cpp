@@ -10,6 +10,7 @@
 #include "Texture/Texture.h"
 #include "VulkanObjects/Hardware/Window/Window.h"
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
+#include "VulkanObjects/CommandBuffer/CommandBufferSingleExecution.h"
 
 namespace _GameEngine::_Render
 {
@@ -67,6 +68,8 @@ namespace _GameEngine::_Render
 
 	void IMGUITest_onSwapChainRebuilded(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
+		ImGui::EndFrame();
+
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 
@@ -83,13 +86,20 @@ namespace _GameEngine::_Render
 		p_imguiTest->FontInitialized = false;
 	};
 
-	void drawImguiElements();
-
-	void IMGUITest_drawFrame(IMGUITest* p_imguiTest, VkCommandBuffer p_commandBuffer, size_t l_imageIndex, RenderInterface* p_renderInterface)
+	void IMGUITest_newFrame(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
 		if (!p_imguiTest->FontInitialized)
 		{
-			ImGui_ImplVulkan_CreateFontsTexture(p_commandBuffer);
+			CommandBufferSingleExecution l_commandBufferSingleExecution{};
+			{
+				CommandBufferSingleExecutionAllocInfo l_allocInfo{};
+				l_allocInfo.Queue = p_renderInterface->Device->LogicalDevice.Queues.GraphicsQueue;
+				CommandBufferSingleExecution_alloc(&l_commandBufferSingleExecution, p_renderInterface, &l_allocInfo);
+			}
+
+			CommandBufferSingleExecution_startRecording(&l_commandBufferSingleExecution, p_renderInterface);
+			ImGui_ImplVulkan_CreateFontsTexture(l_commandBufferSingleExecution.CommandBuffer.CommandBuffer);
+			CommandBufferSingleExecution_execute(&l_commandBufferSingleExecution, p_renderInterface);
 			p_imguiTest->FontInitialized = true;
 		}
 
@@ -97,24 +107,30 @@ namespace _GameEngine::_Render
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		drawImguiElements();
-		//ImGui::ShowDemoWindow();
+	};
 
-		VkRenderPassBeginInfo l_renderPassBeginInfo{};
-		l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		l_renderPassBeginInfo.renderPass = p_imguiTest->Renderpass.renderPass;
-		l_renderPassBeginInfo.framebuffer = p_imguiTest->FrameBuffers.at(l_imageIndex).FrameBuffer;
-		l_renderPassBeginInfo.renderArea.offset = { 0,0 };
-		l_renderPassBeginInfo.renderArea.extent = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend;
-		l_renderPassBeginInfo.clearValueCount = 0;
-		l_renderPassBeginInfo.pClearValues = nullptr;
+	void IMGUITest_drawFrame(IMGUITest* p_imguiTest, VkCommandBuffer p_commandBuffer, size_t l_imageIndex, RenderInterface* p_renderInterface)
+	{
+		if (p_imguiTest->FontInitialized)
+		{
+			VkRenderPassBeginInfo l_renderPassBeginInfo{};
+			l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+			l_renderPassBeginInfo.renderPass = p_imguiTest->Renderpass.renderPass;
+			l_renderPassBeginInfo.framebuffer = p_imguiTest->FrameBuffers.at(l_imageIndex).FrameBuffer;
+			l_renderPassBeginInfo.renderArea.offset = { 0,0 };
+			l_renderPassBeginInfo.renderArea.extent = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend;
+			l_renderPassBeginInfo.clearValueCount = 0;
+			l_renderPassBeginInfo.pClearValues = nullptr;
 
-		vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-		ImGui::Render();
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), p_commandBuffer);
+			ImGui::Render();
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), p_commandBuffer);
 
-		vkCmdEndRenderPass(p_commandBuffer);
+			vkCmdEndRenderPass(p_commandBuffer);
+		}
+
+
 	};
 
 	void createFinalDrawObjects(RenderInterface* p_renderInterface, IMGUITest* p_imguiTest)
@@ -173,42 +189,4 @@ namespace _GameEngine::_Render
 		l_io.DisplaySize.x = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.width;
 		l_io.DisplaySize.y = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.height;
 	};
-
-	bool my_tool_active;
-	glm::vec4 my_color;
-
-	void drawImguiElements()
-	{
-		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-		ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-				if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
-				if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-
-		// Edit a color (stored as ~4 floats)
-		ImGui::ColorEdit4("Color", &my_color.r);
-
-		// Plot some values
-		const float my_values[] = { 0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f };
-		ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
-
-		// Display contents in a scrolling region
-		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
-		ImGui::BeginChild("Scrolling");
-		for (int n = 0; n < 50; n++)
-		{
-			ImGui::Text("%04d: Some text", n);
-		}
-		ImGui::EndChild();
-		ImGui::End();
-	}
 }

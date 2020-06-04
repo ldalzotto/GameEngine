@@ -24,6 +24,12 @@ namespace _GameEngine
 			*p_gameLoop = nullptr;
 		};
 
+		void set_newFrameCallback(GameLoop* p_gameLoop, NewFrameCallback p_newFrameCallback, void* p_closure)
+		{
+			p_gameLoop->NewFrameCallback = p_newFrameCallback;
+			p_gameLoop->NewFrameCallbackClosure = p_closure;
+		};
+
 		void set_updateCallback(GameLoop* p_gameLoop, UpdateCallback p_updateCallback, void* p_closure)
 		{
 			p_gameLoop->UpdateCallback = p_updateCallback;
@@ -49,9 +55,10 @@ namespace _GameEngine
 			p_gameLoop->PreviousUpdateTime_mics = l_currentTime;
 			p_gameLoop->AccumulatedElapsedTime_mics += l_elapsed;
 
-			// Input events
-
 			if (p_gameLoop->AccumulatedElapsedTime_mics >= p_gameLoop->TimeBetweenUpdates_mics) {
+
+				p_gameLoop->NewFrameCallback(p_gameLoop->NewFrameCallbackClosure);
+				// Input events
 
 				while (p_gameLoop->AccumulatedElapsedTime_mics >= p_gameLoop->TimeBetweenUpdates_mics)
 				{

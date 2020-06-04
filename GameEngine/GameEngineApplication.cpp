@@ -4,6 +4,7 @@ namespace _GameEngine
 {
 
 	/// Game loop callback forward declaration
+	void app_newFrame(void* p_gameEngineApplication);
 	void app_update(void* p_closure, float p_delta);
 	void app_render(void* p_closure);
 	///
@@ -22,6 +23,7 @@ namespace _GameEngine
 		p_app->GameLoop = _GameLoop::alloc(16000);
 		p_app->ECS = _ECS::EntityComponent_alloc();
 
+		_GameLoop::set_newFrameCallback(p_app->GameLoop, app_newFrame, p_app);
 		_GameLoop::set_updateCallback(p_app->GameLoop, app_update, p_app);
 		_GameLoop::set_renderCallback(p_app->GameLoop, app_render, p_app);
 	};
@@ -43,6 +45,12 @@ namespace _GameEngine
 			glfwPollEvents();
 			_GameLoop::update(p_app->GameLoop);
 		}
+	};
+
+	void app_newFrame(void* p_gameEngineApplication)
+	{
+		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
+		Render_beforeEverything(l_app->Render);
 	};
 
 	void app_update(void* p_closure, float p_delta)
