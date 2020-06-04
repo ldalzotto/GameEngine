@@ -5,7 +5,7 @@
 #include "vulkan/vulkan.h"
 #include "ImageViews.h"
 
-#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
+#include "VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
 
 namespace _GameEngine::_Render
 {

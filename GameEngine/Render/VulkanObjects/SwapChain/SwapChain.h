@@ -3,8 +3,8 @@
 #include <vector>
 #include <functional>
 
-#include "Render/VulkanObjects/SwapChain/SwapChainSharedStructures.h"
-#include "Render/VulkanObjects/SwapChain/Image/SwapChainImage.h"
+#include "VulkanObjects/SwapChain/SwapChainSharedStructures.h"
+#include "VulkanObjects/SwapChain/Image/SwapChainImage.h"
 #include "Utils/Observer/Observer.h"
 
 #include "vulkan/vulkan.h"

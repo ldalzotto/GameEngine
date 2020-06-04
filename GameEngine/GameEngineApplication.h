@@ -3,7 +3,7 @@
 #include <functional>
 
 #include "Log/Log.h"
-#include "Render/Render.h"
+#include "Render.h"
 #include "GameLoop/GameLoop.h"
 #include "ECS/ECS.h"
 

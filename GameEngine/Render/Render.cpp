@@ -3,8 +3,8 @@
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Log/Log.h"
 
-#include "Render/IMGUITest/IMGUITest.h"
-#include "Render/Texture/InitializationConfigurations/TCDepth.h"
+#include "IMGUITest/IMGUITest.h"
+#include "Texture/InitializationConfigurations/TCDepth.h"
 
 #include <stdexcept>
 

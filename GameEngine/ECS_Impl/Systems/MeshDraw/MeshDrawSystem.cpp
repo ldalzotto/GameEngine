@@ -8,8 +8,8 @@
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
 
-#include "Render/RenderInterface.h"
-#include "Render/LoopStep/DefaultMaterialDrawStep.h"
+#include "RenderInterface.h"
+#include "LoopStep/DefaultMaterialDrawStep.h"
 
 namespace _GameEngine::_ECS
 {

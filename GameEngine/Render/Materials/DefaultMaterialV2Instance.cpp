@@ -1,17 +1,17 @@
 #include "DefaultMaterialV2Instance.h"
 
-#include "Render/RenderInterface.h"
+#include "RenderInterface.h"
 
 #include <stdexcept>
 #include "Log/Log.h"
 
 #include "DefaultMaterialV2.h"
 
-#include "Render/VulkanObjects/Hardware/Device/Device.h"
-#include "Render/LoopStep/DefaultMaterialDrawStep.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
+#include "LoopStep/DefaultMaterialDrawStep.h"
 
-#include "Render/Resources/MeshResourceProvider.h"
-#include "Render/Resources/TextureResourceProvider.h"
+#include "Resources/MeshResourceProvider.h"
+#include "Resources/TextureResourceProvider.h"
 
 namespace _GameEngine::_Render
 {

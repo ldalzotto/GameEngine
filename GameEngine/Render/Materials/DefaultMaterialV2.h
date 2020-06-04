@@ -4,12 +4,12 @@
 #include <string.h>
 #include "vulkan/vulkan.h"
 
-#include "Render/VulkanObjects/Descriptor/DescriptorPool.h"
-#include "Render/VulkanObjects/GraphcisPipeline/GraphicsPipeline.h"
-#include "Render/Shader/Shader.h"
-#include "Render/Shader/VertexInput.h"
-#include "Render/Shader/DescriptorSetLayout.h"
-#include "Render/Shader/ShaderParameter.h"
+#include "VulkanObjects/Descriptor/DescriptorPool.h"
+#include "VulkanObjects/GraphcisPipeline/GraphicsPipeline.h"
+#include "Shader/Shader.h"
+#include "Shader/VertexInput.h"
+#include "Shader/DescriptorSetLayout.h"
+#include "Shader/ShaderParameter.h"
 
 namespace _GameEngine::_Render
 {

@@ -4,8 +4,8 @@
 #include <vector>
 #include "glm/glm.hpp"
 
-#include "Render/VulkanObjects/Memory/VulkanBuffer.h"
-#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
+#include "VulkanObjects/Memory/VulkanBuffer.h"
+#include "VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
 
 namespace _GameEngine::_Render
 {

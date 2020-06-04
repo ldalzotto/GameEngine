@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include "Utils/Resource/UsageCounter.h"
-#include "Render/Mesh/Mesh.h"
+#include "Mesh/Mesh.h"
 
 namespace _GameEngine::_Render
 {

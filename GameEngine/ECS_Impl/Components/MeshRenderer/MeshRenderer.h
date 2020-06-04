@@ -3,7 +3,7 @@
 #include "ECS/Component.h"
 #include "glm/glm.hpp"
 
-#include "Render/Materials/DefaultMaterialV2Instance.h"
+#include "Materials/DefaultMaterialV2Instance.h"
 
 namespace _GameEngine::_Render
 {

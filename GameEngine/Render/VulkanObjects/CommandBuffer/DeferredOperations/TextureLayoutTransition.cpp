@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-#include "Render/Texture/Texture.h"
-#include "Render/VulkanObjects/CommandBuffer/CommandBuffers.h"
+#include "Texture/Texture.h"
+#include "VulkanObjects/CommandBuffer/CommandBuffers.h"
 
 namespace _GameEngine::_Render
 {

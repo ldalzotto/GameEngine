@@ -1,8 +1,8 @@
 #pragma once
 
 #include "vulkan/vulkan.h"
-#include "Render/Shader/VertexInput.h"
-#include "Render/Shader/DescriptorSetLayout.h"
+#include "Shader/VertexInput.h"
+#include "Shader/DescriptorSetLayout.h"
 
 #include <string>
 

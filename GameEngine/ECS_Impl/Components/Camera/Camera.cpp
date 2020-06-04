@@ -1,7 +1,7 @@
 #include "Camera.h"
 
-#include "Render/VulkanObjects/SwapChain/SwapChain.h"
-#include "Render/LoopStep/CameraBufferSetupStep.h"
+#include "VulkanObjects/SwapChain/SwapChain.h"
+#include "LoopStep/CameraBufferSetupStep.h"
 
 #include "ECS/Component.h"
 

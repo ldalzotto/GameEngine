@@ -1,6 +1,6 @@
 #pragma once
-#include "Render/VulkanObjects/Hardware/Window/Window.h"
-#include "Render/VulkanObjects/Hardware/Window/Surface.h"
+#include "VulkanObjects/Hardware/Window/Window.h"
+#include "VulkanObjects/Hardware/Window/Surface.h"
 
 
 #include "vulkan/vulkan.h"
@@ -19,9 +19,9 @@
 #include "Materials/DefaultMaterialV2.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Resources/MeshResourceProvider.h"
-#include "Render/IMGUITest/IMGUITest.h"
+#include "IMGUITest/IMGUITest.h"
 
-#include "Render/RenderInterface.h"
+#include "RenderInterface.h"
 
 namespace _GameEngine::_Render
 {

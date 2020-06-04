@@ -1,12 +1,12 @@
 #include "TCDepth.h"
 
-#include "Render/VulkanObjects/Hardware/Device/Device.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
 
-#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
-#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
+#include "VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
+#include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
-#include "Render/Texture/ImageViews.h"
-#include "Render/Texture/Texture.h"
+#include "Texture/ImageViews.h"
+#include "Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {

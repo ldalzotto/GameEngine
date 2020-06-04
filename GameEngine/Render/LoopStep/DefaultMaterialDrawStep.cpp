@@ -1,10 +1,10 @@
 #include "DefaultMaterialDrawStep.h"
 
-#include "Render/Mesh/Mesh.h"
-#include "Render/VulkanObjects/SwapChain/SwapChain.h"
+#include "Mesh/Mesh.h"
+#include "VulkanObjects/SwapChain/SwapChain.h"
 
-#include "Render/Materials/DefaultMaterialV2.h"
-#include "Render/Materials/DefaultMaterialV2Instance.h"
+#include "Materials/DefaultMaterialV2.h"
+#include "Materials/DefaultMaterialV2Instance.h"
 
 #include "Utils/Algorithm/Algorithm.h"
 

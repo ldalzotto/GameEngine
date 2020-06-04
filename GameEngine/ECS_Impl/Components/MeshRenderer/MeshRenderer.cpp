@@ -1,6 +1,6 @@
 #include "MeshRenderer.h"
 
-#include "Render/RenderInterface.h"
+#include "RenderInterface.h"
 
 namespace _GameEngine::_ECS
 {

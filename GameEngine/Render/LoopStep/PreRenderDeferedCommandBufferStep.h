@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "Render/VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
-#include "Render/VulkanObjects/CommandBuffer/CommandBuffers.h"
-#include "Render/VulkanObjects/CommandBuffer/CommandPool.h"
+#include "VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
+#include "VulkanObjects/CommandBuffer/CommandBuffers.h"
+#include "VulkanObjects/CommandBuffer/CommandPool.h"
 
 namespace _GameEngine::_Render
 {

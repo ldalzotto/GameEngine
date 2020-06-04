@@ -4,7 +4,7 @@
 #include "Utils/Observer/Observer.h"
 
 
-#include "Render/Includes/GLFWIncludes.h"
+#include "Includes/GLFWIncludes.h"
 
 #include <vector>
 #include <string>

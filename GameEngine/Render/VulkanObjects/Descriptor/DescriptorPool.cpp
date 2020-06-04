@@ -1,9 +1,9 @@
 #include "DescriptorPool.h"
 
-#include "Render/VulkanObjects/Hardware/Device/Device.h"
-#include "Render/Shader/DescriptorSetLayout.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
+#include "Shader/DescriptorSetLayout.h"
 
-#include "Render/Shader/DescriptorSetLayout.h"
+#include "Shader/DescriptorSetLayout.h"
 
 #include <stdexcept>
 #include "Log/Log.h"

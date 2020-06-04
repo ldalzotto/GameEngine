@@ -5,11 +5,11 @@
 
 #include "Log/Log.h"
 
-#include "Render/RenderInterface.h"
-#include "Render/VulkanObjects/Hardware/Device/Device.h"
-#include "Render/LoopStep/CameraBufferSetupStep.h"
-#include "Render/Mesh/Mesh.h"
-#include "Render/Texture/TextureSamplers.h"
+#include "RenderInterface.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
+#include "LoopStep/CameraBufferSetupStep.h"
+#include "Mesh/Mesh.h"
+#include "Texture/TextureSamplers.h"
 
 
 namespace _GameEngine::_Render

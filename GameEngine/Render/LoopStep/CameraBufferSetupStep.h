@@ -3,9 +3,9 @@
 #include "vulkan/vulkan.h"
 #include "glm/glm.hpp"
 
-#include "Render/VulkanObjects/Memory/VulkanBuffer.h"
-#include "Render/VulkanObjects/Descriptor/DescriptorPool.h"
-#include "Render/Shader/DescriptorSetLayout.h"
+#include "VulkanObjects/Memory/VulkanBuffer.h"
+#include "VulkanObjects/Descriptor/DescriptorPool.h"
+#include "Shader/DescriptorSetLayout.h"
 
 namespace _GameEngine::_Render
 {

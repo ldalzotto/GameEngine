@@ -1,7 +1,7 @@
 #include "SwapChainImage.h"
 
-#include "Render/Texture/Texture.h"
-#include "Render/Texture/InitializationConfigurations/TCColorShader.h"
+#include "Texture/Texture.h"
+#include "Texture/InitializationConfigurations/TCColorShader.h"
 
 namespace _GameEngine::_Render
 {

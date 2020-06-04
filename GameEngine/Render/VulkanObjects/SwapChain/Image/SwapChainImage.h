@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "Render/VulkanObjects/CommandBuffer/CommandBuffers.h"
-#include "Render/Texture/ImageViews.h"
+#include "VulkanObjects/CommandBuffer/CommandBuffers.h"
+#include "Texture/ImageViews.h"
 
 namespace _GameEngine::_Render
 {

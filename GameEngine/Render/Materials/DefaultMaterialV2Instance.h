@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 #include "vulkan/vulkan.h"
 
-#include "Render/VulkanObjects/Memory/VulkanBuffer.h"
+#include "VulkanObjects/Memory/VulkanBuffer.h"
 
 namespace _GameEngine::_Render
 {

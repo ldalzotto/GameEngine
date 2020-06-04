@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "Render/Mesh/Mesh.h"
+#include "Mesh/Mesh.h"
 
 namespace _GameEngine::_Render
 {

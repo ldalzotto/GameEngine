@@ -1,7 +1,7 @@
 #include "RenderPass.h"
 
-#include "Render/VulkanObjects/SwapChain/SwapChain.h"
-#include "Render/VulkanObjects/Hardware/Device/Device.h"
+#include "VulkanObjects/SwapChain/SwapChain.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
 
 #include <vector>
 #include <stdexcept>

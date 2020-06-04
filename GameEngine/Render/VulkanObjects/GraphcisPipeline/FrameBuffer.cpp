@@ -4,10 +4,10 @@
 #include <stdexcept>
 #include "Log/Log.h"
 
-#include "Render/VulkanObjects/Hardware/Device/Device.h"
-#include "Render/VulkanObjects/SwapChain/SwapChainSharedStructures.h"
-#include "Render/VulkanObjects/GraphcisPipeline/RenderPass.h"
-#include "Render/Texture/ImageViews.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
+#include "VulkanObjects/SwapChain/SwapChainSharedStructures.h"
+#include "VulkanObjects/GraphcisPipeline/RenderPass.h"
+#include "Texture/ImageViews.h"
 
 namespace _GameEngine::_Render
 {

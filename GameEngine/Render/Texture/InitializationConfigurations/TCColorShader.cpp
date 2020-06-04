@@ -1,7 +1,7 @@
 #include "TCColorShader.h"
 
-#include "Render/Texture/ImageViews.h"
-#include "Render/Texture/Texture.h"
+#include "Texture/ImageViews.h"
+#include "Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {

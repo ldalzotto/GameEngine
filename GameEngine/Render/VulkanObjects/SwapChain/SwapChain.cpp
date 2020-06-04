@@ -5,10 +5,10 @@
 
 #include "Log/Log.h"
 
-#include "Render/VulkanObjects/Hardware/Device/Device.h"
-#include "Render/VulkanObjects/Hardware/Window/Window.h"
-#include "Render/VulkanObjects/Hardware/Window/Surface.h"
-#include "Render/Texture/Texture.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
+#include "VulkanObjects/Hardware/Window/Window.h"
+#include "VulkanObjects/Hardware/Window/Surface.h"
+#include "Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {

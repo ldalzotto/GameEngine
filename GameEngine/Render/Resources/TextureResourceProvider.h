@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include "Utils/Resource/UsageCounter.h"
-#include "Render/Texture/Texture.h"
+#include "Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {

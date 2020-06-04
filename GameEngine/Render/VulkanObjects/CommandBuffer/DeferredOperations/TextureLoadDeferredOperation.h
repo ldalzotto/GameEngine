@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DeferredCommandBufferOperation.h"
-#include "Render/VulkanObjects/Memory/VulkanBuffer.h"
+#include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "vulkan/vulkan.h"
 
 namespace _GameEngine::_Render

@@ -1,11 +1,11 @@
 #include "Surface.h"
-#include "Render/RenderInterface.h"
+#include "RenderInterface.h"
 
 #include "Window.h"
 
 #include <stdexcept>
 #include "Log/Log.h"
-#include "Render/Includes/GLFWIncludes.h"
+#include "Includes/GLFWIncludes.h"
 
 namespace _GameEngine::_Render
 {
