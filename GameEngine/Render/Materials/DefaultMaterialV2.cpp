@@ -113,7 +113,7 @@ namespace _GameEngine::_Render
 		DescriptorPoolAllocInfo l_descriptorPoolAllocInfo{};
 		l_descriptorPoolAllocInfo.DescriptionPoolCreateFlags = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		l_descriptorPoolAllocInfo.SourceDescriptorPoolSize = &l_descriptorPoolSizes;
-		l_descriptorPoolAllocInfo.MaxSet = 20;
+		l_descriptorPoolAllocInfo.MaxSet = 100000;
 		DescriptorPool_alloc(p_descritptorPool, p_renderInterface->Device, &l_descriptorPoolAllocInfo);
 	};
 

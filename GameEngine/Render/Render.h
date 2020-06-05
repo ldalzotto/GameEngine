@@ -22,7 +22,6 @@
 #include "Materials/DefaultMaterialV2.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Resources/MeshResourceProvider.h"
-#include "IMGUITest/IMGUITest.h"
 
 #include "RenderInterface.h"
 
@@ -68,14 +67,12 @@ namespace _GameEngine::_Render
 		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;
 		CameraBufferSetupStep CameraBufferSetupStep;
 		DefaultMaterialDrawStep DefaultMaterialDrawStep;
-		IMGUITest IMGUITest;
 	};
 
 	Render* Render_alloc();
 	void Render_free(Render** p_render);
 	void Render_recreateSwapChain(Render* p_render);
 	
-	void Render_beforeEverything(Render* p_render);
 	void Render_render(Render* p_render);
 
 } // namespace _GameEngine::_Render

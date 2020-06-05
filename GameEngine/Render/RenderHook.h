@@ -20,6 +20,7 @@ namespace _GameEngine::_Render
 
 	struct RenderHookCallbacks
 	{
+		_Utils::Observer OnRenderIsGoingToBeDestroyed;
 		_Utils::Observer BeforeEndRecordingMainCommandBuffer;
 	};
 }

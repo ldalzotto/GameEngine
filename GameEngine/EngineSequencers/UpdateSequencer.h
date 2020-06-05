@@ -5,7 +5,6 @@
 namespace _GameEngine
 {
 	extern _Utils::SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY;
-	extern _Utils::SortedSequencerPriority UPDATE_EDITOR_GUI_PRIORITY;
 
 	struct UpdateSequencer
 	{

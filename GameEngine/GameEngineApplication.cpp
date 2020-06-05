@@ -12,20 +12,18 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
 		l_gameEngineApplication->SandboxUpdateHook = p_sandboxUpdateHook;
+
+		_Log::Log_alloc();
+		l_gameEngineApplication->Render = _Render::Render_alloc();
+		l_gameEngineApplication->GameLoop = _GameLoop::alloc(16000);
+		l_gameEngineApplication->ECS = _ECS::EntityComponent_alloc(&l_gameEngineApplication->UpdateSequencer);
+
+		_GameLoop::set_newFrameCallback(l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
+		_GameLoop::set_updateCallback(l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
+		_GameLoop::set_renderCallback(l_gameEngineApplication->GameLoop, app_render, l_gameEngineApplication);
+
 		return l_gameEngineApplication;
 	}
-
-	void app_init(GameEngineApplication* p_app)
-	{
-		_Log::Log_alloc();
-		p_app->Render = _Render::Render_alloc();
-		p_app->GameLoop = _GameLoop::alloc(16000);
-		p_app->ECS = _ECS::EntityComponent_alloc(&p_app->UpdateSequencer);
-
-		_GameLoop::set_newFrameCallback(p_app->GameLoop, app_newFrame, p_app);
-		_GameLoop::set_updateCallback(p_app->GameLoop, app_update, p_app);
-		_GameLoop::set_renderCallback(p_app->GameLoop, app_render, p_app);
-	};
 
 	void app_free(GameEngineApplication* p_app)
 	{
@@ -49,7 +47,7 @@ namespace _GameEngine
 	void app_newFrame(void* p_gameEngineApplication)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
-		Render_beforeEverything(l_app->Render);
+		_Utils::Observer_broadcast(&l_app->NewFrame, l_app);
 	};
 
 	void app_update(void* p_closure, float p_delta)
@@ -62,6 +60,7 @@ namespace _GameEngine
 	void app_render(void* p_closure)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
+		_Utils::Observer_broadcast(&l_app->PreRender, l_app);
 		Render_render(l_app->Render);
 	};
 
@@ -72,7 +71,6 @@ namespace _GameEngine
 
 	void app_run(GameEngineApplication* p_app)
 	{
-		app_init(p_app);
 		app_mainLoop(p_app);
 		app_cleanup(p_app);
 	};

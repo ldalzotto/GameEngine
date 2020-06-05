@@ -3,7 +3,6 @@
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Log/Log.h"
 
-#include "IMGUITest/IMGUITest.h"
 #include "Texture/InitializationConfigurations/TCDepth.h"
 
 #include <stdexcept>
@@ -79,7 +78,6 @@ namespace _GameEngine::_Render
 		allocDefaultMaterialRenderStep(l_render);
 
 		SwapChain_broadcastRebuildEvent(&l_render->SwapChain, &l_render->RenderInterface);
-		IMGUITest_init(&l_render->IMGUITest, &l_render->RenderInterface);
 		return l_render;
 	};
 
@@ -89,7 +87,8 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
-		IMGUITest_free(&(*p_render)->IMGUITest, &(*p_render)->RenderInterface);
+		_Utils::Observer_broadcast(&(*p_render)->RenderHookCallbacks.OnRenderIsGoingToBeDestroyed, &(*p_render)->RenderInterface);
+
 		freeDefaultMaterialRenderStep(*p_render);
 		freeMaterials(*p_render);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
@@ -106,6 +105,7 @@ namespace _GameEngine::_Render
 		freeVulkan(*p_render);
 		delete* p_render;
 		*p_render = nullptr;
+		p_render = nullptr;
 	};
 
 	void Render_recreateSwapChain(Render* p_render)
@@ -498,11 +498,6 @@ namespace _GameEngine::_Render
 
 			PreRenderDeferedCommandBufferStep_WaitForFence(&p_render->PreRenderDeferedCommandBufferStep, &p_render->Device);
 		}
-	};
-
-	void Render_beforeEverything(Render* p_render)
-	{
-		IMGUITest_newFrame(&p_render->IMGUITest, &p_render->RenderInterface);
 	};
 
 	void Render_render(Render* p_render)

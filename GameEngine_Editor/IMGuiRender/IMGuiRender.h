@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include "Utils/Observer/Observer.h"
+
 #include "VulkanObjects/GraphcisPipeline/RenderPass.h"
 #include "VulkanObjects/GraphcisPipeline/FrameBuffer.h"
 
@@ -11,25 +13,28 @@
 
 using namespace _GameEngine;
 
-namespace _GameEngine::_Render
+namespace _GameEngine
 {
-	struct RenderInterface;
+	struct GameEngineApplication;
 }
 
 namespace _GameEngineEditor
 {
+
 	struct IMGuiRender
 	{
 		_Render::DescriptorPool DescriptorPool;
 		_Render::RenderPass Renderpass;
 		std::vector<_Render::FrameBuffer> FrameBuffers;
 
+		_Utils::Subject NewFrame;
+		_Utils::Subject DrawFrame;
+		_Utils::Subject SwapChainRebuild;
+		_Utils::Subject OnRenderDestroyed;
+
 		bool FontInitialized;
 	};
 
-	void IMGuiRender_init(IMGuiRender* p_imguiTest, _Render::RenderInterface* p_renderInterface);
-	void IMGuiRender_free(IMGuiRender* p_imguiTest, _Render::RenderInterface* p_renderInterface);
-	void IMGuiRender_newFrame(IMGuiRender* p_imguiTest, _Render::RenderInterface* p_renderInterface);
-	void IMGuiRender_drawFrame(IMGuiRender* p_imguiTest, VkCommandBuffer p_commandBuffer, size_t l_imageIndex, _Render::RenderInterface* p_renderInterface);
-	void IMGuiRender_onSwapChainRebuilded(IMGuiRender* p_imguiTest, _Render::RenderInterface* p_renderInterface);
+	void IMGuiRender_init(IMGuiRender* p_imguiTest, GameEngineApplication* p_renderInterface);
+	void IMGuiRender_free(IMGuiRender* p_imguiTest, GameEngineApplication* p_renderInterface);
 }
