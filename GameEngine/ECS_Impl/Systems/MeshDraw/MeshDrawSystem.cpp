@@ -13,6 +13,13 @@
 
 namespace _GameEngine::_ECS
 {
+	_Utils::SortedSequencerPriority MeshDrawSystem_getUpdatePriority()
+	{
+		return 500;
+	};
+
+	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta);
+
 	void onMeshDrawSystemEntityAdded(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
@@ -29,6 +36,12 @@ namespace _GameEngine::_ECS
 	{
 		p_meshDrawSystem->ECS = p_ecs;
 
+		p_meshDrawSystem->Update.Priority = MeshDrawSystem_getUpdatePriority();
+		p_meshDrawSystem->Update.Callback = MeshDrawSystem_update;
+		p_meshDrawSystem->Update.Closure = p_meshDrawSystem;
+
+		_Utils::SortedSequencer_addOperation(p_ecs->UpdateSortedSequencer, &p_meshDrawSystem->Update);
+
 		EntityConfigurableContainerInitInfo l_entityComponentListenerInitInfo{};
 		l_entityComponentListenerInitInfo.ECS = p_ecs;
 		l_entityComponentListenerInitInfo.ListenedComponentTypes = std::vector<ComponentType>{ MeshRendererType, TransformType };
@@ -37,7 +50,7 @@ namespace _GameEngine::_ECS
 		EntityConfigurableContainer_init(&p_meshDrawSystem->EntityConfigurableContainer, &l_entityComponentListenerInitInfo);
 	};
 
-	void MeshDrawSystem_update(void* p_meshDrawSystem, float p_delta)
+	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta)
 	{
 		//	AccumulatedTime += p_delta;
 		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
@@ -64,7 +77,6 @@ namespace _GameEngine::_ECS
 	{
 		SystemAllocInfo l_systemAllocInfo{};
 		l_systemAllocInfo.Child = new MeshDrawSystem();
-		l_systemAllocInfo.UpdateFunction = MeshDrawSystem_update;
 		l_systemAllocInfo.OnSystemFree = MeshDrawSystem_free;
 		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer , &l_systemAllocInfo);
 		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)l_system->_child;

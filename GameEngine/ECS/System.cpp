@@ -9,7 +9,6 @@ namespace _GameEngine::_ECS
 	{
 		System* l_system = new System();
 		l_system->_child = p_systemAllocInfo->Child;
-		l_system->UpdateFunction = p_systemAllocInfo->UpdateFunction;
 		l_system->OnSystemFree = p_systemAllocInfo->OnSystemFree;
 		return l_system;
 	};
@@ -35,24 +34,11 @@ namespace _GameEngine::_ECS
 		p_system = nullptr;
 	};
 
-	void System_update(System* p_system, float p_delta)
-	{
-		p_system->UpdateFunction(p_system->_child, p_delta);
-	};
-
 	System* SystemContainer_allocSystem(SystemContainer* p_systemContainer, SystemAllocInfo* p_systemAllocInfo) 
 	{
 		System* p_instanciatedSystem = System_alloc(p_systemAllocInfo);
 		p_systemContainer->Systems.emplace_back(p_instanciatedSystem);
 		return p_instanciatedSystem;
-	};
-
-	void SystemContainer_update(SystemContainer* p_systemContainer, float p_delta)
-	{
-		for (System* l_system : p_systemContainer->Systems)
-		{
-			System_update(l_system, p_delta);
-		}
 	};
 
 	void SystemContainer_free(SystemContainer* p_systemContainer)

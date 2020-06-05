@@ -4,8 +4,20 @@
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS/ECS.h"
 
+#include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
+
 namespace _GameEngine::_ECS
 {
+	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
+	{
+		std::vector<_Utils::SortedSequencerPriority> l_before{
+			MeshDrawSystem_getUpdatePriority()
+		};
+		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
+	};
+
+	void TransformRotationSystem_update(void* p_transformRotateSystem, void* p_delta);
+
 	void TransformRotateSystem_init(TransformRotateSystem* p_transformRotateSystem, ECS* p_ecs)
 	{
 		p_transformRotateSystem->ECS = p_ecs;
@@ -13,6 +25,13 @@ namespace _GameEngine::_ECS
 		EntityConfigurableContainerInitInfo l_entityConfigurableContainerInitInfo{};
 		l_entityConfigurableContainerInitInfo.ListenedComponentTypes = { TransformType, TransformRotateType };
 		l_entityConfigurableContainerInitInfo.ECS = p_ecs;
+
+		p_transformRotateSystem->Update.Priority = TransformRotateSystem_getUpdatePritoriy();
+		p_transformRotateSystem->Update.Callback = TransformRotationSystem_update;
+		p_transformRotateSystem->Update.Closure = p_transformRotateSystem;
+
+		_Utils::SortedSequencer_addOperation(p_ecs->UpdateSortedSequencer, &p_transformRotateSystem->Update);
+
 		EntityConfigurableContainer_init(&p_transformRotateSystem->EntityConfigurableContainer, &l_entityConfigurableContainerInitInfo);
 	};
 
@@ -25,14 +44,16 @@ namespace _GameEngine::_ECS
 	};
 
 
-	void TransformRotationSystem_update(void* p_transformRotateSystem, float p_delta)
+	void TransformRotationSystem_update(void* p_transformRotateSystem, void* p_delta)
 	{
 		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*)p_transformRotateSystem;
+		float l_delta = *(float*)p_delta;
+
 		for (Entity* l_entity : l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities)
 		{
 			Transform* l_transform = GET_COMPONENT(Transform, l_entity);
 			TransformRotate* l_transformRotate = GET_COMPONENT(TransformRotate, l_entity);
-			Transform_setLocalRotation(l_transform, l_transform->LocalRotation * glm::quat(l_transformRotate->Axis * l_transformRotate->Speed * p_delta));
+			Transform_setLocalRotation(l_transform, l_transform->LocalRotation * glm::quat(l_transformRotate->Axis * l_transformRotate->Speed * l_delta));
 		}
 	};
 
@@ -40,7 +61,6 @@ namespace _GameEngine::_ECS
 	{
 		SystemAllocInfo l_systemAllocInfo{};
 		l_systemAllocInfo.Child = new TransformRotateSystem();
-		l_systemAllocInfo.UpdateFunction = TransformRotationSystem_update;
 		l_systemAllocInfo.OnSystemFree = TransformRotateSystem_free;
 		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer, &l_systemAllocInfo);
 		TransformRotateSystem* l_transformRotationSystem = (TransformRotateSystem*)l_system->_child;
