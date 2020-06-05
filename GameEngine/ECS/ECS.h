@@ -4,21 +4,21 @@
 #include "Component.h"
 #include "System.h"
 
-namespace _GameEngine::_Utils
+namespace _GameEngine
 {
-	struct SortedSequencer;
+	struct UpdateSequencer;
 }
 
 namespace _GameEngine::_ECS
 {
 	struct ECS
 	{
-		_Utils::SortedSequencer* UpdateSortedSequencer;
+		UpdateSequencer* UpdateSequencer;
 		EntityContainer EntityContainer;
 		ComponentEvents ComponentEvents;
 		SystemContainer SystemContainer;
 	};
 
-	ECS* EntityComponent_alloc();
+	ECS* EntityComponent_alloc(UpdateSequencer* p_updateSequencer);
 	void EntityComponent_free(ECS** p_entityComponent);
 };

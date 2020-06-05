@@ -5,8 +5,10 @@
 #include <ctime>
 
 #include "Utils/Algorithm/Algorithm.h"
+
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
+#include "EngineSequencers/UpdateSequencer.h"
 
 #include "RenderInterface.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
@@ -15,7 +17,7 @@ namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority MeshDrawSystem_getUpdatePriority()
 	{
-		return 500;
+		return UPDATE_PUSH_TO_RENDER_PRIORITY;
 	};
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta);
@@ -40,7 +42,7 @@ namespace _GameEngine::_ECS
 		p_meshDrawSystem->Update.Callback = MeshDrawSystem_update;
 		p_meshDrawSystem->Update.Closure = p_meshDrawSystem;
 
-		_Utils::SortedSequencer_addOperation(p_ecs->UpdateSortedSequencer, &p_meshDrawSystem->Update);
+		_Utils::SortedSequencer_addOperation(&p_ecs->UpdateSequencer->UpdateSequencer, &p_meshDrawSystem->Update);
 
 		EntityConfigurableContainerInitInfo l_entityComponentListenerInitInfo{};
 		l_entityComponentListenerInitInfo.ECS = p_ecs;

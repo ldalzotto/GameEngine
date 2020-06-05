@@ -2,9 +2,11 @@
 
 namespace _GameEngine::_ECS
 {
-	ECS* EntityComponent_alloc()
+	ECS* EntityComponent_alloc(UpdateSequencer* p_updateSequencer)
 	{
-		return new ECS();
+		ECS* l_ecs = new ECS();
+		l_ecs->UpdateSequencer = p_updateSequencer;
+		return l_ecs;
 	};
 
 	void EntityComponent_free(ECS** p_entityComponent)

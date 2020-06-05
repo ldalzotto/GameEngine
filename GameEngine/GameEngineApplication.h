@@ -6,14 +6,14 @@
 #include "Render.h"
 #include "GameLoop/GameLoop.h"
 #include "ECS/ECS.h"
-#include "Utils/SortedSequencer/SortedSequencer.h"
+#include "EngineSequencers/UpdateSequencer.h"
 
 namespace _GameEngine
 {
 
 	struct GameEngineApplication
 	{
-		_Utils::SortedSequencer UpdateSequencer;
+		UpdateSequencer UpdateSequencer;
 		std::function<void(float)> SandboxUpdateHook;
 		GameLoop* GameLoop;
 		_Render::Render* Render;

@@ -2,7 +2,6 @@
 
 namespace _GameEngine
 {
-
 	/// Game loop callback forward declaration
 	void app_newFrame(void* p_gameEngineApplication);
 	void app_update(void* p_closure, float p_delta);
@@ -21,8 +20,7 @@ namespace _GameEngine
 		_Log::Log_alloc();
 		p_app->Render = _Render::Render_alloc();
 		p_app->GameLoop = _GameLoop::alloc(16000);
-		p_app->ECS = _ECS::EntityComponent_alloc();
-		p_app->ECS->UpdateSortedSequencer = &p_app->UpdateSequencer;
+		p_app->ECS = _ECS::EntityComponent_alloc(&p_app->UpdateSequencer);
 
 		_GameLoop::set_newFrameCallback(p_app->GameLoop, app_newFrame, p_app);
 		_GameLoop::set_updateCallback(p_app->GameLoop, app_update, p_app);
@@ -58,8 +56,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		l_app->SandboxUpdateHook(p_delta);
-		_Utils::SortedSequencer_execute(&l_app->UpdateSequencer, &p_delta);
-		//_ECS::SystemContainer_update(&l_app->ECS->SystemContainer, p_delta);
+		UpdateSequencer_execute(&l_app->UpdateSequencer, p_delta);
 	};
 
 	void app_render(void* p_closure)

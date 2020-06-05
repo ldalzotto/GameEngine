@@ -1,5 +1,5 @@
 #pragma once
 
-#include "GameEngine.h"
+#include "GameEngineApplication.h"
 
 _GameEngine::GameEngineApplication *App;

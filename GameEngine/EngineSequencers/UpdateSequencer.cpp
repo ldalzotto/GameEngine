@@ -1,0 +1,12 @@
+#include "UpdateSequencer.h"
+
+namespace _GameEngine
+{
+	_Utils::SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY = 500;
+	_Utils::SortedSequencerPriority UPDATE_EDITOR_GUI_PRIORITY = 600;
+
+	void UpdateSequencer_execute(UpdateSequencer* p_updateSequencer, float p_float)
+	{
+		_Utils::SortedSequencer_execute(&p_updateSequencer->UpdateSequencer, &p_float);
+	};
+}

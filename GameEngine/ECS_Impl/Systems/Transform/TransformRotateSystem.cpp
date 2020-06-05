@@ -1,9 +1,9 @@
 #include "TransformRotateSystem.h"
 
+#include "EngineSequencers/UpdateSequencer.h"
+
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
-#include "ECS/ECS.h"
-
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
 namespace _GameEngine::_ECS
@@ -30,7 +30,7 @@ namespace _GameEngine::_ECS
 		p_transformRotateSystem->Update.Callback = TransformRotationSystem_update;
 		p_transformRotateSystem->Update.Closure = p_transformRotateSystem;
 
-		_Utils::SortedSequencer_addOperation(p_ecs->UpdateSortedSequencer, &p_transformRotateSystem->Update);
+		_Utils::SortedSequencer_addOperation(&p_ecs->UpdateSequencer->UpdateSequencer, &p_transformRotateSystem->Update);
 
 		EntityConfigurableContainer_init(&p_transformRotateSystem->EntityConfigurableContainer, &l_entityConfigurableContainerInitInfo);
 	};
