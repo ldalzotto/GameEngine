@@ -8,16 +8,20 @@ namespace _GameEngine::_ECS
 {
 	void TransformRotateSystem_init(TransformRotateSystem* p_transformRotateSystem, ECS* p_ecs)
 	{
+		p_transformRotateSystem->ECS = p_ecs;
+
 		EntityConfigurableContainerInitInfo l_entityConfigurableContainerInitInfo{};
 		l_entityConfigurableContainerInitInfo.ListenedComponentTypes = { TransformType, TransformRotateType };
 		l_entityConfigurableContainerInitInfo.ECS = p_ecs;
 		EntityConfigurableContainer_init(&p_transformRotateSystem->EntityConfigurableContainer, &l_entityConfigurableContainerInitInfo);
 	};
 
-	void TransformRotateSystem_free(void* p_transformRotateSystem)
+	void TransformRotateSystem_free(System* p_system)
 	{
-		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*) p_transformRotateSystem;
+		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*)p_system->_child;
 		EntityConfigurableContainer_free(&l_transformRotateSystem->EntityConfigurableContainer, l_transformRotateSystem->ECS);
+		delete l_transformRotateSystem;
+		p_system->_child = nullptr;
 	};
 
 
@@ -35,10 +39,10 @@ namespace _GameEngine::_ECS
 	System* TransformRotateSystem_alloc(ECS* p_ecs)
 	{
 		SystemAllocInfo l_systemAllocInfo{};
-		l_systemAllocInfo.ChildSize = sizeof(TransformRotateSystem);
+		l_systemAllocInfo.Child = new TransformRotateSystem();
 		l_systemAllocInfo.UpdateFunction = TransformRotationSystem_update;
 		l_systemAllocInfo.OnSystemFree = TransformRotateSystem_free;
-		System* l_system = System_alloc(&l_systemAllocInfo, &p_ecs->SystemContainer);
+		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer, &l_systemAllocInfo);
 		TransformRotateSystem* l_transformRotationSystem = (TransformRotateSystem*)l_system->_child;
 		TransformRotateSystem_init(l_transformRotationSystem, p_ecs);
 		return l_system;

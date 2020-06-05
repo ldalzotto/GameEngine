@@ -52,19 +52,21 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	void MeshDrawSystem_free(void* p_meshDrawSystem)
+	void MeshDrawSystem_free(System* p_system)
 	{
-		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
+		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_system->_child;
 		EntityConfigurableContainer_free(&l_meshDrawSystem->EntityConfigurableContainer, l_meshDrawSystem->ECS);
+		delete l_meshDrawSystem;
+		p_system->_child = nullptr;
 	};
 
 	System* MeshDrawSystem_alloc(ECS* p_ecs)
 	{
 		SystemAllocInfo l_systemAllocInfo{};
-		l_systemAllocInfo.ChildSize = sizeof(MeshDrawSystem);
+		l_systemAllocInfo.Child = new MeshDrawSystem();
 		l_systemAllocInfo.UpdateFunction = MeshDrawSystem_update;
 		l_systemAllocInfo.OnSystemFree = MeshDrawSystem_free;
-		System* l_system = System_alloc(&l_systemAllocInfo, &p_ecs->SystemContainer);
+		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer , &l_systemAllocInfo);
 		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)l_system->_child;
 		MeshDrawSystem_init(l_meshDrawSystem, p_ecs);
 		return l_system;
