@@ -78,8 +78,8 @@ namespace _GameEngine::_Render
 		allocMaterials(l_render);
 		allocDefaultMaterialRenderStep(l_render);
 
+		SwapChain_broadcastRebuildEvent(&l_render->SwapChain, &l_render->RenderInterface);
 		IMGUITest_init(&l_render->IMGUITest, &l_render->RenderInterface);
-
 		return l_render;
 	};
 
@@ -124,12 +124,11 @@ namespace _GameEngine::_Render
 		initPreRenderStaging(p_render);
 		initSwapChain(p_render);
 		initDepthTexture(p_render);
-		IMGUITest_onSwapChainRebuilded(&p_render->IMGUITest, &p_render->RenderInterface);
 		reAllocateGraphicsPipelineContainer(p_render);
 		initRenderSemaphore(p_render);
 
 		// The SwapChain has been recreated, thus no more invalid
-		SwapChain_broadcastRebuildEvent(&p_render->SwapChain);
+		SwapChain_broadcastRebuildEvent(&p_render->SwapChain, &p_render->RenderInterface);
 	};
 
 	/////// VULKAN
@@ -328,6 +327,7 @@ namespace _GameEngine::_Render
 		l_swapChainBuildInfo.SwapChainDependencies.Window = &p_render->Window;
 		l_swapChainBuildInfo.CommandPool = &p_render->CommandPool;
 		SwapChain_build(&p_render->SwapChain, &l_swapChainBuildInfo);
+		SwapChain_broadcastRebuildEvent(&p_render->SwapChain, &p_render->RenderInterface);
 	};
 
 	void freeSwapChain(Render* p_render)

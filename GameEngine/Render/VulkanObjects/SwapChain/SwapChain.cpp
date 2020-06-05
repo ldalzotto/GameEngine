@@ -135,14 +135,12 @@ namespace _GameEngine::_Render
 			
 			SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);
 		}
-
-		_Utils::Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_swapChain);
 	};
 
-	void SwapChain_broadcastRebuildEvent(SwapChain* p_swapChain)
+	void SwapChain_broadcastRebuildEvent(SwapChain* p_swapChain, RenderInterface* p_renderInterface)
 	{
 		p_swapChain->MustBeRebuilt = false;
-		_Utils::Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_swapChain);
+		_Utils::Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_renderInterface);
 	};
 
 	void SwapChain_free(SwapChain* p_swapChain)

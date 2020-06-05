@@ -25,6 +25,7 @@ namespace _GameEngine::_Render
 		std::vector<FrameBuffer> FrameBuffers;
 
 		_Utils::Subject DrawFrame;
+		_Utils::Subject SwapChainRebuild;
 
 		bool FontInitialized;
 	};
@@ -33,5 +34,5 @@ namespace _GameEngine::_Render
 	void IMGUITest_free(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface);
 	void IMGUITest_newFrame(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface);
 	//void IMGUITest_drawFrame(IMGUITest* p_imguiTest, VkCommandBuffer p_commandBuffer, size_t l_imageIndex, RenderInterface* p_renderInterface);
-	void IMGUITest_onSwapChainRebuilded(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface);
+	// void IMGUITest_onSwapChainRebuilded(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface);
 }

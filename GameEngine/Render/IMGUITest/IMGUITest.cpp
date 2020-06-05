@@ -17,12 +17,17 @@ namespace _GameEngine::_Render
 {
 	void drawFrame(void* p_imguiTest,void* p_beforeEndRecordingMainCommandBuffer_Input);
 	void createFinalDrawObjects(RenderInterface* p_renderInterface, IMGUITest* p_imguiTest);
+	void onSwapChainRebuilded(void* p_imguiTest, void* p_renderInterface);
 
 	void IMGUITest_init(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
 		p_imguiTest->DrawFrame.Closure = p_imguiTest;
 		p_imguiTest->DrawFrame.Callback = drawFrame;
 		_Utils::Observer_register(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_imguiTest->DrawFrame);
+
+		p_imguiTest->SwapChainRebuild.Closure = p_imguiTest;
+		p_imguiTest->SwapChainRebuild.Callback = onSwapChainRebuilded;
+		_Utils::Observer_register(&p_renderInterface->SwapChain->OnSwapChainBuilded, &p_imguiTest->SwapChainRebuild);
 
 		ImGuiContext* l_imGuicontext = ImGui::CreateContext();
 		ImGui::SetCurrentContext(l_imGuicontext);
@@ -56,6 +61,7 @@ namespace _GameEngine::_Render
 	void IMGUITest_free(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
 		_Utils::Observer_unRegister(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_imguiTest->DrawFrame);
+		_Utils::Observer_unRegister(&p_renderInterface->SwapChain->OnSwapChainBuilded, &p_imguiTest->SwapChainRebuild);
 
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -72,24 +78,26 @@ namespace _GameEngine::_Render
 		p_imguiTest->FontInitialized = false;
 	};
 
-	void IMGUITest_onSwapChainRebuilded(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
+	void onSwapChainRebuilded(void* p_imguiTest, void* p_renderInterface)
 	{
+		IMGUITest* l_imguiTest = (IMGUITest*)p_imguiTest;
+		RenderInterface* l_renderInterface = (RenderInterface*)p_renderInterface;
+
 		ImGui::EndFrame();
 
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 
-		RenderPass_free(&p_imguiTest->Renderpass);
-		for (size_t i = 0; i < p_imguiTest->FrameBuffers.size(); i++)
+		RenderPass_free(&l_imguiTest->Renderpass);
+		for (size_t i = 0; i < l_imguiTest->FrameBuffers.size(); i++)
 		{
-			FrameBuffer_free(&p_imguiTest->FrameBuffers.at(i));
+			FrameBuffer_free(&l_imguiTest->FrameBuffers.at(i));
 		}
-		p_imguiTest->FrameBuffers.clear();
+		l_imguiTest->FrameBuffers.clear();
 
+		createFinalDrawObjects(l_renderInterface, l_imguiTest);
 
-		createFinalDrawObjects(p_renderInterface, p_imguiTest);
-
-		p_imguiTest->FontInitialized = false;
+		l_imguiTest->FontInitialized = false;
 	};
 
 	void IMGUITest_newFrame(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
