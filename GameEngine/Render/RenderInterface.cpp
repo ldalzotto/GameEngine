@@ -8,6 +8,8 @@ namespace _GameEngine::_Render
 	{
 		RenderInterface* l_renderInterface = &p_render->RenderInterface;
 
+		l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks = &p_render->RenderHookCallbacks;
+
 		l_renderInterface->Window = &p_render->Window;
 		l_renderInterface->WindowSurface = &p_render->WindowSurface;
 		l_renderInterface->Instance = &p_render->Instance;

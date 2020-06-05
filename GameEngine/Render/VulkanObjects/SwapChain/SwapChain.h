@@ -63,6 +63,7 @@ namespace _GameEngine::_Render
 	void SwapChain_build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo);
 	SwapChainSupportDetails SwapChain_getSupportDetails(VkPhysicalDevice p_physicalDevice, Surface* p_surface);
 	bool SwapChain_isSwapChainSupported(const SwapChainSupportDetails& p_swapCahinSupportDetails);
+	void SwapChain_broadcastRebuildEvent(SwapChain* p_swapChain);
 	void SwapChain_free(SwapChain* p_swapChain);
 
 }

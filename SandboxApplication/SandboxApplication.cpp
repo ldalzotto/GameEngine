@@ -26,6 +26,7 @@ void SandboxApplication_update(float p_delta);
 int main()
 {
 	App = app_alloc(SandboxApplication_update);
+	App_Editor = _GameEngineEditor::GameEngineEditor_alloc(App);
 
 	try
 	{
@@ -35,16 +36,19 @@ int main()
 	{
 		_Log::LogInstance->ClientLogger->error(e.what());
 		app_free(App);
+		_GameEngineEditor::GameEngineEditor_free(&App_Editor);
 		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
 		_Log::LogInstance->ClientLogger->error("Unexpected Error");
 		app_free(App);
+		_GameEngineEditor::GameEngineEditor_free(&App_Editor);
 		return EXIT_FAILURE;
 	}
 
 	app_free(App);
+	_GameEngineEditor::GameEngineEditor_free(&App_Editor);
 	return EXIT_SUCCESS;
 };
 

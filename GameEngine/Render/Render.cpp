@@ -129,7 +129,7 @@ namespace _GameEngine::_Render
 		initRenderSemaphore(p_render);
 
 		// The SwapChain has been recreated, thus no more invalid
-		p_render->SwapChain.MustBeRebuilt = false;
+		SwapChain_broadcastRebuildEvent(&p_render->SwapChain);
 	};
 
 	/////// VULKAN
@@ -551,7 +551,11 @@ namespace _GameEngine::_Render
 
 		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->SwapChain, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
 
-		 IMGUITest_drawFrame(&p_render->IMGUITest, l_commandBuffer, l_imageIndex, &p_render->RenderInterface);
+		BeforeEndRecordingMainCommandBuffer_Input l_beforeEndRecordingMainCommandBuffer{};
+		l_beforeEndRecordingMainCommandBuffer.CommandBuffer = l_commandBuffer;
+		l_beforeEndRecordingMainCommandBuffer.ImageIndex = l_imageIndex;
+		l_beforeEndRecordingMainCommandBuffer.RenderInterface = &p_render->RenderInterface;
+		_Utils::Observer_broadcast(&p_render->RenderHookCallbacks.BeforeEndRecordingMainCommandBuffer, &l_beforeEndRecordingMainCommandBuffer);
 
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
 		{

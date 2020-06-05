@@ -1,13 +1,16 @@
 #pragma once
+
+
 #include "VulkanObjects/Hardware/Window/Window.h"
 #include "VulkanObjects/Hardware/Window/Surface.h"
 
-
 #include "vulkan/vulkan.h"
+
+#include "RenderHook.h"
+#include "Texture/Texture.h"
 #include "VulkanObjects/ValidationLayers.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/SwapChain/SwapChain.h"
-#include "Texture/Texture.h"
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
 #include "VulkanObjects/CommandBuffer/CommandPool.h"
 #include "VulkanObjects/CommandBuffer/CommandBuffers.h"
@@ -46,6 +49,7 @@ namespace _GameEngine::_Render
 	struct Render
 	{
 		RenderInterface RenderInterface;
+		RenderHookCallbacks RenderHookCallbacks;
 
 		Window Window;
 		Surface WindowSurface;
@@ -65,7 +69,6 @@ namespace _GameEngine::_Render
 		CameraBufferSetupStep CameraBufferSetupStep;
 		DefaultMaterialDrawStep DefaultMaterialDrawStep;
 		IMGUITest IMGUITest;
-
 	};
 
 	Render* Render_alloc();

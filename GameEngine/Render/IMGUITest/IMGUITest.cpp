@@ -5,6 +5,7 @@
 #include "imgui_impl_vulkan.h"
 #include "imgui_impl_glfw.h"
 #include "RenderInterface.h"
+#include "RenderHook.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/SwapChain/SwapChain.h"
 #include "Texture/Texture.h"
@@ -14,10 +15,15 @@
 
 namespace _GameEngine::_Render
 {
+	void drawFrame(void* p_imguiTest,void* p_beforeEndRecordingMainCommandBuffer_Input);
 	void createFinalDrawObjects(RenderInterface* p_renderInterface, IMGUITest* p_imguiTest);
 
 	void IMGUITest_init(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
+		p_imguiTest->DrawFrame.Closure = p_imguiTest;
+		p_imguiTest->DrawFrame.Callback = drawFrame;
+		_Utils::Observer_register(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_imguiTest->DrawFrame);
+
 		ImGuiContext* l_imGuicontext = ImGui::CreateContext();
 		ImGui::SetCurrentContext(l_imGuicontext);
 		ImGui::StyleColorsClassic();
@@ -49,6 +55,8 @@ namespace _GameEngine::_Render
 
 	void IMGUITest_free(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
 	{
+		_Utils::Observer_unRegister(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_imguiTest->DrawFrame);
+
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -62,8 +70,6 @@ namespace _GameEngine::_Render
 
 		DescriptorPool_free(&p_imguiTest->DescriptorPool, p_renderInterface->Device);
 		p_imguiTest->FontInitialized = false;
-
-
 	};
 
 	void IMGUITest_onSwapChainRebuilded(IMGUITest* p_imguiTest, RenderInterface* p_renderInterface)
@@ -109,25 +115,28 @@ namespace _GameEngine::_Render
 
 	};
 
-	void IMGUITest_drawFrame(IMGUITest* p_imguiTest, VkCommandBuffer p_commandBuffer, size_t l_imageIndex, RenderInterface* p_renderInterface)
+	void drawFrame(void* p_imguiTest, void* p_beforeEndRecordingMainCommandBuffer_Input)
 	{
-		if (p_imguiTest->FontInitialized)
+		IMGUITest* l_imguiTest = (IMGUITest*)p_imguiTest;
+		BeforeEndRecordingMainCommandBuffer_Input* l_input = (BeforeEndRecordingMainCommandBuffer_Input*)p_beforeEndRecordingMainCommandBuffer_Input;
+
+		if (l_imguiTest->FontInitialized)
 		{
 			VkRenderPassBeginInfo l_renderPassBeginInfo{};
 			l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			l_renderPassBeginInfo.renderPass = p_imguiTest->Renderpass.renderPass;
-			l_renderPassBeginInfo.framebuffer = p_imguiTest->FrameBuffers.at(l_imageIndex).FrameBuffer;
+			l_renderPassBeginInfo.renderPass = l_imguiTest->Renderpass.renderPass;
+			l_renderPassBeginInfo.framebuffer = l_imguiTest->FrameBuffers.at(l_input->ImageIndex).FrameBuffer;
 			l_renderPassBeginInfo.renderArea.offset = { 0,0 };
-			l_renderPassBeginInfo.renderArea.extent = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend;
+			l_renderPassBeginInfo.renderArea.extent = l_input->RenderInterface->SwapChain->SwapChainInfo.SwapExtend;
 			l_renderPassBeginInfo.clearValueCount = 0;
 			l_renderPassBeginInfo.pClearValues = nullptr;
 
-			vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdBeginRenderPass(l_input->CommandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			ImGui::Render();
-			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), p_commandBuffer);
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), l_input->CommandBuffer);
 
-			vkCmdEndRenderPass(p_commandBuffer);
+			vkCmdEndRenderPass(l_input->CommandBuffer);
 		}
 
 

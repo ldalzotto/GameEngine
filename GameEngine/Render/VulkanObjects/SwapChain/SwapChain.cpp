@@ -139,6 +139,12 @@ namespace _GameEngine::_Render
 		_Utils::Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_swapChain);
 	};
 
+	void SwapChain_broadcastRebuildEvent(SwapChain* p_swapChain)
+	{
+		p_swapChain->MustBeRebuilt = false;
+		_Utils::Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_swapChain);
+	};
+
 	void SwapChain_free(SwapChain* p_swapChain)
 	{
 		Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);

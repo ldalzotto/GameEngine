@@ -15,7 +15,7 @@ file(GLOB_RECURSE GAME_ENGINE_PUBLIC
 	"./GameLoop/*.h"
 	"./EngineSequencers/*.h"
 )
-SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h)
+SET(GAME_ENGINE_PUBLIC ${GAME_ENGINE_PUBLIC} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h)
 
 include_directories(
 	"./ECS"

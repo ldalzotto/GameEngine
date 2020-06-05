@@ -6,6 +6,9 @@ namespace _GameEngine::_Render
 {
 	struct Render;
 
+	struct RenderHookCallbacks;
+	struct BeforeEndRecordingMainCommandBuffer_Input;
+
 	struct Window;
 	struct Surface;
 	struct ValidationLayers;
@@ -42,8 +45,20 @@ namespace _GameEngine::_Render
 		MeshResourceProvider* MeshResourceProvider;
 	};
 
+	struct BeforeEndRecordingMainCommandBuffer_InputInterface
+	{
+		BeforeEndRecordingMainCommandBuffer_Input* BeforeEndRecordingMainCommandBuffer_Input;
+	};
+
+	struct RenderHookCallbacksInterface
+	{
+		RenderHookCallbacks* RenderHookCallbacks;
+	};
+
 	struct RenderInterface
 	{
+		RenderHookCallbacksInterface RenderHookCallbacksInterface;
+
 		Window* Window;
 		Surface* WindowSurface;
 		VkInstance* Instance;
