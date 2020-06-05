@@ -4,6 +4,7 @@
 namespace _GameEngine::_ECS
 {
 	struct ECS;
+	struct System;
 }
 
 namespace _GameEngine::_ECS
@@ -14,7 +15,5 @@ namespace _GameEngine::_ECS
 		EntityConfigurableContainer EntityConfigurableContainer;
 	};
 
-	void TransformRotateSystem_init(TransformRotateSystem* p_transformRotateSystem, ECS* p_ecs);
-	void TransformRotateSystem_free(TransformRotateSystem* p_transformRotateSystem);
-	void TransformRotationSystem_update(TransformRotateSystem* p_transformRotateSystem, float p_delta);
+	System* TransformRotateSystem_alloc(ECS* p_ecs);
 }

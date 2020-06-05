@@ -57,6 +57,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		l_app->SandboxUpdateHook(p_delta);
+		_ECS::SystemContainer_update(&l_app->ECS->SystemContainer, p_delta);
 	};
 
 	void app_render(void* p_closure)

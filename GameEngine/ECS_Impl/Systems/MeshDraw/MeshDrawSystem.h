@@ -17,7 +17,5 @@ namespace _GameEngine::_ECS
 		EntityConfigurableContainer EntityConfigurableContainer;
 	};
 
-	void MeshDrawSystem_init(MeshDrawSystem* p_meshDrawSystem, ECS* p_ecs);
-	void MeshDrawSystem_update(MeshDrawSystem* p_meshDrawSystem, float p_delta);
-	void MeshDrawSystem_free(MeshDrawSystem* p_meshDrawSystem);
+	System* MeshDrawSystem_alloc(ECS* p_ecs);
 }

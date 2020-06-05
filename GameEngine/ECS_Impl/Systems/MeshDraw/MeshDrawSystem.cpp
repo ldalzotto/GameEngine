@@ -37,11 +37,11 @@ namespace _GameEngine::_ECS
 		EntityConfigurableContainer_init(&p_meshDrawSystem->EntityConfigurableContainer, &l_entityComponentListenerInitInfo);
 	};
 
-	void MeshDrawSystem_update(MeshDrawSystem* p_meshDrawSystem, float p_delta)
+	void MeshDrawSystem_update(void* p_meshDrawSystem, float p_delta)
 	{
 		//	AccumulatedTime += p_delta;
-
-		for (Entity*& l_entity : p_meshDrawSystem->EntityConfigurableContainer.FilteredEntities)
+		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
+		for (Entity*& l_entity : l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities)
 		{
 			MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, l_entity);
 			Transform* l_transform = GET_COMPONENT(Transform, l_entity);
@@ -52,8 +52,22 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	void MeshDrawSystem_free(MeshDrawSystem* p_meshDrawSystem)
+	void MeshDrawSystem_free(void* p_meshDrawSystem)
 	{
-		EntityConfigurableContainer_free(&p_meshDrawSystem->EntityConfigurableContainer, p_meshDrawSystem->ECS);
+		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
+		EntityConfigurableContainer_free(&l_meshDrawSystem->EntityConfigurableContainer, l_meshDrawSystem->ECS);
 	};
+
+	System* MeshDrawSystem_alloc(ECS* p_ecs)
+	{
+		SystemAllocInfo l_systemAllocInfo{};
+		l_systemAllocInfo.ChildSize = sizeof(MeshDrawSystem);
+		l_systemAllocInfo.UpdateFunction = MeshDrawSystem_update;
+		l_systemAllocInfo.OnSystemFree = MeshDrawSystem_free;
+		System* l_system = System_alloc(&l_systemAllocInfo, &p_ecs->SystemContainer);
+		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)l_system->_child;
+		MeshDrawSystem_init(l_meshDrawSystem, p_ecs);
+		return l_system;
+	};
+
 }

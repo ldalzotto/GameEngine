@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include "Component.h"
+#include "System.h"
 
 namespace _GameEngine::_ECS
 {
@@ -9,6 +10,7 @@ namespace _GameEngine::_ECS
 	{
 		EntityContainer EntityContainer;
 		ComponentEvents ComponentEvents;
+		SystemContainer SystemContainer;
 	};
 
 	ECS* EntityComponent_alloc();
