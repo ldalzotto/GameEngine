@@ -1,7 +1,8 @@
 -- TODO --
 
 # Creating the Input system.
-	## That provides simple way to query if mouse, or key has been pressed this frame, released this frame or is on hold.
+	[X] ## That provides simple way to query if mouse, or key has been pressed this frame, released this frame or is on hold.
+	## 
 
 # Creating a debug console in ImGUI.
 	## Having a simple command that print something to logs.

@@ -15,6 +15,7 @@ namespace _GameEngine
 
 		_Log::Log_alloc();
 		l_gameEngineApplication->Render = _Render::Render_alloc();
+		l_gameEngineApplication->Input = _Input::Input_alloc(&l_gameEngineApplication->Render->Window);
 		l_gameEngineApplication->GameLoop = _GameLoop::alloc(16000);
 		l_gameEngineApplication->ECS = _ECS::EntityComponent_alloc(&l_gameEngineApplication->UpdateSequencer);
 
@@ -30,6 +31,7 @@ namespace _GameEngine
 		_ECS::EntityComponent_free(&p_app->ECS);
 		_GameLoop::free(&p_app->GameLoop);
 		_Render::Render_free(&p_app->Render);
+		_Input::Input_free(&p_app->Input);
 
 		_Log::Log_free(&_Log::LogInstance);
 		delete p_app;
@@ -47,6 +49,7 @@ namespace _GameEngine
 	void app_newFrame(void* p_gameEngineApplication)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
+		_Input::Input_update(l_app->Input);
 		_Utils::Observer_broadcast(&l_app->NewFrame, l_app);
 	};
 

@@ -6,6 +6,7 @@
 #include "Render.h"
 #include "GameLoop/GameLoop.h"
 #include "ECS/ECS.h"
+#include "Input/Input.h"
 #include "EngineSequencers/UpdateSequencer.h"
 #include "Utils/Observer/Observer.h"
 
@@ -21,6 +22,7 @@ namespace _GameEngine
 		std::function<void(float)> SandboxUpdateHook;
 		GameLoop* GameLoop;
 		_Render::Render* Render;
+		_Input::Input* Input;
 		_ECS::ECS* ECS;
 	};
 

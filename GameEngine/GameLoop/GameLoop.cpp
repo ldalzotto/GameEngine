@@ -58,7 +58,6 @@ namespace _GameEngine
 			if (p_gameLoop->AccumulatedElapsedTime_mics >= p_gameLoop->TimeBetweenUpdates_mics) {
 
 				p_gameLoop->NewFrameCallback(p_gameLoop->NewFrameCallbackClosure);
-				// Input events
 
 				while (p_gameLoop->AccumulatedElapsedTime_mics >= p_gameLoop->TimeBetweenUpdates_mics)
 				{

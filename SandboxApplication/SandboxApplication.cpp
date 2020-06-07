@@ -125,7 +125,7 @@ void SandboxApplication_update(float p_delta)
 		}
 	
 
-		_ECS::TransformRotateSystem_alloc(App->ECS);
+		_ECS::TransformRotateSystem_alloc(App->ECS, App->Input);
 		_ECS::MeshDrawSystem_alloc(App->ECS);
 
 		HasAlreadyUpdated = true;
