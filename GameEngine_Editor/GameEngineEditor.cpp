@@ -1,7 +1,6 @@
 #include "GameEngineEditor.h"
 
 #include "GameEngineApplication.h"
-#include "GameEngineDrawTest.h"
 
 namespace _GameEngineEditor
 {
@@ -32,6 +31,7 @@ namespace _GameEngineEditor
 	void GameEngineEditor_draw(void* p_gameEngineEditor, void* null)
 	{
 		GameEngineEditor* l_gameEngineEditor = (GameEngineEditor*)p_gameEngineEditor;
-		GameEngineDrawTest_Test(l_gameEngineEditor->GameEngineApplication);
+		DebugConsole_draw(&l_gameEngineEditor->DebugConsole);
+		// GameEngineDrawTest_Test(l_gameEngineEditor->GameEngineApplication);
 	};
 }
