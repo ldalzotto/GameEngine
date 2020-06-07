@@ -1,5 +1,19 @@
--- ECS --
-[X] # Provinding a uniquea and safe way to get the child component.
+-- TODO --
+
+# Creating the Input system.
+	## That provides simple way to query if mouse, or key has been pressed this frame, released this frame or is on hold.
+
+# Creating a debug console in ImGUI.
+	## Having a simple command that print something to logs.
+	## Having a command that shows transform with the associated Entity ID (it's pointer address at least) ?
+
+# Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
+
+-- Graphics improvements --
+
+# Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
+# The MeshDrawSystem updates the model matrix for every Transforms. However, if the transform doesn't move, the matrix is still pushed to GPU. Thus we can implement a system that track if transform have changed
+  from the last frame. If that's the case, the MeshDrawSystem pushes data to the gpu.
 
 -- Log term improvements --
 
@@ -8,6 +22,11 @@
   That would require much more work (finding a generic way to define parameters, createing appropriate structures from it).
   For now, such a system is not needed.
 # The same goes for the GraphicsPipeline associated to the shader.
+
+-- ECS --
+[X] # Provinding a uniquea and safe way to get the child component.
+
+-- --
 
 [X] - # Fixing the Transform system to be able to retrieve the Model matrix correctly.
 
