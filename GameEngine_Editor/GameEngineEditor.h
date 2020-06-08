@@ -3,6 +3,7 @@
 #include "IMGuiRender/IMGuiRender.h"
 #include "Utils/Observer/Observer.h"
 #include "DebugConsole/DebugConsole.h"
+#include "IMGuiRender/DrawableWindow.h"
 
 using namespace _GameEngine;
 
@@ -19,6 +20,7 @@ namespace _GameEngineEditor
 		_Utils::Subject OnPreRender;
 		IMGuiRender IMGuiRender;
 		DebugConsole DebugConsole;
+		DrawableWindows DrawableWindows;
 	};
 
 	GameEngineEditor* GameEngineEditor_alloc(GameEngineApplication* p_gameEngineApplication);

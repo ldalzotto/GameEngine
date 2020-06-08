@@ -1,5 +1,8 @@
 #include "CameraSystem.h"
 
+#include "Log/Log.h"
+#include "Log/LogFormatters.h"
+
 #include "glm/gtc/matrix_transform.hpp"
 #include <vector>
 
@@ -67,7 +70,9 @@ namespace _GameEngine::_ECS
 			Transform* p_transform = GET_COMPONENT(Transform, l_entity);
 			Camera* p_camera = GET_COMPONENT(Camera, l_entity);
 
-			p_camera->ViewMatrix = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), Transform_getWorldPosition(p_transform), glm::vec3(0.0f, 0.0f, 1.0f));
+			// _Log::LogInstance->CoreLogger->debug(LOG_VEC3(Transform_getForward(p_transform)));
+
+			p_camera->ViewMatrix = glm::lookAt(Transform_getWorldPosition(p_transform), glm::vec3(0.0f) /* Transform_getWorldPosition(p_transform) + Transform_getForward(p_transform) */, Transform_getUp(p_transform));
 
 			l_cameraSystem->RenderInterface->CameraBufferSetupStep->CameraProjection.Projection = p_camera->ProjectionMatrix;
 			l_cameraSystem->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;

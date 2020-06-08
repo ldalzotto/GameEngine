@@ -19,7 +19,7 @@ namespace _GameEngineEditor
 				return DebugCommandErrorCode::VERB_NOT_FOUND;
 			}
 		}
-		
+
 		{
 			while (l_inputCopy.size() > 0)
 			{
@@ -32,10 +32,10 @@ namespace _GameEngineEditor
 					if (l_argumentEndPos == std::string::npos)
 					{
 						l_argumentEndPos = l_inputCopy.find_last_of("\"\0");
-					}
-					else
-					{
-						return DebugCommandErrorCode::ARGUMENT_PARSING;
+						if (l_argumentEndPos == std::string::npos)
+						{
+							return DebugCommandErrorCode::ARGUMENT_PARSING;
+						}
 					}
 
 					if (l_argumentEndPos != std::string::npos)

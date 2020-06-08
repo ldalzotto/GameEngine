@@ -22,7 +22,10 @@ namespace _GameEngine::_ECS
 	void Transform_setLocalRotation(Transform* p_transform, const glm::quat& p_localRotation);
 	void Transform_setLocalScale(Transform* p_transform, const glm::vec3& p_localScale);
 	glm::mat4x4* Transform_getLocalToWorldMatrix(Transform* p_transform);
+
 	glm::vec3 Transform_getWorldPosition(Transform* p_transform);
+	glm::vec3 Transform_getUp(Transform* p_transform);
+	glm::vec3 Transform_getForward(Transform* p_transform);
 
 	struct TransformInitInfo
 	{

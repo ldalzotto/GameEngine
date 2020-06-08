@@ -47,6 +47,16 @@ namespace _GameEngine::_ECS
 		return *Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(p_transform->LocalPosition, 0.0f);
 	};
 
+	glm::vec3 Transform_getUp(Transform* p_transform)
+	{
+		return glm::normalize(*Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	};
+
+	glm::vec3 Transform_getForward(Transform* p_transform)
+	{
+		return glm::normalize(*Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+	};
+
 	void transform_updateMatricesIfNecessary(Transform* p_transform)
 	{
 		if(p_transform->MatricesMustBeRecalculated)

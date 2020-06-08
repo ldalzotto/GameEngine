@@ -7,8 +7,6 @@
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 
-#include "Input/Input.h"
-
 namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
@@ -22,10 +20,9 @@ namespace _GameEngine::_ECS
 
 	void TransformRotationSystem_update(void* p_transformRotateSystem, void* p_delta);
 
-	void TransformRotateSystem_init(TransformRotateSystem* p_transformRotateSystem, ECS* p_ecs, _Input::Input* p_input)
+	void TransformRotateSystem_init(TransformRotateSystem* p_transformRotateSystem, ECS* p_ecs)
 	{
 		p_transformRotateSystem->ECS = p_ecs;
-		p_transformRotateSystem->Input = p_input;
 
 		EntityConfigurableContainerInitInfo l_entityConfigurableContainerInitInfo{};
 		l_entityConfigurableContainerInitInfo.ListenedComponentTypes = { TransformType, TransformRotateType };
@@ -54,25 +51,22 @@ namespace _GameEngine::_ECS
 		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*)p_transformRotateSystem;
 		float l_delta = *(float*)p_delta;
 
-		if (_Input::Input_getState(l_transformRotateSystem->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::KEY_DOWN))
-		{
 			for (Entity* l_entity : l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities)
 			{
 				Transform* l_transform = GET_COMPONENT(Transform, l_entity);
 				TransformRotate* l_transformRotate = GET_COMPONENT(TransformRotate, l_entity);
 				Transform_setLocalRotation(l_transform, l_transform->LocalRotation * glm::quat(l_transformRotate->Axis * l_transformRotate->Speed * l_delta));
 			}
-		}
 	};
 
-	System* TransformRotateSystem_alloc(ECS* p_ecs, _Input::Input* p_input)
+	System* TransformRotateSystem_alloc(ECS* p_ecs)
 	{
 		SystemAllocInfo l_systemAllocInfo{};
 		l_systemAllocInfo.Child = new TransformRotateSystem();
 		l_systemAllocInfo.OnSystemFree = TransformRotateSystem_free;
 		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer, &l_systemAllocInfo);
 		TransformRotateSystem* l_transformRotationSystem = (TransformRotateSystem*)l_system->_child;
-		TransformRotateSystem_init(l_transformRotationSystem, p_ecs, p_input);
+		TransformRotateSystem_init(l_transformRotationSystem, p_ecs);
 		return l_system;
 	};
 }

@@ -4,12 +4,17 @@
 #include "Log/Log.h"
 #include "imgui.h"
 
+#include "ECS_Impl/Components/Transform/Transform.h"
+
+#include "IMGuiRender/DrawableWindow.h"
+#include "EditWindows/TransformWindow.h"
+
 #include "DebugCommandParser.h"
 
 namespace _GameEngineEditor
 {
 
-	void executeDebugCommand(DebugCommand* p_debugCommand);
+	void executeDebugCommand(DebugConsole* p_debugConsole, DebugCommand* p_debugCommand);
 
 	void DebugConsole_draw(DebugConsole* p_debugConsole)
 	{
@@ -28,18 +33,28 @@ namespace _GameEngineEditor
 			}
 			else
 			{
-				executeDebugCommand(&l_debugCommand);
+				executeDebugCommand(p_debugConsole, &l_debugCommand);
 			}
 		}
 		ImGui::PopItemWidth();
 		ImGui::End();
 	};
 	
-	void executeDebugCommand(DebugCommand* p_debugCommand)
+	void executeDebugCommand(DebugConsole* p_debugConsole, DebugCommand* p_debugCommand)
 	{
 		if (p_debugCommand->Verb == "print")
 		{
 			_GameEngine::_Log::LogInstance->CoreLogger->warn(p_debugCommand->Arguments.at(0).Value);
+		}
+		else if (p_debugCommand->Verb == "transform_show")
+		{
+			if (p_debugCommand->Arguments.size() > 0 && p_debugCommand->Arguments[0].Name == "addr")
+			{
+				size_t l_val = std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0);
+				TransformWindow* l_transformWindow = new TransformWindow();
+				l_transformWindow->Transform = reinterpret_cast<_GameEngine::_ECS::Transform*>(l_val);
+				p_debugConsole->DrawableWindows->DrawableWindows.push_back(TransformWindow_allocDrawableWindow(&l_transformWindow));
+			}
 		}
 	};
 }

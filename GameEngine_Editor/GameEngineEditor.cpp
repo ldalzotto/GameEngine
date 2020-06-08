@@ -17,6 +17,8 @@ namespace _GameEngineEditor
 		
 		IMGuiRender_init(&l_gameEngineEditor->IMGuiRender, p_gameEngineApplication);
 
+		l_gameEngineEditor->DebugConsole.DrawableWindows = &l_gameEngineEditor->DrawableWindows;
+
 		return l_gameEngineEditor;
 	};
 
@@ -32,5 +34,6 @@ namespace _GameEngineEditor
 	{
 		GameEngineEditor* l_gameEngineEditor = (GameEngineEditor*)p_gameEngineEditor;
 		DebugConsole_draw(&l_gameEngineEditor->DebugConsole);
+		DrawableWindows_draw(&l_gameEngineEditor->DrawableWindows);
 	};
 }

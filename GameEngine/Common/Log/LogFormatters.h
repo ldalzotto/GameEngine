@@ -11,3 +11,8 @@ std::string LOG_MAT4(const glm::mat4x4& mat)
 		+ "[ " + std::to_string(mat[2][0]) + " , " + std::to_string(mat[2][1]) + " , " + std::to_string(mat[2][2]) + " , " + std::to_string(mat[2][3]) + " ], \n "
 		+ "[ " + std::to_string(mat[3][0]) + " , " + std::to_string(mat[3][1]) + " , " + std::to_string(mat[3][2]) + " , " + std::to_string(mat[3][3]) + " ]";
 }
+
+std::string LOG_VEC3(const glm::vec3& vec)
+{
+	return "\n [ " + std::to_string(vec.x) + " , " + std::to_string(vec.y) + " , " + std::to_string(vec.z) + " ]";
+}

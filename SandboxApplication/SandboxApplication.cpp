@@ -76,9 +76,9 @@ void SandboxApplication_update(float p_delta)
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
-
+			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+			l_transformInitInfo.LocalPosition = glm::vec3(2.0f, 2.0f, 2.0f);
 			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
 			_ECS::Transform_init(l_transform, &l_transformInitInfo);
@@ -131,14 +131,13 @@ void SandboxApplication_update(float p_delta)
 					l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
 					_ECS::Entity_addComponent(l_instanciatedEntity, l_component);
 				}
-
-				Entities.push_back(l_instanciatedEntity);
+			//	Entities.push_back(l_instanciatedEntity);
 			}
 
 		}
-	
 
-		_ECS::TransformRotateSystem_alloc(App->ECS, App->Input);
+
+		_ECS::TransformRotateSystem_alloc(App->ECS);
 		_ECS::MeshDrawSystem_alloc(App->ECS);
 		_ECS::CameraSystem_alloc(App->ECS, &App->Render->RenderInterface);
 
