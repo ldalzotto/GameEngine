@@ -8,6 +8,7 @@
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 #include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
+#include "ECS_Impl/Systems/Camera/CameraSystem.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 
 #include "Render/Includes/GLFWIncludes.h"
@@ -68,8 +69,20 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Camera* l_camera = (_ECS::Camera*)l_component->Child;
 			_ECS::CameraDependencies l_cameraDependencies{};
 			l_cameraDependencies.SwapChain = &App->Render->SwapChain;
-			l_cameraDependencies.CameraBufferSetupStep = &App->Render->CameraBufferSetupStep;
 			_ECS::Camera_init(l_camera, l_component, &l_cameraDependencies);
+			_ECS::Entity_addComponent(l_cameraEntity, l_component);
+		}
+
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
+			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
+
+			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transformInitInfo.LocalPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
+			_ECS::Transform_init(l_transform, &l_transformInitInfo);
+
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
 
@@ -127,6 +140,7 @@ void SandboxApplication_update(float p_delta)
 
 		_ECS::TransformRotateSystem_alloc(App->ECS, App->Input);
 		_ECS::MeshDrawSystem_alloc(App->ECS);
+		_ECS::CameraSystem_alloc(App->ECS, &App->Render->RenderInterface);
 
 		HasAlreadyUpdated = true;
 	}

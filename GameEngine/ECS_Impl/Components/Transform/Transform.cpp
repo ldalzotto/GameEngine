@@ -42,6 +42,11 @@ namespace _GameEngine::_ECS
 		return &p_transform->LocalToWorldMatrix;
 	};
 
+	glm::vec3 Transform_getWorldPosition(Transform* p_transform)
+	{
+		return *Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(p_transform->LocalPosition, 0.0f);
+	};
+
 	void transform_updateMatricesIfNecessary(Transform* p_transform)
 	{
 		if(p_transform->MatricesMustBeRecalculated)

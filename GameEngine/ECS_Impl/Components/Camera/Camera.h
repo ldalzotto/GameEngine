@@ -9,7 +9,6 @@ namespace _GameEngine
 {
 	namespace _Render
 	{
-		struct CameraBufferSetupStep;
 		struct SwapChain;
 	}
 	
@@ -25,13 +24,14 @@ namespace _GameEngine::_ECS
 
 	struct CameraDependencies
 	{
-		_Render::CameraBufferSetupStep* CameraBufferSetupStep;
 		_Render::SwapChain* SwapChain;
 	};
 
 	struct Camera
 	{
 		CameraDependencies CameraDependencies;
+		glm::mat4 ProjectionMatrix;
+		glm::mat4 ViewMatrix;
 		_Utils::Subject OnSwapChainBuilded;
 		_Utils::Subject OnComponentDetached;
 	};

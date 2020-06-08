@@ -1,7 +1,6 @@
 #include "Camera.h"
 
 #include "VulkanObjects/SwapChain/SwapChain.h"
-#include "LoopStep/CameraBufferSetupStep.h"
 
 #include "ECS/Component.h"
 
@@ -15,7 +14,6 @@ namespace _GameEngine::_ECS
 	{
 		Camera* l_camera = (Camera*)p_camera;
 		Camera_buildProjectionMatrix(l_camera);
-		_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(l_camera->CameraDependencies.CameraBufferSetupStep, l_camera->CameraDependencies.SwapChain->SwapChainDependencies.Device);
 	};
 
 	void camera_onDetached(void* p_camera, void* p_notUsed)
@@ -35,15 +33,12 @@ namespace _GameEngine::_ECS
 		p_camera->OnComponentDetached.Callback = camera_onDetached;
 		_Utils::Observer_register(&p_associatedComponent->ComponentFreeEvent, &p_camera->OnComponentDetached);
 
-		p_camera->CameraDependencies.CameraBufferSetupStep->CameraProjection.View = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
 		Camera_buildProjectionMatrix(p_camera);
-		_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(p_camera->CameraDependencies.CameraBufferSetupStep, p_camera->CameraDependencies.SwapChain->SwapChainDependencies.Device);
 	};
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
-		p_camera->CameraDependencies.CameraBufferSetupStep->CameraProjection.Projection = glm::perspective(glm::radians(45.0f),
+		p_camera->ProjectionMatrix = glm::perspective(glm::radians(45.0f),
 			p_camera->CameraDependencies.SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->CameraDependencies.SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
 	};
 }
