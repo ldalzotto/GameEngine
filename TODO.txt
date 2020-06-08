@@ -4,8 +4,14 @@
 	[X] ## That provides simple way to query if mouse, or key has been pressed this frame, released this frame or is on hold.
 
 # Creating a debug console in ImGUI.
-	## Having a simple command that print something to logs.
-	## Having a command that shows transform with the associated Entity ID (it's pointer address at least) ?
+	[X] ## Having a simple command that print something to logs.
+
+Goal : Having a command that shows transform with the associated Entity ID (it's pointer address at least) ?
+  SubGoals :
+	 - Centralizing the game camera data to a system instead of handling logic in the Camera component.
+	 - Making systems easily retrievable with a type.
+	 - Retrieve the Camera system and MeshDrawSystem from editor and draw points on screen space.
+	 - Instead of a point, draw the text with the Entity address.
 
 # Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
 

@@ -32,6 +32,5 @@ namespace _GameEngineEditor
 	{
 		GameEngineEditor* l_gameEngineEditor = (GameEngineEditor*)p_gameEngineEditor;
 		DebugConsole_draw(&l_gameEngineEditor->DebugConsole);
-		// GameEngineDrawTest_Test(l_gameEngineEditor->GameEngineApplication);
 	};
 }
