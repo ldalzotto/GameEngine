@@ -52,18 +52,32 @@ namespace _GameEngine::_Render
 		Device* Device;
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 	};
-	
+
 	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo);
 
-	typedef VkImageCreateInfo(*VkImageCreateInfoProvider)(uint32_t p_width, uint32_t p_height, Device* p_device);
 	typedef void(*AllocDeferredCommandBufferOperation)(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture);
+
+	struct TextureProceduralCreateInfo
+	{
+		VkImageType              imageType;
+		uint32_t                 mipLevels;
+		uint32_t                 arrayLayers;
+		VkFormat                 format;
+		VkImageTiling            tiling;
+		VkImageLayout            initialLayout;
+		VkImageUsageFlags        usage;
+		VkSharingMode            sharingMode;
+		VkSampleCountFlagBits    samples;
+		VkImageCreateFlags       flags;
+	};
 
 	struct TextureProceduralInstanceInfo
 	{
 		TextureUniqueKey* TextureKey;
 		uint32_t Width;
 		uint32_t Height;
-		VkImageCreateInfoProvider ImageCreateInfoProvider;
+
+		TextureProceduralCreateInfo TextureProceduralCreateInfo;
 		ImageViewCreationInfoProvider ImageViewCreationInfoProvider;
 		AllocDeferredCommandBufferOperation AllocDeferredCommandBufferOperation;
 

@@ -19,7 +19,7 @@ namespace _GameEngine::_Render
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
 		uint32_t p_width, uint32_t p_height,
-		VkImageCreateInfoProvider p_imageCreateInfoProvider,
+		TextureProceduralCreateInfo* p_textureProceduralCreateInfo,
 		ImageViewCreationInfoProvider imageViewCreationProvider,
 		Device* p_device);
 
@@ -38,10 +38,15 @@ namespace _GameEngine::_Render
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to load texture image!"));
 		}
 
+		TextureProceduralCreateInfo l_textureProceduralCreateInfo{};
+		{
+			TCColorShader_BuildTextureProceduralCreateInfo(&l_textureProceduralCreateInfo);
+		}
+		
 		texture_AllocateVulkanObjects(l_texture,
 			static_cast<uint32_t>(l_texWidth),
 			static_cast<uint32_t>(l_texHeight),
-			TCColorShader_BuildVkImageCreateInfo,
+			&l_textureProceduralCreateInfo,
 			TCColorShader_BuildVkImageViewCreateInfo,
 			l_textureLoadInfo->Device
 		);
@@ -81,7 +86,7 @@ namespace _GameEngine::_Render
 		texture_AllocateVulkanObjects(l_texture,
 			p_textureProceduralInstanceInfo->Width,
 			p_textureProceduralInstanceInfo->Height,
-			p_textureProceduralInstanceInfo->ImageCreateInfoProvider,
+			&p_textureProceduralInstanceInfo->TextureProceduralCreateInfo,
 			p_textureProceduralInstanceInfo->ImageViewCreationInfoProvider,
 			p_textureProceduralInstanceInfo->Device
 		);
@@ -116,11 +121,28 @@ namespace _GameEngine::_Render
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
 		uint32_t p_width, uint32_t p_height,
-		VkImageCreateInfoProvider p_imageCreateInfoProvider,
+		TextureProceduralCreateInfo* p_textureProceduralCreateInfo,
 		ImageViewCreationInfoProvider imageViewCreationProvider,
 		Device* p_device)
 	{
-		VkImageCreateInfo l_imageCreateInfo = p_imageCreateInfoProvider(p_width, p_height, p_device);
+		VkImageCreateInfo l_imageCreateInfo{};
+	
+		{
+			l_imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			l_imageCreateInfo.imageType = p_textureProceduralCreateInfo->imageType;
+			l_imageCreateInfo.extent.width = p_width;
+			l_imageCreateInfo.extent.height = p_height;
+			l_imageCreateInfo.extent.depth = 1;
+			l_imageCreateInfo.mipLevels = p_textureProceduralCreateInfo->mipLevels;
+			l_imageCreateInfo.arrayLayers = p_textureProceduralCreateInfo->arrayLayers;
+			l_imageCreateInfo.format = p_textureProceduralCreateInfo->format;
+			l_imageCreateInfo.tiling = p_textureProceduralCreateInfo->tiling;
+			l_imageCreateInfo.initialLayout = p_textureProceduralCreateInfo->initialLayout;
+			l_imageCreateInfo.usage = p_textureProceduralCreateInfo->usage;
+			l_imageCreateInfo.sharingMode = p_textureProceduralCreateInfo->sharingMode;
+			l_imageCreateInfo.samples = p_textureProceduralCreateInfo->samples;
+			l_imageCreateInfo.flags = p_textureProceduralCreateInfo->flags;
+		}
 
 		if (vkCreateImage(p_device->LogicalDevice.LogicalDevice, &l_imageCreateInfo, nullptr, &p_texture->Texture) != VK_SUCCESS)
 		{

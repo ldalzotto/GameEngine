@@ -39,24 +39,18 @@ namespace _GameEngine::_Render
 
 	};
 
-	VkImageCreateInfo TCDepth_BuildVkImageCreateInfo(uint32_t p_width, uint32_t p_height, Device* p_device)
+	void TCDepth_BuildTextureProceduralCreateInfo(TextureProceduralCreateInfo* p_textureProceduralCreateInfo, Device* p_device)
 	{
-		VkImageCreateInfo l_imageCreateInfo{};
-		l_imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		l_imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-		l_imageCreateInfo.extent.width = p_width;
-		l_imageCreateInfo.extent.height = p_height;
-		l_imageCreateInfo.extent.depth = 1;
-		l_imageCreateInfo.mipLevels = 1;
-		l_imageCreateInfo.arrayLayers = 1;
-		l_imageCreateInfo.format = findDepthTextureFormat(p_device);
-		l_imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-		l_imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		l_imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-		l_imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		l_imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		l_imageCreateInfo.flags = 0;
-		return l_imageCreateInfo;
+		p_textureProceduralCreateInfo->imageType = VK_IMAGE_TYPE_2D;
+		p_textureProceduralCreateInfo->mipLevels = 1;
+		p_textureProceduralCreateInfo->arrayLayers = 1;
+		p_textureProceduralCreateInfo->format = findDepthTextureFormat(p_device);
+		p_textureProceduralCreateInfo->tiling = VK_IMAGE_TILING_OPTIMAL;
+		p_textureProceduralCreateInfo->initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		p_textureProceduralCreateInfo->usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		p_textureProceduralCreateInfo->sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		p_textureProceduralCreateInfo->samples = VK_SAMPLE_COUNT_1_BIT;
+		p_textureProceduralCreateInfo->flags = 0;
 	};
 
 	VkImageViewCreateInfo TCDepth_BuildVkImageViewCreateInfo(ImageViewInitializationInfo* p_imageViewInitializationInfo)
