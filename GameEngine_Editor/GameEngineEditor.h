@@ -4,6 +4,7 @@
 #include "Utils/Observer/Observer.h"
 #include "DebugConsole/DebugConsole.h"
 #include "IMGuiRender/DrawableWindow.h"
+#include "Gizmo/GizmoDrawStep.h"
 
 using namespace _GameEngine;
 
@@ -21,6 +22,7 @@ namespace _GameEngineEditor
 		IMGuiRender IMGuiRender;
 		DebugConsole DebugConsole;
 		DrawableWindows DrawableWindows;
+		GizmoDrawStep GizmoDrawStep;
 	};
 
 	GameEngineEditor* GameEngineEditor_alloc(GameEngineApplication* p_gameEngineApplication);

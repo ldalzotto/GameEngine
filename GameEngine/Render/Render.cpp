@@ -87,8 +87,6 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
-		_Utils::Observer_broadcast(&(*p_render)->RenderHookCallbacks.OnRenderIsGoingToBeDestroyed, &(*p_render)->RenderInterface);
-
 		freeDefaultMaterialRenderStep(*p_render);
 		freeMaterials(*p_render);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);

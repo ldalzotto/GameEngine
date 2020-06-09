@@ -34,20 +34,20 @@ int main()
 	catch (const std::exception& e)
 	{
 		_Log::LogInstance->ClientLogger->error(e.what());
-		app_free(App);
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, App);
+		app_free(App);
 		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
 		_Log::LogInstance->ClientLogger->error("Unexpected Error");
-		app_free(App);
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, App);
+		app_free(App);
 		return EXIT_FAILURE;
 	}
 
-	app_free(App);
 	_GameEngineEditor::GameEngineEditor_free(&App_Editor, App);
+	app_free(App);
 	return EXIT_SUCCESS;
 };
 
@@ -82,7 +82,14 @@ void SandboxApplication_update(float p_delta)
 			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
 			_ECS::Transform_init(l_transform, &l_transformInitInfo);
+			_ECS::Entity_addComponent(l_cameraEntity, l_component);
+		}
 
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
+			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
+			l_transformRotate->Speed = 1.0f;
+			l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
 
@@ -127,7 +134,7 @@ void SandboxApplication_update(float p_delta)
 				{
 					_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 					_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
-					l_transformRotate->Speed = 1.0f + i;
+					l_transformRotate->Speed = 0.0f + i;
 					l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
 					_ECS::Entity_addComponent(l_instanciatedEntity, l_component);
 				}

@@ -19,12 +19,15 @@ namespace _GameEngineEditor
 
 		l_gameEngineEditor->DebugConsole.DrawableWindows = &l_gameEngineEditor->DrawableWindows;
 
+		GizmoDrawStep_alloc(&l_gameEngineEditor->GizmoDrawStep, &p_gameEngineApplication->Render->RenderInterface);
+
 		return l_gameEngineEditor;
 	};
 
 	void GameEngineEditor_free(GameEngineEditor** p_gameEngineEditor, GameEngineApplication* p_gameEngineApplication)
 	{
-		IMGuiRender_free(&(*p_gameEngineEditor)->IMGuiRender, p_gameEngineApplication);
+		IMGuiRender_free(&(*p_gameEngineEditor)->IMGuiRender, p_gameEngineApplication);		
+		GizmoDrawStep_free(&(*p_gameEngineEditor)->GizmoDrawStep, &(*p_gameEngineEditor)->GameEngineApplication->Render->RenderInterface);
 		delete (*p_gameEngineEditor);
 		*p_gameEngineEditor = nullptr;
 		p_gameEngineEditor = nullptr;

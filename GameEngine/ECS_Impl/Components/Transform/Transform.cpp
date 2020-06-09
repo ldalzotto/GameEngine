@@ -54,7 +54,7 @@ namespace _GameEngine::_ECS
 
 	glm::vec3 Transform_getForward(Transform* p_transform)
 	{
-		return glm::normalize(*Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+		return glm::normalize(*Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
 	};
 
 	void transform_updateMatricesIfNecessary(Transform* p_transform)

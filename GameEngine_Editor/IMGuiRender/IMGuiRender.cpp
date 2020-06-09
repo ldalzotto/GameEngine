@@ -20,7 +20,6 @@ namespace _GameEngineEditor
 	void drawFrame(void* p_IMGuiRender, void* p_beforeEndRecordingMainCommandBuffer_Input);
 	void createFinalDrawObjects(_Render::RenderInterface* p_renderInterface, IMGuiRender* p_IMGuiRender);
 	void onSwapChainRebuilded(void* p_IMGuiRender, void* p_renderInterface);
-	void onRenderDestroyed(void* p_IMGuiRender, void* p_renderInterface);
 
 	void IMGuiRender_init(IMGuiRender* p_IMGuiRender, GameEngineApplication* p_gameEngineApplication)
 	{
@@ -37,10 +36,6 @@ namespace _GameEngineEditor
 		p_IMGuiRender->SwapChainRebuild.Closure = p_IMGuiRender;
 		p_IMGuiRender->SwapChainRebuild.Callback = onSwapChainRebuilded;
 		_Utils::Observer_register(&p_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
-
-		p_IMGuiRender->OnRenderDestroyed.Closure = p_IMGuiRender;
-		p_IMGuiRender->OnRenderDestroyed.Callback = onRenderDestroyed;
-		_Utils::Observer_register(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->OnRenderIsGoingToBeDestroyed, &p_IMGuiRender->OnRenderDestroyed);
 
 		ImGuiContext* l_imGuicontext = ImGui::CreateContext();
 		ImGui::SetCurrentContext(l_imGuicontext);
@@ -74,6 +69,25 @@ namespace _GameEngineEditor
 	void IMGuiRender_free(IMGuiRender* p_IMGuiRender, GameEngineApplication* p_gameEngineApplication)
 	{
 		_Utils::Observer_unRegister(&p_gameEngineApplication->NewFrame, &p_IMGuiRender->NewFrame);
+
+		_Render::RenderInterface* l_renderInterface = &p_gameEngineApplication->Render->RenderInterface;
+
+		_Utils::Observer_unRegister(&l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
+		_Utils::Observer_unRegister(&l_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
+
+		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+
+		RenderPass_free(&p_IMGuiRender->Renderpass);
+		for (size_t i = 0; i < p_IMGuiRender->FrameBuffers.size(); i++)
+		{
+			FrameBuffer_free(&p_IMGuiRender->FrameBuffers.at(i));
+		}
+		p_IMGuiRender->FrameBuffers.clear();
+
+		DescriptorPool_free(&p_IMGuiRender->DescriptorPool, l_renderInterface->Device);
+		p_IMGuiRender->FontInitialized = false;
 	};
 
 	void onSwapChainRebuilded(void* p_IMGuiRender, void* p_renderInterface)
@@ -96,30 +110,6 @@ namespace _GameEngineEditor
 		createFinalDrawObjects(l_renderInterface, l_IMGuiRender);
 
 		l_IMGuiRender->FontInitialized = false;
-	};
-
-	void onRenderDestroyed(void* p_IMGuiRender, void* p_renderInterface)
-	{
-		IMGuiRender* l_IMGuiRender = (IMGuiRender*)p_IMGuiRender;
-		_Render::RenderInterface* l_renderInterface = (_Render::RenderInterface*)p_renderInterface;
-
-		_Utils::Observer_unRegister(&l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &l_IMGuiRender->DrawFrame);
-		_Utils::Observer_unRegister(&l_renderInterface->SwapChain->OnSwapChainBuilded, &l_IMGuiRender->SwapChainRebuild);
-
-		ImGui_ImplVulkan_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-
-		RenderPass_free(&l_IMGuiRender->Renderpass);
-		for (size_t i = 0; i < l_IMGuiRender->FrameBuffers.size(); i++)
-		{
-			FrameBuffer_free(&l_IMGuiRender->FrameBuffers.at(i));
-		}
-		l_IMGuiRender->FrameBuffers.clear();
-
-		DescriptorPool_free(&l_IMGuiRender->DescriptorPool, l_renderInterface->Device);
-		l_IMGuiRender->FontInitialized = false;
-
 	};
 
 	void newFrame(void* p_IMGuiRender, void* p_gameEngineApplication)
