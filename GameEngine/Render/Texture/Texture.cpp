@@ -20,7 +20,7 @@ namespace _GameEngine::_Render
 	void texture_AllocateVulkanObjects(Texture* p_texture,
 		uint32_t p_width, uint32_t p_height,
 		TextureProceduralCreateInfo* p_textureProceduralCreateInfo,
-		ImageViewCreationInfoProvider imageViewCreationProvider,
+		ImageViewCreateInfo* p_imageViewCreateInfo,
 		Device* p_device);
 
 	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo)
@@ -39,15 +39,16 @@ namespace _GameEngine::_Render
 		}
 
 		TextureProceduralCreateInfo l_textureProceduralCreateInfo{};
-		{
 			TCColorShader_BuildTextureProceduralCreateInfo(&l_textureProceduralCreateInfo);
-		}
+
+		ImageViewCreateInfo l_imageViewCreateInfo{};
+		TCColorShader_BuildVkImageViewCreateInfo(&l_imageViewCreateInfo);
 		
 		texture_AllocateVulkanObjects(l_texture,
 			static_cast<uint32_t>(l_texWidth),
 			static_cast<uint32_t>(l_texHeight),
 			&l_textureProceduralCreateInfo,
-			TCColorShader_BuildVkImageViewCreateInfo,
+			&l_imageViewCreateInfo,
 			l_textureLoadInfo->Device
 		);
 
@@ -87,7 +88,7 @@ namespace _GameEngine::_Render
 			p_textureProceduralInstanceInfo->Width,
 			p_textureProceduralInstanceInfo->Height,
 			&p_textureProceduralInstanceInfo->TextureProceduralCreateInfo,
-			p_textureProceduralInstanceInfo->ImageViewCreationInfoProvider,
+			&p_textureProceduralInstanceInfo->ImageViewCreateInfo,
 			p_textureProceduralInstanceInfo->Device
 		);
 
@@ -122,7 +123,7 @@ namespace _GameEngine::_Render
 	void texture_AllocateVulkanObjects(Texture* p_texture,
 		uint32_t p_width, uint32_t p_height,
 		TextureProceduralCreateInfo* p_textureProceduralCreateInfo,
-		ImageViewCreationInfoProvider imageViewCreationProvider,
+		ImageViewCreateInfo* p_imageViewCreateInfo,
 		Device* p_device)
 	{
 		VkImageCreateInfo l_imageCreateInfo{};
@@ -176,7 +177,7 @@ namespace _GameEngine::_Render
 		l_imageViewInitializationInfo.Device = p_device;
 		l_imageViewInitializationInfo.Texture = p_texture->Texture;
 		l_imageViewInitializationInfo.TextureInfo = &p_texture->TextureInfo;
-		l_imageViewInitializationInfo.ImageViewCreateInfoProvider = imageViewCreationProvider;
+		l_imageViewInitializationInfo.ImageViewCreateInfo = p_imageViewCreateInfo;
 		ImageView_init(&p_texture->ImageView, &l_imageViewInitializationInfo);
 	};
 

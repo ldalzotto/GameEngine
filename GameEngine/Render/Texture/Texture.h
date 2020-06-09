@@ -71,6 +71,13 @@ namespace _GameEngine::_Render
 		VkImageCreateFlags       flags;
 	};
 
+	
+	struct ImageViewCreateInfo
+	{
+		VkImageViewType            viewType;
+		VkImageAspectFlags		   aspectMask;
+	};
+
 	struct TextureProceduralInstanceInfo
 	{
 		TextureUniqueKey* TextureKey;
@@ -78,7 +85,7 @@ namespace _GameEngine::_Render
 		uint32_t Height;
 
 		TextureProceduralCreateInfo TextureProceduralCreateInfo;
-		ImageViewCreationInfoProvider ImageViewCreationInfoProvider;
+		ImageViewCreateInfo ImageViewCreateInfo;
 		AllocDeferredCommandBufferOperation AllocDeferredCommandBufferOperation;
 
 		Device* Device;

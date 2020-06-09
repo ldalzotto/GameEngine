@@ -5,12 +5,12 @@
 namespace _GameEngine::_Render
 {
 	struct TextureProceduralCreateInfo;
-	struct ImageViewInitializationInfo;
+	struct ImageViewCreateInfo;
 	struct Device;
 }
 
 namespace _GameEngine::_Render
 {
 	void TCColorShader_BuildTextureProceduralCreateInfo(TextureProceduralCreateInfo* p_textureProceduralCreateInfo);
-	VkImageViewCreateInfo TCColorShader_BuildVkImageViewCreateInfo(ImageViewInitializationInfo* p_imageViewInitializationInfo);
+	void TCColorShader_BuildVkImageViewCreateInfo(ImageViewCreateInfo* p_imageViewCreateInfo);
 }

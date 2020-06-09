@@ -6,7 +6,7 @@ namespace _GameEngine::_Render
 {
 	struct Device;
 	struct TextureProceduralCreateInfo;
-	struct ImageViewInitializationInfo;
+	struct ImageViewCreateInfo;
 	struct DeferredCommandBufferOperation;
 	struct Texture;
 }
@@ -14,6 +14,6 @@ namespace _GameEngine::_Render
 namespace _GameEngine::_Render
 {
 	void TCDepth_BuildTextureProceduralCreateInfo(TextureProceduralCreateInfo* p_textureProceduralCreateInfo, Device* p_device);
-	VkImageViewCreateInfo TCDepth_BuildVkImageViewCreateInfo(ImageViewInitializationInfo* p_imageViewInitializationInfo);
+	void TCDepth_BuildVkImageViewCreateInfo(ImageViewCreateInfo* p_imageViewInitializationInfo);
 	void TCDepth_InitializationCommandBufferOperation_build(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture);
 }

@@ -8,14 +8,13 @@ namespace _GameEngine::_Render
 {
 	struct Device;
 	struct TextureInfo;
+	struct ImageViewCreateInfo;
 }
 
 namespace _GameEngine::_Render
 {
 	struct ImageView;
 	struct ImageViewInitializationInfo;
-
-	typedef VkImageViewCreateInfo(*ImageViewCreationInfoProvider)(ImageViewInitializationInfo* p_imageViewInitializationInfo);
 
 	struct ImageView
 	{
@@ -27,7 +26,7 @@ namespace _GameEngine::_Render
 		Device* Device;
 		VkImage Texture;
 		TextureInfo* TextureInfo;
-		ImageViewCreationInfoProvider ImageViewCreateInfoProvider;
+		ImageViewCreateInfo* ImageViewCreateInfo;
 	};
 
 	void ImageView_init(ImageView* p_imageView, ImageViewInitializationInfo* p_imageViewInitializationInfo); 

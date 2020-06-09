@@ -9,11 +9,15 @@ namespace _GameEngine::_Render
 	{
 		p_swapChainImage->SwapChainImage = p_swapChainImageInitializationInfo->CreatedImage;
 
+		ImageViewCreateInfo l_imageViewCreateInfo{};
+		TCColorShader_BuildVkImageViewCreateInfo(&l_imageViewCreateInfo);
+
+
 		ImageViewInitializationInfo l_imageViewInitializationInfo{};
 		l_imageViewInitializationInfo.Texture = p_swapChainImage->SwapChainImage;
 		l_imageViewInitializationInfo.TextureInfo = p_swapChainImageInitializationInfo->TextureInfo;
 		l_imageViewInitializationInfo.Device = p_swapChainImageInitializationInfo->Device;
-		l_imageViewInitializationInfo.ImageViewCreateInfoProvider = TCColorShader_BuildVkImageViewCreateInfo;
+		l_imageViewInitializationInfo.ImageViewCreateInfo = &l_imageViewCreateInfo;
 		ImageView_init(&p_swapChainImage->ImageView, &l_imageViewInitializationInfo);
 
 		CommandBuffersDependencies l_commandBufferDependencies{};

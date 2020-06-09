@@ -345,8 +345,8 @@ namespace _GameEngine::_Render
 		l_textureProceduralInstanceInfo.TextureKey = &l_textureKey;
 		l_textureProceduralInstanceInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
 		l_textureProceduralInstanceInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
-		l_textureProceduralInstanceInfo.ImageCreateInfoProvider = TCDepth_BuildVkImageCreateInfo;
-		l_textureProceduralInstanceInfo.ImageViewCreationInfoProvider = TCDepth_BuildVkImageViewCreateInfo;
+		TCDepth_BuildTextureProceduralCreateInfo(&l_textureProceduralInstanceInfo.TextureProceduralCreateInfo, &p_render->Device);
+		TCDepth_BuildVkImageViewCreateInfo(&l_textureProceduralInstanceInfo.ImageViewCreateInfo);
 		l_textureProceduralInstanceInfo.AllocDeferredCommandBufferOperation = TCDepth_InitializationCommandBufferOperation_build;
 
 		l_textureProceduralInstanceInfo.Device = &p_render->Device;
