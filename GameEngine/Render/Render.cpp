@@ -341,11 +341,14 @@ namespace _GameEngine::_Render
 	{
 		TextureUniqueKey l_textureKey{ "DEPTH" };
 
+		TextureInfo l_textureInfo{};
+		TCDepth_BuildTextureInfo(&l_textureInfo, &p_render->Device);
+		l_textureInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
+		l_textureInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
+
 		TextureProceduralInstanceInfo l_textureProceduralInstanceInfo{};
 		l_textureProceduralInstanceInfo.TextureKey = &l_textureKey;
-		l_textureProceduralInstanceInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
-		l_textureProceduralInstanceInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
-		TCDepth_BuildTextureProceduralCreateInfo(&l_textureProceduralInstanceInfo.TextureProceduralCreateInfo, &p_render->Device);
+		l_textureProceduralInstanceInfo.TextureInfo = &l_textureInfo;
 		TCDepth_BuildVkImageViewCreateInfo(&l_textureProceduralInstanceInfo.ImageViewCreateInfo);
 		l_textureProceduralInstanceInfo.AllocDeferredCommandBufferOperation = TCDepth_InitializationCommandBufferOperation_build;
 

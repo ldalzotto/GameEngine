@@ -18,8 +18,6 @@ namespace _GameEngine::_Render
 	///
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
-		uint32_t p_width, uint32_t p_height,
-		TextureProceduralCreateInfo* p_textureProceduralCreateInfo,
 		ImageViewCreateInfo* p_imageViewCreateInfo,
 		Device* p_device);
 
@@ -28,6 +26,7 @@ namespace _GameEngine::_Render
 		Texture* l_texture = new Texture();
 
 		l_texture->TextureUniqueKey = *l_textureLoadInfo->TextureKey;
+		l_texture->TextureType = TextureType::ASSET;
 
 		int l_texWidth, l_texHeight, l_texChannels;
 		stbi_uc* l_pixels = stbi_load(l_texture->TextureUniqueKey.TexturePath.data(), &l_texWidth, &l_texHeight, &l_texChannels, STBI_rgb_alpha);
@@ -37,17 +36,16 @@ namespace _GameEngine::_Render
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to load texture image!"));
 		}
+		
+		l_texture->TextureInfo.Width = static_cast<uint32_t>(l_texWidth);
+		l_texture->TextureInfo.Height = static_cast<uint32_t>(l_texHeight);
 
-		TextureProceduralCreateInfo l_textureProceduralCreateInfo{};
-			TCColorShader_BuildTextureProceduralCreateInfo(&l_textureProceduralCreateInfo);
+		TCColorShader_BuildTextureInfo(&l_texture->TextureInfo);
 
 		ImageViewCreateInfo l_imageViewCreateInfo{};
 		TCColorShader_BuildVkImageViewCreateInfo(&l_imageViewCreateInfo);
 		
 		texture_AllocateVulkanObjects(l_texture,
-			static_cast<uint32_t>(l_texWidth),
-			static_cast<uint32_t>(l_texHeight),
-			&l_textureProceduralCreateInfo,
 			&l_imageViewCreateInfo,
 			l_textureLoadInfo->Device
 		);
@@ -81,13 +79,12 @@ namespace _GameEngine::_Render
 	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo)
 	{
 		Texture* l_texture = new Texture();
+		l_texture->TextureType = TextureType::PROCEDURAL;
 
 		l_texture->TextureUniqueKey = *p_textureProceduralInstanceInfo->TextureKey;
-
+		l_texture->TextureInfo = *p_textureProceduralInstanceInfo->TextureInfo;
+		
 		texture_AllocateVulkanObjects(l_texture,
-			p_textureProceduralInstanceInfo->Width,
-			p_textureProceduralInstanceInfo->Height,
-			&p_textureProceduralInstanceInfo->TextureProceduralCreateInfo,
 			&p_textureProceduralInstanceInfo->ImageViewCreateInfo,
 			p_textureProceduralInstanceInfo->Device
 		);
@@ -117,12 +114,9 @@ namespace _GameEngine::_Render
 		}
 
 		delete l_texture;
-		l_texture = nullptr;
 	};
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
-		uint32_t p_width, uint32_t p_height,
-		TextureProceduralCreateInfo* p_textureProceduralCreateInfo,
 		ImageViewCreateInfo* p_imageViewCreateInfo,
 		Device* p_device)
 	{
@@ -130,19 +124,18 @@ namespace _GameEngine::_Render
 	
 		{
 			l_imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-			l_imageCreateInfo.imageType = p_textureProceduralCreateInfo->imageType;
-			l_imageCreateInfo.extent.width = p_width;
-			l_imageCreateInfo.extent.height = p_height;
+			l_imageCreateInfo.imageType = p_texture->TextureInfo.ImageType;
+			l_imageCreateInfo.extent.width = p_texture->TextureInfo.Width;
+			l_imageCreateInfo.extent.height = p_texture->TextureInfo.Height;
 			l_imageCreateInfo.extent.depth = 1;
-			l_imageCreateInfo.mipLevels = p_textureProceduralCreateInfo->mipLevels;
-			l_imageCreateInfo.arrayLayers = p_textureProceduralCreateInfo->arrayLayers;
-			l_imageCreateInfo.format = p_textureProceduralCreateInfo->format;
-			l_imageCreateInfo.tiling = p_textureProceduralCreateInfo->tiling;
-			l_imageCreateInfo.initialLayout = p_textureProceduralCreateInfo->initialLayout;
-			l_imageCreateInfo.usage = p_textureProceduralCreateInfo->usage;
-			l_imageCreateInfo.sharingMode = p_textureProceduralCreateInfo->sharingMode;
-			l_imageCreateInfo.samples = p_textureProceduralCreateInfo->samples;
-			l_imageCreateInfo.flags = p_textureProceduralCreateInfo->flags;
+			l_imageCreateInfo.mipLevels = p_texture->TextureInfo.MipLevels;
+			l_imageCreateInfo.arrayLayers = p_texture->TextureInfo.ArrayLayers;
+			l_imageCreateInfo.format = p_texture->TextureInfo.Format;
+			l_imageCreateInfo.tiling = p_texture->TextureInfo.Tiling;
+			l_imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			l_imageCreateInfo.usage = p_texture->TextureInfo.Usage;
+			l_imageCreateInfo.sharingMode = p_texture->TextureInfo.SharingMode;
+			l_imageCreateInfo.samples = p_texture->TextureInfo.Samples;
 		}
 
 		if (vkCreateImage(p_device->LogicalDevice.LogicalDevice, &l_imageCreateInfo, nullptr, &p_texture->Texture) != VK_SUCCESS)

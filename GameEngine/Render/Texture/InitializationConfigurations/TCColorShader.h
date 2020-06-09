@@ -4,13 +4,13 @@
 
 namespace _GameEngine::_Render
 {
-	struct TextureProceduralCreateInfo;
+	struct TextureInfo;
 	struct ImageViewCreateInfo;
 	struct Device;
 }
 
 namespace _GameEngine::_Render
 {
-	void TCColorShader_BuildTextureProceduralCreateInfo(TextureProceduralCreateInfo* p_textureProceduralCreateInfo);
+	void TCColorShader_BuildTextureInfo(TextureInfo* p_textureInfo);
 	void TCColorShader_BuildVkImageViewCreateInfo(ImageViewCreateInfo* p_imageViewCreateInfo);
 }

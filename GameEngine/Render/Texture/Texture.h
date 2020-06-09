@@ -26,17 +26,28 @@ namespace _GameEngine::_Render
 
 	struct TextureInfo
 	{
+		VkImageType ImageType;
 		uint32_t MipLevels;
 		uint32_t ArrayLayers;
 		VkFormat Format;
+		VkImageTiling Tiling;
+		VkImageUsageFlags Usage;
+		VkSharingMode SharingMode;
+		VkSampleCountFlagBits Samples;
 		uint32_t Width;
 		uint32_t Height;
 		uint32_t Depth;
 	};
 
+	enum class TextureType : uint8_t
+	{
+		ASSET = 0, PROCEDURAL = 1
+	};
+
 	struct Texture
 	{
 		TextureUniqueKey TextureUniqueKey;
+		TextureType TextureType;
 		TextureInfo TextureInfo;
 		VkImage Texture;
 		VkDeviceMemory TextureMemory;
@@ -56,21 +67,6 @@ namespace _GameEngine::_Render
 	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo);
 
 	typedef void(*AllocDeferredCommandBufferOperation)(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture);
-
-	struct TextureProceduralCreateInfo
-	{
-		VkImageType              imageType;
-		uint32_t                 mipLevels;
-		uint32_t                 arrayLayers;
-		VkFormat                 format;
-		VkImageTiling            tiling;
-		VkImageLayout            initialLayout;
-		VkImageUsageFlags        usage;
-		VkSharingMode            sharingMode;
-		VkSampleCountFlagBits    samples;
-		VkImageCreateFlags       flags;
-	};
-
 	
 	struct ImageViewCreateInfo
 	{
@@ -81,10 +77,8 @@ namespace _GameEngine::_Render
 	struct TextureProceduralInstanceInfo
 	{
 		TextureUniqueKey* TextureKey;
-		uint32_t Width;
-		uint32_t Height;
 
-		TextureProceduralCreateInfo TextureProceduralCreateInfo;
+		TextureInfo* TextureInfo;
 		ImageViewCreateInfo ImageViewCreateInfo;
 		AllocDeferredCommandBufferOperation AllocDeferredCommandBufferOperation;
 

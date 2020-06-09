@@ -5,18 +5,16 @@
 
 namespace _GameEngine::_Render
 {
-	void TCColorShader_BuildTextureProceduralCreateInfo(TextureProceduralCreateInfo* p_textureProceduralCreateInfo)
+	void TCColorShader_BuildTextureInfo(TextureInfo* p_textureInfo)
 	{
-		p_textureProceduralCreateInfo->imageType = VK_IMAGE_TYPE_2D;
-		p_textureProceduralCreateInfo->mipLevels = 1;
-		p_textureProceduralCreateInfo->arrayLayers = 1;
-		p_textureProceduralCreateInfo->format = VK_FORMAT_R8G8B8A8_SRGB;
-		p_textureProceduralCreateInfo->tiling = VK_IMAGE_TILING_OPTIMAL;
-		p_textureProceduralCreateInfo->initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		p_textureProceduralCreateInfo->usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-		p_textureProceduralCreateInfo->sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		p_textureProceduralCreateInfo->samples = VK_SAMPLE_COUNT_1_BIT;
-		p_textureProceduralCreateInfo->flags = 0;
+		p_textureInfo->ImageType = VK_IMAGE_TYPE_2D;
+		p_textureInfo->MipLevels = 1;
+		p_textureInfo->ArrayLayers = 1;
+		p_textureInfo->Format = VK_FORMAT_R8G8B8A8_SRGB;
+		p_textureInfo->Tiling = VK_IMAGE_TILING_OPTIMAL;
+		p_textureInfo->Usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		p_textureInfo->SharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		p_textureInfo->Samples = VK_SAMPLE_COUNT_1_BIT;
 	};
 
 	void TCColorShader_BuildVkImageViewCreateInfo(ImageViewCreateInfo* p_imageViewCreateInfo) 
