@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vulkan/vulkan.h"
 #include <vector>
 #include "VulkanObjects/CommandBuffer/CommandBuffers.h"
 #include "Texture/ImageViews.h"
@@ -8,7 +9,6 @@ namespace _GameEngine::_Render
 {
 	struct Device;
 	struct CommandPool;
-	struct TextureInfo;
 }
 
 namespace _GameEngine::_Render
@@ -23,7 +23,7 @@ namespace _GameEngine::_Render
 	struct SwapChainImageInitializationInfo
 	{
 		VkImage CreatedImage;
-		TextureInfo* TextureInfo;
+		ImageViewCreateInfo* ImageViewCreateInfo;
 		Device* Device;
 		CommandPool* CommandPool;
 	};

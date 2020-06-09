@@ -3,8 +3,6 @@
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Log/Log.h"
 
-#include "Texture/InitializationConfigurations/TCDepth.h"
-
 #include <stdexcept>
 
 namespace _GameEngine::_Render
@@ -341,26 +339,21 @@ namespace _GameEngine::_Render
 	{
 		TextureUniqueKey l_textureKey{ "DEPTH" };
 
-		TextureInfo l_textureInfo{};
-		TCDepth_BuildTextureInfo(&l_textureInfo, &p_render->Device);
-		l_textureInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
-		l_textureInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
+		TextureAllocInfo l_textureAllocInfo{};
+		l_textureAllocInfo.TextureAllocationType = TextureAllocationType::PROCEDURAL;
+		l_textureAllocInfo.TextureKey = &l_textureKey;
+		l_textureAllocInfo.TextureCreateInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
+		l_textureAllocInfo.TextureCreateInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
+		l_textureAllocInfo.TextureCreateInfo.TextureType = TextureType::DEPTH;
+		l_textureAllocInfo.TextureCreateInfo.TextureUsage = TextureUsage::PIPELINE_ATTACHMENT;
+		l_textureAllocInfo.RenderInterface = &p_render->RenderInterface;
 
-		TextureProceduralInstanceInfo l_textureProceduralInstanceInfo{};
-		l_textureProceduralInstanceInfo.TextureKey = &l_textureKey;
-		l_textureProceduralInstanceInfo.TextureInfo = &l_textureInfo;
-		TCDepth_BuildVkImageViewCreateInfo(&l_textureProceduralInstanceInfo.ImageViewCreateInfo);
-		l_textureProceduralInstanceInfo.AllocDeferredCommandBufferOperation = TCDepth_InitializationCommandBufferOperation_build;
-
-		l_textureProceduralInstanceInfo.Device = &p_render->Device;
-		l_textureProceduralInstanceInfo.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
-
-		p_render->DepthTexture = Texture_proceduralInstance(&l_textureProceduralInstanceInfo);
+		p_render->DepthTexture = Texture_alloc(&l_textureAllocInfo);
 	};
 
 	void freeDepthTexture(Render* p_render)
 	{
-		Texture_free(&p_render->DepthTexture, &p_render->Device, &p_render->PreRenderDeferedCommandBufferStep);
+		Texture_free(&p_render->DepthTexture, &p_render->RenderInterface);
 	};
 
 	/////// END DEPTH TEXTURE
@@ -429,9 +422,8 @@ namespace _GameEngine::_Render
 
 	void initResourcesProvider(Render* p_render)
 	{
-		p_render->ResourceProviders.TextureResourceProvider.TextureResourceProviderDependencies.Device = &p_render->Device;
-		p_render->ResourceProviders.TextureResourceProvider.TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
-
+		p_render->ResourceProviders.TextureResourceProvider.RenderInterface = &p_render->RenderInterface;
+		
 		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.Device = &p_render->Device;
 		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
 	};

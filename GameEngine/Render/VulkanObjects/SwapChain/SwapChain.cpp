@@ -8,7 +8,7 @@
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/Hardware/Window/Window.h"
 #include "VulkanObjects/Hardware/Window/Surface.h"
-#include "Texture/Texture.h"
+#include "Texture/ImageViews.h"
 
 namespace _GameEngine::_Render
 {
@@ -120,17 +120,17 @@ namespace _GameEngine::_Render
 		
 		p_swapChain->SwapChainImages.resize(l_imageCount);
 
-		TextureInfo l_textureInfo{};
-		l_textureInfo.Format = p_swapChain->SwapChainInfo.SurfaceFormat.format;
-		l_textureInfo.MipLevels = 1;
-		l_textureInfo.ArrayLayers = 1;
+		ImageViewCreateInfo l_imageViewCreateInfo{};
+		l_imageViewCreateInfo.Format = p_swapChain->SwapChainInfo.SurfaceFormat.format;
+		l_imageViewCreateInfo.MipLevels = 1;
+		l_imageViewCreateInfo.ArrayLayers = 1;
 
 		for (size_t i = 0; i < l_imageCount; i++)
 		{
 			SwapChainImageInitializationInfo l_swapChainImageInitializationInfo{};
 			l_swapChainImageInitializationInfo.CreatedImage = l_swapChainRawImages[i];
 			l_swapChainImageInitializationInfo.Device = p_swapChain->SwapChainDependencies.Device;
-			l_swapChainImageInitializationInfo.TextureInfo = &l_textureInfo;
+			l_swapChainImageInitializationInfo.ImageViewCreateInfo = &l_imageViewCreateInfo;
 			l_swapChainImageInitializationInfo.CommandPool = p_swapChainBuildInfo->CommandPool;
 			
 			SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);

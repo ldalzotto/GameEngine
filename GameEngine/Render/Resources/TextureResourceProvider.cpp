@@ -20,12 +20,14 @@ namespace _GameEngine::_Render
 
 		if (!p_textureResourceProvider->TextureResources.contains(l_hash))
 		{
-			TextureLoadInfo l_textureLoadInfo{};
-			l_textureLoadInfo.Device = p_textureResourceProvider->TextureResourceProviderDependencies.Device;
-			l_textureLoadInfo.PreRenderDeferedCommandBufferStep = p_textureResourceProvider->TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep;
-			l_textureLoadInfo.TextureKey = p_key;
+			TextureAllocInfo l_textureAllocInfo{};
+			l_textureAllocInfo.TextureAllocationType = TextureAllocationType::FILE;
+			l_textureAllocInfo.RenderInterface = p_textureResourceProvider->RenderInterface;
+			l_textureAllocInfo.TextureKey = p_key;
+			l_textureAllocInfo.TextureCreateInfo.TextureType = TextureType::COLOR;
+			l_textureAllocInfo.TextureCreateInfo.TextureUsage = TextureUsage::SHADER_INPUT;
 
-			Texture* l_texture = Texture_loadFromFile(&l_textureLoadInfo);
+			Texture* l_texture = Texture_alloc(&l_textureAllocInfo);
 			TextureResourceWithCounter l_resouceWithCounter{};
 
 			l_resouceWithCounter.Texture = l_texture;
@@ -46,7 +48,7 @@ namespace _GameEngine::_Render
 		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)
 		{
-			Texture_free(&l_resourceWithCounter->Texture, p_textureResourceProvider->TextureResourceProviderDependencies.Device, p_textureResourceProvider->TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep);
+			Texture_free(&l_resourceWithCounter->Texture, p_textureResourceProvider->RenderInterface);
 			p_textureResourceProvider->TextureResources.erase(l_hash);
 		}
 	};
@@ -68,7 +70,7 @@ namespace _GameEngine::_Render
 
 			for (auto&& l_textureResourceEntry : p_textureResourceProvider->TextureResources)
 			{
-				Texture_free(&l_textureResourceEntry.second.Texture, p_textureResourceProvider->TextureResourceProviderDependencies.Device, p_textureResourceProvider->TextureResourceProviderDependencies.PreRenderDeferedCommandBufferStep);
+				Texture_free(&l_textureResourceEntry.second.Texture, p_textureResourceProvider->RenderInterface);
 			}
 			p_textureResourceProvider->TextureResources.clear();
 		}

@@ -9,7 +9,7 @@
 
 namespace _GameEngine::_Render
 {
-	struct Device;
+	struct RenderInterface;
 	struct PreRenderDeferedCommandBufferStep;
 	struct DeferredCommandBufferCompletionToken;
 	struct DeferredCommandBufferOperation;
@@ -17,7 +17,6 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-
 
 	struct TextureUniqueKey
 	{
@@ -39,16 +38,34 @@ namespace _GameEngine::_Render
 		uint32_t Depth;
 	};
 
+	enum class TextureAllocationType : uint8_t
+	{
+		FILE, PROCEDURAL
+	};
+
 	enum class TextureType : uint8_t
 	{
-		ASSET = 0, PROCEDURAL = 1
+		COLOR, DEPTH
+	};
+
+	enum class TextureUsage : uint8_t
+	{
+		SHADER_INPUT, PIPELINE_ATTACHMENT
+	};
+
+	struct TextureCreateInfo
+	{
+		TextureType TextureType; /** Is the texture is a color texture or depth ? */
+		TextureUsage TextureUsage; /** Will the texture be used in shader ? Or in the graphics pipeline ? */
+		uint32_t Width;
+		uint32_t Height;
 	};
 
 	struct Texture
 	{
 		TextureUniqueKey TextureUniqueKey;
-		TextureType TextureType;
 		TextureInfo TextureInfo;
+
 		VkImage Texture;
 		VkDeviceMemory TextureMemory;
 		ImageView ImageView;
@@ -56,37 +73,16 @@ namespace _GameEngine::_Render
 		SmartDeferredCommandBufferCompletionToken TextureInitializationBufferCompletionToken;
 	};
 
-
-	struct TextureLoadInfo
+	struct TextureAllocInfo
 	{
+		TextureAllocationType TextureAllocationType;
 		TextureUniqueKey* TextureKey;
-		Device* Device;
-		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
+		TextureCreateInfo TextureCreateInfo;
+		RenderInterface* RenderInterface;
 	};
 
-	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo);
+	Texture* Texture_alloc(TextureAllocInfo* p_textureAllocInfo);
+	void Texture_alloc(Texture** p_texture, TextureAllocInfo* p_textureAllocInfo);
 
-	typedef void(*AllocDeferredCommandBufferOperation)(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture);
-	
-	struct ImageViewCreateInfo
-	{
-		VkImageViewType            viewType;
-		VkImageAspectFlags		   aspectMask;
-	};
-
-	struct TextureProceduralInstanceInfo
-	{
-		TextureUniqueKey* TextureKey;
-
-		TextureInfo* TextureInfo;
-		ImageViewCreateInfo ImageViewCreateInfo;
-		AllocDeferredCommandBufferOperation AllocDeferredCommandBufferOperation;
-
-		Device* Device;
-		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
-	};
-
-	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo);
-	void check_textureValidationToken_undefinedBehavior(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
-	void Texture_free(Texture** p_texture, Device* p_device, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
+	void Texture_free(Texture** p_texture, RenderInterface* p_renderInterface);
 }

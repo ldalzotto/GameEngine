@@ -5,108 +5,121 @@
 #include "stb_image.h"
 #include "Log/Log.h"
 
+#include "RenderInterface.h"
+
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "LoopStep/PreRenderDeferedCommandBufferStep.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLoadDeferredOperation.h"
 #include "Texture/InitializationConfigurations/TCColorShader.h"
+#include "Texture/InitializationConfigurations/TCDepth.h"
 
 namespace _GameEngine::_Render
 {
+	void Texture_loadFromFile(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo);
+	void Texture_proceduralInstance(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo);
+
 	/// Validation
 	void check_textureValidationToken_undefinedBehavior(Texture* l_texture, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
 	///
+
+	void texture_buildCreationInfoObjects(TextureCreateInfo* p_textureCreateInfo, RenderInterface* p_renderInterface, TextureInfo* out_textureInfo, ImageViewCreateInfo* out_imageViewCreateInfo);
+
+	void texture_buildDeferredInitializationOperation_textureLoad(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels);
+	void texture_buildDeferredInitializationOperation_procedural(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface);
 
 	void texture_AllocateVulkanObjects(Texture* p_texture,
 		ImageViewCreateInfo* p_imageViewCreateInfo,
 		Device* p_device);
 
-	Texture* Texture_loadFromFile(TextureLoadInfo* l_textureLoadInfo)
+	Texture* Texture_alloc(TextureAllocInfo* p_textureAllocInfo)
 	{
 		Texture* l_texture = new Texture();
+		l_texture->TextureUniqueKey = *p_textureAllocInfo->TextureKey;
 
-		l_texture->TextureUniqueKey = *l_textureLoadInfo->TextureKey;
-		l_texture->TextureType = TextureType::ASSET;
+		if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::FILE)
+		{
+			Texture_loadFromFile(l_texture, p_textureAllocInfo);
+		}
+		else if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::PROCEDURAL)
+		{
+			Texture_proceduralInstance(l_texture, p_textureAllocInfo);
+		}
+		else
+		{
+			delete l_texture;
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureAllocation : the TextureAllocationType " + std::to_string((uint8_t)p_textureAllocInfo->TextureAllocationType) + " is not supported."));
+		}
+		return l_texture;
+	};
+
+	void Texture_alloc(Texture** p_texture, TextureAllocInfo* p_textureAllocInfo)
+	{
+		(*p_texture)->TextureUniqueKey = *p_textureAllocInfo->TextureKey;
+		if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::FILE)
+		{
+			Texture_loadFromFile(*p_texture, p_textureAllocInfo);
+		}
+		else if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::PROCEDURAL)
+		{
+			Texture_proceduralInstance(*p_texture, p_textureAllocInfo);
+		}
+	};
+
+	void Texture_loadFromFile(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo)
+	{
+		ImageViewCreateInfo l_imageViewCreateInfo{};
+		texture_buildCreationInfoObjects(&p_textureAllocInfo->TextureCreateInfo, p_textureAllocInfo->RenderInterface, &p_texture->TextureInfo, &l_imageViewCreateInfo);
 
 		int l_texWidth, l_texHeight, l_texChannels;
-		stbi_uc* l_pixels = stbi_load(l_texture->TextureUniqueKey.TexturePath.data(), &l_texWidth, &l_texHeight, &l_texChannels, STBI_rgb_alpha);
+		stbi_uc* l_pixels = stbi_load(p_texture->TextureUniqueKey.TexturePath.data(), &l_texWidth, &l_texHeight, &l_texChannels, STBI_rgb_alpha);
 		VkDeviceSize l_imageSize = l_texWidth * l_texHeight * (STBI_rgb_alpha);
 
 		if (!l_pixels)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to load texture image!"));
 		}
-		
-		l_texture->TextureInfo.Width = static_cast<uint32_t>(l_texWidth);
-		l_texture->TextureInfo.Height = static_cast<uint32_t>(l_texHeight);
 
-		TCColorShader_BuildTextureInfo(&l_texture->TextureInfo);
+		{
+			p_texture->TextureInfo.Width = static_cast<uint32_t>(l_texWidth);
+			p_texture->TextureInfo.Height = static_cast<uint32_t>(l_texHeight);
 
-		ImageViewCreateInfo l_imageViewCreateInfo{};
-		TCColorShader_BuildVkImageViewCreateInfo(&l_imageViewCreateInfo);
-		
-		texture_AllocateVulkanObjects(l_texture,
-			&l_imageViewCreateInfo,
-			l_textureLoadInfo->Device
-		);
-
-		BufferAllocInfo l_stagingBufferAllocInfo{};
-		l_stagingBufferAllocInfo.Size = l_imageSize;
-		l_stagingBufferAllocInfo.BufferUsageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-		l_stagingBufferAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-
-
-		VulkanBuffer l_stagingBuffer{};
-		VulkanBuffer_alloc(&l_stagingBuffer, &l_stagingBufferAllocInfo, l_textureLoadInfo->Device);
-		VulkanBuffer_pushToGPU(&l_stagingBuffer, l_textureLoadInfo->Device, l_pixels, l_imageSize);
-
-
-		TextureLoadDeferredOperation* l_textureDeferredOperation = new TextureLoadDeferredOperation();
-		l_textureDeferredOperation->Device = l_textureLoadInfo->Device;
-		l_textureDeferredOperation->Texture = l_texture;
-		l_textureDeferredOperation->SourceBuffer = l_stagingBuffer;
-		DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation);
-		SmartDeferredCommandBufferCompletionToken_build(&l_texture->TextureInitializationBufferCompletionToken, &l_commandDeferredOperation.DeferredCommandBufferCompletionToken);
-		
-		l_textureLoadInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_commandDeferredOperation));
-
+			texture_AllocateVulkanObjects(p_texture,
+				&l_imageViewCreateInfo,
+				p_textureAllocInfo->RenderInterface->Device
+			);
+		}
+		{
+			texture_buildDeferredInitializationOperation_textureLoad(&p_textureAllocInfo->TextureCreateInfo, p_texture, p_textureAllocInfo->RenderInterface, l_imageSize, l_pixels);
+		}
 
 		stbi_image_free(l_pixels);
-
-		return l_texture;
 	};
 
-	Texture* Texture_proceduralInstance(TextureProceduralInstanceInfo* p_textureProceduralInstanceInfo)
+	void Texture_proceduralInstance(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo)
 	{
-		Texture* l_texture = new Texture();
-		l_texture->TextureType = TextureType::PROCEDURAL;
+		ImageViewCreateInfo l_imageViewCreateInfo{};
+		texture_buildCreationInfoObjects(&p_textureAllocInfo->TextureCreateInfo, p_textureAllocInfo->RenderInterface, &p_texture->TextureInfo, &l_imageViewCreateInfo);
 
-		l_texture->TextureUniqueKey = *p_textureProceduralInstanceInfo->TextureKey;
-		l_texture->TextureInfo = *p_textureProceduralInstanceInfo->TextureInfo;
-		
-		texture_AllocateVulkanObjects(l_texture,
-			&p_textureProceduralInstanceInfo->ImageViewCreateInfo,
-			p_textureProceduralInstanceInfo->Device
+
+		texture_AllocateVulkanObjects(p_texture,
+			&l_imageViewCreateInfo,
+			p_textureAllocInfo->RenderInterface->Device
 		);
 
-		DeferredCommandBufferOperation l_deferredCommandBufferOperation{};
-		p_textureProceduralInstanceInfo->AllocDeferredCommandBufferOperation(&l_deferredCommandBufferOperation, l_texture);
-		SmartDeferredCommandBufferCompletionToken_build(&l_texture->TextureInitializationBufferCompletionToken, &l_deferredCommandBufferOperation.DeferredCommandBufferCompletionToken);
-		p_textureProceduralInstanceInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_deferredCommandBufferOperation));
-
-		return l_texture;
+		texture_buildDeferredInitializationOperation_procedural(&p_textureAllocInfo->TextureCreateInfo, p_texture, p_textureAllocInfo->RenderInterface);
 	};
 
-	void Texture_free(Texture** p_texture, Device* p_device, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep)
+	void Texture_free(Texture** p_texture, RenderInterface* p_renderInterface)
 	{
 		Texture* l_texture = *p_texture;
-		ImageView_free(&l_texture->ImageView, p_device);
-		vkDestroyImage(p_device->LogicalDevice.LogicalDevice, l_texture->Texture, nullptr);
-		vkFreeMemory(p_device->LogicalDevice.LogicalDevice, l_texture->TextureMemory, nullptr);
+		ImageView_free(&l_texture->ImageView, p_renderInterface->Device);
+		vkDestroyImage(p_renderInterface->Device->LogicalDevice.LogicalDevice, l_texture->Texture, nullptr);
+		vkFreeMemory(p_renderInterface->Device->LogicalDevice.LogicalDevice, l_texture->TextureMemory, nullptr);
 		l_texture->Texture = VK_NULL_HANDLE;
 		l_texture->TextureMemory = VK_NULL_HANDLE;
 
-        check_textureValidationToken_undefinedBehavior(l_texture, p_preRenderDeferedCommandBufferStep);
+		check_textureValidationToken_undefinedBehavior(l_texture, p_renderInterface->PreRenderDeferedCommandBufferStep);
 
 		if (!SmartDeferredCommandBufferCompletionToken_isNull(&l_texture->TextureInitializationBufferCompletionToken))
 		{
@@ -121,7 +134,7 @@ namespace _GameEngine::_Render
 		Device* p_device)
 	{
 		VkImageCreateInfo l_imageCreateInfo{};
-	
+
 		{
 			l_imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 			l_imageCreateInfo.imageType = p_texture->TextureInfo.ImageType;
@@ -141,6 +154,12 @@ namespace _GameEngine::_Render
 		if (vkCreateImage(p_device->LogicalDevice.LogicalDevice, &l_imageCreateInfo, nullptr, &p_texture->Texture) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create image!"));
+		}
+
+		{
+			p_imageViewCreateInfo->Format = p_texture->TextureInfo.Format;
+			p_imageViewCreateInfo->MipLevels = p_texture->TextureInfo.MipLevels;
+			p_imageViewCreateInfo->ArrayLayers = p_texture->TextureInfo.ArrayLayers;
 		}
 
 		p_texture->TextureInfo.Format = l_imageCreateInfo.format;
@@ -165,17 +184,12 @@ namespace _GameEngine::_Render
 
 		vkBindImageMemory(p_device->LogicalDevice.LogicalDevice, p_texture->Texture, p_texture->TextureMemory, 0);
 
-
 		ImageViewInitializationInfo l_imageViewInitializationInfo{};
 		l_imageViewInitializationInfo.Device = p_device;
 		l_imageViewInitializationInfo.Texture = p_texture->Texture;
-		l_imageViewInitializationInfo.TextureInfo = &p_texture->TextureInfo;
 		l_imageViewInitializationInfo.ImageViewCreateInfo = p_imageViewCreateInfo;
 		ImageView_init(&p_texture->ImageView, &l_imageViewInitializationInfo);
 	};
-
-
-
 
 	void check_textureValidationToken_undefinedBehavior(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep)
 	{
@@ -203,4 +217,80 @@ namespace _GameEngine::_Render
 		}
 #endif
 	}
+
+
+	void texture_buildCreationInfoObjects(TextureCreateInfo* p_textureCreateInfo, RenderInterface* p_renderInterface, TextureInfo* out_textureInfo, ImageViewCreateInfo* out_imageViewCreateInfo)
+	{
+		out_textureInfo->Width = p_textureCreateInfo->Width;
+		out_textureInfo->Height = p_textureCreateInfo->Height;
+
+		if (p_textureCreateInfo->TextureType == TextureType::COLOR
+			&& p_textureCreateInfo->TextureUsage == TextureUsage::SHADER_INPUT)
+		{
+			TCColorShader_BuildTextureInfo(out_textureInfo);
+			TCColorShader_BuildVkImageViewCreateInfo(out_imageViewCreateInfo);
+		}
+		else if (p_textureCreateInfo->TextureType == TextureType::DEPTH
+			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)
+		{
+			TCDepth_BuildTextureInfo(out_textureInfo, p_renderInterface->Device);
+			TCDepth_BuildVkImageViewCreateInfo(out_imageViewCreateInfo);
+		}
+		else
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureBuildCreationInfoObject : Texture build creation object with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
+				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
+		}
+	};
+
+	void texture_buildDeferredInitializationOperation_textureLoad(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels)
+	{
+		if (p_textureCreateInfo->TextureType == TextureType::COLOR
+			&& p_textureCreateInfo->TextureUsage == TextureUsage::SHADER_INPUT)
+		{
+
+			BufferAllocInfo l_stagingBufferAllocInfo{};
+			l_stagingBufferAllocInfo.Size = p_imageSize;
+			l_stagingBufferAllocInfo.BufferUsageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+			l_stagingBufferAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+
+			VulkanBuffer l_stagingBuffer{};
+			VulkanBuffer_alloc(&l_stagingBuffer, &l_stagingBufferAllocInfo, p_renderInterface->Device);
+			VulkanBuffer_pushToGPU(&l_stagingBuffer, p_renderInterface->Device, p_pixels, p_imageSize);
+
+
+			TextureLoadDeferredOperation* l_textureDeferredOperation = new TextureLoadDeferredOperation();
+			l_textureDeferredOperation->Device = p_renderInterface->Device;
+			l_textureDeferredOperation->Texture = p_texture;
+			l_textureDeferredOperation->SourceBuffer = l_stagingBuffer;
+			DeferredCommandBufferOperation l_commandDeferredOperation = TextureLoadDeferredOperation_build(&l_textureDeferredOperation);
+			SmartDeferredCommandBufferCompletionToken_build(&p_texture->TextureInitializationBufferCompletionToken, &l_commandDeferredOperation.DeferredCommandBufferCompletionToken);
+
+			p_renderInterface->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_commandDeferredOperation));
+
+		}
+		else if (p_textureCreateInfo->TextureType == TextureType::DEPTH
+			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for texture load with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) + 
+				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
+		}
+	};
+
+	void texture_buildDeferredInitializationOperation_procedural(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface)
+	{
+		if (p_textureCreateInfo->TextureType == TextureType::DEPTH
+			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)
+		{
+			DeferredCommandBufferOperation l_deferredCommandBufferOperation{};
+			TCDepth_InitializationCommandBufferOperation_build(&l_deferredCommandBufferOperation, p_texture);
+			p_renderInterface->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_deferredCommandBufferOperation));
+		}
+		else
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for procedural texture with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
+				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
+		}
+	};
 }

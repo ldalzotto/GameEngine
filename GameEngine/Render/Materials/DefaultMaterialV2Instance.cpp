@@ -39,6 +39,7 @@ namespace _GameEngine::_Render
 		{
 			TextureUniqueKey l_textureUniqueKey{};
 			l_textureUniqueKey.TexturePath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->Texturepath;
+		
 			p_defaultMaterialV2Instance->ExternalResources.Texture =
 				TextureResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.TextureResourceProvider, &l_textureUniqueKey);
 		}

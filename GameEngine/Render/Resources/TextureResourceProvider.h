@@ -6,8 +6,7 @@
 
 namespace _GameEngine::_Render
 {
-	struct Device;
-	struct PreRenderDeferedCommandBufferStep;
+	struct RenderInterface;
 }
 
 namespace _GameEngine::_Render
@@ -18,15 +17,9 @@ namespace _GameEngine::_Render
 		_Utils::UsageCounter UsageCounter;
 	};
 
-	struct TextureResourceProviderDependencies
-	{
-		Device* Device;
-		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
-	};
-
 	struct TextureResourceProvider
 	{
-		TextureResourceProviderDependencies TextureResourceProviderDependencies;
+		RenderInterface* RenderInterface;
 		std::unordered_map<size_t, TextureResourceWithCounter> TextureResources;
 	};
 
