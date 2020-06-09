@@ -36,8 +36,8 @@ namespace _GameEngine::_Render
 		std::vector<uint16_t> Indices;
 		VulkanBuffer IndicesBuffer;
 		
-		DeferredCommandBufferCompletionToken* VerticesStagingBufferCompletionToken;
-		DeferredCommandBufferCompletionToken* IndicesStagingBufferCompletionToken;
+		SmartDeferredCommandBufferCompletionToken VerticesStagingBufferCompletionToken;
+		SmartDeferredCommandBufferCompletionToken IndicesStagingBufferCompletionToken;
 	};
 
 	struct MeshAllocProceduralInfo

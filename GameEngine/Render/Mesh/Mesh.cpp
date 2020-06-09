@@ -34,7 +34,7 @@ namespace _GameEngine::_Render
 			l_bufferCopyOperation->SourceBuffer = l_vertexStagingBuffer;
 			l_bufferCopyOperation->TargetBuffer = &l_mesh->VertexBuffer;
 			DeferredCommandBufferOperation l_vertexStagingCopyOperation = BufferCopyDeferredOperation_build(&l_bufferCopyOperation);
-			l_mesh->VerticesStagingBufferCompletionToken = l_vertexStagingCopyOperation.DeferredCommandBufferCompletionToken;
+			SmartDeferredCommandBufferCompletionToken_build(&l_mesh->VerticesStagingBufferCompletionToken, &l_vertexStagingCopyOperation.DeferredCommandBufferCompletionToken);
 			p_meshAllocProceduralInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_vertexStagingCopyOperation));
 
 		}
@@ -58,9 +58,8 @@ namespace _GameEngine::_Render
 			l_bufferCopyOperation->Device = p_meshAllocProceduralInfo->Device;
 			l_bufferCopyOperation->SourceBuffer = l_indexStaggingBuffer;
 			l_bufferCopyOperation->TargetBuffer = &l_mesh->IndicesBuffer;
-			l_mesh->IndicesStagingBufferCompletionToken = new DeferredCommandBufferCompletionToken();
 			DeferredCommandBufferOperation l_indexStagingCopyOperation = BufferCopyDeferredOperation_build(&l_bufferCopyOperation);
-			l_mesh->IndicesStagingBufferCompletionToken = l_indexStagingCopyOperation.DeferredCommandBufferCompletionToken;
+			SmartDeferredCommandBufferCompletionToken_build(&l_mesh->IndicesStagingBufferCompletionToken, &l_indexStagingCopyOperation.DeferredCommandBufferCompletionToken);
 			p_meshAllocProceduralInfo->PreRenderDeferedCommandBufferStep->DefferedOperations.emplace_back(std::move(l_indexStagingCopyOperation));
 		}
 
@@ -70,8 +69,16 @@ namespace _GameEngine::_Render
 	void Mesh_free(Mesh** p_mesh, Device* p_device)
 	{
 		Mesh* l_mesh = *p_mesh;
-		l_mesh->IndicesStagingBufferCompletionToken->IsCancelled = true;
-		l_mesh->VerticesStagingBufferCompletionToken->IsCancelled = true;
+
+		if (!SmartDeferredCommandBufferCompletionToken_isNull(&l_mesh->IndicesStagingBufferCompletionToken))
+		{
+			l_mesh->IndicesStagingBufferCompletionToken.TokenReference->IsCancelled = true;
+		}
+		if (!SmartDeferredCommandBufferCompletionToken_isNull(&l_mesh->VerticesStagingBufferCompletionToken))
+		{
+			l_mesh->VerticesStagingBufferCompletionToken.TokenReference->IsCancelled = true;
+		}
+		
 		VulkanBuffer_free(&l_mesh->VertexBuffer, p_device);
 		VulkanBuffer_free(&l_mesh->IndicesBuffer, p_device);
 		delete l_mesh;
