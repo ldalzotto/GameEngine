@@ -2,28 +2,39 @@
 
 #include <vector>
 
+#include "Entity.h"
+#include "Utils/SortedSequencer/SortedSequencer.h"
+
 namespace _GameEngine::_ECS
 {
-	struct System
+	struct ECS;
+}
+
+namespace _GameEngine::_ECS
+{
+	struct SystemV2
 	{
-		void* _child;
-		void(*OnSystemFree)(System* p_system);
-	};
-	
-	struct SystemAllocInfo
-	{
-		void* Child;
-		void(*OnSystemFree)(System* p_system);
+		ECS* ECS;
+		EntityConfigurableContainer EntityConfigurableContainer;
+		_Utils::SortedSequencerOperation Update;
 	};
 
-	System* System_alloc(SystemAllocInfo* p_systemAllocInfo);
-	void System_free(System** p_system);
+	struct SystemV2AllocInfo
+	{
+		ECS* ECS;
+		EntityConfigurableContainerInitInfo EntityConfigurableContainerInitInfo;
+		_Utils::SortedSequencerOperation Update;
+	};
+
+	SystemV2* SystemV2_alloc(SystemV2AllocInfo* p_systemV2AllocInfo);
+	void SystemV2_free(SystemV2** p_systemV2);
 
 	struct SystemContainer
 	{
-		std::vector<System*> Systems;
+		std::vector<SystemV2*> SystemsV2;
 	};
 
-	System* SystemContainer_allocSystem(SystemContainer* p_systemContainer, SystemAllocInfo* p_systemAllocInfo);
+	void SystemContainer_addSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2);
+	void SystemContainer_removeSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2);
 	void SystemContainer_free(SystemContainer* p_systemContainer);
 }

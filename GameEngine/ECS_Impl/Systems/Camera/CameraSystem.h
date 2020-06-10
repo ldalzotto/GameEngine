@@ -10,14 +10,6 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_ECS
 {
-	struct CameraSystem
-	{
-		ECS* ECS;
-		_Render::RenderInterface* RenderInterface;
-		_Utils::SortedSequencerOperation Update;		
-		EntityConfigurableContainer EntityConfigurableContainer;
-	};
-
 	_Utils::SortedSequencerPriority CameraSystem_getUpdatePriority();
-	System* CameraSystem_alloc(ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
+	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
 }

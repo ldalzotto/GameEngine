@@ -10,6 +10,7 @@
 #include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
+#include "ECS_Impl/Systems/SystemV2Factory.h"
 
 #include "Render/Includes/GLFWIncludes.h"
 #include "Render/Texture/Texture.h"
@@ -67,9 +68,7 @@ void SandboxApplication_update(float p_delta)
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::CameraType, sizeof(_ECS::Camera));
 			_ECS::Camera* l_camera = (_ECS::Camera*)l_component->Child;
-			_ECS::CameraDependencies l_cameraDependencies{};
-			l_cameraDependencies.SwapChain = &App->Render->SwapChain;
-			_ECS::Camera_init(l_camera, l_component, &l_cameraDependencies);
+			_ECS::Camera_init(l_camera, l_component, &App->Render->RenderInterface);
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
 
@@ -143,10 +142,17 @@ void SandboxApplication_update(float p_delta)
 
 		}
 
+		_ECS::SystemV2AllocInfo l_systemAllocInfo{};
+		_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, App->ECS);
+		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
-		_ECS::TransformRotateSystem_alloc(App->ECS);
-		_ECS::MeshDrawSystem_alloc(App->ECS);
-		_ECS::CameraSystem_alloc(App->ECS, &App->Render->RenderInterface);
+		l_systemAllocInfo = {};
+		_ECS::MeshDrawSystemV2_init(&l_systemAllocInfo, App->ECS);
+		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
+
+		l_systemAllocInfo = {};
+		_ECS::CameraSystem_init(&l_systemAllocInfo, App->ECS);
+		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		HasAlreadyUpdated = true;
 	}

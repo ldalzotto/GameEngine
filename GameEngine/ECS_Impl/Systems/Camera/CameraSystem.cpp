@@ -10,8 +10,6 @@
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
-#include "EngineSequencers/EngineSequencers.h"
-
 #include "Render/RenderInterface.h"
 #include "Render/LoopStep/CameraBufferSetupStep.h"
 
@@ -28,44 +26,20 @@ namespace _GameEngine::_ECS
 		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
-	void CameraSystem_free(System* p_cameraSystem)
+	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
 	{
-		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem->_child;
-		EntityConfigurableContainer_free(&l_cameraSystem->EntityConfigurableContainer, l_cameraSystem->ECS);
-		delete l_cameraSystem;
-		p_cameraSystem->_child = nullptr;
-	}
-
-	System* CameraSystem_alloc(ECS* p_ecs, _Render::RenderInterface* p_renderInterface)
-	{
-		SystemAllocInfo l_systemAllocInfo{};
-		l_systemAllocInfo.Child = new CameraSystem();
-		l_systemAllocInfo.OnSystemFree = CameraSystem_free;
-		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer, &l_systemAllocInfo);
-
-		CameraSystem* l_cameraSystem = (CameraSystem*)l_system->_child;
-
-		l_cameraSystem->ECS = p_ecs;
-		l_cameraSystem->RenderInterface = p_renderInterface;
-		l_cameraSystem->Update.Priority = CameraSystem_getUpdatePriority();
-		l_cameraSystem->Update.Callback = cameraSystem_update;
-		l_cameraSystem->Update.Closure = l_cameraSystem;
-
-		_Utils::SortedSequencer_addOperation(&p_ecs->UpdateSequencer->UpdateSequencer, &l_cameraSystem->Update);
-		
-		EntityConfigurableContainerInitInfo l_entityConfigurableContainerInfo{};
-		l_entityConfigurableContainerInfo.ECS = p_ecs;
-		l_entityConfigurableContainerInfo.ListenedComponentTypes.alloc(2);
-		l_entityConfigurableContainerInfo.ListenedComponentTypes.push_back(&CameraType);
-		l_entityConfigurableContainerInfo.ListenedComponentTypes.push_back(&TransformType);
-		EntityConfigurableContainer_init(&l_cameraSystem->EntityConfigurableContainer, &l_entityConfigurableContainerInfo);
-
-		return l_system;
+		p_systemV2AllocInfo->ECS = p_ecs;
+		p_systemV2AllocInfo->Update.Priority = CameraSystem_getUpdatePriority();
+		p_systemV2AllocInfo->Update.Callback = cameraSystem_update;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&CameraType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
 	};
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_delta)
 	{
-		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
+		_ECS::SystemV2* l_cameraSystem = (_ECS::SystemV2*)p_cameraSystem;
 		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.size() > 0)
 		{
 			Entity* l_entity = *l_cameraSystem->EntityConfigurableContainer.FilteredEntities.at(0);
@@ -74,9 +48,9 @@ namespace _GameEngine::_ECS
 
 			p_camera->ViewMatrix = glm::lookAt(Transform_getWorldPosition(p_transform), glm::vec3(0.0f) /* Transform_getWorldPosition(p_transform) + Transform_getForward(p_transform)*/, Transform_getUp(p_transform));
 
-			l_cameraSystem->RenderInterface->CameraBufferSetupStep->CameraProjection.Projection = p_camera->ProjectionMatrix;
-			l_cameraSystem->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;
-			_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(l_cameraSystem->RenderInterface->CameraBufferSetupStep, l_cameraSystem->RenderInterface->Device);
+			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.Projection = p_camera->ProjectionMatrix;
+			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;
+			_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(p_camera->RenderInterface->CameraBufferSetupStep, p_camera->RenderInterface->Device);
 		}
 	};
 }

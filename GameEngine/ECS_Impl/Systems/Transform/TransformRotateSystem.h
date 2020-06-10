@@ -6,18 +6,11 @@
 namespace _GameEngine::_ECS
 {
 	struct ECS;
-	struct System;
+	struct SystemV2AllocInfo;
 }
 
 namespace _GameEngine::_ECS
 {
-	struct TransformRotateSystem
-	{
-		ECS* ECS;
-		_Utils::SortedSequencerOperation Update;
-		EntityConfigurableContainer EntityConfigurableContainer;
-	};
-
-	System* TransformRotateSystem_alloc(ECS* p_ecs);
 	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy();
+	void TransformRotateSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
 }

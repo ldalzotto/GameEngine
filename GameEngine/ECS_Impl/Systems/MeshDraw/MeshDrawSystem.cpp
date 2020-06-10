@@ -34,29 +34,22 @@ namespace _GameEngine::_ECS
 		_Utils::Vector_eraseElementEquals(l_mesRenderer->RenderInterface->DefaultMaterialDrawStep->DefaultMaterialV2Instance, &l_mesRenderer->DefaultMaterialV2Instance);
 	}
 
-	void MeshDrawSystem_init(MeshDrawSystem* p_meshDrawSystem, ECS* p_ecs)
+	void MeshDrawSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
 	{
-		p_meshDrawSystem->ECS = p_ecs;
-
-		p_meshDrawSystem->Update.Priority = MeshDrawSystem_getUpdatePriority();
-		p_meshDrawSystem->Update.Callback = MeshDrawSystem_update;
-		p_meshDrawSystem->Update.Closure = p_meshDrawSystem;
-
-		_Utils::SortedSequencer_addOperation(&p_ecs->UpdateSequencer->UpdateSequencer, &p_meshDrawSystem->Update);
-
-		EntityConfigurableContainerInitInfo l_entityComponentListenerInitInfo{};
-		l_entityComponentListenerInitInfo.ECS = p_ecs;
-		l_entityComponentListenerInitInfo.ListenedComponentTypes.alloc(2);
-		l_entityComponentListenerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
-		l_entityComponentListenerInitInfo.ListenedComponentTypes.push_back(&TransformType);
-		l_entityComponentListenerInitInfo.OnEntityThatMatchesComponentTypesAdded = onMeshDrawSystemEntityAdded;
-		l_entityComponentListenerInitInfo.OnEntityThatMatchesComponentTypesRemoved = onMeshDrawSystemEntityRemoved;
-		EntityConfigurableContainer_init(&p_meshDrawSystem->EntityConfigurableContainer, &l_entityComponentListenerInitInfo);
+		p_systemV2AllocInfo->ECS = p_ecs;
+		p_systemV2AllocInfo->Update.Priority = MeshDrawSystem_getUpdatePriority();
+		p_systemV2AllocInfo->Update.Callback = MeshDrawSystem_update;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = onMeshDrawSystemEntityAdded;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = onMeshDrawSystemEntityRemoved;
 	};
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta)
 	{
-		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
+		_ECS::SystemV2* l_meshDrawSystem = (_ECS::SystemV2*)p_meshDrawSystem;
 
 		for (size_t i = 0; i < l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
 		{
@@ -75,24 +68,4 @@ namespace _GameEngine::_ECS
 			}
 		}
 	};
-
-	void MeshDrawSystem_free(System* p_system)
-	{
-		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_system->_child;
-		EntityConfigurableContainer_free(&l_meshDrawSystem->EntityConfigurableContainer, l_meshDrawSystem->ECS);
-		delete l_meshDrawSystem;
-		p_system->_child = nullptr;
-	};
-
-	System* MeshDrawSystem_alloc(ECS* p_ecs)
-	{
-		SystemAllocInfo l_systemAllocInfo{};
-		l_systemAllocInfo.Child = new MeshDrawSystem();
-		l_systemAllocInfo.OnSystemFree = MeshDrawSystem_free;
-		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer , &l_systemAllocInfo);
-		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)l_system->_child;
-		MeshDrawSystem_init(l_meshDrawSystem, p_ecs);
-		return l_system;
-	};
-
 }

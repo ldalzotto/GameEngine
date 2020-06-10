@@ -9,7 +9,7 @@ namespace _GameEngine
 {
 	namespace _Render
 	{
-		struct SwapChain;
+		struct RenderInterface;
 	}
 	
 	namespace _ECS
@@ -22,20 +22,15 @@ namespace _GameEngine::_ECS
 {
 	extern ComponentType CameraType;
 
-	struct CameraDependencies
-	{
-		_Render::SwapChain* SwapChain;
-	};
-
 	struct Camera
 	{
-		CameraDependencies CameraDependencies;
+		_Render::RenderInterface* RenderInterface;
 		glm::mat4 ProjectionMatrix;
 		glm::mat4 ViewMatrix;
 		_Utils::Subject OnSwapChainBuilded;
 		_Utils::Subject OnComponentDetached;
 	};
 
-	void Camera_init(Camera* p_camera, Component* p_associatedComponent, CameraDependencies* p_cameraDependencies);
+	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::RenderInterface* p_renderInterface);
 	void Camera_buildProjectionMatrix(Camera* p_camera);
 }

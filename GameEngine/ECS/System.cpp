@@ -3,58 +3,55 @@
 #include <cstdlib>
 #include "Log/Log.h"
 
+#include "ECS.h"
+
 namespace _GameEngine::_ECS
 {
-	System* System_alloc(SystemAllocInfo* p_systemAllocInfo)
+	SystemV2* SystemV2_alloc(SystemV2AllocInfo* p_systemV2AllocInfo)
 	{
-		System* l_system = new System();
-		l_system->_child = p_systemAllocInfo->Child;
-		l_system->OnSystemFree = p_systemAllocInfo->OnSystemFree;
+		SystemV2* l_system = (SystemV2*)calloc(1, sizeof(SystemV2));
+		l_system->ECS = p_systemV2AllocInfo->ECS;
+		EntityConfigurableContainer_init(&l_system->EntityConfigurableContainer, &p_systemV2AllocInfo->EntityConfigurableContainerInitInfo);
+		l_system->Update = p_systemV2AllocInfo->Update;
+		SystemContainer_addSystemV2(&l_system->ECS->SystemContainer, l_system);
+		
 		return l_system;
 	};
 
-	void System_free(System** p_system)
+	void SystemV2_free(SystemV2** p_systemV2)
 	{
-		System* l_system = *p_system;
-
-		if (l_system->OnSystemFree)
-		{
-			l_system->OnSystemFree(l_system);
-		}
-
-#ifndef NDEBUG
-		if (l_system->_child)
-		{
-			_Log::LogInstance->CoreLogger->warn("Potential memory leak, System._child not freed.");
-		}
-#endif
-
-		delete l_system;
+		SystemV2* l_system = *p_systemV2;
+		EntityConfigurableContainer_free(&l_system->EntityConfigurableContainer, l_system->ECS);
+		SystemContainer_removeSystemV2(&l_system->ECS->SystemContainer, l_system);
+		free(l_system);
 		l_system = nullptr;
-		p_system = nullptr;
+		p_systemV2 = nullptr;
 	};
 
-	System* SystemContainer_allocSystem(SystemContainer* p_systemContainer, SystemAllocInfo* p_systemAllocInfo) 
+	void SystemContainer_addSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)
 	{
-		System* p_instanciatedSystem = System_alloc(p_systemAllocInfo);
-		p_systemContainer->Systems.emplace_back(p_instanciatedSystem);
-		return p_instanciatedSystem;
+		p_systemContainer->SystemsV2.emplace_back(p_systemV2);
+	};
+
+	void SystemContainer_removeSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)
+	{
+		for (size_t i = 0; i < p_systemContainer->SystemsV2.size(); i++)
+		{
+			SystemV2* l_systemV2 = p_systemContainer->SystemsV2.at(i);
+			if (l_systemV2 == p_systemV2)
+			{
+				p_systemContainer->SystemsV2.erase(p_systemContainer->SystemsV2.begin() + i);
+				break;
+			}
+		}
 	};
 
 	void SystemContainer_free(SystemContainer* p_systemContainer)
 	{
-		for (System* l_system : p_systemContainer->Systems)
+		std::vector<SystemV2*> l_systemV2s = std::vector<SystemV2*>(p_systemContainer->SystemsV2);
+		for (size_t i = 0; i < l_systemV2s.size(); i++)
 		{
-			System_free(&l_system);
+			SystemV2_free(&l_systemV2s.at(i));
 		}
-
-		p_systemContainer->Systems.clear();
-
-		/*
-		if (p_systemContainer->Systems.size() > 0)
-		{
-			// _Log::LogInstance->CoreLogger->warn("When the SystemContainer is being free");
-		}
-		*/
 	};
 }

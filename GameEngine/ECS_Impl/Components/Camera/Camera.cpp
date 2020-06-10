@@ -3,6 +3,7 @@
 #include "VulkanObjects/SwapChain/SwapChain.h"
 
 #include "ECS/Component.h"
+#include "Render/RenderInterface.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -19,15 +20,15 @@ namespace _GameEngine::_ECS
 	void camera_onDetached(void* p_camera, void* p_notUsed)
 	{
 		Camera* l_camera = (Camera*)p_camera;
-		_Utils::Observer_unRegister(&l_camera->CameraDependencies.SwapChain->OnSwapChainBuilded, &l_camera->OnSwapChainBuilded);
+		_Utils::Observer_unRegister(&l_camera->RenderInterface->SwapChain->OnSwapChainBuilded, &l_camera->OnSwapChainBuilded);
 	};
 
-	void Camera_init(Camera* p_camera, Component* p_associatedComponent, CameraDependencies* p_cameraDependencies)
+	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::RenderInterface* p_renderInterface)
 	{
-		p_camera->CameraDependencies = *p_cameraDependencies;
+		p_camera->RenderInterface = p_renderInterface;
 		p_camera->OnSwapChainBuilded.Closure = p_camera;
 		p_camera->OnSwapChainBuilded.Callback = camera_onSwapChainBuild;
-		_Utils::Observer_register(&p_camera->CameraDependencies.SwapChain->OnSwapChainBuilded, &p_camera->OnSwapChainBuilded);
+		_Utils::Observer_register(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, &p_camera->OnSwapChainBuilded);
 
 		p_camera->OnComponentDetached.Closure = p_camera;
 		p_camera->OnComponentDetached.Callback = camera_onDetached;
@@ -39,6 +40,6 @@ namespace _GameEngine::_ECS
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
 		p_camera->ProjectionMatrix = glm::perspective(glm::radians(45.0f),
-			p_camera->CameraDependencies.SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->CameraDependencies.SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
+			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
 	};
 }

@@ -1,7 +1,5 @@
 #include "TransformRotateSystem.h"
 
-#include "EngineSequencers/EngineSequencers.h"
-
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -18,39 +16,24 @@ namespace _GameEngine::_ECS
 		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
-	void TransformRotationSystem_update(void* p_transformRotateSystem, void* p_delta);
+	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_delta);
 
-	void TransformRotateSystem_init(TransformRotateSystem* p_transformRotateSystem, ECS* p_ecs)
+	void TransformRotateSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
 	{
-		p_transformRotateSystem->ECS = p_ecs;
+		p_systemV2AllocInfo->ECS = p_ecs;
 
-		EntityConfigurableContainerInitInfo l_entityConfigurableContainerInitInfo{};
-		l_entityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		l_entityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
-		l_entityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformRotateType);
-		l_entityConfigurableContainerInitInfo.ECS = p_ecs;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformRotateType);
 
-		p_transformRotateSystem->Update.Priority = TransformRotateSystem_getUpdatePritoriy();
-		p_transformRotateSystem->Update.Callback = TransformRotationSystem_update;
-		p_transformRotateSystem->Update.Closure = p_transformRotateSystem;
-
-		_Utils::SortedSequencer_addOperation(&p_ecs->UpdateSequencer->UpdateSequencer, &p_transformRotateSystem->Update);
-
-		EntityConfigurableContainer_init(&p_transformRotateSystem->EntityConfigurableContainer, &l_entityConfigurableContainerInitInfo);
+		p_systemV2AllocInfo->Update.Priority = TransformRotateSystem_getUpdatePritoriy();
+		p_systemV2AllocInfo->Update.Callback = TransformRotationSystemV2_update;
 	};
 
-	void TransformRotateSystem_free(System* p_system)
+	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_delta)
 	{
-		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*)p_system->_child;
-		EntityConfigurableContainer_free(&l_transformRotateSystem->EntityConfigurableContainer, l_transformRotateSystem->ECS);
-		delete l_transformRotateSystem;
-		p_system->_child = nullptr;
-	};
-
-
-	void TransformRotationSystem_update(void* p_transformRotateSystem, void* p_delta)
-	{
-		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*)p_transformRotateSystem;
+		_ECS::SystemV2* l_transformRotateSystem = (_ECS::SystemV2*)p_transformRotateSystem;
 		float l_delta = *(float*)p_delta;
 
 		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
@@ -62,14 +45,4 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	System* TransformRotateSystem_alloc(ECS* p_ecs)
-	{
-		SystemAllocInfo l_systemAllocInfo{};
-		l_systemAllocInfo.Child = new TransformRotateSystem();
-		l_systemAllocInfo.OnSystemFree = TransformRotateSystem_free;
-		System* l_system = SystemContainer_allocSystem(&p_ecs->SystemContainer, &l_systemAllocInfo);
-		TransformRotateSystem* l_transformRotationSystem = (TransformRotateSystem*)l_system->_child;
-		TransformRotateSystem_init(l_transformRotationSystem, p_ecs);
-		return l_system;
-	};
 }
