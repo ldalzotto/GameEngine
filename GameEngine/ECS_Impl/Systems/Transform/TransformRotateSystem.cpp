@@ -1,6 +1,6 @@
 #include "TransformRotateSystem.h"
 
-#include "EngineSequencers/UpdateSequencer.h"
+#include "EngineSequencers/EngineSequencers.h"
 
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
@@ -25,7 +25,9 @@ namespace _GameEngine::_ECS
 		p_transformRotateSystem->ECS = p_ecs;
 
 		EntityConfigurableContainerInitInfo l_entityConfigurableContainerInitInfo{};
-		l_entityConfigurableContainerInitInfo.ListenedComponentTypes = { TransformType, TransformRotateType };
+		l_entityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
+		l_entityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
+		l_entityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformRotateType);
 		l_entityConfigurableContainerInitInfo.ECS = p_ecs;
 
 		p_transformRotateSystem->Update.Priority = TransformRotateSystem_getUpdatePritoriy();
@@ -51,12 +53,13 @@ namespace _GameEngine::_ECS
 		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*)p_transformRotateSystem;
 		float l_delta = *(float*)p_delta;
 
-			for (Entity* l_entity : l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities)
-			{
-				Transform* l_transform = GET_COMPONENT(Transform, l_entity);
-				TransformRotate* l_transformRotate = GET_COMPONENT(TransformRotate, l_entity);
-				Transform_setLocalRotation(l_transform, l_transform->LocalRotation * glm::quat(l_transformRotate->Axis * l_transformRotate->Speed * l_delta));
-			}
+		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
+		{
+			Entity** l_entity = l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.at(i);
+			Transform* l_transform = GET_COMPONENT(Transform, *l_entity);
+			TransformRotate* l_transformRotate = GET_COMPONENT(TransformRotate, *l_entity);
+			Transform_setLocalRotation(l_transform, l_transform->LocalRotation * glm::quat(l_transformRotate->Axis * l_transformRotate->Speed * l_delta));
+		}
 	};
 
 	System* TransformRotateSystem_alloc(ECS* p_ecs)

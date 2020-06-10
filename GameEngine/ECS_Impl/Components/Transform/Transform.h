@@ -12,6 +12,7 @@ namespace _GameEngine::_ECS
 	struct Transform
 	{
 		bool MatricesMustBeRecalculated;
+		bool HasChangedThisFrame;
 		glm::vec3 LocalPosition;
 		glm::quat LocalRotation;
 		glm::vec3 LocalScale;

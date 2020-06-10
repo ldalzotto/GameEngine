@@ -10,7 +10,7 @@
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
-#include "EngineSequencers/UpdateSequencer.h"
+#include "EngineSequencers/EngineSequencers.h"
 
 #include "Render/RenderInterface.h"
 #include "Render/LoopStep/CameraBufferSetupStep.h"
@@ -55,7 +55,9 @@ namespace _GameEngine::_ECS
 		
 		EntityConfigurableContainerInitInfo l_entityConfigurableContainerInfo{};
 		l_entityConfigurableContainerInfo.ECS = p_ecs;
-		l_entityConfigurableContainerInfo.ListenedComponentTypes = std::vector<ComponentType>{ CameraType, TransformType };
+		l_entityConfigurableContainerInfo.ListenedComponentTypes.alloc(2);
+		l_entityConfigurableContainerInfo.ListenedComponentTypes.push_back(&CameraType);
+		l_entityConfigurableContainerInfo.ListenedComponentTypes.push_back(&TransformType);
 		EntityConfigurableContainer_init(&l_cameraSystem->EntityConfigurableContainer, &l_entityConfigurableContainerInfo);
 
 		return l_system;
@@ -66,7 +68,7 @@ namespace _GameEngine::_ECS
 		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
 		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.size() > 0)
 		{
-			Entity* l_entity = l_cameraSystem->EntityConfigurableContainer.FilteredEntities.at(0);
+			Entity* l_entity = *l_cameraSystem->EntityConfigurableContainer.FilteredEntities.at(0);
 			Transform* p_transform = GET_COMPONENT(Transform, l_entity);
 			Camera* p_camera = GET_COMPONENT(Camera, l_entity);
 

@@ -8,7 +8,7 @@
 
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
-#include "EngineSequencers/UpdateSequencer.h"
+#include "EngineSequencers/EngineSequencers.h"
 
 #include "RenderInterface.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
@@ -46,7 +46,9 @@ namespace _GameEngine::_ECS
 
 		EntityConfigurableContainerInitInfo l_entityComponentListenerInitInfo{};
 		l_entityComponentListenerInitInfo.ECS = p_ecs;
-		l_entityComponentListenerInitInfo.ListenedComponentTypes = std::vector<ComponentType>{ MeshRendererType, TransformType };
+		l_entityComponentListenerInitInfo.ListenedComponentTypes.alloc(2);
+		l_entityComponentListenerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
+		l_entityComponentListenerInitInfo.ListenedComponentTypes.push_back(&TransformType);
 		l_entityComponentListenerInitInfo.OnEntityThatMatchesComponentTypesAdded = onMeshDrawSystemEntityAdded;
 		l_entityComponentListenerInitInfo.OnEntityThatMatchesComponentTypesRemoved = onMeshDrawSystemEntityRemoved;
 		EntityConfigurableContainer_init(&p_meshDrawSystem->EntityConfigurableContainer, &l_entityComponentListenerInitInfo);
@@ -54,16 +56,23 @@ namespace _GameEngine::_ECS
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta)
 	{
-		//	AccumulatedTime += p_delta;
 		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
-		for (Entity*& l_entity : l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities)
-		{
-			MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, l_entity);
-			Transform* l_transform = GET_COMPONENT(Transform, l_entity);
 
-			_Render::ModelProjection l_meshUniform{};
-			l_meshUniform.Model = *_ECS::Transform_getLocalToWorldMatrix(l_transform);
-			MeshRenderer_updateMeshDrawUniform(l_mesRenderer, &l_meshUniform);
+		for (size_t i = 0; i < l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
+		{
+			Entity** l_entity = l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.at(i);
+
+			MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, *l_entity);
+			Transform* l_transform = GET_COMPONENT(Transform, *l_entity);
+
+			if (l_transform->HasChangedThisFrame)
+			{
+				_Render::ModelProjection l_meshUniform{};
+				l_meshUniform.Model = *_ECS::Transform_getLocalToWorldMatrix(l_transform);
+				MeshRenderer_updateMeshDrawUniform(l_mesRenderer, &l_meshUniform);
+
+				l_transform->HasChangedThisFrame = false;
+			}
 		}
 	};
 

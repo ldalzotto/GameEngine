@@ -14,6 +14,7 @@ namespace _GameEngine::_ECS
 		if (p_transform->LocalPosition != p_localPosition)
 		{
 			p_transform->MatricesMustBeRecalculated = true;
+			p_transform->HasChangedThisFrame = true;
 			p_transform->LocalPosition = p_localPosition;
 		}
 	};
@@ -23,6 +24,7 @@ namespace _GameEngine::_ECS
 		if (p_transform->LocalRotation != p_localRotation)
 		{
 			p_transform->MatricesMustBeRecalculated = true;
+			p_transform->HasChangedThisFrame = true;
 			p_transform->LocalRotation = p_localRotation;
 		}
 	};
@@ -32,6 +34,7 @@ namespace _GameEngine::_ECS
 		if (p_transform->LocalScale != p_localScale)
 		{
 			p_transform->MatricesMustBeRecalculated = true;
+			p_transform->HasChangedThisFrame = true;
 			p_transform->LocalScale = p_localScale;
 		}
 	};
@@ -71,7 +74,8 @@ namespace _GameEngine::_ECS
 		p_transform->LocalPosition = p_transformInitInfo->LocalPosition;
 		p_transform->LocalRotation = p_transformInitInfo->LocalRotation;
 		p_transform->LocalScale = p_transformInitInfo->LocalScale;
-		p_transform->MatricesMustBeRecalculated = true;
+		p_transform->MatricesMustBeRecalculated = true; 
+		p_transform->HasChangedThisFrame = true;
 	};
 
 

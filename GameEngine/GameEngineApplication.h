@@ -7,7 +7,7 @@
 #include "GameLoop/GameLoop.h"
 #include "ECS/ECS.h"
 #include "Input/Input.h"
-#include "EngineSequencers/UpdateSequencer.h"
+#include "EngineSequencers/EngineSequencers.h"
 #include "Utils/Observer/Observer.h"
 
 namespace _GameEngine

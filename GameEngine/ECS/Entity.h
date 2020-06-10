@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DataStructures/VectorT.h"
 #include <unordered_map>
 #include <list>
 
@@ -37,8 +38,8 @@ namespace _GameEngine::_ECS
 
 	struct EntityConfigurableContainer
 	{
-		std::vector<ComponentType> ListenedComponentTypes;
-		std::vector<Entity*> FilteredEntities;
+		_Core::VectorT<ComponentType> ListenedComponentTypes;
+		_Core::VectorT<Entity*> FilteredEntities;
 		void(*OnEntityThatMatchesComponentTypesAdded)(Entity*);
 		void(*OnEntityThatMatchesComponentTypesRemoved)(Entity*);
 
@@ -55,7 +56,7 @@ namespace _GameEngine::_ECS
 
 	struct EntityConfigurableContainerInitInfo
 	{
-		std::vector<ComponentType> ListenedComponentTypes;
+		_Core::VectorT<ComponentType> ListenedComponentTypes;
 		void(*OnEntityThatMatchesComponentTypesAdded)(Entity*);
 		void(*OnEntityThatMatchesComponentTypesRemoved)(Entity*);
 

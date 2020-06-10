@@ -1,6 +1,11 @@
 -- TODO --
 
 # Make only transforms that have moved the last frame update their data to GPU.s
+
+# Simplifying _ECS::Systems creation, there is a lot of repetition between Systems.
+  A system is just a set of functions that do operations on some entity components.
+	## Creating my own vector so that the system object can be allocated with calloc ?
+
 # Create transform hierarchy.
 
 # Simplifying the GraphicsPipeline creation (like texture).
