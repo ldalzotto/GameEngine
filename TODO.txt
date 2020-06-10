@@ -1,5 +1,19 @@
 -- TODO --
 
+# Make only transforms that have moved the last frame update their data to GPU.s
+# Create transform hierarchy.
+
+# Simplifying the GraphicsPipeline creation (like texture).
+
+# Having multiple materials and instance that are rendered in a given order.
+	## As a test, rendering the same model twice that have different materials.
+
+# The last task will allow us to easily render gizmos for the editor.
+
+# Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
+
+-- DONE --
+
 # Creating the Input system.
 	[X] ## That provides simple way to query if mouse, or key has been pressed this frame, released this frame or is on hold.
 
@@ -9,11 +23,7 @@
 Goal : Having a command that shows transform with the associated Entity ID (it's pointer address at least) ?
   SubGoals :
 	 [X] Centralizing the game camera data to a system instead of handling logic in the Camera component.
-	 - Making systems easily retrievable with a type.
-	 - Retrieve the Camera system and MeshDrawSystem from editor and draw points on screen space.
-	 - Instead of a point, draw the text with the Entity address.
 
-# Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
 
 -- Graphics improvements --
 
