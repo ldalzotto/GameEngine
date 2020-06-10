@@ -2,6 +2,7 @@
 
 #include <array>
 
+#include "Render/Texture/Texture.h"
 #include "Render/RenderInterface.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/LoopStep/CameraBufferSetupStep.h"
@@ -53,6 +54,18 @@ namespace _GameEngineEditor
 			DescriptorPool_alloc(&l_parameters->DescriptorPool, p_renderInterface->Device, &l_descriptorPoolAllocInfo);
 		}
 
+
+		{
+			TextureAllocInfo l_textureAllocInfo{};
+			l_textureAllocInfo.FitSwapChainSize = true;
+			l_textureAllocInfo.TextureAllocationType = TextureAllocationType::PROCEDURAL;
+			l_textureAllocInfo.TextureCreateInfo.TextureType = TextureType::DEPTH;
+			l_textureAllocInfo.TextureCreateInfo.TextureUsage = TextureUsage::PIPELINE_ATTACHMENT;
+			l_textureAllocInfo.TextureKey.TexturePath = "DEPTH";
+			l_textureAllocInfo.RenderInterface = p_renderInterface;
+			l_parameters->OwnDepthTexture = Texture_alloc(&l_textureAllocInfo);
+		}
+
 		GizmoDrawStepDrawObject* l_drawObjects = &p_gizmoDrawStep->GizmoDrawStepDrawObject;
 
 		{
@@ -79,6 +92,7 @@ namespace _GameEngineEditor
 			l_graphicsPipelineAllocInfo.VertexInput = &l_parameters->VertexInput;
 			l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.Device = p_renderInterface->Device;
 			l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.SwapChain = p_renderInterface->SwapChain;
+			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.DepthTexture = l_parameters->OwnDepthTexture;
 			GraphicsPipeline_alloc(&l_drawObjects->GraphicsPipeline, &l_graphicsPipelineAllocInfo);
 		}
 	};
@@ -88,6 +102,7 @@ namespace _GameEngineEditor
 		DescriptorSetLayout_free(&p_gizmoDrawStep->GizmoDrawStepParameters.DescriptorSetLayout, p_renderInterface->Device);
 		DescriptorPool_free(&p_gizmoDrawStep->GizmoDrawStepParameters.DescriptorPool, p_renderInterface->Device);
 		vkDestroyPipelineLayout(p_renderInterface->Device->LogicalDevice.LogicalDevice, p_gizmoDrawStep->GizmoDrawStepDrawObject.PipelineLayout, nullptr);
+		Texture_free(&p_gizmoDrawStep->GizmoDrawStepParameters.OwnDepthTexture, p_renderInterface);
 		GraphicsPipeline_free(&p_gizmoDrawStep->GizmoDrawStepDrawObject.GraphicsPipeline);
 	};
 }

@@ -16,6 +16,7 @@
 #include "VulkanObjects/CommandBuffer/CommandBuffers.h"
 #include "VulkanObjects/Synchronisation/Semaphore.h"
 #include "Texture/TextureSamplers.h"
+#include "Texture/TextureSwapChainSizeSynchronizer.h"
 #include "LoopStep/PreRenderDeferedCommandBufferStep.h"
 #include "LoopStep/CameraBufferSetupStep.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
@@ -61,6 +62,7 @@ namespace _GameEngine::_Render
 		CommandPool CommandPool;
 		RenderSemaphore RenderSemaphore;
 		TextureSamplers TextureSamplers;
+		TextureSwapChainSizeSynchronizer TextureSwapChainSizeSynchronizer;
 		ResourceProviders ResourceProviders;
 
 		RenderMaterials RenderMaterials;

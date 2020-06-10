@@ -21,6 +21,7 @@ namespace _GameEngine::_Render
 		l_renderInterface->CommandPool = &p_render->CommandPool;
 		l_renderInterface->RenderSemaphore = &p_render->RenderSemaphore;
 		l_renderInterface->TextureSamplers = &p_render->TextureSamplers;
+		l_renderInterface->TextureSwapChainSizeSynchronizer = &p_render->TextureSwapChainSizeSynchronizer;
 		
 		l_renderInterface->ResourceProvidersInterface.MeshResourceProvider = &p_render->ResourceProviders.MeshResourceProvider;
 		l_renderInterface->ResourceProvidersInterface.TextureResourceProvider = &p_render->ResourceProviders.TextureResourceProvider;

@@ -20,6 +20,7 @@ namespace _GameEngine::_Render
 	struct CommandBuffer;
 	struct RenderSemaphore;
 	struct TextureSamplers;
+	struct TextureSwapChainSizeSynchronizer;
 
 	struct TextureResourceProvider;
 	struct MeshResourceProvider;
@@ -70,6 +71,7 @@ namespace _GameEngine::_Render
 		CommandPool* CommandPool;
 		RenderSemaphore* RenderSemaphore;
 		TextureSamplers* TextureSamplers;
+		TextureSwapChainSizeSynchronizer* TextureSwapChainSizeSynchronizer;
 
 		ResourceProvidersInterface ResourceProvidersInterface;
 		RenderMaterialsInterface RenderMaterialsInterface;

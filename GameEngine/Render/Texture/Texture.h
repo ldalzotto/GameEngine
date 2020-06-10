@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 #include "vulkan/vulkan.h"
 #include "ImageViews.h"
@@ -61,10 +62,16 @@ namespace _GameEngine::_Render
 		uint32_t Height;
 	};
 
+	struct TextureFeatures
+	{
+		bool FitSwapChainSizeEnabled;
+	};
+
 	struct Texture
 	{
 		TextureUniqueKey TextureUniqueKey;
 		TextureInfo TextureInfo;
+		TextureFeatures Features;
 
 		VkImage Texture;
 		VkDeviceMemory TextureMemory;
@@ -76,13 +83,15 @@ namespace _GameEngine::_Render
 	struct TextureAllocInfo
 	{
 		TextureAllocationType TextureAllocationType;
-		TextureUniqueKey* TextureKey;
+		TextureUniqueKey TextureKey;
 		TextureCreateInfo TextureCreateInfo;
+		bool FitSwapChainSize;
+
 		RenderInterface* RenderInterface;
 	};
 
 	Texture* Texture_alloc(TextureAllocInfo* p_textureAllocInfo);
 	void Texture_alloc(Texture** p_texture, TextureAllocInfo* p_textureAllocInfo);
-
+	void Texture_free(Texture* p_texture, RenderInterface* p_renderInterface);
 	void Texture_free(Texture** p_texture, RenderInterface* p_renderInterface);
 }

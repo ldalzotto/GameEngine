@@ -23,7 +23,7 @@ namespace _GameEngine::_Render
 			TextureAllocInfo l_textureAllocInfo{};
 			l_textureAllocInfo.TextureAllocationType = TextureAllocationType::FILE;
 			l_textureAllocInfo.RenderInterface = p_textureResourceProvider->RenderInterface;
-			l_textureAllocInfo.TextureKey = p_key;
+			l_textureAllocInfo.TextureKey.TexturePath = p_key->TexturePath;
 			l_textureAllocInfo.TextureCreateInfo.TextureType = TextureType::COLOR;
 			l_textureAllocInfo.TextureCreateInfo.TextureUsage = TextureUsage::SHADER_INPUT;
 

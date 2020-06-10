@@ -94,6 +94,7 @@ namespace _GameEngine::_Render
 		freeTextureSamplers(*p_render);
 		freeRenderSemaphore(*p_render);
 		freeSwapChain(*p_render);
+		TextureSwapChainSizeSynchronizer_free(&(*p_render)->TextureSwapChainSizeSynchronizer);
 		freeCommandPool(*p_render);
 		freeDevice(*p_render);
 		freeSurface(*p_render);
@@ -112,14 +113,13 @@ namespace _GameEngine::_Render
 
 		freeRenderSemaphore(p_render);
 		freeSwapChain(p_render);
-		freeDepthTexture(p_render);
 		freePreRenderStaging(p_render);
 		freeCommandPool(p_render);
 
 		initCommandPool(p_render);
 		initPreRenderStaging(p_render);
 		initSwapChain(p_render);
-		initDepthTexture(p_render);
+		TextureSwapChainSizeSynchronizer_onSwapChainSizeChanged(&p_render->TextureSwapChainSizeSynchronizer);
 		reAllocateGraphicsPipelineContainer(p_render);
 		initRenderSemaphore(p_render);
 
@@ -337,17 +337,13 @@ namespace _GameEngine::_Render
 
 	void initDepthTexture(Render* p_render)
 	{
-		TextureUniqueKey l_textureKey{ "DEPTH" };
-
 		TextureAllocInfo l_textureAllocInfo{};
 		l_textureAllocInfo.TextureAllocationType = TextureAllocationType::PROCEDURAL;
-		l_textureAllocInfo.TextureKey = &l_textureKey;
-		l_textureAllocInfo.TextureCreateInfo.Width = p_render->SwapChain.SwapChainInfo.SwapExtend.width;
-		l_textureAllocInfo.TextureCreateInfo.Height = p_render->SwapChain.SwapChainInfo.SwapExtend.height;
+		l_textureAllocInfo.TextureKey.TexturePath = "DEPTH";
 		l_textureAllocInfo.TextureCreateInfo.TextureType = TextureType::DEPTH;
 		l_textureAllocInfo.TextureCreateInfo.TextureUsage = TextureUsage::PIPELINE_ATTACHMENT;
+		l_textureAllocInfo.FitSwapChainSize = true;
 		l_textureAllocInfo.RenderInterface = &p_render->RenderInterface;
-
 		p_render->DepthTexture = Texture_alloc(&l_textureAllocInfo);
 	};
 

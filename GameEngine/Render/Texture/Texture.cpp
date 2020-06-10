@@ -5,7 +5,10 @@
 #include "stb_image.h"
 #include "Log/Log.h"
 
+#include "TextureSwapChainSizeSynchronizer.h"
 #include "RenderInterface.h"
+
+#include "VulkanObjects/SwapChain/SwapChain.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/Memory/VulkanBuffer.h"
@@ -16,26 +19,40 @@
 
 namespace _GameEngine::_Render
 {
-	/// Texture instanciation
+	//////////////////// Texture instanciation ////////////////////
 	void Texture_loadFromFile(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo);
 	void Texture_proceduralInstance(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo);
-	///
+	///////////////////////////////////////////////////////////////
 
-	/// Validation
+	//////////////////// Validation ////////////////////
 	void check_textureValidationToken_undefinedBehavior(Texture* l_texture, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
-	///
+	////////////////////////////////////////////////////
 
-	/// Texture internal object creation
+	//////////////////// Fit swap chain size feature ////////////////////
+	void texture_enableFitSwapChainSizeFeature(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo);
+	void texture_removeFitSwapChainSizeFeature(Texture* p_texture, RenderInterface* p_renderInterface);
+	/////////////////////////////////////////////////////////////////////
+
+	//////////////////// Texture internal object creation ////////////////////
 	void texture_buildCreationInfoObjects(TextureCreateInfo* p_textureCreateInfo, RenderInterface* p_renderInterface, TextureInfo* out_textureInfo, ImageViewCreateInfo* out_imageViewCreateInfo);
 	void texture_buildDeferredInitializationOperation_textureLoad(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels);
 	void texture_buildDeferredInitializationOperation_procedural(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface);
 	void texture_AllocateVulkanObjects(Texture* p_texture, ImageViewCreateInfo* p_imageViewCreateInfo, Device* p_device);
-	///
+	//////////////////////////////////////////////////////////////////////////
 
 	Texture* Texture_alloc(TextureAllocInfo* p_textureAllocInfo)
 	{
 		Texture* l_texture = new Texture();
-		l_texture->TextureUniqueKey = *p_textureAllocInfo->TextureKey;
+		Texture_alloc(&l_texture, p_textureAllocInfo);
+		return l_texture;
+	};
+
+	void Texture_alloc(Texture** p_texture, TextureAllocInfo* p_textureAllocInfo)
+	{
+		Texture* l_texture = *p_texture;
+		l_texture->TextureUniqueKey = p_textureAllocInfo->TextureKey;
+
+		texture_enableFitSwapChainSizeFeature(l_texture, p_textureAllocInfo);
 
 		if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::FILE)
 		{
@@ -49,20 +66,6 @@ namespace _GameEngine::_Render
 		{
 			delete l_texture;
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureAllocation : the TextureAllocationType " + std::to_string((uint8_t)p_textureAllocInfo->TextureAllocationType) + " is not supported."));
-		}
-		return l_texture;
-	};
-
-	void Texture_alloc(Texture** p_texture, TextureAllocInfo* p_textureAllocInfo)
-	{
-		(*p_texture)->TextureUniqueKey = *p_textureAllocInfo->TextureKey;
-		if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::FILE)
-		{
-			Texture_loadFromFile(*p_texture, p_textureAllocInfo);
-		}
-		else if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::PROCEDURAL)
-		{
-			Texture_proceduralInstance(*p_texture, p_textureAllocInfo);
 		}
 	};
 
@@ -110,22 +113,28 @@ namespace _GameEngine::_Render
 		texture_buildDeferredInitializationOperation_procedural(&p_textureAllocInfo->TextureCreateInfo, p_texture, p_textureAllocInfo->RenderInterface);
 	};
 
+	void Texture_free(Texture* p_texture, RenderInterface* p_renderInterface)
+	{
+		ImageView_free(&p_texture->ImageView, p_renderInterface->Device);
+		vkDestroyImage(p_renderInterface->Device->LogicalDevice.LogicalDevice, p_texture->Texture, nullptr);
+		vkFreeMemory(p_renderInterface->Device->LogicalDevice.LogicalDevice, p_texture->TextureMemory, nullptr);
+		p_texture->Texture = VK_NULL_HANDLE;
+		p_texture->TextureMemory = VK_NULL_HANDLE;
+
+		texture_removeFitSwapChainSizeFeature(p_texture, p_renderInterface);
+
+		check_textureValidationToken_undefinedBehavior(p_texture, p_renderInterface->PreRenderDeferedCommandBufferStep);
+
+		if (!SmartDeferredCommandBufferCompletionToken_isNull(&p_texture->TextureInitializationBufferCompletionToken))
+		{
+			p_texture->TextureInitializationBufferCompletionToken.TokenReference->IsCancelled = true;
+		}
+	};
+
 	void Texture_free(Texture** p_texture, RenderInterface* p_renderInterface)
 	{
 		Texture* l_texture = *p_texture;
-		ImageView_free(&l_texture->ImageView, p_renderInterface->Device);
-		vkDestroyImage(p_renderInterface->Device->LogicalDevice.LogicalDevice, l_texture->Texture, nullptr);
-		vkFreeMemory(p_renderInterface->Device->LogicalDevice.LogicalDevice, l_texture->TextureMemory, nullptr);
-		l_texture->Texture = VK_NULL_HANDLE;
-		l_texture->TextureMemory = VK_NULL_HANDLE;
-
-		check_textureValidationToken_undefinedBehavior(l_texture, p_renderInterface->PreRenderDeferedCommandBufferStep);
-
-		if (!SmartDeferredCommandBufferCompletionToken_isNull(&l_texture->TextureInitializationBufferCompletionToken))
-		{
-			l_texture->TextureInitializationBufferCompletionToken.TokenReference->IsCancelled = true;
-		}
-
+		Texture_free(l_texture, p_renderInterface);
 		delete l_texture;
 	};
 
@@ -290,4 +299,31 @@ namespace _GameEngine::_Render
 				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
 		}
 	};
+
+	void texture_enableFitSwapChainSizeFeature(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo)
+	{
+		if (p_textureAllocInfo->FitSwapChainSize)
+		{
+#ifndef NDEBUG
+			if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::FILE)
+			{
+				delete p_texture;
+				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureAllocation : cannot activate the FIT_SWAPCHAIN_SIZE feature when allocation type is TextureAllocationType::FILE."));
+			}
+#endif
+			p_textureAllocInfo->TextureCreateInfo.Width = p_textureAllocInfo->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width;
+			p_textureAllocInfo->TextureCreateInfo.Height = p_textureAllocInfo->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height;
+			p_texture->Features.FitSwapChainSizeEnabled = true;
+			TextureSwapChainSizeSynchronizer_addSynchronizer(p_textureAllocInfo->RenderInterface->TextureSwapChainSizeSynchronizer, p_texture, p_textureAllocInfo);
+		}
+	};
+
+	void texture_removeFitSwapChainSizeFeature(Texture* p_texture, RenderInterface* p_renderInterface)
+	{
+		if (p_texture->Features.FitSwapChainSizeEnabled)
+		{
+			p_texture->Features.FitSwapChainSizeEnabled = false;
+			TextureSwapChainSizeSynchronizer_removeSynchronizer(p_renderInterface->TextureSwapChainSizeSynchronizer, p_texture);
+		}
+	}
 }
