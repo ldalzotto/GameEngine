@@ -122,6 +122,8 @@ namespace _GameEngine::_Render
 
 		ImageViewCreateInfo l_imageViewCreateInfo{};
 		l_imageViewCreateInfo.Format = p_swapChain->SwapChainInfo.SurfaceFormat.format;
+		l_imageViewCreateInfo.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		l_imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 		l_imageViewCreateInfo.MipLevels = 1;
 		l_imageViewCreateInfo.ArrayLayers = 1;
 

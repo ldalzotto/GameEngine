@@ -16,21 +16,21 @@
 
 namespace _GameEngine::_Render
 {
+	/// Texture instanciation
 	void Texture_loadFromFile(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo);
 	void Texture_proceduralInstance(Texture* p_texture, TextureAllocInfo* p_textureAllocInfo);
+	///
 
 	/// Validation
 	void check_textureValidationToken_undefinedBehavior(Texture* l_texture, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
 	///
 
+	/// Texture internal object creation
 	void texture_buildCreationInfoObjects(TextureCreateInfo* p_textureCreateInfo, RenderInterface* p_renderInterface, TextureInfo* out_textureInfo, ImageViewCreateInfo* out_imageViewCreateInfo);
-
 	void texture_buildDeferredInitializationOperation_textureLoad(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels);
 	void texture_buildDeferredInitializationOperation_procedural(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface);
-
-	void texture_AllocateVulkanObjects(Texture* p_texture,
-		ImageViewCreateInfo* p_imageViewCreateInfo,
-		Device* p_device);
+	void texture_AllocateVulkanObjects(Texture* p_texture, ImageViewCreateInfo* p_imageViewCreateInfo, Device* p_device);
+	///
 
 	Texture* Texture_alloc(TextureAllocInfo* p_textureAllocInfo)
 	{
@@ -129,9 +129,7 @@ namespace _GameEngine::_Render
 		delete l_texture;
 	};
 
-	void texture_AllocateVulkanObjects(Texture* p_texture,
-		ImageViewCreateInfo* p_imageViewCreateInfo,
-		Device* p_device)
+	void texture_AllocateVulkanObjects(Texture* p_texture, ImageViewCreateInfo* p_imageViewCreateInfo, Device* p_device)
 	{
 		VkImageCreateInfo l_imageCreateInfo{};
 
@@ -217,7 +215,6 @@ namespace _GameEngine::_Render
 		}
 #endif
 	}
-
 
 	void texture_buildCreationInfoObjects(TextureCreateInfo* p_textureCreateInfo, RenderInterface* p_renderInterface, TextureInfo* out_textureInfo, ImageViewCreateInfo* out_imageViewCreateInfo)
 	{
