@@ -90,6 +90,15 @@ namespace _GameEngine::_ECS
 		{
 			Entity_freeComponent((*p_entity), &p_component.second);
 		}
+
+#ifndef NDEBUG
+		EntityContainer* l_entityContainer = &(*p_entity)->ECS->EntityContainer;
+		if(_Utils::Vector_containsElementEquals(&l_entityContainer->Entities, *p_entity))
+        {
+            _Log::LogInstance->CoreLogger->warn("Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
+        }
+#endif
+
 		delete (*p_entity);
 		*p_entity = nullptr;
 	};

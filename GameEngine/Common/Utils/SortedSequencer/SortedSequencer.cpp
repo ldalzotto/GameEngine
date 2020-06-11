@@ -50,7 +50,7 @@ namespace _GameEngine::_Utils
 
 		if (p_before)
 		{
-			if (Vector_containsElementEquals(p_before, (uint16_t)0) != -1 || Vector_containsElementEquals(p_before, (uint16_t)1) != -1)
+			if (Vector_containsElementEquals(p_before, (uint16_t)0) || Vector_containsElementEquals(p_before, (uint16_t)1))
 			{
 				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("You cannot insert an operation before the priority 0 (which will always be the first)."));
 			};
