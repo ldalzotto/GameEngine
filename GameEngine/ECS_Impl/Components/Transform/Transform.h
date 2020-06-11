@@ -31,9 +31,12 @@ namespace _GameEngine::_ECS
 	void Transform_setLocalPosition(Transform* p_transform, const glm::vec3& p_localPosition);
 	void Transform_setLocalRotation(Transform* p_transform, const glm::quat& p_localRotation);
 	void Transform_setLocalScale(Transform* p_transform, const glm::vec3& p_localScale);
-	glm::mat4x4 Transform_getLocalToWorldMatrix(Transform* p_transform);
+	glm::mat4x4 Transform_getLocalToWorldMatrix(Transform* p_transform, bool p_includeSelf = true);
 
 	glm::vec3 Transform_getWorldPosition(Transform* p_transform);
+	glm::quat Transform_getWorldRotation(Transform* p_transform);
+	glm::vec3 Transform_getWorldScale(Transform* p_transform);
+
 	glm::vec3 Transform_getUp(Transform* p_transform);
 	glm::vec3 Transform_getForward(Transform* p_transform);
 

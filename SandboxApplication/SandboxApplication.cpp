@@ -76,7 +76,7 @@ void SandboxApplication_update(float p_delta)
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
-			_Log::LogInstance->CoreLogger->info((void*)l_transform);
+			
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = glm::vec3(2.0f, 2.0f, 2.0f);
 			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -106,6 +106,8 @@ void SandboxApplication_update(float p_delta)
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
+
+			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
@@ -146,6 +148,8 @@ void SandboxApplication_update(float p_delta)
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
+
+			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = glm::vec3(0.5f, 0.0f, 0.5f);

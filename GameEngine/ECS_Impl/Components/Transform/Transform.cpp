@@ -15,7 +15,7 @@ namespace _GameEngine::_ECS
 	ComponentType TransformType = "Transform";
 
 	void transform_markMatricsForRecalculation(Transform* p_transform);
-    void transform_updateMatricesIfNecessary(Transform* p_transform);
+	void transform_updateMatricesIfNecessary(Transform* p_transform);
 
 	void Transform_addChild(Transform* p_transform, Transform* p_newChild)
 	{
@@ -38,7 +38,9 @@ namespace _GameEngine::_ECS
 		if (p_transform->Parent)
 		{
 			// Because the child referential has changed, we must update the local positions to fit the new referential.
-			p_transform->LocalPosition = Transform_getWorldPosition(p_transform);
+			Transform_setLocalPosition(p_transform, Transform_getWorldPosition(p_transform));
+			Transform_setLocalRotation(p_transform, Transform_getWorldRotation(p_transform));
+			Transform_setLocalScale(p_transform, Transform_getWorldScale(p_transform));
 
 			p_transform->Parent->Childs.erase(Vector_transformComparator, &p_transform);
 		}
@@ -64,7 +66,7 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	void Transform_setLocalScale(Transform* p_transform, const glm::vec3& p_localScale) 
+	void Transform_setLocalScale(Transform* p_transform, const glm::vec3& p_localScale)
 	{
 		if (p_transform->LocalScale != p_localScale)
 		{
@@ -73,7 +75,7 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	glm::mat4x4 Transform_getLocalToWorldMatrix(Transform* p_transform)
+	glm::mat4x4 Transform_getLocalToWorldMatrix(Transform* p_transform, bool p_includeSelf)
 	{
 		glm::mat4x4 l_return = glm::mat4x4{};
 		l_return[0][0] = 1.0f;
@@ -81,28 +83,61 @@ namespace _GameEngine::_ECS
 		l_return[2][2] = 1.0f;
 		l_return[3][3] = 1.0f;
 
-		if (p_transform->Parent)
+		Transform* l_currentTransform = nullptr;
+		if (p_includeSelf)
 		{
-			l_return = l_return * Transform_getLocalToWorldMatrix(p_transform->Parent);
+			l_currentTransform = p_transform;
+		}
+		else
+		{
+			l_currentTransform = p_transform->Parent;
 		}
 
-		transform_updateMatricesIfNecessary(p_transform);
-		return l_return * p_transform->LocalToWorldMatrix;
+		while (l_currentTransform != nullptr)
+		{
+			transform_updateMatricesIfNecessary(l_currentTransform);
+			l_return = l_currentTransform->LocalToWorldMatrix * l_return;
+			l_currentTransform = l_currentTransform->Parent;
+		}
+
+		return l_return;
 	};
 
 	glm::vec3 Transform_getWorldPosition(Transform* p_transform)
 	{
-		return Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(p_transform->LocalPosition, 0.0f);
+		return Transform_getLocalToWorldMatrix(p_transform, false) * glm::vec4(p_transform->LocalPosition, 1.0f);
+	};
+
+	glm::quat Transform_getWorldRotation(Transform* p_transform)
+	{
+		glm::quat l_return = glm::quat(glm::vec3(0.0, 0.0, 0.0));
+		if (p_transform->Parent)
+		{
+			l_return = Transform_getWorldRotation(p_transform->Parent) * l_return;
+		}
+
+		l_return = l_return * p_transform->LocalRotation;
+		return l_return;
+	};
+
+	glm::vec3 Transform_getWorldScale(Transform* p_transform)
+	{
+		glm::vec3 l_return = p_transform->LocalScale;
+		if (p_transform->Parent)
+		{
+			l_return = l_return * Transform_getWorldScale(p_transform->Parent);
+		}
+		return l_return;
 	};
 
 	glm::vec3 Transform_getUp(Transform* p_transform)
 	{
-		return glm::normalize(Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+		return glm::normalize(Transform_getLocalToWorldMatrix(p_transform, false) * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
 	};
 
 	glm::vec3 Transform_getForward(Transform* p_transform)
 	{
-		return glm::normalize(Transform_getLocalToWorldMatrix(p_transform) * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+		return glm::normalize(Transform_getLocalToWorldMatrix(p_transform, false) * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
 	};
 
 
@@ -118,7 +153,7 @@ namespace _GameEngine::_ECS
 
 	void transform_updateMatricesIfNecessary(Transform* p_transform)
 	{
-		if(p_transform->MatricesMustBeRecalculated)
+		if (p_transform->MatricesMustBeRecalculated)
 		{
 			p_transform->LocalToWorldMatrix = _Utils::Math_TRS(p_transform->LocalPosition, p_transform->LocalRotation, p_transform->LocalScale);
 			p_transform->MatricesMustBeRecalculated = false;
@@ -126,21 +161,21 @@ namespace _GameEngine::_ECS
 	};
 
 	void Transform_free(void* p_transform, void* p_null)
-    {
-        Transform* l_transform = (Transform*)p_transform;
-        l_transform->Childs.free();
-    };
+	{
+		Transform* l_transform = (Transform*)p_transform;
+		l_transform->Childs.free();
+	};
 
 	void Transform_init(Component* p_transform, TransformInitInfo* p_transformInitInfo)
 	{
-        Transform* l_transform = (Transform*)p_transform->Child;
-	    l_transform->Childs.alloc(0);
+		Transform* l_transform = (Transform*)p_transform->Child;
+		l_transform->Childs.alloc(0);
 		l_transform->LocalPosition = p_transformInitInfo->LocalPosition;
 		l_transform->LocalRotation = p_transformInitInfo->LocalRotation;
 		l_transform->LocalScale = p_transformInitInfo->LocalScale;
 		transform_markMatricsForRecalculation(l_transform);
 
-        l_transform->OnComponentDetached.Closure = l_transform;
+		l_transform->OnComponentDetached.Closure = l_transform;
 		l_transform->OnComponentDetached.Callback = Transform_free;
 		_Utils::Observer_register(&p_transform->ComponentFreeEvent, &l_transform->OnComponentDetached);
 	};

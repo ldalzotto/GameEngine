@@ -56,6 +56,18 @@ namespace _GameEngineEditor
 				p_debugConsole->DrawableWindows->DrawableWindows.push_back(TransformWindow_allocDrawableWindow(&l_transformWindow));
 			}
 		}
+		else if (p_debugCommand->Verb == "transform_attach")
+		{
+			if (p_debugCommand->Arguments.size() == 2
+				&& p_debugCommand->Arguments[0].Name == "parent"
+				&& p_debugCommand->Arguments[1].Name == "child")
+			{
+				_ECS::Transform* l_parent = reinterpret_cast<_GameEngine::_ECS::Transform*>(std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0));
+				_ECS::Transform* l_child = reinterpret_cast<_GameEngine::_ECS::Transform*>(std::stoull(p_debugCommand->Arguments[1].Value, nullptr, 0));
+				_ECS::Transform_addChild(l_parent, l_child);
+			}
+
+		}
 		else if (p_debugCommand->Verb == "transform_detach_parent")
 		{
 			if (p_debugCommand->Arguments.size() == 1 
