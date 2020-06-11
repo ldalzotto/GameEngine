@@ -12,6 +12,8 @@ _deps
 build
 .vscode
 .vs
+.idea
+cmake-build-debug
 
 Assets/Models
 Assets/Textures

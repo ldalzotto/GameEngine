@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+	<Type Name="_GameEngine::_Core::VectorT&lt;*&gt;">
+		<Intrinsic Name="size" Expression="Vector.Size" />
+		<Intrinsic Name="capacity" Expression="Vector.Capacity" />
+		<Intrinsic Name="memory" Expression="Vector.Memory" />
+		<DisplayString>{{ size={size()} }}</DisplayString>
+		<Expand>
+			<Item Name="[capacity]" ExcludeView="simple">capacity()</Item>
+			<ArrayItems>
+				<Size>size()</Size>
+				<ValuePointer>($T1*)Vector.Memory</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+</AutoVisualizer>

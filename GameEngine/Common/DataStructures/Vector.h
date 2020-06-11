@@ -4,13 +4,13 @@
 
 namespace _GameEngine::_Core
 {
-	typedef struct Vector
+	struct Vector
 	{
 		void* Memory;
 		size_t Size;
 		size_t ElementSize;
 		size_t Capacity;
-	} Vector;
+	};
 
 	using VectorElementComparator = bool(*)(void*, void*);
 
