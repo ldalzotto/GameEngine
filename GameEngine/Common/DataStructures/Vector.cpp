@@ -80,7 +80,7 @@ namespace _GameEngine::_Core
 		if (p_index + 1 != p_vector->Size)
 		{
 			void* p_targetMemory = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
-			memcpy(p_targetMemory, (char*)p_targetMemory + p_vector->ElementSize, (p_vector->Capacity - p_index - 1) * p_vector->ElementSize);
+			memmove(p_targetMemory, (char*)p_targetMemory + p_vector->ElementSize, (p_vector->Size - p_index - 1) * p_vector->ElementSize);
 		}
 
 		p_vector->Size -= 1;
@@ -98,15 +98,17 @@ namespace _GameEngine::_Core
 
 	void* Vector_get(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject)
 	{
+		void* l_cursor = p_vector->Memory;
 		for (size_t i = 0; i < p_vector->Size; i++)
 		{
-			void* l_element = Vector_at(p_vector, i);
-			if (p_comparator(l_element, p_userObject, p_vector->ElementSize))
+			if (p_comparator(l_cursor, p_userObject))
 			{
-				return l_element;
-				break;
+				return l_cursor;
 			}
+
+			l_cursor = (char*)l_cursor + p_vector->ElementSize;
 		}
+		return nullptr;
 	};
 
 	size_t Vector_getIndex(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject)
@@ -114,7 +116,7 @@ namespace _GameEngine::_Core
 		for (size_t i = 0; i < p_vector->Size; i++)
 		{
 			void* l_element = Vector_at(p_vector, i);
-			if (p_comparator(l_element, p_userObject, p_vector->ElementSize))
+			if (p_comparator(l_element, p_userObject))
 			{
 				return i;
 				break;
@@ -123,8 +125,4 @@ namespace _GameEngine::_Core
 		return std::numeric_limits<size_t>::max();
 	};
 
-	bool Vector_equalsComparator(void* p_element, void* p_userObject, size_t p_vectorElementSize)
-	{
-		return memcmp(p_element, p_userObject, p_vectorElementSize) == 0;
-	};
 }

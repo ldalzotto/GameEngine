@@ -6,11 +6,18 @@
 #include "Utils/Algorithm/Algorithm.h"
 #include "Log/Log.h"
 
+#include "DataStructures/ElementComparators.h"
+
 namespace _GameEngine::_ECS
 {
 
 	Entity* entity_alloc(ECS* p_ecs);
 	void entity_free(Entity** p_entity);
+
+	bool Entity_comparator(Entity** p_left, Entity** p_right)
+	{
+		return *p_left == *p_right;
+	};
 
 	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent)
 	{
@@ -159,7 +166,7 @@ namespace _GameEngine::_ECS
 		Component* l_component = (Component*)p_component;
 
 
-		ComponentType* l_foundComponentType = l_entityComponentListener->ListenedComponentTypes.get(_Core::Vector_equalsComparator, &l_component->ComponentType);
+		ComponentType* l_foundComponentType = l_entityComponentListener->ListenedComponentTypes.get(_Core::Vector_equalsStringComparator, &l_component->ComponentType);
 		if (l_foundComponentType)
 		{
 			entityComponentListener_removeEntity(l_entityComponentListener, l_component->AttachedEntity);
@@ -192,7 +199,7 @@ namespace _GameEngine::_ECS
 
 	void entityComponentListener_pushEntityToEntityIfElligible(_GameEngine::_ECS::EntityConfigurableContainer* l_entityComponentListener, _GameEngine::_ECS::Component* l_comparedComponent)
 	{
-		if (l_entityComponentListener->ListenedComponentTypes.get(_Core::Vector_equalsComparator, &l_comparedComponent->ComponentType))
+		if (l_entityComponentListener->ListenedComponentTypes.get(_Core::Vector_equalsStringComparator, &l_comparedComponent->ComponentType))
 		{
 			bool l_addEntity = true;
 			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.size(); i++)
@@ -255,7 +262,7 @@ namespace _GameEngine::_ECS
 
 	void entityComponentListener_pushEntity(EntityConfigurableContainer* l_entityComponentListener, Entity* p_entity)
 	{
-		if (!l_entityComponentListener->FilteredEntities.get(_Core::Vector_equalsComparator, &p_entity))
+		if (!l_entityComponentListener->FilteredEntities.get(Entity_comparator, &p_entity))
 		{
 			l_entityComponentListener->FilteredEntities.push_back(&p_entity);
 		}
@@ -268,7 +275,7 @@ namespace _GameEngine::_ECS
 
 	void entityComponentListener_removeEntity(EntityConfigurableContainer* p_entityComponentListener, Entity* p_entity)
 	{
-		size_t l_foundEntityIndex = p_entityComponentListener->FilteredEntities.getIndex(_Core::Vector_equalsComparator, &p_entity);
+		size_t l_foundEntityIndex = p_entityComponentListener->FilteredEntities.getIndex(Entity_comparator, &p_entity);
 		if (l_foundEntityIndex != std::numeric_limits<size_t>::max())
 		{
 			p_entityComponentListener->FilteredEntities.erase(l_foundEntityIndex);

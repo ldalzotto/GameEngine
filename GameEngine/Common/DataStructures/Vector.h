@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 namespace _GameEngine::_Core
 {
 	typedef struct Vector
@@ -10,7 +12,7 @@ namespace _GameEngine::_Core
 		size_t Capacity;
 	} Vector;
 
-	typedef bool(*VectorElementComparator)(void* p_element, void* p_userObject, size_t p_vectorElementSize);
+	using VectorElementComparator = bool(*)(void*, void*);
 
 	void Vector_alloc(Vector* p_vector, size_t p_initialCapacity, size_t p_elementSize);
 	void Vector_free(Vector* p_vector);
@@ -20,7 +22,5 @@ namespace _GameEngine::_Core
 	void* Vector_at(Vector* p_vector, size_t p_index);
 	void* Vector_get(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 	size_t Vector_getIndex(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
-
-	bool Vector_equalsComparator(void* p_element, void* p_userObject, size_t p_vectorElementSize);
 }
 
