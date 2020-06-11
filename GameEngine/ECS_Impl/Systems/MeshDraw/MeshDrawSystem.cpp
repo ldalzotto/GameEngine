@@ -61,7 +61,7 @@ namespace _GameEngine::_ECS
 			if (l_transform->HasChangedThisFrame)
 			{
 				_Render::ModelProjection l_meshUniform{};
-				l_meshUniform.Model = *_ECS::Transform_getLocalToWorldMatrix(l_transform);
+				l_meshUniform.Model = _ECS::Transform_getLocalToWorldMatrix(l_transform);
 				MeshRenderer_updateMeshDrawUniform(l_mesRenderer, &l_meshUniform);
 
 				l_transform->HasChangedThisFrame = false;

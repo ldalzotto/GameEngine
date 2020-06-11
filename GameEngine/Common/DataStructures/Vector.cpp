@@ -58,7 +58,7 @@ namespace _GameEngine::_Core
 	{
 		if (p_vector->Size >= p_vector->Capacity)
 		{
-			Vector_resize(p_vector, p_vector->Capacity * 2);
+			Vector_resize(p_vector, p_vector->Capacity == 0 ? 1 : (p_vector->Capacity * 2));
 			Vector_pushBack(p_vector, p_value);
 		}
 		else
@@ -85,6 +85,21 @@ namespace _GameEngine::_Core
 
 		p_vector->Size -= 1;
 	}
+
+	void Vector_erase(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject)
+	{
+		void* l_cursor = p_vector->Memory;
+		for (size_t i = 0; i < p_vector->Size; i++)
+		{
+			if (p_comparator(l_cursor, p_userObject))
+			{
+				Vector_erase(p_vector, i);
+				break;
+			}
+
+			l_cursor = (char*)l_cursor + p_vector->ElementSize;
+		};
+	};
 
 	void* Vector_at(Vector* p_vector, size_t p_index)
 	{
