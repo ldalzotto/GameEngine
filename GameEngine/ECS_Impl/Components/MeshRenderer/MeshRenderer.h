@@ -25,7 +25,7 @@ namespace _GameEngine::_ECS
 	struct MeshRendererInitInfo
 	{
 		Component* AssociatedComponent;
-		_Render::DefaultMaterialV2Instance_InputAssets* DefaultMaterialV2Instance_InputAssets;
+		std::unordered_map<std::string, void*> InputParameters;
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);

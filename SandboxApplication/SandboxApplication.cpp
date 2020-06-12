@@ -14,6 +14,7 @@
 
 #include "Render/Includes/GLFWIncludes.h"
 #include "Render/Texture/Texture.h"
+#include "Render/Materials/MaterialInstanceKeys.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -91,12 +92,14 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, sizeof(_ECS::MeshRenderer));
 			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
-			_Render::DefaultMaterialV2Instance_InputAssets l_defaultMaterialAsset{};
-			l_defaultMaterialAsset.MeshPath = "E:/GameProjects/GameEngine/Assets/Models/Cube.obj";
-			l_defaultMaterialAsset.Texturepath = "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png";
+			std::unordered_map<std::string, void*> l_defaultMaterialInput
+			{
+				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
+				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
+			};
 
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			l_meshRendererInitInfo.DefaultMaterialV2Instance_InputAssets = &l_defaultMaterialAsset;
+			l_meshRendererInitInfo.InputParameters = l_defaultMaterialInput;
 			l_meshRendererInitInfo.AssociatedComponent = l_component;
 			_ECS::MeshRenderer_init(l_meshRenderer, &App->Render->RenderInterface, &l_meshRendererInitInfo);
 
@@ -133,12 +136,14 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, sizeof(_ECS::MeshRenderer));
 			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
-			_Render::DefaultMaterialV2Instance_InputAssets l_defaultMaterialAsset{};
-			l_defaultMaterialAsset.MeshPath = "E:/GameProjects/GameEngine/Assets/Models/Cube.obj";
-			l_defaultMaterialAsset.Texturepath = "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png";
+			std::unordered_map<std::string, void*> l_defaultMaterialInput
+			{
+				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
+				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
+			};
 
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			l_meshRendererInitInfo.DefaultMaterialV2Instance_InputAssets = &l_defaultMaterialAsset;
+			l_meshRendererInitInfo.InputParameters = l_defaultMaterialInput;
 			l_meshRendererInitInfo.AssociatedComponent = l_component;
 			_ECS::MeshRenderer_init(l_meshRenderer, &App->Render->RenderInterface, &l_meshRendererInitInfo);
 

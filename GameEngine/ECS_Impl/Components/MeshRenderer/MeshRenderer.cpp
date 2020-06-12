@@ -19,7 +19,7 @@ namespace _GameEngine::_ECS
 
 		_Render::DefaultMaterialV2DrawerAllocInfo l_defaultMaterialV2DrawerAllocInfo{};
 		l_defaultMaterialV2DrawerAllocInfo.DefaultMaterial = p_renderInterface->RenderMaterialsInterface.DefaultMaterial;
-		l_defaultMaterialV2DrawerAllocInfo.DefaultMaterialV2Instance_InputAssets = p_mehsRendererInfo->DefaultMaterialV2Instance_InputAssets;
+		l_defaultMaterialV2DrawerAllocInfo.InputParameters = p_mehsRendererInfo->InputParameters;
 
 		_Render::DefaultMaterialV2Instance_alloc(&p_meshRenderer->DefaultMaterialV2Instance, p_renderInterface, &l_defaultMaterialV2DrawerAllocInfo);
 

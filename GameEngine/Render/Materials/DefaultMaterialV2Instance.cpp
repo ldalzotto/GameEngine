@@ -33,29 +33,28 @@ namespace _GameEngine::_Render
 
 		{
 			MeshUniqueKey l_meshKey{};
-			l_meshKey.MeshAssetPath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->MeshPath;
+			l_meshKey.MeshAssetPath = std::string((char*)p_defaultMaterialV2InstanceAllocInfo->InputParameters.at(MATERIALINSTANCE_MESH_KEY));
 			MaterialInstance_setMesh(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_MESH_KEY, &l_meshKey);
 		}
-
 
 		for (ShaderParameter& l_shaderParameter : p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial->LocalInputParameters.ShaderParameters)
 		{
 			switch (l_shaderParameter.Type)
 			{
-				case ShaderParameterType::UNIFORM_BUFFER:
-				{
-					UniformBufferParameter* l_uniformBufferParameter = (UniformBufferParameter*)l_shaderParameter.Parameter;
-					MaterialInstance_setUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName, l_uniformBufferParameter);
-				}
-				break;
-				case ShaderParameterType::IMAGE_SAMPLER:
-				{
-					ImageSampleParameter* l_imageSamplerParameter = (ImageSampleParameter*)l_shaderParameter.Parameter;
-					TextureUniqueKey l_textureUniqueKey{};
-					l_textureUniqueKey.TexturePath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->Texturepath;
-					MaterialInstance_setTexture(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName, &l_textureUniqueKey);
-				}
-				break;
+			case ShaderParameterType::UNIFORM_BUFFER:
+			{
+				UniformBufferParameter* l_uniformBufferParameter = (UniformBufferParameter*)l_shaderParameter.Parameter;
+				MaterialInstance_setUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName, l_uniformBufferParameter);
+			}
+			break;
+			case ShaderParameterType::IMAGE_SAMPLER:
+			{
+				ImageSampleParameter* l_imageSamplerParameter = (ImageSampleParameter*)l_shaderParameter.Parameter;
+				TextureUniqueKey l_textureUniqueKey{};
+				l_textureUniqueKey.TexturePath = std::string((char*)p_defaultMaterialV2InstanceAllocInfo->InputParameters.at(l_shaderParameter.KeyName));
+				MaterialInstance_setTexture(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName, &l_textureUniqueKey);
+			}
+			break;
 			}
 		}
 

@@ -23,16 +23,10 @@ namespace _GameEngine::_Render
 		VkDescriptorSet MaterialDescriptorSet;
 	};
 
-	struct DefaultMaterialV2Instance_InputAssets
-	{
-		std::string MeshPath;
-		std::string Texturepath;
-	};
-
 	struct DefaultMaterialV2DrawerAllocInfo
 	{
 		DefaultMaterialV2* DefaultMaterial;
-		DefaultMaterialV2Instance_InputAssets* DefaultMaterialV2Instance_InputAssets;
+		std::unordered_map<std::string, void*> InputParameters;
 	};
 
 	void DefaultMaterialV2Instance_alloc(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, RenderInterface* p_renderInterface, DefaultMaterialV2DrawerAllocInfo* p_defaultMaterialV2InstanceAllocInfo);
