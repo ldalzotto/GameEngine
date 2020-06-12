@@ -15,10 +15,10 @@ namespace _GameEngineEditor
 	{
 		GizmoDrawStepParameters* l_parameters = &p_gizmoDrawStep->GizmoDrawStepParameters;
 		{
-			l_parameters->VertexShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/EditorVertex.spv";
+			l_parameters->VertexShader.ShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/EditorVertex.spv";
 			l_parameters->VertexShader.ShaderType = ShaderType::VERTEX;
 
-			l_parameters->FragmentShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/EditorFragment.spv";
+			l_parameters->FragmentShader.ShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/EditorFragment.spv";
 			l_parameters->FragmentShader.ShaderType = ShaderType::FRAGMENT;
 		}
 

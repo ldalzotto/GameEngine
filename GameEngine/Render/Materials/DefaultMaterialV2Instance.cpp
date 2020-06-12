@@ -8,10 +8,12 @@
 #include "DefaultMaterialV2.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
-#include "LoopStep/DefaultMaterialDrawStep.h"
+#include "MaterialInstanceKeys.h"
 
-#include "Resources/MeshResourceProvider.h"
+#include "LoopStep/DefaultMaterialDrawStep.h"
 #include "Resources/TextureResourceProvider.h"
+
+#include "Mesh/Mesh.h"
 
 namespace _GameEngine::_Render
 {
@@ -28,12 +30,15 @@ namespace _GameEngine::_Render
 		{
 			p_defaultMaterialV2Instance->_DefaultMaterial = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial;
 		}
+
+		{
+			MaterialInstance_init(&p_defaultMaterialV2Instance->MaterialInstance, p_renderInterface);
+		}
 		
 		{
-			MeshResourceProviderUseResourceInfo l_meshResourceProviderUserResource{};
-			l_meshResourceProviderUserResource.Meshpath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->MeshPath;
-			p_defaultMaterialV2Instance->ExternalResources.Mesh =
-				MeshResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.MeshResourceProvider, &l_meshResourceProviderUserResource);
+			MeshUniqueKey l_meshKey{};
+			l_meshKey.MeshAssetPath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->MeshPath;
+			MaterialInstance_setMesh(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALISTANCE_MESH_KEY, &l_meshKey);
 		}
 
 		{
@@ -52,9 +57,12 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterialV2Instance_free(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, RenderInterface* p_renderInterface)
 	{
+		{
+			MaterialInstance_free(&p_defaultMaterialV2Instance->MaterialInstance);
+		}
+
 		freeModelMatrixBuffer(p_defaultMaterialV2Instance, p_renderInterface->Device);
 		freeDescriptorSet(p_defaultMaterialV2Instance, p_renderInterface->Device);
-		MeshResourceProvider_ReleaseResource(p_renderInterface->ResourceProvidersInterface.MeshResourceProvider, &p_defaultMaterialV2Instance->ExternalResources.Mesh->MeshUniqueKey);
 		TextureResourceProvider_ReleaseResource(p_renderInterface->ResourceProvidersInterface.TextureResourceProvider, &p_defaultMaterialV2Instance->ExternalResources.Texture->TextureUniqueKey);
 	};
 

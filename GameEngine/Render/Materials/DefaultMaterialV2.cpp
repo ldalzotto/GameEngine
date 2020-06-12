@@ -79,10 +79,10 @@ namespace _GameEngine::_Render
 
 	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources)
 	{
-		p_externalResources->VertexShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialVertex.spv";
+		p_externalResources->VertexShader.ShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
 		p_externalResources->VertexShader.ShaderType = ShaderType::VERTEX;
 
-		p_externalResources->FragmentShader.ShaderPath = "E:/GameProjects/VulkanTutorial/Assets/Shader/out/TutorialFragment.spv";
+		p_externalResources->FragmentShader.ShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
 		p_externalResources->FragmentShader.ShaderType = ShaderType::FRAGMENT;
 	};
 

@@ -92,8 +92,8 @@ void SandboxApplication_update(float p_delta)
 			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
 			_Render::DefaultMaterialV2Instance_InputAssets l_defaultMaterialAsset{};
-			l_defaultMaterialAsset.MeshPath = "E:/GameProjects/VulkanTutorial/Assets/Models/Cube.obj";
-			l_defaultMaterialAsset.Texturepath = "E:/GameProjects/VulkanTutorial/Assets/Textures/viking_room.png";
+			l_defaultMaterialAsset.MeshPath = "E:/GameProjects/GameEngine/Assets/Models/Cube.obj";
+			l_defaultMaterialAsset.Texturepath = "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png";
 
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.DefaultMaterialV2Instance_InputAssets = &l_defaultMaterialAsset;
@@ -134,8 +134,8 @@ void SandboxApplication_update(float p_delta)
 			_ECS::MeshRenderer* l_meshRenderer = (_ECS::MeshRenderer*)l_component->Child;
 
 			_Render::DefaultMaterialV2Instance_InputAssets l_defaultMaterialAsset{};
-			l_defaultMaterialAsset.MeshPath = "E:/GameProjects/VulkanTutorial/Assets/Models/Cube.obj";
-			l_defaultMaterialAsset.Texturepath = "E:/GameProjects/VulkanTutorial/Assets/Textures/viking_room.png";
+			l_defaultMaterialAsset.MeshPath = "E:/GameProjects/GameEngine/Assets/Models/Cube.obj";
+			l_defaultMaterialAsset.Texturepath = "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png";
 
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.DefaultMaterialV2Instance_InputAssets = &l_defaultMaterialAsset;

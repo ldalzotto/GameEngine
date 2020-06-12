@@ -4,7 +4,7 @@
 
 #include "glm/glm.hpp"
 #include "vulkan/vulkan.h"
-
+#include "MaterialInstance.h"
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 
 namespace _GameEngine::_Render
@@ -19,7 +19,6 @@ namespace _GameEngine::_Render
 {
 	struct DefaultMaterialV2Drawer_ExternalResources
 	{
-		Mesh* Mesh;
 		Texture* Texture;
 	};
 
@@ -27,6 +26,7 @@ namespace _GameEngine::_Render
 	{
 		DefaultMaterialV2* _DefaultMaterial;
 
+		MaterialInstance MaterialInstance;
 		DefaultMaterialV2Drawer_ExternalResources ExternalResources;
 		VulkanBuffer ModelMatrixBuffer;
 		VkDescriptorSet MaterialDescriptorSet;

@@ -1,7 +1,9 @@
 #include "TransformTest.h"
 
 #include <stdexcept>
+
 #include "ECS_Impl/Components/Transform/Transform.h"
+#include "GameEngineApplication.h"
 
 using namespace _GameEngine::_ECS;
 
@@ -76,7 +78,7 @@ namespace _GameEngine::_Test
 			TEST_ASSERT(Transform_getWorldPosition(l_child1), glm::vec3(1.0f, 1.0f, -1.0f));
 			TEST_ASSERT(Transform_getWorldRotation(l_child1), glm::quat(glm::vec3(0.0f, 1.0f, 0.0f)) * glm::quat(glm::vec3(0.0f, 1.0f, 0.0f)));
 			TEST_ASSERT(Transform_getWorldScale(l_child2), glm::vec3(4.0f, 4.0f, 4.0f));
-			
+
 			Component_free(&l_rootComponent);
 			Component_free(&l_child1Component);
 			Component_free(&l_child2Component);
@@ -87,5 +89,11 @@ namespace _GameEngine::_Test
 	{
 		Transform_simpleTransformation_test();
 		Transform_parenting_test();
+
+		auto l_app = _GameEngine::app_alloc(nullptr);
+		_GameEngine::app_free(l_app);
+
+		l_app = _GameEngine::app_alloc(nullptr);
+		_GameEngine::app_free(l_app);
 	};
 }
