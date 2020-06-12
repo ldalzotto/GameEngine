@@ -2,11 +2,19 @@
 
 #include <functional>
 
+#include <stdexcept>
+#include "Log/Log.h"
+
 #include "RenderInterface.h"
 #include "Resources/MeshResourceProvider.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Mesh/Mesh.h"
+#include "VulkanObjects/Descriptor/DescriptorPool.h"
+#include "VulkanObjects/Hardware/Device/Device.h"
 #include "Shader/ShaderParameter.h"
+#include "Shader/DescriptorSetLayout.h"
+
+#include "MaterialInstanceKeys.h"
 
 namespace _GameEngine::_Render
 {
@@ -17,14 +25,28 @@ namespace _GameEngine::_Render
 
 	void MeshMaterialInstanceParameter_free(MaterialInstanceParameter* p_materialInstanceParameter, RenderInterface* p_renderInterface);
 
-	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface)
+	void populateParameters(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter);
+
+	void createDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout);
+	void updateDescriptorSet(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters);
+	void freeDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool);
+
+	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo)
 	{
 		p_materialInstance->RenderInterface = p_renderInterface;
+		p_materialInstance->ParentDescriptorPool = p_materialInstanceInitInfo->DescriptorPool;
+		p_materialInstance->PipelineLayout = p_materialInstanceInitInfo->PipelineLayout;
 		p_materialInstance->Parameters.alloc(4);
+
+		populateParameters(p_materialInstance, p_materialInstanceInitInfo->ShaderParameters, &p_materialInstanceInitInfo->MaterialInstanceInputParameters);
+		createDescriptorSet(p_materialInstance, p_materialInstanceInitInfo->DescriptorPool, p_materialInstanceInitInfo->DescriptorSetLayout);
+		updateDescriptorSet(p_materialInstance, p_materialInstanceInitInfo->ShaderParameters);
 	};
 
 	void MaterialInstance_free(MaterialInstance* p_materialInstance)
 	{
+		freeDescriptorSet(p_materialInstance, p_materialInstance->ParentDescriptorPool);
+
 		for (size_t i = 0; i < p_materialInstance->Parameters.size(); i++)
 		{
 			MaterialInstanceParameter* l_materialInstanceParameter = *p_materialInstance->Parameters.at(i);
@@ -196,4 +218,102 @@ namespace _GameEngine::_Render
 			VulkanBuffer_pushToGPU(&l_uniformBufferParameter->UniformBuffer, p_materialInstance->RenderInterface->Device, p_data, l_uniformBufferParameter->UniformBuffer.BufferAllocInfo.Size);
 		}
 	};
+
+
+	void populateParameters(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter)
+	{
+		{
+			MeshUniqueKey l_meshKey{};
+			l_meshKey.MeshAssetPath = std::string((char*)p_materialInstanceInputParamter->at(MATERIALINSTANCE_MESH_KEY));
+			MaterialInstance_setMesh(p_materialInstance, MATERIALINSTANCE_MESH_KEY, &l_meshKey);
+		}
+
+		for (ShaderParameter& l_shaderParameter : *p_parentMaterialParameters)
+		{
+			switch (l_shaderParameter.Type)
+			{
+			case ShaderParameterType::UNIFORM_BUFFER:
+			{
+				UniformBufferParameter* l_uniformBufferParameter = (UniformBufferParameter*)l_shaderParameter.Parameter;
+				MaterialInstance_setUniformBuffer(p_materialInstance, l_shaderParameter.KeyName, l_uniformBufferParameter);
+			}
+			break;
+			case ShaderParameterType::IMAGE_SAMPLER:
+			{
+				ImageSampleParameter* l_imageSamplerParameter = (ImageSampleParameter*)l_shaderParameter.Parameter;
+				TextureUniqueKey l_textureUniqueKey{};
+				l_textureUniqueKey.TexturePath = std::string((char*)p_materialInstanceInputParamter->at(l_shaderParameter.KeyName));
+				MaterialInstance_setTexture(p_materialInstance, l_shaderParameter.KeyName, &l_textureUniqueKey);
+			}
+			break;
+			}
+		}
+	};
+
+	//////////////////// DESCRIPTOR SET
+
+	void createDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout)
+	{
+		VkDescriptorSetAllocateInfo l_descriptorSetAllocateInfo{};
+		l_descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		l_descriptorSetAllocateInfo.descriptorPool = p_descriptorPool->DescriptorPool;
+		l_descriptorSetAllocateInfo.descriptorSetCount = 1;
+		l_descriptorSetAllocateInfo.pSetLayouts = &p_descriptorSetLayout->DescriptorSetLayout;
+		if (vkAllocateDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_materialInstance->MaterialDescriptorSet) != VK_SUCCESS)
+		{
+			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create description set."));
+		};
+	};
+
+	void updateDescriptorSet(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters)
+	{
+		std::vector<VkWriteDescriptorSet> l_writeDescirptorSets;
+		std::vector<VkDescriptorBufferInfo> l_descriptorBufferInfo(p_parentMaterialParameters->size());
+		std::vector<VkDescriptorImageInfo> l_descriptorImageInfo(p_parentMaterialParameters->size());
+
+		size_t i = 0;
+		for (ShaderParameter& l_shaderParameter : *p_parentMaterialParameters)
+		{
+			switch (l_shaderParameter.Type)
+			{
+			case ShaderParameterType::UNIFORM_BUFFER:
+			{
+				UniformBufferParameter* l_uniformBufferParameter = (UniformBufferParameter*)l_shaderParameter.Parameter;
+
+				VkWriteDescriptorSet l_writeDescriptorSet = UniformBufferParameter_buildWriteDescriptorSet(
+					l_uniformBufferParameter,
+					MaterialInstance_getUniformBuffer(p_materialInstance, l_shaderParameter.KeyName),
+					&l_descriptorBufferInfo.at(i),
+					p_materialInstance->MaterialDescriptorSet);
+				l_writeDescirptorSets.emplace_back(l_writeDescriptorSet);
+			}
+			break;
+			case ShaderParameterType::IMAGE_SAMPLER:
+			{
+				ImageSampleParameter* l_imageSamplerParameter = (ImageSampleParameter*)l_shaderParameter.Parameter;
+
+				VkWriteDescriptorSet l_writeDescriptorSet = ImageSampleParameter_buildWriteDescriptorSet(
+					l_imageSamplerParameter,
+					MaterialInstance_getTexture(p_materialInstance, l_shaderParameter.KeyName),
+					&l_descriptorImageInfo.at(i),
+					p_materialInstance->MaterialDescriptorSet);
+				l_writeDescirptorSets.emplace_back(l_writeDescriptorSet);
+			}
+			break;
+			}
+
+			i += 1;
+		}
+
+		vkUpdateDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice, l_writeDescirptorSets.size(), l_writeDescirptorSets.data(), 0, nullptr);
+	};
+	
+	void freeDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool)
+	{
+		vkFreeDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice,
+				p_descriptorPool->DescriptorPool, 1, &p_materialInstance->MaterialDescriptorSet);
+	};
+
+	//////////////////// END DESCRIPTOR SET
+
 }

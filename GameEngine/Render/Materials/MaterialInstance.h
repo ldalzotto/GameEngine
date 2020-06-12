@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vulkan/vulkan.h>
 #include <string>
 #include "DataStructures/VectorT.h"
 #include "VulkanObjects/Memory/VulkanBuffer.h"
+#include "Shader/ShaderParameter.h"
 
 namespace _GameEngine::_Render
 {
@@ -12,6 +14,8 @@ namespace _GameEngine::_Render
 	struct TextureUniqueKey;
 	struct UniformBufferParameter;
 	struct RenderInterface;
+	struct DescriptorSetLayout;
+	struct DescriptorPool;
 }
 
 namespace _GameEngine::_Render
@@ -28,10 +32,26 @@ namespace _GameEngine::_Render
 	struct MaterialInstance
 	{
 		RenderInterface* RenderInterface;
+
+		//TODO This belongs to the original material. To remove when the material object is created
+		DescriptorPool* ParentDescriptorPool;
+		VkPipelineLayout* PipelineLayout;
+
+		VkDescriptorSet MaterialDescriptorSet;
 		_Core::VectorT<MaterialInstanceParameter*> Parameters;
 	};
 
-	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface);
+	//TODO This structure must be replaced with a generic Material object.
+	struct MaterialInstanceInitInfo
+	{
+		std::vector<ShaderParameter>* ShaderParameters;
+		std::unordered_map<std::string, void*> MaterialInstanceInputParameters;
+		DescriptorSetLayout* DescriptorSetLayout;
+		DescriptorPool* DescriptorPool;
+		VkPipelineLayout* PipelineLayout;
+	};
+
+	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo);
 	void MaterialInstance_free(MaterialInstance* p_materialInstance);
 
 	struct MeshMaterialInstanceParameter

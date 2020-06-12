@@ -39,7 +39,7 @@ namespace _GameEngine::_Render
 		VertexInput VertexInput;
 
 		std::vector<ShaderParameter> ShaderParameters;
-		
+
 		DescriptorSetLayout DescriptorSetLayout;
 		DescriptorPool DescriptorPool;
 	};

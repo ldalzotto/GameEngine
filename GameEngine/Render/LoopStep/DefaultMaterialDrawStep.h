@@ -11,7 +11,7 @@ namespace _GameEngine::_Render
 	struct SwapChain;
 	struct Mesh;
 	struct DefaultMaterialV2;
-	struct DefaultMaterialV2Instance;
+	struct MaterialInstance;
 }
 
 namespace _GameEngine::_Render
@@ -20,7 +20,7 @@ namespace _GameEngine::_Render
 	struct DefaultMaterialDrawStep
 	{
 		DefaultMaterialV2* DefaultMaterial;
-		std::vector<DefaultMaterialV2Instance*> DefaultMaterialV2Instance;
+		std::vector<MaterialInstance*> MaterialInstances;
 	};
 
 	void DefaultMaterialDrawStep_init(DefaultMaterialDrawStep* p_meshDrawStep, DefaultMaterialV2* p_defaultMaterial);

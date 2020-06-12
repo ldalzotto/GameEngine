@@ -3,7 +3,7 @@
 #include "ECS/Component.h"
 #include "glm/glm.hpp"
 
-#include "Materials/DefaultMaterialV2Instance.h"
+#include "Materials/MaterialInstance.h"
 
 namespace _GameEngine::_Render
 {
@@ -18,7 +18,7 @@ namespace _GameEngine::_ECS
 	struct MeshRenderer
 	{
 		_Render::RenderInterface* RenderInterface;
-		_Render::DefaultMaterialV2Instance DefaultMaterialV2Instance;
+		_Render::MaterialInstance MaterialInstance;
 		_Utils::Subject OnComponentDetached;
 	};
 
@@ -29,5 +29,4 @@ namespace _GameEngine::_ECS
 	};
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
-	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection* l_meshUniformObject);
 }

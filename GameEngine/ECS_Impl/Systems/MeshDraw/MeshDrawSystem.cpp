@@ -13,6 +13,7 @@
 #include "RenderInterface.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
 #include "Materials/DefaultMaterialV2.h"
+#include "Materials/MaterialInstanceKeys.h"
 
 namespace _GameEngine::_ECS
 {
@@ -26,13 +27,13 @@ namespace _GameEngine::_ECS
 	void onMeshDrawSystemEntityAdded(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
-		l_mesRenderer->RenderInterface->DefaultMaterialDrawStep->DefaultMaterialV2Instance.emplace_back(&l_mesRenderer->DefaultMaterialV2Instance);
+		l_mesRenderer->RenderInterface->DefaultMaterialDrawStep->MaterialInstances.emplace_back(&l_mesRenderer->MaterialInstance);
 	}
 
 	void onMeshDrawSystemEntityRemoved(Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
-		_Utils::Vector_eraseElementEquals(l_mesRenderer->RenderInterface->DefaultMaterialDrawStep->DefaultMaterialV2Instance, &l_mesRenderer->DefaultMaterialV2Instance);
+		_Utils::Vector_eraseElementEquals(l_mesRenderer->RenderInterface->DefaultMaterialDrawStep->MaterialInstances, &l_mesRenderer->MaterialInstance);
 	}
 
 	void MeshDrawSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
@@ -63,7 +64,7 @@ namespace _GameEngine::_ECS
 			{
 				_Render::ModelProjection l_meshUniform{};
 				l_meshUniform.Model = _ECS::Transform_getLocalToWorldMatrix(l_transform);
-				MeshRenderer_updateMeshDrawUniform(l_mesRenderer, &l_meshUniform);
+				_Render::MaterialInstance_pushUniformBuffer(&l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, &l_meshUniform);
 
 				l_transform->HasChangedThisFrame = false;
 			}
