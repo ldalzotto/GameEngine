@@ -5,20 +5,16 @@
 
 #include "Log/Log.h"
 
-#include "MaterialInstanceKeys.h"
+// #include "MaterialInstanceKeys.h"
 #include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "LoopStep/CameraBufferSetupStep.h"
-#include "Mesh/Mesh.h"
-#include "Texture/TextureSamplers.h"
+// #include "Mesh/Mesh.h"
+// #include "Texture/TextureSamplers.h"
 
 
 namespace _GameEngine::_Render
 {
-	const uint32_t DEFAULTMATERIAL_MODEL_LAYOUT_BINDING = 0;
-	const uint32_t DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING = 1;
-
-	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources);
 
 	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, RenderInterface* p_renderInterface);
 	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface);
@@ -31,14 +27,15 @@ namespace _GameEngine::_Render
 
 	GraphicsPipelineAllocInfo buildPipelineAllocInfo(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface);
 
-	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
+	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface, MaterialAllocInfo* p_materialAllocInfo)
 	{
 		
+		/*
 		ShaderParameter l_modelMatrixShaderParameter{};
 		ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
 
 		UniformBufferParameter* l_modelMatrixParameter = (UniformBufferParameter*)l_modelMatrixShaderParameter.Parameter;
-		l_modelMatrixParameter->Binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
+		l_modelMatrixParameter->Binding = 0;
 		l_modelMatrixParameter->BufferSize = sizeof(ModelProjection);
 		l_modelMatrixParameter->StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
 		l_modelMatrixShaderParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_modelMatrixParameter);
@@ -48,17 +45,26 @@ namespace _GameEngine::_Render
 		ShaderParameter_alloc(&l_imageSamplerShaderParameter, ShaderParameterType::IMAGE_SAMPLER, MATERIALINSTANCE_TEXTURE_KEY);
 
 		ImageSampleParameter* l_imageSampleParameter = (ImageSampleParameter*)l_imageSamplerShaderParameter.Parameter;
-		l_imageSampleParameter->Binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
+		l_imageSampleParameter->Binding = 1;
 		l_imageSampleParameter->TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
 		l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 		l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
 
 		p_defaultMaterial->LocalInputParameters.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
 		p_defaultMaterial->LocalInputParameters.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
+		
+		*/
+		
+		p_defaultMaterial->LocalInputParameters.ShaderParameters = p_materialAllocInfo->ShaderParameters;
 		p_defaultMaterial->InternalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
 
 		{
-			setupExternalResources(&p_defaultMaterial->ExternalResources);
+			DefaultMaterialV2_ExternalResources* l_externalResources = &p_defaultMaterial->ExternalResources;
+			l_externalResources->VertexShader.ShaderPath = p_materialAllocInfo->VertexShader;
+			l_externalResources->VertexShader.ShaderType = ShaderType::VERTEX;
+
+			l_externalResources->FragmentShader.ShaderPath = p_materialAllocInfo->FragmentShader;
+			l_externalResources->FragmentShader.ShaderType = ShaderType::FRAGMENT;
 		}
 
 		{
@@ -96,15 +102,6 @@ namespace _GameEngine::_Render
 
 		GraphicsPipelineAllocInfo l_graphicsPipelineAllocInfo = buildPipelineAllocInfo(p_defaultMaterial, p_renderInterface);
 		GraphicsPipeline_reallocatePipeline(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline, &l_graphicsPipelineAllocInfo);
-	};
-
-	void setupExternalResources(DefaultMaterialV2_ExternalResources* p_externalResources)
-	{
-		p_externalResources->VertexShader.ShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
-		p_externalResources->VertexShader.ShaderType = ShaderType::VERTEX;
-
-		p_externalResources->FragmentShader.ShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
-		p_externalResources->FragmentShader.ShaderType = ShaderType::FRAGMENT;
 	};
 
 	void createDescriptorSetLayout(DefaultMaterialV2_LocalInputParameters* p_localInputParameters, RenderInterface* p_renderInterface)

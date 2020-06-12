@@ -58,7 +58,14 @@ namespace _GameEngine::_Render
 		FinalDrawObjects FinalDrawObjects;
 	};
 
-	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
+	struct MaterialAllocInfo
+	{
+		std::string VertexShader;
+		std::string FragmentShader;
+		std::vector<ShaderParameter> ShaderParameters;
+	};
+
+	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface, MaterialAllocInfo* p_materialAllocInfo);
 	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
 	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
 };
