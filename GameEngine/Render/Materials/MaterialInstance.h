@@ -10,6 +10,7 @@ namespace _GameEngine::_Render
 	struct MeshUniqueKey;
 	struct Texture;
 	struct TextureUniqueKey;
+	struct UniformBufferParameter;
 	struct RenderInterface;
 }
 
@@ -33,18 +34,14 @@ namespace _GameEngine::_Render
 	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface);
 	void MaterialInstance_free(MaterialInstance* p_materialInstance);
 
-	Mesh* MaterialInstance_getMesh(MaterialInstance* p_materialInstance, std::string& p_key);
-	void MaterialInstance_setMesh(MaterialInstance* p_materialInstance, std::string& p_key, MeshUniqueKey* p_meshUniqueKey);
-	
-	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, std::string& p_key);
-	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, std::string& p_key, TextureUniqueKey* p_textureKey);
-
 	struct MeshMaterialInstanceParameter
 	{
 		Mesh* Mesh;
 	};
 
 	void MeshMaterialInstanceParameter_alloc(MaterialInstanceParameter* l_parent, RenderInterface* p_renderInterface, MeshUniqueKey* p_meshUniqueKey);
+	Mesh* MaterialInstance_getMesh(MaterialInstance* p_materialInstance, std::string& p_key);
+	void MaterialInstance_setMesh(MaterialInstance* p_materialInstance, std::string& p_key, MeshUniqueKey* p_meshUniqueKey);
 
 	struct TextureMaterialInstanceParameter
 	{
@@ -52,10 +49,16 @@ namespace _GameEngine::_Render
 	};
 
 	void TextureMaterialInstanceParameter_alloc(MaterialInstanceParameter* l_parent, RenderInterface* p_renderInterface, TextureUniqueKey* p_textureUniqueKey);
+	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, std::string& p_key);
+	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, std::string& p_key, TextureUniqueKey* p_textureKey);
 
-	struct ModelMatrixInstanceParameter
+	struct UniformBufferInstanceParameter
 	{
-		VulkanBuffer ModelMatrixBuffer;
+		VulkanBuffer UniformBuffer;
 	};
 
+	void UniformBufferInstanceParameter_alloc(MaterialInstanceParameter* l_parent, RenderInterface* p_renderInterface, UniformBufferParameter* p_uniformBufferParameter);
+	VulkanBuffer* MaterialInstance_getUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key);
+	void MaterialInstance_setUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key, UniformBufferParameter* p_uniformBufferParameter);
+	void MaterialInstance_pushUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key, void* p_data);
 }

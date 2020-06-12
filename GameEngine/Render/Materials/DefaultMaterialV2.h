@@ -29,6 +29,11 @@ namespace _GameEngine::_Render
 		Texture* DepthBufferTexture;
 	};
 
+	struct ModelProjection
+	{
+		glm::mat4x4 Model;
+	};
+
 	struct DefaultMaterialV2_LocalInputParameters
 	{
 		VertexInput VertexInput;

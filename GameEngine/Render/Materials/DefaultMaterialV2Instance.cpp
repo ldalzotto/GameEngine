@@ -17,10 +17,6 @@
 
 namespace _GameEngine::_Render
 {
-
-	void createModelMatrixBuffer(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device);
-	void freeModelMatrixBuffer(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device);
-
 	void createDescriptorSet(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device);
 	void updateDescriptorSet(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device);
 	void freeDescriptorSet(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device);
@@ -48,7 +44,9 @@ namespace _GameEngine::_Render
 			MaterialInstance_setTexture(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_TEXTURE_KEY, &l_textureUniqueKey);
 		}
 		
-		createModelMatrixBuffer(p_defaultMaterialV2Instance, p_renderInterface->Device);
+		{
+			MaterialInstance_setUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_MODEL_BUFFER, &p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial->LocalInputParameters.ModelMatrix);
+		}
 
 		createDescriptorSet(p_defaultMaterialV2Instance, p_renderInterface->Device);
 		updateDescriptorSet(p_defaultMaterialV2Instance, p_renderInterface->Device);
@@ -59,24 +57,7 @@ namespace _GameEngine::_Render
 		{
 			MaterialInstance_free(&p_defaultMaterialV2Instance->MaterialInstance);
 		}
-
-		freeModelMatrixBuffer(p_defaultMaterialV2Instance, p_renderInterface->Device);
 		freeDescriptorSet(p_defaultMaterialV2Instance, p_renderInterface->Device);
-	};
-
-	void DefaultMaterialV2Instance_setModelMatrix(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, RenderInterface* p_renderInterface, ModelProjection* p_modelProjection)
-	{
-		VulkanBuffer_pushToGPU(&p_defaultMaterialV2Instance->ModelMatrixBuffer, p_renderInterface->Device, p_modelProjection, sizeof(ModelProjection));
-	};
-
-	void createModelMatrixBuffer(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device)
-	{
-		p_defaultMaterialV2Instance->ModelMatrixBuffer = UniformBufferParameter_allocVulkanBuffer(&p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.ModelMatrix, p_device);
-	};
-
-	void freeModelMatrixBuffer(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device)
-	{
-		_Render::VulkanBuffer_free(&p_defaultMaterialV2Instance->ModelMatrixBuffer, p_device);
 	};
 
 	void updateDescriptorSet(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device)
@@ -86,7 +67,7 @@ namespace _GameEngine::_Render
 		VkDescriptorBufferInfo l_decriptorBufferInfo{};
 		l_writeDescirptorSets[0] = UniformBufferParameter_buildWriteDescriptorSet(
 			&p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.ModelMatrix,
-			&p_defaultMaterialV2Instance->ModelMatrixBuffer,
+			MaterialInstance_getUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_MODEL_BUFFER),
 			&l_decriptorBufferInfo,
 			p_defaultMaterialV2Instance->MaterialDescriptorSet);
 

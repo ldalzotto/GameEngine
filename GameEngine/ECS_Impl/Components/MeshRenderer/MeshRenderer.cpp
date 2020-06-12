@@ -1,6 +1,8 @@
 #include "MeshRenderer.h"
 
 #include "RenderInterface.h"
+#include "Materials/MaterialInstanceKeys.h"
+#include "Materials/DefaultMaterialV2.h"
 
 namespace _GameEngine::_ECS
 {
@@ -25,7 +27,7 @@ namespace _GameEngine::_ECS
 
 	void MeshRenderer_updateMeshDrawUniform(MeshRenderer* p_meshRenderer, _Render::ModelProjection* l_meshUniformObject)
 	{
-		_Render::DefaultMaterialV2Instance_setModelMatrix(&p_meshRenderer->DefaultMaterialV2Instance, p_meshRenderer->RenderInterface,  l_meshUniformObject);
+		_Render::MaterialInstance_pushUniformBuffer(&p_meshRenderer->DefaultMaterialV2Instance.MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, l_meshUniformObject);
 	};
 
 	void MeshRenderer_free(void* p_meshRenderer, void* p_null)

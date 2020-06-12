@@ -12,6 +12,7 @@
 
 #include "RenderInterface.h"
 #include "LoopStep/DefaultMaterialDrawStep.h"
+#include "Materials/DefaultMaterialV2.h"
 
 namespace _GameEngine::_ECS
 {

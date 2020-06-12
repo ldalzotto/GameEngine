@@ -8,6 +8,7 @@
 namespace _GameEngine::_Render
 {
 	struct RenderInterface;
+	struct ModelProjection;
 }
 
 namespace _GameEngine::_ECS

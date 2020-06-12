@@ -33,7 +33,7 @@ namespace _GameEngine::_Render
 	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
 		p_defaultMaterial->LocalInputParameters.ModelMatrix.Binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
-		p_defaultMaterial->LocalInputParameters.ModelMatrix.BufferSize = sizeof(Vertex);
+		p_defaultMaterial->LocalInputParameters.ModelMatrix.BufferSize = sizeof(ModelProjection);
 		p_defaultMaterial->LocalInputParameters.ModelMatrix.StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
 
 		p_defaultMaterial->LocalInputParameters.BaseTexture.Binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;

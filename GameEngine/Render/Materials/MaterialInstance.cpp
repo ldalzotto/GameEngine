@@ -6,6 +6,7 @@
 #include "Resources/MeshResourceProvider.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Mesh/Mesh.h"
+#include "Shader/ShaderParameter.h"
 
 namespace _GameEngine::_Render
 {
@@ -139,5 +140,60 @@ namespace _GameEngine::_Render
 		TextureMaterialInstanceParameter_alloc(l_materialInstanceParameter, p_materialInstance->RenderInterface, p_textureKey);
 		l_materialInstanceParameter->Key = l_hash;
 		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
+	};
+
+	
+	void UniformBufferInstanceParameter_free(MaterialInstanceParameter* p_materialInstanceParameter, RenderInterface* p_renderInterface)
+	{
+		UniformBufferInstanceParameter* l_uniformBufferParameter = (UniformBufferInstanceParameter*)p_materialInstanceParameter->Parameter;
+		VulkanBuffer_free(&l_uniformBufferParameter->UniformBuffer, p_renderInterface->Device);
+	};
+
+	void UniformBufferInstanceParameter_alloc(MaterialInstanceParameter* l_parent, RenderInterface* p_renderInterface, UniformBufferParameter* p_uniformBufferParameter)
+	{
+		UniformBufferInstanceParameter* l_uniformBufferInstanceParameter = (UniformBufferInstanceParameter*)calloc(1, sizeof(UniformBufferInstanceParameter));
+
+		l_parent->Parameter = l_uniformBufferInstanceParameter;
+		l_parent->FreeCallback = UniformBufferInstanceParameter_free;
+
+		l_uniformBufferInstanceParameter->UniformBuffer = UniformBufferParameter_allocVulkanBuffer(p_uniformBufferParameter, p_renderInterface->Device);
+	};
+
+	VulkanBuffer* MaterialInstance_getUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key)
+	{
+		size_t l_hash = std::hash<std::string>()(p_key);
+		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		if (l_foundParameter)
+		{
+			return &((UniformBufferInstanceParameter*)(*l_foundParameter)->Parameter)->UniformBuffer;
+		}
+		return nullptr;
+	};
+	
+	void MaterialInstance_setUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key, UniformBufferParameter* p_uniformBufferParameter)
+	{
+		size_t l_hash = std::hash<std::string>()(p_key);
+		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		if (l_foundParameter)
+		{
+			MaterialInstanceParameter_free(l_foundParameter, p_materialInstance->RenderInterface);
+			p_materialInstance->Parameters.erase(MaterialInstanceParameter_vectorFind, &l_hash);
+		}
+
+		MaterialInstanceParameter* l_materialInstanceParameter = (MaterialInstanceParameter*)calloc(1, sizeof(MaterialInstanceParameter));
+		UniformBufferInstanceParameter_alloc(l_materialInstanceParameter, p_materialInstance->RenderInterface, p_uniformBufferParameter);
+		l_materialInstanceParameter->Key = l_hash;
+		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
+	};
+
+	void MaterialInstance_pushUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key, void* p_data)
+	{
+		size_t l_hash = std::hash<std::string>()(p_key);
+		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		if (l_foundParameter)
+		{
+			UniformBufferInstanceParameter* l_uniformBufferParameter = (UniformBufferInstanceParameter*) (*l_foundParameter)->Parameter;
+			VulkanBuffer_pushToGPU(&l_uniformBufferParameter->UniformBuffer, p_materialInstance->RenderInterface->Device, p_data, l_uniformBufferParameter->UniformBuffer.BufferAllocInfo.Size);
+		}
 	};
 }
