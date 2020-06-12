@@ -5,15 +5,37 @@
 
 namespace _GameEngine::_Render
 {
+	void ShaderParameter_alloc(ShaderParameter* p_shaderParameter, ShaderParameterType p_shaderParameterType, std::string& p_keyName)
+	{
+		p_shaderParameter->Type = p_shaderParameterType;
+		p_shaderParameter->KeyName = p_keyName;
+
+		switch (p_shaderParameter->Type)
+		{
+		case ShaderParameterType::UNIFORM_BUFFER:
+			p_shaderParameter->Parameter = malloc(sizeof(UniformBufferParameter));
+			break;
+		case ShaderParameterType::IMAGE_SAMPLER:
+			p_shaderParameter->Parameter = malloc(sizeof(ImageSampleParameter));
+			break;
+		}
+	};
+
+	void ShaderParameter_free(ShaderParameter* p_shaderParameter)
+	{
+		free(p_shaderParameter->Parameter);
+		p_shaderParameter->Parameter = nullptr;
+	};
+
 	VkDescriptorSetLayoutBinding UniformBufferParameter_buildLayoutBinding(UniformBufferParameter* p_uniformBufferParameter)
 	{
-		VkDescriptorSetLayoutBinding l_modelLayoutBinding{};
-		l_modelLayoutBinding.binding = p_uniformBufferParameter->Binding;
-		l_modelLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		l_modelLayoutBinding.descriptorCount = 1;
-		l_modelLayoutBinding.stageFlags = p_uniformBufferParameter->StageFlag;
-		l_modelLayoutBinding.pImmutableSamplers = nullptr;
-		return std::move(l_modelLayoutBinding);
+		VkDescriptorSetLayoutBinding l_layoutBinding{};
+		l_layoutBinding.binding = p_uniformBufferParameter->Binding;
+		l_layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		l_layoutBinding.descriptorCount = 1;
+		l_layoutBinding.stageFlags = p_uniformBufferParameter->StageFlag;
+		l_layoutBinding.pImmutableSamplers = nullptr;
+		return l_layoutBinding;
 	};
 
 	VulkanBuffer UniformBufferParameter_allocVulkanBuffer(UniformBufferParameter* p_uniformBufferParameter, Device* p_device)
@@ -50,13 +72,13 @@ namespace _GameEngine::_Render
 
 	VkDescriptorSetLayoutBinding ImageSampleParameter_buildLayoutBinding(ImageSampleParameter* p_imageSampleParameter)
 	{
-		VkDescriptorSetLayoutBinding l_textureSamplerBinding{};
-		l_textureSamplerBinding.binding = p_imageSampleParameter->Binding;
-		l_textureSamplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		l_textureSamplerBinding.descriptorCount = 1;
-		l_textureSamplerBinding.stageFlags = p_imageSampleParameter->StageFlag;
-		l_textureSamplerBinding.pImmutableSamplers = nullptr;
-		return std::move(l_textureSamplerBinding);
+		VkDescriptorSetLayoutBinding l_layoutBinding{};
+		l_layoutBinding.binding = p_imageSampleParameter->Binding;
+		l_layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		l_layoutBinding.descriptorCount = 1;
+		l_layoutBinding.stageFlags = p_imageSampleParameter->StageFlag;
+		l_layoutBinding.pImmutableSamplers = nullptr;
+		return l_layoutBinding;
 	};
 
 	VkWriteDescriptorSet ImageSampleParameter_buildWriteDescriptorSet(ImageSampleParameter* p_imageSampleParameter, Texture* p_texture, VkDescriptorImageInfo* p_descriptorImageInfo, VkDescriptorSet p_descriptorSet)

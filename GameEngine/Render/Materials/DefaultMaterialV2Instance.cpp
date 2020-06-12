@@ -30,22 +30,33 @@ namespace _GameEngine::_Render
 		{
 			MaterialInstance_init(&p_defaultMaterialV2Instance->MaterialInstance, p_renderInterface);
 		}
-		
+
 		{
 			MeshUniqueKey l_meshKey{};
 			l_meshKey.MeshAssetPath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->MeshPath;
 			MaterialInstance_setMesh(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_MESH_KEY, &l_meshKey);
 		}
 
+
+		for (ShaderParameter& l_shaderParameter : p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial->LocalInputParameters.ShaderParameters)
 		{
-		
-			TextureUniqueKey l_textureUniqueKey{};
-			l_textureUniqueKey.TexturePath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->Texturepath;
-			MaterialInstance_setTexture(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_TEXTURE_KEY, &l_textureUniqueKey);
-		}
-		
-		{
-			MaterialInstance_setUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_MODEL_BUFFER, &p_defaultMaterialV2InstanceAllocInfo->DefaultMaterial->LocalInputParameters.ModelMatrix);
+			switch (l_shaderParameter.Type)
+			{
+				case ShaderParameterType::UNIFORM_BUFFER:
+				{
+					UniformBufferParameter* l_uniformBufferParameter = (UniformBufferParameter*)l_shaderParameter.Parameter;
+					MaterialInstance_setUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName, l_uniformBufferParameter);
+				}
+				break;
+				case ShaderParameterType::IMAGE_SAMPLER:
+				{
+					ImageSampleParameter* l_imageSamplerParameter = (ImageSampleParameter*)l_shaderParameter.Parameter;
+					TextureUniqueKey l_textureUniqueKey{};
+					l_textureUniqueKey.TexturePath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->Texturepath;
+					MaterialInstance_setTexture(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName, &l_textureUniqueKey);
+				}
+				break;
+			}
 		}
 
 		createDescriptorSet(p_defaultMaterialV2Instance, p_renderInterface->Device);
@@ -62,21 +73,43 @@ namespace _GameEngine::_Render
 
 	void updateDescriptorSet(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, Device* p_device)
 	{
-		std::vector<VkWriteDescriptorSet> l_writeDescirptorSets(2);
+		std::vector<VkWriteDescriptorSet> l_writeDescirptorSets;
+		std::vector<VkDescriptorBufferInfo> l_descriptorBufferInfo(p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.ShaderParameters.size());
+		std::vector<VkDescriptorImageInfo> l_descriptorImageInfo(p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.ShaderParameters.size());
 
-		VkDescriptorBufferInfo l_decriptorBufferInfo{};
-		l_writeDescirptorSets[0] = UniformBufferParameter_buildWriteDescriptorSet(
-			&p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.ModelMatrix,
-			MaterialInstance_getUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_MODEL_BUFFER),
-			&l_decriptorBufferInfo,
-			p_defaultMaterialV2Instance->MaterialDescriptorSet);
+		size_t i = 0;
+		for (ShaderParameter& l_shaderParameter : p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.ShaderParameters)
+		{
+			switch (l_shaderParameter.Type)
+			{
+			case ShaderParameterType::UNIFORM_BUFFER:
+			{
+				UniformBufferParameter* l_uniformBufferParameter = (UniformBufferParameter*)l_shaderParameter.Parameter;
 
-		VkDescriptorImageInfo l_descriptorImageInfo{};
-		l_writeDescirptorSets[1] = ImageSampleParameter_buildWriteDescriptorSet(
-			&p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.BaseTexture,
-			MaterialInstance_getTexture(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_TEXTURE_KEY),
-			&l_descriptorImageInfo,
-			p_defaultMaterialV2Instance->MaterialDescriptorSet);
+				VkWriteDescriptorSet l_writeDescriptorSet = UniformBufferParameter_buildWriteDescriptorSet(
+					l_uniformBufferParameter,
+					MaterialInstance_getUniformBuffer(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName),
+					&l_descriptorBufferInfo.at(i),
+					p_defaultMaterialV2Instance->MaterialDescriptorSet);
+				l_writeDescirptorSets.emplace_back(l_writeDescriptorSet);
+			}
+			break;
+			case ShaderParameterType::IMAGE_SAMPLER:
+			{
+				ImageSampleParameter* l_imageSamplerParameter = (ImageSampleParameter*)l_shaderParameter.Parameter;
+
+				VkWriteDescriptorSet l_writeDescriptorSet = ImageSampleParameter_buildWriteDescriptorSet(
+					l_imageSamplerParameter,
+					MaterialInstance_getTexture(&p_defaultMaterialV2Instance->MaterialInstance, l_shaderParameter.KeyName),
+					&l_descriptorImageInfo.at(i),
+					p_defaultMaterialV2Instance->MaterialDescriptorSet);
+				l_writeDescirptorSets.emplace_back(l_writeDescriptorSet);
+			}
+			break;
+			}
+
+			i += 1;
+		}
 
 		vkUpdateDescriptorSets(p_device->LogicalDevice.LogicalDevice, l_writeDescirptorSets.size(), l_writeDescirptorSets.data(), 0, nullptr);
 	};

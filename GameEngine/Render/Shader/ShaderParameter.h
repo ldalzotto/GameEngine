@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 #include "vulkan/vulkan.h"
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
@@ -13,6 +14,23 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
+	enum class ShaderParameterType : uint8_t
+	{
+		UNIFORM_BUFFER,
+		IMAGE_SAMPLER
+	};
+
+	struct ShaderParameter
+	{
+		ShaderParameterType Type;
+		std::string KeyName;
+		VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding;
+		void* Parameter;
+	};
+
+	void ShaderParameter_alloc(ShaderParameter* p_shaderParameter, ShaderParameterType p_shaderParameterType, std::string& p_keyName);
+	void ShaderParameter_free(ShaderParameter* p_shaderParameter);
+
 	struct UniformBufferParameter
 	{
 		uint32_t Binding;
@@ -26,7 +44,7 @@ namespace _GameEngine::_Render
 	
 	struct ImageSampleParameter
 	{
-		uint32_t Binding;
+		uint32_t Binding;	
 		VkShaderStageFlags StageFlag;
 		VkSampler TextureSampler;
 	};

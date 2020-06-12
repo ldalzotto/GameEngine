@@ -37,9 +37,9 @@ namespace _GameEngine::_Render
 	struct DefaultMaterialV2_LocalInputParameters
 	{
 		VertexInput VertexInput;
-		UniformBufferParameter ModelMatrix;
-		ImageSampleParameter BaseTexture;
 
+		std::vector<ShaderParameter> ShaderParameters;
+		
 		DescriptorSetLayout DescriptorSetLayout;
 		DescriptorPool DescriptorPool;
 	};

@@ -37,6 +37,7 @@ namespace _GameEngineEditor
 			{
 				UniformBufferParameter_buildLayoutBinding(&l_parameters->ModelMatrixParameter)
 			};
+
 			DescriptorSetLayoutAllocInfo l_descriptorLayourAllocInfo{};
 			l_descriptorLayourAllocInfo.LayoutBindings = &l_bindings;
 			DescriptorSetLayout_alloc(&l_parameters->DescriptorSetLayout, p_renderInterface->Device, &l_descriptorLayourAllocInfo);

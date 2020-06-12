@@ -5,6 +5,7 @@
 
 #include "Log/Log.h"
 
+#include "MaterialInstanceKeys.h"
 #include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "LoopStep/CameraBufferSetupStep.h"
@@ -32,14 +33,28 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
-		p_defaultMaterial->LocalInputParameters.ModelMatrix.Binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
-		p_defaultMaterial->LocalInputParameters.ModelMatrix.BufferSize = sizeof(ModelProjection);
-		p_defaultMaterial->LocalInputParameters.ModelMatrix.StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
+		
+		ShaderParameter l_modelMatrixShaderParameter{};
+		ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
 
-		p_defaultMaterial->LocalInputParameters.BaseTexture.Binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
-		p_defaultMaterial->LocalInputParameters.BaseTexture.TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
-		p_defaultMaterial->LocalInputParameters.BaseTexture.StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
+		UniformBufferParameter* l_modelMatrixParameter = (UniformBufferParameter*)l_modelMatrixShaderParameter.Parameter;
+		l_modelMatrixParameter->Binding = DEFAULTMATERIAL_MODEL_LAYOUT_BINDING;
+		l_modelMatrixParameter->BufferSize = sizeof(ModelProjection);
+		l_modelMatrixParameter->StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
+		l_modelMatrixShaderParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_modelMatrixParameter);
+		
 
+		ShaderParameter l_imageSamplerShaderParameter{};
+		ShaderParameter_alloc(&l_imageSamplerShaderParameter, ShaderParameterType::IMAGE_SAMPLER, MATERIALINSTANCE_TEXTURE_KEY);
+
+		ImageSampleParameter* l_imageSampleParameter = (ImageSampleParameter*)l_imageSamplerShaderParameter.Parameter;
+		l_imageSampleParameter->Binding = DEFAULTMATERIAL_TEXTURE_LAYOUT_BINDING;
+		l_imageSampleParameter->TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
+		l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
+		l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
+
+		p_defaultMaterial->LocalInputParameters.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
+		p_defaultMaterial->LocalInputParameters.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
 		p_defaultMaterial->InternalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
 
 		{
@@ -63,6 +78,12 @@ namespace _GameEngine::_Render
 
 	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
+		for (ShaderParameter& l_shaderParameter : p_defaultMaterial->LocalInputParameters.ShaderParameters)
+		{
+			ShaderParameter_free(&l_shaderParameter);
+		}
+		p_defaultMaterial->LocalInputParameters.ShaderParameters.clear();
+
 		GraphicsPipeline_free(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline);
 		freePipelineLayout(p_defaultMaterial, p_renderInterface);
 		freeDescriptorPool(p_defaultMaterial, p_renderInterface);
@@ -90,11 +111,11 @@ namespace _GameEngine::_Render
 	{
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
 
-		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings
+		std::vector<VkDescriptorSetLayoutBinding> l_defaultMaterialDescriptorSetLayoutBindings;
+		for (ShaderParameter& l_shaderParameter : p_localInputParameters->ShaderParameters)
 		{
-			UniformBufferParameter_buildLayoutBinding(&p_localInputParameters->ModelMatrix),
-			ImageSampleParameter_buildLayoutBinding(&p_localInputParameters->BaseTexture)
-		};
+			l_defaultMaterialDescriptorSetLayoutBindings.emplace_back(l_shaderParameter.DescriptorSetLayoutBinding);
+		}
 
 		l_descriptorSetLayoutAllocInfo.LayoutBindings = &l_defaultMaterialDescriptorSetLayoutBindings;
 
@@ -157,7 +178,7 @@ namespace _GameEngine::_Render
 		l_graphicsPipelineAllocInfo.VertexInput = &p_defaultMaterial->LocalInputParameters.VertexInput;
 		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.Device = p_renderInterface->Device;
 		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.SwapChain = p_renderInterface->SwapChain;
-	
+
 		if (p_defaultMaterial->InternalResources.DepthBufferTexture != nullptr)
 		{
 			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.DepthTexture = p_defaultMaterial->InternalResources.DepthBufferTexture;
