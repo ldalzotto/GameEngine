@@ -48,7 +48,7 @@ namespace _GameEngine::_Render
 
 		for (DefaultMaterialV2Instance* l_materialInstance : p_meshDrawStep->DefaultMaterialV2Instance)
 		{
-			Mesh* l_mesh = MaterialInstance_getMesh(&l_materialInstance->MaterialInstance, MATERIALISTANCE_MESH_KEY);
+			Mesh* l_mesh = MaterialInstance_getMesh(&l_materialInstance->MaterialInstance, MATERIALINSTANCE_MESH_KEY);
 			VkBuffer l_vertexBuffers[] = { l_mesh->VertexBuffer.Buffer };
 			VkDeviceSize l_offsets[] = { 0 };
 			vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);

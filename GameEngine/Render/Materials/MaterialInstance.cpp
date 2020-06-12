@@ -4,6 +4,7 @@
 
 #include "RenderInterface.h"
 #include "Resources/MeshResourceProvider.h"
+#include "Resources/TextureResourceProvider.h"
 #include "Mesh/Mesh.h"
 
 namespace _GameEngine::_Render
@@ -69,7 +70,7 @@ namespace _GameEngine::_Render
 			MaterialInstanceParameter_free(l_foundMaterialInstanceParameter, p_materialInstance->RenderInterface);
 			p_materialInstance->Parameters.erase(MaterialInstanceParameter_vectorFind, &l_key);
 		}
-		
+
 		MaterialInstanceParameter* l_materialInstanceParameter = (MaterialInstanceParameter*)calloc(1, sizeof(MaterialInstanceParameter));
 		MeshMaterialInstanceParameter_alloc(l_materialInstanceParameter, p_materialInstance->RenderInterface, p_meshUniqueKey);
 		l_materialInstanceParameter->Key = l_key;
@@ -95,18 +96,48 @@ namespace _GameEngine::_Render
 		l_meshMaterialInstanceParameter->Mesh = MeshResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.MeshResourceProvider, &l_meshResourceUseInfo);
 	};
 
-	/*
-	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, std::string& p_key)
+
+	void TextureMaterialInstanceParameter_free(MaterialInstanceParameter* p_materialInstanceParameter, RenderInterface* p_renderInterface)
 	{
-		if (p_materialInstance->Parameters.contains(p_key))
-		{
-			return (Texture*)p_materialInstance->Parameters.at(p_key);
-		}
+		TextureMaterialInstanceParameter* l_textureParameter = (TextureMaterialInstanceParameter*)p_materialInstanceParameter->Parameter;
+		TextureResourceProvider_ReleaseResource(p_renderInterface->ResourceProvidersInterface.TextureResourceProvider, &l_textureParameter->Texture->TextureUniqueKey);
+		l_textureParameter->Texture = nullptr;
 	};
 
-	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, std::string& p_key, Texture* p_texture)
+	void TextureMaterialInstanceParameter_alloc(MaterialInstanceParameter* l_parent, RenderInterface* p_renderInterface, TextureUniqueKey* p_textureUniqueKey)
 	{
-		p_materialInstance->Parameters.emplace(p_key, p_texture);
+		TextureMaterialInstanceParameter* l_textureMaterialInstanceParameter = (TextureMaterialInstanceParameter*)calloc(1, sizeof(TextureMaterialInstanceParameter));
+
+		l_parent->Parameter = l_textureMaterialInstanceParameter;
+		l_parent->FreeCallback = TextureMaterialInstanceParameter_free;
+
+		l_textureMaterialInstanceParameter->Texture = TextureResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.TextureResourceProvider, p_textureUniqueKey);
 	};
-	*/
+
+	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, std::string& p_key)
+	{
+		size_t l_hash = std::hash<std::string>()(p_key);
+		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		if (l_foundParameter)
+		{
+			return ((TextureMaterialInstanceParameter*)(*l_foundParameter)->Parameter)->Texture;
+		}
+		return nullptr;
+	};
+
+	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, std::string& p_key, TextureUniqueKey* p_textureKey)
+	{
+		size_t l_hash = std::hash<std::string>()(p_key);
+		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		if (l_foundParameter)
+		{
+			MaterialInstanceParameter_free(l_foundParameter, p_materialInstance->RenderInterface);
+			p_materialInstance->Parameters.erase(MaterialInstanceParameter_vectorFind, &l_hash);
+		}
+
+		MaterialInstanceParameter* l_materialInstanceParameter = (MaterialInstanceParameter*)calloc(1, sizeof(MaterialInstanceParameter));
+		TextureMaterialInstanceParameter_alloc(l_materialInstanceParameter, p_materialInstance->RenderInterface, p_textureKey);
+		l_materialInstanceParameter->Key = l_hash;
+		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
+	};
 }

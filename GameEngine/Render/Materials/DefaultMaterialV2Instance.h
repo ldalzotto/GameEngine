@@ -11,23 +11,15 @@ namespace _GameEngine::_Render
 {
 	struct RenderInterface;
 	struct DefaultMaterialV2;
-	struct Mesh;
-	struct Texture;
 }
 
 namespace _GameEngine::_Render
 {
-	struct DefaultMaterialV2Drawer_ExternalResources
-	{
-		Texture* Texture;
-	};
-
 	struct DefaultMaterialV2Instance
 	{
 		DefaultMaterialV2* _DefaultMaterial;
 
 		MaterialInstance MaterialInstance;
-		DefaultMaterialV2Drawer_ExternalResources ExternalResources;
 		VulkanBuffer ModelMatrixBuffer;
 		VkDescriptorSet MaterialDescriptorSet;
 	};

@@ -11,9 +11,9 @@
 #include "MaterialInstanceKeys.h"
 
 #include "LoopStep/DefaultMaterialDrawStep.h"
-#include "Resources/TextureResourceProvider.h"
 
 #include "Mesh/Mesh.h"
+#include "Texture/Texture.h"
 
 namespace _GameEngine::_Render
 {
@@ -38,15 +38,14 @@ namespace _GameEngine::_Render
 		{
 			MeshUniqueKey l_meshKey{};
 			l_meshKey.MeshAssetPath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->MeshPath;
-			MaterialInstance_setMesh(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALISTANCE_MESH_KEY, &l_meshKey);
+			MaterialInstance_setMesh(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_MESH_KEY, &l_meshKey);
 		}
 
 		{
+		
 			TextureUniqueKey l_textureUniqueKey{};
 			l_textureUniqueKey.TexturePath = p_defaultMaterialV2InstanceAllocInfo->DefaultMaterialV2Instance_InputAssets->Texturepath;
-		
-			p_defaultMaterialV2Instance->ExternalResources.Texture =
-				TextureResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.TextureResourceProvider, &l_textureUniqueKey);
+			MaterialInstance_setTexture(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_TEXTURE_KEY, &l_textureUniqueKey);
 		}
 		
 		createModelMatrixBuffer(p_defaultMaterialV2Instance, p_renderInterface->Device);
@@ -63,7 +62,6 @@ namespace _GameEngine::_Render
 
 		freeModelMatrixBuffer(p_defaultMaterialV2Instance, p_renderInterface->Device);
 		freeDescriptorSet(p_defaultMaterialV2Instance, p_renderInterface->Device);
-		TextureResourceProvider_ReleaseResource(p_renderInterface->ResourceProvidersInterface.TextureResourceProvider, &p_defaultMaterialV2Instance->ExternalResources.Texture->TextureUniqueKey);
 	};
 
 	void DefaultMaterialV2Instance_setModelMatrix(DefaultMaterialV2Instance* p_defaultMaterialV2Instance, RenderInterface* p_renderInterface, ModelProjection* p_modelProjection)
@@ -95,7 +93,7 @@ namespace _GameEngine::_Render
 		VkDescriptorImageInfo l_descriptorImageInfo{};
 		l_writeDescirptorSets[1] = ImageSampleParameter_buildWriteDescriptorSet(
 			&p_defaultMaterialV2Instance->_DefaultMaterial->LocalInputParameters.BaseTexture,
-			p_defaultMaterialV2Instance->ExternalResources.Texture,
+			MaterialInstance_getTexture(&p_defaultMaterialV2Instance->MaterialInstance, MATERIALINSTANCE_TEXTURE_KEY),
 			&l_descriptorImageInfo,
 			p_defaultMaterialV2Instance->MaterialDescriptorSet);
 

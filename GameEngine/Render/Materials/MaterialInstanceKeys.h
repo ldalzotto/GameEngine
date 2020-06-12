@@ -4,5 +4,6 @@
 
 namespace _GameEngine::_Render
 {
-	extern std::string MATERIALISTANCE_MESH_KEY;
+	extern std::string MATERIALINSTANCE_MESH_KEY;
+	extern std::string MATERIALINSTANCE_TEXTURE_KEY;
 }

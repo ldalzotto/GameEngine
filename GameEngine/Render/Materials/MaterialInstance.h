@@ -6,10 +6,11 @@
 
 namespace _GameEngine::_Render
 {
+	struct Mesh;
 	struct MeshUniqueKey;
 	struct Texture;
+	struct TextureUniqueKey;
 	struct RenderInterface;
-	struct Mesh;
 }
 
 namespace _GameEngine::_Render
@@ -35,10 +36,8 @@ namespace _GameEngine::_Render
 	Mesh* MaterialInstance_getMesh(MaterialInstance* p_materialInstance, std::string& p_key);
 	void MaterialInstance_setMesh(MaterialInstance* p_materialInstance, std::string& p_key, MeshUniqueKey* p_meshUniqueKey);
 	
-	/*
 	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, std::string& p_key);
-	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, std::string& p_key, Texture* p_texture);
-	*/
+	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, std::string& p_key, TextureUniqueKey* p_textureKey);
 
 	struct MeshMaterialInstanceParameter
 	{
@@ -51,6 +50,8 @@ namespace _GameEngine::_Render
 	{
 		Texture* Texture;
 	};
+
+	void TextureMaterialInstanceParameter_alloc(MaterialInstanceParameter* l_parent, RenderInterface* p_renderInterface, TextureUniqueKey* p_textureUniqueKey);
 
 	struct ModelMatrixInstanceParameter
 	{

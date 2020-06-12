@@ -2,5 +2,6 @@
 
 namespace _GameEngine::_Render
 {
-	std::string MATERIALISTANCE_MESH_KEY = "Mesh";
+	std::string MATERIALINSTANCE_MESH_KEY = "Mesh";
+	std::string MATERIALINSTANCE_TEXTURE_KEY = "Texture";
 }
