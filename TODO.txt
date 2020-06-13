@@ -8,9 +8,11 @@
 
 [X] # Create transform hierarchy.
 
-# Simplifying the GraphicsPipeline creation (like texture).
+[X] # Simplifying the GraphicsPipeline creation (like texture).
 
 # Having multiple materials and instance that are rendered in a given order.
+	## Removing Material instance value from MeshRenderer ? Only a pointer is necessary (and allocate the instance on the heap).
+	## How to handle clearing value ? Is it possible to create a render pass only for clearing at the beginning ?
 	## As a test, rendering the same model twice that have different materials.
 
 # The last task will allow us to easily render gizmos for the editor.
