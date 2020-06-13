@@ -44,7 +44,7 @@ namespace _GameEngine::_Render
 		{
 			for (MaterialInstance* l_materialInstance : l_materialEntry.second)
 			{
-				MaterialInstance_free(l_materialInstance);
+				MaterialInstance_free(&l_materialInstance);
 			}
 
 			MaterialResourceProvider_ReleaseResource(p_materialInstanceContainer->RenderInterface->ResourceProvidersInterface.MaterialResourceProvider, &l_materialEntry.first->MaterialUniqueKey);

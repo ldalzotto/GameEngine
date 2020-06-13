@@ -3,13 +3,13 @@
 #include "ECS/Component.h"
 #include "glm/glm.hpp"
 
-#include "Materials/MaterialInstance.h"
 #include "Materials/Material.h"
 
 namespace _GameEngine::_Render
 {
 	struct RenderInterface;
 	struct ModelProjection;
+	struct MaterialInstance;
 }
 
 namespace _GameEngine::_ECS
@@ -20,7 +20,7 @@ namespace _GameEngine::_ECS
 	{
 		_Render::RenderInterface* RenderInterface;
 		
-		_Render::MaterialInstance MaterialInstance;
+		_Render::MaterialInstance* MaterialInstance;
 		_Render::MaterialUniqueKey MaterialUniqueKey;
 
 		_Utils::Subject OnComponentDetached;

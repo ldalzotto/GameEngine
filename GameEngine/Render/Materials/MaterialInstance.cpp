@@ -32,28 +32,34 @@ namespace _GameEngine::_Render
 	void updateDescriptorSet(MaterialInstance* p_materialInstance);
 	void freeDescriptorSet(MaterialInstance* p_materialInstance);
 
-	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo)
+	MaterialInstance* MaterialInstance_alloc(RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo)
 	{
-		p_materialInstance->RenderInterface = p_renderInterface;
-		p_materialInstance->SourceMaterial = p_materialInstanceInitInfo->SourceMaterial;
-		p_materialInstance->Parameters.alloc(4);
+		MaterialInstance* l_materialInstance = new MaterialInstance();
+		l_materialInstance->RenderInterface = p_renderInterface;
+		l_materialInstance->SourceMaterial = p_materialInstanceInitInfo->SourceMaterial;
+		l_materialInstance->Parameters.alloc(4);
 
-		populateParameters(p_materialInstance, &p_materialInstanceInitInfo->MaterialInstanceInputParameters);
-		createDescriptorSet(p_materialInstance);
-		updateDescriptorSet(p_materialInstance);
+		populateParameters(l_materialInstance, &p_materialInstanceInitInfo->MaterialInstanceInputParameters);
+		createDescriptorSet(l_materialInstance);
+		updateDescriptorSet(l_materialInstance);
+
+		return l_materialInstance;
 	};
 
-	void MaterialInstance_free(MaterialInstance* p_materialInstance)
+	void MaterialInstance_free(MaterialInstance** p_materialInstance)
 	{
-		freeDescriptorSet(p_materialInstance);
+		MaterialInstance* l_materialInstance = *p_materialInstance;
+		freeDescriptorSet(l_materialInstance);
 
-		for (size_t i = 0; i < p_materialInstance->Parameters.size(); i++)
+		for (size_t i = 0; i < l_materialInstance->Parameters.size(); i++)
 		{
-			MaterialInstanceParameter* l_materialInstanceParameter = *p_materialInstance->Parameters.at(i);
-			MaterialInstanceParameter_free(&l_materialInstanceParameter, p_materialInstance->RenderInterface);
+			MaterialInstanceParameter* l_materialInstanceParameter = *l_materialInstance->Parameters.at(i);
+			MaterialInstanceParameter_free(&l_materialInstanceParameter, l_materialInstance->RenderInterface);
 		}
 
-		p_materialInstance->Parameters.free();
+		l_materialInstance->Parameters.free();
+		delete l_materialInstance;
+		l_materialInstance = nullptr;
 	};
 
 	void MaterialInstanceParameter_free(MaterialInstanceParameter** p_materialInstanceParameter, RenderInterface* p_renderInterface)

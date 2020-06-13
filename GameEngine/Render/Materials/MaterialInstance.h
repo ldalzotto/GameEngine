@@ -46,8 +46,8 @@ namespace _GameEngine::_Render
 		std::unordered_map<std::string, void*> MaterialInstanceInputParameters;
 	};
 
-	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo);
-	void MaterialInstance_free(MaterialInstance* p_materialInstance);
+	MaterialInstance* MaterialInstance_alloc(RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo);
+	void MaterialInstance_free(MaterialInstance** p_materialInstance);
 
 	struct MeshMaterialInstanceParameter
 	{

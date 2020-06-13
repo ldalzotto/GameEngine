@@ -14,6 +14,7 @@
 #include "LoopStep/DefaultMaterialDrawStep.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialInstanceKeys.h"
+#include "Materials/MaterialInstance.h"
 
 namespace _GameEngine::_ECS
 {
@@ -50,7 +51,7 @@ namespace _GameEngine::_ECS
 			{
 				_Render::ModelProjection l_meshUniform{};
 				l_meshUniform.Model = _ECS::Transform_getLocalToWorldMatrix(l_transform);
-				_Render::MaterialInstance_pushUniformBuffer(&l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, &l_meshUniform);
+				_Render::MaterialInstance_pushUniformBuffer(l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, &l_meshUniform);
 
 				l_transform->HasChangedThisFrame = false;
 			}
