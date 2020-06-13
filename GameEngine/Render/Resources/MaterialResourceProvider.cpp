@@ -106,6 +106,37 @@ namespace _GameEngine::_Render
 
 			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
 		}
+		else if (p_key->VertexShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/EditorVertex.spv"
+			&& p_key->FragmentShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/EditorFragment.spv")
+		{
+			MaterialAllocInfo l_materialAllocInfo{};
+			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
+			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
+
+			ShaderParameter l_modelMatrixShaderParameter{};
+			ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
+
+			UniformBufferParameter* l_modelMatrixParameter = (UniformBufferParameter*)l_modelMatrixShaderParameter.Parameter;
+			l_modelMatrixParameter->Binding = 0;
+			l_modelMatrixParameter->BufferSize = sizeof(ModelProjection);
+			l_modelMatrixParameter->StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
+			l_modelMatrixShaderParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_modelMatrixParameter);
+
+
+			ShaderParameter l_imageSamplerShaderParameter{};
+			ShaderParameter_alloc(&l_imageSamplerShaderParameter, ShaderParameterType::IMAGE_SAMPLER, MATERIALINSTANCE_TEXTURE_KEY);
+
+			ImageSampleParameter* l_imageSampleParameter = (ImageSampleParameter*)l_imageSamplerShaderParameter.Parameter;
+			l_imageSampleParameter->Binding = 1;
+			l_imageSampleParameter->TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
+			l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
+			l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
+
+			l_materialAllocInfo.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
+			l_materialAllocInfo.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
+
+			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
+		}
 		else
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Cannot build material."));

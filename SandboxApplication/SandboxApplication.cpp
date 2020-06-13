@@ -149,8 +149,8 @@ void SandboxApplication_update(float p_delta)
 			};
 
 			_Render::MaterialUniqueKey l_materialKey{};
-			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
-			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
+			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/EditorVertex.spv";
+			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/EditorFragment.spv";
 
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.InputParameters = l_defaultMaterialInput;
