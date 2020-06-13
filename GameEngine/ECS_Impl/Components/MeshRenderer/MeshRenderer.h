@@ -4,7 +4,7 @@
 #include "glm/glm.hpp"
 
 #include "Materials/MaterialInstance.h"
-#include "Materials/DefaultMaterialV2.h"
+#include "Materials/Material.h"
 
 namespace _GameEngine::_Render
 {

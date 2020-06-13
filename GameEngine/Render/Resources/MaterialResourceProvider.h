@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include "Materials/DefaultMaterialV2.h"
+#include "Materials/Material.h"
 #include "Utils/Resource/UsageCounter.h"
 
 namespace _GameEngine::_Render
@@ -13,7 +13,7 @@ namespace _GameEngine::_Render
 {
 	struct MaterialWithCounter
 	{
-		DefaultMaterialV2* Material;
+		Material* Material;
 		_Utils::UsageCounter UsageCounter;
 	};
 
@@ -24,6 +24,6 @@ namespace _GameEngine::_Render
 	};
 
 	void MaterialResourceProvider_Clear(MaterialResourceProvider* p_materialResourceProvider);
-	DefaultMaterialV2* MaterialResourceProvider_UseResource(MaterialResourceProvider* p_materialResourceProvider, MaterialUniqueKey* p_key);
+	Material* MaterialResourceProvider_UseResource(MaterialResourceProvider* p_materialResourceProvider, MaterialUniqueKey* p_key);
 	void MaterialResourceProvider_ReleaseResource(MaterialResourceProvider* p_materialResourceProvider, MaterialUniqueKey* p_key);
 }

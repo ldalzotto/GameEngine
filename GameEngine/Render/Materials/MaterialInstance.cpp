@@ -13,7 +13,7 @@
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "Shader/ShaderParameter.h"
 #include "Shader/DescriptorSetLayout.h"
-#include "DefaultMaterialV2.h"
+#include "Material.h"
 
 #include "MaterialInstanceKeys.h"
 

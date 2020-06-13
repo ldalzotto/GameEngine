@@ -10,9 +10,9 @@
 namespace _GameEngine::_Render
 {
 
-	std::unordered_map<DefaultMaterialV2*, std::vector<MaterialInstance*>> materialInstanceContainer_deepCopy(MaterialInstanceContainer* p_materialInstanceContainer)
+	std::unordered_map<Material*, std::vector<MaterialInstance*>> materialInstanceContainer_deepCopy(MaterialInstanceContainer* p_materialInstanceContainer)
 	{
-		std::unordered_map<DefaultMaterialV2*, std::vector<MaterialInstance*>> l_copy;
+		std::unordered_map<Material*, std::vector<MaterialInstance*>> l_copy;
 		for (auto&& l_materialEntry : p_materialInstanceContainer->InstanciatedMaterials)
 		{
 			l_copy.emplace(l_materialEntry.first, std::vector<MaterialInstance*>(l_materialEntry.second));
@@ -24,7 +24,7 @@ namespace _GameEngine::_Render
 	{
 		for (auto&& l_materialEntry : p_materialInstanceContainer->InstanciatedMaterials)
 		{
-			DefaultMaterial_reAllocGraphicsPipeline(l_materialEntry.first, p_materialInstanceContainer->RenderInterface);
+			Material_reAllocGraphicsPipeline(l_materialEntry.first, p_materialInstanceContainer->RenderInterface);
 		}
 	};
 
@@ -58,22 +58,22 @@ namespace _GameEngine::_Render
 		}
 	};
 	
-	void MaterialInstanceContainer_addMaterial(MaterialInstanceContainer* p_materialInstanceContainer, DefaultMaterialV2* p_material)
+	void MaterialInstanceContainer_addMaterial(MaterialInstanceContainer* p_materialInstanceContainer, Material* p_material)
 	{
 		p_materialInstanceContainer->InstanciatedMaterials.emplace(p_material, std::vector<MaterialInstance*>());
 	};
 	
-	void MaterialInstanceContainer_removeMaterial(MaterialInstanceContainer* p_materialInstanceContainer, DefaultMaterialV2* p_material)
+	void MaterialInstanceContainer_removeMaterial(MaterialInstanceContainer* p_materialInstanceContainer, Material* p_material)
 	{
 		p_materialInstanceContainer->InstanciatedMaterials.erase(p_material);
 	};
 
-	void MaterialInstanceContainer_addMaterialInstance(MaterialInstanceContainer* p_materialInstanceContainer, DefaultMaterialV2* p_material, MaterialInstance* p_materialInstance)
+	void MaterialInstanceContainer_addMaterialInstance(MaterialInstanceContainer* p_materialInstanceContainer, Material* p_material, MaterialInstance* p_materialInstance)
 	{
 		p_materialInstanceContainer->InstanciatedMaterials.at(p_material).emplace_back(p_materialInstance);
 	};
 
-	void MaterialInstanceContainer_removeMaterialInstance(MaterialInstanceContainer* p_materialInstanceContainer, DefaultMaterialV2* p_material, MaterialInstance* p_materialInstance)
+	void MaterialInstanceContainer_removeMaterialInstance(MaterialInstanceContainer* p_materialInstanceContainer, Material* p_material, MaterialInstance* p_materialInstance)
 	{
 		std::vector<MaterialInstance*>* l_materialInstances = &p_materialInstanceContainer->InstanciatedMaterials.at(p_material);
 		l_materialInstances->erase(std::find(l_materialInstances->begin(), l_materialInstances->end(), p_materialInstance));

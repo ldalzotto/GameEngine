@@ -10,16 +10,16 @@
 
 namespace _GameEngine::_Render
 {
-	DefaultMaterialV2* materialResourceProvider_allocateMaterial(MaterialUniqueKey* p_key, RenderInterface* p_renderInterface);
+	Material* materialResourceProvider_allocateMaterial(MaterialUniqueKey* p_key, RenderInterface* p_renderInterface);
 
-	DefaultMaterialV2* MaterialResourceProvider_UseResource(MaterialResourceProvider* p_materialResourceProvider, MaterialUniqueKey* p_key)
+	Material* MaterialResourceProvider_UseResource(MaterialResourceProvider* p_materialResourceProvider, MaterialUniqueKey* p_key)
 	{
 		size_t l_hash = MaterialUniqueKey_buildHash(p_key);
 
 		if (!p_materialResourceProvider->MaterialResources.contains(l_hash))
 		{
 
-			DefaultMaterialV2* l_material = materialResourceProvider_allocateMaterial(p_key, p_materialResourceProvider->RenderInterface);
+			Material* l_material = materialResourceProvider_allocateMaterial(p_key, p_materialResourceProvider->RenderInterface);
 			MaterialInstanceContainer_addMaterial(p_materialResourceProvider->RenderInterface->MaterialInstanceContainer, l_material);
 
 			MaterialWithCounter l_materialWithCounter{};
@@ -42,7 +42,7 @@ namespace _GameEngine::_Render
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)
 		{
 			MaterialInstanceContainer_removeMaterial(p_materialResourceProvider->RenderInterface->MaterialInstanceContainer, l_resourceWithCounter->Material);
-			DefaultMaterial_free(&l_resourceWithCounter->Material, p_materialResourceProvider->RenderInterface);
+			Material_free(&l_resourceWithCounter->Material, p_materialResourceProvider->RenderInterface);
 			p_materialResourceProvider->MaterialResources.erase(l_hash);
 		}
 	};
@@ -66,13 +66,13 @@ namespace _GameEngine::_Render
 
 			for (auto&& l_textureResourceEntry : p_materialResourceProvider->MaterialResources)
 			{
-				DefaultMaterial_free(&l_textureResourceEntry.second.Material, p_materialResourceProvider->RenderInterface);
+				Material_free(&l_textureResourceEntry.second.Material, p_materialResourceProvider->RenderInterface);
 			}
 			p_materialResourceProvider->MaterialResources.clear();
 		}
 	};
 
-	DefaultMaterialV2* materialResourceProvider_allocateMaterial(MaterialUniqueKey* p_key, RenderInterface* p_renderInterface)
+	Material* materialResourceProvider_allocateMaterial(MaterialUniqueKey* p_key, RenderInterface* p_renderInterface)
 	{
 		if (p_key->VertexShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv"
 			&& p_key->FragmentShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv")
@@ -104,7 +104,7 @@ namespace _GameEngine::_Render
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
 
-			return DefaultMaterial_alloc(p_renderInterface, &l_materialAllocInfo);
+			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
 		}
 		else
 		{

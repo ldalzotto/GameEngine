@@ -1,7 +1,6 @@
 #include "MeshRenderer.h"
 
 #include "RenderInterface.h"
-#include "Materials/DefaultMaterialV2.h"
 #include "Resources/MaterialResourceProvider.h"
 #include "Materials/MaterialInstanceContainer.h"
 
@@ -20,7 +19,7 @@ namespace _GameEngine::_ECS
 		_Utils::Observer_register(&p_mehsRendererInfo->AssociatedComponent->ComponentFreeEvent, &p_meshRenderer->OnComponentDetached);
 
 
-		_Render::DefaultMaterialV2* l_material 
+		_Render::Material* l_material 
 				= _Render::MaterialResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.MaterialResourceProvider, &p_meshRenderer->MaterialUniqueKey);
 
 		_Render::MaterialInstanceInitInfo l_materialInstanceInitInfo{};

@@ -5,7 +5,7 @@
 
 #include "RenderInterface.h"
 #include "Materials/MaterialInstanceContainer.h"
-#include "Materials/DefaultMaterialV2.h"
+#include "Materials/Material.h"
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceKeys.h"
 
@@ -20,7 +20,7 @@ namespace _GameEngine::_Render
 
 		for (auto&& l_materialEntry : l_materialInstanceConctainer->InstanciatedMaterials)
 		{
-			DefaultMaterialV2* l_defaultMaterial = l_materialEntry.first;
+			Material* l_defaultMaterial = l_materialEntry.first;
 
 			GraphicsPipeline* l_graphicsPipeline = &l_defaultMaterial->FinalDrawObjects.GraphicsPipeline;
 			std::vector<FrameBuffer>* l_frameBuffers = &l_graphicsPipeline->PipelineInternals.FrameBuffers;

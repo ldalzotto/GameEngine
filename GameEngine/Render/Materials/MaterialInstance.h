@@ -16,7 +16,7 @@ namespace _GameEngine::_Render
 	struct RenderInterface;
 	struct DescriptorSetLayout;
 	struct DescriptorPool;
-	struct DefaultMaterialV2;
+	struct Material;
 }
 
 namespace _GameEngine::_Render
@@ -33,7 +33,7 @@ namespace _GameEngine::_Render
 	struct MaterialInstance
 	{
 		RenderInterface* RenderInterface;
-		DefaultMaterialV2* SourceMaterial;
+		Material* SourceMaterial;
 
 		VkDescriptorSet MaterialDescriptorSet;
 		_Core::VectorT<MaterialInstanceParameter*> Parameters;
@@ -42,7 +42,7 @@ namespace _GameEngine::_Render
 	//TODO This structure must be replaced with a generic Material object.
 	struct MaterialInstanceInitInfo
 	{
-		DefaultMaterialV2* SourceMaterial;
+		Material* SourceMaterial;
 		std::unordered_map<std::string, void*> MaterialInstanceInputParameters;
 	};
 

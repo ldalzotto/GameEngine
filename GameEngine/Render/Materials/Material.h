@@ -18,13 +18,13 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	struct DefaultMaterialV2_ExternalResources
+	struct Material_ExternalResources
 	{
 		Shader VertexShader;
 		Shader FragmentShader;
 	};
 
-	struct DefaultMaterialV2_InternalResources
+	struct Material_InternalResources
 	{
 		Texture* DepthBufferTexture;
 	};
@@ -34,7 +34,7 @@ namespace _GameEngine::_Render
 		glm::mat4x4 Model;
 	};
 
-	struct DefaultMaterialV2_LocalInputParameters
+	struct Material_LocalInputParameters
 	{
 		VertexInput VertexInput;
 
@@ -52,7 +52,7 @@ namespace _GameEngine::_Render
 
 	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey);
 
-	struct DefaultMaterialV2
+	struct Material
 	{
 		struct FinalDrawObjects
 		{
@@ -61,9 +61,9 @@ namespace _GameEngine::_Render
 		};
 
 		MaterialUniqueKey MaterialUniqueKey;
-		DefaultMaterialV2_ExternalResources ExternalResources;
-		DefaultMaterialV2_InternalResources InternalResources;
-		DefaultMaterialV2_LocalInputParameters LocalInputParameters;
+		Material_ExternalResources ExternalResources;
+		Material_InternalResources InternalResources;
+		Material_LocalInputParameters LocalInputParameters;
 		FinalDrawObjects FinalDrawObjects;
 	};
 
@@ -74,7 +74,7 @@ namespace _GameEngine::_Render
 		std::vector<ShaderParameter> ShaderParameters;
 	};
 
-	DefaultMaterialV2* DefaultMaterial_alloc(RenderInterface* p_renderInterface, MaterialAllocInfo* p_materialAllocInfo);
-	void DefaultMaterial_free(DefaultMaterialV2** p_defaultMaterialV2, RenderInterface* p_renderInterface);
-	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
+	Material* Material_alloc(RenderInterface* p_renderInterface, MaterialAllocInfo* p_materialAllocInfo);
+	void Material_free(Material** p_defaultMaterialV2, RenderInterface* p_renderInterface);
+	void Material_reAllocGraphicsPipeline(Material* p_defaultMaterialV2, RenderInterface* p_renderInterface);
 };
