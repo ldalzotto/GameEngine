@@ -21,11 +21,11 @@ namespace _GameEngine::_Render
 	struct RenderSemaphore;
 	struct TextureSamplers;
 	struct TextureSwapChainSizeSynchronizer;
+	struct MaterialInstanceContainer;
 
 	struct TextureResourceProvider;
 	struct MeshResourceProvider;
-
-	struct DefaultMaterialV2;
+	struct MaterialResourceProvider;
 
 	struct PreRenderDeferedCommandBufferStep;
 	struct CameraBufferSetupStep;
@@ -34,16 +34,11 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	 
-	struct RenderMaterialsInterface
-	{
-		DefaultMaterialV2* DefaultMaterial;
-	};
-
 	struct ResourceProvidersInterface
 	{
 		TextureResourceProvider* TextureResourceProvider;
 		MeshResourceProvider* MeshResourceProvider;
+		MaterialResourceProvider* MaterialResourceProvider;
 	};
 
 	struct BeforeEndRecordingMainCommandBuffer_InputInterface
@@ -72,9 +67,9 @@ namespace _GameEngine::_Render
 		RenderSemaphore* RenderSemaphore;
 		TextureSamplers* TextureSamplers;
 		TextureSwapChainSizeSynchronizer* TextureSwapChainSizeSynchronizer;
+		MaterialInstanceContainer* MaterialInstanceContainer;
 
 		ResourceProvidersInterface ResourceProvidersInterface;
-		RenderMaterialsInterface RenderMaterialsInterface;
 
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 		CameraBufferSetupStep* CameraBufferSetupStep;

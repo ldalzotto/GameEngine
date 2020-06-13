@@ -44,6 +44,14 @@ namespace _GameEngine::_Render
 		DescriptorPool DescriptorPool;
 	};
 
+	struct MaterialUniqueKey
+	{
+		std::string VertexShaderPath;
+		std::string FragmentShaderPath;
+	};
+
+	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey);
+
 	struct DefaultMaterialV2
 	{
 		struct FinalDrawObjects
@@ -52,6 +60,7 @@ namespace _GameEngine::_Render
 			GraphicsPipeline GraphicsPipeline;
 		};
 
+		MaterialUniqueKey MaterialUniqueKey;
 		DefaultMaterialV2_ExternalResources ExternalResources;
 		DefaultMaterialV2_InternalResources InternalResources;
 		DefaultMaterialV2_LocalInputParameters LocalInputParameters;
@@ -65,7 +74,7 @@ namespace _GameEngine::_Render
 		std::vector<ShaderParameter> ShaderParameters;
 	};
 
-	void DefaultMaterial_alloc(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface, MaterialAllocInfo* p_materialAllocInfo);
-	void DefaultMaterial_free(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
+	DefaultMaterialV2* DefaultMaterial_alloc(RenderInterface* p_renderInterface, MaterialAllocInfo* p_materialAllocInfo);
+	void DefaultMaterial_free(DefaultMaterialV2** p_defaultMaterialV2, RenderInterface* p_renderInterface);
 	void DefaultMaterial_reAllocGraphicsPipeline(DefaultMaterialV2* p_defaultMaterialV2, RenderInterface* p_renderInterface);
 };

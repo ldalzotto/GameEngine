@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 
 #include "Materials/MaterialInstance.h"
+#include "Materials/DefaultMaterialV2.h"
 
 namespace _GameEngine::_Render
 {
@@ -18,13 +19,17 @@ namespace _GameEngine::_ECS
 	struct MeshRenderer
 	{
 		_Render::RenderInterface* RenderInterface;
+		
 		_Render::MaterialInstance MaterialInstance;
+		_Render::MaterialUniqueKey MaterialUniqueKey;
+
 		_Utils::Subject OnComponentDetached;
 	};
 
 	struct MeshRendererInitInfo
 	{
 		Component* AssociatedComponent;
+		_Render::MaterialUniqueKey* MaterialUniqueKey;
 		std::unordered_map<std::string, void*> InputParameters;
 	};
 

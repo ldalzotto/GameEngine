@@ -19,10 +19,10 @@
 #include "Texture/TextureSwapChainSizeSynchronizer.h"
 #include "LoopStep/PreRenderDeferedCommandBufferStep.h"
 #include "LoopStep/CameraBufferSetupStep.h"
-#include "LoopStep/DefaultMaterialDrawStep.h"
-#include "Materials/DefaultMaterialV2.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Resources/MeshResourceProvider.h"
+#include "Resources/MaterialResourceProvider.h"
+#include "Materials/MaterialInstanceContainer.h"
 
 #include "RenderInterface.h"
 
@@ -35,15 +35,11 @@ namespace _GameEngine::_Render
 		PFN_vkDestroyDebugUtilsMessengerEXT PfnDestroyDebugUtilsMessengerEXT;
 	};
 
-	struct RenderMaterials
-	{
-		DefaultMaterialV2 DefaultMaterial;
-	};
-
 	struct ResourceProviders
 	{
 		TextureResourceProvider TextureResourceProvider;
 		MeshResourceProvider MeshResourceProvider;
+		MaterialResourceProvider MaterialResourceProvider;
 	};
 
 	struct Render
@@ -63,12 +59,11 @@ namespace _GameEngine::_Render
 		RenderSemaphore RenderSemaphore;
 		TextureSamplers TextureSamplers;
 		TextureSwapChainSizeSynchronizer TextureSwapChainSizeSynchronizer;
+		MaterialInstanceContainer MaterialInstanceContainer;
 		ResourceProviders ResourceProviders;
 
-		RenderMaterials RenderMaterials;
 		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;
 		CameraBufferSetupStep CameraBufferSetupStep;
-		DefaultMaterialDrawStep DefaultMaterialDrawStep;
 	};
 
 	Render* Render_alloc();

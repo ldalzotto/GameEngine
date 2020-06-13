@@ -22,14 +22,13 @@ namespace _GameEngine::_Render
 		l_renderInterface->RenderSemaphore = &p_render->RenderSemaphore;
 		l_renderInterface->TextureSamplers = &p_render->TextureSamplers;
 		l_renderInterface->TextureSwapChainSizeSynchronizer = &p_render->TextureSwapChainSizeSynchronizer;
-		
+		l_renderInterface->MaterialInstanceContainer = &p_render->MaterialInstanceContainer;
+
 		l_renderInterface->ResourceProvidersInterface.MeshResourceProvider = &p_render->ResourceProviders.MeshResourceProvider;
 		l_renderInterface->ResourceProvidersInterface.TextureResourceProvider = &p_render->ResourceProviders.TextureResourceProvider;
-
-		l_renderInterface->RenderMaterialsInterface.DefaultMaterial = &p_render->RenderMaterials.DefaultMaterial;
+		l_renderInterface->ResourceProvidersInterface.MaterialResourceProvider = &p_render->ResourceProviders.MaterialResourceProvider;
 
 		l_renderInterface->PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
 		l_renderInterface->CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
-		l_renderInterface->DefaultMaterialDrawStep = &p_render->DefaultMaterialDrawStep;
 	};
 }

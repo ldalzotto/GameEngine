@@ -98,9 +98,15 @@ void SandboxApplication_update(float p_delta)
 				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
 			};
 
+			_Render::MaterialUniqueKey l_materialKey{};
+			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
+			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
+
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.InputParameters = l_defaultMaterialInput;
 			l_meshRendererInitInfo.AssociatedComponent = l_component;
+			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
+
 			_ECS::MeshRenderer_init(l_meshRenderer, &App->Render->RenderInterface, &l_meshRendererInitInfo);
 
 			_ECS::Entity_addComponent(l_parent, l_component);
@@ -142,9 +148,15 @@ void SandboxApplication_update(float p_delta)
 				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
 			};
 
+			_Render::MaterialUniqueKey l_materialKey{};
+			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
+			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
+
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.InputParameters = l_defaultMaterialInput;
+			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
 			l_meshRendererInitInfo.AssociatedComponent = l_component;
+
 			_ECS::MeshRenderer_init(l_meshRenderer, &App->Render->RenderInterface, &l_meshRendererInitInfo);
 
 			_ECS::Entity_addComponent(l_child, l_component);

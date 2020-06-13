@@ -3,6 +3,8 @@
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Log/Log.h"
 
+#include "LoopStep/DefaultMaterialDrawStep.h"
+
 #include <stdexcept>
 
 namespace _GameEngine::_Render
@@ -45,13 +47,6 @@ namespace _GameEngine::_Render
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
-	void allocMaterials(Render* p_render);
-	void freeMaterials(Render* p_render);
-
-	void allocDefaultMaterialRenderStep(Render* p_render);
-	void freeDefaultMaterialRenderStep(Render* p_render);
-
-
 	Render* Render_alloc()
 	{
 		Render* l_render = new Render();
@@ -72,8 +67,7 @@ namespace _GameEngine::_Render
 		initDepthTexture(l_render);
 		initResourcesProvider(l_render);
 		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
-		allocMaterials(l_render);
-		allocDefaultMaterialRenderStep(l_render);
+		l_render->MaterialInstanceContainer.RenderInterface = &l_render->RenderInterface;
 
 		SwapChain_broadcastRebuildEvent(&l_render->SwapChain, &l_render->RenderInterface);
 		return l_render;
@@ -85,8 +79,7 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
-		freeDefaultMaterialRenderStep(*p_render);
-		freeMaterials(*p_render);
+		MaterialInstanceContainer_free(&(*p_render)->MaterialInstanceContainer);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
 		freeResourcesProvider(*p_render);
 		freeDepthTexture(*p_render);
@@ -358,7 +351,7 @@ namespace _GameEngine::_Render
 
 	void reAllocateGraphicsPipelineContainer(Render* p_render)
 	{
-		DefaultMaterial_reAllocGraphicsPipeline(&p_render->RenderMaterials.DefaultMaterial, &p_render->RenderInterface);
+		MaterialInstanceContainer_reAllocGraphicsPipeline(&p_render->MaterialInstanceContainer);
 	};
 
 	/////// END GRAPHICS PIPELINE
@@ -422,12 +415,15 @@ namespace _GameEngine::_Render
 		
 		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.Device = &p_render->Device;
 		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
+
+		p_render->ResourceProviders.MaterialResourceProvider.RenderInterface = &p_render->RenderInterface;
 	};
 
 	void freeResourcesProvider(Render* p_render)
 	{
 		TextureResourceProvider_Clear(&p_render->ResourceProviders.TextureResourceProvider);
 		MeshResourceProvider_Clear(&p_render->ResourceProviders.MeshResourceProvider);
+		MaterialResourceProvider_Clear(&p_render->ResourceProviders.MaterialResourceProvider);
 	};
 
 	/////// END RESOURCES PROVIDER
@@ -445,34 +441,6 @@ namespace _GameEngine::_Render
 	};
 
 	/////// END PRE RENDER STAGGING
-
-	/////// MATERIALS
-
-	void allocMaterials(Render* p_render)
-	{
-		DefaultMaterial_alloc(&p_render->RenderMaterials.DefaultMaterial, &p_render->RenderInterface);
-	};
-
-	void freeMaterials(Render* p_render)
-	{
-		DefaultMaterial_free(&p_render->RenderMaterials.DefaultMaterial, &p_render->RenderInterface);
-	};
-
-	/////// END MATERIALS
-
-	/////// MESH RENDER STEP
-
-	void allocDefaultMaterialRenderStep(Render* p_render)
-	{
-		DefaultMaterialDrawStep_init(&p_render->DefaultMaterialDrawStep, &p_render->RenderMaterials.DefaultMaterial);
-	};
-
-	void freeDefaultMaterialRenderStep(Render* p_render)
-	{
-		DefaultMaterialDrawStep_clear(&p_render->DefaultMaterialDrawStep);
-	};
-
-	/////// END MESH RENDER STEP
 
 	void preRenderStagginStep(Render* p_render)
 	{
@@ -533,7 +501,7 @@ namespace _GameEngine::_Render
 
 		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
 
-		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->SwapChain, &p_render->DefaultMaterialDrawStep, l_commandBuffer, l_imageIndex);
+		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->RenderInterface, l_commandBuffer, l_imageIndex);
 
 		BeforeEndRecordingMainCommandBuffer_Input l_beforeEndRecordingMainCommandBuffer{};
 		l_beforeEndRecordingMainCommandBuffer.CommandBuffer = l_commandBuffer;

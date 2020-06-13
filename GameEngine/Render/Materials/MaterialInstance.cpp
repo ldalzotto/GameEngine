@@ -13,6 +13,7 @@
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "Shader/ShaderParameter.h"
 #include "Shader/DescriptorSetLayout.h"
+#include "DefaultMaterialV2.h"
 
 #include "MaterialInstanceKeys.h"
 
@@ -25,27 +26,26 @@ namespace _GameEngine::_Render
 
 	void MeshMaterialInstanceParameter_free(MaterialInstanceParameter* p_materialInstanceParameter, RenderInterface* p_renderInterface);
 
-	void populateParameters(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter);
+	void populateParameters(MaterialInstance* p_materialInstance, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter);
 
-	void createDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout);
-	void updateDescriptorSet(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters);
-	void freeDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool);
+	void createDescriptorSet(MaterialInstance* p_materialInstance);
+	void updateDescriptorSet(MaterialInstance* p_materialInstance);
+	void freeDescriptorSet(MaterialInstance* p_materialInstance);
 
 	void MaterialInstance_init(MaterialInstance* p_materialInstance, RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo)
 	{
 		p_materialInstance->RenderInterface = p_renderInterface;
-		p_materialInstance->ParentDescriptorPool = p_materialInstanceInitInfo->DescriptorPool;
-		p_materialInstance->PipelineLayout = p_materialInstanceInitInfo->PipelineLayout;
+		p_materialInstance->SourceMaterial = p_materialInstanceInitInfo->SourceMaterial;
 		p_materialInstance->Parameters.alloc(4);
 
-		populateParameters(p_materialInstance, p_materialInstanceInitInfo->ShaderParameters, &p_materialInstanceInitInfo->MaterialInstanceInputParameters);
-		createDescriptorSet(p_materialInstance, p_materialInstanceInitInfo->DescriptorPool, p_materialInstanceInitInfo->DescriptorSetLayout);
-		updateDescriptorSet(p_materialInstance, p_materialInstanceInitInfo->ShaderParameters);
+		populateParameters(p_materialInstance, &p_materialInstanceInitInfo->MaterialInstanceInputParameters);
+		createDescriptorSet(p_materialInstance);
+		updateDescriptorSet(p_materialInstance);
 	};
 
 	void MaterialInstance_free(MaterialInstance* p_materialInstance)
 	{
-		freeDescriptorSet(p_materialInstance, p_materialInstance->ParentDescriptorPool);
+		freeDescriptorSet(p_materialInstance);
 
 		for (size_t i = 0; i < p_materialInstance->Parameters.size(); i++)
 		{
@@ -220,7 +220,7 @@ namespace _GameEngine::_Render
 	};
 
 
-	void populateParameters(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter)
+	void populateParameters(MaterialInstance* p_materialInstance, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter)
 	{
 		{
 			MeshUniqueKey l_meshKey{};
@@ -228,7 +228,7 @@ namespace _GameEngine::_Render
 			MaterialInstance_setMesh(p_materialInstance, MATERIALINSTANCE_MESH_KEY, &l_meshKey);
 		}
 
-		for (ShaderParameter& l_shaderParameter : *p_parentMaterialParameters)
+		for (ShaderParameter& l_shaderParameter : p_materialInstance->SourceMaterial->LocalInputParameters.ShaderParameters)
 		{
 			switch (l_shaderParameter.Type)
 			{
@@ -252,21 +252,23 @@ namespace _GameEngine::_Render
 
 	//////////////////// DESCRIPTOR SET
 
-	void createDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout)
+	void createDescriptorSet(MaterialInstance* p_materialInstance)
 	{
 		VkDescriptorSetAllocateInfo l_descriptorSetAllocateInfo{};
 		l_descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		l_descriptorSetAllocateInfo.descriptorPool = p_descriptorPool->DescriptorPool;
+		l_descriptorSetAllocateInfo.descriptorPool = p_materialInstance->SourceMaterial->LocalInputParameters.DescriptorPool.DescriptorPool;
 		l_descriptorSetAllocateInfo.descriptorSetCount = 1;
-		l_descriptorSetAllocateInfo.pSetLayouts = &p_descriptorSetLayout->DescriptorSetLayout;
+		l_descriptorSetAllocateInfo.pSetLayouts = &p_materialInstance->SourceMaterial->LocalInputParameters.DescriptorSetLayout.DescriptorSetLayout;
 		if (vkAllocateDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_materialInstance->MaterialDescriptorSet) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create description set."));
 		};
 	};
 
-	void updateDescriptorSet(MaterialInstance* p_materialInstance, std::vector<ShaderParameter>* p_parentMaterialParameters)
+	void updateDescriptorSet(MaterialInstance* p_materialInstance)
 	{
+		std::vector<ShaderParameter>* p_parentMaterialParameters = &p_materialInstance->SourceMaterial->LocalInputParameters.ShaderParameters;
+
 		std::vector<VkWriteDescriptorSet> l_writeDescirptorSets;
 		std::vector<VkDescriptorBufferInfo> l_descriptorBufferInfo(p_parentMaterialParameters->size());
 		std::vector<VkDescriptorImageInfo> l_descriptorImageInfo(p_parentMaterialParameters->size());
@@ -308,10 +310,10 @@ namespace _GameEngine::_Render
 		vkUpdateDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice, l_writeDescirptorSets.size(), l_writeDescirptorSets.data(), 0, nullptr);
 	};
 	
-	void freeDescriptorSet(MaterialInstance* p_materialInstance, DescriptorPool* p_descriptorPool)
+	void freeDescriptorSet(MaterialInstance* p_materialInstance)
 	{
 		vkFreeDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice,
-				p_descriptorPool->DescriptorPool, 1, &p_materialInstance->MaterialDescriptorSet);
+			p_materialInstance->SourceMaterial->LocalInputParameters.DescriptorPool.DescriptorPool, 1, &p_materialInstance->MaterialDescriptorSet);
 	};
 
 	//////////////////// END DESCRIPTOR SET
