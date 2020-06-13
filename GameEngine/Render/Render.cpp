@@ -310,12 +310,7 @@ namespace _GameEngine::_Render
 
 	void initSwapChain(Render* p_render)
 	{
-		SwapChainBuildInfo l_swapChainBuildInfo{};
-		l_swapChainBuildInfo.SwapChainDependencies.Device = &p_render->Device;
-		l_swapChainBuildInfo.SwapChainDependencies.Surface = &p_render->WindowSurface;
-		l_swapChainBuildInfo.SwapChainDependencies.Window = &p_render->Window;
-		l_swapChainBuildInfo.CommandPool = &p_render->CommandPool;
-		SwapChain_build(&p_render->SwapChain, &l_swapChainBuildInfo);
+		SwapChain_build(&p_render->SwapChain, &p_render->RenderInterface);
 		SwapChain_broadcastRebuildEvent(&p_render->SwapChain, &p_render->RenderInterface);
 	};
 

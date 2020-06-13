@@ -124,12 +124,12 @@ namespace _GameEngineEditor
 			{
 				_Render::CommandBufferSingleExecutionAllocInfo l_allocInfo{};
 				l_allocInfo.Queue = l_renderInterface->Device->LogicalDevice.Queues.GraphicsQueue;
-				CommandBufferSingleExecution_alloc(&l_commandBufferSingleExecution, l_renderInterface, &l_allocInfo);
+				CommandBufferSingleExecution_alloc(&l_commandBufferSingleExecution, l_renderInterface->CommandPool, l_renderInterface->Device, &l_allocInfo);
 			}
 
-			CommandBufferSingleExecution_startRecording(&l_commandBufferSingleExecution, l_renderInterface);
+			CommandBufferSingleExecution_startRecording(&l_commandBufferSingleExecution);
 			ImGui_ImplVulkan_CreateFontsTexture(l_commandBufferSingleExecution.CommandBuffer.CommandBuffer);
-			CommandBufferSingleExecution_execute(&l_commandBufferSingleExecution, l_renderInterface);
+			CommandBufferSingleExecution_execute(&l_commandBufferSingleExecution, l_renderInterface->Device);
 			l_imGuiRender->FontInitialized = true;
 		}
 

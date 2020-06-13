@@ -4,10 +4,12 @@
 #include "VulkanObjects/SwapChain/SwapChain.h"
 
 #include "RenderInterface.h"
+#include "Texture/Texture.h"
 #include "Materials/MaterialInstanceContainer.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceKeys.h"
+#include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
 #include "Utils/Algorithm/Algorithm.h"
 
@@ -17,6 +19,18 @@ namespace _GameEngine::_Render
 	void DefaultMaterialDrawStep_buildCommandBuffer(RenderInterface* p_renderInterface, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
 	{
 		MaterialInstanceContainer* l_materialInstanceConctainer = p_renderInterface->MaterialInstanceContainer;
+
+		VkClearColorValue l_colorClear = { 0.0f,0.0f,0.0f,1.0f };
+		SwapChainImage* l_colorImage = &p_renderInterface->SwapChain->SwapChainImages.at(l_imageIndex);
+		TextureLayoutTransition_executeTransition(p_commandBuffer, l_colorImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		VkImageSubresourceRange l_subResourceRange = SwapChainImage_buildSubResource(l_colorImage);
+		vkCmdClearColorImage(p_commandBuffer, l_colorImage->SwapChainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &l_colorClear, 1, &l_subResourceRange);
+		TextureLayoutTransition_executeTransition(p_commandBuffer, l_colorImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+		/*
+		VkClearColorValue l_depthClear = { 1.0f, 0.0f };
+		vkCmdClearColorImage(p_commandBuffer, (*(p_renderInterface->DepthTexture))->Texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &l_depthClear, 1, &l_subResourceRange);
+		*/
 
 		for (auto&& l_materialEntry : l_materialInstanceConctainer->InstanciatedMaterials)
 		{
@@ -35,21 +49,21 @@ namespace _GameEngine::_Render
 			l_renderPassBeginInfo.renderArea.extent = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend;
 
 			int l_clearValuesNumber = 1;
+			
 			if (l_defaultMaterial->InternalResources.DepthBufferTexture)
 			{
 				l_clearValuesNumber += 1;
 			}
 			std::vector<VkClearValue> l_clearValues(l_clearValuesNumber);
-			l_clearValues.at(0) = { 0.0f,0.0f,0.0f,1.0f };
+		//	l_clearValues.at(0) = { 0.0f,0.0f,0.0f,1.0f };
 
 			if (l_defaultMaterial->InternalResources.DepthBufferTexture)
 			{
 				l_clearValues.at(1) = { 1.0f, 0.0f };
 			}
-
 			l_renderPassBeginInfo.clearValueCount = l_clearValues.size();
 			l_renderPassBeginInfo.pClearValues = l_clearValues.data();
-
+		
 			vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdBindPipeline(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_graphicsPipeline->PipelineInternals.Pipeline);
 

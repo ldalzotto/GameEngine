@@ -4,7 +4,8 @@
 
 namespace _GameEngine::_Render
 {
-	struct RenderInterface;
+	struct CommandPool;
+	struct Device;
 }
 
 namespace _GameEngine::_Render
@@ -22,7 +23,7 @@ namespace _GameEngine::_Render
 	};
 
 	void CommandBufferSingleExecution_alloc(CommandBufferSingleExecution* p_commandBufferSingleExecution, 
-			RenderInterface* p_renderInterface, CommandBufferSingleExecutionAllocInfo* p_commandBufferSingleExecutionAllocInfo);
-	void CommandBufferSingleExecution_startRecording(CommandBufferSingleExecution* p_commandBufferSingleExecution, RenderInterface* p_renderInterface);
-	void CommandBufferSingleExecution_execute(CommandBufferSingleExecution* p_commandBufferSingleExecution, RenderInterface* p_renderInterface);
+			CommandPool* p_commandPool, Device* p_device, CommandBufferSingleExecutionAllocInfo* p_commandBufferSingleExecutionAllocInfo);
+	void CommandBufferSingleExecution_startRecording(CommandBufferSingleExecution* p_commandBufferSingleExecution);
+	void CommandBufferSingleExecution_execute(CommandBufferSingleExecution* p_commandBufferSingleExecution, Device* p_device);
 }

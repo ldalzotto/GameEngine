@@ -169,7 +169,7 @@ void SandboxApplication_update(float p_delta)
 			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.5f, 0.0f, 0.5f);
+			l_transformInitInfo.LocalPosition = glm::vec3(0.5f, 0.0f, -0.5f);
 			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
 			_ECS::Transform_init(l_component, &l_transformInitInfo);

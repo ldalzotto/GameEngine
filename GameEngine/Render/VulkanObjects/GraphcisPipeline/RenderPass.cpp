@@ -1,5 +1,6 @@
 #include "RenderPass.h"
 
+#include "RenderInterface.h"
 #include "VulkanObjects/SwapChain/SwapChain.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 
@@ -34,7 +35,7 @@ namespace _GameEngine::_Render
 		{
 			l_colorAttachment->format = p_renderPass->RenderPassDependencies.SwapChain->SwapChainInfo.SurfaceFormat.format;
 			l_colorAttachment->samples = VK_SAMPLE_COUNT_1_BIT;
-			l_colorAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			l_colorAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			l_colorAttachment->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			l_colorAttachment->stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			l_colorAttachment->stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -90,7 +91,7 @@ namespace _GameEngine::_Render
 		l_renderPassCreateInfo.dependencyCount = 1;
 		l_renderPassCreateInfo.pDependencies = &l_subpassDependency;
 		
-		if (vkCreateRenderPass(p_renderPass->RenderPassDependencies.SwapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, &l_renderPassCreateInfo, nullptr, &p_renderPass->renderPass)
+		if (vkCreateRenderPass(p_renderPass->RenderPassDependencies.SwapChain->RenderInterface->Device->LogicalDevice.LogicalDevice, &l_renderPassCreateInfo, nullptr, &p_renderPass->renderPass)
 			!= VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create render pass!"));
@@ -99,6 +100,6 @@ namespace _GameEngine::_Render
 
 	void RenderPass_free(RenderPass* p_renderPass)
 	{
-		vkDestroyRenderPass(p_renderPass->RenderPassDependencies.SwapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_renderPass->renderPass, nullptr);
+		vkDestroyRenderPass(p_renderPass->RenderPassDependencies.SwapChain->RenderInterface->Device->LogicalDevice.LogicalDevice, p_renderPass->renderPass, nullptr);
 	};
 };

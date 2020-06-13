@@ -5,6 +5,7 @@
 
 #include "Log/Log.h"
 
+#include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/Hardware/Window/Window.h"
 #include "VulkanObjects/Hardware/Window/Surface.h"
@@ -48,23 +49,22 @@ namespace _GameEngine::_Render
 		return p_swapCahinSupportDetails.PresentModes.size() > 0 && p_swapCahinSupportDetails.SurfaceFormats.size() > 0;
 	};
 
-	void SwapChain_build(SwapChain* p_swapChain, SwapChainBuildInfo* p_swapChainBuildInfo)
+	void SwapChain_build(SwapChain* p_swapChain, RenderInterface* p_renderInterface)
 	{
-		p_swapChain->SwapChainDependencies = p_swapChainBuildInfo->SwapChainDependencies;
-
+		p_swapChain->RenderInterface = p_renderInterface;
 		p_swapChain->OnWindowSizeChangeCallback.Callback = onWindowSizeChanged;
 		p_swapChain->OnWindowSizeChangeCallback.Closure = p_swapChain;
-		_Utils::Observer_register(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
+		_Utils::Observer_register(&p_renderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
 
 		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
 
 		SwapChainSupportDetails l_swapChainDetails = SwapChain_getSupportDetails(
-			p_swapChain->SwapChainDependencies.Device->PhysicalDevice.PhysicalDevice,
-			p_swapChain->SwapChainDependencies.Surface);
+			p_renderInterface->Device->PhysicalDevice.PhysicalDevice,
+			p_renderInterface->WindowSurface);
 
 		l_swapChainInfo->SurfaceFormat = chooseSwapSurfaceFormat(l_swapChainDetails.SurfaceFormats);
 		l_swapChainInfo->PresentMode = chooseSwapPresentMode(l_swapChainDetails.PresentModes);
-		l_swapChainInfo->SwapExtend = chooseSwapExtent(p_swapChain->SwapChainDependencies.Window, l_swapChainDetails.Capabilities);
+		l_swapChainInfo->SwapExtend = chooseSwapExtent(p_renderInterface->Window, l_swapChainDetails.Capabilities);
 
 		uint32_t l_imageCount = l_swapChainDetails.Capabilities.minImageCount;
 		if (l_swapChainDetails.Capabilities.minImageCount > 0 && l_imageCount > l_swapChainDetails.Capabilities.maxImageCount)
@@ -74,17 +74,16 @@ namespace _GameEngine::_Render
 
 		VkSwapchainCreateInfoKHR l_createInfo{ };
 		l_createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		l_createInfo.surface = p_swapChain->SwapChainDependencies.Surface->WindowSurface;
+		l_createInfo.surface = p_renderInterface->WindowSurface->WindowSurface;
 		l_createInfo.minImageCount = l_imageCount;
 		l_createInfo.imageFormat = l_swapChainInfo->SurfaceFormat.format;
 		l_createInfo.imageColorSpace = l_swapChainInfo->SurfaceFormat.colorSpace;
 		l_createInfo.imageExtent = l_swapChainInfo->SwapExtend;
 		l_createInfo.imageArrayLayers = 1;
-		l_createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-
-
+		l_createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+		
 		// How swap chain is handling images
-		auto l_physicalDeviceQueues = &p_swapChain->SwapChainDependencies.Device->PhysicalDevice.QueueFamilies;
+		auto l_physicalDeviceQueues = &p_renderInterface->Device->PhysicalDevice.QueueFamilies;
 
 		// Graphics and Presentation queues are not the same.
 		if (l_physicalDeviceQueues->Graphics.QueueIndex != l_physicalDeviceQueues->Present.QueueIndex)
@@ -106,7 +105,7 @@ namespace _GameEngine::_Render
 		l_createInfo.clipped = VK_TRUE;
 		l_createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-		if (vkCreateSwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, &l_createInfo, nullptr, &p_swapChain->VkSwapchainKHR) != VK_SUCCESS)
+		if (vkCreateSwapchainKHR(p_renderInterface->Device->LogicalDevice.LogicalDevice, &l_createInfo, nullptr, &p_swapChain->VkSwapchainKHR) != VK_SUCCESS)
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create swap chain!"));
 		}
@@ -114,9 +113,9 @@ namespace _GameEngine::_Render
 
 		std::vector<VkImage> l_swapChainRawImages;
 		l_imageCount = 0;
-		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, nullptr);
+		vkGetSwapchainImagesKHR(p_renderInterface->Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, nullptr);
 		l_swapChainRawImages.resize(l_imageCount);
-		vkGetSwapchainImagesKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, l_swapChainRawImages.data());
+		vkGetSwapchainImagesKHR(p_renderInterface->Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, &l_imageCount, l_swapChainRawImages.data());
 		
 		p_swapChain->SwapChainImages.resize(l_imageCount);
 
@@ -131,10 +130,9 @@ namespace _GameEngine::_Render
 		{
 			SwapChainImageInitializationInfo l_swapChainImageInitializationInfo{};
 			l_swapChainImageInitializationInfo.CreatedImage = l_swapChainRawImages[i];
-			l_swapChainImageInitializationInfo.Device = p_swapChain->SwapChainDependencies.Device;
 			l_swapChainImageInitializationInfo.ImageViewCreateInfo = &l_imageViewCreateInfo;
-			l_swapChainImageInitializationInfo.CommandPool = p_swapChainBuildInfo->CommandPool;
-			
+			l_swapChainImageInitializationInfo.RenderInterface = p_renderInterface;
+
 			SwapChainImage_init(&p_swapChain->SwapChainImages[i], &l_swapChainImageInitializationInfo);
 		}
 	};
@@ -147,14 +145,14 @@ namespace _GameEngine::_Render
 
 	void SwapChain_free(SwapChain* p_swapChain)
 	{
-		Observer_unRegister(&p_swapChain->SwapChainDependencies.Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
+		Observer_unRegister(&p_swapChain->RenderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
 
 		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)
 		{
-			SwapChainImage_free(&p_swapChain->SwapChainImages[i], p_swapChain->SwapChainDependencies.Device);
+			SwapChainImage_free(&p_swapChain->SwapChainImages[i], p_swapChain->RenderInterface->Device);
 		}
 
-		vkDestroySwapchainKHR(p_swapChain->SwapChainDependencies.Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
+		vkDestroySwapchainKHR(p_swapChain->RenderInterface->Device->LogicalDevice.LogicalDevice, p_swapChain->VkSwapchainKHR, nullptr);
 	};
 
 	void swapChainInvalidate(SwapChain* p_swapChain)
