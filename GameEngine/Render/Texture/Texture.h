@@ -27,6 +27,7 @@ namespace _GameEngine::_Render
 	struct TextureInfo
 	{
 		VkImageType ImageType;
+		VkImageAspectFlags AspectMask;
 		uint32_t MipLevels;
 		uint32_t ArrayLayers;
 		VkFormat Format;
@@ -94,4 +95,6 @@ namespace _GameEngine::_Render
 	void Texture_alloc(Texture** p_texture, TextureAllocInfo* p_textureAllocInfo);
 	void Texture_free(Texture* p_texture, RenderInterface* p_renderInterface);
 	void Texture_free(Texture** p_texture, RenderInterface* p_renderInterface);
+
+	VkImageSubresourceRange Texture_buildSubResource(Texture* p_texture);
 }

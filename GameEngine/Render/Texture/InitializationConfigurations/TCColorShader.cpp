@@ -8,6 +8,7 @@ namespace _GameEngine::_Render
 	void TCColorShader_BuildTextureInfo(TextureInfo* p_textureInfo)
 	{
 		p_textureInfo->ImageType = VK_IMAGE_TYPE_2D;
+		p_textureInfo->AspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		p_textureInfo->MipLevels = 1;
 		p_textureInfo->ArrayLayers = 1;
 		p_textureInfo->Format = VK_FORMAT_R8G8B8A8_SRGB;
@@ -20,6 +21,5 @@ namespace _GameEngine::_Render
 	void TCColorShader_BuildVkImageViewCreateInfo(ImageViewCreateInfo* p_imageViewCreateInfo) 
 	{
 		p_imageViewCreateInfo->viewType = VK_IMAGE_VIEW_TYPE_2D;
-		p_imageViewCreateInfo->aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	};
 }

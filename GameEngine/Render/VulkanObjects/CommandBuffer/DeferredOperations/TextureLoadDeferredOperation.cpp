@@ -26,9 +26,9 @@ namespace _GameEngine::_Render
 	{
 		TextureLoadDeferredOperation* l_textureLoadDeferredOperation = (TextureLoadDeferredOperation*)p_commentBufferOperation->UserObject;
 
-		TextureLayoutTransition_executeTransition(p_commandBuffer, l_textureLoadDeferredOperation->Texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		TextureLayoutTransition_executeTransition(p_commandBuffer->CommandBuffer, l_textureLoadDeferredOperation->Texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 		copyBufferToImage(p_commandBuffer, &l_textureLoadDeferredOperation->SourceBuffer, l_textureLoadDeferredOperation->Texture);
-		TextureLayoutTransition_executeTransition(p_commandBuffer, l_textureLoadDeferredOperation->Texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		TextureLayoutTransition_executeTransition(p_commandBuffer->CommandBuffer, l_textureLoadDeferredOperation->Texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	};
 
 	void TextureLoadDeferredOperation_onCompleted(DeferredCommandBufferOperation* p_commentBufferOperation)

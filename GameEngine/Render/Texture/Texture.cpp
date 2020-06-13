@@ -138,6 +138,17 @@ namespace _GameEngine::_Render
 		delete l_texture;
 	};
 
+	VkImageSubresourceRange Texture_buildSubResource(Texture* p_texture)
+	{
+		VkImageSubresourceRange l_subResourceRange{};
+		l_subResourceRange.aspectMask = p_texture->TextureInfo.AspectMask;
+		l_subResourceRange.baseMipLevel = p_texture->TextureInfo.MipLevels - 1;
+		l_subResourceRange.layerCount = p_texture->TextureInfo.MipLevels;
+		l_subResourceRange.baseArrayLayer = p_texture->TextureInfo.ArrayLayers - 1;
+		l_subResourceRange.levelCount = p_texture->TextureInfo.ArrayLayers;
+		return l_subResourceRange;
+	};
+
 	void texture_AllocateVulkanObjects(Texture* p_texture, ImageViewCreateInfo* p_imageViewCreateInfo, Device* p_device)
 	{
 		VkImageCreateInfo l_imageCreateInfo{};
@@ -164,6 +175,7 @@ namespace _GameEngine::_Render
 		}
 
 		{
+			p_imageViewCreateInfo->aspectMask = p_texture->TextureInfo.AspectMask;
 			p_imageViewCreateInfo->Format = p_texture->TextureInfo.Format;
 			p_imageViewCreateInfo->MipLevels = p_texture->TextureInfo.MipLevels;
 			p_imageViewCreateInfo->ArrayLayers = p_texture->TextureInfo.ArrayLayers;

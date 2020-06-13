@@ -4,6 +4,7 @@
 
 #include "VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
+#include "VulkanObjects/CommandBuffer/CommandBuffers.h"
 
 #include "Texture/ImageViews.h"
 #include "Texture/Texture.h"
@@ -42,11 +43,12 @@ namespace _GameEngine::_Render
 	void TCDepth_BuildTextureInfo(TextureInfo* p_textureInfo, Device* p_device)
 	{
 		p_textureInfo->ImageType = VK_IMAGE_TYPE_2D;
+		p_textureInfo->AspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 		p_textureInfo->MipLevels = 1;
 		p_textureInfo->ArrayLayers = 1;
 		p_textureInfo->Format = findDepthTextureFormat(p_device);
 		p_textureInfo->Tiling = VK_IMAGE_TILING_OPTIMAL;
-		p_textureInfo->Usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		p_textureInfo->Usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		p_textureInfo->SharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		p_textureInfo->Samples = VK_SAMPLE_COUNT_1_BIT;
 	};
@@ -54,13 +56,12 @@ namespace _GameEngine::_Render
 	void TCDepth_BuildVkImageViewCreateInfo(ImageViewCreateInfo* p_imageViewInitializationInfo)
 	{
 		p_imageViewInitializationInfo->viewType = VK_IMAGE_VIEW_TYPE_2D;
-		p_imageViewInitializationInfo->aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 	};
 
 	void tCDepth_initializationCommandBufferOperation_buildCommandBuffer(CommandBuffer* p_commandBuffer, DeferredCommandBufferOperation* p_commentBufferOperation)
 	{
 		Texture* l_texture = (Texture*)p_commentBufferOperation->UserObject;
-		TextureLayoutTransition_executeTransition(p_commandBuffer, l_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+		TextureLayoutTransition_executeTransition(p_commandBuffer->CommandBuffer, l_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 	};
 
 	void TCDepth_InitializationCommandBufferOperation_build(DeferredCommandBufferOperation* p_deferredCommandBufferOperation, Texture* p_texture)

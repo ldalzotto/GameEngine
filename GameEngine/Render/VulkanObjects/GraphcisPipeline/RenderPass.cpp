@@ -52,7 +52,7 @@ namespace _GameEngine::_Render
 			VkAttachmentDescription* l_depthAttachment = &l_attachments.at(1);
 			l_depthAttachment->format =  *p_renderPassBuildInfo->DepthTextureFormat;
 			l_depthAttachment->samples = VK_SAMPLE_COUNT_1_BIT;
-			l_depthAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			l_depthAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			l_depthAttachment->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			l_depthAttachment->stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			l_depthAttachment->stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
