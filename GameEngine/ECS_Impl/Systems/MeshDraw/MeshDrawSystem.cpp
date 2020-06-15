@@ -12,7 +12,7 @@
 
 #include "RenderInterface.h"
 #include "Materials/Material.h"
-#include "Materials/MaterialInstanceKeys.h"
+#include "Shader/ShaderParameterKeys.h"
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceContainer.h"
 

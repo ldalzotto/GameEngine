@@ -3,7 +3,7 @@
 #include "Log/Log.h"
 #include <stdexcept>
 
-#include "Materials/MaterialInstanceKeys.h"
+#include "Shader/ShaderParameterKeys.h"
 #include "Materials/MaterialInstanceContainer.h"
 #include "RenderInterface.h"
 #include "Texture/TextureSamplers.h"

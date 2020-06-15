@@ -1,13 +1,23 @@
 -- TODO --
 
-[X] # Moving MeshStep creation to ECS system instead of mesh renderer component.
-# Adding validation for material properties ?
-
 # Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
 
+
+
+
+
+~~ LONG TERM OBJECTIVES ~~
+
+-- Graphics improvements --
+
+# Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 -- DONE --
-
-
 
 
 -- Materials Generalizaion --
@@ -18,6 +28,8 @@
 	[X] ## Removing Material instance value from MeshRenderer ? Only a pointer is necessary (and allocate the instance on the heap).
 	[X] ## How to handle clearing value ? Is it possible to create a render pass only for clearing at the beginning ?
 	[X] ## As a test, rendering the same model twice that have different materials.
+
+[X] # Moving MeshStep creation to ECS system instead of mesh renderer component.
 
 
 -- Transforms --
@@ -43,21 +55,6 @@
 Goal : Having a command that shows transform with the associated Entity ID (it's pointer address at least) ?
   SubGoals :
 	 [X] Centralizing the game camera data to a system instead of handling logic in the Camera component.
-
-
--- Graphics improvements --
-
-# Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
-# The MeshDrawSystem updates the model matrix for every Transforms. However, if the transform doesn't move, the matrix is still pushed to GPU. Thus we can implement a system that track if transform have changed
-  from the last frame. If that's the case, the MeshDrawSystem pushes data to the gpu.
-
--- Log term improvements --
-
-# The material definition is hard coded (vertex buffer type, input shader parameters).
-  We could potentially implement a system that read a single configuration object and create the material and it's instances accordingly.
-  That would require much more work (finding a generic way to define parameters, createing appropriate structures from it).
-  For now, such a system is not needed.
-# The same goes for the GraphicsPipeline associated to the shader.
 
 -- ECS --
 [X] # Provinding a uniquea and safe way to get the child component.

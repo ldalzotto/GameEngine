@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
 #include "vulkan/vulkan.h"
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
+#include "ShaderParameterKeys.h"
 
 namespace _GameEngine::_Render
 {
@@ -23,12 +23,12 @@ namespace _GameEngine::_Render
 	struct ShaderParameter
 	{
 		ShaderParameterType Type;
-		std::string KeyName;
+		ShaderParameterKey KeyName;
 		VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding;
 		void* Parameter;
 	};
 
-	void ShaderParameter_alloc(ShaderParameter* p_shaderParameter, ShaderParameterType p_shaderParameterType, std::string& p_keyName);
+	void ShaderParameter_alloc(ShaderParameter* p_shaderParameter, ShaderParameterType p_shaderParameterType, ShaderParameterKey& p_keyName);
 	void ShaderParameter_free(ShaderParameter* p_shaderParameter);
 
 	struct UniformBufferParameter

@@ -5,7 +5,7 @@
 
 namespace _GameEngine::_Render
 {
-	void ShaderParameter_alloc(ShaderParameter* p_shaderParameter, ShaderParameterType p_shaderParameterType, std::string& p_keyName)
+	void ShaderParameter_alloc(ShaderParameter* p_shaderParameter, ShaderParameterType p_shaderParameterType, ShaderParameterKey& p_keyName)
 	{
 		p_shaderParameter->Type = p_shaderParameterType;
 		p_shaderParameter->KeyName = p_keyName;

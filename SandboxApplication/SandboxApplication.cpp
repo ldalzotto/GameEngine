@@ -14,7 +14,7 @@
 
 #include "Render/Includes/GLFWIncludes.h"
 #include "Render/Texture/Texture.h"
-#include "Render/Materials/MaterialInstanceKeys.h"
+#include "Shader/ShaderParameterKeys.h"
 
 #include <iostream>
 #include <stdexcept>

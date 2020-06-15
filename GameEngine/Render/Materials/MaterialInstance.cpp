@@ -13,9 +13,9 @@
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "Shader/ShaderParameter.h"
 #include "Shader/DescriptorSetLayout.h"
+#include "Shader/ShaderParameterKeys.h"
 #include "Material.h"
 
-#include "MaterialInstanceKeys.h"
 
 namespace _GameEngine::_Render
 {
@@ -26,7 +26,7 @@ namespace _GameEngine::_Render
 
 	void MeshMaterialInstanceParameter_free(MaterialInstanceParameter* p_materialInstanceParameter, RenderInterface* p_renderInterface);
 
-	void populateParameters(MaterialInstance* p_materialInstance, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter);
+	void populateParameters(MaterialInstance* p_materialInstance, std::unordered_map<ShaderParameterKey, void*>* p_materialInstanceInputParamter);
 
 	void createDescriptorSet(MaterialInstance* p_materialInstance);
 	void updateDescriptorSet(MaterialInstance* p_materialInstance);
@@ -76,9 +76,9 @@ namespace _GameEngine::_Render
 		free(l_materialInstanceParameter);
 	};
 
-	Mesh* MaterialInstance_getMesh(MaterialInstance* p_materialInstance, std::string& p_key)
+	Mesh* MaterialInstance_getMesh(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
-		size_t l_key = std::hash<std::string>()(p_key);
+		size_t l_key = ShaderParameterKey_buildHash(&p_key);
 		MaterialInstanceParameter** l_foundMaterialInstanceParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_key);
 		if (l_foundMaterialInstanceParameter)
 		{
@@ -90,9 +90,9 @@ namespace _GameEngine::_Render
 		return nullptr;
 	};
 
-	void MaterialInstance_setMesh(MaterialInstance* p_materialInstance, std::string& p_key, MeshUniqueKey* p_meshUniqueKey)
+	void MaterialInstance_setMesh(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, MeshUniqueKey* p_meshUniqueKey)
 	{
-		size_t l_key = std::hash<std::string>()(p_key);
+		size_t l_key = ShaderParameterKey_buildHash(&p_key);
 		MaterialInstanceParameter** l_foundMaterialInstanceParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_key);
 		if (l_foundMaterialInstanceParameter)
 		{
@@ -143,9 +143,9 @@ namespace _GameEngine::_Render
 		l_textureMaterialInstanceParameter->Texture = TextureResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.TextureResourceProvider, p_textureUniqueKey);
 	};
 
-	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, std::string& p_key)
+	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
-		size_t l_hash = std::hash<std::string>()(p_key);
+		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
 		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
 		if (l_foundParameter)
 		{
@@ -154,9 +154,9 @@ namespace _GameEngine::_Render
 		return nullptr;
 	};
 
-	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, std::string& p_key, TextureUniqueKey* p_textureKey)
+	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, TextureUniqueKey* p_textureKey)
 	{
-		size_t l_hash = std::hash<std::string>()(p_key);
+		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
 		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
 		if (l_foundParameter)
 		{
@@ -187,9 +187,9 @@ namespace _GameEngine::_Render
 		l_uniformBufferInstanceParameter->UniformBuffer = UniformBufferParameter_allocVulkanBuffer(p_uniformBufferParameter, p_renderInterface->Device);
 	};
 
-	VulkanBuffer* MaterialInstance_getUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key)
+	VulkanBuffer* MaterialInstance_getUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
-		size_t l_hash = std::hash<std::string>()(p_key);
+		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
 		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
 		if (l_foundParameter)
 		{
@@ -198,9 +198,9 @@ namespace _GameEngine::_Render
 		return nullptr;
 	};
 	
-	void MaterialInstance_setUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key, UniformBufferParameter* p_uniformBufferParameter)
+	void MaterialInstance_setUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, UniformBufferParameter* p_uniformBufferParameter)
 	{
-		size_t l_hash = std::hash<std::string>()(p_key);
+		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
 		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
 		if (l_foundParameter)
 		{
@@ -214,9 +214,9 @@ namespace _GameEngine::_Render
 		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
 	};
 
-	void MaterialInstance_pushUniformBuffer(MaterialInstance* p_materialInstance, std::string& p_key, void* p_data)
+	void MaterialInstance_pushUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, void* p_data)
 	{
-		size_t l_hash = std::hash<std::string>()(p_key);
+		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
 		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
 		if (l_foundParameter)
 		{
@@ -226,7 +226,7 @@ namespace _GameEngine::_Render
 	};
 
 
-	void populateParameters(MaterialInstance* p_materialInstance, std::unordered_map<std::string, void*>* p_materialInstanceInputParamter)
+	void populateParameters(MaterialInstance* p_materialInstance, std::unordered_map<ShaderParameterKey, void*>* p_materialInstanceInputParamter)
 	{
 		{
 			MeshUniqueKey l_meshKey{};
@@ -252,6 +252,9 @@ namespace _GameEngine::_Render
 				MaterialInstance_setTexture(p_materialInstance, l_shaderParameter.KeyName, &l_textureUniqueKey);
 			}
 			break;
+			default:
+				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to populate ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
+				break;
 			}
 		}
 	};
@@ -308,6 +311,9 @@ namespace _GameEngine::_Render
 				l_writeDescirptorSets.emplace_back(l_writeDescriptorSet);
 			}
 			break;
+			default:
+				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to update ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
+				break;
 			}
 
 			i += 1;

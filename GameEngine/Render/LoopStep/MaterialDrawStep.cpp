@@ -8,7 +8,7 @@
 #include "Materials/MaterialInstanceContainer.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialInstance.h"
-#include "Materials/MaterialInstanceKeys.h"
+#include "Shader/ShaderParameterKeys.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
 #include "Utils/Algorithm/Algorithm.h"
