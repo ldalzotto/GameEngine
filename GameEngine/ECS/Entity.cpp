@@ -23,13 +23,13 @@ namespace _GameEngine::_ECS
 	{
 
 #ifndef NDEBUG
-		if (p_entity->Components.contains(p_unlinkedComponent->ComponentType))
+		if (p_entity->Components.get(Component_comparator, &p_unlinkedComponent->ComponentType))
 		{
 			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Trying to add a component were it's type ( " + p_unlinkedComponent->ComponentType + " ) is aleady present as a component."));
 		}
 #endif
 
-		p_entity->Components[p_unlinkedComponent->ComponentType] = p_unlinkedComponent;
+		p_entity->Components.push_back(&p_unlinkedComponent);
 		p_unlinkedComponent->AttachedEntity = p_entity;
 		ComponentEvents_onComponentAttached(&p_entity->ECS->ComponentEvents, p_unlinkedComponent);
 	};
@@ -37,15 +37,16 @@ namespace _GameEngine::_ECS
 	void Entity_freeComponent(Entity* p_entity, Component** p_component)
 	{
 		ComponentEvents_onComponentDetached(&p_entity->ECS->ComponentEvents, (*p_component));
-		p_entity->Components.erase((*p_component)->ComponentType);
+		p_entity->Components.erase(Component_comparator, &(*p_component)->ComponentType);
 		Component_free(p_component);
 	};
 
 	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType)
 	{
-		if (p_entity->Components.contains(p_componentType))
+		Component** l_foundComponent = p_entity->Components.get(Component_comparator, (ComponentType*)&p_componentType);
+		if (l_foundComponent)
 		{
-			return p_entity->Components[p_componentType];
+			return *l_foundComponent;
 		}
 		return nullptr;
 	};
@@ -53,53 +54,71 @@ namespace _GameEngine::_ECS
 	Entity* EntityContainer_allocEntity(ECS* p_ecs)
 	{
 		Entity* l_instanciatedEntity = entity_alloc(p_ecs);
-		p_ecs->EntityContainer.Entities.emplace_back(l_instanciatedEntity);
+		p_ecs->EntityContainer.Entities.push_back(&l_instanciatedEntity);
 		return l_instanciatedEntity;
+	};
+
+	void EntityContainer_alloc(EntityContainer* p_entityContainer)
+	{
+		p_entityContainer->Entities.alloc();
 	};
 
 	void EntityContainer_free(EntityContainer* p_entityContainer, ComponentEvents* p_componentEvents)
 	{
 		// We copy entities vector because operations inside the loop writes to the initial array
-		std::vector<Entity*> l_copiedEntitiesPointer = p_entityContainer->Entities;
+		_Core::VectorT<Entity*> l_copiedEntitiesPointer;
+		p_entityContainer->Entities.deepCopy(&l_copiedEntitiesPointer);
+
 		for (size_t i = l_copiedEntitiesPointer.size(); i--;)
 		{
-			EntityContainer_freeEntity(&l_copiedEntitiesPointer[i]);
+			EntityContainer_freeEntity(l_copiedEntitiesPointer.at(i));
 		}
 
-		p_entityContainer->Entities.clear();
+		l_copiedEntitiesPointer.free();
+		p_entityContainer->Entities.free();
 	};
 
 	void EntityContainer_freeEntity(Entity** p_entity)
 	{
-		_Utils::Vector_eraseElementEquals((*p_entity)->ECS->EntityContainer.Entities, (*p_entity));
+		(*p_entity)->ECS->EntityContainer.Entities.erase(Entity_comparator, p_entity);
 		entity_free(p_entity);
 	};
 
 	Entity* entity_alloc(ECS* p_ecs)
 	{
-		Entity* l_instanciatedEntity = new Entity();
+		Entity* l_instanciatedEntity = (Entity*)malloc(sizeof(Entity));
 		l_instanciatedEntity->ECS = p_ecs;
+		l_instanciatedEntity->Components.alloc(2);
 		return l_instanciatedEntity;
 	};
 
 	void entity_free(Entity** p_entity)
 	{
-		// We copy components vector because operations inside the loop writes to the initial array
-		auto l_copiedComponents = (*p_entity)->Components;
-		for (auto&& p_component : l_copiedComponents)
 		{
-			Entity_freeComponent((*p_entity), &p_component.second);
+			// We copy components vector because operations inside the loop writes to the initial array
+			_Core::VectorT<Component*> l_copiedComponents{};
+
+			(*p_entity)->Components.deepCopy(&l_copiedComponents);
+			for (size_t i = 0; i < l_copiedComponents.size(); i++)
+			{
+				Entity_freeComponent((*p_entity), l_copiedComponents.at(i));
+			}
+
+			l_copiedComponents.free();
 		}
+
+
+		(*p_entity)->Components.free();
 
 #ifndef NDEBUG
 		EntityContainer* l_entityContainer = &(*p_entity)->ECS->EntityContainer;
-		if(_Utils::Vector_containsElementEquals(&l_entityContainer->Entities, *p_entity))
-        {
-            _Log::LogInstance->CoreLogger->warn("Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
-        }
+		if (l_entityContainer->Entities.get(Entity_comparator, p_entity))
+		{
+			_Log::LogInstance->CoreLogger->warn("Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
+		}
 #endif
 
-		delete (*p_entity);
+		free(*p_entity);
 		*p_entity = nullptr;
 	};
 
@@ -119,7 +138,7 @@ namespace _GameEngine::_ECS
 		Entity to the Listener if successfull.
 		This is to be sure that all already present Entities are checked if the system initiation is done after the Entity creation.
 	*/
-	void entityComponentListener_pushAllElligibleEntities(EntityConfigurableContainer* l_entityComponentListener, std::vector<Entity*>* p_queriedEntities);
+	void entityComponentListener_pushAllElligibleEntities(EntityConfigurableContainer* l_entityComponentListener, _Core::VectorT<Entity*>* p_queriedEntities);
 
 
 	void EntityConfigurableContainer_init(EntityConfigurableContainer* p_entityComponentListener, EntityConfigurableContainerInitInfo* p_entityComponentListenerInitInfo)
@@ -215,9 +234,11 @@ namespace _GameEngine::_ECS
 			{
 				ComponentType* l_componentType = l_entityComponentListener->ListenedComponentTypes.at(i);
 				bool l_filteredComponentTypeIsAnEntityComponent = false;
-				for (auto&& l_entityComponentEntry : l_comparedComponent->AttachedEntity->Components)
+
+				for (size_t i = 0; i < l_comparedComponent->AttachedEntity->Components.size(); i++)
 				{
-					if (l_entityComponentEntry.first == *l_componentType)
+					Component* l_component = *l_comparedComponent->AttachedEntity->Components.at(i);
+					if (l_component->ComponentType == *l_componentType)
 					{
 						l_filteredComponentTypeIsAnEntityComponent = true;
 						break;
@@ -239,18 +260,20 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	void entityComponentListener_pushAllElligibleEntities(EntityConfigurableContainer* l_entityComponentListener, std::vector<Entity*>* p_queriedEntities)
+	void entityComponentListener_pushAllElligibleEntities(EntityConfigurableContainer* l_entityComponentListener, _Core::VectorT<Entity*>* p_queriedEntities)
 	{
 		for (size_t i = 0; i < p_queriedEntities->size(); i++)
 		{
-			Entity*& p_entity = p_queriedEntities->at(i);
+			Entity** p_entity = p_queriedEntities->at(i);
 			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.size(); i++)
 			{
 				ComponentType* l_askedComponentType = l_entityComponentListener->ListenedComponentTypes.at(i);
 				bool l_componentTypeMatchFound = false;
-				for (auto&& l_componentEntry : p_entity->Components)
+
+				for (size_t i = 0; i < (*p_entity)->Components.size(); i++)
 				{
-					if (*l_askedComponentType == l_componentEntry.first)
+					Component** l_component = (*p_entity)->Components.at(i);
+					if (*l_askedComponentType == (*l_component)->ComponentType)
 					{
 						l_componentTypeMatchFound = true;
 						break;
@@ -263,7 +286,7 @@ namespace _GameEngine::_ECS
 				}
 			}
 
-			entityComponentListener_pushEntity(l_entityComponentListener, p_entity);
+			entityComponentListener_pushEntity(l_entityComponentListener, *p_entity);
 
 		checkNextEntity:;
 		}

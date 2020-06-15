@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-
+#include "DataStructures/VectorT.h"
 #include "Entity.h"
 #include "Utils/SortedSequencer/SortedSequencer.h"
 
@@ -31,9 +30,10 @@ namespace _GameEngine::_ECS
 
 	struct SystemContainer
 	{
-		std::vector<SystemV2*> SystemsV2;
+		_Core::VectorT<SystemV2*> SystemsV2;
 	};
 
+	void SystemContainer_alloc(SystemContainer* p_systemContainer);
 	void SystemContainer_addSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2);
 	void SystemContainer_removeSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2);
 	void SystemContainer_free(SystemContainer* p_systemContainer);

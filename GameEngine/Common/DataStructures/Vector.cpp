@@ -54,6 +54,13 @@ namespace _GameEngine::_Core
 		}
 	}
 
+	void Vector_deepCopy(Vector* p_source, Vector* p_target)
+	{
+		memcpy(p_target, p_source, sizeof(Vector));
+		p_target->Memory = malloc(Vector_getTotalSize(p_source));
+		memcpy(p_target->Memory, p_source->Memory, Vector_getTotalSize(p_source));
+	};
+
 	void Vector_pushBack(Vector* p_vector, void* p_value)
 	{
 		if (p_vector->Size >= p_vector->Capacity)
@@ -109,7 +116,12 @@ namespace _GameEngine::_Core
 		}
 
 		return  (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
-	}
+	};
+
+	void* Vector_at_unchecked(Vector* p_vector, size_t p_index)
+	{
+		return  (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
+	};
 
 	void* Vector_get(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject)
 	{
@@ -138,6 +150,16 @@ namespace _GameEngine::_Core
 			}
 		}
 		return std::numeric_limits<size_t>::max();
+	};
+
+	void Vector_forEachReverse(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject)
+	{
+		size_t l_size = p_vector->Size;
+
+		for (size_t i = l_size - 1; i < l_size; --i)
+		{
+			p_callback(Vector_at_unchecked(p_vector, i), p_userObject);
+		}
 	};
 
 }

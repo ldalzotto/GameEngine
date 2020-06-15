@@ -28,30 +28,35 @@ namespace _GameEngine::_ECS
 		p_systemV2 = nullptr;
 	};
 
+	bool SystemV2_comparator(SystemV2** left, SystemV2** right)
+	{
+		return *left == *right;
+	};
+
 	void SystemContainer_addSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)
 	{
-		p_systemContainer->SystemsV2.emplace_back(p_systemV2);
+		p_systemContainer->SystemsV2.push_back(&p_systemV2);
 	};
 
 	void SystemContainer_removeSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)
 	{
-		for (size_t i = 0; i < p_systemContainer->SystemsV2.size(); i++)
-		{
-			SystemV2* l_systemV2 = p_systemContainer->SystemsV2.at(i);
-			if (l_systemV2 == p_systemV2)
-			{
-				p_systemContainer->SystemsV2.erase(p_systemContainer->SystemsV2.begin() + i);
-				break;
-			}
-		}
+		p_systemContainer->SystemsV2.erase(SystemV2_comparator, &p_systemV2);
+	};
+
+	void system_reverseLoop_erase(SystemV2** p_system, void* null)
+	{
+		SystemV2_free(p_system);
+	}
+
+
+	void SystemContainer_alloc(SystemContainer* p_systemContainer)
+	{
+		p_systemContainer->SystemsV2.alloc();
 	};
 
 	void SystemContainer_free(SystemContainer* p_systemContainer)
 	{
-		std::vector<SystemV2*> l_systemV2s = std::vector<SystemV2*>(p_systemContainer->SystemsV2);
-		for (size_t i = 0; i < l_systemV2s.size(); i++)
-		{
-			SystemV2_free(&l_systemV2s.at(i));
-		}
+		p_systemContainer->SystemsV2.forEachReverse(system_reverseLoop_erase, (void*)nullptr);
+		p_systemContainer->SystemsV2.free();
 	};
 }

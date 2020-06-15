@@ -23,6 +23,8 @@ namespace _GameEngine::_ECS
 	Component* Component_alloc(ComponentType& p_type, size_t p_componentChildSize);
 	void Component_free(Component** p_component);
 
+	bool Component_comparator(Component** left, ComponentType* right);
+
 	struct ComponentEvents
 	{
 		std::unordered_map<ComponentType, _Utils::Observer> ComponentAttachedEvents;

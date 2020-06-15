@@ -1,8 +1,6 @@
 #pragma once
 
 #include "DataStructures/VectorT.h"
-#include <unordered_map>
-#include <list>
 
 #include "ECS/Component.h"
 
@@ -13,11 +11,11 @@ namespace _GameEngine::_ECS
 	struct Entity
 	{
 		ECS* ECS;
-		std::unordered_map<ComponentType, Component*> Components;
+		_Core::VectorT<Component*> Components;
 	};
 
 	bool Entity_comparator(Entity** p_left, Entity** p_right);
-	 
+	
 	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent);
 	void Entity_freeComponent(Entity* p_entity, Component** p_component);
 
@@ -27,11 +25,12 @@ namespace _GameEngine::_ECS
 
 	struct EntityContainer
 	{
-		std::vector<Entity*> Entities;
+		_Core::VectorT<Entity*> Entities;
 	};
 
 	Entity* EntityContainer_allocEntity(ECS* p_ecs);
 	void EntityContainer_freeEntity(Entity** p_entity);
+	void EntityContainer_alloc(EntityContainer* p_entityContainer);
 	void EntityContainer_free(EntityContainer* p_entityContainer, ComponentEvents* p_componentEvents);
 
 	///////////////////////////////////

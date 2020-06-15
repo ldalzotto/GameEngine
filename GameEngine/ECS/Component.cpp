@@ -22,6 +22,11 @@ namespace _GameEngine::_ECS
 		*p_component = nullptr;
 	};
 
+	bool Component_comparator(Component** left, ComponentType* right)
+	{
+		return (*left)->ComponentType == *right;
+	};
+
 	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, Component* p_component)
 	{
 		if (p_componentEvents->ComponentAttachedEvents.contains(p_component->ComponentType))

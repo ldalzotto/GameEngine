@@ -6,6 +6,8 @@ namespace _GameEngine::_ECS
 	{
 		ECS* l_ecs = new ECS();
 		l_ecs->UpdateSequencer = p_updateSequencer;
+		SystemContainer_alloc(&l_ecs->SystemContainer);
+		EntityContainer_alloc(&l_ecs->EntityContainer);
 		return l_ecs;
 	};
 
