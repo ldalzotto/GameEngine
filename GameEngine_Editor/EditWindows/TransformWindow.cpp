@@ -21,12 +21,12 @@ namespace _GameEngineEditor
 	{
 		TransformWindow* l_transformWindow = (TransformWindow*)p_transformWindow->Window;
 		ImGui::Begin("Transform", &p_transformWindow->IsOpen);
-		glm::vec3 l_localPosition = l_transformWindow->Transform->LocalPosition;
+		_Math::Vector3f l_localPosition = l_transformWindow->Transform->LocalPosition;
 		if (ImGui::InputFloat3("pos", &l_localPosition.x, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			_ECS::Transform_setLocalPosition(l_transformWindow->Transform, l_localPosition);
 		}
-		glm::quat l_localRotation = l_transformWindow->Transform->LocalRotation;
+		_Math::Quaternionf l_localRotation = l_transformWindow->Transform->LocalRotation;
 		if (ImGui::DragFloat4("rot", &l_localRotation.x, 0.1f, -3.14f, 3.14f))
 		{
 			_ECS::Transform_setLocalRotation(l_transformWindow->Transform, l_localRotation);

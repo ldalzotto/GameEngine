@@ -13,4 +13,4 @@ target_include_directories(Test PUBLIC "./")
 target_link_libraries(Test PUBLIC GameEngine)
 target_link_libraries(Test PUBLIC GameEngine_Editor)
 
-copy_assimp_dll(${PROJECT_BINARY_DIR}/${BUILD_TYPE})
+copy_assimp_dll(${PROJECT_BINARY_DIR}/${BUILD_TYPE}/Debug)

@@ -1,0 +1,100 @@
+#include "QuaternionTransform.h"
+
+#include <math.h>
+#include "Quaternion.h"
+#include "Math/Matrix/Matrix.h"
+#include "Math/Vector/Vector.h"
+
+namespace _GameEngine::_Math
+{
+	void Quaternion_mul(Quaternionf* p_quaternion, Quaternionf* p_other, Quaternionf* out)
+	{
+		out->w = (p_quaternion->w * p_other->w) - (p_quaternion->x * p_other->x) - (p_quaternion->y * p_other->y) - (p_quaternion->z * p_other->z);
+		out->x = (p_quaternion->w * p_other->x) + (p_quaternion->x * p_other->w) + (p_quaternion->y * p_other->z) - (p_quaternion->z * p_other->y);
+		out->y = (p_quaternion->w * p_other->y) + (p_quaternion->y * p_other->w) + (p_quaternion->z * p_other->x) - (p_quaternion->x * p_other->z);
+		out->z = (p_quaternion->w * p_other->z) + (p_quaternion->z * p_other->w) + (p_quaternion->x * p_other->y) - (p_quaternion->y * p_other->x);
+	};
+
+	void Quaternion_rotateAround(Quaternionf* p_quaternion, Vector3f* p_axis, float p_angle, Quaternionf* out)
+	{
+		_Math::Quaternionf l_deltaRotation;
+		{
+			_Math::Vector3f l_deltaEuler;
+			{
+				_Math::Vector3f_mul(p_axis, p_angle, &l_deltaEuler);
+			}
+			_Math::Quaternion_fromEulerAngles(&l_deltaEuler, &l_deltaRotation);
+		}
+
+		_Math::Quaternion_mul(p_quaternion, &l_deltaRotation, out);
+	};
+
+	void Quaternion_fromEulerAngles(Vector3f* p_eulerAngles, Quaternionf* p_out)
+	{
+		glm::quat l_quat = glm::quat(glm::vec3(p_eulerAngles->x, p_eulerAngles->y, p_eulerAngles->z));
+
+		_Math::Vector3f l_cos;
+		{
+			_Math::Vector3f_mul(p_eulerAngles, 0.5f, &l_cos);
+			l_cos.x = cos(l_cos.x);
+			l_cos.y = cos(l_cos.y);
+			l_cos.z = cos(l_cos.z);
+		}
+
+		_Math::Vector3f l_sin;
+		{
+			_Math::Vector3f_mul(p_eulerAngles, 0.5f, &l_sin);
+			l_sin.x = sin(l_sin.x);
+			l_sin.y = sin(l_sin.y);
+			l_sin.z = sin(l_sin.z);
+		}
+
+		p_out->w = l_cos.x * l_cos.y * l_cos.z + l_sin.x * l_sin.y * l_sin.z;
+		p_out->x = l_sin.x * l_cos.y * l_cos.z - l_cos.x * l_sin.y * l_sin.z;
+		p_out->y = l_cos.x * l_sin.y * l_cos.z + l_sin.x * l_cos.y * l_sin.z;
+		p_out->z = l_cos.x * l_cos.y * l_sin.z - l_sin.x * l_sin.y * l_cos.z;
+	};
+
+	void Quaternion_fromEulerAngles(Vector3f& p_eulerAngles, Quaternionf* p_out)
+	{
+		Quaternion_fromEulerAngles(&p_eulerAngles, p_out);
+	};
+
+	/*
+		vec<3, T, Q> c = glm::cos(eulerAngle * T(0.5));
+		vec<3, T, Q> s = glm::sin(eulerAngle * T(0.5));
+
+		this->w = c.x * c.y * c.z + s.x * s.y * s.z;
+		this->x = s.x * c.y * c.z - c.x * s.y * s.z;
+		this->y = c.x * s.y * c.z + s.x * c.y * s.z;
+		this->z = c.x * c.y * s.z - s.x * s.y * c.z;
+	*/
+
+	void Quaterion_toRotationMatrix(Quaternionf* p_quaternion, Matrix3x3f* out_matrix)
+	{
+		float l_qxx = p_quaternion->x * p_quaternion->x;
+		float l_qxy = p_quaternion->x * p_quaternion->y;
+		float l_qxz = p_quaternion->x * p_quaternion->z;
+		float l_qxw = p_quaternion->x * p_quaternion->w;
+
+		float l_qyy = p_quaternion->y * p_quaternion->y;
+		float l_qyz = p_quaternion->y * p_quaternion->z;
+		float l_qyw = p_quaternion->y * p_quaternion->w;
+
+		float l_qzz = p_quaternion->z * p_quaternion->z;
+		float l_qzw = p_quaternion->z * p_quaternion->w;
+
+
+		out_matrix->_00 = 1 - (2 * l_qyy) - (2 * l_qzz);
+		out_matrix->_01 = (2 * l_qxy) + (2 * l_qzw);
+		out_matrix->_02 = (2 * l_qxz) - (2 * l_qyw);
+
+		out_matrix->_10 = (2 * l_qxy) - (2 * l_qzw);
+		out_matrix->_11 = 1 - (2 * l_qxx) - (2 * l_qzz);
+		out_matrix->_12 = (2 * l_qyz) + (2 * l_qxw);
+
+		out_matrix->_20 = (2 * l_qxz) + (2 * l_qyw);
+		out_matrix->_21 = (2 * l_qyz) - (2 * l_qxw);
+		out_matrix->_22 = 1 - (2 * l_qxx) - (2 * l_qyy);
+	};
+}

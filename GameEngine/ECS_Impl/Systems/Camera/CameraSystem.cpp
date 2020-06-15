@@ -46,7 +46,17 @@ namespace _GameEngine::_ECS
 			Transform* p_transform = GET_COMPONENT(Transform, l_entity);
 			Camera* p_camera = GET_COMPONENT(Camera, l_entity);
 
-			p_camera->ViewMatrix = glm::lookAt(Transform_getWorldPosition(p_transform), glm::vec3(0.0f) /* Transform_getWorldPosition(p_transform) + Transform_getForward(p_transform)*/, Transform_getUp(p_transform));
+			_Math::Vector3f l_worldPosition = Transform_getWorldPosition(p_transform);
+			glm::vec3 l_worldPositionGLM;
+			_Math::Vector3f_toGLM(&l_worldPosition, &l_worldPositionGLM);
+
+			_Math::Vector3f l_up = Transform_getUp(p_transform);
+			glm::vec3 l_upGLM;
+			{
+				_Math::Vector3f_toGLM(&l_up, &l_upGLM);
+			}
+
+			p_camera->ViewMatrix = glm::lookAt(l_worldPositionGLM, glm::vec3(0.0f) /* Transform_getWorldPosition(p_transform) + Transform_getForward(p_transform)*/, l_upGLM);
 
 			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.Projection = p_camera->ProjectionMatrix;
 			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;

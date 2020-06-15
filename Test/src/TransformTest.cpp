@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "Math/Quaternion/QuaternionTransform.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "GameEngineApplication.h"
 
@@ -13,20 +14,40 @@ if(left != right) \
 	throw std::runtime_error(""); \
 } \
 
+void test_assert(_GameEngine::_Math::Vector3f& l_left, _GameEngine::_Math::Vector3f& l_right)
+{
+	if (!_GameEngine::_Math::Vector3f_equals(&l_left, &l_right))
+	{
+		throw std::runtime_error("");
+	}
+}
+
+void test_assert(_GameEngine::_Math::Quaternionf& l_left, _GameEngine::_Math::Quaternionf& l_right)
+{
+	if (!_GameEngine::_Math::Quaternionf_equals(&l_left, &l_right))
+	{
+		throw std::runtime_error("");
+	}
+}
+
 namespace _GameEngine::_Test
 {
 	void Transform_simpleTransformation_test()
 	{
 		Transform l_transform{};
-		Transform_setLocalPosition(&l_transform, glm::vec3(1.0f, 1.0f, 1.0f));
-		TEST_ASSERT(Transform_getWorldPosition(&l_transform), glm::vec3(1.0f, 1.0f, 1.0f));
+		_Math::Vector3f l_localPosition = { 1.0f, 1.0f, 1.0f };
+		Transform_setLocalPosition(&l_transform, l_localPosition);
 
-		Transform_setLocalRotation(&l_transform, glm::quat(0.5f, 0.5f, 0.5f, 0.5f));
-		glm::quat l_worldRot = Transform_getWorldRotation(&l_transform);
-		TEST_ASSERT(l_worldRot, glm::quat(0.5f, 0.5f, 0.5f, 0.5f));
+		test_assert(Transform_getWorldPosition(&l_transform), l_localPosition);
 
-		Transform_setLocalScale(&l_transform, glm::vec3(1.0f, 1.0f, 1.0f));
-		TEST_ASSERT(Transform_getWorldScale(&l_transform), glm::vec3(1.0f, 1.0f, 1.0f));
+		_Math::Quaternionf l_localRotation{ 0.5f, 0.5f, 0.5f, 0.5f };
+		Transform_setLocalRotation(&l_transform, l_localRotation);
+		_Math::Quaternionf l_worldRot = Transform_getWorldRotation(&l_transform);
+		test_assert(l_worldRot, _Math::Quaternionf{ 0.5f, 0.5f, 0.5f, 0.5f });
+
+		_Math::Vector3f l_localScale = { 1.0f, 1.0f, 1.0f };
+		Transform_setLocalScale(&l_transform, l_localScale);
+		test_assert(Transform_getWorldScale(&l_transform), l_localScale);
 	}
 
 	void Transform_parenting_test()
@@ -39,9 +60,12 @@ namespace _GameEngine::_Test
 				l_root = (Transform*)l_rootComponent->Child;
 
 				TransformInitInfo l_rootInitInfo{};
-				l_rootInitInfo.LocalPosition = glm::vec3(1.0f, 0.0f, -1.0f);
-				l_rootInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 1.0f, 0.0f));
-				l_rootInitInfo.LocalScale = glm::vec3(1.0f, 1.0f, 1.0f);
+				l_rootInitInfo.LocalPosition = { 1.0f, 0.0f, -1.0f };
+				{
+					_Math::Vector3f l_localEuler{ 0.0f, 1.0f, 0.0f };
+					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
+				}
+				l_rootInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 				Transform_init(l_rootComponent, &l_rootInitInfo);
 			}
 
@@ -52,9 +76,12 @@ namespace _GameEngine::_Test
 				l_child1 = (Transform*)l_child1Component->Child;
 
 				TransformInitInfo l_rootInitInfo{};
-				l_rootInitInfo.LocalPosition = glm::vec3(0.0f, 1.0f, 0.0f);
-				l_rootInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 1.0f, 0.0f));
-				l_rootInitInfo.LocalScale = glm::vec3(2.0f, 2.0f, 2.0f);
+				l_rootInitInfo.LocalPosition = { 0.0f, 1.0f, 0.0f }; 
+				{
+					_Math::Vector3f l_localEuler{ 0.0f, 1.0f, 0.0f };
+					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
+				}
+				l_rootInitInfo.LocalScale = { 2.0f, 2.0f, 2.0f };
 				Transform_init(l_child1Component, &l_rootInitInfo);
 			}
 
@@ -67,17 +94,34 @@ namespace _GameEngine::_Test
 				l_child2 = (Transform*)l_child2Component->Child;
 
 				TransformInitInfo l_rootInitInfo{};
-				l_rootInitInfo.LocalPosition = glm::vec3(1.0f, 1.0f, 0.0f);
-				l_rootInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 1.0f, 0.0f));
-				l_rootInitInfo.LocalScale = glm::vec3(2.0f, 2.0f, 2.0f);
+				l_rootInitInfo.LocalPosition = { 1.0f, 1.0f, 0.0f };
+				{
+					_Math::Vector3f l_localEuler{ 0.0f, 1.0f, 0.0f };
+					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
+				}
+				l_rootInitInfo.LocalScale = { 2.0f, 2.0f, 2.0f };
 				Transform_init(l_child2Component, &l_rootInitInfo);
 			}
 
 			Transform_addChild(l_child1, l_child2);
 
-			TEST_ASSERT(Transform_getWorldPosition(l_child1), glm::vec3(1.0f, 1.0f, -1.0f));
-			TEST_ASSERT(Transform_getWorldRotation(l_child1), glm::quat(glm::vec3(0.0f, 1.0f, 0.0f)) * glm::quat(glm::vec3(0.0f, 1.0f, 0.0f)));
-			TEST_ASSERT(Transform_getWorldScale(l_child2), glm::vec3(4.0f, 4.0f, 4.0f));
+			_Math::Vector3f l_worldPositionChild1ValueTest = { 1.0f, 1.0f, -1.0f };
+			test_assert(Transform_getWorldPosition(l_child1), l_worldPositionChild1ValueTest);
+
+			_Math::Quaternionf l_wordRotationValueTest;
+			{
+				_Math::Vector3f l_localEuler{ 0.0f, 1.0f, 0.0f };
+				_Math::Quaternionf l_rotationDelta;
+				{
+					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rotationDelta);
+				}
+				_Math::Quaternion_mul(&l_rotationDelta, &l_rotationDelta, &l_wordRotationValueTest);
+			}
+			
+			test_assert(Transform_getWorldRotation(l_child1), l_wordRotationValueTest);
+
+			_Math::Vector3f l_worldScaleChild2ValueTest = { 4.0f, 4.0f, 4.0f };
+			test_assert(Transform_getWorldScale(l_child2), l_worldScaleChild2ValueTest);
 
 			Component_free(&l_rootComponent);
 			Component_free(&l_child1Component);
@@ -89,11 +133,5 @@ namespace _GameEngine::_Test
 	{
 		Transform_simpleTransformation_test();
 		Transform_parenting_test();
-
-		auto l_app = _GameEngine::app_alloc(nullptr);
-		_GameEngine::app_free(l_app);
-
-		l_app = _GameEngine::app_alloc(nullptr);
-		_GameEngine::app_free(l_app);
 	};
 }

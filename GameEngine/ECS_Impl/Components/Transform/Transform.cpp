@@ -1,5 +1,9 @@
 #include "Transform.h"
 
+#include "Math/Vector/VectorTransform.h"
+#include "Math/Matrix/MatrixTransform.h"
+#include "Math/Quaternion/QuaternionTransform.h"
+
 #include "Utils/Math/Math.h"
 
 namespace _GameEngine::_ECS
@@ -48,40 +52,36 @@ namespace _GameEngine::_ECS
 		p_transform->Parent = nullptr;
 	};
 
-	void Transform_setLocalPosition(Transform* p_transform, const glm::vec3& p_localPosition)
+	void Transform_setLocalPosition(Transform* p_transform, _Math::Vector3f& p_localPosition)
 	{
-		if (p_transform->LocalPosition != p_localPosition)
+		if (!_Math::Vector3f_equals(&p_transform->LocalPosition, &p_localPosition))
 		{
 			transform_markMatricsForRecalculation(p_transform);
 			p_transform->LocalPosition = p_localPosition;
 		}
 	};
 
-	void Transform_setLocalRotation(Transform* p_transform, const glm::quat& p_localRotation)
+	void Transform_setLocalRotation(Transform* p_transform, _Math::Quaternionf& p_localRotation)
 	{
-		if (p_transform->LocalRotation != p_localRotation)
+		if (!_Math::Quaternionf_equals(&p_transform->LocalRotation, &p_localRotation))
 		{
 			transform_markMatricsForRecalculation(p_transform);
 			p_transform->LocalRotation = p_localRotation;
 		}
 	};
 
-	void Transform_setLocalScale(Transform* p_transform, const glm::vec3& p_localScale)
+	void Transform_setLocalScale(Transform* p_transform, _Math::Vector3f& p_localScale)
 	{
-		if (p_transform->LocalScale != p_localScale)
+		if (!_Math::Vector3f_equals(&p_transform->LocalScale, &p_localScale))
 		{
 			transform_markMatricsForRecalculation(p_transform);
 			p_transform->LocalScale = p_localScale;
 		}
 	};
 
-	glm::mat4x4 Transform_getLocalToWorldMatrix(Transform* p_transform, bool p_includeSelf)
+	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform, bool p_includeSelf)
 	{
-		glm::mat4x4 l_return = glm::mat4x4{};
-		l_return[0][0] = 1.0f;
-		l_return[1][1] = 1.0f;
-		l_return[2][2] = 1.0f;
-		l_return[3][3] = 1.0f;
+		_Math::Matrix4x4f l_return = _Math::Matrix4x4f_identity();
 
 		Transform* l_currentTransform = nullptr;
 		if (p_includeSelf)
@@ -96,48 +96,90 @@ namespace _GameEngine::_ECS
 		while (l_currentTransform != nullptr)
 		{
 			transform_updateMatricesIfNecessary(l_currentTransform);
-			l_return = l_currentTransform->LocalToWorldMatrix * l_return;
+
+			_Math::Matrix4x4f l_returnCopy;
+			{
+				_Math::Matrix4x4f_copy(&l_return, &l_returnCopy);
+			}
+			_Math::Matrixf4x4_mul(&l_currentTransform->LocalToWorldMatrix, &l_returnCopy, &l_return);
 			l_currentTransform = l_currentTransform->Parent;
 		}
-
 		return l_return;
 	};
 
-	glm::vec3 Transform_getWorldPosition(Transform* p_transform)
+	_Math::Vector3f Transform_getWorldPosition(Transform* p_transform)
 	{
-		return Transform_getLocalToWorldMatrix(p_transform, false) * glm::vec4(p_transform->LocalPosition, 1.0f);
+		_Math::Vector4f l_localPosition4f;
+		{
+			_Math::Vector4f_build(&p_transform->LocalPosition, 1.0f, &l_localPosition4f);
+		}
+		_Math::Matrix4x4f l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform, false);
+		_Math::Vector3f l_result;
+		{
+			_Math::Vector4f l_worldPosition4f;
+			_Math::Matrixf4x4_mul(&l_localToWorldMatrix, &l_localPosition4f, &l_worldPosition4f);
+			_Math::Vector3f_build(&l_worldPosition4f, &l_result);
+		}
+		return l_result;
 	};
 
-	glm::quat Transform_getWorldRotation(Transform* p_transform)
+	_Math::Quaternionf Transform_getWorldRotation(Transform* p_transform)
 	{
-		glm::quat l_return = glm::quat(glm::vec3(0.0, 0.0, 0.0));
-		if (p_transform->Parent)
+		_Math::Quaternionf l_return;
 		{
-			l_return = Transform_getWorldRotation(p_transform->Parent) * l_return;
+			_Math::Vector3f l_eulerAngles{ 0.0f, 0.0f, 0.0f };
+			_Math::Quaternion_fromEulerAngles(&l_eulerAngles, &l_return);
 		}
 
-		l_return = l_return * p_transform->LocalRotation;
+		if (p_transform->Parent)
+		{
+			_Math::Quaternionf l_parentRotation = Transform_getWorldRotation(p_transform->Parent);
+			_Math::Quaternionf l_returnCopy;
+			{
+				_Math::Quaternionf_copy(&l_return, &l_returnCopy);
+			}
+			_Math::Quaternion_mul(&l_parentRotation, &l_returnCopy, &l_return);
+		}
+
+		_Math::Quaternionf l_returnCopy;
+		{
+			_Math::Quaternionf_copy(&l_return, &l_returnCopy);
+		}
+		_Math::Quaternion_mul(&l_returnCopy, &p_transform->LocalRotation, &l_return);
 		return l_return;
 	};
 
-	glm::vec3 Transform_getWorldScale(Transform* p_transform)
+	_Math::Vector3f Transform_getWorldScale(Transform* p_transform)
 	{
-		glm::vec3 l_return = p_transform->LocalScale;
+		_Math::Vector3f l_return = p_transform->LocalScale;
 		if (p_transform->Parent)
 		{
-			l_return = l_return * Transform_getWorldScale(p_transform->Parent);
+			_Math::Vector3f l_parentWorldScale = Transform_getWorldScale(p_transform->Parent);
+			_Math::Vector3f_mul(&l_return, &l_parentWorldScale, &l_return);
 		}
 		return l_return;
 	};
 
-	glm::vec3 Transform_getUp(Transform* p_transform)
+	_Math::Vector3f Transform_getUp(Transform* p_transform)
 	{
-		return glm::normalize(Transform_getLocalToWorldMatrix(p_transform, false) * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, false);
+		_Math::Vector4f l_up{ 0.0f, 0.0f, 1.0f, 0.0f };
+		_Math::Vector4f l_upLocal4f;
+		_Math::Matrixf4x4_mul(&l_localToWorld, &l_up, &l_upLocal4f);
+		_Math::Vector3f l_up3f = *(_Math::Vector3f*)(&l_upLocal4f);
+		_Math::Vector3f_normalize(&l_up3f);
+		return l_up3f;
 	};
 
-	glm::vec3 Transform_getForward(Transform* p_transform)
+	_Math::Vector3f Transform_getForward(Transform* p_transform)
 	{
-		return glm::normalize(Transform_getLocalToWorldMatrix(p_transform, false) * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, false);
+		_Math::Vector4f l_forward{ 1.0f, 0.0f, 0.0f, 0.0f };
+		_Math::Vector4f l_forwardLocal4f;
+		_Math::Matrixf4x4_mul(&l_localToWorld, &l_forward, &l_forwardLocal4f);
+		_Math::Vector3f l_forward3f = *(_Math::Vector3f*)(&l_forwardLocal4f);
+		_Math::Vector3f_normalize(&l_forward3f);
+		return l_forward3f;
 	};
 
 
@@ -155,7 +197,17 @@ namespace _GameEngine::_ECS
 	{
 		if (p_transform->MatricesMustBeRecalculated)
 		{
-			p_transform->LocalToWorldMatrix = _Utils::Math_TRS(p_transform->LocalPosition, p_transform->LocalRotation, p_transform->LocalScale);
+			glm::vec3 l_localPositionGLM;
+			_Math::Vector3f_toGLM(&p_transform->LocalPosition, &l_localPositionGLM);
+
+			glm::vec3 l_localScaleGLM;
+			_Math::Vector3f_toGLM(&p_transform->LocalScale, &l_localScaleGLM);
+
+			glm::quat l_localRotationGLM;
+			_Math::Quaternionf_toGLM(&p_transform->LocalRotation, &l_localRotationGLM);
+
+			glm::mat4x4 l_localToWorldGLM = _Utils::Math_TRS(l_localPositionGLM, l_localRotationGLM, l_localScaleGLM);
+			p_transform->LocalToWorldMatrix = _Math::Matrix4x4f_fromGLM(l_localToWorldGLM);
 			p_transform->MatricesMustBeRecalculated = false;
 		}
 	};

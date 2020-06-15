@@ -1,6 +1,6 @@
 
 #include "ECS/Component.h"
-#include "glm/glm.hpp"
+#include "Math/Vector/Vector.h"
 
 namespace _GameEngine::_ECS
 {
@@ -9,6 +9,6 @@ namespace _GameEngine::_ECS
 	struct TransformRotate
 	{
 		float Speed;
-		glm::vec3 Axis;
+		_Math::Vector3f Axis;
 	};
 }

@@ -4,6 +4,8 @@
 #include <string.h>
 #include "vulkan/vulkan.h"
 
+#include "Math/Matrix/Matrix.h"
+
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
 #include "VulkanObjects/GraphcisPipeline/GraphicsPipeline.h"
 #include "Shader/Shader.h"
@@ -31,7 +33,7 @@ namespace _GameEngine::_Render
 
 	struct ModelProjection
 	{
-		glm::mat4x4 Model;
+		_Math::Matrix4x4f Model;
 	};
 
 	struct Material_LocalInputParameters

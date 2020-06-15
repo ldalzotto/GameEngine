@@ -12,6 +12,8 @@
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 
+#include "Math/Quaternion/QuaternionTransform.h"
+
 #include "Render/Includes/GLFWIncludes.h"
 #include "Render/Texture/Texture.h"
 #include "Shader/ShaderParameterKeys.h"
@@ -78,11 +80,11 @@ void SandboxApplication_update(float p_delta)
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
-			
+
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(2.0f, 2.0f, 2.0f);
-			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
+			l_transformInitInfo.LocalPosition = { 2.0f, 2.0f, 2.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
@@ -120,9 +122,9 @@ void SandboxApplication_update(float p_delta)
 			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.0f);
-			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
+			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
 
 			_ECS::Entity_addComponent(l_parent, l_component);
@@ -132,7 +134,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 			l_transformRotate->Speed = 1.0f;
-			l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
+			l_transformRotate->Axis = { 0.0f, 0.0f, 1.0f };
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
 
@@ -170,9 +172,9 @@ void SandboxApplication_update(float p_delta)
 			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.15f, 0.0f, -0.15f);
-			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
+			l_transformInitInfo.LocalPosition = { 0.15f, 0.0f, -0.15f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, & l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalScale = { 1.0f ,1.0f ,1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
 
 			_ECS::Entity_addComponent(l_child, l_component);
@@ -182,16 +184,12 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 			l_transformRotate->Speed = 1.0f;
-			l_transformRotate->Axis = glm::vec3(0.0f, 0.0f, 1.0f);
+			l_transformRotate->Axis = { 0.0f, 1.0f, 0.0f };
 			_ECS::Entity_addComponent(l_child, l_component);
 		}
 
 
 		_ECS::Transform_addChild((_ECS::Transform*)Entity_getComponent(l_parent, _ECS::TransformType)->Child, (_ECS::Transform*)Entity_getComponent(l_child, _ECS::TransformType)->Child);
-
-
-
-
 
 
 
@@ -228,9 +226,9 @@ void SandboxApplication_update(float p_delta)
 			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = glm::vec3(0.15f, 0.0f, -0.15f);
-			l_transformInitInfo.LocalRotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-			l_transformInitInfo.LocalScale = glm::vec3(1.0f);
+			l_transformInitInfo.LocalPosition = { 0.15f, 0.0f, -0.15f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, & l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
 
 			_ECS::Entity_addComponent(l_child2, l_component);
