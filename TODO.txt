@@ -1,10 +1,26 @@
 -- TODO --
 
-# Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
+-- ECS --
 
+# Custom container for ECS components (instead of unordered_map which may not be as efficient as linear search for small amount of entries).
 
+-- Math --
 
+# Creating my own math library. Removing dependencies from glm.
 
+-- Physics/MeshRenderer --
+
+# The MeshRenderer has a Bounding BOX in local space that is calculated only once based on vertices local positions.
+# Adding option to draw the bounding box in the editor.
+
+-- Materials --
+
+# Adding configuration properties for rendering order
+# Adding configuration properties for blending (editor gizmo may be transparent ?)
+
+-- Inputs --
+
+# Implementing mouse detection input and easily get it's screen position.
 
 ~~ LONG TERM OBJECTIVES ~~
 
