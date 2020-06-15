@@ -11,10 +11,10 @@
 #include "EngineSequencers/EngineSequencers.h"
 
 #include "RenderInterface.h"
-#include "LoopStep/DefaultMaterialDrawStep.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialInstanceKeys.h"
 #include "Materials/MaterialInstance.h"
+#include "Materials/MaterialInstanceContainer.h"
 
 namespace _GameEngine::_ECS
 {
@@ -25,6 +25,9 @@ namespace _GameEngine::_ECS
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta);
 
+	void meshDrawSystem_onComponentsAttached(Entity* p_entity);
+	void meshDrawSystem_onComponentsDetached(Entity* p_entity);
+
 	void MeshDrawSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
 	{
 		p_systemV2AllocInfo->ECS = p_ecs;
@@ -34,6 +37,20 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = meshDrawSystem_onComponentsAttached;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = meshDrawSystem_onComponentsDetached;
+	};
+
+	void meshDrawSystem_onComponentsAttached(Entity* p_entity)
+	{
+		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
+		_Render::MaterialInstanceContainer_addMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
+	};
+	
+	void meshDrawSystem_onComponentsDetached(Entity* p_entity)
+	{
+		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
+		_Render::MaterialInstanceContainer_removeMaterial(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial);
 	};
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta)

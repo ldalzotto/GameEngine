@@ -2,7 +2,6 @@
 
 #include "RenderInterface.h"
 #include "Resources/MaterialResourceProvider.h"
-#include "Materials/MaterialInstanceContainer.h"
 #include "Materials/MaterialInstance.h"
 
 namespace _GameEngine::_ECS
@@ -28,13 +27,11 @@ namespace _GameEngine::_ECS
 		l_materialInstanceInitInfo.SourceMaterial = l_material;
 
 		p_meshRenderer->MaterialInstance = _Render::MaterialInstance_alloc(p_renderInterface, &l_materialInstanceInitInfo);
-		_Render::MaterialInstanceContainer_addMaterialInstance(p_renderInterface->MaterialInstanceContainer, l_material, p_meshRenderer->MaterialInstance);
 	};
 
 	void MeshRenderer_free(void* p_meshRenderer, void* p_null)
 	{
 		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
-		_Render::MaterialInstanceContainer_removeMaterialInstance(l_meshRenderer->RenderInterface->MaterialInstanceContainer, l_meshRenderer->MaterialInstance->SourceMaterial, l_meshRenderer->MaterialInstance);
 		_Render::MaterialInstance_free(&l_meshRenderer->MaterialInstance);		
 		_Render::MaterialResourceProvider_ReleaseResource(l_meshRenderer->RenderInterface->ResourceProvidersInterface.MaterialResourceProvider, &l_meshRenderer->MaterialUniqueKey);
 	};

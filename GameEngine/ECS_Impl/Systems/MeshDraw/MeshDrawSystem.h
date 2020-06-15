@@ -7,7 +7,6 @@
 namespace _GameEngine::_Render
 {
 	struct Render;
-	struct DefaultMaterialDrawStep;
 }
 
 namespace _GameEngine::_ECS

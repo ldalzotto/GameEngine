@@ -1,6 +1,28 @@
 -- TODO --
 
-# Make only transforms that have moved the last frame update their data to GPU.s
+[X] # Moving MeshStep creation to ECS system instead of mesh renderer component.
+# Adding validation for material properties ?
+
+# Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
+
+-- DONE --
+
+
+
+
+-- Materials Generalizaion --
+
+[X] # Simplifying the GraphicsPipeline creation (like texture).
+
+[X] # Having multiple materials and instance that are rendered in a given order.
+	[X] ## Removing Material instance value from MeshRenderer ? Only a pointer is necessary (and allocate the instance on the heap).
+	[X] ## How to handle clearing value ? Is it possible to create a render pass only for clearing at the beginning ?
+	[X] ## As a test, rendering the same model twice that have different materials.
+
+
+-- Transforms --
+
+[X] # Make only transforms that have moved the last frame update their data to GPU.s
 
 [X] Simplifying _ECS::Systems creation, there is a lot of repetition between Systems.
   A system is just a set of functions that do operations on some entity components.
@@ -8,18 +30,9 @@
 
 [X] # Create transform hierarchy.
 
-[X] # Simplifying the GraphicsPipeline creation (like texture).
 
-# Having multiple materials and instance that are rendered in a given order.
-	## Removing Material instance value from MeshRenderer ? Only a pointer is necessary (and allocate the instance on the heap).
-	## How to handle clearing value ? Is it possible to create a render pass only for clearing at the beginning ?
-	## As a test, rendering the same model twice that have different materials.
 
-# The last task will allow us to easily render gizmos for the editor.
-
-# Vulkan : how to use GraphicsPipeline cache ? can this be used to simply multiple pipeline creation ?
-
--- DONE --
+-- Input --
 
 # Creating the Input system.
 	[X] ## That provides simple way to query if mouse, or key has been pressed this frame, released this frame or is on hold.

@@ -1,4 +1,4 @@
-#include "DefaultMaterialDrawStep.h"
+#include "MaterialDrawStep.h"
 
 #include "Mesh/Mesh.h"
 #include "VulkanObjects/SwapChain/SwapChain.h"
@@ -16,7 +16,7 @@
 
 namespace _GameEngine::_Render
 {
-	void DefaultMaterialDrawStep_buildCommandBuffer(RenderInterface* p_renderInterface, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
+	void MaterialDrawStep_buildCommandBuffer(RenderInterface* p_renderInterface, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
 	{
 		MaterialInstanceContainer* l_materialInstanceConctainer = p_renderInterface->MaterialInstanceContainer;
 

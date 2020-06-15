@@ -13,5 +13,5 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	void DefaultMaterialDrawStep_buildCommandBuffer(RenderInterface* p_renderInterface, VkCommandBuffer p_commandBuffer, size_t l_imageIndex);
+	void MaterialDrawStep_buildCommandBuffer(RenderInterface* p_renderInterface, VkCommandBuffer p_commandBuffer, size_t l_imageIndex);
 }

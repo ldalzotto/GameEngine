@@ -59,7 +59,13 @@ namespace _GameEngine::_ECS
 	struct EntityConfigurableContainerInitInfo
 	{
 		_Core::VectorT<ComponentType> ListenedComponentTypes;
+
+		/** This callback is called when the components listed in ListenedComponentTypes are attached to the Entity.
+			It is called after component initialization. */
 		void(*OnEntityThatMatchesComponentTypesAdded)(Entity*);
+
+		/** This callback is called when the components liste in the ListenedComponentTypes are no more attached to the Entity.
+			It is called before the components are freed. */
 		void(*OnEntityThatMatchesComponentTypesRemoved)(Entity*);
 
 		ECS* ECS;

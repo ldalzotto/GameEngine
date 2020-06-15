@@ -3,7 +3,7 @@
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Log/Log.h"
 
-#include "LoopStep/DefaultMaterialDrawStep.h"
+#include "LoopStep/MaterialDrawStep.h"
 
 #include <stdexcept>
 
@@ -496,7 +496,7 @@ namespace _GameEngine::_Render
 
 		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
 
-		DefaultMaterialDrawStep_buildCommandBuffer(&p_render->RenderInterface, l_commandBuffer, l_imageIndex);
+		MaterialDrawStep_buildCommandBuffer(&p_render->RenderInterface, l_commandBuffer, l_imageIndex);
 
 		BeforeEndRecordingMainCommandBuffer_Input l_beforeEndRecordingMainCommandBuffer{};
 		l_beforeEndRecordingMainCommandBuffer.CommandBuffer = l_commandBuffer;
