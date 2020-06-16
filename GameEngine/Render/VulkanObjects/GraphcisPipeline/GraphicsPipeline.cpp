@@ -176,9 +176,10 @@ namespace _GameEngine::_Render
 		// This is possible only if VK_KHR_MAINTENANCE1_EXTENSION_NAME device extension is enabled.
 		VkViewport l_viewport{};
 		l_viewport.x = 0.0f;
-		l_viewport.y = (float)p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo.SwapExtend.height;
+		l_viewport.y = 0.0f;
+		//(float)p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo.SwapExtend.height;
 		l_viewport.width = (float)p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo.SwapExtend.width;
-		l_viewport.height = -(float)p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo.SwapExtend.height;
+		l_viewport.height = (float)p_graphicsPipeline->GraphicsPipelineDependencies.SwapChain->SwapChainInfo.SwapExtend.height;
 		l_viewport.minDepth = 0.0f;
 		l_viewport.maxDepth = 1.0f;
 		return l_viewport;

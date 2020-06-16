@@ -195,7 +195,6 @@ namespace _GameEngine::_ECS
 	{
 		if (p_transform->MatricesMustBeRecalculated)
 		{
-			/*
 			glm::vec3 l_positionGLM, l_scaleGLM;
 			glm::quat l_rotationGLM;
 			_Math::Vector3f_toGLM(&p_transform->LocalPosition, &l_positionGLM);
@@ -203,7 +202,7 @@ namespace _GameEngine::_ECS
 			_Math::Vector3f_toGLM(&p_transform->LocalScale, &l_scaleGLM);
 
 			glm::mat4x4 l_trs = _Utils::Math_TRS(l_positionGLM, l_rotationGLM, l_scaleGLM);
-			*/
+			
 			_Math::Matrif4x4_buildTRS(&p_transform->LocalPosition, &p_transform->LocalRotation, &p_transform->LocalScale, &p_transform->LocalToWorldMatrix);
 			p_transform->MatricesMustBeRecalculated = false;
 		}

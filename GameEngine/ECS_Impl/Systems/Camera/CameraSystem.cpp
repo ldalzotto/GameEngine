@@ -57,17 +57,19 @@ namespace _GameEngine::_ECS
 				_Math::Vector3f_toGLM(&l_up, &l_upGLM);
 			}
 
+
 			_Math::Vector3f l_target = { 0.0f, 0.0f, 0.0f };
 			p_camera->ViewMatrix = glm::lookAt(l_worldPositionGLM, glm::vec3(0.0f) /* Transform_getWorldPosition(p_transform) + Transform_getForward(p_transform)*/, l_upGLM);
 
-			/*
 			{
 				_Math::Vector3f l_target = { 0.0f, 0.0f, 0.0f };
 				_Math::Matrix4x4f l_view;
-				_Math::Matrixf4x4_lookAtRotation(&l_worldPosition, &l_target, &l_up, &l_view);
-				p_camera->ViewMatrix = l_view.toGLM();
+				_Math::Matrixf4x4_lookAtViewMatrix(&l_worldPosition, &l_target, &l_up, &l_view);
+				_Math::Matrix4x4f l_viewInv;
+				_Math::Matrixf4x4_inv(&l_view, &l_viewInv);
+				p_camera->ViewMatrix = l_viewInv.toGLM();
 			}
-			*/
+			
 
 			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.Projection = p_camera->ProjectionMatrix;
 			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;

@@ -31,6 +31,7 @@ namespace _GameEngine::_Math
 		_Math::Quaternion_mul(p_quaternion, &l_deltaRotation, out);
 	};
 
+	//TODO - Doubt
 	void Quaternion_fromEulerAngles(Vector3f* p_eulerAngles, Quaternionf* p_out)
 	{
 		glm::quat l_quat = glm::quat(glm::vec3(p_eulerAngles->x, p_eulerAngles->y, p_eulerAngles->z));
@@ -77,14 +78,17 @@ namespace _GameEngine::_Math
 		float l_qzw = p_quaternion->z * p_quaternion->w;
 
 
+		//Right
 		out_matrix->_00 = 1 - (2 * l_qyy) - (2 * l_qzz);
 		out_matrix->_01 = (2 * l_qxy) + (2 * l_qzw);
 		out_matrix->_02 = (2 * l_qxz) - (2 * l_qyw);
 
+		//UP
 		out_matrix->_10 = (2 * l_qxy) - (2 * l_qzw);
 		out_matrix->_11 = 1 - (2 * l_qxx) - (2 * l_qzz);
 		out_matrix->_12 = (2 * l_qyz) + (2 * l_qxw);
 
+		//Forward
 		out_matrix->_20 = (2 * l_qxz) + (2 * l_qyw);
 		out_matrix->_21 = (2 * l_qyz) - (2 * l_qxw);
 		out_matrix->_22 = 1 - (2 * l_qxx) - (2 * l_qyy);

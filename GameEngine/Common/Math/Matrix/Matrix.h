@@ -28,6 +28,8 @@ namespace _GameEngine::_Math
 		float _31;
 		float _32;
 		float _33;
+
+		float get_unsafe(int p_col, int p_line);
 	
 		void _c0(Vector4f* p_out);
 		void _c1(Vector4f* p_out);

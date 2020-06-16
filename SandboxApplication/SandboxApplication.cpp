@@ -130,6 +130,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
 
+		/*
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
@@ -137,7 +138,8 @@ void SandboxApplication_update(float p_delta)
 			l_transformRotate->Axis = { 0.0f, 0.0f, 1.0f };
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
-
+		*/
+		/*
 
 		l_child = _ECS::EntityContainer_allocEntity(App->ECS);
 
@@ -238,7 +240,7 @@ void SandboxApplication_update(float p_delta)
 		_ECS::Transform_addChild((_ECS::Transform*)Entity_getComponent(l_child, _ECS::TransformType)->Child, (_ECS::Transform*)Entity_getComponent(l_child2, _ECS::TransformType)->Child);
 
 
-
+		*/
 
 
 		_ECS::SystemV2AllocInfo l_systemAllocInfo{};

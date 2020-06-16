@@ -15,6 +15,11 @@ namespace _GameEngine::_Math
 
 	*/
 
+	float Matrix4x4f::get_unsafe(int p_col, int p_line)
+	{
+		return *(float*)(((char*)&_00) + (sizeof(float) * ((4 * p_col) + p_line)));
+	};
+
 	void Matrix4x4f::_c0(Vector4f* p_out) { p_out->x = _00; p_out->y = _01; p_out->z = _02; p_out->w = _03;	};
 	void Matrix4x4f::_c1(Vector4f* p_out) { p_out->x = _10; p_out->y = _11; p_out->z = _12; p_out->w = _13;	};
 	void Matrix4x4f::_c2(Vector4f* p_out) { p_out->x = _20; p_out->y = _21; p_out->z = _22; p_out->w = _23;	};
@@ -35,8 +40,13 @@ namespace _GameEngine::_Math
 	void Matrix4x4f::_set_l2(Vector3f* p_line) { _02 = p_line->x; _12 = p_line->y; _22 = p_line->z; };
 	void Matrix4x4f::_set_l3(Vector3f* p_line) { _03 = p_line->x; _13 = p_line->y; _23 = p_line->z; };
 
-	void Matrix4x4f::forward(Vector4f* p_out) { p_out->x = _00; p_out->y = _10; p_out->z = _20; p_out->w = _30; };
-	void Matrix4x4f::up(Vector4f* p_out) { p_out->x = _02; p_out->y = _12; p_out->z = _22; p_out->w = _32; };
+	/*
+		p_out->_set_c0(p_right);
+		p_out->_set_c1(p_up);
+		p_out->_set_c2(p_forward);
+	*/
+	void Matrix4x4f::forward(Vector4f* p_out) { p_out->x = _02; p_out->y = _12; p_out->z = _22; p_out->w = _32; };
+	void Matrix4x4f::up(Vector4f* p_out) { p_out->x = _01; p_out->y = _11; p_out->z = _21; p_out->w = _31; };
 
 	void Matrix3x3f::_c0(Vector3f* p_out) { p_out->x = _00; p_out->y = _01; p_out->z = _02; };
 	void Matrix3x3f::_c1(Vector3f* p_out) { p_out->x = _10; p_out->y = _11; p_out->z = _12; };
@@ -44,7 +54,7 @@ namespace _GameEngine::_Math
 
 	glm::mat4 Matrix4x4f::toGLM()
 	{
-		glm::mat4 l_mat;
+		glm::mat4 l_mat{};
 		l_mat[0][0] = _00;
 		l_mat[0][1] = _01;
 		l_mat[0][2] = _02;

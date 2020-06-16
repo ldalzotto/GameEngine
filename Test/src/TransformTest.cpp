@@ -3,6 +3,8 @@
 #include <stdexcept>
 
 #include "Math/Quaternion/QuaternionTransform.h"
+#include "Math/Matrix/MatrixTransform.h"
+
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "GameEngineApplication.h"
 
@@ -76,7 +78,7 @@ namespace _GameEngine::_Test
 				l_child1 = (Transform*)l_child1Component->Child;
 
 				TransformInitInfo l_rootInitInfo{};
-				l_rootInitInfo.LocalPosition = { 0.0f, 1.0f, 0.0f }; 
+				l_rootInitInfo.LocalPosition = { 0.0f, 1.0f, 0.0f };
 				{
 					_Math::Vector3f l_localEuler{ 0.0f, 1.0f, 0.0f };
 					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
@@ -117,7 +119,7 @@ namespace _GameEngine::_Test
 				}
 				_Math::Quaternion_mul(&l_rotationDelta, &l_rotationDelta, &l_wordRotationValueTest);
 			}
-			
+
 			test_assert(Transform_getWorldRotation(l_child1), l_wordRotationValueTest);
 
 			_Math::Vector3f l_worldScaleChild2ValueTest = { 4.0f, 4.0f, 4.0f };
