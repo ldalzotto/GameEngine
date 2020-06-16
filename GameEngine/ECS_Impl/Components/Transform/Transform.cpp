@@ -163,9 +163,8 @@ namespace _GameEngine::_ECS
 	_Math::Vector3f Transform_getUp(Transform* p_transform)
 	{
 		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, false);
-		_Math::Vector4f l_up{ 0.0f, 0.0f, 1.0f, 0.0f };
 		_Math::Vector4f l_upLocal4f;
-		_Math::Matrixf4x4_mul(&l_localToWorld, &l_up, &l_upLocal4f);
+		l_localToWorld.up(&l_upLocal4f);
 		_Math::Vector3f l_up3f = *(_Math::Vector3f*)(&l_upLocal4f);
 		_Math::Vector3f_normalize(&l_up3f);
 		return l_up3f;
@@ -174,9 +173,8 @@ namespace _GameEngine::_ECS
 	_Math::Vector3f Transform_getForward(Transform* p_transform)
 	{
 		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, false);
-		_Math::Vector4f l_forward{ 1.0f, 0.0f, 0.0f, 0.0f };
 		_Math::Vector4f l_forwardLocal4f;
-		_Math::Matrixf4x4_mul(&l_localToWorld, &l_forward, &l_forwardLocal4f);
+		l_localToWorld.forward(&l_forwardLocal4f);
 		_Math::Vector3f l_forward3f = *(_Math::Vector3f*)(&l_forwardLocal4f);
 		_Math::Vector3f_normalize(&l_forward3f);
 		return l_forward3f;
@@ -197,17 +195,16 @@ namespace _GameEngine::_ECS
 	{
 		if (p_transform->MatricesMustBeRecalculated)
 		{
-			glm::vec3 l_localPositionGLM;
-			_Math::Vector3f_toGLM(&p_transform->LocalPosition, &l_localPositionGLM);
+			/*
+			glm::vec3 l_positionGLM, l_scaleGLM;
+			glm::quat l_rotationGLM;
+			_Math::Vector3f_toGLM(&p_transform->LocalPosition, &l_positionGLM);
+			_Math::Quaternionf_toGLM(&p_transform->LocalRotation, &l_rotationGLM);
+			_Math::Vector3f_toGLM(&p_transform->LocalScale, &l_scaleGLM);
 
-			glm::vec3 l_localScaleGLM;
-			_Math::Vector3f_toGLM(&p_transform->LocalScale, &l_localScaleGLM);
-
-			glm::quat l_localRotationGLM;
-			_Math::Quaternionf_toGLM(&p_transform->LocalRotation, &l_localRotationGLM);
-
-			glm::mat4x4 l_localToWorldGLM = _Utils::Math_TRS(l_localPositionGLM, l_localRotationGLM, l_localScaleGLM);
-			p_transform->LocalToWorldMatrix = _Math::Matrix4x4f_fromGLM(l_localToWorldGLM);
+			glm::mat4x4 l_trs = _Utils::Math_TRS(l_positionGLM, l_rotationGLM, l_scaleGLM);
+			*/
+			_Math::Matrif4x4_buildTRS(&p_transform->LocalPosition, &p_transform->LocalRotation, &p_transform->LocalScale, &p_transform->LocalToWorldMatrix);
 			p_transform->MatricesMustBeRecalculated = false;
 		}
 	};

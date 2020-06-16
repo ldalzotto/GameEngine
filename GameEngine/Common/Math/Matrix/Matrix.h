@@ -39,6 +39,19 @@ namespace _GameEngine::_Math
 		void _set_c2(Vector4f* p_col);
 		void _set_c3(Vector4f* p_col);
 
+		void _set_c0(Vector3f* p_col);
+		void _set_c1(Vector3f* p_col);
+		void _set_c2(Vector3f* p_col);
+		void _set_c3(Vector3f* p_col);
+
+		void _set_l0(Vector3f* p_line);
+		void _set_l1(Vector3f* p_line);
+		void _set_l2(Vector3f* p_line);
+		void _set_l3(Vector3f* p_line);
+
+		void forward(Vector4f* p_out);
+		void up(Vector4f* p_out);
+
 		glm::mat4x4 toGLM();
 	};
 

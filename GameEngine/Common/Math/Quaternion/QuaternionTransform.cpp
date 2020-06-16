@@ -3,7 +3,9 @@
 #include <math.h>
 #include "Quaternion.h"
 #include "Math/Matrix/Matrix.h"
+#include "Math/Matrix/MatrixTransform.h"
 #include "Math/Vector/Vector.h"
+#include "Math/Vector/VectorTransform.h"
 
 namespace _GameEngine::_Math
 {
@@ -60,16 +62,6 @@ namespace _GameEngine::_Math
 		Quaternion_fromEulerAngles(&p_eulerAngles, p_out);
 	};
 
-	/*
-		vec<3, T, Q> c = glm::cos(eulerAngle * T(0.5));
-		vec<3, T, Q> s = glm::sin(eulerAngle * T(0.5));
-
-		this->w = c.x * c.y * c.z + s.x * s.y * s.z;
-		this->x = s.x * c.y * c.z - c.x * s.y * s.z;
-		this->y = c.x * s.y * c.z + s.x * c.y * s.z;
-		this->z = c.x * c.y * s.z - s.x * s.y * c.z;
-	*/
-
 	void Quaterion_toRotationMatrix(Quaternionf* p_quaternion, Matrix3x3f* out_matrix)
 	{
 		float l_qxx = p_quaternion->x * p_quaternion->x;
@@ -96,5 +88,14 @@ namespace _GameEngine::_Math
 		out_matrix->_20 = (2 * l_qxz) + (2 * l_qyw);
 		out_matrix->_21 = (2 * l_qyz) - (2 * l_qxw);
 		out_matrix->_22 = 1 - (2 * l_qxx) - (2 * l_qyy);
+	};
+
+	void Quaterion_toRotationMatrix(Quaternionf* p_quaternion, Matrix4x4f* out_matrix)
+	{
+		Matrix3x3f l_rotation;
+		{
+			Quaterion_toRotationMatrix(p_quaternion, &l_rotation);
+		}
+		Matrixf4x4_build(&l_rotation, out_matrix);
 	};
 }

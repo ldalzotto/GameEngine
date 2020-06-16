@@ -1,7 +1,5 @@
 #pragma once
 
-#include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
 #include "Math/Vector/Vector.h"
 #include "Math/Matrix/Matrix.h"
 #include "Math/Quaternion/Quaternion.h"

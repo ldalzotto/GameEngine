@@ -11,9 +11,12 @@ namespace _GameEngine::_Math
 		float z;
 	};
 
+	extern Vector3f UP;
+	extern Vector3f RIGHT;
+	extern Vector3f FORWARD;
+
 	void Vector3f_fromGLM(glm::vec3* p_vec, Vector3f* p_out);
 	void Vector3f_toGLM(Vector3f* p_vec, glm::vec3* p_out);
-	void Vector3f_mul(Vector3f* p_vec, float p_other, Vector3f* p_out);
 	bool Vector3f_equals(Vector3f* left, Vector3f* right);
 	void Vector3f_normalize(Vector3f* p_vec);
 	float Vector3f_length(Vector3f* p_vec);

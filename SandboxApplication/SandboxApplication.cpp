@@ -184,7 +184,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 			l_transformRotate->Speed = 1.0f;
-			l_transformRotate->Axis = { 0.0f, 1.0f, 0.0f };
+			l_transformRotate->Axis = _Math::UP;
 			_ECS::Entity_addComponent(l_child, l_component);
 		}
 
