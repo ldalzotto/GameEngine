@@ -130,16 +130,13 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
 
-		/*
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 			l_transformRotate->Speed = 1.0f;
-			l_transformRotate->Axis = { 0.0f, 0.0f, 1.0f };
+			l_transformRotate->Axis = { 0.0f, 1.0f, 0.0f };
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
-		*/
-		/*
 
 		l_child = _ECS::EntityContainer_allocEntity(App->ECS);
 
@@ -174,7 +171,7 @@ void SandboxApplication_update(float p_delta)
 			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.15f, 0.0f, -0.15f };
+			l_transformInitInfo.LocalPosition = { 0.15f, -0.15f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, & l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f ,1.0f ,1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
@@ -228,7 +225,7 @@ void SandboxApplication_update(float p_delta)
 			_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.15f, 0.0f, -0.15f };
+			l_transformInitInfo.LocalPosition = { 0.15f, -0.15f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, & l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
@@ -238,9 +235,6 @@ void SandboxApplication_update(float p_delta)
 
 
 		_ECS::Transform_addChild((_ECS::Transform*)Entity_getComponent(l_child, _ECS::TransformType)->Child, (_ECS::Transform*)Entity_getComponent(l_child2, _ECS::TransformType)->Child);
-
-
-		*/
 
 
 		_ECS::SystemV2AllocInfo l_systemAllocInfo{};

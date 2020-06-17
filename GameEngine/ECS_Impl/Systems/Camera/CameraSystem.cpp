@@ -5,6 +5,7 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "Math/Matrix/MatrixTransform.h"
+#include "Math/Vector/VectorTransform.h"
 #include <vector>
 
 #include "ECS_Impl/Components/Camera/Camera.h"
@@ -52,16 +53,9 @@ namespace _GameEngine::_ECS
 			_Math::Vector3f_toGLM(&l_worldPosition, &l_worldPositionGLM);
 
 			_Math::Vector3f l_up = Transform_getUp(p_transform);
-			glm::vec3 l_upGLM;
-			{
-				_Math::Vector3f_toGLM(&l_up, &l_upGLM);
-			}
-
-
-			_Math::Vector3f l_target = { 0.0f, 0.0f, 0.0f };
-			p_camera->ViewMatrix = glm::lookAt(l_worldPositionGLM, glm::vec3(0.0f) /* Transform_getWorldPosition(p_transform) + Transform_getForward(p_transform)*/, l_upGLM);
 
 			{
+				_Math::Vector3f_mul(&l_up, -1.0f, &l_up);
 				_Math::Vector3f l_target = { 0.0f, 0.0f, 0.0f };
 				_Math::Matrix4x4f l_view;
 				_Math::Matrixf4x4_lookAtViewMatrix(&l_worldPosition, &l_target, &l_up, &l_view);
