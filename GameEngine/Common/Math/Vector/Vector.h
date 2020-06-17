@@ -1,9 +1,13 @@
 #pragma once
 
-#include "glm/glm.hpp"
-
 namespace _GameEngine::_Math
 {
+	struct Vector2f
+	{
+		float x;
+		float y;
+	};
+
 	struct Vector3f
 	{
 		float x;
@@ -15,8 +19,6 @@ namespace _GameEngine::_Math
 	extern Vector3f UP;
 	extern Vector3f FORWARD;
 
-	void Vector3f_fromGLM(glm::vec3* p_vec, Vector3f* p_out);
-	void Vector3f_toGLM(Vector3f* p_vec, glm::vec3* p_out);
 	bool Vector3f_equals(Vector3f* left, Vector3f* right);
 	void Vector3f_normalize(Vector3f* p_vec);
 	float Vector3f_length(Vector3f* p_vec);

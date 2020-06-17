@@ -31,11 +31,8 @@ namespace _GameEngine::_Math
 		_Math::Quaternion_mul(p_quaternion, &l_deltaRotation, out);
 	};
 
-	//TODO - Doubt
 	void Quaternion_fromEulerAngles(Vector3f* p_eulerAngles, Quaternionf* p_out)
 	{
-		glm::quat l_quat = glm::quat(glm::vec3(p_eulerAngles->x, p_eulerAngles->y, p_eulerAngles->z));
-
 		_Math::Vector3f l_cos;
 		{
 			_Math::Vector3f_mul(p_eulerAngles, 0.5f, &l_cos);

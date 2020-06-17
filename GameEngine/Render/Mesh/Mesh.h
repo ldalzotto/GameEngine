@@ -2,7 +2,8 @@
 
 #include <string>
 #include <vector>
-#include "glm/glm.hpp"
+
+#include "Math/Vector/Vector.h"
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
@@ -17,8 +18,8 @@ namespace _GameEngine::_Render
 {
 	struct Vertex
 	{
-		glm::vec3 pos;
-		glm::vec2 TexCoord;
+		_Math::Vector3f pos;
+		_Math::Vector2f TexCoord;
 	};
 
 	struct MeshUniqueKey

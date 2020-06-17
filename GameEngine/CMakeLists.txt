@@ -35,7 +35,6 @@ target_include_directories(GameEngine PUBLIC "./")
 add_subdirectory(Common)
 add_subdirectory(Render)
 
-target_link_libraries(GameEngine PUBLIC glm)
 target_link_libraries(GameEngine PUBLIC GLFW)
 target_link_libraries(GameEngine PUBLIC GameEngine_Common)
 target_link_libraries(GameEngine PUBLIC GameEngine_Render)

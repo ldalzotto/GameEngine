@@ -2,8 +2,6 @@
 
 #include <vector>
 
-#include "glm/glm.hpp"
-
 #include "vulkan/vulkan.h"
 
 namespace _GameEngine::_Render

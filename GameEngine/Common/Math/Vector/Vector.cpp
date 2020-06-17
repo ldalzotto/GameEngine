@@ -8,20 +8,6 @@ namespace _GameEngine::_Math
 	Vector3f UP{ 0.0f, 1.0f, 0.0f };
 	Vector3f FORWARD{ 0.0f, 0.0f, 1.0f };
 
-	void Vector3f_fromGLM(glm::vec3* p_vec, Vector3f* p_out)
-	{
-		p_out->x = p_vec->x;
-		p_out->y = p_vec->y;
-		p_out->z = p_vec->z;
-	};
-
-	void Vector3f_toGLM(Vector3f* p_vec, glm::vec3* p_out)
-	{
-		p_out->x = p_vec->x;
-		p_out->y = p_vec->y;
-		p_out->z = p_vec->z;
-	};
-
 	float Vector3f_length(Vector3f* p_vec)
 	{
 		return

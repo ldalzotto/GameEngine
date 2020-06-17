@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ECS/Component.h"
-#include "glm/glm.hpp"
 
 #include "Materials/Material.h"
 

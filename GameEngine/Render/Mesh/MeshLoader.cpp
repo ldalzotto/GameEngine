@@ -48,19 +48,14 @@ namespace _GameEngine::_Render
 		for (size_t i = 0; i < mesh->mNumVertices; i++) {
 			Vertex vertex;
 			aiVector3D& verticeVector = mesh->mVertices[i];
-			vertex.pos = glm::vec3(verticeVector.x, verticeVector.y, verticeVector.z);
-
-			/*
-			aiVector3D& normalVector = mesh->mNormals[i];
-			vertex.Normal = glm::vec3(normalVector.x, normalVector.y, normalVector.z);
-			*/
+			vertex.pos = { verticeVector.x, verticeVector.y, verticeVector.z };
 
 			if (mesh->mTextureCoords) {
 				aiVector3D& texCoordVector = mesh->mTextureCoords[0][i];
-				vertex.TexCoord = glm::vec2(texCoordVector.x, texCoordVector.y);
+				vertex.TexCoord = { texCoordVector.x, texCoordVector.y };
 			}
 			else {
-				vertex.TexCoord = glm::vec2(0.0f);
+				vertex.TexCoord = { 0.0f };
 			}
 
 			p_loadedData->Vertices.at(i) = vertex;

@@ -1,5 +1,7 @@
 #include "MatrixTransform.h"
 
+#include <math.h>
+
 #include "Math/Matrix/Matrix.h"
 #include "Math/Vector/Vector.h"
 #include "Math/Vector/VectorTransform.h"

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "glm/glm.hpp"
-
 namespace _GameEngine::_Math
 {
 	struct Vector3f;
@@ -64,8 +62,6 @@ namespace _GameEngine::_Math
 		void right(Vector4f* p_out);
 		void up(Vector4f* p_out);
 		void forward(Vector4f* p_out);
-
-		glm::mat4x4 toGLM();
 	};
 
 	Matrix4x4f Matrix4x4f_identity();
@@ -87,7 +83,5 @@ namespace _GameEngine::_Math
 		void _c1(Vector3f* p_out);
 		void _c2(Vector3f* p_out);
 	};
-
-	Matrix4x4f Matrix4x4f_fromGLM(const glm::mat4x4& p_mat);
 
 }

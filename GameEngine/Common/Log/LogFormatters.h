@@ -1,18 +1,18 @@
 #pragma once
 
-#include "glm/glm.hpp"
-
+#include "Math/Matrix/Matrix.h"
+#include "Math/Vector/Vector.h"
 #include <string>
 
-std::string LOG_MAT4(const glm::mat4x4& mat)
+std::string LOG_MAT4(const _GameEngine::_Math::Matrix4x4f& mat)
 {
-	return "\n [ " + std::to_string(mat[0][0]) + " , " + std::to_string(mat[0][1]) + " , " + std::to_string(mat[0][2]) + " , " + std::to_string(mat[0][3]) + " ], \n "
-		+ "[ " + std::to_string(mat[1][0]) + " , " + std::to_string(mat[1][1]) + " , " + std::to_string(mat[1][2]) + " , " + std::to_string(mat[1][3]) + " ], \n "
-		+ "[ " + std::to_string(mat[2][0]) + " , " + std::to_string(mat[2][1]) + " , " + std::to_string(mat[2][2]) + " , " + std::to_string(mat[2][3]) + " ], \n "
-		+ "[ " + std::to_string(mat[3][0]) + " , " + std::to_string(mat[3][1]) + " , " + std::to_string(mat[3][2]) + " , " + std::to_string(mat[3][3]) + " ]";
+	return "\n [ " + std::to_string(mat._00) + " , " + std::to_string(mat._10) + " , " + std::to_string(mat._20) + " , " + std::to_string(mat._30) + " ], \n "
+		    + "[ " + std::to_string(mat._01) + " , " + std::to_string(mat._11) + " , " + std::to_string(mat._21) + " , " + std::to_string(mat._31) + " ], \n "
+		    + "[ " + std::to_string(mat._02) + " , " + std::to_string(mat._12) + " , " + std::to_string(mat._22) + " , " + std::to_string(mat._32) + " ], \n "
+		    + "[ " + std::to_string(mat._03) + " , " + std::to_string(mat._13) + " , " + std::to_string(mat._23) + " , " + std::to_string(mat._33) + " ]";
 }
 
-std::string LOG_VEC3(const glm::vec3& vec)
+std::string LOG_VEC3(const _GameEngine::_Math::Vector3f& vec)
 {
 	return "\n [ " + std::to_string(vec.x) + " , " + std::to_string(vec.y) + " , " + std::to_string(vec.z) + " ]";
 }
