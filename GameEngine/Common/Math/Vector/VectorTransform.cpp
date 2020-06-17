@@ -19,6 +19,12 @@ namespace _GameEngine::_Math
 		p_out->z = p_vector->z * p_value;
 	};
 
+	void Vector3f_add(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out)
+	{
+		p_out->x = p_vector->x + p_other->x;
+		p_out->y = p_vector->y + p_other->y;
+		p_out->z = p_vector->z + p_other->z;
+	};
 
 	void Vector3f_min(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out)
 	{

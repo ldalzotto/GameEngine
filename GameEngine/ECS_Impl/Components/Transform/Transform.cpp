@@ -162,7 +162,7 @@ namespace _GameEngine::_ECS
 
 	_Math::Vector3f Transform_getUp(Transform* p_transform)
 	{
-		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, false);
+		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, true);
 		_Math::Vector4f l_upLocal4f;
 		l_localToWorld.up(&l_upLocal4f);
 		_Math::Vector3f l_up3f = *(_Math::Vector3f*)(&l_upLocal4f);
@@ -172,7 +172,7 @@ namespace _GameEngine::_ECS
 
 	_Math::Vector3f Transform_getForward(Transform* p_transform)
 	{
-		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, false);
+		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, true);
 		_Math::Vector4f l_forwardLocal4f;
 		l_localToWorld.forward(&l_forwardLocal4f);
 		_Math::Vector3f l_forward3f = *(_Math::Vector3f*)(&l_forwardLocal4f);

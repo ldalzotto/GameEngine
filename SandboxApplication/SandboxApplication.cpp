@@ -82,8 +82,8 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 2.0f, 2.0f, 2.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalPosition = { 0.0f, 2.5f, -4.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ -0.6f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
