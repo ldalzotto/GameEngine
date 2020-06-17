@@ -48,7 +48,6 @@ namespace _GameEngine::_ECS
 			Camera* p_camera = GET_COMPONENT(Camera, l_entity);
 
 			{
-				// _Math::Vector3f l_target = { 0.0f, 0.0f, 0.0f };
 				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(p_transform);
 				
 				_Math::Vector3f l_target;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "vulkan/vulkan.h"
-#include "glm/glm.hpp"
 
 #include "Math/Matrix/Matrix.h"
 
@@ -19,7 +18,7 @@ namespace _GameEngine::_Render
 	struct CameraProjection
 	{
 		_Math::Matrix4x4f View;
-		glm::mat4 Projection;
+		_Math::Matrix4x4f Projection;
 	};
 
 	struct CameraBufferSetupStep

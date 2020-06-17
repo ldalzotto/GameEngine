@@ -166,22 +166,22 @@ namespace _GameEngine::_Math
 		float l_det = (m->_00 * matrixf4x4_3x3det(m, 0, 0)) - (m->_01 * matrixf4x4_3x3det(m, 0, 1)) + (m->_02 * matrixf4x4_3x3det(m, 0, 2)) - (m->_03 * matrixf4x4_3x3det(m, 0, 3));
 
 		{
-			p_out->_00 =   matrixf4x4_3x3det(m, 0, 0);
-			p_out->_01 = - matrixf4x4_3x3det(m, 1, 0);
-			p_out->_02 =   matrixf4x4_3x3det(m, 2, 0);
-			p_out->_03 = - matrixf4x4_3x3det(m, 3, 0);
-			p_out->_10 = - matrixf4x4_3x3det(m, 0, 1);
-			p_out->_11 =   matrixf4x4_3x3det(m, 1, 1);
-			p_out->_12 = - matrixf4x4_3x3det(m, 2, 1);
-			p_out->_13 =   matrixf4x4_3x3det(m, 3, 1);
-			p_out->_20 =   matrixf4x4_3x3det(m, 0, 2);
-			p_out->_21 = - matrixf4x4_3x3det(m, 1, 2);
-			p_out->_22 =   matrixf4x4_3x3det(m, 2, 2);
-			p_out->_23 = - matrixf4x4_3x3det(m, 3, 2);
-			p_out->_30 = - matrixf4x4_3x3det(m, 0, 3);
-			p_out->_31 =   matrixf4x4_3x3det(m, 1, 3);
-			p_out->_32 = - matrixf4x4_3x3det(m, 2, 3);
-			p_out->_33 =   matrixf4x4_3x3det(m, 3, 3);
+			p_out->_00 = matrixf4x4_3x3det(m, 0, 0);
+			p_out->_01 = -matrixf4x4_3x3det(m, 1, 0);
+			p_out->_02 = matrixf4x4_3x3det(m, 2, 0);
+			p_out->_03 = -matrixf4x4_3x3det(m, 3, 0);
+			p_out->_10 = -matrixf4x4_3x3det(m, 0, 1);
+			p_out->_11 = matrixf4x4_3x3det(m, 1, 1);
+			p_out->_12 = -matrixf4x4_3x3det(m, 2, 1);
+			p_out->_13 = matrixf4x4_3x3det(m, 3, 1);
+			p_out->_20 = matrixf4x4_3x3det(m, 0, 2);
+			p_out->_21 = -matrixf4x4_3x3det(m, 1, 2);
+			p_out->_22 = matrixf4x4_3x3det(m, 2, 2);
+			p_out->_23 = -matrixf4x4_3x3det(m, 3, 2);
+			p_out->_30 = -matrixf4x4_3x3det(m, 0, 3);
+			p_out->_31 = matrixf4x4_3x3det(m, 1, 3);
+			p_out->_32 = -matrixf4x4_3x3det(m, 2, 3);
+			p_out->_33 = matrixf4x4_3x3det(m, 3, 3);
 		}
 
 		Matrixf4x4_mul(p_out, 1 / l_det, p_out);
@@ -263,4 +263,29 @@ namespace _GameEngine::_Math
 		Vector3f l_scale{ 1.0f, 1.0f, 1.0f };
 		Matrif4x4_buildTRS(p_origin, &l_forward, &l_right, &l_up, &l_scale, p_out);
 	};
+
+	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out)
+	{
+		float l_halfTan = tan(p_fov / 2);
+
+		p_out->_00 = 1.0f / (p_aspect * l_halfTan);
+		p_out->_01 = 0.0f;
+		p_out->_02 = 0.0f;
+		p_out->_03 = 0.0f;
+
+		p_out->_10 = 0.0f;
+		p_out->_11 = 1.0f / l_halfTan;
+		p_out->_12 = 0.0f;
+		p_out->_13 = 0.0f;
+
+		p_out->_20 = 0.0f;
+		p_out->_21 = 0.0f;
+		p_out->_22 = -(p_far + p_near) / (p_far - p_near);
+		p_out->_23 = -1.0f;
+
+		p_out->_30 = 0.0f;
+		p_out->_31 = 0.0f;
+		p_out->_32 = (-2.0f * p_far * p_near) / (p_far - p_near);
+		p_out->_33 = 0.0f;
+	}
 }

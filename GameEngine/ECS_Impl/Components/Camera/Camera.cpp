@@ -4,8 +4,8 @@
 
 #include "ECS/Component.h"
 #include "Render/RenderInterface.h"
-
-#include "glm/gtc/matrix_transform.hpp"
+#include "Math/Math.h"
+#include "Math/Matrix/MatrixTransform.h"
 
 namespace _GameEngine::_ECS
 {
@@ -39,7 +39,7 @@ namespace _GameEngine::_ECS
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
-		p_camera->ProjectionMatrix = glm::perspective(glm::radians(45.0f),
-			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f);
+		_Math::Matrixf4x4_perspective(45.0f * _Math::DEG_TO_RAD,
+			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f, &p_camera->ProjectionMatrix);
 	};
 }

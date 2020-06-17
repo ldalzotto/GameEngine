@@ -1,6 +1,5 @@
 #pragma once
 
-#include "glm/glm.hpp"
 #include "Math/Matrix/Matrix.h"
 
 #include "Utils/Observer/Observer.h"
@@ -26,7 +25,7 @@ namespace _GameEngine::_ECS
 	struct Camera
 	{
 		_Render::RenderInterface* RenderInterface;
-		glm::mat4 ProjectionMatrix;
+		_Math::Matrix4x4f ProjectionMatrix;
 		_Math::Matrix4x4f ViewMatrix;
 		_Utils::Subject OnSwapChainBuilded;
 		_Utils::Subject OnComponentDetached;
