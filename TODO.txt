@@ -6,7 +6,7 @@
 
 -- Math --
 
-# Creating my own math library. Removing dependencies from glm.
+[X] # Creating my own math library. Removing dependencies from glm.
 
 -- Physics/MeshRenderer --
 
