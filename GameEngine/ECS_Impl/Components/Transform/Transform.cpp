@@ -1,8 +1,8 @@
 #include "Transform.h"
 
-#include "Math/Vector/VectorTransform.h"
-#include "Math/Matrix/MatrixTransform.h"
-#include "Math/Quaternion/QuaternionTransform.h"
+#include "Math/Vector/VectorMath.h"
+#include "Math/Matrix/MatrixMath.h"
+#include "Math/Quaternion/QuaternionMath.h"
 
 
 namespace _GameEngine::_ECS
@@ -163,7 +163,7 @@ namespace _GameEngine::_ECS
 	{
 		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, true);
 		_Math::Vector4f l_upLocal4f;
-		l_localToWorld.up(&l_upLocal4f);
+		_Math::Matrix4x4f_up(&l_localToWorld, &l_upLocal4f);
 		_Math::Vector3f l_up3f = *(_Math::Vector3f*)(&l_upLocal4f);
 		_Math::Vector3f_normalize(&l_up3f);
 		return l_up3f;
@@ -173,7 +173,7 @@ namespace _GameEngine::_ECS
 	{
 		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, true);
 		_Math::Vector4f l_forwardLocal4f;
-		l_localToWorld.forward(&l_forwardLocal4f);
+		_Math::Matrix4x4f_forward(&l_localToWorld, &l_forwardLocal4f);
 		_Math::Vector3f l_forward3f = *(_Math::Vector3f*)(&l_forwardLocal4f);
 		_Math::Vector3f_normalize(&l_forward3f);
 		return l_forward3f;

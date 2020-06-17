@@ -5,7 +5,7 @@
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 
-#include "Math/Quaternion/QuaternionTransform.h"
+#include "Math/Quaternion/QuaternionMath.h"
 
 namespace _GameEngine::_ECS
 {

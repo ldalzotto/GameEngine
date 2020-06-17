@@ -2,8 +2,9 @@
 
 #include <stdexcept>
 
-#include "Math/Quaternion/QuaternionTransform.h"
-#include "Math/Matrix/MatrixTransform.h"
+#include "Math/Quaternion/QuaternionMath.h"
+#include "Math/Vector/VectorMath.h"
+#include "Math/Matrix/MatrixMath.h"
 
 #include "ECS_Impl/Components/Transform/Transform.h"
 #include "GameEngineApplication.h"

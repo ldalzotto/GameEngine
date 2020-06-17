@@ -1,14 +1,30 @@
-#include "QuaternionTransform.h"
+#include "QuaternionMath.h"
 
+#include <string>
 #include <math.h>
 #include "Quaternion.h"
 #include "Math/Matrix/Matrix.h"
-#include "Math/Matrix/MatrixTransform.h"
+#include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/Vector.h"
-#include "Math/Vector/VectorTransform.h"
+#include "Math/Vector/VectorMath.h"
 
 namespace _GameEngine::_Math
 {
+	void Quaternionf_copy(Quaternionf* p_source, Quaternionf* p_target)
+	{
+		memcpy(p_target, p_source, sizeof(Quaternionf));
+	};
+
+	bool Quaternionf_equals(Quaternionf* p_left, Quaternionf* p_right)
+	{
+		return
+			p_left->x == p_right->x &&
+			p_left->y == p_right->y &&
+			p_left->z == p_right->z &&
+			p_left->w == p_right->w
+			;
+	};
+
 	void Quaternion_mul(Quaternionf* p_quaternion, Quaternionf* p_other, Quaternionf* out)
 	{
 		out->w = (p_quaternion->w * p_other->w) - (p_quaternion->x * p_other->x) - (p_quaternion->y * p_other->y) - (p_quaternion->z * p_other->z);

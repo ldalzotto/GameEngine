@@ -14,7 +14,4 @@ namespace _GameEngine::_Math
 		float z;
 		float w;
 	};
-
-	void Quaternionf_copy(Quaternionf* p_source, Quaternionf* p_target);
-	bool Quaternionf_equals(Quaternionf* p_left, Quaternionf* p_right);
 }

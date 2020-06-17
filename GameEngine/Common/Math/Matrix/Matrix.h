@@ -41,27 +41,6 @@ namespace _GameEngine::_Math
 		float _31;
 		float _32;
 		float _33;
-
-		float get_unsafe(int p_col, int p_line);
-	
-		void _c0(Vector4f* p_out);
-		void _c1(Vector4f* p_out);
-		void _c2(Vector4f* p_out);
-		void _c3(Vector4f* p_out);
-
-		void _set_c0(Vector4f* p_col);
-		void _set_c1(Vector4f* p_col);
-		void _set_c2(Vector4f* p_col);
-		void _set_c3(Vector4f* p_col);
-
-		void _set_c0(Vector3f* p_col);
-		void _set_c1(Vector3f* p_col);
-		void _set_c2(Vector3f* p_col);
-		void _set_c3(Vector3f* p_col);
-
-		void right(Vector4f* p_out);
-		void up(Vector4f* p_out);
-		void forward(Vector4f* p_out);
 	};
 
 	Matrix4x4f Matrix4x4f_identity();
@@ -78,10 +57,6 @@ namespace _GameEngine::_Math
 		float _20;
 		float _21;
 		float _22;
-
-		void _c0(Vector3f* p_out);
-		void _c1(Vector3f* p_out);
-		void _c2(Vector3f* p_out);
 	};
 
 }

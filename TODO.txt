@@ -10,7 +10,7 @@
 
 -- Physics/MeshRenderer --
 
-# The MeshRenderer has a Bounding BOX in local space that is calculated only once based on vertices local positions.
+# The MeshRenderer has a Bounding BOX axis aligned in local space that is calculated only once based on vertices local positions.
 # Adding option to draw the bounding box in the editor.
 
 -- Materials --

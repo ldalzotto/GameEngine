@@ -12,7 +12,7 @@
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 
-#include "Math/Quaternion/QuaternionTransform.h"
+#include "Math/Quaternion/QuaternionMath.h"
 
 #include "Render/Includes/GLFWIncludes.h"
 #include "Render/Texture/Texture.h"

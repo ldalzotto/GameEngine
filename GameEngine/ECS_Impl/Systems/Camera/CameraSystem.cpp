@@ -3,8 +3,8 @@
 #include "Log/Log.h"
 #include "Log/LogFormatters.h"
 
-#include "Math/Matrix/MatrixTransform.h"
-#include "Math/Vector/VectorTransform.h"
+#include "Math/Matrix/MatrixMath.h"
+#include "Math/Vector/VectorMath.h"
 #include <vector>
 
 #include "ECS_Impl/Components/Camera/Camera.h"
