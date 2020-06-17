@@ -21,6 +21,13 @@ namespace _GameEngine::_Math
 				(p_vec->z * p_vec->z));
 	};
 
+	float Vector3f_distance(Vector3f* p_vec, Vector3f* p_target)
+	{
+		Vector3f l_delta;
+		Vector3f_min(p_target, p_vec, &l_delta);
+		return Vector3f_length(&l_delta);
+	};
+
 	void Vector3f_normalize(Vector3f* p_vec)
 	{
 		float l_length = Vector3f_length(p_vec);

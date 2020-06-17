@@ -97,7 +97,7 @@ void SandboxApplication_update(float p_delta)
 
 			std::unordered_map<std::string, void*> l_defaultMaterialInput
 			{
-				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
+				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/VikingRoom.obj"},
 				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
 			};
 
@@ -137,6 +137,8 @@ void SandboxApplication_update(float p_delta)
 			l_transformRotate->Axis = { 0.0f, 1.0f, 0.0f };
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
+
+		/*
 
 		l_child = _ECS::EntityContainer_allocEntity(App->ECS);
 
@@ -236,6 +238,7 @@ void SandboxApplication_update(float p_delta)
 
 		_ECS::Transform_addChild((_ECS::Transform*)Entity_getComponent(l_child, _ECS::TransformType)->Child, (_ECS::Transform*)Entity_getComponent(l_child2, _ECS::TransformType)->Child);
 
+		*/
 
 		_ECS::SystemV2AllocInfo l_systemAllocInfo{};
 		_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, App->ECS);

@@ -13,6 +13,7 @@ namespace _GameEngine::_Math
 	bool Vector3f_equals(Vector3f* left, Vector3f* right);
 	void Vector3f_normalize(Vector3f* p_vec);
 	float Vector3f_length(Vector3f* p_vec);
+	float Vector3f_distance(Vector3f* p_vec, Vector3f* p_target);
 
 	void Vector3f_mul(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out);
 	void Vector3f_mul(Vector3f* p_vector, float p_value, Vector3f* p_out);

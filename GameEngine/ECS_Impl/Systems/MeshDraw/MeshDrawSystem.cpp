@@ -16,6 +16,10 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceContainer.h"
 
+#include "Render/Mesh/Mesh.h"
+#include "Math/Box/Box.h"
+#include "Math/Box/BoxMath.h"
+
 namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority MeshDrawSystem_getUpdatePriority()
@@ -71,6 +75,22 @@ namespace _GameEngine::_ECS
 				_Render::MaterialInstance_pushUniformBuffer(l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, &l_meshUniform);
 
 				l_transform->HasChangedThisFrame = false;
+
+
+				// BOX TEST
+				_Render::Mesh* l_mesh = _Render::MaterialInstance_getMesh(l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MESH_KEY);
+
+				_Core::VectorT<_Math::Vector3f> l_vertices;
+				l_vertices.alloc(l_mesh->Vertices.size());
+				{
+					for (size_t i = 0; i < l_vertices.capacity(); i++)
+					{
+						l_vertices.push_back(&l_mesh->Vertices.at(i).pos);
+					}
+					_Math::Box l_box{};
+					_Math::Box_build(&l_box, &l_vertices);
+				}
+				l_vertices.free();
 			}
 		}
 	};

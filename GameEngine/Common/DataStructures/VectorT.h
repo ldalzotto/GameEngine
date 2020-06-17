@@ -12,6 +12,7 @@ namespace _GameEngine::_Core
 		void free() { Vector_free(&Vector); };
 		void deepCopy(VectorT<T>* p_target) { Vector_deepCopy(&Vector, (_Core::Vector*)p_target); };
 		size_t size() { return Vector.Size; };
+		size_t capacity() { return Vector.Capacity; };
 		void push_back(T* p_value) { Vector_pushBack(&Vector, p_value); };
 		void erase(size_t p_index) { Vector_erase(&Vector, p_index); };
 
