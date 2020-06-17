@@ -3,6 +3,8 @@
 #include "vulkan/vulkan.h"
 #include "glm/glm.hpp"
 
+#include "Math/Matrix/Matrix.h"
+
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
 #include "Shader/DescriptorSetLayout.h"
@@ -16,7 +18,7 @@ namespace _GameEngine::_Render
 {
 	struct CameraProjection
 	{
-		glm::mat4 View;
+		_Math::Matrix4x4f View;
 		glm::mat4 Projection;
 	};
 

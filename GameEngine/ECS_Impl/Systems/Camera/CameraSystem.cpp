@@ -3,7 +3,6 @@
 #include "Log/Log.h"
 #include "Log/LogFormatters.h"
 
-#include "glm/gtc/matrix_transform.hpp"
 #include "Math/Matrix/MatrixTransform.h"
 #include "Math/Vector/VectorTransform.h"
 #include <vector>
@@ -48,20 +47,16 @@ namespace _GameEngine::_ECS
 			Transform* p_transform = GET_COMPONENT(Transform, l_entity);
 			Camera* p_camera = GET_COMPONENT(Camera, l_entity);
 
-			_Math::Vector3f l_worldPosition = Transform_getWorldPosition(p_transform);
-			glm::vec3 l_worldPositionGLM;
-			_Math::Vector3f_toGLM(&l_worldPosition, &l_worldPositionGLM);
-
-			_Math::Vector3f l_up = Transform_getUp(p_transform);
-
 			{
-				_Math::Vector3f_mul(&l_up, -1.0f, &l_up);
 				_Math::Vector3f l_target = { 0.0f, 0.0f, 0.0f };
-				_Math::Matrix4x4f l_view;
-				_Math::Matrixf4x4_lookAtViewMatrix(&l_worldPosition, &l_target, &l_up, &l_view);
-				_Math::Matrix4x4f l_viewInv;
-				_Math::Matrixf4x4_inv(&l_view, &l_viewInv);
-				p_camera->ViewMatrix = l_viewInv.toGLM();
+				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(p_transform);
+
+				_Math::Vector3f l_up = Transform_getUp(p_transform);
+				_Math::Vector3f_mul(&l_up, -1.0f, &l_up);
+
+				_Math::Matrix4x4f l_lookAt;
+				_Math::Matrixf4x4_lookAt(&l_worldPosition, &l_target, &l_up, &l_lookAt);
+				_Math::Matrixf4x4_inv(&l_lookAt, &p_camera->ViewMatrix);
 			}
 			
 

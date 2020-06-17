@@ -10,6 +10,21 @@ namespace _GameEngine::_Math
 
 namespace _GameEngine::_Math
 {
+
+	/**
+	Convention
+		  - column major matrix
+
+		  [RIGHT.x   UP.x    FORWARD.x    POS.x ]
+		  [RIGHT.y   UP.y    FORWARD.y    POS.y ]
+		  [RIGHT.z   UP.y    FORWARD.z    POS.z ]
+		  [   0        0         0          S   ]
+
+		  [00   10    20    30 ]
+		  [01   11    21    31 ]
+		  [02   12    22    32 ]
+		  [03   13    23    33 ]
+	*/
 	struct Matrix4x4f
 	{
 		float _00;
@@ -46,13 +61,9 @@ namespace _GameEngine::_Math
 		void _set_c2(Vector3f* p_col);
 		void _set_c3(Vector3f* p_col);
 
-		void _set_l0(Vector3f* p_line);
-		void _set_l1(Vector3f* p_line);
-		void _set_l2(Vector3f* p_line);
-		void _set_l3(Vector3f* p_line);
-
-		void forward(Vector4f* p_out);
+		void right(Vector4f* p_out);
 		void up(Vector4f* p_out);
+		void forward(Vector4f* p_out);
 
 		glm::mat4x4 toGLM();
 	};

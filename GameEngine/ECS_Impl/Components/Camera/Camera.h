@@ -1,6 +1,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
+#include "Math/Matrix/Matrix.h"
 
 #include "Utils/Observer/Observer.h"
 #include "ECS/ComponentType.h"
@@ -26,7 +27,7 @@ namespace _GameEngine::_ECS
 	{
 		_Render::RenderInterface* RenderInterface;
 		glm::mat4 ProjectionMatrix;
-		glm::mat4 ViewMatrix;
+		_Math::Matrix4x4f ViewMatrix;
 		_Utils::Subject OnSwapChainBuilded;
 		_Utils::Subject OnComponentDetached;
 	};

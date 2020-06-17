@@ -11,8 +11,8 @@ namespace _GameEngine::_Math
 		float z;
 	};
 
-	extern Vector3f UP;
 	extern Vector3f RIGHT;
+	extern Vector3f UP;
 	extern Vector3f FORWARD;
 
 	void Vector3f_fromGLM(glm::vec3* p_vec, Vector3f* p_out);
