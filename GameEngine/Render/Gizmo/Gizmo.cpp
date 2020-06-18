@@ -1,6 +1,10 @@
 #include "Gizmo.h"
 #include "RenderInterface.h"
 
+#include "Math/Box/BoxMath.h"
+#include "Math/Vector/VectorMath.h"
+#include "Math/Matrix/MatrixMath.h"
+
 #include "Materials/MaterialInstance.h"
 #include "Resources/MaterialResourceProvider.h"
 #include "Materials/MaterialInstanceContainer.h"
@@ -34,6 +38,7 @@ namespace _GameEngine::_Render
 		VulkanBuffer_free(&p_gizmoMesh->Buffer, p_device);
 	};
 
+	/*
 	void gizmoMesh_populateBuffer(GizmoMesh* p_gizmoMesh, RenderInterface* p_renderInterface)
 	{
 		p_gizmoMesh->GizmoVerticesV2.clear();
@@ -93,7 +98,12 @@ namespace _GameEngine::_Render
 			p_gizmoMesh->GizmoVerticesV2.push_back(&l_vertex);
 		}
 	}
+	*/
 
+	void gizmoMesh_clearBuffer(GizmoMesh* p_gizmoMesh)
+	{
+		p_gizmoMesh->GizmoVerticesV2.clear();
+	}
 
 	void Gizmo_alloc(Gizmo* p_gizmo, RenderInterface* p_renderInterface)
 	{
@@ -114,8 +124,52 @@ namespace _GameEngine::_Render
 		_Render::MaterialResourceProvider_ReleaseResource(p_renderInterface->ResourceProvidersInterface.MaterialResourceProvider, &Gizmo_MaterialKey);
 	};
 
-	void Gizmo_populateBuffer(Gizmo* p_gizmo, RenderInterface* p_renderInterface)
+	void Gizmo_clear(Gizmo* p_gizmo)
 	{
-		gizmoMesh_populateBuffer(&p_gizmo->GizmoMesh, p_renderInterface);
+		gizmoMesh_clearBuffer(&p_gizmo->GizmoMesh);
 	}
+
+	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f& p_begin, _Math::Vector3f& p_end, _Math::Vector3f& p_color)
+	{
+		{
+			GizmoVertex l_gizmoVertex{};
+			l_gizmoVertex.Position = p_begin;
+			l_gizmoVertex.Color = p_color;
+			p_gizmo->GizmoMesh.GizmoVerticesV2.push_back(&l_gizmoVertex);
+		}
+		{
+			GizmoVertex l_gizmoVertex{};
+			l_gizmoVertex.Position = p_end;
+			l_gizmoVertex.Color = p_color;
+			p_gizmo->GizmoMesh.GizmoVerticesV2.push_back(&l_gizmoVertex);
+		}
+	}
+
+	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix)
+	{
+		_Core::ArrayT<_Math::Vector3f> l_points;
+		_Math::BoxPoints l_boxPoints;
+		_Math::Box_extractPoints(p_box, &l_boxPoints);
+		_Math::BoxPoints_mul(&l_boxPoints, p_localToWorldMatrix);
+
+		_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
+		Gizmo_drawLine(p_gizmo, l_boxPoints.L_D_F, l_boxPoints.L_D_B, l_color);
+		Gizmo_drawLine(p_gizmo, l_boxPoints.L_D_F, l_boxPoints.L_U_F, l_color);
+		Gizmo_drawLine(p_gizmo, l_boxPoints.L_D_F, l_boxPoints.R_D_F, l_color);
+
+		Gizmo_drawLine(p_gizmo, l_boxPoints.L_U_F, l_boxPoints.L_U_B, l_color);
+		Gizmo_drawLine(p_gizmo, l_boxPoints.L_U_F, l_boxPoints.R_U_F, l_color);
+
+		Gizmo_drawLine(p_gizmo, l_boxPoints.L_D_B, l_boxPoints.L_U_B, l_color);
+		Gizmo_drawLine(p_gizmo, l_boxPoints.L_D_B, l_boxPoints.R_D_B, l_color);
+		
+		Gizmo_drawLine(p_gizmo, l_boxPoints.R_D_F, l_boxPoints.R_U_F, l_color);
+		Gizmo_drawLine(p_gizmo, l_boxPoints.R_D_F, l_boxPoints.R_D_B, l_color);
+
+		Gizmo_drawLine(p_gizmo, l_boxPoints.R_U_B, l_boxPoints.R_D_B, l_color);
+		Gizmo_drawLine(p_gizmo, l_boxPoints.R_U_B, l_boxPoints.L_U_B, l_color);
+		Gizmo_drawLine(p_gizmo, l_boxPoints.R_U_B, l_boxPoints.R_U_F, l_color);
+
+		
+	};
 }

@@ -463,8 +463,6 @@ namespace _GameEngine::_Render
 		preRenderStagginStep(p_render);
 
 
-		Gizmo_populateBuffer(&p_render->Gizmo,&p_render->RenderInterface);
-
 		uint32_t l_imageIndex;
 		VkResult l_acquireNextImageResult = vkAcquireNextImageKHR(
 			p_render->Device.LogicalDevice.LogicalDevice,
@@ -550,6 +548,8 @@ namespace _GameEngine::_Render
 		vkQueuePresentKHR(p_render->Device.LogicalDevice.Queues.PresentQueue, &l_presentInfo);
 
 		vkWaitForFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence, VK_FALSE, UINT64_MAX);
+
+		Gizmo_clear(&p_render->Gizmo);
 	};
 
 

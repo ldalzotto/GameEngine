@@ -9,4 +9,5 @@ namespace _GameEngine::_Math
 		Vector3f Center;
 		Vector3f Extend;
 	};
+
 }

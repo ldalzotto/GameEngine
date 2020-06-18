@@ -4,9 +4,12 @@
 
 #include "Math/Box/BoxMath.h"
 
+#include "Render/RenderInterface.h"
+#include "Render/Gizmo/Gizmo.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
 
+#include "ECS_Impl/Components/Transform/Transform.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 
@@ -23,6 +26,7 @@ namespace _GameEngine::_ECS
 	struct MeshRendererBoundSystem
 	{
 		_Core::VectorT<MeshRendererBoundCalculationOperation> MeshRendererBoundsToCaluclate;
+		_Render::Gizmo* Gizmo;
 	};
 
 	_Utils::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
@@ -49,6 +53,7 @@ namespace _GameEngine::_ECS
 
 	void meshRendererBoundSystem_update(void* p_system, void* p_delta)
 	{
+		SystemV2* l_system = (SystemV2*)p_system;
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)((SystemV2*)p_system)->Child;
 
 		for (size_t i = 0; i < l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.size(); i++)
@@ -66,19 +71,32 @@ namespace _GameEngine::_ECS
 					l_vertices.push_back(&l_mesh->Vertices.at(i).pos);
 				}
 				_Math::Box_build(&l_operation->Bound->BoundingBox, &l_vertices);
+
+
 			}
 			l_vertices.free();
+		}
+
+		for (size_t i = 0; i < l_system->EntityConfigurableContainer.FilteredEntities.size(); i++)
+		{
+			_ECS::Entity* l_entity = *l_system->EntityConfigurableContainer.FilteredEntities.at(i);
+			_ECS::Transform* l_transform = (_ECS::Transform*)_ECS::Entity_getComponent(l_entity, _ECS::TransformType)->Child;
+			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, _ECS::MeshRendererBoundType)->Child;
+
+			_Render::Gizmo_drawBox(l_meshrendererBoundSystem->Gizmo, &l_meshRendererBound->BoundingBox, &l_transform->LocalToWorldMatrix);
+
 		}
 
 		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.clear();
 	};
 
 
-	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
+	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs, _Render::RenderInterface* p_renderInterface)
 	{
 
 		MeshRendererBoundSystem* l_meshRendererBoundSystem = (MeshRendererBoundSystem*)malloc(sizeof(MeshRendererBoundSystem));;
 		l_meshRendererBoundSystem->MeshRendererBoundsToCaluclate.alloc(2);
+		l_meshRendererBoundSystem->Gizmo = p_renderInterface->Gizmo;
 
 		p_systemV2AllocInfo->ECS = p_ecs;
 

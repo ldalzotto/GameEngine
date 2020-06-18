@@ -77,10 +77,13 @@ namespace _GameEngine::_Render
 				for (MaterialInstance* l_materialInstance : l_materialEntry.second)
 				{
 					GizmoMesh* l_gizmoMesh = &p_renderInterface->Gizmo->GizmoMesh;
-					VkBuffer l_vertexBuffers[] = { l_gizmoMesh->Buffer.Buffer };
-					VkDeviceSize l_offsets[] = { 0 };
-					vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
-					vkCmdDraw(p_commandBuffer, l_gizmoMesh->GizmoVerticesV2.size(), 1, 0, 0);
+					if (l_gizmoMesh->GizmoVerticesV2.size() > 0)
+					{
+						VkBuffer l_vertexBuffers[] = { l_gizmoMesh->Buffer.Buffer };
+						VkDeviceSize l_offsets[] = { 0 };
+						vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
+						vkCmdDraw(p_commandBuffer, l_gizmoMesh->GizmoVerticesV2.size(), 1, 0, 0);
+					}
 				}
 			}
 			break;

@@ -6,6 +6,12 @@
 
 #include "DataStructures/ArrayT.h"
 
+namespace _GameEngine::_Math
+{
+	struct Box;
+	struct Matrix4x4f;
+}
+
 namespace _GameEngine::_Render
 {
 	struct RenderInterface;
@@ -38,6 +44,8 @@ namespace _GameEngine::_Render
 
 	void Gizmo_alloc(Gizmo* p_gizmo, RenderInterface* p_renderInterface);
 	void Gizmo_free(Gizmo* p_gizmo, RenderInterface* p_renderInterface);
-	void Gizmo_populateBuffer(Gizmo* p_gizmo, RenderInterface* p_renderInterface);
+	void Gizmo_clear(Gizmo* p_gizmo);
+
+	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix);
 
 }

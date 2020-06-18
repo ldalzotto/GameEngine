@@ -3,6 +3,7 @@
 #include <math.h>
 #include "Math/Box/Box.h"
 #include "Math/Vector/VectorMath.h"
+#include "Math/Matrix/MatrixMath.h"
 
 namespace _GameEngine::_Math
 {
@@ -44,6 +45,102 @@ namespace _GameEngine::_Math
 			{
 				box_grow(p_box, p_points->at(i));
 			}
+		}
+	};
+
+	void Box_extractPoints(Box* p_box, BoxPoints* out_points)
+	{
+
+		// Set gizmo positions
+		{
+			out_points->R_U_F = p_box->Center;
+			_Math::Vector3f l_add = { p_box->Extend.x, p_box->Extend.y, p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->R_U_F, &l_add, &out_points->R_U_F);
+		}
+		{
+			out_points->R_D_F = p_box->Center;
+			_Math::Vector3f l_add = { p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->R_D_F, &l_add, &out_points->R_D_F);
+		}
+		{
+			out_points->R_U_B = p_box->Center;
+			_Math::Vector3f l_add = { p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->R_U_B, &l_add, &out_points->R_U_B);
+		}
+		{
+			out_points->R_D_B = p_box->Center;
+			_Math::Vector3f l_add = { p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->R_D_B, &l_add, &out_points->R_D_B);
+		}
+
+		{
+			out_points->L_U_F = p_box->Center;
+			_Math::Vector3f l_add = { -p_box->Extend.x, p_box->Extend.y, p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->L_U_F, &l_add, &out_points->L_U_F);
+		}
+		{
+			out_points->L_D_F = p_box->Center;
+			_Math::Vector3f l_add = { -p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->L_D_F, &l_add, &out_points->L_D_F);
+		}
+		{
+			out_points->L_U_B = p_box->Center;
+			_Math::Vector3f l_add = { -p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->L_U_B, &l_add, &out_points->L_U_B);
+		}
+		{
+			out_points->L_D_B = p_box->Center;
+			_Math::Vector3f l_add = { -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z };
+			_Math::Vector3f_add(&out_points->L_D_B, &l_add, &out_points->L_D_B);
+		}
+	};
+
+	void BoxPoints_mul(BoxPoints* p_boxPoints, Matrix4x4f* p_matrix)
+	{
+		_Math::Vector4f l_pointAsVec4;
+		_Math::Vector4f l_transformedPoint;
+
+
+		{
+			_Math::Vector4f_build(&p_boxPoints->L_D_B, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->L_D_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		}
+		{
+			_Math::Vector4f_build(&p_boxPoints->L_D_F, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->L_D_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		}
+		{
+			_Math::Vector4f_build(&p_boxPoints->L_U_B, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->L_U_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		} 
+		{
+			_Math::Vector4f_build(&p_boxPoints->L_U_F, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->L_U_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		}
+
+		{
+			_Math::Vector4f_build(&p_boxPoints->R_D_B, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->R_D_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		}
+		{
+			_Math::Vector4f_build(&p_boxPoints->R_D_F, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->R_D_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		}
+		{
+			_Math::Vector4f_build(&p_boxPoints->R_U_B, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->R_U_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		}
+		{
+			_Math::Vector4f_build(&p_boxPoints->R_U_F, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->R_U_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 	};
 
