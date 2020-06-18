@@ -1,25 +1,25 @@
 -- TODO --
 
+-- Gizmo Drawer --
+
+# Adding configuration properties for GraphicsPipeline to draw wire lines.
+# Creating a gizmo material (no depth testing, line).
+# Gizmos are rendered by pushing commands every frame. For each frame, these commands are consumed and executed.
+
 -- ECS --
 
-[X] # Custom container for ECS components (instead of unordered_map which may not be as efficient as linear search for small amount of entries).
-
--- Math --
-
-[X] # Creating my own math library. Removing dependencies from glm.
-
--- Physics/MeshRenderer --
-
-# The MeshRenderer has a Bounding BOX axis aligned in local space that is calculated only once based on vertices local positions.
-	[X] ## Having a child object for ECS system (like component).
-	## The MeshRendererBoundingBoxSystem reacts to the presence of MeshRenderer and MeshRendererBound. On creation, a bound calculation operation is added to a vector that is consumed by the system.
-
-# Adding option to draw the bounding box in the editor.
+# Right now, the ECS engine is immediate. This means that Entities, Component and Systems are created immediately when asked (and the associated events are also triggered immediately).
+  Is we imagine that a System creates a child Entity on the fly when component is attached, this can create some undefined behavior.
+  Also, in the future it may be safre to defere ECS operations inside a multithreaded environment. 
+  
+  ## Deferring every ECS Engine operations (Entity creation, System creation, Component creation) :
+	- Creating a single entry point that dispach requested message.
+	- Creating a sync entry point that consume messages until there is no more.
 
 -- Materials --
 
 # Adding configuration properties for rendering order
-# Adding configuration properties for blending (editor gizmo may be transparent ?)
+# Adding configuration properties for blending (editor 3D gizmo may be transparent ?)
 
 -- Inputs --
 
@@ -37,6 +37,21 @@
 
 
 -- DONE --
+
+
+-- ECS --
+
+[X] # Custom container for ECS components (instead of unordered_map which may not be as efficient as linear search for small amount of entries).
+
+-- Math --
+
+[X] # Creating my own math library. Removing dependencies from glm.
+
+-- Physics/MeshRenderer --
+
+# The MeshRenderer has a Bounding BOX axis aligned in local space that is calculated only once based on vertices local positions.
+	[X] ## Having a child object for ECS system (like component).
+	[X] ## The MeshRendererBoundingBoxSystem reacts to the presence of MeshRenderer and MeshRendererBound. On creation, a bound calculation operation is added to a vector that is consumed by the system.
 
 
 -- Materials Generalizaion --
