@@ -4,6 +4,8 @@
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 
+#include "DataStructures/ArrayT.h"
+
 namespace _GameEngine::_Render
 {
 	struct RenderInterface;
@@ -22,13 +24,10 @@ namespace _GameEngine::_Render
 
 	struct GizmoMesh
 	{
-		size_t MaxVerticesCount;
-		size_t VerticesCount;
+		// TODO -> moving to a custom array without automatic resize
+		_Core::ArrayT<GizmoVertex> GizmoVerticesV2;
 		VulkanBuffer Buffer;
 	};
-
-	void GizmoMesh_alloc(GizmoMesh* p_gizmoMesh, size_t p_maxVerticesNb, Device* p_device);
-	void GizmoMesh_free(GizmoMesh* p_gizmoMesh, Device* p_device);
 
 	struct Gizmo
 	{

@@ -31,5 +31,7 @@ namespace _GameEngine::_Render
 
 	void VulkanBuffer_alloc(VulkanBuffer* p_buffer, BufferAllocInfo* p_bufferAllocInfo, Device* p_device);
 	void VulkanBuffer_free(VulkanBuffer* p_buffer, Device* p_device);
+	void VulkanBuffer_map(VulkanBuffer* p_buffer, Device* p_device, void** out_address, size_t p_size);
+	void VulkanBuffer_unMap(VulkanBuffer* p_buffer, Device* p_device);
 	void VulkanBuffer_pushToGPU(VulkanBuffer* p_buffer, Device* p_device, void* p_source, size_t p_size);
 }

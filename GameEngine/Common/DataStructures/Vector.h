@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 namespace _GameEngine::_Core
 {
 	struct Vector

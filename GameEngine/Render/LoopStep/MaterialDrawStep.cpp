@@ -80,7 +80,7 @@ namespace _GameEngine::_Render
 					VkBuffer l_vertexBuffers[] = { l_gizmoMesh->Buffer.Buffer };
 					VkDeviceSize l_offsets[] = { 0 };
 					vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
-					vkCmdDraw(p_commandBuffer, l_gizmoMesh->VerticesCount, 1, 0, 0);
+					vkCmdDraw(p_commandBuffer, l_gizmoMesh->GizmoVerticesV2.size(), 1, 0, 0);
 				}
 			}
 			break;

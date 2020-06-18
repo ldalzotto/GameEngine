@@ -25,6 +25,17 @@ namespace _GameEngine::_Render
 			p_vertexBuffer->Buffer = VK_NULL_HANDLE;
 	};
 
+
+	void VulkanBuffer_map(VulkanBuffer* p_buffer, Device* p_device, void** out_address, size_t p_size)
+	{
+		vkMapMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->BufferMemory, 0, p_size, 0, out_address);
+	};
+	
+	void VulkanBuffer_unMap(VulkanBuffer* p_buffer, Device* p_device)
+	{
+		vkUnmapMemory(p_device->LogicalDevice.LogicalDevice, p_buffer->BufferMemory);
+	};
+
 	void VulkanBuffer_pushToGPU(VulkanBuffer* p_buffer, Device* p_device, void* p_source, size_t p_size)
 	{
 		void* data;
