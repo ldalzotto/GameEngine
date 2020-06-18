@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "Utils/Algorithm/Algorithm.h"
+#include "Utils/Functional/OptionalT.h"
 
 #include "VulkanObjects/GraphcisPipeline/RenderPass.h"
 #include "VulkanObjects/GraphcisPipeline/FrameBuffer.h"
@@ -56,6 +57,9 @@ namespace _GameEngine::_Render
 		VertexInput* VertexInput;
 		VkPipelineLayout PipelineLayout;
 		GraphicsPipeline_DepthTest GraphicsPipeline_DepthTest;
+
+		/** OPTIONAL - Default value is VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST */
+		_Utils::OptionalT<VkPrimitiveTopology> PrimitiveTopology;
 	};
 
 	void GraphicsPipeline_alloc(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineAllocInfo* p_graphicsPipelineGetOrAllocInfo);

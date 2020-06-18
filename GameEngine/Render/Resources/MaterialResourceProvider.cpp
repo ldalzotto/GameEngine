@@ -81,6 +81,8 @@ namespace _GameEngine::_Render
 			MaterialAllocInfo l_materialAllocInfo{};
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
+			l_materialAllocInfo.MaterialType = MaterialType::MESH;
+			l_materialAllocInfo.UseDepthBuffer = true;
 
 			ShaderParameter l_modelMatrixShaderParameter{};
 			ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
@@ -111,7 +113,9 @@ namespace _GameEngine::_Render
 		{
 			MaterialAllocInfo l_materialAllocInfo{};
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
-			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
+			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath; 
+			l_materialAllocInfo.MaterialType = MaterialType::MESH;
+			l_materialAllocInfo.UseDepthBuffer = true;
 
 			ShaderParameter l_modelMatrixShaderParameter{};
 			ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
@@ -135,6 +139,16 @@ namespace _GameEngine::_Render
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
 
+			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
+		}
+		else if (p_key->VertexShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/GizmoVertex.spv"
+			&& p_key->FragmentShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/GizmoFragment.spv")
+		{
+			MaterialAllocInfo l_materialAllocInfo{};
+			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
+			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
+			l_materialAllocInfo.MaterialType = MaterialType::GIZMO;
+			l_materialAllocInfo.UseDepthBuffer = false;
 			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
 		}
 		else

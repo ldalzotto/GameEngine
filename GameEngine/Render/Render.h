@@ -23,6 +23,7 @@
 #include "Resources/MeshResourceProvider.h"
 #include "Resources/MaterialResourceProvider.h"
 #include "Materials/MaterialInstanceContainer.h"
+#include "Gizmo/Gizmo.h"
 
 #include "RenderInterface.h"
 
@@ -64,6 +65,7 @@ namespace _GameEngine::_Render
 
 		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;
 		CameraBufferSetupStep CameraBufferSetupStep;
+		Gizmo Gizmo;
 	};
 
 	Render* Render_alloc();

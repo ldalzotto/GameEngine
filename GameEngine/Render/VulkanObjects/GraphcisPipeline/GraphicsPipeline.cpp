@@ -17,7 +17,7 @@ namespace _GameEngine::_Render
 	void GraphicsPipeline_free(GraphicsPipeline** p_graphicsPipeline);
 
 	VkPipelineVertexInputStateCreateInfo createVertexInputState(GraphicsPipeline* p_graphicsPipeline, VertexInput* p_vertexInput);
-	VkPipelineInputAssemblyStateCreateInfo creteInputAssemblyState(GraphicsPipeline* p_graphcisPipeline);
+	VkPipelineInputAssemblyStateCreateInfo createInputAssemblyState(GraphicsPipeline* p_graphcisPipeline, _Utils::OptionalT<VkPrimitiveTopology>* p_primitiveTopology);
 	VkViewport createViewport(GraphicsPipeline* p_graphicsPipeline);
 	VkRect2D createScissor(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineViewportStateCreateInfo createViewportState(GraphicsPipeline* p_graphicsPipeline, VkViewport* p_viewPort, VkRect2D* p_scissor);
@@ -43,7 +43,7 @@ namespace _GameEngine::_Render
 		l_pipelineCreateInfo.pStages = l_shaderStages;
 
 		auto l_vertexInputState = createVertexInputState(p_graphicsPipeline, p_graphicsPipelineGetOrAllocInfo->VertexInput);
-		auto l_inputAssemblyState = creteInputAssemblyState(p_graphicsPipeline);
+		auto l_inputAssemblyState = createInputAssemblyState(p_graphicsPipeline, &p_graphicsPipelineGetOrAllocInfo->PrimitiveTopology);
 		auto l_viewport = createViewport(p_graphicsPipeline);
 		auto l_scissor = createScissor(p_graphicsPipeline);
 		auto l_viewportState = createViewportState(p_graphicsPipeline, &l_viewport, &l_scissor);
@@ -51,20 +51,20 @@ namespace _GameEngine::_Render
 		auto l_multisampleState = createMultisampleState(p_graphicsPipeline);
 		auto l_colorBlendAttachmentState = createColorBlendAttachmentState(p_graphicsPipeline);
 		auto l_colorBlendState = createColorBlendState(p_graphicsPipeline, &l_colorBlendAttachmentState);
-		VkPipelineDepthStencilStateCreateInfo l_depthStencilState{};
-		if (p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture)
-		{
-			createDepthStencilState(&l_depthStencilState, p_graphicsPipeline);
-		}
-
+	
 		l_pipelineCreateInfo.pVertexInputState = &l_vertexInputState;
 		l_pipelineCreateInfo.pInputAssemblyState = &l_inputAssemblyState;
 		l_pipelineCreateInfo.pViewportState = &l_viewportState;
 		l_pipelineCreateInfo.pRasterizationState = &l_rasterizationState;
 		l_pipelineCreateInfo.pMultisampleState = &l_multisampleState;
 		l_pipelineCreateInfo.pColorBlendState = &l_colorBlendState;
-		l_pipelineCreateInfo.pDepthStencilState = &l_depthStencilState;
-	
+
+		if (p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture)
+		{
+			VkPipelineDepthStencilStateCreateInfo l_depthStencilState{};
+			createDepthStencilState(&l_depthStencilState, p_graphicsPipeline);
+			l_pipelineCreateInfo.pDepthStencilState = &l_depthStencilState;
+		}
 
 		l_pipelineCreateInfo.layout = p_graphicsPipelineGetOrAllocInfo->PipelineLayout;
 
@@ -160,11 +160,18 @@ namespace _GameEngine::_Render
 		return l_vertexInputStateCreate;
 	};
 
-	VkPipelineInputAssemblyStateCreateInfo creteInputAssemblyState(GraphicsPipeline* p_graphcisPipeline)
+	VkPipelineInputAssemblyStateCreateInfo createInputAssemblyState(GraphicsPipeline* p_graphcisPipeline, _Utils::OptionalT<VkPrimitiveTopology>* p_primitiveTopology)
 	{
 		VkPipelineInputAssemblyStateCreateInfo l_inputAssemblyState{};
 		l_inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		l_inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		if (p_primitiveTopology->HasValue)
+		{
+			l_inputAssemblyState.topology = p_primitiveTopology->Value;
+		}
+		else
+		{
+			l_inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		}
 		l_inputAssemblyState.primitiveRestartEnable = VK_FALSE;
 		return l_inputAssemblyState;
 	};

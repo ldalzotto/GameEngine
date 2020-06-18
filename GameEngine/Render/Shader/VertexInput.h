@@ -14,4 +14,5 @@ namespace _GameEngine::_Render
 	};
 
 	void VertexInput_buildInput(VertexInput* p_vertexInput);
+	void VertexInput_buildGizmoInfo(VertexInput* p_vertexInput);
 };

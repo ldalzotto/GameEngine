@@ -9,6 +9,7 @@ namespace _GameEngine::_Render
 	size_t ShaderParameterKey_buildHash(ShaderParameterKey* p_key);
 
 	extern ShaderParameterKey MATERIALINSTANCE_MESH_KEY;
+	extern ShaderParameterKey MATERIALINSTANCE_GIZMOMESH_KEY;
 	extern ShaderParameterKey MATERIALINSTANCE_TEXTURE_KEY;
 	extern ShaderParameterKey MATERIALINSTANCE_MODEL_BUFFER;
 

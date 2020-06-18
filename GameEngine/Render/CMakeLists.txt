@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(GameEngine_Render VERSION 0.0.1)
 
 file(GLOB_RECURSE GAME_ENGINE_RENDER_PRIVATE 
-	"./IMGUITest/*.cpp"
+	"./Gizmo/*.cpp"
 	"./Includes/*.cpp"
 	"./LoopStep/*.cpp"
 	"./Materials/*.cpp"
@@ -18,7 +18,7 @@ SET(GAME_ENGINE_RENDER_PRIVATE
 )
 
 file(GLOB_RECURSE GAME_ENGINE_RENDER_PUBLIC 
-	"./IMGUITest/*.h"
+	"./Gizmo/*.h"
 	"./Includes/*.h"
 	"./LoopStep/*.h"
 	"./Materials/*.h"

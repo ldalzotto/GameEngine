@@ -36,6 +36,11 @@ namespace _GameEngine::_Render
 		_Math::Matrix4x4f Model;
 	};
 
+	enum MaterialType : uint8_t
+	{
+		MESH, GIZMO
+	};
+
 	struct Material_LocalInputParameters
 	{
 		VertexInput VertexInput;
@@ -63,6 +68,7 @@ namespace _GameEngine::_Render
 		};
 
 		MaterialUniqueKey MaterialUniqueKey;
+		MaterialType MaterialType;
 		Material_ExternalResources ExternalResources;
 		Material_InternalResources InternalResources;
 		Material_LocalInputParameters LocalInputParameters;
@@ -71,8 +77,10 @@ namespace _GameEngine::_Render
 
 	struct MaterialAllocInfo
 	{
+		MaterialType MaterialType;
 		std::string VertexShader;
 		std::string FragmentShader;
+		bool UseDepthBuffer;
 		std::vector<ShaderParameter> ShaderParameters;
 	};
 

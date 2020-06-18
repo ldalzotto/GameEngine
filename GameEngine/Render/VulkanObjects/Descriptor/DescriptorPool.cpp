@@ -12,17 +12,20 @@ namespace _GameEngine::_Render
 {
 	void DescriptorPool_alloc(DescriptorPool* p_descriptorPool, Device* p_device, DescriptorPoolAllocInfo* p_descriptorPoolAllocInfo)
 	{
-		VkDescriptorPoolCreateInfo l_descriptorPoolCreateInfo{};
-
-		l_descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		l_descriptorPoolCreateInfo.flags = p_descriptorPoolAllocInfo->DescriptionPoolCreateFlags;
-		l_descriptorPoolCreateInfo.poolSizeCount = 1;
-		l_descriptorPoolCreateInfo.pPoolSizes = (const VkDescriptorPoolSize*)p_descriptorPoolAllocInfo->SourceDescriptorPoolSize->data();
-		l_descriptorPoolCreateInfo.maxSets = p_descriptorPoolAllocInfo->MaxSet;
-
-		if (vkCreateDescriptorPool(p_device->LogicalDevice.LogicalDevice, &l_descriptorPoolCreateInfo, nullptr, &p_descriptorPool->DescriptorPool) != VK_SUCCESS)
+		if (p_descriptorPoolAllocInfo->SourceDescriptorPoolSize->size() > 0)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create the descriptor pool."));
+			VkDescriptorPoolCreateInfo l_descriptorPoolCreateInfo{};
+
+			l_descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+			l_descriptorPoolCreateInfo.flags = p_descriptorPoolAllocInfo->DescriptionPoolCreateFlags;
+			l_descriptorPoolCreateInfo.poolSizeCount = 1;
+			l_descriptorPoolCreateInfo.pPoolSizes = (const VkDescriptorPoolSize*)p_descriptorPoolAllocInfo->SourceDescriptorPoolSize->data();
+			l_descriptorPoolCreateInfo.maxSets = p_descriptorPoolAllocInfo->MaxSet;
+
+			if (vkCreateDescriptorPool(p_device->LogicalDevice.LogicalDevice, &l_descriptorPoolCreateInfo, nullptr, &p_descriptorPool->DescriptorPool) != VK_SUCCESS)
+			{
+				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create the descriptor pool."));
+			}
 		}
 	};
 

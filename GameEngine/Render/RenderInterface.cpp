@@ -30,5 +30,6 @@ namespace _GameEngine::_Render
 
 		l_renderInterface->PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
 		l_renderInterface->CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
+		l_renderInterface->Gizmo = &p_render->Gizmo;
 	};
 }

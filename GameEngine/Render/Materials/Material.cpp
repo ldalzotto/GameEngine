@@ -41,8 +41,14 @@ namespace _GameEngine::_Render
 		l_material->MaterialUniqueKey.VertexShaderPath = p_materialAllocInfo->VertexShader;
 		l_material->MaterialUniqueKey.FragmentShaderPath = p_materialAllocInfo->FragmentShader;
 
+		l_material->MaterialType = p_materialAllocInfo->MaterialType;
+
 		l_material->LocalInputParameters.ShaderParameters = p_materialAllocInfo->ShaderParameters;
-		l_material->InternalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
+
+		if (p_materialAllocInfo->UseDepthBuffer)
+		{
+			l_material->InternalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
+		}
 
 		{
 			Material_ExternalResources* l_externalResources = &l_material->ExternalResources;
@@ -55,7 +61,13 @@ namespace _GameEngine::_Render
 
 		{
 			auto l_localInputParameters = &l_material->LocalInputParameters;
-			VertexInput_buildInput(&l_localInputParameters->VertexInput);
+			switch (l_material->MaterialType)
+			{
+			case MaterialType::MESH: {VertexInput_buildInput(&l_localInputParameters->VertexInput); }
+								   break;
+			case MaterialType::GIZMO: {VertexInput_buildGizmoInfo(&l_localInputParameters->VertexInput); }
+									break;
+			}
 			createDescriptorSetLayout(l_localInputParameters, p_renderInterface);
 			createDescriptorPool(&l_localInputParameters->DescriptorPool, &l_localInputParameters->DescriptorSetLayout, p_renderInterface);
 		}
@@ -172,6 +184,12 @@ namespace _GameEngine::_Render
 		if (p_defaultMaterial->InternalResources.DepthBufferTexture != nullptr)
 		{
 			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.DepthTexture = p_defaultMaterial->InternalResources.DepthBufferTexture;
+		}
+
+		if (p_defaultMaterial->MaterialType == MaterialType::GIZMO)
+		{
+			l_graphicsPipelineAllocInfo.PrimitiveTopology.HasValue = true;
+			l_graphicsPipelineAllocInfo.PrimitiveTopology.Value = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 		}
 
 		return l_graphicsPipelineAllocInfo;

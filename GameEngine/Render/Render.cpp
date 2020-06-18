@@ -67,6 +67,7 @@ namespace _GameEngine::_Render
 		initDepthTexture(l_render);
 		initResourcesProvider(l_render);
 		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
+		Gizmo_alloc(&l_render->Gizmo, &l_render->RenderInterface);
 		l_render->MaterialInstanceContainer.RenderInterface = &l_render->RenderInterface;
 
 		SwapChain_broadcastRebuildEvent(&l_render->SwapChain, &l_render->RenderInterface);
@@ -79,6 +80,7 @@ namespace _GameEngine::_Render
 		// This is to ensure that no undefined behavior occurs while doing so.
 		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
 
+		Gizmo_free(&(*p_render)->Gizmo, &(*p_render)->RenderInterface);
 		MaterialInstanceContainer_free(&(*p_render)->MaterialInstanceContainer);
 		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
 		freeResourcesProvider(*p_render);
@@ -459,6 +461,9 @@ namespace _GameEngine::_Render
 		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
 
 		preRenderStagginStep(p_render);
+
+
+		Gizmo_populateBuffer(&p_render->Gizmo,&p_render->RenderInterface);
 
 		uint32_t l_imageIndex;
 		VkResult l_acquireNextImageResult = vkAcquireNextImageKHR(
