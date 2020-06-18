@@ -6,9 +6,11 @@
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 #include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
+#include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 
@@ -127,6 +129,11 @@ void SandboxApplication_update(float p_delta)
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::Transform_init(l_component, &l_transformInitInfo);
 
+			_ECS::Entity_addComponent(l_parent, l_component);
+		}
+
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererBoundType, sizeof(_ECS::MeshRendererBound));
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
 
@@ -250,6 +257,10 @@ void SandboxApplication_update(float p_delta)
 
 		l_systemAllocInfo = {};
 		_ECS::CameraSystem_init(&l_systemAllocInfo, App->ECS);
+		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
+
+		l_systemAllocInfo = {};
+		_ECS::MeshRendererBoundSystem_init(&l_systemAllocInfo, App->ECS);
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		HasAlreadyUpdated = true;

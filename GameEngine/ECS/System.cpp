@@ -13,10 +13,7 @@ namespace _GameEngine::_ECS
 		l_system->ECS = p_systemV2AllocInfo->ECS;
 		EntityConfigurableContainer_init(&l_system->EntityConfigurableContainer, &p_systemV2AllocInfo->EntityConfigurableContainerInitInfo);
 		l_system->Update = p_systemV2AllocInfo->Update;
-		if (p_systemV2AllocInfo->ChildSize != 0)
-		{
-			l_system->Child = calloc(1, p_systemV2AllocInfo->ChildSize);
-		}
+		l_system->Child = p_systemV2AllocInfo->Child;
 		l_system->OnSystemDestroyed = p_systemV2AllocInfo->OnSystemDestroyed;
 		SystemContainer_addSystemV2(&l_system->ECS->SystemContainer, l_system);
 

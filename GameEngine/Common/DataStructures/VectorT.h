@@ -15,6 +15,7 @@ namespace _GameEngine::_Core
 		size_t capacity() { return Vector.Capacity; };
 		void push_back(T* p_value) { Vector_pushBack(&Vector, p_value); };
 		void erase(size_t p_index) { Vector_erase(&Vector, p_index); };
+		void clear() { Vector_clear(&Vector); };
 
 		template <class COMPARED_OBJECT>
 		void erase(bool(*p_comparator)(T*, COMPARED_OBJECT*), COMPARED_OBJECT* p_userObject) { Vector_erase(&Vector, (VectorElementComparator)p_comparator, p_userObject); };

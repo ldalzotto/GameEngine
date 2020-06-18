@@ -27,7 +27,7 @@ namespace _GameEngine::_ECS
 		EntityConfigurableContainerInitInfo EntityConfigurableContainerInitInfo;
 		_Utils::SortedSequencerOperation Update;
 
-		size_t ChildSize;
+		void* Child;
 		void(*OnSystemDestroyed)(SystemV2* p_system);
 	};
 

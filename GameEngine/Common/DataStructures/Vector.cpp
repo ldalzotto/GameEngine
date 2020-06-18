@@ -108,6 +108,11 @@ namespace _GameEngine::_Core
 		};
 	};
 
+	void Vector_clear(Vector* p_vector)
+	{
+		p_vector->Size = 0;
+	};
+
 	void* Vector_at(Vector* p_vector, size_t p_index)
 	{
 		if (p_index > p_vector->Size)
