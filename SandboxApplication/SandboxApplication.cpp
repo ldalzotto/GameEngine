@@ -97,7 +97,7 @@ void SandboxApplication_update(float p_delta)
 
 			std::unordered_map<std::string, void*> l_defaultMaterialInput
 			{
-				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/VikingRoom.obj"},
+				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/VikingRoomV2.obj"},
 				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
 			};
 

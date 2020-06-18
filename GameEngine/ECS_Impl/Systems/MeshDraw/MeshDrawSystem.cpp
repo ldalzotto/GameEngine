@@ -16,9 +16,11 @@
 #include "Materials/MaterialInstance.h"
 #include "Materials/MaterialInstanceContainer.h"
 
+/*
 #include "Render/Mesh/Mesh.h"
 #include "Math/Box/Box.h"
 #include "Math/Box/BoxMath.h"
+*/
 
 namespace _GameEngine::_ECS
 {
@@ -29,8 +31,8 @@ namespace _GameEngine::_ECS
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta);
 
-	void meshDrawSystem_onComponentsAttached(Entity* p_entity);
-	void meshDrawSystem_onComponentsDetached(Entity* p_entity);
+	void meshDrawSystem_onComponentsAttached(Entity* p_entity, void* p_null);
+	void meshDrawSystem_onComponentsDetached(Entity* p_entity, void* p_null);
 
 	void MeshDrawSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
 	{
@@ -45,13 +47,13 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = meshDrawSystem_onComponentsDetached;
 	};
 
-	void meshDrawSystem_onComponentsAttached(Entity* p_entity)
+	void meshDrawSystem_onComponentsAttached(Entity* p_entity, void* p_null)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
 		_Render::MaterialInstanceContainer_addMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 	
-	void meshDrawSystem_onComponentsDetached(Entity* p_entity)
+	void meshDrawSystem_onComponentsDetached(Entity* p_entity, void* p_null)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
 		_Render::MaterialInstanceContainer_removeMaterial(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial);
@@ -77,6 +79,7 @@ namespace _GameEngine::_ECS
 				l_transform->HasChangedThisFrame = false;
 
 
+				/*
 				// BOX TEST
 				_Render::Mesh* l_mesh = _Render::MaterialInstance_getMesh(l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MESH_KEY);
 
@@ -91,6 +94,7 @@ namespace _GameEngine::_ECS
 					_Math::Box_build(&l_box, &l_vertices);
 				}
 				l_vertices.free();
+				*/
 			}
 		}
 	};

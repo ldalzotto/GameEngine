@@ -16,6 +16,9 @@ namespace _GameEngine::_ECS
 		ECS* ECS;
 		EntityConfigurableContainer EntityConfigurableContainer;
 		_Utils::SortedSequencerOperation Update;
+
+		void* Child;
+		void(*OnSystemDestroyed)(SystemV2* p_system);
 	};
 
 	struct SystemV2AllocInfo
@@ -23,6 +26,9 @@ namespace _GameEngine::_ECS
 		ECS* ECS;
 		EntityConfigurableContainerInitInfo EntityConfigurableContainerInitInfo;
 		_Utils::SortedSequencerOperation Update;
+
+		size_t ChildSize;
+		void(*OnSystemDestroyed)(SystemV2* p_system);
 	};
 
 	SystemV2* SystemV2_alloc(SystemV2AllocInfo* p_systemV2AllocInfo);

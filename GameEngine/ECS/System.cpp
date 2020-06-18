@@ -13,8 +13,13 @@ namespace _GameEngine::_ECS
 		l_system->ECS = p_systemV2AllocInfo->ECS;
 		EntityConfigurableContainer_init(&l_system->EntityConfigurableContainer, &p_systemV2AllocInfo->EntityConfigurableContainerInitInfo);
 		l_system->Update = p_systemV2AllocInfo->Update;
+		if (p_systemV2AllocInfo->ChildSize != 0)
+		{
+			l_system->Child = calloc(1, p_systemV2AllocInfo->ChildSize);
+		}
+		l_system->OnSystemDestroyed = p_systemV2AllocInfo->OnSystemDestroyed;
 		SystemContainer_addSystemV2(&l_system->ECS->SystemContainer, l_system);
-		
+
 		return l_system;
 	};
 
@@ -23,6 +28,13 @@ namespace _GameEngine::_ECS
 		SystemV2* l_system = *p_systemV2;
 		EntityConfigurableContainer_free(&l_system->EntityConfigurableContainer, l_system->ECS);
 		SystemContainer_removeSystemV2(&l_system->ECS->SystemContainer, l_system);
+
+		if (l_system->OnSystemDestroyed)
+		{
+			l_system->OnSystemDestroyed(l_system);
+		}
+		free(l_system->Child);
+
 		free(l_system);
 		l_system = nullptr;
 		p_systemV2 = nullptr;

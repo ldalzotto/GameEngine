@@ -147,7 +147,10 @@ namespace _GameEngine::_ECS
 		p_entityComponentListener->FilteredEntities.alloc(16);
 
 		p_entityComponentListener->OnEntityThatMatchesComponentTypesAdded = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesAdded;
+		p_entityComponentListener->OnEntityThatMatchesComponentTypesAddedUserdata = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesAddedUserdata;
+
 		p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesRemoved;
+		p_entityComponentListener->OnEntityThatMatchesComponentTypesRemovedUserData = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesRemovedUserData;
 
 		p_entityComponentListener->OnComponentAttachedEventListener.Closure = p_entityComponentListener;
 		p_entityComponentListener->OnComponentAttachedEventListener.Callback = entityComponentListener_onComponentAttachedCallback;
@@ -301,7 +304,7 @@ namespace _GameEngine::_ECS
 
 		if (l_entityComponentListener->OnEntityThatMatchesComponentTypesAdded)
 		{
-			l_entityComponentListener->OnEntityThatMatchesComponentTypesAdded(p_entity);
+			l_entityComponentListener->OnEntityThatMatchesComponentTypesAdded(p_entity, l_entityComponentListener->OnEntityThatMatchesComponentTypesAddedUserdata);
 		}
 	};
 
@@ -313,7 +316,7 @@ namespace _GameEngine::_ECS
 			p_entityComponentListener->FilteredEntities.erase(l_foundEntityIndex);
 			if (p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved)
 			{
-				p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved(p_entity);
+				p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved(p_entity, p_entityComponentListener->OnEntityThatMatchesComponentTypesRemovedUserData);
 			}
 		}
 	};

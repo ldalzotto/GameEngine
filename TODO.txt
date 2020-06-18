@@ -11,7 +11,7 @@
 -- Physics/MeshRenderer --
 
 # The MeshRenderer has a Bounding BOX axis aligned in local space that is calculated only once based on vertices local positions.
-	## Having a child object for ECS system (like component).
+	[X] ## Having a child object for ECS system (like component).
 	## The MeshRendererBoundingBoxSystem reacts to the presence of MeshRenderer and MeshRendererBound. On creation, a bound calculation operation is added to a vector that is consumed by the system.
 
 # Adding option to draw the bounding box in the editor.

@@ -36,6 +36,7 @@ namespace _GameEngine::_ECS
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_delta)
 	{
 		_ECS::SystemV2* l_transformRotateSystem = (_ECS::SystemV2*)p_transformRotateSystem;
+
 		float l_delta = *(float*)p_delta;
 
 		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
