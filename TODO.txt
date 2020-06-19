@@ -2,9 +2,20 @@
 
 -- Gizmo Drawer --
 
-# Adding configuration properties for GraphicsPipeline to draw wire lines.
-# Creating a gizmo material (no depth testing, line).
-# Gizmos are rendered by pushing commands every frame. For each frame, these commands are consumed and executed.
+[X] # Adding configuration properties for GraphicsPipeline to draw wire lines.
+[X] # Creating a gizmo material (no depth testing, line).
+[X] # Gizmos are rendered by pushing commands every frame. For each frame, these commands are consumed and executed.
+# Clearing the generic Graphics pipeline from ifs. And removing material type.
+
+-- ECS --
+
+# Adding the choice for the EntityConfigurableContainer to only trigger events (no storage of Entities).
+
+-- Gizmo Drawer --
+
+# MeshBoundBox gizmos rendering must be done to a specific system. (owned by the editor module.).
+# Adding rendering order to materials.
+
 
 -- ECS --
 

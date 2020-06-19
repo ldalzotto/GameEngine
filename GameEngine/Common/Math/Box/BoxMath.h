@@ -24,6 +24,8 @@ namespace _GameEngine::_Math
 		
 		_Math::Vector3f R_D_B;
 		_Math::Vector3f R_U_B;
+
+		_Math::Vector3f Center;
 	};
 
 	void Box_build(Box* p_box, _Core::VectorT<_Math::Vector3f>* p_points);

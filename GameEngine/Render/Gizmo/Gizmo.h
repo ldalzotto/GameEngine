@@ -30,7 +30,6 @@ namespace _GameEngine::_Render
 
 	struct GizmoMesh
 	{
-		// TODO -> moving to a custom array without automatic resize
 		_Core::ArrayT<GizmoVertex> GizmoVerticesV2;
 		VulkanBuffer Buffer;
 	};

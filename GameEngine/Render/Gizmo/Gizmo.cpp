@@ -38,68 +38,6 @@ namespace _GameEngine::_Render
 		VulkanBuffer_free(&p_gizmoMesh->Buffer, p_device);
 	};
 
-	/*
-	void gizmoMesh_populateBuffer(GizmoMesh* p_gizmoMesh, RenderInterface* p_renderInterface)
-	{
-		p_gizmoMesh->GizmoVerticesV2.clear();
-
-		{
-			GizmoVertex l_vertex =
-			{
-				{ 0.0f, 0.0f , 0.0f },
-				{ 1.0f, 0.0f , 0.0f }
-			};
-
-			p_gizmoMesh->GizmoVerticesV2.push_back(&l_vertex);
-		}
-		{
-			GizmoVertex l_vertex =
-			{
-				{ 1.0f, 0.0f , 0.0f },
-				{ 1.0f, 0.0f , 0.0f }
-			};
-
-			p_gizmoMesh->GizmoVerticesV2.push_back(&l_vertex);
-		}
-		{
-			GizmoVertex l_vertex =
-			{
-				{ 0.0f, 0.0f , 0.0f },
-				{ 0.0f, 1.0f , 0.0f }
-			};
-
-			p_gizmoMesh->GizmoVerticesV2.push_back(&l_vertex);
-		}
-		{
-			GizmoVertex l_vertex =
-			{
-				{ 0.0f, 1.0f , 0.0f },
-				{ 0.0f, 1.0f , 0.0f }
-			};
-
-			p_gizmoMesh->GizmoVerticesV2.push_back(&l_vertex);
-		}
-		{
-			GizmoVertex l_vertex =
-			{
-				{ 0.0f, 0.0f , 0.0f },
-				{ 0.0f, 0.0f , 1.0f }
-			};
-
-			p_gizmoMesh->GizmoVerticesV2.push_back(&l_vertex);
-		}
-		{
-			GizmoVertex l_vertex =
-			{
-				{ 0.0f, 0.0f , 1.0f },
-				{ 0.0f, 0.0f , 1.0f }
-			};
-
-			p_gizmoMesh->GizmoVerticesV2.push_back(&l_vertex);
-		}
-	}
-	*/
-
 	void gizmoMesh_clearBuffer(GizmoMesh* p_gizmoMesh)
 	{
 		p_gizmoMesh->GizmoVerticesV2.clear();
@@ -145,6 +83,37 @@ namespace _GameEngine::_Render
 		}
 	}
 
+	void Gizmo_drawPoint(Gizmo* p_gizmo, _Math::Vector3f& p_point, _Math::Vector3f& p_color)
+	{
+		_Math::Vector3f l_begin;
+		_Math::Vector3f l_end;
+		_Math::Vector3f l_deltaAdd;
+
+		float l_lineLenght = 0.1f;
+
+		{
+			l_deltaAdd = { l_lineLenght, 0.0f, 0.0f };
+			_Math::Vector3f_add(&p_point, &l_deltaAdd, &l_begin);
+			_Math::Vector3f_mul(&l_deltaAdd, -1.0f, &l_deltaAdd);
+			_Math::Vector3f_add(&p_point, &l_deltaAdd, &l_end);
+			Gizmo_drawLine(p_gizmo, l_begin, l_end, p_color);
+		}
+		{
+			l_deltaAdd = { 0.0f, l_lineLenght, 0.0f };
+			_Math::Vector3f_add(&p_point, &l_deltaAdd, &l_begin);
+			_Math::Vector3f_mul(&l_deltaAdd, -1.0f, &l_deltaAdd);
+			_Math::Vector3f_add(&p_point, &l_deltaAdd, &l_end);
+			Gizmo_drawLine(p_gizmo, l_begin, l_end, p_color);
+		}
+		{
+			l_deltaAdd = { 0.0f, 0.0f, l_lineLenght };
+			_Math::Vector3f_add(&p_point, &l_deltaAdd, &l_begin);
+			_Math::Vector3f_mul(&l_deltaAdd, -1.0f, &l_deltaAdd);
+			_Math::Vector3f_add(&p_point, &l_deltaAdd, &l_end);
+			Gizmo_drawLine(p_gizmo, l_begin, l_end, p_color);
+		}
+	}
+
 	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix)
 	{
 		_Core::ArrayT<_Math::Vector3f> l_points;
@@ -170,6 +139,6 @@ namespace _GameEngine::_Render
 		Gizmo_drawLine(p_gizmo, l_boxPoints.R_U_B, l_boxPoints.L_U_B, l_color);
 		Gizmo_drawLine(p_gizmo, l_boxPoints.R_U_B, l_boxPoints.R_U_F, l_color);
 
-		
+		Gizmo_drawPoint(p_gizmo, l_boxPoints.Center, l_color);
 	};
 }

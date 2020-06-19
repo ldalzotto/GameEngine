@@ -50,7 +50,7 @@ namespace _GameEngine::_Math
 
 	void Box_extractPoints(Box* p_box, BoxPoints* out_points)
 	{
-
+		out_points->Center = p_box->Center;
 		// Set gizmo positions
 		{
 			out_points->R_U_F = p_box->Center;
@@ -93,6 +93,7 @@ namespace _GameEngine::_Math
 			_Math::Vector3f l_add = { -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z };
 			_Math::Vector3f_add(&out_points->L_D_B, &l_add, &out_points->L_D_B);
 		}
+
 	};
 
 	void BoxPoints_mul(BoxPoints* p_boxPoints, Matrix4x4f* p_matrix)
@@ -100,6 +101,11 @@ namespace _GameEngine::_Math
 		_Math::Vector4f l_pointAsVec4;
 		_Math::Vector4f l_transformedPoint;
 
+		{
+			_Math::Vector4f_build(&p_boxPoints->Center, 0.0f, &l_pointAsVec4);
+			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
+			p_boxPoints->Center = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
+		}
 
 		{
 			_Math::Vector4f_build(&p_boxPoints->L_D_B, 0.0f, &l_pointAsVec4);

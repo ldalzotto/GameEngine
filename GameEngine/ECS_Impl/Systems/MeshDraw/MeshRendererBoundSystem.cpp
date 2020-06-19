@@ -58,11 +58,11 @@ namespace _GameEngine::_ECS
 
 		for (size_t i = 0; i < l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.size(); i++)
 		{
-			// BOX TEST
 			MeshRendererBoundCalculationOperation* l_operation = l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.at(i);
 
 			_Render::Mesh* l_mesh = _Render::MaterialInstance_getMesh(l_operation->MeshRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MESH_KEY);
 
+			//TODO - This is not the most optimal as we copy vertices to a temporary vector.
 			_Core::VectorT<_Math::Vector3f> l_vertices;
 			l_vertices.alloc(l_mesh->Vertices.size());
 			{
@@ -77,6 +77,8 @@ namespace _GameEngine::_ECS
 			l_vertices.free();
 		}
 
+		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.clear();
+
 		for (size_t i = 0; i < l_system->EntityConfigurableContainer.FilteredEntities.size(); i++)
 		{
 			_ECS::Entity* l_entity = *l_system->EntityConfigurableContainer.FilteredEntities.at(i);
@@ -84,10 +86,7 @@ namespace _GameEngine::_ECS
 			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, _ECS::MeshRendererBoundType)->Child;
 
 			_Render::Gizmo_drawBox(l_meshrendererBoundSystem->Gizmo, &l_meshRendererBound->BoundingBox, &l_transform->LocalToWorldMatrix);
-
 		}
-
-		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.clear();
 	};
 
 
