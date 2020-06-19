@@ -22,7 +22,7 @@ namespace _GameEngine::_ECS
 	{
 		std::vector<_Utils::SortedSequencerPriority> l_before
 		{
-			MeshDrawSystem_getUpdatePriority()
+			MeshDrawSystem_updatePriorityBefore()
 		};
 		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};

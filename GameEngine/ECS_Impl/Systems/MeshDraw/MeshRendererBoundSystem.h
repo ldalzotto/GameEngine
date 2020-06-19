@@ -18,5 +18,5 @@ namespace _GameEngine::_ECS
 namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority();
-	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
+	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
 }

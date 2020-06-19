@@ -11,6 +11,6 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_ECS
 {
-	_Utils::SortedSequencerPriority MeshDrawSystem_getUpdatePriority();
+	_Utils::SortedSequencerPriority MeshDrawSystem_updatePriorityBefore();
 	void MeshDrawSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
 }

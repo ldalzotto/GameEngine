@@ -13,7 +13,7 @@
 
 -- Gizmo Drawer --
 
-# MeshBoundBox gizmos rendering must be done to a specific system. (owned by the editor module.).
+[X] # MeshBoundBox gizmos rendering must be done to a specific system. (owned by the editor module.).
 # Adding rendering order to materials.
 
 
