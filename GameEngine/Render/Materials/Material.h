@@ -12,6 +12,7 @@
 #include "Shader/VertexInput.h"
 #include "Shader/DescriptorSetLayout.h"
 #include "Shader/ShaderParameter.h"
+#include "Materials/MaterialDrawFunctions.h"
 
 namespace _GameEngine::_Render
 {
@@ -36,11 +37,6 @@ namespace _GameEngine::_Render
 		_Math::Matrix4x4f Model;
 	};
 
-	enum MaterialType : uint8_t
-	{
-		MESH, GIZMO
-	};
-
 	struct Material_LocalInputParameters
 	{
 		VertexInput VertexInput;
@@ -49,6 +45,11 @@ namespace _GameEngine::_Render
 
 		DescriptorSetLayout DescriptorSetLayout;
 		DescriptorPool DescriptorPool;
+	};
+
+	struct Material_Configuration
+	{
+		_Utils::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
 	};
 
 	struct MaterialUniqueKey
@@ -65,22 +66,28 @@ namespace _GameEngine::_Render
 		{
 			VkPipelineLayout PipelineLayout;
 			GraphicsPipeline GraphicsPipeline;
+			MaterialDrawFn MaterialDrawFn;
 		};
 
 		MaterialUniqueKey MaterialUniqueKey;
-		MaterialType MaterialType;
 		Material_ExternalResources ExternalResources;
 		Material_InternalResources InternalResources;
 		Material_LocalInputParameters LocalInputParameters;
+		Material_Configuration Configuration;
 		FinalDrawObjects FinalDrawObjects;
 	};
 
 	struct MaterialAllocInfo
 	{
-		MaterialType MaterialType;
 		std::string VertexShader;
 		std::string FragmentShader;
 		bool UseDepthBuffer;
+		VertexInput VertexInput;
+
+		/** OPTIONAL - Default value is VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST */
+		_Utils::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
+
+		MaterialDrawFn MaterialDrawFn;
 		std::vector<ShaderParameter> ShaderParameters;
 	};
 

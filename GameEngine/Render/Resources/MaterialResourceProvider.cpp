@@ -81,8 +81,9 @@ namespace _GameEngine::_Render
 			MaterialAllocInfo l_materialAllocInfo{};
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
-			l_materialAllocInfo.MaterialType = MaterialType::MESH;
+			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
 			l_materialAllocInfo.UseDepthBuffer = true;
+			VertexInput_buildInput(&l_materialAllocInfo.VertexInput);
 
 			ShaderParameter l_modelMatrixShaderParameter{};
 			ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
@@ -114,8 +115,9 @@ namespace _GameEngine::_Render
 			MaterialAllocInfo l_materialAllocInfo{};
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath; 
-			l_materialAllocInfo.MaterialType = MaterialType::MESH;
+			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
 			l_materialAllocInfo.UseDepthBuffer = true;
+			VertexInput_buildInput(&l_materialAllocInfo.VertexInput);
 
 			ShaderParameter l_modelMatrixShaderParameter{};
 			ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
@@ -147,8 +149,11 @@ namespace _GameEngine::_Render
 			MaterialAllocInfo l_materialAllocInfo{};
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
-			l_materialAllocInfo.MaterialType = MaterialType::GIZMO;
+			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_gizmoDraw;
 			l_materialAllocInfo.UseDepthBuffer = false;
+			VertexInput_buildGizmoInfo(&l_materialAllocInfo.VertexInput);
+			l_materialAllocInfo.PrimitiveTopologyOverride.HasValue = true;
+			l_materialAllocInfo.PrimitiveTopologyOverride.Value = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
 		}
 		else

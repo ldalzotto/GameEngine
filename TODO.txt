@@ -5,7 +5,7 @@
 [X] # Adding configuration properties for GraphicsPipeline to draw wire lines.
 [X] # Creating a gizmo material (no depth testing, line).
 [X] # Gizmos are rendered by pushing commands every frame. For each frame, these commands are consumed and executed.
-# Clearing the generic Graphics pipeline from ifs. And removing material type.
+[X] # Clearing the generic Graphics pipeline from ifs. And removing material type.
 
 -- ECS --
 

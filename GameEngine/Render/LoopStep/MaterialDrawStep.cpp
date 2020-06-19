@@ -1,18 +1,11 @@
 #include "MaterialDrawStep.h"
 
-#include "Mesh/Mesh.h"
 #include "VulkanObjects/SwapChain/SwapChain.h"
-
 #include "RenderInterface.h"
 #include "Texture/Texture.h"
 #include "Materials/MaterialInstanceContainer.h"
 #include "Materials/Material.h"
-#include "Materials/MaterialInstance.h"
-#include "Shader/ShaderParameterKeys.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
-#include "Gizmo/Gizmo.h"
-#include "Utils/Algorithm/Algorithm.h"
-
 
 namespace _GameEngine::_Render
 {
@@ -56,40 +49,10 @@ namespace _GameEngine::_Render
 			vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdBindPipeline(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_graphicsPipeline->PipelineInternals.Pipeline);
 
-			switch (l_defaultMaterial->MaterialType)
+			for (MaterialInstance* l_materialInstance : l_materialEntry.second)
 			{
-			case MaterialType::MESH:
-			{
-				for (MaterialInstance* l_materialInstance : l_materialEntry.second)
-				{
-					Mesh* l_mesh = MaterialInstance_getMesh(l_materialInstance, MATERIALINSTANCE_MESH_KEY);
-					VkBuffer l_vertexBuffers[] = { l_mesh->VertexBuffer.Buffer };
-					VkDeviceSize l_offsets[] = { 0 };
-					vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
-					vkCmdBindIndexBuffer(p_commandBuffer, l_mesh->IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
-					vkCmdBindDescriptorSets(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_materialInstance->SourceMaterial->FinalDrawObjects.PipelineLayout, 1, 1, &l_materialInstance->MaterialDescriptorSet, 0, nullptr);
-					vkCmdDrawIndexed(p_commandBuffer, l_mesh->Indices.size(), 1, 0, 0, 0);
-				}
+				l_defaultMaterial->FinalDrawObjects.MaterialDrawFn(p_commandBuffer, l_materialInstance, p_renderInterface);
 			}
-			break;
-			case MaterialType::GIZMO:
-			{
-				for (MaterialInstance* l_materialInstance : l_materialEntry.second)
-				{
-					GizmoMesh* l_gizmoMesh = &p_renderInterface->Gizmo->GizmoMesh;
-					if (l_gizmoMesh->GizmoVerticesV2.size() > 0)
-					{
-						VkBuffer l_vertexBuffers[] = { l_gizmoMesh->Buffer.Buffer };
-						VkDeviceSize l_offsets[] = { 0 };
-						vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
-						vkCmdDraw(p_commandBuffer, l_gizmoMesh->GizmoVerticesV2.size(), 1, 0, 0);
-					}
-				}
-			}
-			break;
-			}
-
-
 
 			vkCmdEndRenderPass(p_commandBuffer);
 		}
