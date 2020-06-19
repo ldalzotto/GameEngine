@@ -14,6 +14,10 @@
 namespace _GameEngine::_Render
 {
 
+	size_t MaterialRenderingOrder_opaque = 100;
+	size_t MaterialRenderingOrder_gizmo = 200;
+
+
 	void createDescriptorSetLayout(Material_LocalInputParameters* p_localInputParameters, RenderInterface* p_renderInterface);
 	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface);
 

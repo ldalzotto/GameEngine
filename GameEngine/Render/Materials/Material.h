@@ -60,6 +60,10 @@ namespace _GameEngine::_Render
 
 	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey);
 
+	typedef size_t MaterialRenderingOrder;
+	extern size_t MaterialRenderingOrder_opaque;
+	extern size_t MaterialRenderingOrder_gizmo;
+
 	struct Material
 	{
 		struct FinalDrawObjects
@@ -70,7 +74,7 @@ namespace _GameEngine::_Render
 		};
 
 		MaterialUniqueKey MaterialUniqueKey;
-		size_t RenderingOrder;
+		MaterialRenderingOrder RenderingOrder;
 		Material_ExternalResources ExternalResources;
 		Material_InternalResources InternalResources;
 		Material_LocalInputParameters LocalInputParameters;
