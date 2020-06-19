@@ -30,9 +30,11 @@ namespace _GameEngine::_Render
 			TextureLayoutTransition_executeTransition(p_commandBuffer, *(p_renderInterface->DepthTexture), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 		}
 
-		for (auto&& l_materialEntry : l_materialInstanceConctainer->InstanciatedMaterials)
+		for (size_t i = 0; i < l_materialInstanceConctainer->DataStructure.InstanciatedMaterialsV2.size(); i++)
 		{
-			Material* l_defaultMaterial = l_materialEntry.first;
+			Material_with_MaterialInstances* l_materialWithInstance = l_materialInstanceConctainer->DataStructure.InstanciatedMaterialsV2.at(i);
+
+			Material* l_defaultMaterial = l_materialWithInstance->Material;
 
 			GraphicsPipeline* l_graphicsPipeline = &l_defaultMaterial->FinalDrawObjects.GraphicsPipeline;
 			std::vector<FrameBuffer>* l_frameBuffers = &l_graphicsPipeline->PipelineInternals.FrameBuffers;
@@ -49,10 +51,12 @@ namespace _GameEngine::_Render
 			vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdBindPipeline(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_graphicsPipeline->PipelineInternals.Pipeline);
 
-			for (MaterialInstance* l_materialInstance : l_materialEntry.second)
+			for (size_t j = 0; j < l_materialWithInstance->MaterialInstance.size(); j++)
 			{
+				MaterialInstance* l_materialInstance = *l_materialWithInstance->MaterialInstance.at(j);
 				l_defaultMaterial->FinalDrawObjects.MaterialDrawFn(p_commandBuffer, l_materialInstance, p_renderInterface);
 			}
+
 
 			vkCmdEndRenderPass(p_commandBuffer);
 		}

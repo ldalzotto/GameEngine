@@ -143,6 +143,11 @@ namespace _GameEngine::_Core
 		return nullptr;
 	};
 
+	bool Vector_contains(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject)
+	{
+		return Vector_get(p_vector, p_comparator, p_userObject) != nullptr;
+	};
+
 	size_t Vector_getIndex(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject)
 	{
 		for (size_t i = 0; i < p_vector->Size; i++)

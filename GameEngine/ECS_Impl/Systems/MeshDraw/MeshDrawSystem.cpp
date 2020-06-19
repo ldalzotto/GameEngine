@@ -55,7 +55,7 @@ namespace _GameEngine::_ECS
 	void meshDrawSystem_onComponentsDetached(Entity* p_entity, void* p_null)
 	{
 		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
-		_Render::MaterialInstanceContainer_removeMaterial(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial);
+		_Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta)

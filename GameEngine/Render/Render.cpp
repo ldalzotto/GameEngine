@@ -67,6 +67,7 @@ namespace _GameEngine::_Render
 		initDepthTexture(l_render);
 		initResourcesProvider(l_render);
 		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
+		MaterialInstanceContainer_alloc(&l_render->MaterialInstanceContainer);
 		Gizmo_alloc(&l_render->Gizmo, &l_render->RenderInterface);
 		l_render->MaterialInstanceContainer.RenderInterface = &l_render->RenderInterface;
 
