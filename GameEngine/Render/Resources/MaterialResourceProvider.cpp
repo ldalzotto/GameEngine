@@ -79,6 +79,7 @@ namespace _GameEngine::_Render
 		{
 
 			MaterialAllocInfo l_materialAllocInfo{};
+			l_materialAllocInfo.RenderingOrder = 2;
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
 			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
@@ -113,6 +114,7 @@ namespace _GameEngine::_Render
 			&& p_key->FragmentShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/EditorFragment.spv")
 		{
 			MaterialAllocInfo l_materialAllocInfo{};
+			l_materialAllocInfo.RenderingOrder = 2;
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath; 
 			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
@@ -147,6 +149,7 @@ namespace _GameEngine::_Render
 			&& p_key->FragmentShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/GizmoFragment.spv")
 		{
 			MaterialAllocInfo l_materialAllocInfo{};
+			l_materialAllocInfo.RenderingOrder = 3;
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
 			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_gizmoDraw;

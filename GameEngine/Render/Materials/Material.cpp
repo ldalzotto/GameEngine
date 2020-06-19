@@ -38,6 +38,7 @@ namespace _GameEngine::_Render
 
 		Material* l_material = new Material();
 
+		l_material->RenderingOrder = p_materialAllocInfo->RenderingOrder;
 		l_material->Configuration.PrimitiveTopologyOverride = p_materialAllocInfo->PrimitiveTopologyOverride;
 		l_material->FinalDrawObjects.MaterialDrawFn = p_materialAllocInfo->MaterialDrawFn;
 		l_material->MaterialUniqueKey.VertexShaderPath = p_materialAllocInfo->VertexShader;

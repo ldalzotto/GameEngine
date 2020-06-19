@@ -17,6 +17,7 @@ namespace _GameEngine::_Core
 	void Vector_resize(Vector* p_vector, size_t p_newCapacity);
 	void Vector_deepCopy(Vector* p_source, Vector* p_target);
 	void Vector_pushBack(Vector* p_vector, void* p_value);
+	void Vector_insertAt(Vector* p_vector, void* p_value, size_t p_index);
 	void Vector_erase(Vector* p_vector, size_t p_index);	
 	void Vector_erase(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 	void Vector_clear(Vector* p_vector);
@@ -27,5 +28,19 @@ namespace _GameEngine::_Core
 
 	using VectorElementCallback = void(*)(void*, void*);
 	void Vector_forEachReverse(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject = nullptr);
+
+	// < 0 means left < right ...
+	using SortElementComparator = short int(*)(void*, void*);
+
+	struct SortedVector
+	{
+		Vector Vector;
+		SortElementComparator SortComparator;
+	};
+
+	void SortedVector_alloc(SortedVector* p_vector, size_t p_initialCapacity, size_t p_elementSize, SortElementComparator p_sortComparator);
+	void SortedVector_free(SortedVector* p_vector);
+	void SortedVector_pushBack(SortedVector* p_vector, void* p_value);
+
 }
 

@@ -14,6 +14,7 @@ namespace _GameEngine::_Core
 		size_t size() { return Vector.Size; };
 		size_t capacity() { return Vector.Capacity; };
 		void push_back(T* p_value) { Vector_pushBack(&Vector, p_value); };
+		void insertAt(T* p_value, size_t p_index) { Vector_insertAt(&Vector, p_value, p_index); };
 		void erase(size_t p_index) { Vector_erase(&Vector, p_index); };
 		void clear() { Vector_clear(&Vector); };
 
@@ -35,4 +36,14 @@ namespace _GameEngine::_Core
 		void forEachReverse(void(*p_callback)(T*, USER_OBJECT*), USER_OBJECT* p_userObject) { Vector_forEachReverse(&Vector, (VectorElementCallback)p_callback, p_userObject); };
 	};
 
+	template <class T>
+	struct SortedVectorT
+	{
+		SortedVector SortedVector;
+
+		void alloc(size_t p_initialCapacity, short(*p_sortComparator)(T*, T*)) { SortedVector_alloc(&SortedVector, p_initialCapacity, sizeof(T), (SortElementComparator)p_sortComparator); }
+		void free() { SortedVector_free(&SortedVector); }
+		void push_back(T* p_value) { SortedVector_pushBack(&SortedVector, p_value); }
+		VectorT<T>* vector() { return (VectorT<T>*)&SortedVector.Vector; }
+	};
 }

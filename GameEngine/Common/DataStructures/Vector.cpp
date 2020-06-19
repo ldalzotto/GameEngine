@@ -76,6 +76,32 @@ namespace _GameEngine::_Core
 		}
 	}
 
+	void Vector_insertAt(Vector* p_vector, void* p_value, size_t p_index)
+	{
+		if (p_index > p_vector->Size)
+		{
+			throw std::runtime_error("Vector : Insert out of range.");
+		}
+
+		if (p_vector->Size >= p_vector->Capacity)
+		{
+			Vector_resize(p_vector, p_vector->Capacity == 0 ? 1 : (p_vector->Capacity * 2));
+			Vector_insertAt(p_vector, p_value, p_index);
+		}
+		else
+		{
+			void* l_initialElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
+			if (p_vector->Size - p_index > 0)
+			{
+				void* l_targetElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index + 1);
+				memmove(l_targetElement, l_initialElement, p_vector->ElementSize * (p_vector->Size - p_index));
+			}
+			memcpy(l_initialElement, p_value, p_vector->ElementSize);
+			p_vector->Size += 1;
+		}
+
+	};
+
 	void Vector_erase(Vector* p_vector, size_t p_index)
 	{
 		if (p_index >= p_vector->Size)
@@ -119,6 +145,7 @@ namespace _GameEngine::_Core
 		{
 			throw std::runtime_error("Vector : At out of range.");
 		}
+
 
 		return  (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
 	};
@@ -170,6 +197,37 @@ namespace _GameEngine::_Core
 		{
 			p_callback(Vector_at_unchecked(p_vector, i), p_userObject);
 		}
+	};
+
+
+	void SortedVector_alloc(SortedVector* p_vector, size_t p_initialCapacity, size_t p_elementSize, SortElementComparator p_sortComparator)
+	{
+		p_vector->SortComparator = p_sortComparator;
+		Vector_alloc(&p_vector->Vector, p_initialCapacity, p_elementSize);
+	};
+
+	void SortedVector_free(SortedVector* p_vector)
+	{
+		Vector_free(&p_vector->Vector);
+	};
+
+	void SortedVector_pushBack(SortedVector* p_vector, void* p_value)
+	{
+		size_t l_insertIndex = 0;
+		for (size_t i = 0; i < p_vector->Vector.Size; i++)
+		{
+			short int l_compareValue = p_vector->SortComparator(p_value, Vector_at(&p_vector->Vector, i));
+			if (l_compareValue >= 0)
+			{
+				l_insertIndex = i + 1;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		Vector_insertAt(&p_vector->Vector, p_value, l_insertIndex);
 	};
 
 }

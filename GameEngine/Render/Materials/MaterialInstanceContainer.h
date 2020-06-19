@@ -21,7 +21,7 @@ namespace _GameEngine::_Render
 
 	struct InstancedMaterialsDataStructure
 	{
-		_Core::VectorT<Material_with_MaterialInstances> InstanciatedMaterialsV2;
+		_Core::SortedVectorT<Material_with_MaterialInstances> InstanciatedMaterialsV3;
 	};
 
 	struct MaterialInstanceContainer

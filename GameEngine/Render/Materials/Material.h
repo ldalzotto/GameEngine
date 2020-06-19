@@ -70,6 +70,7 @@ namespace _GameEngine::_Render
 		};
 
 		MaterialUniqueKey MaterialUniqueKey;
+		size_t RenderingOrder;
 		Material_ExternalResources ExternalResources;
 		Material_InternalResources InternalResources;
 		Material_LocalInputParameters LocalInputParameters;
@@ -79,6 +80,7 @@ namespace _GameEngine::_Render
 
 	struct MaterialAllocInfo
 	{
+		size_t RenderingOrder;
 		std::string VertexShader;
 		std::string FragmentShader;
 		bool UseDepthBuffer;
