@@ -22,5 +22,3 @@ add_library(GameEngine_Common STATIC ${GAME_ENGINE_COMMON_PUBLIC} ${GAME_ENGINE_
 # add_executable(GameEngine ${GAME_ENGINE_PUBLIC} ${GAME_ENGINE_PRIVATE})
 
 target_include_directories(GameEngine_Common PUBLIC "./")
-
-target_link_libraries(GameEngine_Common PUBLIC spdlog)

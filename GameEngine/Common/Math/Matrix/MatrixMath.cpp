@@ -80,7 +80,7 @@ namespace _GameEngine::_Math
 		Matrix3x3f_c1(&l_rotation, &l_rotation_c1);
 		Matrix3x3f_c2(&l_rotation, &l_rotation_c2);
 
-		Vector4f l_return_col0, l_return_col1, l_return_col2, l_return_col3;
+		Vector4f l_return_col0, l_return_col1, l_return_col2;
 		Vector4f_build(&l_rotation_c0, 0.0f, &l_return_col0);
 		Vector4f_build(&l_rotation_c1, 0.0f, &l_return_col1);
 		Vector4f_build(&l_rotation_c2, 0.0f, &l_return_col2);
@@ -296,7 +296,7 @@ namespace _GameEngine::_Math
 
 	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out)
 	{
-		float l_halfTan = tan(p_fov / 2);
+		float l_halfTan = tanf(p_fov / 2.0f);
 
 		p_out->_00 = 1.0f / (p_aspect * l_halfTan);
 		p_out->_01 = 0.0f;

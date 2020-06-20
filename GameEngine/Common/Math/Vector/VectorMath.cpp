@@ -16,7 +16,7 @@ namespace _GameEngine::_Math
 	float Vector3f_length(Vector3f* p_vec)
 	{
 		return
-			sqrt((p_vec->x * p_vec->x) +
+			sqrtf((p_vec->x * p_vec->x) +
 				(p_vec->y * p_vec->y) +
 				(p_vec->z * p_vec->z));
 	};
@@ -96,7 +96,7 @@ namespace _GameEngine::_Math
 	{
 		float p_vectorLength = Vector3f_length(p_vector);
 		float p_otherLength = Vector3f_length(p_other);
-		return acos(
+		return acosf(
 			Vector3f_dot(p_vector, p_other) / (p_vectorLength * p_otherLength)
 		);
 	};

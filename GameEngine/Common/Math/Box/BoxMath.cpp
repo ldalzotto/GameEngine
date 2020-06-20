@@ -16,15 +16,15 @@ namespace _GameEngine::_Math
 
 		if (fabs(l_delta.x) > p_box->Extend.x)
 		{
-			p_box->Extend.x = fabs(l_delta.x);
+			p_box->Extend.x = fabsf(l_delta.x);
 		}
 		if (fabs(l_delta.y) > p_box->Extend.y)
 		{
-			p_box->Extend.y = fabs(l_delta.y);
+			p_box->Extend.y = fabsf(l_delta.y);
 		}
 		if (fabs(l_delta.z) > p_box->Extend.z)
 		{
-			p_box->Extend.z = fabs(l_delta.z);
+			p_box->Extend.z = fabsf(l_delta.z);
 		}
 	};
 

@@ -52,17 +52,17 @@ namespace _GameEngine::_Math
 		_Math::Vector3f l_cos;
 		{
 			_Math::Vector3f_mul(p_eulerAngles, 0.5f, &l_cos);
-			l_cos.x = cos(l_cos.x);
-			l_cos.y = cos(l_cos.y);
-			l_cos.z = cos(l_cos.z);
+			l_cos.x = cosf(l_cos.x);
+			l_cos.y = cosf(l_cos.y);
+			l_cos.z = cosf(l_cos.z);
 		}
 
 		_Math::Vector3f l_sin;
 		{
 			_Math::Vector3f_mul(p_eulerAngles, 0.5f, &l_sin);
-			l_sin.x = sin(l_sin.x);
-			l_sin.y = sin(l_sin.y);
-			l_sin.z = sin(l_sin.z);
+			l_sin.x = sinf(l_sin.x);
+			l_sin.y = sinf(l_sin.y);
+			l_sin.z = sinf(l_sin.z);
 		}
 
 		p_out->w = l_cos.x * l_cos.y * l_cos.z + l_sin.x * l_sin.y * l_sin.z;
