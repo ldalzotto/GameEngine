@@ -28,7 +28,7 @@ namespace _GameEngine::_ECS
 		return UPDATE_PUSH_TO_RENDER_PRIORITY;
 	};
 
-	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta);
+	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_gameEngineInterface);
 
 	void meshDrawSystem_onComponentsAttached(Entity* p_entity, void* p_null);
 	void meshDrawSystem_onComponentsDetached(Entity* p_entity, void* p_null);
@@ -58,7 +58,7 @@ namespace _GameEngine::_ECS
 		_Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 
-	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_delta)
+	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_gameEngineInterface)
 	{
 		_ECS::SystemV2* l_meshDrawSystem = (_ECS::SystemV2*)p_meshDrawSystem;
 

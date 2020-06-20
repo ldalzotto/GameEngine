@@ -57,9 +57,8 @@ namespace _GameEngine
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
 		_Clock::Clock_newFrame(&l_app->Clock);
 		_Input::Input_update(&l_app->Input);
-		_Utils::Observer_broadcast(&l_app->NewFrame, l_app);
-
-		_Log::MyLog_pushLog(&l_app->Log, _Log::LogLevel::WARN, "Hello");
+		_Utils::Observer_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
+		//_Log::MyLog_pushLog(&l_app->Log, _Log::LogLevel::WARN, "Hello");
 	};
 
 	void app_update(void* p_closure, float p_delta)
@@ -67,7 +66,7 @@ namespace _GameEngine
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		_Clock::Clock_newUpdate(&l_app->Clock, p_delta);
 		l_app->SandboxUpdateHook(p_delta);
-		UpdateSequencer_execute(&l_app->UpdateSequencer, p_delta);
+		UpdateSequencer_execute(&l_app->UpdateSequencer, &l_app->GameEngineApplicationInterface);
 	};
 
 	void app_render(void* p_closure)

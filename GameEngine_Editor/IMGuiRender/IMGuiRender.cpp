@@ -6,7 +6,6 @@
 #include "imgui_impl_glfw.h"
 
 #include "RenderInterface.h"
-#include "GameEngineApplication.h"
 
 #include "RenderHook.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
@@ -114,11 +113,11 @@ namespace _GameEngineEditor
 		l_IMGuiRender->FontInitialized = false;
 	};
 
-	void newFrame(void* p_IMGuiRender, void* p_gameEngineApplication)
+	void newFrame(void* p_IMGuiRender, void* p_gameEngineApplicationInterface)
 	{
 		IMGuiRender* l_imGuiRender = (IMGuiRender*)p_IMGuiRender;
-		GameEngineApplication* l_gameEngineApplcation = (GameEngineApplication*)p_gameEngineApplication;
-		_Render::RenderInterface* l_renderInterface = &l_gameEngineApplcation->Render.RenderInterface;
+		GameEngineApplicationInterface* l_gameEngineApplcationInterface = (GameEngineApplicationInterface*)p_gameEngineApplicationInterface;
+		_Render::RenderInterface* l_renderInterface = l_gameEngineApplcationInterface->RenderInterface;
 
 		if (!l_imGuiRender->FontInitialized)
 		{

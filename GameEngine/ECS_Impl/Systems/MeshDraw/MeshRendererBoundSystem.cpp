@@ -46,7 +46,7 @@ namespace _GameEngine::_ECS
 		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.free();
 	};
 
-	void meshRendererBoundSystem_update(void* p_system, void* p_delta)
+	void meshRendererBoundSystem_update(void* p_system, void* p_gameEngineInterface)
 	{
 		SystemV2* l_system = (SystemV2*)p_system;
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)((SystemV2*)p_system)->Child;

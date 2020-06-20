@@ -4,6 +4,11 @@
 
 namespace _GameEngine
 {
+	struct GameEngineApplicationInterface;
+}
+
+namespace _GameEngine
+{
 	extern _Utils::SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY;	
 	extern _Utils::SortedSequencerPriority EDITR_PRIORITY;
 
@@ -13,5 +18,5 @@ namespace _GameEngine
 		_Utils::SortedSequencer UpdateSequencer;
 	};
 
-	void UpdateSequencer_execute(UpdateSequencer* p_updateSequencer, float p_float);
+	void UpdateSequencer_execute(UpdateSequencer* p_updateSequencer, GameEngineApplicationInterface* p_gameEngineInterface);
 }

@@ -7,7 +7,6 @@
 #include "Math/Matrix/MatrixMath.h"
 
 #include "ECS_Impl/Components/Transform/Transform.h"
-#include "GameEngineApplication.h"
 
 using namespace _GameEngine::_ECS;
 

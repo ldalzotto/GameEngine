@@ -1,8 +1,5 @@
 #include "CameraSystem.h"
 
-#include "Log/Log.h"
-#include "Log/LogFormatters.h"
-
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/VectorMath.h"
 #include <vector>
@@ -16,7 +13,7 @@
 
 namespace _GameEngine::_ECS
 {
-	void cameraSystem_update(void* p_cameraSystem, void* p_delta);
+	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
 
 	_Utils::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
@@ -38,7 +35,7 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
 	};
 
-	void cameraSystem_update(void* p_cameraSystem, void* p_delta)
+	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface)
 	{
 		_ECS::SystemV2* l_cameraSystem = (_ECS::SystemV2*)p_cameraSystem;
 		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.size() > 0)
