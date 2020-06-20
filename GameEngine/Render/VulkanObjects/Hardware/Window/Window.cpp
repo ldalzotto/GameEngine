@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 namespace _GameEngine::_Render
 {
@@ -52,7 +52,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 		if (!p_window->Window)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE(WINDOW_ERROR_NOT_INITIALIZED));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE(WINDOW_ERROR_NOT_INITIALIZED));
 		}
 #endif
 

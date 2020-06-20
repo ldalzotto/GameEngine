@@ -1,6 +1,6 @@
 
 #include "Device.h"
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Queue.h"
 #include "Utils/Algorithm/Algorithm.h"
@@ -47,7 +47,7 @@ namespace _GameEngine::_Render
 
 		if (l_deviceCount == 0)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find GPUs with Vulkan support!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to find GPUs with Vulkan support!"));
 		}
 
 		std::vector<VkPhysicalDevice> l_physicalDevices(l_deviceCount);
@@ -66,7 +66,7 @@ namespace _GameEngine::_Render
 
 		if (p_device->PhysicalDevice.PhysicalDevice == VK_NULL_HANDLE)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find a suitable GPU!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to find a suitable GPU!"));
 		}
 	};
 
@@ -111,7 +111,7 @@ namespace _GameEngine::_Render
 
 		if (vkCreateDevice(p_device->PhysicalDevice.PhysicalDevice, &l_deviceCreateInfo, nullptr, &p_device->LogicalDevice.LogicalDevice) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create logical device!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create logical device!"));
 		}
 
 		vkGetDeviceQueue(p_device->LogicalDevice.LogicalDevice, p_device->PhysicalDevice.QueueFamilies.Graphics.QueueIndex, 0, &p_device->LogicalDevice.Queues.GraphicsQueue);
@@ -132,7 +132,7 @@ namespace _GameEngine::_Render
 			}
 		}
 
-		throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to find suitable memory type!"));
+		throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to find suitable memory type!"));
 	};
 
 	size_t FormatSupportKey_buildHashKey(FormatSupportKey* p_formatSupportKey)

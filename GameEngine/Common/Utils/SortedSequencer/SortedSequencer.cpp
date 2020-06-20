@@ -2,7 +2,7 @@
 
 #include "Utils/Algorithm/Algorithm.h"
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 #include <limits>
 
 namespace _GameEngine::_Utils
@@ -52,7 +52,7 @@ namespace _GameEngine::_Utils
 		{
 			if (Vector_containsElementEquals(p_before, (uint16_t)0) || Vector_containsElementEquals(p_before, (uint16_t)1))
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("You cannot insert an operation before the priority 0 (which will always be the first)."));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("You cannot insert an operation before the priority 0 (which will always be the first)."));
 			};
 		}
 
@@ -116,7 +116,7 @@ namespace _GameEngine::_Utils
 			}
 			else
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Cannot find a suitable priority value that executes before and after the associated inputs."));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Cannot find a suitable priority value that executes before and after the associated inputs."));
 			}
 		}
 	};

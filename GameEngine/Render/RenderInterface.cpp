@@ -4,10 +4,10 @@
 
 namespace _GameEngine::_Render
 {
-	void RenderInterface_initialize(Render* p_render)
+	void RenderInterface_initialize(Render* p_render, _Log::MyLog* p_myLog)
 	{
 		RenderInterface* l_renderInterface = &p_render->RenderInterface;
-
+		l_renderInterface->MyLog = p_myLog;
 		l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks = &p_render->RenderHookCallbacks;
 
 		l_renderInterface->Window = &p_render->Window;

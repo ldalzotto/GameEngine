@@ -1,7 +1,7 @@
 #include "ImageViews.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "Texture/Texture.h"
@@ -29,7 +29,7 @@ namespace _GameEngine::_Render
 		if (vkCreateImageView(p_imageViewInitializationInfo->Device->LogicalDevice.LogicalDevice, &l_imageCreate, nullptr, &(p_imageView->ImageView))
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create image views!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create image views!"));
 		}
 	};
 

@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "Utils/Algorithm/Algorithm.h"
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
@@ -159,7 +159,7 @@ namespace _GameEngine::_Render
 		if (vkCreatePipelineLayout(p_renderInterface->Device->LogicalDevice.LogicalDevice, &l_pipelineLayoutCreateInfo, nullptr, &p_defaultMaterial->FinalDrawObjects.PipelineLayout)
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create pipeline layout!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create pipeline layout!"));
 		}
 	};
 

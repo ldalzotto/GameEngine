@@ -1,7 +1,12 @@
 #pragma once
 
 #include "vulkan/vulkan.h"
- 
+
+namespace _GameEngine::_Log
+{
+	struct MyLog;
+}
+
 namespace _GameEngine::_Render
 {
 	struct Render;
@@ -54,6 +59,8 @@ namespace _GameEngine::_Render
 
 	struct RenderInterface
 	{
+		_Log::MyLog* MyLog;
+
 		RenderHookCallbacksInterface RenderHookCallbacksInterface;
 
 		Window* Window;
@@ -78,5 +85,5 @@ namespace _GameEngine::_Render
 		Gizmo* Gizmo;
 	};
 
-	void RenderInterface_initialize(Render* p_render);
+	void RenderInterface_initialize(Render* p_render, _Log::MyLog* p_myLog);
 }

@@ -27,6 +27,11 @@
 
 #include "RenderInterface.h"
 
+namespace _GameEngine::_Log
+{
+	struct MyLog;
+}
+
 namespace _GameEngine::_Render
 {
 	struct RenderDebug
@@ -68,7 +73,7 @@ namespace _GameEngine::_Render
 		Gizmo Gizmo;
 	};
 
-	void Render_build(Render* p_render);
+	void Render_build(Render* p_render, _Log::MyLog* p_myLog);
 	void Render_free(Render* p_render);
 	void Render_recreateSwapChain(Render* p_render);
 	

@@ -1,7 +1,7 @@
 #include "PreRenderDeferedCommandBufferStep.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 
@@ -34,7 +34,7 @@ namespace _GameEngine::_Render
 
 			if (vkBeginCommandBuffer(p_preRenderDeferedCommandBufferStep->DedicatedCommandBuffer.CommandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
 			}
 
 			VkFenceCreateInfo l_staginFenceCreate{};
@@ -60,7 +60,7 @@ namespace _GameEngine::_Render
 
 			if (vkEndCommandBuffer(p_preRenderDeferedCommandBufferStep->DedicatedCommandBuffer.CommandBuffer) != VK_SUCCESS)
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
 			}
 
 			return PreRenderDeferredCommandBufferStepStatusBitFlag::CREATED;

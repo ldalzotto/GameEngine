@@ -1,7 +1,8 @@
 #include "MeshResourceProvider.h"
 
-#include "Log/Log.h"
+#include "MyLog/MyLog.h"
 
+#include "RenderInterface.h"
 #include "Utils/Algorithm/Algorithm.h"
 #include "Mesh/MeshLoader.h"
 
@@ -34,8 +35,8 @@ namespace _GameEngine::_Render
 
 			MeshAllocProceduralInfo l_meshAllocInfo{};
 			l_meshAllocInfo.MeshUniqueKey = &l_meshUniqueKey;
-			l_meshAllocInfo.Device = p_meshResourceProvider->MeshResourceProviderDependencies.Device;
-			l_meshAllocInfo.PreRenderDeferedCommandBufferStep = p_meshResourceProvider->MeshResourceProviderDependencies.PreRenderDeferedCommandBufferStep;
+			l_meshAllocInfo.Device = p_meshResourceProvider->RenderInterface->Device;
+			l_meshAllocInfo.PreRenderDeferedCommandBufferStep = p_meshResourceProvider->RenderInterface->PreRenderDeferedCommandBufferStep;
 			l_meshAllocInfo.Vertices = &l_vertices;
 			l_meshAllocInfo.Indices = &l_indices;
 		
@@ -59,7 +60,7 @@ namespace _GameEngine::_Render
 		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)
 		{
-			Mesh_free(&l_resourceWithCounter->Mesh, p_meshResourceProvider->MeshResourceProviderDependencies.Device);
+			Mesh_free(&l_resourceWithCounter->Mesh, p_meshResourceProvider->RenderInterface->Device);
 			p_meshResourceProvider->MeshResources.erase(l_hash);
 		}
 	};
@@ -76,12 +77,12 @@ namespace _GameEngine::_Render
 				l_textureResourcesNotDisposed += ",";
 			}
 			l_textureResourcesNotDisposed += "]";
-			_Log::LogInstance->CoreLogger->warn("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.");
+			MYLOG_PUSH(p_meshResourceProvider->RenderInterface->MyLog, _Log::WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
 #endif
 
 			for (auto&& l_textureResourceEntry : p_meshResourceProvider->MeshResources)
 			{
-				Mesh_free(&l_textureResourceEntry.second.Mesh, p_meshResourceProvider->MeshResourceProviderDependencies.Device);
+				Mesh_free(&l_textureResourceEntry.second.Mesh, p_meshResourceProvider->RenderInterface->Device);
 			}
 			p_meshResourceProvider->MeshResources.clear();
 		}

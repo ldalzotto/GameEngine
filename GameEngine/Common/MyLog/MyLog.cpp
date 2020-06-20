@@ -16,24 +16,23 @@ namespace _GameEngine::_Log
 
 	void MyLog_free(MyLog* p_myLog)
 	{
+		MyLog_processLogs(p_myLog);
 		p_myLog->LogMessages.free();
-		free(p_myLog->TmpFinalMessage);
 	};
 
 	void logMessage_free(LogMessage* p_logMessage)
 	{
-		free(p_logMessage->Message);
+		//	free(p_logMessage->Message);
 	};
 
-	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, char* p_message)
+	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, char* p_message)
 	{
 		LogMessage l_logMessage{};
-
 		l_logMessage.LogLevel = p_logLevel;
+		l_logMessage.FilePath = p_filePath;
+		l_logMessage.FileLine = p_line;
 
 		{
-			l_logMessage.Message = p_message;
-			l_logMessage.Message = (char*)malloc(strlen(p_message) + 1);
 			strcpy(l_logMessage.Message, p_message);
 		}
 
@@ -89,15 +88,16 @@ namespace _GameEngine::_Log
 
 			char  l_frameCountStr[256] = "";
 			ultoa(l_message->FrameNb, l_frameCountStr, 10);
-			
-			char* l_newFinalMessage = (char*)realloc(p_myLog->TmpFinalMessage, strlen(l_frameCountStr) + strlen(l_message->Message) + strlen(l_logLevemMessage) + 1);
-			if (l_newFinalMessage == nullptr)
-			{
-				free(p_myLog->TmpFinalMessage);
-			}
-			p_myLog->TmpFinalMessage = l_newFinalMessage;
+
+			char l_lineCountStr[256] = "";
+			itoa(l_message->FileLine, l_lineCountStr, 10);
+
 			strcpy(p_myLog->TmpFinalMessage, l_frameCountStr);
 			strcat(p_myLog->TmpFinalMessage, l_logLevemMessage);
+			strcat(p_myLog->TmpFinalMessage, l_message->FilePath);
+			strcat(p_myLog->TmpFinalMessage, ".");
+			strcat(p_myLog->TmpFinalMessage, l_lineCountStr);
+			strcat(p_myLog->TmpFinalMessage, " ");
 			strcat(p_myLog->TmpFinalMessage, l_message->Message);
 
 			printf(p_myLog->TmpFinalMessage);
@@ -108,5 +108,10 @@ namespace _GameEngine::_Log
 		}
 
 		p_myLog->LogMessages.clear();
+	};
+
+	std::string MyLog_formatError(const std::string& p_file, int p_line, const std::string& p_message) 
+	{
+		return p_file + " " + std::to_string(p_line) + " : " + p_message;
 	};
 }

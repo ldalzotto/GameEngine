@@ -2,7 +2,6 @@
 
 #include <functional>
 
-#include "Log/Log.h"
 #include "GameLoop/GameLoop.h"
 #include "EngineSequencers/EngineSequencers.h"
 #include "Utils/Observer/Observer.h"

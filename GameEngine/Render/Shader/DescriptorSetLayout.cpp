@@ -1,7 +1,7 @@
 #include "DescriptorSetLayout.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 
@@ -19,7 +19,7 @@ namespace _GameEngine::_Render
 		if (vkCreateDescriptorSetLayout(p_device->LogicalDevice.LogicalDevice, &l_descriptorSetLayoutCreateInfo, nullptr, &p_descriptorSetLayout->DescriptorSetLayout)
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create descriptor set layout!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create descriptor set layout!"));
 		}
 	};
 

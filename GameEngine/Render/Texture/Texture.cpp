@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "stb_image.h"
-#include "Log/Log.h"
+#include "MyLog/MyLog.h"
 
 #include "TextureSwapChainSizeSynchronizer.h"
 #include "RenderInterface.h"
@@ -25,7 +25,7 @@ namespace _GameEngine::_Render
 	///////////////////////////////////////////////////////////////
 
 	//////////////////// Validation ////////////////////
-	void check_textureValidationToken_undefinedBehavior(Texture* l_texture, PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep);
+	void check_textureValidationToken_undefinedBehavior(Texture* l_texture, RenderInterface* p_renderInterface);
 	////////////////////////////////////////////////////
 
 	//////////////////// Fit swap chain size feature ////////////////////
@@ -65,7 +65,7 @@ namespace _GameEngine::_Render
 		else
 		{
 			delete l_texture;
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureAllocation : the TextureAllocationType " + std::to_string((uint8_t)p_textureAllocInfo->TextureAllocationType) + " is not supported."));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureAllocation : the TextureAllocationType " + std::to_string((uint8_t)p_textureAllocInfo->TextureAllocationType) + " is not supported."));
 		}
 	};
 
@@ -80,7 +80,7 @@ namespace _GameEngine::_Render
 
 		if (!l_pixels)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to load texture image!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to load texture image!"));
 		}
 
 		{
@@ -123,7 +123,7 @@ namespace _GameEngine::_Render
 
 		texture_removeFitSwapChainSizeFeature(p_texture, p_renderInterface);
 
-		check_textureValidationToken_undefinedBehavior(p_texture, p_renderInterface->PreRenderDeferedCommandBufferStep);
+		check_textureValidationToken_undefinedBehavior(p_texture, p_renderInterface);
 
 		if (!SmartDeferredCommandBufferCompletionToken_isNull(&p_texture->TextureInitializationBufferCompletionToken))
 		{
@@ -171,7 +171,7 @@ namespace _GameEngine::_Render
 
 		if (vkCreateImage(p_device->LogicalDevice.LogicalDevice, &l_imageCreateInfo, nullptr, &p_texture->Texture) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create image!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create image!"));
 		}
 
 		{
@@ -198,7 +198,7 @@ namespace _GameEngine::_Render
 
 		if (vkAllocateMemory(p_device->LogicalDevice.LogicalDevice, &l_textureMemoryAllocateInfo, nullptr, &p_texture->TextureMemory) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to allocate image memory!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to allocate image memory!"));
 		}
 
 		vkBindImageMemory(p_device->LogicalDevice.LogicalDevice, p_texture->Texture, p_texture->TextureMemory, 0);
@@ -210,13 +210,13 @@ namespace _GameEngine::_Render
 		ImageView_init(&p_texture->ImageView, &l_imageViewInitializationInfo);
 	};
 
-	void check_textureValidationToken_undefinedBehavior(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep)
+	void check_textureValidationToken_undefinedBehavior(_GameEngine::_Render::Texture* l_texture, _GameEngine::_Render::RenderInterface* p_renderInterface)
 	{
 #ifndef NDEBUG
 		if (!SmartDeferredCommandBufferCompletionToken_isNull(&l_texture->TextureInitializationBufferCompletionToken))
 		{
 			bool l_tokenFoundInDeferrendOperations = false;
-			for (auto&& l_defferedInitializationOperation : p_preRenderDeferedCommandBufferStep->DefferedOperations)
+			for (auto&& l_defferedInitializationOperation : p_renderInterface->PreRenderDeferedCommandBufferStep->DefferedOperations)
 			{
 				if (l_defferedInitializationOperation.DeferredCommandBufferCompletionToken == l_texture->TextureInitializationBufferCompletionToken.TokenReference)
 				{
@@ -227,11 +227,10 @@ namespace _GameEngine::_Render
 
 			if (!l_tokenFoundInDeferrendOperations)
 			{
-				_Log::LogInstance->CoreLogger->warn(
+				MYLOG_PUSH(p_renderInterface->MyLog, _Log::WARN,
 					"The local reference of DeferredCommandBufferCompletionToken is not null. However, it's reference is not found inside the PreRenderDeferedCommandBufferStep."
 					" Because it is up to the PreRenderDeferedCommandBufferStep to dispose the token, this means that it's duplicated reference has not been cleared on completion. This may lead to undefined behavior."
-					" Be sure that the token reference is nullified when destroyed."
-				);
+					" Be sure that the token reference is nullified when destroyed.");
 			}
 		}
 #endif
@@ -256,7 +255,7 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureBuildCreationInfoObject : Texture build creation object with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureBuildCreationInfoObject : Texture build creation object with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
 				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
 		}
 	};
@@ -291,7 +290,7 @@ namespace _GameEngine::_Render
 		else if (p_textureCreateInfo->TextureType == TextureType::DEPTH
 			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for texture load with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) + 
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for texture load with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) + 
 				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
 		}
 	};
@@ -307,7 +306,7 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for procedural texture with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for procedural texture with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
 				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
 		}
 	};
@@ -320,7 +319,7 @@ namespace _GameEngine::_Render
 			if (p_textureAllocInfo->TextureAllocationType == TextureAllocationType::FILE)
 			{
 				delete p_texture;
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("TextureAllocation : cannot activate the FIT_SWAPCHAIN_SIZE feature when allocation type is TextureAllocationType::FILE."));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureAllocation : cannot activate the FIT_SWAPCHAIN_SIZE feature when allocation type is TextureAllocationType::FILE."));
 			}
 #endif
 			p_textureAllocInfo->TextureCreateInfo.Width = p_textureAllocInfo->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width;

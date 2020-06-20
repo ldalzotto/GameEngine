@@ -4,7 +4,7 @@
 #include "Window.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 #include "Includes/GLFWIncludes.h"
 
 namespace _GameEngine::_Render
@@ -13,7 +13,7 @@ namespace _GameEngine::_Render
 	{
 		if (glfwCreateWindowSurface(*p_renderInterface->Instance, p_renderInterface->Window->Window, nullptr, &p_surface->WindowSurface) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create window surface!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create window surface!"));
 		}
 	};
 

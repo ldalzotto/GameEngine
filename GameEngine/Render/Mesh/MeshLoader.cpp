@@ -6,7 +6,7 @@
 #include <Assimp/scene.h>
 #include <Assimp/postprocess.h>
 
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 namespace _GameEngine::_Render
 {
@@ -25,7 +25,7 @@ namespace _GameEngine::_Render
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Cannot load the model : " + p_readMeshFromFileInfo->Path));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Cannot load the model : " + p_readMeshFromFileInfo->Path));
 		}
 
 		std::vector<LoadedData> loadedData;

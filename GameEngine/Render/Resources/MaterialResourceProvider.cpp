@@ -1,6 +1,6 @@
 #include "MaterialResourceProvider.h"
 
-#include "Log/Log.h"
+#include "MyLog/MyLog.h"
 #include <stdexcept>
 
 #include "Shader/ShaderParameterKeys.h"
@@ -61,7 +61,7 @@ namespace _GameEngine::_Render
 				l_textureResourcesNotDisposed += ",";
 			}
 			l_textureResourcesNotDisposed += "]";
-			_Log::LogInstance->CoreLogger->warn("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.");
+			MYLOG_PUSH(p_materialResourceProvider->RenderInterface->MyLog, _Log::WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
 #endif
 
 			for (auto&& l_textureResourceEntry : p_materialResourceProvider->MaterialResources)
@@ -161,7 +161,7 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Cannot build material."));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Cannot build material."));
 		}
 
 	};

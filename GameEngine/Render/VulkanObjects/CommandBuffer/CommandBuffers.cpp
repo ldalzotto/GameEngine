@@ -1,7 +1,7 @@
 #include "CommandBuffers.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
@@ -21,7 +21,7 @@ namespace _GameEngine::_Render
 		if (vkAllocateCommandBuffers(p_commandBuffersDependencies->CommandPool->CommanPoolDependencies.Device->LogicalDevice.LogicalDevice, &l_commandBufferAllocateInfo, &p_commandBuffer->CommandBuffer)
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to allocate command buffers!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to allocate command buffers!"));
 		}
 	};
 

@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
@@ -107,7 +107,7 @@ namespace _GameEngine::_Render
 
 		if (vkCreateSwapchainKHR(p_renderInterface->Device->LogicalDevice.LogicalDevice, &l_createInfo, nullptr, &p_swapChain->VkSwapchainKHR) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create swap chain!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create swap chain!"));
 		}
 
 

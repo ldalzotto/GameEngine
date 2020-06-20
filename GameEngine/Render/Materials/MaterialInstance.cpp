@@ -3,7 +3,7 @@
 #include <functional>
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "RenderInterface.h"
 #include "Resources/MeshResourceProvider.h"
@@ -255,7 +255,7 @@ namespace _GameEngine::_Render
 			}
 			break;
 			default:
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to populate ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to populate ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
 				break;
 			}
 		}
@@ -274,7 +274,7 @@ namespace _GameEngine::_Render
 			l_descriptorSetAllocateInfo.pSetLayouts = &p_materialInstance->SourceMaterial->LocalInputParameters.DescriptorSetLayout.DescriptorSetLayout;
 			if (vkAllocateDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice, &l_descriptorSetAllocateInfo, &p_materialInstance->MaterialDescriptorSet) != VK_SUCCESS)
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create description set."));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create description set."));
 			};
 		}
 	};
@@ -317,7 +317,7 @@ namespace _GameEngine::_Render
 			}
 			break;
 			default:
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to update ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to update ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
 				break;
 			}
 

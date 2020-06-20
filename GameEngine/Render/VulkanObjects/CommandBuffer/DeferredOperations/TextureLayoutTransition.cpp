@@ -1,7 +1,7 @@
 #include "TextureLayoutTransition.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "Texture/Texture.h"
 #include "VulkanObjects/SwapChain/Image/SwapChainImage.h"
@@ -114,7 +114,7 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Unsupported layout transition!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Unsupported layout transition!"));
 		}
 	};
 

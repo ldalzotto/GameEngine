@@ -7,7 +7,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 namespace _GameEngine::_Render
 {
@@ -94,7 +94,7 @@ namespace _GameEngine::_Render
 		if (vkCreateRenderPass(p_renderPass->RenderPassDependencies.SwapChain->RenderInterface->Device->LogicalDevice.LogicalDevice, &l_renderPassCreateInfo, nullptr, &p_renderPass->renderPass)
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create render pass!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create render pass!"));
 		}
 	};
 

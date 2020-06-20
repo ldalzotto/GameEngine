@@ -1,7 +1,6 @@
 #include "System.h"
 
 #include <cstdlib>
-#include "Log/Log.h"
 
 #include "ECS.h"
 

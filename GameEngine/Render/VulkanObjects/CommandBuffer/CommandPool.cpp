@@ -1,7 +1,7 @@
 #include "CommandPool.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 
 namespace _GameEngine::_Render
@@ -20,7 +20,7 @@ namespace _GameEngine::_Render
         if (vkCreateCommandPool(p_commandPool->CommanPoolDependencies.Device->LogicalDevice.LogicalDevice, &l_commandPoolCreateInfo, nullptr, &p_commandPool->CommandPool)
             != VK_SUCCESS)
         {
-            throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create command pool!"));
+            throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create command pool!"));
         }
     };
 

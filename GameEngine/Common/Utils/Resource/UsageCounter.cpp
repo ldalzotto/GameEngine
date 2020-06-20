@@ -1,7 +1,7 @@
 #include "UsageCounter.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MyLog/MyLog.h"
 
 namespace _GameEngine::_Utils
 {
@@ -20,7 +20,7 @@ namespace _GameEngine::_Utils
 		else
 		{
 
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("The UsageCounter cannot be released whe it's current UsageCount is 0!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("The UsageCounter cannot be released whe it's current UsageCount is 0!"));
 		}
 #endif
 	};

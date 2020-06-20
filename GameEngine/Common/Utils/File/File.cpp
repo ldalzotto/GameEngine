@@ -1,6 +1,6 @@
 #include "File.h"
 
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include <stdexcept>
 #include <fstream>
@@ -14,7 +14,7 @@ namespace _GameEngine::_Utils
 
 		if (!file.is_open())
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to open file : " + p_absoluteFilePath));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to open file : " + p_absoluteFilePath));
 		}
 
 		size_t l_fileSize = (size_t)file.tellg();

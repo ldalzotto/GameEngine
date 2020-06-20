@@ -4,7 +4,7 @@
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 #include "Utils/File/File.h"
 
 namespace _GameEngine::_Render
@@ -41,7 +41,7 @@ namespace _GameEngine::_Render
 
 		if (vkCreateShaderModule(p_device->LogicalDevice.LogicalDevice, &l_shaderModuleCreateInfo, nullptr, &l_shaderModule) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create shader module!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create shader module!"));
 		}
 		return l_shaderModule;
 	};

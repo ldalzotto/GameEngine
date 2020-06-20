@@ -4,7 +4,7 @@
 
 #include "ECS/ECS.h"
 #include "Utils/Algorithm/Algorithm.h"
-#include "Log/Log.h"
+#include "MyLog/MyLog.h"
 
 #include "DataStructures/ElementComparators.h"
 
@@ -25,7 +25,7 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (p_entity->Components.get(Component_comparator, &p_unlinkedComponent->ComponentType))
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Trying to add a component were it's type ( " + p_unlinkedComponent->ComponentType + " ) is aleady present as a component."));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Trying to add a component were it's type ( " + p_unlinkedComponent->ComponentType + " ) is aleady present as a component."));
 		}
 #endif
 
@@ -114,7 +114,7 @@ namespace _GameEngine::_ECS
 		EntityContainer* l_entityContainer = &(*p_entity)->ECS->EntityContainer;
 		if (l_entityContainer->Entities.get(Entity_comparator, p_entity))
 		{
-			_Log::LogInstance->CoreLogger->warn("Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
+			MYLOG_PUSH((*p_entity)->ECS->MyLog, _Log::WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
 		}
 #endif
 

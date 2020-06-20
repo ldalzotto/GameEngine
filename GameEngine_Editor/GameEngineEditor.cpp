@@ -24,6 +24,7 @@ namespace _GameEngineEditor
 
 		IMGuiRender_init(&l_gameEngineEditor->IMGuiRender, l_gameEngineEditor->GameEngineApplicationInterface);
 
+		l_gameEngineEditor->DebugConsole.GameEngineApplicationInterface = p_gameEngineApplicationInterface;
 		l_gameEngineEditor->DebugConsole.DrawableWindows = &l_gameEngineEditor->DrawableWindows;
 
 		gameEngineEditor_systemInitialization(l_gameEngineEditor);

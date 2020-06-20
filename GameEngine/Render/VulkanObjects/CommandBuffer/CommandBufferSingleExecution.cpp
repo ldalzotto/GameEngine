@@ -1,7 +1,7 @@
 #include "CommandBufferSingleExecution.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 
@@ -34,7 +34,7 @@ namespace _GameEngine::_Render
 
 		if (vkBeginCommandBuffer(p_commandBufferSingleExecution->CommandBuffer.CommandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
 		}
 
 	};
@@ -43,7 +43,7 @@ namespace _GameEngine::_Render
 	{
 		if (vkEndCommandBuffer(p_commandBufferSingleExecution->CommandBuffer.CommandBuffer) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
 		}
 
 		VkSubmitInfo l_staginSubmit{};

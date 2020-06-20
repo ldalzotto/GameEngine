@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/SwapChain/SwapChainSharedStructures.h"
@@ -43,7 +43,7 @@ namespace _GameEngine::_Render
 		if (vkCreateFramebuffer(p_frameBuffer->FrameBufferDependencies.Device->LogicalDevice.LogicalDevice, &l_frameBufferCreateInfo, nullptr, &p_frameBuffer->FrameBuffer)
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create framebuffer!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create framebuffer!"));
 		}
 
 	};

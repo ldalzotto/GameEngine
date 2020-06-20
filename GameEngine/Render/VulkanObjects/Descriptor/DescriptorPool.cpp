@@ -6,7 +6,7 @@
 #include "Shader/DescriptorSetLayout.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 namespace _GameEngine::_Render
 {
@@ -24,7 +24,7 @@ namespace _GameEngine::_Render
 
 			if (vkCreateDescriptorPool(p_device->LogicalDevice.LogicalDevice, &l_descriptorPoolCreateInfo, nullptr, &p_descriptorPool->DescriptorPool) != VK_SUCCESS)
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create the descriptor pool."));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create the descriptor pool."));
 			}
 		}
 	};

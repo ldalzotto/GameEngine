@@ -2,7 +2,7 @@
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 namespace _GameEngine::_Render
 {
@@ -25,7 +25,7 @@ namespace _GameEngine::_Render
 				|| vkCreateSemaphore(p_renderSemaphore->RenderSemaphoreDependencies.Device->LogicalDevice.LogicalDevice, &l_semaphoreCreateInfo, nullptr, &p_renderSemaphore->RenderFinishedSemaphores[i]) != VK_SUCCESS
 				)
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create semaphores!"));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create semaphores!"));
 			}
 
 			VkFenceCreateInfo l_waitForEndOfRenderFenceCreationInfo{};
@@ -33,7 +33,7 @@ namespace _GameEngine::_Render
 			if (vkCreateFence(p_renderSemaphore->RenderSemaphoreDependencies.Device->LogicalDevice.LogicalDevice,
 				&l_waitForEndOfRenderFenceCreationInfo, nullptr, &p_renderSemaphore->WaitForGraphicsQueueFences[i]) != VK_SUCCESS)
 			{
-				throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create fence!"));
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create fence!"));
 			}
 		}
 

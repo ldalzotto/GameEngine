@@ -9,7 +9,7 @@
 #include "Texture/Texture.h"
 
 #include "vulkan/vulkan.h"
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 namespace _GameEngine::_Render
 {
@@ -86,7 +86,7 @@ namespace _GameEngine::_Render
 		if (vkCreateGraphicsPipelines(p_graphicsPipeline->GraphicsPipelineDependencies.Device->LogicalDevice.LogicalDevice, VK_NULL_HANDLE, 1, &l_pipelineCreateInfo, nullptr, &l_pipelineInernalObjects->Pipeline)
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create graphics pipeline!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create graphics pipeline!"));
 		}
 
 		Shader_freeShaderModule(l_vertexShaderModule, p_graphicsPipeline->GraphicsPipelineDependencies.Device);

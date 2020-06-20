@@ -7,6 +7,11 @@
 
 namespace _GameEngine::_Render
 {
+	struct RenderInterface;
+}
+
+namespace _GameEngine::_Render
+{
 	struct MeshResourceWithCounter
 	{
 		Mesh* Mesh;
@@ -21,7 +26,7 @@ namespace _GameEngine::_Render
 
 	struct MeshResourceProvider
 	{
-		MeshResourceProviderDependencies MeshResourceProviderDependencies;
+		RenderInterface* RenderInterface;
 		std::unordered_map<size_t, MeshResourceWithCounter> MeshResources;
 	};
 

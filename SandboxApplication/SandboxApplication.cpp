@@ -14,6 +14,8 @@
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 
+#include "MyLog/MyLog.h"
+
 #include "Math/Quaternion/QuaternionMath.h"
 
 #include <iostream>
@@ -35,14 +37,14 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-		_Log::LogInstance->ClientLogger->error(e.what());
+		_Log::MyLog_pushLog(&App->Log, _Log::ERROR, __FILE__, __LINE__, (char*)e.what());
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
-		_Log::LogInstance->ClientLogger->error("Unexpected Error");
+		_Log::MyLog_pushLog(&App->Log, _Log::ERROR, __FILE__, __LINE__, "Unexpected Error");
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		return EXIT_FAILURE;
@@ -117,7 +119,8 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
 
-			_Log::LogInstance->CoreLogger->info((void*)l_transform);
+			// MYLOG_PUSH(&App->Log, _Log::INFO, _Log::MyLog_pointerToString(&l_transform));
+			//_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };

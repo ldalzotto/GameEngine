@@ -1,7 +1,7 @@
 #include "Render.h"
 
 #include "VulkanObjects/Extensions/Extensions.h"
-#include "Log/Log.h"
+#include "MyLog/MyLog.h"
 
 #include "LoopStep/MaterialDrawStep.h"
 
@@ -15,7 +15,7 @@ namespace _GameEngine::_Render
 	void initValidationLayers(Render* p_render);
 
 	void initVulkanDebugger(Render* p_render);
-	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo);
+	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo, RenderInterface* p_renderInterface);
 	void freeVulkanDebugger(Render* p_render);
 
 	void initSurface(Render* p_render);
@@ -47,9 +47,9 @@ namespace _GameEngine::_Render
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
-	void Render_build(Render* p_render)
+	void Render_build(Render* p_render, _Log::MyLog* p_myLog)
 	{
-		RenderInterface_initialize(p_render);
+		RenderInterface_initialize(p_render, p_myLog);
 		
 		Window_init(&p_render->Window);
 
@@ -88,7 +88,7 @@ namespace _GameEngine::_Render
 		freeTextureSamplers(p_render);
 		freeRenderSemaphore(p_render);
 		freeSwapChain(p_render);
-		TextureSwapChainSizeSynchronizer_free(&(p_render)->TextureSwapChainSizeSynchronizer);
+		TextureSwapChainSizeSynchronizer_free(&(p_render)->TextureSwapChainSizeSynchronizer, &p_render->RenderInterface);
 		freeCommandPool(p_render);
 		freeDevice(p_render);
 		freeSurface(p_render);
@@ -151,7 +151,7 @@ namespace _GameEngine::_Render
 			createInfo.enabledLayerCount = static_cast<uint32_t>(l_validationLayers->ValidationLayers.size());
 			createInfo.ppEnabledLayerNames = l_validationLayers->ValidationLayers.data();
 
-			initVkDebugUtilsMessengerCreateInfoEXT(&l_debugUtlsMessengerCreateInfo);
+			initVkDebugUtilsMessengerCreateInfoEXT(&l_debugUtlsMessengerCreateInfo, &p_render->RenderInterface);
 			createInfo.pNext = &l_debugUtlsMessengerCreateInfo;
 		}
 		else
@@ -194,7 +194,7 @@ namespace _GameEngine::_Render
 
 
 			VkDebugUtilsMessengerCreateInfoEXT createInfo{};
-			initVkDebugUtilsMessengerCreateInfoEXT(&createInfo);
+			initVkDebugUtilsMessengerCreateInfoEXT(&createInfo, &p_render->RenderInterface);
 
 			if (l_renderDebug->PfnCreateDebugUtilsMessengerEXT(p_render->Instance, &createInfo, nullptr, &l_renderDebug->DebugMessenger) != VK_SUCCESS)
 			{
@@ -206,32 +206,34 @@ namespace _GameEngine::_Render
 	VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT p_messageSeverity, VkDebugUtilsMessageTypeFlagsEXT p_messageType,
 		const VkDebugUtilsMessengerCallbackDataEXT* p_callbackData, void* p_userData)
 	{
+		RenderInterface* l_renderInterface = (RenderInterface*)p_userData;
+
 		switch (p_messageSeverity)
 		{
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			_Log::LogInstance->CoreLogger->trace(p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, _Log::INFO, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-			_Log::LogInstance->CoreLogger->info(p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, _Log::INFO, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-			_Log::LogInstance->CoreLogger->warn(p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, _Log::WARN, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-			_Log::LogInstance->CoreLogger->error(p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, _Log::ERROR, (char*)p_callbackData->pMessage);
 			break;
 		}
 
 		return VK_FALSE;
 	};
 
-	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo)
+	void initVkDebugUtilsMessengerCreateInfoEXT(VkDebugUtilsMessengerCreateInfoEXT* p_debugUtilsMessengerCreateInfo, RenderInterface* p_renderInterface)
 	{
 		p_debugUtilsMessengerCreateInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 		p_debugUtilsMessengerCreateInfo->messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
 		p_debugUtilsMessengerCreateInfo->messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 		p_debugUtilsMessengerCreateInfo->pfnUserCallback = debugCallback;
-		p_debugUtilsMessengerCreateInfo->pUserData = nullptr;
+		p_debugUtilsMessengerCreateInfo->pUserData = p_renderInterface;
 	};
 
 	void freeVulkanDebugger(Render* p_render)
@@ -405,10 +407,7 @@ namespace _GameEngine::_Render
 	void initResourcesProvider(Render* p_render)
 	{
 		p_render->ResourceProviders.TextureResourceProvider.RenderInterface = &p_render->RenderInterface;
-		
-		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.Device = &p_render->Device;
-		p_render->ResourceProviders.MeshResourceProvider.MeshResourceProviderDependencies.PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
-
+		p_render->ResourceProviders.MeshResourceProvider.RenderInterface = &p_render->RenderInterface; 
 		p_render->ResourceProviders.MaterialResourceProvider.RenderInterface = &p_render->RenderInterface;
 	};
 
@@ -476,7 +475,7 @@ namespace _GameEngine::_Render
 		
 		if (l_acquireNextImageResult != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
 		}
 
 		std::vector<SwapChainImage>* l_swapChainImages = &p_render->SwapChain.SwapChainImages;
@@ -490,7 +489,7 @@ namespace _GameEngine::_Render
 
 		if (vkBeginCommandBuffer(l_commandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
 		}
 
 		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
@@ -505,7 +504,7 @@ namespace _GameEngine::_Render
 
 		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
 		}
 
 		VkSubmitInfo l_submitInfo{};
@@ -526,7 +525,7 @@ namespace _GameEngine::_Render
 
 		if (vkQueueSubmit(p_render->Device.LogicalDevice.Queues.GraphicsQueue, 1, &l_submitInfo, l_synchronizationObject.WaitForGraphicsQueueFence) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to submit draw command buffer!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to submit draw command buffer!"));
 		}
 
 		VkPresentInfoKHR l_presentInfo{ };

@@ -1,7 +1,7 @@
 #include "VulkanBuffer.h"
 
 #include <stdexcept>
-#include "Log/Log.h"
+#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 
@@ -57,7 +57,7 @@ namespace _GameEngine::_Render
 		if (vkCreateBuffer(p_device->LogicalDevice.LogicalDevice, &l_bufferCreateInfo, nullptr, &p_buffer->Buffer)
 			!= VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to create vertex buffer!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create vertex buffer!"));
 		}
 	};
 
@@ -75,7 +75,7 @@ namespace _GameEngine::_Render
 
 		if (vkAllocateMemory(p_device->LogicalDevice.LogicalDevice, &l_memoryAllocateInfo, nullptr, &p_buffer->BufferMemory) != VK_SUCCESS)
 		{
-			throw std::runtime_error(LOG_BUILD_ERRORMESSAGE("Failed to allocate vertex buffer memory!"));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to allocate vertex buffer memory!"));
 		}
 	};
 

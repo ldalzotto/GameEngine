@@ -16,12 +16,11 @@ namespace _GameEngine
 
 		GameEngineApplicationInterface_build(&l_gameEngineApplication->GameEngineApplicationInterface, l_gameEngineApplication);
 
-		_Log::Log_alloc();
 		_Log::MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
-		_Render::Render_build(&l_gameEngineApplication->Render);
+		_Render::Render_build(&l_gameEngineApplication->Render, &l_gameEngineApplication->Log);
 		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
-		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->UpdateSequencer);
+		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->Log);
 
 		_GameLoop::set_newFrameCallback(&l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
 		_GameLoop::set_updateCallback(&l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
@@ -37,7 +36,6 @@ namespace _GameEngine
 		_Render::Render_free(&p_app->Render);
 		_Input::Input_free(&p_app->Input);
 
-		_Log::Log_free(&_Log::LogInstance);
 		_Log::MyLog_free(&p_app->Log);
 
 		delete p_app;
@@ -58,7 +56,7 @@ namespace _GameEngine
 		_Clock::Clock_newFrame(&l_app->Clock);
 		_Input::Input_update(&l_app->Input);
 		_Utils::Observer_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
-		//_Log::MyLog_pushLog(&l_app->Log, _Log::LogLevel::WARN, "Hello");
+		// _Log::MyLog_pushLog(&l_app->Log, _Log::LogLevel::WARN, __FILE__, __LINE__, "Hello");
 	};
 
 	void app_update(void* p_closure, float p_delta)
