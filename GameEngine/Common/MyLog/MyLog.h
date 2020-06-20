@@ -32,6 +32,8 @@ namespace _GameEngine::_Log
 	{
 		_Core::VectorT<LogMessage> LogMessages;
 		_Clock::Clock* Clock;
+		// TODO -> Using a custom memory allocator tied to the log object.
+		_Core::VectorT<void*> GarbageAllocations;
 		char TmpFinalMessage[LOG_FINAL_MESSAGE_MAX_SIZE];
 	};
 
@@ -40,6 +42,7 @@ namespace _GameEngine::_Log
 	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, char* p_message);
 	void MyLog_processLogs(MyLog* p_myLog);
 
+	char* MyLog_allocatePointerString(MyLog* p_myLog, void* p_ptr);
 	std::string MyLog_formatError(const std::string& p_file, int p_line, const std::string& p_message);
 
 #define MYLOG_BUILD_ERRORMESSAGE(MESSAGE) _Log::MyLog_formatError(__FILE__, __LINE__, MESSAGE)

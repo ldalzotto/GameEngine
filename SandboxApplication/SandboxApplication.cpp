@@ -120,6 +120,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
 
 			// MYLOG_PUSH(&App->Log, _Log::INFO, _Log::MyLog_pointerToString(&l_transform));
+			MYLOG_PUSH(&App->Log, _Log::INFO, _Log::MyLog_allocatePointerString(&App->Log, (void*)l_transform));
 			//_Log::LogInstance->CoreLogger->info((void*)l_transform);
 
 			_ECS::TransformInitInfo l_transformInitInfo{};

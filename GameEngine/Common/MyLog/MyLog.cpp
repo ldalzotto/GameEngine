@@ -12,12 +12,14 @@ namespace _GameEngine::_Log
 	{
 		p_myLog->Clock = p_clock;
 		p_myLog->LogMessages.alloc();
+		p_myLog->GarbageAllocations.alloc();
 	};
 
 	void MyLog_free(MyLog* p_myLog)
 	{
 		MyLog_processLogs(p_myLog);
 		p_myLog->LogMessages.free();
+		p_myLog->GarbageAllocations.free();
 	};
 
 	void logMessage_free(LogMessage* p_logMessage)
@@ -108,9 +110,24 @@ namespace _GameEngine::_Log
 		}
 
 		p_myLog->LogMessages.clear();
+
+		for (size_t i = 0; i < p_myLog->GarbageAllocations.size(); i++)
+		{
+			void* l_garbageMemory = *p_myLog->GarbageAllocations.at(i);
+			free(l_garbageMemory);
+		}
+		p_myLog->GarbageAllocations.clear();
 	};
 
-	std::string MyLog_formatError(const std::string& p_file, int p_line, const std::string& p_message) 
+	char* MyLog_allocatePointerString(MyLog* p_myLog, void* p_ptr)
+	{
+		void* l_allocatedMemory = malloc(sizeof(char) * 19);
+		p_myLog->GarbageAllocations.push_back(&l_allocatedMemory);
+		snprintf((char*)l_allocatedMemory, sizeof(char) * 19, "0x%p", p_ptr);
+		return (char*)l_allocatedMemory;
+	};
+
+	std::string MyLog_formatError(const std::string& p_file, int p_line, const std::string& p_message)
 	{
 		return p_file + " " + std::to_string(p_line) + " : " + p_message;
 	};
