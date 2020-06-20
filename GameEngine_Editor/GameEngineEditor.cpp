@@ -2,6 +2,8 @@
 
 #include "GameEngineApplication.h"
 
+#include "Render/Render.h"
+#include "ECS/ECS.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 #include "ECS/Systems/MeshRendererBoundGizmoSystem.h"
 

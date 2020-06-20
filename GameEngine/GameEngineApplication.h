@@ -3,12 +3,19 @@
 #include <functional>
 
 #include "Log/Log.h"
-#include "Render.h"
 #include "GameLoop/GameLoop.h"
-#include "ECS/ECS.h"
-#include "Input/Input.h"
 #include "EngineSequencers/EngineSequencers.h"
 #include "Utils/Observer/Observer.h"
+
+/**/
+namespace _GameEngine
+{
+	namespace _Log { struct MyLog; }
+	namespace _Clock { struct Clock; }
+	namespace _Render { struct Render; }
+	namespace _Input { struct Input; }
+	namespace _ECS { struct ECS; }
+}
 
 namespace _GameEngine
 {
@@ -17,10 +24,12 @@ namespace _GameEngine
 	{
 		_Utils::Observer NewFrame;
 		_Utils::Observer PreRender;
-
 		UpdateSequencer UpdateSequencer;
 		std::function<void(float)> SandboxUpdateHook;
+
 		GameLoop* GameLoop;
+		_Log::MyLog* Log;
+		_Clock::Clock* Clock;
 		_Render::Render* Render;
 		_Input::Input* Input;
 		_ECS::ECS* ECS;

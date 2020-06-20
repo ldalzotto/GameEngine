@@ -7,16 +7,18 @@
 [X] # Gizmos are rendered by pushing commands every frame. For each frame, these commands are consumed and executed.
 [X] # Clearing the generic Graphics pipeline from ifs. And removing material type.
 
--- ECS --
-
-# Adding the choice for the EntityConfigurableContainer to only trigger events (no storage of Entities).
-
 -- Gizmo Drawer --
 
 [X] # MeshBoundBox gizmos rendering must be done to a specific system. (owned by the editor module.).
 [X] # Adding rendering order to materials.
 
+-- Log --
+
+# Creating my own Log library that defer log messages.
+
 -- ECS --
+
+# REFACTOR - Moving the Engine sequencer to a SortedVector.
 
 # Right now, the ECS engine is immediate. This means that Entities, Component and Systems are created immediately when asked (and the associated events are also triggered immediately).
   Is we imagine that a System creates a child Entity on the fly when component is attached, this can create some undefined behavior.
@@ -28,7 +30,7 @@
 
 -- Materials --
 
-# Adding configuration properties for rendering order
+[X] # Adding configuration properties for rendering order
 # Adding configuration properties for blending (editor 3D gizmo may be transparent ?)
 
 -- Inputs --

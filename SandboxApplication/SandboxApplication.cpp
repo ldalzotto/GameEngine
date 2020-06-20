@@ -1,6 +1,7 @@
 
 #include "SandboxApplication.h"
 #include "Log/Log.h"
+#include "Render/Render.h"
 #include "ECS/Entity.h"
 #include "ECS/System.h"
 #include "ECS_Impl/Components/Camera/Camera.h"

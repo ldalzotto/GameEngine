@@ -42,6 +42,12 @@ namespace _GameEngine
 			p_gameLoop->RenderCallbackClosure = p_closure;
 		};
 
+		void set_endOfFrameCallback(GameLoop* p_gameLoop, EndOfFrameCallback p_endOfFrameCallback, void* p_closure)
+		{
+			p_gameLoop->EndofFrameCallback = p_endOfFrameCallback;
+			p_gameLoop->EndOfFrameClosure = p_closure;
+		};
+
 		void update(GameLoop* p_gameLoop)
 		{
 			TimeClockPrecision l_currentTime = _Utils::get_currentTime_mics();
@@ -68,6 +74,8 @@ namespace _GameEngine
 				p_gameLoop->RenderCallback(p_gameLoop->RenderCallbackClosure);
 
 			}
+
+			p_gameLoop->EndofFrameCallback(p_gameLoop->EndOfFrameClosure);
 		};
 	} // namespace _GameLoop
 
