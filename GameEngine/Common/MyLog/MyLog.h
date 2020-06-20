@@ -28,8 +28,8 @@ namespace _GameEngine::_Log
 		char* TmpFinalMessage;
 	};
 
-	MyLog* MyLog_alloc(_Clock::Clock* p_clock);
-	void MyLog_free(MyLog** p_myLog);
+	void MyLog_build(MyLog* p_myLog, _Clock::Clock* p_clock);
+	void MyLog_free(MyLog* p_myLog);
 	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, char* p_message);
 	void MyLog_processLogs(MyLog* p_myLog);
 }

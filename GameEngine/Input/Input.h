@@ -175,8 +175,8 @@ namespace _GameEngine::_Input
 		std::unordered_map<int, InputKey> GLFWKeyToInputKeyLookup;
 	};
 
-	Input* Input_alloc(_Render::Window* p_window);
-	void Input_free(Input** p_input);
+	void Input_build(Input* p_input, _Render::Window* p_window);
+	void Input_free(Input* p_input);
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);
 	void Input_update(Input* p_input);

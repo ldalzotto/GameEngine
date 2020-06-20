@@ -8,9 +8,6 @@ namespace _GameEngine::_Clock
 		float DeltaTime;
 	};
 
-	Clock* Clock_alloc();
-	void Clock_free(Clock** p_clock);
-
 	void Clock_newFrame(Clock* p_clock);
 	void Clock_newUpdate(Clock* p_clock, float p_delta);
 }

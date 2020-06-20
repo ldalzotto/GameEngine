@@ -11,11 +11,9 @@ namespace _GameEngine::_Input
 
 	void initializeGLFWLookup(Input* p_input);
 
-	Input* Input_alloc(_Render::Window* p_window)
+	void Input_build(Input* p_input, _Render::Window* p_window)
 	{
-		Input* p_input = new Input();
 		InputInstance = p_input;
-		// glfwSetKeyCallback(p_window->Window, )
 
 		InputKey l_inputKey = (InputKey)0;
 		while (l_inputKey != InputKey::LAST)
@@ -28,15 +26,10 @@ namespace _GameEngine::_Input
 
 		glfwSetKeyCallback(p_window->Window, OnKeyEvent);
 		glfwSetMouseButtonCallback(p_window->Window, OnMouseEvent);
-
-		return p_input;
 	};
 
-	void Input_free(Input** p_input)
+	void Input_free(Input* p_input)
 	{
-		delete* p_input;
-		*p_input = nullptr;
-		p_input = nullptr;
 		InputInstance = nullptr;
 	};
 

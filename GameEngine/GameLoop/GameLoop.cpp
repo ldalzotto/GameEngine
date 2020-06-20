@@ -9,19 +9,15 @@ namespace _GameEngine
 		// To avoid crazy amount of update if the elapsed time from last frame is huge
 		int MAX_UPDATE_CALL_PER_FRAME = 2;
 
-		GameLoop* alloc(TimeClockPrecision p_timeBetweenUpdates_mics)
+		void GameLoop_build(GameLoop* p_gameLoop, TimeClockPrecision p_timeBetweenUpdates_mics)
 		{
-			GameLoop* l_instance = new GameLoop();
-			l_instance->TimeBetweenUpdates_mics = static_cast<int>(p_timeBetweenUpdates_mics);
-			l_instance->AccumulatedElapsedTime_mics = 0;
-			l_instance->PreviousUpdateTime_mics = _Utils::get_currentTime_mics();
-			return l_instance;
+			p_gameLoop->TimeBetweenUpdates_mics = static_cast<int>(p_timeBetweenUpdates_mics);
+			p_gameLoop->AccumulatedElapsedTime_mics = 0;
+			p_gameLoop->PreviousUpdateTime_mics = _Utils::get_currentTime_mics();
 		};
 
-		void free(GameLoop** p_gameLoop)
+		void GameLoop_free(GameLoop* p_gameLoop)
 		{
-			delete* p_gameLoop;
-			*p_gameLoop = nullptr;
 		};
 
 		void set_newFrameCallback(GameLoop* p_gameLoop, NewFrameCallback p_newFrameCallback, void* p_closure)

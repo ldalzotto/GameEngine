@@ -68,8 +68,8 @@ namespace _GameEngine::_Render
 		Gizmo Gizmo;
 	};
 
-	Render* Render_alloc();
-	void Render_free(Render** p_render);
+	void Render_build(Render* p_render);
+	void Render_free(Render* p_render);
 	void Render_recreateSwapChain(Render* p_render);
 	
 	void Render_render(Render* p_render);

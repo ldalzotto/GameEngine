@@ -8,21 +8,16 @@
 
 namespace _GameEngine::_Log
 {
-	MyLog* MyLog_alloc(_Clock::Clock* p_clock)
+	void MyLog_build(MyLog* p_myLog, _Clock::Clock* p_clock)
 	{
-		MyLog* l_log = new MyLog();
-		l_log->Clock = p_clock;
-		l_log->LogMessages.alloc();
-		return l_log;
+		p_myLog->Clock = p_clock;
+		p_myLog->LogMessages.alloc();
 	};
 
-	void MyLog_free(MyLog** p_myLog)
+	void MyLog_free(MyLog* p_myLog)
 	{
-		(*p_myLog)->LogMessages.free();
-		free((*p_myLog)->TmpFinalMessage);
-		delete (*p_myLog);
-		*p_myLog = nullptr;
-		p_myLog = nullptr;
+		p_myLog->LogMessages.free();
+		free(p_myLog->TmpFinalMessage);
 	};
 
 	void logMessage_free(LogMessage* p_logMessage)

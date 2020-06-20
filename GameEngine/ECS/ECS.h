@@ -19,6 +19,6 @@ namespace _GameEngine::_ECS
 		SystemContainer SystemContainer;
 	};
 
-	ECS* EntityComponent_alloc(UpdateSequencer* p_updateSequencer);
-	void EntityComponent_free(ECS** p_entityComponent);
+	void EntityComponent_build(ECS* p_ecs, UpdateSequencer* p_updateSequencer);
+	void EntityComponent_free(ECS* p_entityComponent);
 };

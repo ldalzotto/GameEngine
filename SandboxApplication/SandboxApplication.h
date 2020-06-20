@@ -1,7 +1,12 @@
 #pragma once
 
-#include "GameEngineApplication.h"
-#include "GameEngineEditor.h"
+namespace _GameEngine {
+	struct  GameEngineApplication;
+}
+namespace _GameEngineEditor
+{
+	struct GameEngineEditor;
+}
 
 _GameEngine::GameEngineApplication *App;
 _GameEngineEditor::GameEngineEditor *App_Editor;

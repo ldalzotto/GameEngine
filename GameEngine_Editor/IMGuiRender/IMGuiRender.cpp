@@ -2,10 +2,12 @@
 
 #include "Render/Render.h"
 
-#include "GameEngineApplication.h"
 #include "imgui_impl_vulkan.h"
 #include "imgui_impl_glfw.h"
+
 #include "RenderInterface.h"
+#include "GameEngineApplication.h"
+
 #include "RenderHook.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/SwapChain/SwapChain.h"
@@ -21,13 +23,13 @@ namespace _GameEngineEditor
 	void createFinalDrawObjects(_Render::RenderInterface* p_renderInterface, IMGuiRender* p_IMGuiRender);
 	void onSwapChainRebuilded(void* p_IMGuiRender, void* p_renderInterface);
 
-	void IMGuiRender_init(IMGuiRender* p_IMGuiRender, GameEngineApplication* p_gameEngineApplication)
+	void IMGuiRender_init(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
-		_Render::RenderInterface* p_renderInterface = &p_gameEngineApplication->Render->RenderInterface;
+		_Render::RenderInterface* p_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
 
 		p_IMGuiRender->NewFrame.Closure = p_IMGuiRender;
 		p_IMGuiRender->NewFrame.Callback = newFrame;
-		_Utils::Observer_register(&p_gameEngineApplication->NewFrame, &p_IMGuiRender->NewFrame);
+		_Utils::Observer_register(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
 
 		p_IMGuiRender->DrawFrame.Closure = p_IMGuiRender;
 		p_IMGuiRender->DrawFrame.Callback = drawFrame;
@@ -66,11 +68,11 @@ namespace _GameEngineEditor
 
 	};
 
-	void IMGuiRender_free(IMGuiRender* p_IMGuiRender, GameEngineApplication* p_gameEngineApplication)
+	void IMGuiRender_free(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
-		_Utils::Observer_unRegister(&p_gameEngineApplication->NewFrame, &p_IMGuiRender->NewFrame);
+		_Utils::Observer_unRegister(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
 
-		_Render::RenderInterface* l_renderInterface = &p_gameEngineApplication->Render->RenderInterface;
+		_Render::RenderInterface* l_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
 
 		_Utils::Observer_unRegister(&l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
 		_Utils::Observer_unRegister(&l_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
@@ -116,7 +118,7 @@ namespace _GameEngineEditor
 	{
 		IMGuiRender* l_imGuiRender = (IMGuiRender*)p_IMGuiRender;
 		GameEngineApplication* l_gameEngineApplcation = (GameEngineApplication*)p_gameEngineApplication;
-		_Render::RenderInterface* l_renderInterface = &l_gameEngineApplcation->Render->RenderInterface;
+		_Render::RenderInterface* l_renderInterface = &l_gameEngineApplcation->Render.RenderInterface;
 
 		if (!l_imGuiRender->FontInitialized)
 		{

@@ -1,9 +1,8 @@
-
 #include "SandboxApplication.h"
-#include "Log/Log.h"
-#include "Render/Render.h"
-#include "ECS/Entity.h"
-#include "ECS/System.h"
+
+#include "GameEngineApplication.h"
+#include "GameEngineEditor.h"
+
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
@@ -17,10 +16,6 @@
 
 #include "Math/Quaternion/QuaternionMath.h"
 
-#include "Render/Includes/GLFWIncludes.h"
-#include "Render/Texture/Texture.h"
-#include "Shader/ShaderParameterKeys.h"
-
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
@@ -32,7 +27,7 @@ void SandboxApplication_update(float p_delta);
 int main()
 {
 	App = app_alloc(SandboxApplication_update);
-	App_Editor = _GameEngineEditor::GameEngineEditor_alloc(App);
+	App_Editor = _GameEngineEditor::GameEngineEditor_alloc(&App->GameEngineApplicationInterface);
 
 	try
 	{
@@ -41,19 +36,19 @@ int main()
 	catch (const std::exception& e)
 	{
 		_Log::LogInstance->ClientLogger->error(e.what());
-		_GameEngineEditor::GameEngineEditor_free(&App_Editor, App);
+		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
 		_Log::LogInstance->ClientLogger->error("Unexpected Error");
-		_GameEngineEditor::GameEngineEditor_free(&App_Editor, App);
+		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		return EXIT_FAILURE;
 	}
 
-	_GameEngineEditor::GameEngineEditor_free(&App_Editor, App);
+	_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 	app_free(App);
 	return EXIT_SUCCESS;
 };
@@ -71,12 +66,12 @@ void SandboxApplication_update(float p_delta)
 	if (!HasAlreadyUpdated)
 	{
 
-		l_cameraEntity = _ECS::EntityContainer_allocEntity(App->ECS);
+		l_cameraEntity = _ECS::EntityContainer_allocEntity(&App->ECS);
 
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::CameraType, sizeof(_ECS::Camera));
 			_ECS::Camera* l_camera = (_ECS::Camera*)l_component->Child;
-			_ECS::Camera_init(l_camera, l_component, &App->Render->RenderInterface);
+			_ECS::Camera_init(l_camera, l_component, &App->Render.RenderInterface);
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
 
@@ -92,7 +87,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Entity_addComponent(l_cameraEntity, l_component);
 		}
 
-		l_parent = _ECS::EntityContainer_allocEntity(App->ECS);
+		l_parent = _ECS::EntityContainer_allocEntity(&App->ECS);
 
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererType, sizeof(_ECS::MeshRenderer));
@@ -113,7 +108,7 @@ void SandboxApplication_update(float p_delta)
 			l_meshRendererInitInfo.AssociatedComponent = l_component;
 			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
 
-			_ECS::MeshRenderer_init(l_meshRenderer, &App->Render->RenderInterface, &l_meshRendererInitInfo);
+			_ECS::MeshRenderer_init(l_meshRenderer, &App->Render.RenderInterface, &l_meshRendererInitInfo);
 
 			_ECS::Entity_addComponent(l_parent, l_component);
 		}
@@ -249,19 +244,19 @@ void SandboxApplication_update(float p_delta)
 		*/
 
 		_ECS::SystemV2AllocInfo l_systemAllocInfo{};
-		_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, App->ECS);
+		_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, &App->ECS);
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		l_systemAllocInfo = {};
-		_ECS::MeshDrawSystemV2_init(&l_systemAllocInfo, App->ECS);
+		_ECS::MeshDrawSystemV2_init(&l_systemAllocInfo, &App->ECS);
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		l_systemAllocInfo = {};
-		_ECS::CameraSystem_init(&l_systemAllocInfo, App->ECS);
+		_ECS::CameraSystem_init(&l_systemAllocInfo, &App->ECS);
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		l_systemAllocInfo = {};
-		_ECS::MeshRendererBoundSystem_init(&l_systemAllocInfo, App->ECS);
+		_ECS::MeshRendererBoundSystem_init(&l_systemAllocInfo, &App->ECS);
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		HasAlreadyUpdated = true;

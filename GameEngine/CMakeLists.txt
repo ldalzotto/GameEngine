@@ -8,7 +8,7 @@ file(GLOB_RECURSE GAME_ENGINE_PRIVATE
 	"./Input/*.cpp"
 	"./EngineSequencers/*.cpp"
 )
-SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.cpp)
+SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.cpp ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.cpp)
 
 file(GLOB_RECURSE GAME_ENGINE_PUBLIC 
 	"./ECS/*.h"
@@ -17,7 +17,7 @@ file(GLOB_RECURSE GAME_ENGINE_PUBLIC
 	"./Input/*.h"
 	"./EngineSequencers/*.h"
 )
-SET(GAME_ENGINE_PUBLIC ${GAME_ENGINE_PUBLIC} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h)
+SET(GAME_ENGINE_PUBLIC ${GAME_ENGINE_PUBLIC} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.h)
 
 include_directories(
 	"./ECS"

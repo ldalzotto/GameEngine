@@ -47,58 +47,53 @@ namespace _GameEngine::_Render
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
-	Render* Render_alloc()
+	void Render_build(Render* p_render)
 	{
-		Render* l_render = new Render();
-		RenderInterface_initialize(l_render);
+		RenderInterface_initialize(p_render);
 		
-		Window_init(&l_render->Window);
+		Window_init(&p_render->Window);
 
-		initValidationLayers(l_render);
-		initializeVulkan(l_render);
-		initVulkanDebugger(l_render);
-		initSurface(l_render);
-		initDevice(l_render);
-		initCommandPool(l_render);
-		initSwapChain(l_render);
-		initRenderSemaphore(l_render);
-		initTextureSamplers(l_render);
-		initPreRenderStaging(l_render);
-		initDepthTexture(l_render);
-		initResourcesProvider(l_render);
-		CameraBufferSetupStep_init(&l_render->CameraBufferSetupStep, &l_render->Device);
-		MaterialInstanceContainer_alloc(&l_render->MaterialInstanceContainer);
-		Gizmo_alloc(&l_render->Gizmo, &l_render->RenderInterface);
-		l_render->MaterialInstanceContainer.RenderInterface = &l_render->RenderInterface;
+		initValidationLayers(p_render);
+		initializeVulkan(p_render);
+		initVulkanDebugger(p_render);
+		initSurface(p_render);
+		initDevice(p_render);
+		initCommandPool(p_render);
+		initSwapChain(p_render);
+		initRenderSemaphore(p_render);
+		initTextureSamplers(p_render);
+		initPreRenderStaging(p_render);
+		initDepthTexture(p_render);
+		initResourcesProvider(p_render);
+		CameraBufferSetupStep_init(&p_render->CameraBufferSetupStep, &p_render->Device);
+		MaterialInstanceContainer_alloc(&p_render->MaterialInstanceContainer);
+		Gizmo_alloc(&p_render->Gizmo, &p_render->RenderInterface);
+		p_render->MaterialInstanceContainer.RenderInterface = &p_render->RenderInterface;
 
-		SwapChain_broadcastRebuildEvent(&l_render->SwapChain, &l_render->RenderInterface);
-		return l_render;
+		SwapChain_broadcastRebuildEvent(&p_render->SwapChain, &p_render->RenderInterface);
 	};
 
-	void Render_free(Render** p_render)
+	void Render_free(Render* p_render)
 	{
 		// We wait for the Queues to finish their curent operation before releasing memory.
 		// This is to ensure that no undefined behavior occurs while doing so.
-		vkDeviceWaitIdle((*p_render)->Device.LogicalDevice.LogicalDevice);
+		vkDeviceWaitIdle((p_render)->Device.LogicalDevice.LogicalDevice);
 
-		Gizmo_free(&(*p_render)->Gizmo, &(*p_render)->RenderInterface);
-		MaterialInstanceContainer_free(&(*p_render)->MaterialInstanceContainer);
-		CameraBufferSetupStep_free(&(*p_render)->CameraBufferSetupStep, &(*p_render)->Device);
-		freeResourcesProvider(*p_render);
-		freeDepthTexture(*p_render);
-		freePreRenderStaging(*p_render);
-		freeTextureSamplers(*p_render);
-		freeRenderSemaphore(*p_render);
-		freeSwapChain(*p_render);
-		TextureSwapChainSizeSynchronizer_free(&(*p_render)->TextureSwapChainSizeSynchronizer);
-		freeCommandPool(*p_render);
-		freeDevice(*p_render);
-		freeSurface(*p_render);
-		freeVulkanDebugger((*p_render));
-		freeVulkan(*p_render);
-		delete* p_render;
-		*p_render = nullptr;
-		p_render = nullptr;
+		Gizmo_free(&(p_render)->Gizmo, &(p_render)->RenderInterface);
+		MaterialInstanceContainer_free(&(p_render)->MaterialInstanceContainer);
+		CameraBufferSetupStep_free(&(p_render)->CameraBufferSetupStep, &(p_render)->Device);
+		freeResourcesProvider(p_render);
+		freeDepthTexture(p_render);
+		freePreRenderStaging(p_render);
+		freeTextureSamplers(p_render);
+		freeRenderSemaphore(p_render);
+		freeSwapChain(p_render);
+		TextureSwapChainSizeSynchronizer_free(&(p_render)->TextureSwapChainSizeSynchronizer);
+		freeCommandPool(p_render);
+		freeDevice(p_render);
+		freeSurface(p_render);
+		freeVulkanDebugger((p_render));
+		freeVulkan(p_render);
 	};
 
 	void Render_recreateSwapChain(Render* p_render)

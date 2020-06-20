@@ -1,12 +1,5 @@
 #include "GameEngineApplication.h"
 
-
-#include "Render.h"
-#include "MyLog/MyLog.h"
-#include "Clock/Clock.h"
-#include "ECS/ECS.h"
-#include "Input/Input.h"
-
 namespace _GameEngine
 {
 	/// Game loop callback forward declaration
@@ -21,58 +14,58 @@ namespace _GameEngine
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
 		l_gameEngineApplication->SandboxUpdateHook = p_sandboxUpdateHook;
 
-		_Log::Log_alloc();
-		l_gameEngineApplication->Clock = _Clock::Clock_alloc();
-		l_gameEngineApplication->Log = _Log::MyLog_alloc(l_gameEngineApplication->Clock);
-		l_gameEngineApplication->Render = _Render::Render_alloc();
-		l_gameEngineApplication->Input = _Input::Input_alloc(&l_gameEngineApplication->Render->Window);
-		l_gameEngineApplication->GameLoop = _GameLoop::alloc(16000);
-		l_gameEngineApplication->ECS = _ECS::EntityComponent_alloc(&l_gameEngineApplication->UpdateSequencer);
+		GameEngineApplicationInterface_build(&l_gameEngineApplication->GameEngineApplicationInterface, l_gameEngineApplication);
 
-		_GameLoop::set_newFrameCallback(l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
-		_GameLoop::set_updateCallback(l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
-		_GameLoop::set_renderCallback(l_gameEngineApplication->GameLoop, app_render, l_gameEngineApplication);
-		_GameLoop::set_endOfFrameCallback(l_gameEngineApplication->GameLoop, app_endOfFrame, l_gameEngineApplication);
+		_Log::Log_alloc();
+		_Log::MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
+		_Render::Render_build(&l_gameEngineApplication->Render);
+		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window);
+		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
+		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->UpdateSequencer);
+
+		_GameLoop::set_newFrameCallback(&l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
+		_GameLoop::set_updateCallback(&l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
+		_GameLoop::set_renderCallback(&l_gameEngineApplication->GameLoop, app_render, l_gameEngineApplication);
+		_GameLoop::set_endOfFrameCallback(&l_gameEngineApplication->GameLoop, app_endOfFrame, l_gameEngineApplication);
 		return l_gameEngineApplication;
 	}
 
 	void app_free(GameEngineApplication* p_app)
 	{
 		_ECS::EntityComponent_free(&p_app->ECS);
-		_GameLoop::free(&p_app->GameLoop);
+		_GameLoop::GameLoop_free(&p_app->GameLoop);
 		_Render::Render_free(&p_app->Render);
 		_Input::Input_free(&p_app->Input);
 
 		_Log::Log_free(&_Log::LogInstance);
 		_Log::MyLog_free(&p_app->Log);
 
-		_Clock::Clock_free(&p_app->Clock);
 		delete p_app;
 	}
 
 	void app_mainLoop(GameEngineApplication* p_app)
 	{
-		while (!Window_askedForClose(&p_app->Render->Window))
+		while (!Window_askedForClose(&p_app->Render.Window))
 		{
 			glfwPollEvents();
-			_GameLoop::update(p_app->GameLoop);
+			_GameLoop::update(&p_app->GameLoop);
 		}
 	};
 
 	void app_newFrame(void* p_gameEngineApplication)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
-		_Clock::Clock_newFrame(l_app->Clock);
-		_Input::Input_update(l_app->Input);
+		_Clock::Clock_newFrame(&l_app->Clock);
+		_Input::Input_update(&l_app->Input);
 		_Utils::Observer_broadcast(&l_app->NewFrame, l_app);
 
-		_Log::MyLog_pushLog(l_app->Log, _Log::LogLevel::WARN, "Hello");
+		_Log::MyLog_pushLog(&l_app->Log, _Log::LogLevel::WARN, "Hello");
 	};
 
 	void app_update(void* p_closure, float p_delta)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		_Clock::Clock_newUpdate(l_app->Clock, p_delta);
+		_Clock::Clock_newUpdate(&l_app->Clock, p_delta);
 		l_app->SandboxUpdateHook(p_delta);
 		UpdateSequencer_execute(&l_app->UpdateSequencer, p_delta);
 	};
@@ -81,18 +74,18 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		_Utils::Observer_broadcast(&l_app->PreRender, l_app);
-		Render_render(l_app->Render);
+		Render_render(&l_app->Render);
 	};
 
 	void app_endOfFrame(void* p_closure)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		_Log::MyLog_processLogs(l_app->Log);
+		_Log::MyLog_processLogs(&l_app->Log);
 	};
 
 	void app_cleanup(GameEngineApplication* p_app)
 	{
-		Window_closeWindow(&p_app->Render->Window);
+		Window_closeWindow(&p_app->Render.Window);
 	};
 
 	void app_run(GameEngineApplication* p_app)

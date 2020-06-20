@@ -9,20 +9,20 @@ using namespace _GameEngine;
 
 namespace _GameEngine
 {
-	struct GameEngineApplication;
+	struct GameEngineApplicationInterface;
 }
 
 namespace _GameEngineEditor
 {
 	struct GameEngineEditor
 	{
-		GameEngineApplication* GameEngineApplication;
+		GameEngineApplicationInterface* GameEngineApplicationInterface;
 		_Utils::Subject OnPreRender;
 		IMGuiRender IMGuiRender;
 		DebugConsole DebugConsole;
 		DrawableWindows DrawableWindows;
 	};
 
-	GameEngineEditor* GameEngineEditor_alloc(GameEngineApplication* p_gameEngineApplication);
-	void GameEngineEditor_free(GameEngineEditor** p_gameEngineEditor, GameEngineApplication* p_gameEngineApplication);
+	GameEngineEditor* GameEngineEditor_alloc(GameEngineApplicationInterface* p_gameEngineApplicationInterface);
+	void GameEngineEditor_free(GameEngineEditor** p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
 }

@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include "GameEngineApplicationInterface.h"
 #include "Utils/Observer/Observer.h"
 
 #include "VulkanObjects/GraphcisPipeline/RenderPass.h"
@@ -34,6 +35,6 @@ namespace _GameEngineEditor
 		bool FontInitialized;
 	};
 
-	void IMGuiRender_init(IMGuiRender* p_imguiTest, GameEngineApplication* p_renderInterface);
-	void IMGuiRender_free(IMGuiRender* p_imguiTest, GameEngineApplication* p_renderInterface);
+	void IMGuiRender_init(IMGuiRender* p_imguiTest, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
+	void IMGuiRender_free(IMGuiRender* p_imguiTest, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
 }

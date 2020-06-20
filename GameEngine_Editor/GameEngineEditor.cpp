@@ -1,8 +1,8 @@
 #include "GameEngineEditor.h"
 
-#include "GameEngineApplication.h"
+#include "GameEngineApplicationInterface.h"
 
-#include "Render/Render.h"
+#include "Utils/Observer/Observer.h"
 #include "ECS/ECS.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 #include "ECS/Systems/MeshRendererBoundGizmoSystem.h"
@@ -13,16 +13,16 @@ namespace _GameEngineEditor
 	void gameEngineEditor_systemInitialization(GameEngineEditor* p_gameEngineEditor);
 
 
-	GameEngineEditor* GameEngineEditor_alloc(GameEngineApplication* p_gameEngineApplication)
+	GameEngineEditor* GameEngineEditor_alloc(GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
 		GameEngineEditor* l_gameEngineEditor = new GameEngineEditor();
-		l_gameEngineEditor->GameEngineApplication = p_gameEngineApplication;
+		l_gameEngineEditor->GameEngineApplicationInterface = p_gameEngineApplicationInterface;
 
 		l_gameEngineEditor->OnPreRender.Closure = l_gameEngineEditor;
 		l_gameEngineEditor->OnPreRender.Callback = GameEngineEditor_draw;
-		_Utils::Observer_register(&p_gameEngineApplication->PreRender, &l_gameEngineEditor->OnPreRender);
+		_Utils::Observer_register(l_gameEngineEditor->GameEngineApplicationInterface->PreRender, &l_gameEngineEditor->OnPreRender);
 
-		IMGuiRender_init(&l_gameEngineEditor->IMGuiRender, p_gameEngineApplication);
+		IMGuiRender_init(&l_gameEngineEditor->IMGuiRender, l_gameEngineEditor->GameEngineApplicationInterface);
 
 		l_gameEngineEditor->DebugConsole.DrawableWindows = &l_gameEngineEditor->DrawableWindows;
 
@@ -31,9 +31,9 @@ namespace _GameEngineEditor
 		return l_gameEngineEditor;
 	};
 
-	void GameEngineEditor_free(GameEngineEditor** p_gameEngineEditor, GameEngineApplication* p_gameEngineApplication)
+	void GameEngineEditor_free(GameEngineEditor** p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
-		IMGuiRender_free(&(*p_gameEngineEditor)->IMGuiRender, p_gameEngineApplication);
+		IMGuiRender_free(&(*p_gameEngineEditor)->IMGuiRender, p_gameEngineApplicationInterface);
 		delete (*p_gameEngineEditor);
 		*p_gameEngineEditor = nullptr;
 		p_gameEngineEditor = nullptr;
@@ -48,11 +48,9 @@ namespace _GameEngineEditor
 
 	void gameEngineEditor_systemInitialization(GameEngineEditor* p_gameEngineEditor)
 	{
-		_ECS::ECS* l_ecs = p_gameEngineEditor->GameEngineApplication->ECS;
-		_Render::RenderInterface* l_renderInterface = &p_gameEngineEditor->GameEngineApplication->Render->RenderInterface;
-
+		
 		_ECS::SystemV2AllocInfo	l_systemAllocInfo = {};
-		MeshRendererBoundGizmoSystem_init(&l_systemAllocInfo, l_ecs, l_renderInterface);
-		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &p_gameEngineEditor->GameEngineApplication->UpdateSequencer);
+		MeshRendererBoundGizmoSystem_init(&l_systemAllocInfo, p_gameEngineEditor->GameEngineApplicationInterface->ECS, p_gameEngineEditor->GameEngineApplicationInterface->RenderInterface);
+		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, p_gameEngineEditor->GameEngineApplicationInterface->UpdateSequencer);
 	};
 }
