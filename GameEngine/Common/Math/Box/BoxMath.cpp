@@ -102,49 +102,49 @@ namespace _GameEngine::_Math
 		_Math::Vector4f l_transformedPoint;
 
 		{
-			_Math::Vector4f_build(&p_boxPoints->Center, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->Center, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->Center = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 
 		{
-			_Math::Vector4f_build(&p_boxPoints->L_D_B, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->L_D_B, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->L_D_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 		{
-			_Math::Vector4f_build(&p_boxPoints->L_D_F, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->L_D_F, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->L_D_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 		{
-			_Math::Vector4f_build(&p_boxPoints->L_U_B, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->L_U_B, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->L_U_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		} 
 		{
-			_Math::Vector4f_build(&p_boxPoints->L_U_F, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->L_U_F, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->L_U_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 
 		{
-			_Math::Vector4f_build(&p_boxPoints->R_D_B, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->R_D_B, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->R_D_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 		{
-			_Math::Vector4f_build(&p_boxPoints->R_D_F, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->R_D_F, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->R_D_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 		{
-			_Math::Vector4f_build(&p_boxPoints->R_U_B, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->R_U_B, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->R_U_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}
 		{
-			_Math::Vector4f_build(&p_boxPoints->R_U_F, 0.0f, &l_pointAsVec4);
+			_Math::Vector4f_build(&p_boxPoints->R_U_F, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->R_U_F = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
 		}

@@ -33,7 +33,8 @@ namespace _GameEngineEditor
 			_ECS::Transform* l_transform = (_ECS::Transform*)_ECS::Entity_getComponent(l_entity, _ECS::TransformType)->Child;
 			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, _ECS::MeshRendererBoundType)->Child;
 
-			_Render::Gizmo_drawBox(l_meshRendererBoundSystem->Gizmo, &l_meshRendererBound->BoundingBox, &l_transform->LocalToWorldMatrix);
+			_Math::Matrix4x4f l_localToWorld = _ECS::Transform_getLocalToWorldMatrix(l_transform);
+			_Render::Gizmo_drawBox(l_meshRendererBoundSystem->Gizmo, &l_meshRendererBound->BoundingBox, &l_localToWorld);
 		}
 	}
 

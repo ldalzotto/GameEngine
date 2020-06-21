@@ -9,6 +9,8 @@
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 
+#include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
+
 #include "ECS/System.h"
 
 namespace _GameEngine::_ECS
@@ -26,7 +28,10 @@ namespace _GameEngine::_ECS
 
 	_Utils::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
-		return 0;
+		std::vector<_Utils::SortedSequencerPriority> l_before{
+			MeshDrawSystem_updatePriorityBefore(),
+		};
+		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
 	void meshRendererBoundSystem_onComponentAttached(Entity* p_entity, void* p_system)
