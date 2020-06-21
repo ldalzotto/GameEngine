@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "Component.h"
 #include "System.h"
+#include "ECSEventQueue.h"
 
 namespace _GameEngine
 {
@@ -19,6 +20,8 @@ namespace _GameEngine::_ECS
 	{
 		UpdateSequencer* UpdateSequencer;
 		_Log::MyLog* MyLog;
+
+		ECSEventQueue EventQueue;
 		EntityContainer EntityContainer;
 		ComponentEvents ComponentEvents;
 		SystemContainer SystemContainer;

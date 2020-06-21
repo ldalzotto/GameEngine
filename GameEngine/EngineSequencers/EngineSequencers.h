@@ -5,6 +5,8 @@
 namespace _GameEngine
 {
 	struct GameEngineApplicationInterface;
+
+	namespace _ECS { struct ECS; }
 }
 
 namespace _GameEngine
@@ -15,10 +17,11 @@ namespace _GameEngine
 
 	struct UpdateSequencer
 	{
+		_ECS::ECS* ECS;
 		_Utils::SortedSequencer UpdateSequencer;
 	};
 
-	void UpdateSequencer_alloc(UpdateSequencer* p_udpateSequencer);
+	void UpdateSequencer_alloc(UpdateSequencer* p_udpateSequencer, GameEngineApplicationInterface* p_gameEngineInterface);
 	void UpdateSequencer_free(UpdateSequencer* p_udpateSequencer);
 	void UpdateSequencer_execute(UpdateSequencer* p_updateSequencer, GameEngineApplicationInterface* p_gameEngineInterface);
 }

@@ -11,7 +11,6 @@
 namespace _GameEngine::_ECS
 {
 
-	Entity* entity_alloc(ECS* p_ecs);
 	void entity_free(Entity** p_entity);
 
 	bool Entity_comparator(Entity** p_left, Entity** p_right)
@@ -51,13 +50,6 @@ namespace _GameEngine::_ECS
 		return nullptr;
 	};
 
-	Entity* EntityContainer_allocEntity(ECS* p_ecs)
-	{
-		Entity* l_instanciatedEntity = entity_alloc(p_ecs);
-		p_ecs->EntityContainer.Entities.push_back(&l_instanciatedEntity);
-		return l_instanciatedEntity;
-	};
-
 	void EntityContainer_alloc(EntityContainer* p_entityContainer)
 	{
 		p_entityContainer->Entities.alloc();
@@ -65,17 +57,16 @@ namespace _GameEngine::_ECS
 
 	void EntityContainer_free(EntityContainer* p_entityContainer, ComponentEvents* p_componentEvents)
 	{
-		// We copy entities vector because operations inside the loop writes to the initial array
-		_Core::VectorT<Entity*> l_copiedEntitiesPointer;
-		p_entityContainer->Entities.deepCopy(&l_copiedEntitiesPointer);
-
-		for (size_t i = l_copiedEntitiesPointer.size(); i--;)
-		{
-			EntityContainer_freeEntity(l_copiedEntitiesPointer.at(i));
-		}
-
-		l_copiedEntitiesPointer.free();
 		p_entityContainer->Entities.free();
+	};
+
+	void EntityContainer_sendEventToDeleteAllEntities(EntityContainer* p_entityContainer, ECS* p_ecs)
+	{
+		for (size_t i = 0; i < p_entityContainer->Entities.size(); i++)
+		{
+			auto l_message = ECSEventMessage_removeEntity_alloc(p_entityContainer->Entities.at(i));
+			ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_message);
+		}
 	};
 
 	void EntityContainer_freeEntity(Entity** p_entity)
@@ -84,7 +75,7 @@ namespace _GameEngine::_ECS
 		entity_free(p_entity);
 	};
 
-	Entity* entity_alloc(ECS* p_ecs)
+	Entity* Entity_alloc(ECS* p_ecs)
 	{
 		Entity* l_instanciatedEntity = (Entity*)malloc(sizeof(Entity));
 		l_instanciatedEntity->ECS = p_ecs;

@@ -43,6 +43,16 @@ namespace _GameEngine::_Utils
 		}
 	};
 
+	void SortedSequencer_execute(SortedSequencer* p_sortedSequencer, void* p_input, void(*p_afterEveryExecution)(void*), void* p_afterEveryExecution_userData)
+	{
+		for (size_t i = 0; i < p_sortedSequencer->OperationsV2.vector()->size(); i++)
+		{
+			SortedSequencerOperation* l_operation = p_sortedSequencer->OperationsV2.vector()->at(i);
+			l_operation->Callback(l_operation->Closure, p_input);
+			p_afterEveryExecution(p_afterEveryExecution_userData);
+		}
+	};
+
 	SortedSequencerPriority SortedSequencer_calculatePriority(_Core::VectorT<SortedSequencerPriority>* p_before, _Core::VectorT<SortedSequencerPriority>* p_after)
 	{
 		if (!p_before && !p_after)
