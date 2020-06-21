@@ -28,9 +28,12 @@ namespace _GameEngine::_ECS
 
 	_Utils::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
-		std::vector<_Utils::SortedSequencerPriority> l_before{
-			MeshDrawSystem_updatePriorityBefore(),
-		};
+		_Core::VectorT<_Utils::SortedSequencerPriority>  l_before;
+		l_before.alloc(1);
+		{
+			auto l_index = MeshDrawSystem_updatePriorityBefore();
+			l_before.push_back(&l_index);
+		}
 		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 

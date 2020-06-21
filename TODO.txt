@@ -18,7 +18,7 @@
 
 -- ECS --
 
-# REFACTOR - Moving the Engine sequencer to a SortedVector.
+[X] # REFACTOR - Moving the Engine sequencer to a SortedVector.
 
 # Right now, the ECS engine is immediate. This means that Entities, Component and Systems are created immediately when asked (and the associated events are also triggered immediately).
   Is we imagine that a System creates a child Entity on the fly when component is attached, this can create some undefined behavior.

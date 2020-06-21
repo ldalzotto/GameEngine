@@ -17,10 +17,12 @@ namespace _GameEngine::_ECS
 
 	_Utils::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
-		std::vector<_Utils::SortedSequencerPriority> l_before
+		_Core::VectorT<_Utils::SortedSequencerPriority>  l_before;
+		l_before.alloc(1);
 		{
-			MeshDrawSystem_updatePriorityBefore()
-		};
+			auto l_index = MeshDrawSystem_updatePriorityBefore();
+			l_before.push_back(&l_index);
+		}
 		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
@@ -46,11 +48,11 @@ namespace _GameEngine::_ECS
 
 			{
 				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(p_transform);
-				
+
 				_Math::Vector3f l_target;
 				_Math::Vector3f l_foward = Transform_getForward(p_transform);
 				_Math::Vector3f_add(&l_worldPosition, &l_foward, &l_target);
-				
+
 				_Math::Vector3f l_up = Transform_getUp(p_transform);
 				_Math::Vector3f_mul(&l_up, -1.0f, &l_up);
 
@@ -58,7 +60,7 @@ namespace _GameEngine::_ECS
 				_Math::Matrixf4x4_lookAt(&l_worldPosition, &l_target, &l_up, &l_lookAt);
 				_Math::Matrixf4x4_inv(&l_lookAt, &p_camera->ViewMatrix);
 			}
-			
+
 
 			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.Projection = p_camera->ProjectionMatrix;
 			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;

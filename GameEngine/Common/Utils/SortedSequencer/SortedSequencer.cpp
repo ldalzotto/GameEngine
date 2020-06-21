@@ -8,6 +8,11 @@
 
 namespace _GameEngine::_Utils
 {
+	bool SortedSequencerPriority_equals(SortedSequencerPriority* p_left, SortedSequencerPriority* p_right)
+	{
+		return *p_left == *p_right;
+	};
+
 	short SortedSequencerOperation_sortComparator(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right)
 	{
 		return Uint16tComparator(p_left->Priority, p_right->Priority);
@@ -38,7 +43,7 @@ namespace _GameEngine::_Utils
 		}
 	};
 
-	SortedSequencerPriority SortedSequencer_calculatePriority(std::vector<SortedSequencerPriority>* p_before, std::vector<SortedSequencerPriority>* p_after)
+	SortedSequencerPriority SortedSequencer_calculatePriority(_Core::VectorT<SortedSequencerPriority>* p_before, _Core::VectorT<SortedSequencerPriority>* p_after)
 	{
 		if (!p_before && !p_after)
 		{
@@ -47,11 +52,17 @@ namespace _GameEngine::_Utils
 
 		if (p_before)
 		{
-			if (Vector_containsElementEquals(p_before, (uint16_t)0) || Vector_containsElementEquals(p_before, (uint16_t)1))
+			SortedSequencerPriority l_zeroPriority = (uint16_t)0;
+			SortedSequencerPriority l_onePriority = (uint16_t)1;
+
+			if (p_before->contains(SortedSequencerPriority_equals, &l_zeroPriority) || p_before->contains(SortedSequencerPriority_equals, &l_onePriority))
 			{
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("You cannot insert an operation before the priority 0 (which will always be the first)."));
 			};
 		}
+
+		bool l_returnValueFound = true;
+		SortedSequencerPriority l_returnValue = 0;
 
 		if (p_before && !p_after)
 		{
@@ -59,34 +70,35 @@ namespace _GameEngine::_Utils
 			uint16_t l_minBefore = std::numeric_limits<uint16_t>::max();
 			for (size_t i = 0; i < p_before->size(); i++)
 			{
-				SortedSequencerPriority l_priority = p_before->at(i);
+				SortedSequencerPriority l_priority = *p_before->at(i);
 				if (l_priority <= l_minBefore)
 				{
 					l_minBefore = l_priority;
 				}
 			}
-			return l_minBefore - 1;
-
+			l_returnValue = l_minBefore - 1;
+			goto end;
 		}
 		else if (!p_before && p_after)
 		{
 			uint16_t l_maxAfter = 0;
 			for (size_t i = 0; i < p_after->size(); i++)
 			{
-				SortedSequencerPriority l_priority = p_after->at(i);
+				SortedSequencerPriority l_priority = *p_after->at(i);
 				if (l_priority >= l_maxAfter)
 				{
 					l_maxAfter = l_priority;
 				}
 			}
-			return l_maxAfter + 1;
+			l_returnValue = l_maxAfter + 1;
+			goto end;
 		}
 		else
 		{
 			uint16_t l_minBefore = std::numeric_limits<uint16_t>::max();
 			for (size_t i = 0; i < p_before->size(); i++)
 			{
-				SortedSequencerPriority l_priority = p_before->at(i);
+				SortedSequencerPriority l_priority = *p_before->at(i);
 				if (l_priority <= l_minBefore)
 				{
 					l_minBefore = l_priority;
@@ -96,7 +108,7 @@ namespace _GameEngine::_Utils
 			uint16_t l_maxAfter = 0;
 			for (size_t i = 0; i < p_after->size(); i++)
 			{
-				SortedSequencerPriority l_priority = p_after->at(i);
+				SortedSequencerPriority l_priority = *p_after->at(i);
 				if (l_priority >= l_maxAfter)
 				{
 					l_maxAfter = l_priority;
@@ -105,16 +117,40 @@ namespace _GameEngine::_Utils
 
 			if (l_minBefore > l_maxAfter)
 			{
-				return l_minBefore - 1;
+				l_returnValue = l_minBefore - 1;
+				goto end;
 			}
 			else if (l_minBefore == l_maxAfter)
 			{
-				return l_minBefore;
+				l_returnValue = l_minBefore;
+				goto end;
 			}
 			else
+			{
+				l_returnValueFound = false;
+				goto end;
+			}
+		}
+
+
+		end:
+
+		{
+			if (p_before)
+			{
+				p_before->free();
+			}
+			if (p_after)
+			{
+				p_after->free();
+			}
+
+			if (!l_returnValueFound)
 			{
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Cannot find a suitable priority value that executes before and after the associated inputs."));
 			}
 		}
+		
+		return l_returnValue;
 	};
 }

@@ -15,10 +15,16 @@ namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
 	{
-		std::vector<_Utils::SortedSequencerPriority> l_before{
-			MeshDrawSystem_updatePriorityBefore(),
-			CameraSystem_getUpdatePriority()
-		};
+		_Core::VectorT<_Utils::SortedSequencerPriority>  l_before;
+		l_before.alloc(2);
+		{
+			auto l_index = MeshDrawSystem_updatePriorityBefore();
+			l_before.push_back(&l_index);
+		}
+		{
+			auto l_index = CameraSystem_getUpdatePriority();
+			l_before.push_back(&l_index);
+		}
 		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 

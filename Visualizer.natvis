@@ -16,6 +16,21 @@
 		</Expand>
 	</Type>
 
+	<Type Name="_GameEngine::_Core::SortedVectorT&lt;*&gt;">
+		<Intrinsic Name="size" Expression="SortedVector.Vector.Size" />
+		<Intrinsic Name="capacity" Expression="SortedVector.Vector.Capacity" />
+		<Intrinsic Name="memory" Expression="SortedVector.Vector.Memory" />
+		<DisplayString>{{ size={size()} }}</DisplayString>
+		<Expand>
+			<Item Name="[capacity]" ExcludeView="simple">capacity()</Item>
+			<ArrayItems>
+				<Size>size()</Size>
+				<ValuePointer>($T1*)SortedVector.Vector.Memory</ValuePointer>
+			</ArrayItems>
+		</Expand>
+
+	</Type>
+
 	<Type Name="_GameEngine::_Math::Matrix3x3f">
 		<Expand>
 			<Synthetic Name="[row 0]" Condition="true">

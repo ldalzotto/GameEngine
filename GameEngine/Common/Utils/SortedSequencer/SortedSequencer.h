@@ -26,5 +26,5 @@ namespace _GameEngine::_Utils
 	void SortedSequencer_addOperation(SortedSequencer* p_sortedSequencer, SortedSequencerOperation* p_sortedSequencerOperation);
 	void SortedSequencer_execute(SortedSequencer* p_sortedSequencer, void* p_input);
 
-	SortedSequencerPriority SortedSequencer_calculatePriority(std::vector<SortedSequencerPriority>* p_before, std::vector<SortedSequencerPriority>* p_after);
+	SortedSequencerPriority SortedSequencer_calculatePriority(_Core::VectorT<SortedSequencerPriority>* p_before, _Core::VectorT<SortedSequencerPriority>* p_after);
 }
