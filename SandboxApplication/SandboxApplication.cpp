@@ -3,6 +3,9 @@
 #include "GameEngineApplication.h"
 #include "GameEngineEditor.h"
 
+#include "DataStructures/String.h"
+#include "DataStructures/StringConverterPrimitives.h"
+
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/Transform.h"
@@ -67,7 +70,6 @@ void SandboxApplication_update(float p_delta)
 {
 	if (!HasAlreadyUpdated)
 	{
-
 		{
 			l_cameraEntity = _ECS::Entity_alloc(&App->ECS);
 			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
@@ -132,9 +134,11 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
 			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
 
-			// MYLOG_PUSH(&App->Log, _Log::INFO, _Log::MyLog_pointerToString(&l_transform));
-			MYLOG_PUSH(&App->Log, _Log::INFO, _Log::MyLog_allocatePointerString(&App->Log, (void*)l_transform));
-			//_Log::LogInstance->CoreLogger->info((void*)l_transform);
+			{
+				_Core::String* l_str = _Log::MyLog_AllocateString(&App->Log);
+				_Core::String_appendPointer(l_str, l_transform);
+				MYLOG_PUSH(&App->Log, _Log::INFO, l_str->c_str());
+			}
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };

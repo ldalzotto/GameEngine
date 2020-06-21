@@ -18,6 +18,7 @@ namespace _GameEngine::_Core
 	void Vector_deepCopy(Vector* p_source, Vector* p_target);
 	void Vector_pushBack(Vector* p_vector, void* p_value);
 	void Vector_insertAt(Vector* p_vector, void* p_value, size_t p_index);
+	void Vector_insertAt(Vector* p_vector, void* p_value, size_t p_elementNb, size_t p_index);
 	void Vector_erase(Vector* p_vector, size_t p_index);	
 	void Vector_erase(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 	void Vector_clear(Vector* p_vector);

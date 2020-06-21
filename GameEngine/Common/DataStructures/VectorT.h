@@ -15,6 +15,7 @@ namespace _GameEngine::_Core
 		size_t capacity() { return Vector.Capacity; };
 		void push_back(T* p_value) { Vector_pushBack(&Vector, p_value); };
 		void insertAt(T* p_value, size_t p_index) { Vector_insertAt(&Vector, p_value, p_index); };
+		void insertAt(T* p_value, size_t p_elementNb, size_t p_index) { Vector_insertAt(&Vector, p_value, p_elementNb, p_index); };
 		void erase(size_t p_index) { Vector_erase(&Vector, p_index); };
 		void clear() { Vector_clear(&Vector); };
 

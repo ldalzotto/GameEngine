@@ -102,6 +102,31 @@ namespace _GameEngine::_Core
 
 	};
 
+	void Vector_insertAt(Vector* p_vector, void* p_value, size_t p_elementNb, size_t p_index)
+	{
+		if (p_index > p_vector->Size)
+		{
+			throw std::runtime_error("Vector : Insert out of range.");
+		}
+
+		if (p_vector->Size + p_elementNb > p_vector->Capacity)
+		{
+			Vector_resize(p_vector, p_vector->Capacity == 0 ? 1 : (p_vector->Capacity * 2));
+			Vector_insertAt(p_vector, p_value, p_elementNb, p_index);
+		}
+		else
+		{
+			void* l_initialElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
+			if (p_vector->Size - p_index > 0)
+			{
+				void* l_targetElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index + p_elementNb);
+				memmove(l_targetElement, l_initialElement, p_vector->ElementSize * (p_vector->Size - p_index));
+			}
+			memcpy(l_initialElement, p_value, p_vector->ElementSize * p_elementNb);
+			p_vector->Size += p_elementNb;
+		}
+	};
+
 	void Vector_erase(Vector* p_vector, size_t p_index)
 	{
 		if (p_index >= p_vector->Size)
@@ -141,7 +166,7 @@ namespace _GameEngine::_Core
 
 	void* Vector_at(Vector* p_vector, size_t p_index)
 	{
-		if (p_index > p_vector->Size)
+		if (p_index >= p_vector->Size)
 		{
 			throw std::runtime_error("Vector : At out of range.");
 		}

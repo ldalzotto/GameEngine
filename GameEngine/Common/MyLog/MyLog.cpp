@@ -12,14 +12,14 @@ namespace _GameEngine::_Log
 	{
 		p_myLog->Clock = p_clock;
 		p_myLog->LogMessages.alloc();
-		p_myLog->GarbageAllocations.alloc();
+		p_myLog->StringAllocations.alloc();
 	};
 
 	void MyLog_free(MyLog* p_myLog)
 	{
 		MyLog_processLogs(p_myLog);
 		p_myLog->LogMessages.free();
-		p_myLog->GarbageAllocations.free();
+		p_myLog->StringAllocations.free();
 	};
 
 	void logMessage_free(LogMessage* p_logMessage)
@@ -35,26 +35,13 @@ namespace _GameEngine::_Log
 		l_logMessage.FileLine = p_line;
 
 		{
-			strcpy(l_logMessage.Message, p_message);
+			strcpy_s(l_logMessage.Message, p_message);
 		}
 
 		{
 			l_logMessage.FrameNb = p_myLog->Clock->FrameCount;
 		}
-		/*
-		{
-			time_t rawtime;
-			struct tm* timeinfo;
-			time(&rawtime);
-			timeinfo = localtime(&rawtime);
-			char* l_ascTime = asctime(timeinfo);
-			size_t len = strlen(l_ascTime);
-			l_ascTime[len - 1] = '\0';
-			l_logMessage.TimeString = (char*)malloc(strlen(l_ascTime) + 1);
-			strcpy(l_logMessage.TimeString, l_ascTime);
-		}
-		*/
-
+		  
 		p_myLog->LogMessages.push_back(&l_logMessage);
 	};
 
@@ -94,13 +81,13 @@ namespace _GameEngine::_Log
 			char l_lineCountStr[256] = "";
 			itoa(l_message->FileLine, l_lineCountStr, 10);
 
-			strcpy(p_myLog->TmpFinalMessage, l_frameCountStr);
-			strcat(p_myLog->TmpFinalMessage, l_logLevemMessage);
-			strcat(p_myLog->TmpFinalMessage, l_message->FilePath);
-			strcat(p_myLog->TmpFinalMessage, ".");
-			strcat(p_myLog->TmpFinalMessage, l_lineCountStr);
-			strcat(p_myLog->TmpFinalMessage, " ");
-			strcat(p_myLog->TmpFinalMessage, l_message->Message);
+			strcpy_s(p_myLog->TmpFinalMessage, l_frameCountStr);
+			strcat_s(p_myLog->TmpFinalMessage, l_logLevemMessage);
+			strcat_s(p_myLog->TmpFinalMessage, l_message->FilePath);
+			strcat_s(p_myLog->TmpFinalMessage, ".");
+			strcat_s(p_myLog->TmpFinalMessage, l_lineCountStr);
+			strcat_s(p_myLog->TmpFinalMessage, " ");
+			strcat_s(p_myLog->TmpFinalMessage, l_message->Message);
 
 			printf(p_myLog->TmpFinalMessage);
 			printf("\n");
@@ -111,35 +98,23 @@ namespace _GameEngine::_Log
 
 		p_myLog->LogMessages.clear();
 
-		for (size_t i = 0; i < p_myLog->GarbageAllocations.size(); i++)
+		for (size_t i = 0; i < p_myLog->StringAllocations.size(); i++)
 		{
-			void* l_garbageMemory = *p_myLog->GarbageAllocations.at(i);
-			free(l_garbageMemory);
+			_Core::String* l_garbageMemory = p_myLog->StringAllocations.at(i);
+			l_garbageMemory->free();
 		}
-		p_myLog->GarbageAllocations.clear();
+
+		p_myLog->StringAllocations.clear();
 	};
 
-	char* MyLog_allocateString(MyLog* p_myLog, size_t p_size)
+	_Core::String* MyLog_AllocateString(MyLog* p_mylog)
 	{
-		void* l_allocatedMemory = malloc(p_size);
-		p_myLog->GarbageAllocations.push_back(&l_allocatedMemory);
-		return (char*)l_allocatedMemory;
-	};
-
-	char* MyLog_allocatePointerDouble(MyLog* p_myLog, double p_double)
-	{
-		void* l_allocatedMemory = malloc(sizeof(char) * 50);
-		p_myLog->GarbageAllocations.push_back(&l_allocatedMemory);
-		snprintf((char*)l_allocatedMemory, sizeof(char) * 50, "%f", p_double);
-		return (char*)l_allocatedMemory;
-	};
-
-	char* MyLog_allocatePointerString(MyLog* p_myLog, void* p_ptr)
-	{
-		void* l_allocatedMemory = malloc(sizeof(char) * 19);
-		p_myLog->GarbageAllocations.push_back(&l_allocatedMemory);
-		snprintf((char*)l_allocatedMemory, sizeof(char) * 19, "0x%p", p_ptr);
-		return (char*)l_allocatedMemory;
+		_Core::String l_str;
+		// l_str.alloc(LOG_MESSAGE_MAX_SIZE);
+		p_mylog->StringAllocations.push_back(&l_str);
+		_Core::String* l_insertedString = p_mylog->StringAllocations.at(p_mylog->StringAllocations.size() - 1);
+		l_insertedString->alloc(LOG_MESSAGE_MAX_SIZE);
+		return l_insertedString;
 	};
 
 	std::string MyLog_formatError(const std::string& p_file, int p_line, const std::string& p_message)
