@@ -13,10 +13,10 @@ namespace _GameEngine::_Render
 		switch (p_shaderParameter->Type)
 		{
 		case ShaderParameterType::UNIFORM_BUFFER:
-			p_shaderParameter->Parameter = malloc(sizeof(UniformBufferParameter));
+			p_shaderParameter->Parameter = calloc(1, sizeof(UniformBufferParameter));
 			break;
 		case ShaderParameterType::IMAGE_SAMPLER:
-			p_shaderParameter->Parameter = malloc(sizeof(ImageSampleParameter));
+			p_shaderParameter->Parameter = calloc(1, sizeof(ImageSampleParameter));
 			break;
 		}
 	};
@@ -46,6 +46,10 @@ namespace _GameEngine::_Render
 		l_bufferAllocInfo.BufferUsageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 		l_bufferAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 		_Render::VulkanBuffer_alloc(&l_buffer, &l_bufferAllocInfo, p_device);
+		if (p_uniformBufferParameter->DefaultValue)
+		{
+			_Render::VulkanBuffer_pushToGPU(&l_buffer, p_device, p_uniformBufferParameter->DefaultValue, l_buffer.BufferAllocInfo.Size);
+		}
 		return std::move(l_buffer);
 	};
 

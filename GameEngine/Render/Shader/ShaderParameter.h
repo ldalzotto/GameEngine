@@ -36,6 +36,7 @@ namespace _GameEngine::_Render
 		uint32_t Binding;
 		VkShaderStageFlags StageFlag;
 		size_t BufferSize;
+		void* DefaultValue;
 	};
 
 	VkDescriptorSetLayoutBinding UniformBufferParameter_buildLayoutBinding(UniformBufferParameter* p_uniformBufferParameter);

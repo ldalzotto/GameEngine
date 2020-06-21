@@ -28,10 +28,15 @@ namespace _GameEngine::_Render
 		_Math::Vector3f Color;
 	};
 
+	typedef uint16_t GizmoIndiceType;
+
 	struct GizmoMesh
 	{
 		_Core::ArrayT<GizmoVertex> GizmoVerticesV2;
-		VulkanBuffer Buffer;
+		VulkanBuffer VertexBuffer;
+
+		_Core::ArrayT<GizmoIndiceType> GizmoIndicesV2;
+		VulkanBuffer IndicesBuffer;
 	};
 
 	struct Gizmo

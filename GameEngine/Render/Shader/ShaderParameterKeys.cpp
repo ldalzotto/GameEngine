@@ -12,4 +12,5 @@ namespace _GameEngine::_Render
 	ShaderParameterKey MATERIALINSTANCE_GIZMOMESH_KEY = "GizmoMesh";
 	ShaderParameterKey MATERIALINSTANCE_TEXTURE_KEY = "Texture";
 	ShaderParameterKey MATERIALINSTANCE_MODEL_BUFFER = "Model";
+	ShaderParameterKey MATERIALINSTANCE_COLOR = "Color";
 }

@@ -1,5 +1,33 @@
 -- TODO --
 
+-- Materials --
+
+[X] # Adding configuration properties for rendering order
+# Adding configuration properties for blending (editor 3D gizmo may be transparent ?)
+
+-- Inputs --
+
+# Implementing mouse detection input and easily get it's screen position.
+
+-- ScreenSpace interactions --
+
+
+
+~~ LONG TERM OBJECTIVES ~~
+
+-- Graphics improvements --
+
+# Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
+# Simplifying the creation of a VulkanBuffer that is not host visible (push is done with a temporary buffer).
+	## Switching some ShaderParameter to the new smart staging buffer ?
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+-- DONE --
+
+
+
 -- Gizmo Drawer --
 
 [X] # Adding configuration properties for GraphicsPipeline to draw wire lines.
@@ -20,36 +48,13 @@
 
 [X] # REFACTOR - Moving the Engine sequencer to a SortedVector.
 
-# Right now, the ECS engine is immediate. This means that Entities, Component and Systems are created immediately when asked (and the associated events are also triggered immediately).
+[X] # Right now, the ECS engine is immediate. This means that Entities, Component and Systems are created immediately when asked (and the associated events are also triggered immediately).
   Is we imagine that a System creates a child Entity on the fly when component is attached, this can create some undefined behavior.
   Also, in the future it may be safre to defere ECS operations inside a multithreaded environment. 
   
   ## Deferring every ECS Engine operations (Entity creation, System creation, Component creation) :
 	- Creating a single entry point that dispach requested message.
 	- Creating a sync entry point that consume messages until there is no more.
-
--- Materials --
-
-[X] # Adding configuration properties for rendering order
-# Adding configuration properties for blending (editor 3D gizmo may be transparent ?)
-
--- Inputs --
-
-# Implementing mouse detection input and easily get it's screen position.
-
-~~ LONG TERM OBJECTIVES ~~
-
--- Graphics improvements --
-
-# Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
-
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
--- DONE --
-
 
 -- ECS --
 

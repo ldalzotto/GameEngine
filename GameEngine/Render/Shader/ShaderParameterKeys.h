@@ -12,6 +12,7 @@ namespace _GameEngine::_Render
 	extern ShaderParameterKey MATERIALINSTANCE_GIZMOMESH_KEY;
 	extern ShaderParameterKey MATERIALINSTANCE_TEXTURE_KEY;
 	extern ShaderParameterKey MATERIALINSTANCE_MODEL_BUFFER;
+	extern ShaderParameterKey MATERIALINSTANCE_COLOR;
 
 
 }

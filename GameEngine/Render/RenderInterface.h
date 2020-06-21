@@ -34,7 +34,6 @@ namespace _GameEngine::_Render
 
 	struct PreRenderDeferedCommandBufferStep;
 	struct CameraBufferSetupStep;
-	struct DefaultMaterialDrawStep;
 	struct Gizmo;
 }
 
@@ -81,7 +80,6 @@ namespace _GameEngine::_Render
 
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
 		CameraBufferSetupStep* CameraBufferSetupStep;
-		DefaultMaterialDrawStep* DefaultMaterialDrawStep;
 		Gizmo* Gizmo;
 	};
 

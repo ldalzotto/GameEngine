@@ -3,6 +3,8 @@
 #include "MyLog/MyLog.h"
 #include <stdexcept>
 
+#include "Math/Vector/Vector.h"
+
 #include "Shader/ShaderParameterKeys.h"
 #include "Materials/MaterialInstanceContainer.h"
 #include "RenderInterface.h"
@@ -10,6 +12,8 @@
 
 namespace _GameEngine::_Render
 {
+	_Math::Vector4f Material_ColorDefaultValue = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 	Material* materialResourceProvider_allocateMaterial(MaterialUniqueKey* p_key, RenderInterface* p_renderInterface);
 
 	Material* MaterialResourceProvider_UseResource(MaterialResourceProvider* p_materialResourceProvider, MaterialUniqueKey* p_key)
@@ -105,8 +109,19 @@ namespace _GameEngine::_Render
 			l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 			l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
 
+			ShaderParameter l_colorParameter{};
+			ShaderParameter_alloc(&l_colorParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_COLOR);
+
+			UniformBufferParameter* l_colorParameterBufer = (UniformBufferParameter*)l_colorParameter.Parameter;
+			l_colorParameterBufer->Binding = 2;
+			l_colorParameterBufer->BufferSize = sizeof(_Math::Vector4f);
+			l_colorParameterBufer->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
+			l_colorParameterBufer->DefaultValue = &Material_ColorDefaultValue;
+			l_colorParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_colorParameterBufer);
+
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
+			l_materialAllocInfo.ShaderParameters.emplace_back(l_colorParameter);
 
 			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
 		}

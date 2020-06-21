@@ -24,10 +24,11 @@ namespace _GameEngine::_Render
 		GizmoMesh* l_gizmoMesh = &p_renderInterface->Gizmo->GizmoMesh;
 		if (l_gizmoMesh->GizmoVerticesV2.size() > 0)
 		{
-			VkBuffer l_vertexBuffers[] = { l_gizmoMesh->Buffer.Buffer };
+			VkBuffer l_vertexBuffers[] = { l_gizmoMesh->VertexBuffer.Buffer };
 			VkDeviceSize l_offsets[] = { 0 };
 			vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
-			vkCmdDraw(p_commandBuffer, l_gizmoMesh->GizmoVerticesV2.size(), 1, 0, 0);
+			vkCmdBindIndexBuffer(p_commandBuffer, l_gizmoMesh->IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
+			vkCmdDrawIndexed(p_commandBuffer, l_gizmoMesh->GizmoIndicesV2.size(), 1, 0, 0, 0);
 		}
 	};
 }
