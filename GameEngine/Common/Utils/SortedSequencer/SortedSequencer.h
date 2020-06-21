@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector>
+#include <stdint.h>
+#include "DataStructures/VectorT.h"
 
 namespace _GameEngine::_Utils
 {
@@ -16,8 +17,11 @@ namespace _GameEngine::_Utils
 
 	struct SortedSequencer
 	{
-		std::vector<SortedSequencerOperation> Operations;
+		_Core::SortedVectorT<SortedSequencerOperation> OperationsV2;
 	};
+
+	void SortedSequencer_alloc(SortedSequencer* p_sortedSequencer);
+	void SortedSequender_free(SortedSequencer* p_sortedSequencer);
 
 	void SortedSequencer_addOperation(SortedSequencer* p_sortedSequencer, SortedSequencerOperation* p_sortedSequencerOperation);
 	void SortedSequencer_execute(SortedSequencer* p_sortedSequencer, void* p_input);

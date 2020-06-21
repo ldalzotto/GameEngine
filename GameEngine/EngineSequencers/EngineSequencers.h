@@ -18,5 +18,7 @@ namespace _GameEngine
 		_Utils::SortedSequencer UpdateSequencer;
 	};
 
+	void UpdateSequencer_alloc(UpdateSequencer* p_udpateSequencer);
+	void UpdateSequencer_free(UpdateSequencer* p_udpateSequencer);
 	void UpdateSequencer_execute(UpdateSequencer* p_updateSequencer, GameEngineApplicationInterface* p_gameEngineInterface);
 }

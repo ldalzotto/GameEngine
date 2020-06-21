@@ -1,13 +1,12 @@
 #pragma once
 
+#include <cstdint>
+
 namespace _GameEngine::_Utils
 {
 
-	short SizeTCompararator(size_t p_left, size_t p_right)
-	{
-		if (p_left > p_right) { return 1; }
-		else if (p_left < p_right) { return -1; }
-		else { return 0; }
-	};
+	short SizeTCompararator(size_t p_left, size_t p_right);
+
+	short Uint16tComparator(uint16_t p_left, uint16_t p_right);
 
 }

@@ -1,43 +1,40 @@
 #include "SortedSequencer.h"
 
 #include "Utils/Algorithm/Algorithm.h"
+#include "Utils/Functional/Comparators.h"
 #include <stdexcept>
 #include "MYLog/MYLog.h"
 #include <limits>
 
 namespace _GameEngine::_Utils
 {
+	short SortedSequencerOperation_sortComparator(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right)
+	{
+		return Uint16tComparator(p_left->Priority, p_right->Priority);
+	}
+
+	void SortedSequencer_alloc(SortedSequencer* p_sortedSequencer)
+	{
+		p_sortedSequencer->OperationsV2.alloc(2, SortedSequencerOperation_sortComparator);
+	};
+
+	void SortedSequender_free(SortedSequencer* p_sortedSequencer)
+	{
+		p_sortedSequencer->OperationsV2.free();
+	};
+
 	void SortedSequencer_addOperation(SortedSequencer* p_sortedSequencer, SortedSequencerOperation* p_sortedSequencerOperation)
 	{
-		size_t l_insertedIndex = 0;
-
-
-		bool l_insertedIndexFound = false;
-		for (size_t l_comparedIndex = 0; l_comparedIndex < p_sortedSequencer->Operations.size(); l_comparedIndex++)
-		{
-			SortedSequencerOperation* l_comparedOperation = &p_sortedSequencer->Operations.at(l_comparedIndex);
-			if (p_sortedSequencerOperation->Priority <= l_comparedOperation->Priority)
-			{
-				l_insertedIndex = l_comparedIndex;
-				l_insertedIndexFound = true;
-				break;
-			}
-		}
-
-		if (!l_insertedIndexFound)
-		{
-			l_insertedIndex = p_sortedSequencer->Operations.size();
-		}
-
-		p_sortedSequencer->Operations.insert(p_sortedSequencer->Operations.begin() + l_insertedIndex, *p_sortedSequencerOperation);
+		p_sortedSequencer->OperationsV2.push_back(p_sortedSequencerOperation);
 
 	};
 
 	void SortedSequencer_execute(SortedSequencer* p_sortedSequencer, void* p_input)
 	{
-		for (SortedSequencerOperation& l_operation : p_sortedSequencer->Operations)
+		for (size_t i = 0; i < p_sortedSequencer->OperationsV2.vector()->size(); i++)
 		{
-			l_operation.Callback(l_operation.Closure, p_input);
+			SortedSequencerOperation* l_operation = p_sortedSequencer->OperationsV2.vector()->at(i);
+			l_operation->Callback(l_operation->Closure, p_input);
 		}
 	};
 
