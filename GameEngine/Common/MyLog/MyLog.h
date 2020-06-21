@@ -42,6 +42,8 @@ namespace _GameEngine::_Log
 	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, char* p_message);
 	void MyLog_processLogs(MyLog* p_myLog);
 
+	char* MyLog_allocateString(MyLog* p_myLog, size_t p_size);
+	char* MyLog_allocatePointerDouble(MyLog* p_myLog, double p_double);
 	char* MyLog_allocatePointerString(MyLog* p_myLog, void* p_ptr);
 	std::string MyLog_formatError(const std::string& p_file, int p_line, const std::string& p_message);
 

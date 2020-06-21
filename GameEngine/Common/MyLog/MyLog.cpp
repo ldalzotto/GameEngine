@@ -119,6 +119,21 @@ namespace _GameEngine::_Log
 		p_myLog->GarbageAllocations.clear();
 	};
 
+	char* MyLog_allocateString(MyLog* p_myLog, size_t p_size)
+	{
+		void* l_allocatedMemory = malloc(p_size);
+		p_myLog->GarbageAllocations.push_back(&l_allocatedMemory);
+		return (char*)l_allocatedMemory;
+	};
+
+	char* MyLog_allocatePointerDouble(MyLog* p_myLog, double p_double)
+	{
+		void* l_allocatedMemory = malloc(sizeof(char) * 50);
+		p_myLog->GarbageAllocations.push_back(&l_allocatedMemory);
+		snprintf((char*)l_allocatedMemory, sizeof(char) * 50, "%f", p_double);
+		return (char*)l_allocatedMemory;
+	};
+
 	char* MyLog_allocatePointerString(MyLog* p_myLog, void* p_ptr)
 	{
 		void* l_allocatedMemory = malloc(sizeof(char) * 19);

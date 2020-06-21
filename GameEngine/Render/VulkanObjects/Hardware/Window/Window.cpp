@@ -21,6 +21,8 @@ namespace _GameEngine::_Render
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 		p_window->Window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan", nullptr, nullptr);
+		p_window->WindowSize.Width = WINDOW_WIDTH;
+		p_window->WindowSize.Height = WINDOW_HEIGHT;
 		WindowIndexedForGLFW.emplace(p_window->Window, p_window);
 		glfwSetWindowSizeCallback(p_window->Window, window_size_callback);
 	}
@@ -40,10 +42,7 @@ namespace _GameEngine::_Render
 
 	WindowSize Window_getSize(Window* p_window)
 	{
-		WindowSize l_windowSize{};
-		l_windowSize.Width = WINDOW_WIDTH;
-		l_windowSize.Height = WINDOW_HEIGHT;
-		return l_windowSize;
+		return p_window->WindowSize;
 	};
 
 	std::vector<char*> Window_getRequiredExtensionsV2(Window* p_window)
@@ -73,11 +72,9 @@ namespace _GameEngine::_Render
 	{
 		Window* l_window = WindowIndexedForGLFW.at(window);
 
-		/*
-		WindowSize l_newWindowSize{};
-		l_newWindowSize.Width = width;
-		l_newWindowSize.Height = height;
-		*/
+		l_window->WindowSize.Width = width;
+		l_window->WindowSize.Height = height;
+
 		Observer_broadcast(&l_window->OnWindowSizeChanged, nullptr);
 	};
 

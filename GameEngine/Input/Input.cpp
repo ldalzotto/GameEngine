@@ -1,6 +1,10 @@
 #include "Input.h"
 
+#include <math.h>
 #include "VulkanObjects/Hardware/Window/Window.h"
+
+#include "Math/Math.h"
+#include "MyLog/MyLog.h"
 
 namespace _GameEngine::_Input
 {
@@ -11,9 +15,13 @@ namespace _GameEngine::_Input
 
 	void initializeGLFWLookup(Input* p_input);
 
-	void Input_build(Input* p_input, _Render::Window* p_window)
+	void Input_build(Input* p_input, _Render::Window* p_window, _Log::MyLog* Log)
 	{
 		InputInstance = p_input;
+		p_input->Window = p_window;
+		p_input->Log = Log;
+
+		p_input->InputMouse.MouseEnabled = true;
 
 		InputKey l_inputKey = (InputKey)0;
 		while (l_inputKey != InputKey::LAST)
@@ -26,6 +34,7 @@ namespace _GameEngine::_Input
 
 		glfwSetKeyCallback(p_window->Window, OnKeyEvent);
 		glfwSetMouseButtonCallback(p_window->Window, OnMouseEvent);
+		
 	};
 
 	void Input_free(Input* p_input)
@@ -67,6 +76,15 @@ namespace _GameEngine::_Input
 			}
 			
 			p_input->InputEventsLastFrame.pop();
+		}
+
+		if (p_input->InputMouse.MouseEnabled)
+		{
+			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
+			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
+
+			p_input->InputMouse.ScreenPosition.x = _Math::Math_max(_Math::Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);
+			p_input->InputMouse.ScreenPosition.y = _Math::Math_max(_Math::Math_min(p_input->InputMouse.ScreenPosition.y, static_cast<double>(l_windowDimensions.Height)), 0.0f);
 		}
 	};
 

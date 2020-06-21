@@ -20,6 +20,7 @@ namespace _GameEngine::_Render
 	struct Window
 	{
 		GLFWwindow* Window;
+		WindowSize WindowSize;
 		_Utils::Observer OnWindowSizeChanged;
 	};
 

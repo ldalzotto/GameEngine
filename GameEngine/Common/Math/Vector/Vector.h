@@ -8,6 +8,12 @@ namespace _GameEngine::_Math
 		float y;
 	};
 
+	struct Vector2d
+	{
+		double x;
+		double y;
+	};
+
 	struct Vector3f
 	{
 		float x;

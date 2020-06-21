@@ -2,6 +2,8 @@
 
 #include "Includes/GLFWIncludes.h"
 
+#include "Math/Vector/Vector.h"
+
 #include <unordered_map>
 #include <queue>
 #include <vector>
@@ -9,6 +11,11 @@
 namespace _GameEngine::_Render
 {
 	struct Window;
+}
+
+namespace _GameEngine::_Log
+{
+	struct MyLog;
 }
 
 namespace _GameEngine::_Input
@@ -167,15 +174,25 @@ namespace _GameEngine::_Input
 		LAST
 	};
 
+	struct InputMouse
+	{
+		bool MouseEnabled;
+		_Math::Vector2d ScreenPosition;
+	};
+
 	struct Input
 	{
+		_Render::Window* Window;
+		_Log::MyLog* Log;
+
 		std::vector<KeyStateFlag> InputState;
 		std::queue<InputEvent> InputEventsLastFrame;
 		std::vector<InputKey> InputKeysReleasedThisFrame;
 		std::unordered_map<int, InputKey> GLFWKeyToInputKeyLookup;
+		InputMouse InputMouse;
 	};
 
-	void Input_build(Input* p_input, _Render::Window* p_window);
+	void Input_build(Input* p_input, _Render::Window* p_window, _Log::MyLog* Log);
 	void Input_free(Input* p_input);
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);

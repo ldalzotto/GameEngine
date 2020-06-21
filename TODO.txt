@@ -7,7 +7,7 @@
 
 -- Inputs --
 
-# Implementing mouse detection input and easily get it's screen position.
+[X] # Implementing mouse detection input and easily get it's screen position.
 
 -- ScreenSpace interactions --
 

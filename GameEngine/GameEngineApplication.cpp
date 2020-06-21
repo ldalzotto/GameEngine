@@ -18,7 +18,7 @@ namespace _GameEngine
 
 		_Log::MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
 		UpdateSequencer_alloc(&l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->GameEngineApplicationInterface);
-		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window);
+		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window, &l_gameEngineApplication->Log);
 		_Render::Render_build(&l_gameEngineApplication->Render, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->Log);
