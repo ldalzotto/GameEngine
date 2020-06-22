@@ -110,7 +110,6 @@ namespace _GameEngine::_Log
 	_Core::String* MyLog_AllocateString(MyLog* p_mylog)
 	{
 		_Core::String l_str;
-		// l_str.alloc(LOG_MESSAGE_MAX_SIZE);
 		p_mylog->StringAllocations.push_back(&l_str);
 		_Core::String* l_insertedString = p_mylog->StringAllocations.at(p_mylog->StringAllocations.size() - 1);
 		l_insertedString->alloc(LOG_MESSAGE_MAX_SIZE);

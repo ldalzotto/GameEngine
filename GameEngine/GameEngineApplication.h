@@ -6,7 +6,8 @@
 #include "EngineSequencers/EngineSequencers.h"
 #include "Utils/Observer/Observer.h"
 
-#include "Render.h"
+#include "Physics/Physics.h"
+#include "Render/Render.h"
 #include "MyLog/MyLog.h"
 #include "Clock/Clock.h"
 #include "ECS/ECS.h"
@@ -28,6 +29,7 @@ namespace _GameEngine
 		GameLoop GameLoop;
 		_Log::MyLog Log;
 		_Clock::Clock Clock;
+		_Physics::Physics Physics;
 		_Render::Render Render;
 		_Input::Input Input;
 		_ECS::ECS ECS;
