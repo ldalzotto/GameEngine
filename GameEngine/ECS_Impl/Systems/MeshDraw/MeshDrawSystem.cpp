@@ -7,7 +7,7 @@
 #include "Utils/Algorithm/Algorithm.h"
 
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
-#include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "EngineSequencers/EngineSequencers.h"
 
 #include "RenderInterface.h"
@@ -41,7 +41,7 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformComponentType);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = meshDrawSystem_onComponentsAttached;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = meshDrawSystem_onComponentsDetached;
 	};
@@ -67,15 +67,15 @@ namespace _GameEngine::_ECS
 			Entity** l_entity = l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.at(i);
 
 			MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, *l_entity);
-			Transform* l_transform = GET_COMPONENT(Transform, *l_entity);
+			TransformComponent* l_transform = GET_COMPONENT(TransformComponent, *l_entity);
 
-			if (l_transform->HasChangedThisFrame)
+			if (l_transform->Transform.UserFlag_ChangesMade)
 			{
 				_Render::ModelProjection l_meshUniform{};
-				l_meshUniform.Model = _ECS::Transform_getLocalToWorldMatrix(l_transform);
+				l_meshUniform.Model = _Math::Transform_getLocalToWorldMatrix(&l_transform->Transform);
 				_Render::MaterialInstance_pushUniformBuffer(l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, &l_meshUniform);
 
-				l_transform->HasChangedThisFrame = false;	
+				l_transform->Transform.UserFlag_ChangesMade = false;	
 			}
 		}
 	};

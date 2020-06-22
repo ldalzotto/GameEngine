@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "ECS_Impl/Components/Camera/Camera.h"
-#include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
 #include "Render/RenderInterface.h"
@@ -34,7 +34,7 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&CameraType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformComponentType);
 	};
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface)
@@ -43,17 +43,17 @@ namespace _GameEngine::_ECS
 		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.size() > 0)
 		{
 			Entity* l_entity = *l_cameraSystem->EntityConfigurableContainer.FilteredEntities.at(0);
-			Transform* p_transform = GET_COMPONENT(Transform, l_entity);
+			TransformComponent* p_transform = GET_COMPONENT(TransformComponent, l_entity);
 			Camera* p_camera = GET_COMPONENT(Camera, l_entity);
 
 			{
-				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(p_transform);
+				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(&p_transform->Transform);
 
 				_Math::Vector3f l_target;
-				_Math::Vector3f l_foward = Transform_getForward(p_transform);
+				_Math::Vector3f l_foward = Transform_getForward(&p_transform->Transform);
 				_Math::Vector3f_add(&l_worldPosition, &l_foward, &l_target);
 
-				_Math::Vector3f l_up = Transform_getUp(p_transform);
+				_Math::Vector3f l_up = Transform_getUp(&p_transform->Transform);
 				_Math::Vector3f_mul(&l_up, -1.0f, &l_up);
 
 				_Math::Matrix4x4f l_lookAt;

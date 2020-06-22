@@ -8,7 +8,7 @@
 
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
-#include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 #include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
@@ -86,14 +86,14 @@ void SandboxApplication_update(float p_delta)
 		}
 
 		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
-			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
+			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)l_component->Child;
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { -4.0f, 0.0f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ -0.0f, -3.14f / 2, 0.0f }, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-			_ECS::Transform_init(l_component, &l_transformInitInfo);
+			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 
 			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_cameraEntity, &l_component);
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
@@ -131,8 +131,8 @@ void SandboxApplication_update(float p_delta)
 		}
 
 		{
-			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformType, sizeof(_ECS::Transform));
-			_ECS::Transform* l_transform = (_ECS::Transform*)l_component->Child;
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
+			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)l_component->Child;
 
 			{
 				_Core::String* l_str = _Log::MyLog_AllocateString(&App->Log);
@@ -144,7 +144,7 @@ void SandboxApplication_update(float p_delta)
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-			_ECS::Transform_init(l_component, &l_transformInitInfo);
+			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 
 			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_parent, &l_component);
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);

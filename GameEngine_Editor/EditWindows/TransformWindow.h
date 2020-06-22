@@ -4,7 +4,7 @@
 
 namespace _GameEngine::_ECS
 {
-	struct Transform;
+	struct TransformComponent;
 }
 
 using namespace _GameEngine;
@@ -13,7 +13,7 @@ namespace _GameEngineEditor
 {
 	struct TransformWindow
 	{
-		_ECS::Transform* Transform;
+		_ECS::TransformComponent* Transform;
 		bool Open;
 	};
 

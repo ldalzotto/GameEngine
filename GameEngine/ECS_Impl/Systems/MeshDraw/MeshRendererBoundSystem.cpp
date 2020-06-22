@@ -5,7 +5,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
 
-#include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 

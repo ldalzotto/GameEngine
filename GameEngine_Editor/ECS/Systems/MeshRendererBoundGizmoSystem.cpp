@@ -6,7 +6,7 @@
 #include "ECS/ECS.h"
 #include "EngineSequencers/EngineSequencers.h"
 
-#include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 
@@ -30,10 +30,10 @@ namespace _GameEngineEditor
 		for (size_t i = 0; i < l_system->EntityConfigurableContainer.FilteredEntities.size(); i++)
 		{
 			_ECS::Entity* l_entity = *l_system->EntityConfigurableContainer.FilteredEntities.at(i);
-			_ECS::Transform* l_transform = (_ECS::Transform*)_ECS::Entity_getComponent(l_entity, _ECS::TransformType)->Child;
+			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)_ECS::Entity_getComponent(l_entity, _ECS::TransformComponentType)->Child;
 			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, _ECS::MeshRendererBoundType)->Child;
 
-			_Math::Matrix4x4f l_localToWorld = _ECS::Transform_getLocalToWorldMatrix(l_transform);
+			_Math::Matrix4x4f l_localToWorld = _Math::Transform_getLocalToWorldMatrix(&l_transform->Transform);
 			_Render::Gizmo_drawBox(l_meshRendererBoundSystem->Gizmo, &l_meshRendererBound->BoundingBox, &l_localToWorld);
 		}
 	}

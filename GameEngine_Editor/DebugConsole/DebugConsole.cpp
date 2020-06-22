@@ -7,7 +7,7 @@
 #include "MyLog/MyLog.h"
 #include "imgui.h"
 
-#include "ECS_Impl/Components/Transform/Transform.h"
+#include "ECS_Impl/Components/Transform/TransformComponent.h"
 
 #include "IMGuiRender/DrawableWindow.h"
 #include "EditWindows/TransformWindow.h"
@@ -55,7 +55,7 @@ namespace _GameEngineEditor
 			{
 				size_t l_val = std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0);
 				TransformWindow* l_transformWindow = new TransformWindow();
-				l_transformWindow->Transform = reinterpret_cast<_GameEngine::_ECS::Transform*>(l_val);
+				l_transformWindow->Transform = reinterpret_cast<_GameEngine::_ECS::TransformComponent*>(l_val);
 				p_debugConsole->DrawableWindows->DrawableWindows.push_back(TransformWindow_allocDrawableWindow(&l_transformWindow));
 			}
 		}
@@ -65,9 +65,9 @@ namespace _GameEngineEditor
 				&& p_debugCommand->Arguments[0].Name == "parent"
 				&& p_debugCommand->Arguments[1].Name == "child")
 			{
-				_ECS::Transform* l_parent = reinterpret_cast<_GameEngine::_ECS::Transform*>(std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0));
-				_ECS::Transform* l_child = reinterpret_cast<_GameEngine::_ECS::Transform*>(std::stoull(p_debugCommand->Arguments[1].Value, nullptr, 0));
-				_ECS::Transform_addChild(l_parent, l_child);
+				_ECS::TransformComponent* l_parent = reinterpret_cast<_GameEngine::_ECS::TransformComponent*>(std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0));
+				_ECS::TransformComponent* l_child = reinterpret_cast<_GameEngine::_ECS::TransformComponent*>(std::stoull(p_debugCommand->Arguments[1].Value, nullptr, 0));
+				_Math::Transform_addChild(&l_parent->Transform, &l_child->Transform);
 			}
 
 		}
@@ -76,8 +76,8 @@ namespace _GameEngineEditor
 			if (p_debugCommand->Arguments.size() == 1 
 						&& p_debugCommand->Arguments[0].Name == "addr")
 			{
-				_ECS::Transform* l_transform = reinterpret_cast<_GameEngine::_ECS::Transform*>(std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0));
-				_ECS::Transform_detachParent(l_transform);
+				_ECS::TransformComponent* l_transform = reinterpret_cast<_GameEngine::_ECS::TransformComponent*>(std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0));
+				_Math::Transform_detachParent(&l_transform->Transform);
 			}
 
 		}

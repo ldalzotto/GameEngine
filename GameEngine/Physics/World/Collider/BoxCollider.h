@@ -1,13 +1,16 @@
 #pragma once
 
-#include "Math/Box/Box.h"
-#include "Math/Matrix/Matrix.h"
+namespace _GameEngine::_Math
+{
+	struct Transform;
+	struct Box;
+}
 
 namespace _GameEngine::_Physics
 {
 	struct BoxCollider
 	{
-		_Math::Box Box;
-		_Math::Matrix4x4f ModelMatrix;
+		_Math::Transform* Transform;
+		_Math::Box* Box;
 	};
 }
