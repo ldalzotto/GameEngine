@@ -282,7 +282,7 @@ void SandboxApplication_update(float p_delta)
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		l_systemAllocInfo = {};
-		_ECS::MeshRendererBoundSystem_init(&l_systemAllocInfo, &App->ECS);
+		_ECS::MeshRendererBoundSystem_init(&l_systemAllocInfo, &App->ECS, &App->Physics.PhysicsInterface);
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		HasAlreadyUpdated = true;

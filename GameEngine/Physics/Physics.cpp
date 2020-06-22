@@ -2,10 +2,10 @@
 
 namespace _GameEngine::_Physics
 {
-	void Physics_alloc(Physics* p_physics)
+	void Physics_alloc(Physics* p_physics, _Log::MyLog* p_myLog)
 	{
 		PhysicsInterface_build(&p_physics->PhysicsInterface, p_physics);
-		World_alloc(&p_physics->World);
+		World_alloc(&p_physics->World, p_myLog);
 	};
 	
 	void Physics_free(Physics* p_physics)

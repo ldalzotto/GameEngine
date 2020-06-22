@@ -13,4 +13,9 @@ namespace _GameEngine::_Physics
 		_Math::Transform* Transform;
 		_Math::Box* Box;
 	};
+
+	bool BoxCollider_equals(BoxCollider** p_left, BoxCollider** p_right);
+
+	BoxCollider* BoxCollider_alloc(BoxCollider* p_template);
+	void BoxCollider_free(BoxCollider** p_boxCollider);
 }

@@ -5,6 +5,10 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
 
+#include "Physics/PhysicsInterface.h"
+#include "Physics/World/World.h"
+#include "Physics/World/Collider/BoxCollider.h"
+
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
@@ -23,6 +27,7 @@ namespace _GameEngine::_ECS
 
 	struct MeshRendererBoundSystem
 	{
+		_Physics::PhysicsInterface* PhysicsInterface;
 		_Core::VectorT<MeshRendererBoundCalculationOperation> MeshRendererBoundsToCaluclate;
 	};
 
@@ -46,6 +51,21 @@ namespace _GameEngine::_ECS
 			l_operation.MeshRenderer = GET_COMPONENT(MeshRenderer, p_entity);
 		}
 		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.push_back(&l_operation);
+
+		l_operation.Bound->Boxcollider = new _Physics::BoxCollider();
+		_Physics::BoxCollider l_boxCollider{};
+		l_boxCollider.Box = &l_operation.Bound->BoundingBox;
+		_ECS::TransformComponent* l_transformComponent = GET_COMPONENT(TransformComponent, p_entity);
+		l_boxCollider.Transform = &l_transformComponent->Transform;
+		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_boxCollider);
+		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World , l_operation.Bound->Boxcollider);
+	};
+
+	void meshRendererBoundSystem_onComponentRemoved(Entity* p_entity, void* p_system)
+	{
+		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
+		_ECS::MeshRendererBound* l_meshRendererBound = GET_COMPONENT(MeshRendererBound, p_entity);
+		_Physics::World_removeBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_meshRendererBound->Boxcollider);
 	};
 
 	void meshRendererBoundSystem_onSystemDestroyed(SystemV2* p_system)
@@ -84,10 +104,11 @@ namespace _GameEngine::_ECS
 	};
 
 
-	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
+	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs, _Physics::PhysicsInterface* p_physicsInterface)
 	{
 
 		MeshRendererBoundSystem* l_meshRendererBoundSystem = (MeshRendererBoundSystem*)malloc(sizeof(MeshRendererBoundSystem));;
+		l_meshRendererBoundSystem->PhysicsInterface = p_physicsInterface;
 		l_meshRendererBoundSystem->MeshRendererBoundsToCaluclate.alloc(2);
 
 		p_systemV2AllocInfo->ECS = p_ecs;
@@ -98,6 +119,9 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = meshRendererBoundSystem_onComponentAttached;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAddedUserdata = l_meshRendererBoundSystem;
+
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = meshRendererBoundSystem_onComponentRemoved;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemovedUserData = l_meshRendererBoundSystem;
 
 		p_systemV2AllocInfo->OnSystemDestroyed = meshRendererBoundSystem_onSystemDestroyed;
 		p_systemV2AllocInfo->Child = l_meshRendererBoundSystem;
