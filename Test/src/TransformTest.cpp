@@ -37,19 +37,19 @@ namespace _GameEngine::_Test
 	void Transform_simpleTransformation_test()
 	{
 		TransformComponent l_transform{};
+
+		_Math::Vector3f l_localScale = { 1.0f, 1.0f, 1.0f };
+		_Math::Transform_setLocalScale(&l_transform.Transform, l_localScale);
+		test_assert(_Math::Transform_getWorldScale(&l_transform.Transform), l_localScale);
+
 		_Math::Vector3f l_localPosition = { 1.0f, 1.0f, 1.0f };
 		_Math::Transform_setLocalPosition(&l_transform.Transform, l_localPosition);
-
 		test_assert(_Math::Transform_getWorldPosition(&l_transform.Transform), l_localPosition);
 
 		_Math::Quaternionf l_localRotation{ 0.5f, 0.5f, 0.5f, 0.5f };
 		_Math::Transform_setLocalRotation(&l_transform.Transform, l_localRotation);
 		_Math::Quaternionf l_worldRot = _Math::Transform_getWorldRotation(&l_transform.Transform);
 		test_assert(l_worldRot, _Math::Quaternionf{ 0.5f, 0.5f, 0.5f, 0.5f });
-
-		_Math::Vector3f l_localScale = { 1.0f, 1.0f, 1.0f };
-		_Math::Transform_setLocalScale(&l_transform.Transform, l_localScale);
-		test_assert(_Math::Transform_getWorldScale(&l_transform.Transform), l_localScale);
 	}
 
 	void Transform_parenting_test()
@@ -123,7 +123,17 @@ namespace _GameEngine::_Test
 			test_assert(_Math::Transform_getWorldRotation(&l_child1->Transform), l_wordRotationValueTest);
 
 			_Math::Vector3f l_worldScaleChild2ValueTest = { 4.0f, 4.0f, 4.0f };
-			test_assert(_Math::Transform_getWorldScale(&l_child2->Transform), l_worldScaleChild2ValueTest);
+			 test_assert(_Math::Transform_getWorldScale(&l_child2->Transform), l_worldScaleChild2ValueTest);
+
+			 /*
+			{
+				// _Math::Matrix4x4f l_localToWorld = _Math::Transform_getLocalToWorldMatrix(&l_child2->Transform);
+				_Math::Transform_getLocalToWorldMatrix(&l_child2->Transform);
+				_Math::Vector3f l_c0 = { l_child2->Transform.Parent->Parent->LocalToWorldMatrix._00, l_child2->Transform.Parent->Parent->LocalToWorldMatrix._01 , l_child2->Transform.Parent->Parent->LocalToWorldMatrix._02 };
+				float l_lenght = _Math::Vector3f_length(&l_c0);
+				int ldz = 0;
+			}
+			*/
 
 			Component_free(&l_rootComponent);
 			Component_free(&l_child1Component);

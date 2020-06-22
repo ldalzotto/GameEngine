@@ -72,6 +72,7 @@ namespace _GameEngine::_Math
 
 		Vector3f l_right, l_up, l_forward;
 		Quaternion_extractAxis(p_quaternion, &l_right, &l_up, &l_forward);
+
 		Matrixf4x4_buildRotationMatrixV2(&l_right, &l_up, &l_forward, out_TRS);
 		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
 	};
@@ -227,6 +228,24 @@ namespace _GameEngine::_Math
 		p_out->_20 *= p_scale->z;
 		p_out->_21 *= p_scale->z;
 		p_out->_22 *= p_scale->z;
+	};
+
+	void Matrixf4x4_extractTranslation(Matrix4x4f* p_mat, Vector4f* out_translation)
+	{
+		Matrix4x4f_c3(p_mat, out_translation);
+	};
+
+	void Matrixf4x4_extractScale(Matrix4x4f* p_mat, Vector4f* out_scale)
+	{
+		Vector4f l_c0, l_c1, l_c2;
+		Matrix4x4f_c0(p_mat, &l_c0);
+		Matrix4x4f_c1(p_mat, &l_c1);
+		Matrix4x4f_c2(p_mat, &l_c2);
+		
+		out_scale->x = Vector4f_length(&l_c0);
+		out_scale->y = Vector4f_length(&l_c1);
+		out_scale->z = Vector4f_length(&l_c2);
+		out_scale->w = 0.0f;
 	};
 
 	void Matrixf4x4_lookAtRotation(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out)

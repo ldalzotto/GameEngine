@@ -24,6 +24,9 @@ namespace _GameEngine::_Math
 	void Matrixf4x4_buildRotationMatrixV2(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Matrix4x4f* p_out);
 	void Matrixf4x4_buildScaleMatrix(Vector3f* p_scale, Matrix4x4f* p_out);
 
+	void Matrixf4x4_extractTranslation(Matrix4x4f* p_mat, Vector4f* out_translation);
+	void Matrixf4x4_extractScale(Matrix4x4f* p_mat, Vector4f* out_scale);
+
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, float p_value, Matrix4x4f* out);
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector4f* p_vector, Vector4f* out);
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Matrix4x4f* p_other, Matrix4x4f* out);

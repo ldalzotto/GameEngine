@@ -75,45 +75,19 @@ namespace _GameEngine::_Math
 		}
 	};
 
-	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform, bool p_includeSelf)
+	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform)
 	{
-		_Math::Matrix4x4f l_return = _Math::Matrix4x4f_identity();
-
-		Transform* l_currentTransform = nullptr;
-		if (p_includeSelf)
-		{
-			l_currentTransform = p_transform;
-		}
-		else
-		{
-			l_currentTransform = p_transform->Parent;
-		}
-
-		while (l_currentTransform != nullptr)
-		{
-			transform_updateMatricesIfNecessary(l_currentTransform);
-
-			_Math::Matrix4x4f l_returnCopy;
-			{
-				_Math::Matrix4x4f_copy(&l_return, &l_returnCopy);
-			}
-			_Math::Matrixf4x4_mul(&l_currentTransform->LocalToWorldMatrix, &l_returnCopy, &l_return);
-			l_currentTransform = l_currentTransform->Parent;
-		}
-		return l_return;
+		transform_updateMatricesIfNecessary(p_transform);
+		return p_transform->LocalToWorldMatrix;
 	};
 
 	_Math::Vector3f Transform_getWorldPosition(Transform* p_transform)
 	{
-		_Math::Vector4f l_localPosition4f;
-		{
-			_Math::Vector4f_build(&p_transform->LocalPosition, 1.0f, &l_localPosition4f);
-		}
-		_Math::Matrix4x4f l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform, false);
+		_Math::Matrix4x4f l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);
 		_Math::Vector3f l_result;
 		{
 			_Math::Vector4f l_worldPosition4f;
-			_Math::Matrixf4x4_mul(&l_localToWorldMatrix, &l_localPosition4f, &l_worldPosition4f);
+			_Math::Matrixf4x4_extractTranslation(&l_localToWorldMatrix, &l_worldPosition4f);
 			_Math::Vector3f_build(&l_worldPosition4f, &l_result);
 		}
 		return l_result;
@@ -147,18 +121,19 @@ namespace _GameEngine::_Math
 
 	_Math::Vector3f Transform_getWorldScale(Transform* p_transform)
 	{
-		_Math::Vector3f l_return = p_transform->LocalScale;
-		if (p_transform->Parent)
+		_Math::Matrix4x4f l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);
+		_Math::Vector3f l_return;
 		{
-			_Math::Vector3f l_parentWorldScale = Transform_getWorldScale(p_transform->Parent);
-			_Math::Vector3f_mul(&l_return, &l_parentWorldScale, &l_return);
+			_Math::Vector4f l_scale4f;
+			Matrixf4x4_extractScale(&l_localToWorldMatrix, &l_scale4f);
+			l_return = { l_scale4f.x, l_scale4f.y, l_scale4f.z };
 		}
 		return l_return;
 	};
 
 	_Math::Vector3f Transform_getUp(Transform* p_transform)
 	{
-		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, true);
+		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform);
 		_Math::Vector4f l_upLocal4f;
 		_Math::Matrix4x4f_up(&l_localToWorld, &l_upLocal4f);
 		_Math::Vector3f l_up3f = *(_Math::Vector3f*)(&l_upLocal4f);
@@ -168,7 +143,7 @@ namespace _GameEngine::_Math
 
 	_Math::Vector3f Transform_getForward(Transform* p_transform)
 	{
-		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform, true);
+		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform);
 		_Math::Vector4f l_forwardLocal4f;
 		_Math::Matrix4x4f_forward(&l_localToWorld, &l_forwardLocal4f);
 		_Math::Vector3f l_forward3f = *(_Math::Vector3f*)(&l_forwardLocal4f);
@@ -179,7 +154,7 @@ namespace _GameEngine::_Math
 	void Transform_markMatricsForRecalculation(Transform* p_transform)
 	{
 		p_transform->MatricesMustBeRecalculated = true;
-		p_transform->UserFlag_ChangesMade = true;
+		p_transform->UserFlag_HasChanged = true;
 		for (size_t i = 0; i < p_transform->Childs.size(); i++)
 		{
 			Transform_markMatricsForRecalculation(*p_transform->Childs.at(i));
@@ -190,7 +165,22 @@ namespace _GameEngine::_Math
 	{
 		if (p_transform->MatricesMustBeRecalculated)
 		{
-			_Math::Matrif4x4_buildTRS(&p_transform->LocalPosition, &p_transform->LocalRotation, &p_transform->LocalScale, &p_transform->LocalToWorldMatrix);
+			{
+				_Math::Matrif4x4_buildTRS(&p_transform->LocalPosition, &p_transform->LocalRotation, &p_transform->LocalScale, &p_transform->LocalToWorldMatrix);
+				
+				if (p_transform->Parent)
+				{
+					_Math::Matrix4x4f l_localToWorldCopy;
+					{
+						_Math::Matrix4x4f_copy(&p_transform->LocalToWorldMatrix, &l_localToWorldCopy);
+					}
+
+					_Math::Matrix4x4f l_parentLocalToWorld = Transform_getLocalToWorldMatrix(p_transform->Parent);
+					_Math::Matrixf4x4_mul(&l_parentLocalToWorld, &l_localToWorldCopy, &p_transform->LocalToWorldMatrix);
+				}
+
+			}
+
 			p_transform->MatricesMustBeRecalculated = false;
 		}
 	};
@@ -201,7 +191,7 @@ namespace _GameEngine::_Math
 		p_transform->Childs.alloc(0);
 		Transform_markMatricsForRecalculation(p_transform);
 	};
-	
+
 	void Transform_free(Transform* p_transform)
 	{
 		p_transform->Childs.free();

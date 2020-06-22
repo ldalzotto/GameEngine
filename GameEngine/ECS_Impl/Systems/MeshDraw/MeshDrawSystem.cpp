@@ -69,13 +69,13 @@ namespace _GameEngine::_ECS
 			MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, *l_entity);
 			TransformComponent* l_transform = GET_COMPONENT(TransformComponent, *l_entity);
 
-			if (l_transform->Transform.UserFlag_ChangesMade)
+			if (l_transform->Transform.UserFlag_HasChanged)
 			{
 				_Render::ModelProjection l_meshUniform{};
 				l_meshUniform.Model = _Math::Transform_getLocalToWorldMatrix(&l_transform->Transform);
 				_Render::MaterialInstance_pushUniformBuffer(l_mesRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, &l_meshUniform);
 
-				l_transform->Transform.UserFlag_ChangesMade = false;	
+				l_transform->Transform.UserFlag_HasChanged = false;	
 			}
 		}
 	};

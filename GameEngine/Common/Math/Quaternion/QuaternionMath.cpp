@@ -3,6 +3,7 @@
 #include <string>
 #include <math.h>
 #include "Quaternion.h"
+#include "Math/Math.h"
 #include "Math/Vector/Vector.h"
 #include "Math/Vector/VectorMath.h"
 
@@ -16,10 +17,10 @@ namespace _GameEngine::_Math
 	bool Quaternionf_equals(Quaternionf* p_left, Quaternionf* p_right)
 	{
 		return
-			p_left->x == p_right->x &&
-			p_left->y == p_right->y &&
-			p_left->z == p_right->z &&
-			p_left->w == p_right->w
+			fabsf(p_left->x - p_right->x) < FLOAT_TOLERANCE &&
+			fabsf(p_left->y - p_right->y) < FLOAT_TOLERANCE &&
+			fabsf(p_left->z - p_right->z) < FLOAT_TOLERANCE &&
+			fabsf(p_left->w - p_right->w) < FLOAT_TOLERANCE
 			;
 	};
 

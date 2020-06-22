@@ -14,7 +14,7 @@ namespace _GameEngine::_Math
 		_Core::VectorT<Transform*> Childs;
 
 		bool MatricesMustBeRecalculated;
-		bool UserFlag_ChangesMade;
+		bool UserFlag_HasChanged;
 		
 		_Math::Vector3f LocalPosition;
 		_Math::Quaternionf LocalRotation;
@@ -30,7 +30,7 @@ namespace _GameEngine::_Math
 	void Transform_setLocalPosition(Transform* p_transform, _Math::Vector3f& p_localPosition);
 	void Transform_setLocalRotation(Transform* p_transform, _Math::Quaternionf& p_localRotation);
 	void Transform_setLocalScale(Transform* p_transform, _Math::Vector3f& p_localScale);
-	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform, bool p_includeSelf = true);
+	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform);
 
 	_Math::Vector3f Transform_getWorldPosition(Transform* p_transform);
 	_Math::Quaternionf Transform_getWorldRotation(Transform* p_transform);

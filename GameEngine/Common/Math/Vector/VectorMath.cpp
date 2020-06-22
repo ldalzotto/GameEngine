@@ -1,6 +1,7 @@
 #include "VectorMath.h"
 
 #include <math.h>
+#include "Math/Math.h"
 #include "Math/Vector/Vector.h"
 
 namespace _GameEngine::_Math
@@ -42,9 +43,9 @@ namespace _GameEngine::_Math
 	bool Vector3f_equals(Vector3f* left, Vector3f* right)
 	{
 		return
-			left->x == right->x &&
-			left->y == right->y &&
-			left->z == right->z
+			fabsf(left->x - right->x) < FLOAT_TOLERANCE &&
+			fabsf(left->y - right->y) < FLOAT_TOLERANCE &&
+			fabsf(left->z - right->z) < FLOAT_TOLERANCE
 			;
 	};
 
@@ -108,5 +109,14 @@ namespace _GameEngine::_Math
 		out->y = p_xyz->y;
 		out->z = p_xyz->z;
 		out->w = p_w;
+	};
+
+	float Vector4f_length(Vector4f* p_vec)
+	{
+		return
+			sqrtf((p_vec->x * p_vec->x) +
+				(p_vec->y * p_vec->y) +
+				(p_vec->z * p_vec->z) +
+				(p_vec->w * p_vec->w));
 	};
 }
