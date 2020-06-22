@@ -3,8 +3,6 @@
 namespace _GameEngine::_Math
 {
 	struct Quaternionf;
-	struct Matrix3x3f;
-	struct Matrix4x4f;
 	struct Vector3f;
 }
 
@@ -18,6 +16,5 @@ namespace _GameEngine::_Math
 
 	void Quaternion_fromEulerAngles(Vector3f* p_eulerAngles, Quaternionf* p_out);
 	void Quaternion_fromEulerAngles(Vector3f& p_eulerAngles, Quaternionf* p_out);
-	void Quaterion_toRotationMatrix(Quaternionf* p_quaternion, Matrix3x3f* out_matrix);
-	void Quaterion_toRotationMatrix(Quaternionf* p_quaternion, Matrix4x4f* out_matrix);
+	void Quaternion_extractAxis(Quaternionf* p_quaternion, Vector3f* out_right, Vector3f* out_up, Vector3f* out_forward);
 }

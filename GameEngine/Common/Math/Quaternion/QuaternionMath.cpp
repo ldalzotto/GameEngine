@@ -3,8 +3,6 @@
 #include <string>
 #include <math.h>
 #include "Quaternion.h"
-#include "Math/Matrix/Matrix.h"
-#include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/Vector.h"
 #include "Math/Vector/VectorMath.h"
 
@@ -76,7 +74,7 @@ namespace _GameEngine::_Math
 		Quaternion_fromEulerAngles(&p_eulerAngles, p_out);
 	};
 
-	void Quaterion_toRotationMatrix(Quaternionf* p_quaternion, Matrix3x3f* out_matrix)
+	void Quaternion_extractAxis(Quaternionf* p_quaternion, Vector3f* out_right, Vector3f* out_up, Vector3f* out_forward)
 	{
 		float l_qxx = p_quaternion->x * p_quaternion->x;
 		float l_qxy = p_quaternion->x * p_quaternion->y;
@@ -90,29 +88,23 @@ namespace _GameEngine::_Math
 		float l_qzz = p_quaternion->z * p_quaternion->z;
 		float l_qzw = p_quaternion->z * p_quaternion->w;
 
-
-		//Right
-		out_matrix->_00 = 1 - (2 * l_qyy) - (2 * l_qzz);
-		out_matrix->_01 = (2 * l_qxy) + (2 * l_qzw);
-		out_matrix->_02 = (2 * l_qxz) - (2 * l_qyw);
+		//RIGHT
+		out_right->x = 1 - (2 * l_qyy) - (2 * l_qzz);
+		out_right->y = (2 * l_qxy) + (2 * l_qzw);
+		out_right->z = (2 * l_qxz) - (2 * l_qyw);
+		Vector3f_normalize(out_right);
 
 		//UP
-		out_matrix->_10 = (2 * l_qxy) - (2 * l_qzw);
-		out_matrix->_11 = 1 - (2 * l_qxx) - (2 * l_qzz);
-		out_matrix->_12 = (2 * l_qyz) + (2 * l_qxw);
+		out_up->x = (2 * l_qxy) - (2 * l_qzw);
+		out_up->y = 1 - (2 * l_qxx) - (2 * l_qzz);
+		out_up->z = (2 * l_qyz) + (2 * l_qxw);
+		Vector3f_normalize(out_up);
 
 		//Forward
-		out_matrix->_20 = (2 * l_qxz) + (2 * l_qyw);
-		out_matrix->_21 = (2 * l_qyz) - (2 * l_qxw);
-		out_matrix->_22 = 1 - (2 * l_qxx) - (2 * l_qyy);
+		out_forward->x = (2 * l_qxz) + (2 * l_qyw);
+		out_forward->y = (2 * l_qyz) - (2 * l_qxw);
+		out_forward->z = 1 - (2 * l_qxx) - (2 * l_qyy);
+		Vector3f_normalize(out_forward);
 	};
 
-	void Quaterion_toRotationMatrix(Quaternionf* p_quaternion, Matrix4x4f* out_matrix)
-	{
-		Matrix3x3f l_rotation;
-		{
-			Quaterion_toRotationMatrix(p_quaternion, &l_rotation);
-		}
-		Matrixf4x4_build(&l_rotation, out_matrix);
-	};
 }

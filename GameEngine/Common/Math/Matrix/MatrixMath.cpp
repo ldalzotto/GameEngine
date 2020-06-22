@@ -32,9 +32,9 @@ namespace _GameEngine::_Math
 	void Matrix3x3f_c0(Matrix3x3f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_00; p_out->y = p_matrix->_01; p_out->z = p_matrix->_02; };
 	void Matrix3x3f_c1(Matrix3x3f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_10; p_out->y = p_matrix->_11; p_out->z = p_matrix->_12; };
 	void Matrix3x3f_c2(Matrix3x3f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_20; p_out->y = p_matrix->_21; p_out->z = p_matrix->_22; };
-	
-	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector4f* p_out)   { p_out->x = p_matrix->_00; p_out->y = p_matrix->_10; p_out->z = p_matrix->_20; p_out->w = p_matrix->_30; };
-	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector4f* p_out)      { p_out->x = p_matrix->_01; p_out->y = p_matrix->_11; p_out->z = p_matrix->_21; p_out->w = p_matrix->_31; };
+
+	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_00; p_out->y = p_matrix->_10; p_out->z = p_matrix->_20; p_out->w = p_matrix->_30; };
+	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_01; p_out->y = p_matrix->_11; p_out->z = p_matrix->_21; p_out->w = p_matrix->_31; };
 	void Matrix4x4f_forward(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_02; p_out->y = p_matrix->_12; p_out->z = p_matrix->_22; p_out->w = p_matrix->_32; };
 
 
@@ -70,29 +70,14 @@ namespace _GameEngine::_Math
 
 		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
 
-
-		Matrix3x3f l_rotation;
-		Quaterion_toRotationMatrix(p_quaternion, &l_rotation);
-
-		Vector3f l_rotation_c0, l_rotation_c1, l_rotation_c2;
-
-		Matrix3x3f_c0(&l_rotation, &l_rotation_c0);
-		Matrix3x3f_c1(&l_rotation, &l_rotation_c1);
-		Matrix3x3f_c2(&l_rotation, &l_rotation_c2);
-
-		Vector4f l_return_col0, l_return_col1, l_return_col2;
-		Vector4f_build(&l_rotation_c0, 0.0f, &l_return_col0);
-		Vector4f_build(&l_rotation_c1, 0.0f, &l_return_col1);
-		Vector4f_build(&l_rotation_c2, 0.0f, &l_return_col2);
-
-		Matrix4x4f_set_c0(out_TRS, &l_return_col0);
-		Matrix4x4f_set_c1(out_TRS, &l_return_col1);
-		Matrix4x4f_set_c2(out_TRS, &l_return_col2);
-
+		Vector3f l_right, l_up, l_forward;
+		Quaternion_extractAxis(p_quaternion, &l_right, &l_up, &l_forward);
+		Matrixf4x4_buildRotationMatrixV2(&l_right, &l_up, &l_forward, out_TRS);
 		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
 	};
 
-	void Matrif4x4_buildTRS(Vector3f* p_position, Vector3f* p_forward, Vector3f* p_right, Vector3f* p_up, Vector3f* p_scale, Matrix4x4f* out_TRS)
+
+	void Matrif4x4_buildTRSV2(Vector3f* p_position, Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Vector3f* p_scale, Matrix4x4f* out_TRS)
 	{
 		out_TRS->_03 = 0.0f;
 		out_TRS->_13 = 0.0f;
@@ -100,7 +85,7 @@ namespace _GameEngine::_Math
 		out_TRS->_33 = 1.0f;
 
 		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
-		Matrixf4x4_buildRotationMatrix(p_forward, p_right, p_up, out_TRS);
+		Matrixf4x4_buildRotationMatrixV2(p_right, p_up, p_forward, out_TRS);
 		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
 	};
 
@@ -222,7 +207,7 @@ namespace _GameEngine::_Math
 		Matrix4x4f_set_c3(p_out, p_translation);
 	}
 
-	void Matrixf4x4_buildRotationMatrix(Vector3f* p_forward, Vector3f* p_right, Vector3f* p_up, Matrix4x4f* p_out)
+	void Matrixf4x4_buildRotationMatrixV2(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Matrix4x4f* p_out)
 	{
 		Matrix4x4f_set_c0(p_out, p_right);
 		Matrix4x4f_set_c1(p_out, p_up);
@@ -265,7 +250,7 @@ namespace _GameEngine::_Math
 		}
 
 		Vector3f l_scale{ 1.0f, 1.0f, 1.0f };
-		Matrif4x4_buildTRS(p_origin, &l_forward, &l_right, &l_up, &l_scale, p_out);
+		Matrif4x4_buildTRSV2(p_origin, &l_right, &l_up, &l_forward, &l_scale, p_out);
 	};
 
 
@@ -291,7 +276,7 @@ namespace _GameEngine::_Math
 		}
 
 		Vector3f l_scale{ 1.0f, 1.0f, 1.0f };
-		Matrif4x4_buildTRS(p_origin, &l_forward, &l_right, &l_up, &l_scale, p_out);
+		Matrif4x4_buildTRSV2(p_origin, &l_right, &l_up, &l_forward, &l_scale, p_out);
 	};
 
 	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out)
