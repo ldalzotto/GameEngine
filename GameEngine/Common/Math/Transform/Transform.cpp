@@ -81,6 +81,28 @@ namespace _GameEngine::_Math
 		return p_transform->LocalToWorldMatrix;
 	};
 
+	_Math::Matrix4x4f* Transform_getLocalToWorldMatrix_ref(Transform* p_transform)
+	{
+		transform_updateMatricesIfNecessary(p_transform);
+		return &p_transform->LocalToWorldMatrix;
+	};
+
+	_Math::Matrix4x4f Transform_getWorldToLocalMatrix(Transform* p_transform)
+	{
+		_Math::Matrix4x4f l_worldToLocal;
+		_Math::Matrixf4x4_inv(Transform_getLocalToWorldMatrix_ref(p_transform), &l_worldToLocal);
+		return l_worldToLocal;
+	};
+
+	_Math::Matrix4x4f Transform_calculateMatrixToProjectFromTransformToAnother(Transform* p_source, Transform* p_target)
+	{
+		_Math::Matrix4x4f* l_sourceLocalToWorld = Transform_getLocalToWorldMatrix_ref(p_source);
+		_Math::Matrix4x4f l_targetWorldToLocal = Transform_getWorldToLocalMatrix(p_target);
+		_Math::Matrix4x4f l_transformationMatrix;
+		_Math::Matrixf4x4_mul(l_sourceLocalToWorld, &l_targetWorldToLocal, &l_transformationMatrix);
+		return l_transformationMatrix;
+	};
+
 	_Math::Vector3f Transform_getWorldPosition(Transform* p_transform)
 	{
 		_Math::Matrix4x4f l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);

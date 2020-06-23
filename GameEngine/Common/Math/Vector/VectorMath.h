@@ -25,7 +25,11 @@ namespace _GameEngine::_Math
 	
 	float Vector3f_angle(Vector3f* p_vector, Vector3f* p_other);
 
+	bool Vector4f_equals(Vector4f* left, Vector4f* right);
 	void Vector4f_build(Vector3f* p_xyz, float p_w, Vector4f* out);
 
 	float Vector4f_length(Vector4f* p_vec);
+	void Vector4f_add(Vector4f* p_vector, Vector4f* p_other, Vector4f* p_out);
+	void Vector4f_add(Vector4f* p_vector, Vector3f* p_other, Vector4f* p_out);
+
 }

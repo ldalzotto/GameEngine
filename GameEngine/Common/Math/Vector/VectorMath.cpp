@@ -102,6 +102,15 @@ namespace _GameEngine::_Math
 		);
 	};
 
+	bool Vector4f_equals(Vector4f* left, Vector4f* right)
+	{
+		return
+			fabsf(left->x - right->x) < FLOAT_TOLERANCE &&
+			fabsf(left->y - right->y) < FLOAT_TOLERANCE &&
+			fabsf(left->z - right->z) < FLOAT_TOLERANCE &&
+			fabsf(left->w - right->w) < FLOAT_TOLERANCE
+			;
+	};
 
 	void Vector4f_build(Vector3f* p_xyz, float p_w, Vector4f* out)
 	{
@@ -118,5 +127,21 @@ namespace _GameEngine::_Math
 				(p_vec->y * p_vec->y) +
 				(p_vec->z * p_vec->z) +
 				(p_vec->w * p_vec->w));
+	};
+
+	void Vector4f_add(Vector4f* p_vector, Vector4f* p_other, Vector4f* p_out)
+	{
+		p_out->x = p_vector->x + p_other->x;
+		p_out->y = p_vector->y + p_other->y;
+		p_out->z = p_vector->z + p_other->z;
+		p_out->w = p_vector->w + p_other->w;
+	};
+
+	void Vector4f_add(Vector4f* p_vector, Vector3f* p_other, Vector4f* p_out)
+	{
+		p_out->x = p_vector->x + p_other->x;
+		p_out->y = p_vector->y + p_other->y;
+		p_out->z = p_vector->z + p_other->z;
+		p_out->w = p_vector->w;
 	};
 }

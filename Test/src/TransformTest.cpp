@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "Math/Math.h"
 #include "Math/Quaternion/QuaternionMath.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
@@ -19,6 +20,14 @@ if(left != right) \
 void test_assert(_GameEngine::_Math::Vector3f& l_left, _GameEngine::_Math::Vector3f& l_right)
 {
 	if (!_GameEngine::_Math::Vector3f_equals(&l_left, &l_right))
+	{
+		throw std::runtime_error("");
+	}
+}
+
+void test_assert(_GameEngine::_Math::Vector4f& l_left, _GameEngine::_Math::Vector4f& l_right)
+{
+	if (!_GameEngine::_Math::Vector4f_equals(&l_left, &l_right))
 	{
 		throw std::runtime_error("");
 	}
@@ -118,32 +127,76 @@ namespace _GameEngine::_Test
 					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rotationDelta);
 				}
 				_Math::Quaternion_mul(&l_rotationDelta, &l_rotationDelta, &l_wordRotationValueTest);
+
 			}
 
 			test_assert(_Math::Transform_getWorldRotation(&l_child1->Transform), l_wordRotationValueTest);
 
 			_Math::Vector3f l_worldScaleChild2ValueTest = { 4.0f, 4.0f, 4.0f };
-			 test_assert(_Math::Transform_getWorldScale(&l_child2->Transform), l_worldScaleChild2ValueTest);
-
-			 /*
-			{
-				// _Math::Matrix4x4f l_localToWorld = _Math::Transform_getLocalToWorldMatrix(&l_child2->Transform);
-				_Math::Transform_getLocalToWorldMatrix(&l_child2->Transform);
-				_Math::Vector3f l_c0 = { l_child2->Transform.Parent->Parent->LocalToWorldMatrix._00, l_child2->Transform.Parent->Parent->LocalToWorldMatrix._01 , l_child2->Transform.Parent->Parent->LocalToWorldMatrix._02 };
-				float l_lenght = _Math::Vector3f_length(&l_c0);
-				int ldz = 0;
-			}
-			*/
+			test_assert(_Math::Transform_getWorldScale(&l_child2->Transform), l_worldScaleChild2ValueTest);
 
 			Component_free(&l_rootComponent);
 			Component_free(&l_child1Component);
 			Component_free(&l_child2Component);
 		}
-	}
+	};
+
+	void Transform_referenceSwitch()
+	{
+		{
+			Component* l_rootComponent;
+			TransformComponent* l_root;
+			{
+				l_rootComponent = Component_alloc(TransformComponentType, sizeof(TransformComponent));
+				l_root = (TransformComponent*)l_rootComponent->Child;
+
+				TransformInitInfo l_rootInitInfo{};
+				l_rootInitInfo.LocalPosition = { 1.0f, 0.0f, -1.0f };
+				{
+					_Math::Vector3f l_localEuler{ 0.0f, 0.0f, 0.0f };
+					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
+				}
+				l_rootInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
+				TransformComponent_init(l_rootComponent, &l_rootInitInfo);
+			}
+
+			Component* l_child1Component;
+			TransformComponent* l_child1;
+			{
+				l_child1Component = Component_alloc(TransformComponentType, sizeof(TransformComponent));
+				l_child1 = (TransformComponent*)l_child1Component->Child;
+
+				TransformInitInfo l_rootInitInfo{};
+				l_rootInitInfo.LocalPosition = { 0.0f, 1.0f, 0.0f };
+				{
+					_Math::Vector3f l_localEuler{ M_PI, 0.0f, 0.0f };
+					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
+				}
+				l_rootInitInfo.LocalScale = { 2.0f, 2.0f, 2.0f };
+				TransformComponent_init(l_child1Component, &l_rootInitInfo);
+			}
+
+			_Math::Transform_addChild(&l_root->Transform, &l_child1->Transform);
+
+			_Math::Matrix4x4f l_child1ToRootMatrix = _Math::Transform_calculateMatrixToProjectFromTransformToAnother(&l_child1->Transform, &l_root->Transform);
+			_Math::Vector4f l_child1RelativePosition = { 0.0f, 1.0f, 0.0f, 0.0f };
+			{
+				_Math::Vector4f l_child1TransformedPosition;
+				_Math::Matrixf4x4_mul(&l_child1ToRootMatrix, &l_child1RelativePosition, &l_child1TransformedPosition);
+				// The l_child1 is rotated by PI in the x axis
+				_Math::Vector4f l_compared =  {0.0f, -2.0f, 0.0f, 0.0f};
+				test_assert(l_child1TransformedPosition, l_compared);
+			}
+
+			Component_free(&l_rootComponent);
+			Component_free(&l_child1Component);
+		}
+	};
 
 	void TransformTest_test()
 	{
-		Transform_simpleTransformation_test();
-		Transform_parenting_test();
+		// Transform_simpleTransformation_test();
+		// Transform_parenting_test();
+		Transform_referenceSwitch();
 	};
 }
