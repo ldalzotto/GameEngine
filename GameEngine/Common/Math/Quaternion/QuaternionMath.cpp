@@ -135,29 +135,37 @@ namespace _GameEngine::_Math
 	{
 #if !comment
 		// We calculate the four square roots and get the higher one.
+		float qxDiag = fmaxf(1 + p_right->x - p_up->y - p_forward->z, 0.0f);
+		float qyDiag = fmaxf(1 + p_up->y - p_right->x - p_forward->z, 0.0f);
+		float qzDiag = fmaxf(1 + p_forward->z - p_right->x - p_up->y, 0.0f);
+		float qwDiag = fmaxf(1 + p_right->x + p_up->y + p_forward->z, 0.0f);
+
+		/*
 		float qxSr = fmaxf(0.5f * sqrtf(1 + p_right->x - p_up->y - p_forward->z), -std::numeric_limits<float>::max());
 		float qySr = fmaxf(0.5f * sqrtf(1 + p_up->y - p_right->x - p_forward->z), -std::numeric_limits<float>::max());
 		float qzSr = fmaxf(0.5f * sqrtf(1 + p_forward->z - p_right->x - p_up->y), -std::numeric_limits<float>::max());
 		float qwSr = fmaxf(0.5f * sqrtf(1 + p_right->x + p_up->y + p_forward->z), -std::numeric_limits<float>::max());
+		*/
 
 		int l_diagonalIndex = 0;
-		float l_biggestDiagonalValue = qxSr;
-		if (qySr > l_biggestDiagonalValue)
+		float l_biggestDiagonalValue = qxDiag;
+		if (qyDiag > l_biggestDiagonalValue)
 		{
-			l_biggestDiagonalValue = qySr;
+			l_biggestDiagonalValue = qyDiag;
 			l_diagonalIndex = 1;
 		}
-		if (qzSr > l_biggestDiagonalValue)
+		if (qzDiag > l_biggestDiagonalValue)
 		{
-			l_biggestDiagonalValue = qzSr;
+			l_biggestDiagonalValue = qzDiag;
 			l_diagonalIndex = 2;
 		}
-		if (qwSr > l_biggestDiagonalValue)
+		if (qwDiag > l_biggestDiagonalValue)
 		{
-			l_biggestDiagonalValue = qwSr;
+			l_biggestDiagonalValue = qwDiag;
 			l_diagonalIndex = 3;
 		}
 
+		l_biggestDiagonalValue = 0.5f * sqrtf(l_biggestDiagonalValue);
 		float mult = 1 / (4.0f * l_biggestDiagonalValue);
 
 		switch (l_diagonalIndex)
