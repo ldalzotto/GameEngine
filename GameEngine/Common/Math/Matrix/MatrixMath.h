@@ -15,6 +15,10 @@ namespace _GameEngine::_Math
 	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector4f* p_out);
 	void Matrix4x4f_forward(Matrix4x4f* p_matrix, Vector4f* p_out);
 
+	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector3f* p_out);
+	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector3f* p_out);
+	void Matrix4x4f_forward(Matrix4x4f* p_matrix, Vector3f* p_out);
+
 	void Matrixf4x4_build(Matrix3x3f* p_matrix, Matrix4x4f* p_out);
 
 	void Matrif4x4_buildTRS(Vector3f* p_position, Quaternionf* p_quaternion, Vector3f* p_scale, Matrix4x4f* out_TRS);

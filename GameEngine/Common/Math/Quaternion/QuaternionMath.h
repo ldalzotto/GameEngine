@@ -16,5 +16,8 @@ namespace _GameEngine::_Math
 
 	void Quaternion_fromEulerAngles(Vector3f* p_eulerAngles, Quaternionf* p_out);
 	void Quaternion_fromEulerAngles(Vector3f& p_eulerAngles, Quaternionf* p_out);
+	void Quaternion_toEulerAngles(Quaternionf* p_quaternion, Vector3f* p_eulerAngles);
 	void Quaternion_extractAxis(Quaternionf* p_quaternion, Vector3f* out_right, Vector3f* out_up, Vector3f* out_forward);
+	void Quaternion_fromAxis(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Quaternionf* out_quaternion);
+
 }

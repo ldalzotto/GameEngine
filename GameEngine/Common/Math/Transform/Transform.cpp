@@ -96,26 +96,15 @@ namespace _GameEngine::_Math
 	_Math::Quaternionf Transform_getWorldRotation(Transform* p_transform)
 	{
 		_Math::Quaternionf l_return;
+		_Math::Matrix4x4f l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);
 		{
-			_Math::Vector3f l_eulerAngles{ 0.0f, 0.0f, 0.0f };
-			_Math::Quaternion_fromEulerAngles(&l_eulerAngles, &l_return);
+			_Math::Vector3f l_right, l_up, l_forward;
+			_Math::Matrix4x4f_right(&l_localToWorldMatrix, &l_right);
+			_Math::Matrix4x4f_up(&l_localToWorldMatrix, &l_up);
+			_Math::Matrix4x4f_forward(&l_localToWorldMatrix, &l_forward);
+			Quaternion_fromAxis(&l_right, &l_up, &l_forward, &l_return);
 		}
 
-		if (p_transform->Parent)
-		{
-			_Math::Quaternionf l_parentRotation = Transform_getWorldRotation(p_transform->Parent);
-			_Math::Quaternionf l_returnCopy;
-			{
-				_Math::Quaternionf_copy(&l_return, &l_returnCopy);
-			}
-			_Math::Quaternion_mul(&l_parentRotation, &l_returnCopy, &l_return);
-		}
-
-		_Math::Quaternionf l_returnCopy;
-		{
-			_Math::Quaternionf_copy(&l_return, &l_returnCopy);
-		}
-		_Math::Quaternion_mul(&l_returnCopy, &p_transform->LocalRotation, &l_return);
 		return l_return;
 	};
 
@@ -167,7 +156,7 @@ namespace _GameEngine::_Math
 		{
 			{
 				_Math::Matrif4x4_buildTRS(&p_transform->LocalPosition, &p_transform->LocalRotation, &p_transform->LocalScale, &p_transform->LocalToWorldMatrix);
-				
+
 				if (p_transform->Parent)
 				{
 					_Math::Matrix4x4f l_localToWorldCopy;
