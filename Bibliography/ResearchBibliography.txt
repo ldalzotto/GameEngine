@@ -1,0 +1,10 @@
+Blibliography :
+
+Quaternion.
+  https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/
+
+Physics.
+  AABB Intersection : 
+https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
+  Simple intersections (sweep test) : 
+https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?print=1

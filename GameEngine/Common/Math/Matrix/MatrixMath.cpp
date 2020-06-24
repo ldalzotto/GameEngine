@@ -33,13 +33,13 @@ namespace _GameEngine::_Math
 	void Matrix3x3f_c1(Matrix3x3f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_10; p_out->y = p_matrix->_11; p_out->z = p_matrix->_12; };
 	void Matrix3x3f_c2(Matrix3x3f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_20; p_out->y = p_matrix->_21; p_out->z = p_matrix->_22; };
 
-	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_00; p_out->y = p_matrix->_10; p_out->z = p_matrix->_20; p_out->w = p_matrix->_30; };
-	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_01; p_out->y = p_matrix->_11; p_out->z = p_matrix->_21; p_out->w = p_matrix->_31; };
-	void Matrix4x4f_forward(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_02; p_out->y = p_matrix->_12; p_out->z = p_matrix->_22; p_out->w = p_matrix->_32; };
+	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_00; p_out->y = p_matrix->_01; p_out->z = p_matrix->_02; p_out->w = p_matrix->_03; };
+	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_10; p_out->y = p_matrix->_11; p_out->z = p_matrix->_12; p_out->w = p_matrix->_13; };
+	void Matrix4x4f_forward(Matrix4x4f* p_matrix, Vector4f* p_out) { p_out->x = p_matrix->_20; p_out->y = p_matrix->_21; p_out->z = p_matrix->_22; p_out->w = p_matrix->_23; };
 
-	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_00; p_out->y = p_matrix->_10; p_out->z = p_matrix->_20; };
-	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_01; p_out->y = p_matrix->_11; p_out->z = p_matrix->_21; };
-	void Matrix4x4f_forward(Matrix4x4f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_02; p_out->y = p_matrix->_12; p_out->z = p_matrix->_22; };
+	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_00; p_out->y = p_matrix->_01; p_out->z = p_matrix->_02; };
+	void Matrix4x4f_up(Matrix4x4f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_10; p_out->y = p_matrix->_11; p_out->z = p_matrix->_12; };
+	void Matrix4x4f_forward(Matrix4x4f* p_matrix, Vector3f* p_out) { p_out->x = p_matrix->_20; p_out->y = p_matrix->_21; p_out->z = p_matrix->_22; };
 
 	void Matrixf4x4_build(Matrix3x3f* p_matrix, Matrix4x4f* p_out)
 	{
