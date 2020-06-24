@@ -50,6 +50,8 @@ namespace _GameEngine::_Render
 	void Gizmo_free(Gizmo* p_gizmo, RenderInterface* p_renderInterface);
 	void Gizmo_clear(Gizmo* p_gizmo);
 
+	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end);
+	void Gizmo_drawPoint(Gizmo* p_gizmo, _Math::Vector3f* p_point);
 	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix);
 
 }

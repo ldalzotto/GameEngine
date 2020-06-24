@@ -17,6 +17,8 @@
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 
+#include "Physics/World/RayCast.h"
+
 #include "MyLog/MyLog.h"
 
 #include "Math/Quaternion/QuaternionMath.h"
@@ -145,7 +147,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
-			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 2.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 
 			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_parent, &l_component);
@@ -201,6 +203,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
 		}
 
+		/*
 		_ECS::TransformComponent* l_childTransform;
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
@@ -210,7 +213,7 @@ void SandboxApplication_update(float p_delta)
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.15f, -0.15f, 0.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, & l_transformInitInfo.LocalRotation);
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f ,1.0f ,1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 
@@ -223,7 +226,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 			l_transformRotate->Speed = 1.0f;
 			l_transformRotate->Axis = _Math::FORWARD;
-		
+
 			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_child, &l_component);
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
 		}
@@ -276,7 +279,7 @@ void SandboxApplication_update(float p_delta)
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.15f, -0.15f, 0.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, & l_transformInitInfo.LocalRotation);
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 
@@ -289,9 +292,10 @@ void SandboxApplication_update(float p_delta)
 			&l_child2Transform->Transform
 		);
 
+		*/
 		// _ECS::Transform_addChild((_ECS::Transform*)Entity_getComponent(l_child, _ECS::TransformType)->Child, (_ECS::Transform*)Entity_getComponent(l_child2, _ECS::TransformType)->Child);
 
-		
+
 
 		_ECS::SystemV2AllocInfo l_systemAllocInfo{};
 		_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, &App->ECS);
@@ -310,6 +314,26 @@ void SandboxApplication_update(float p_delta)
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
 		HasAlreadyUpdated = true;
+	}
+	else
+	{
+		_Math::Vector3f l_begin = {0.0f, -5.0f, -10.0f};
+		_Math::Vector3f l_end = {0.0f, 5.0f, 10.0f };
+		_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_begin, &l_end);
+		
+
+		_Core::VectorT<_Math::Vector3f> l_intersectionPoints;
+		l_intersectionPoints.alloc();
+		{
+			_Physics::RayCastAll(&App->Physics.World, &l_begin, &l_end, &l_intersectionPoints);
+
+			for (size_t i = 0; i < l_intersectionPoints.size(); i++)
+			{
+				_Render::Gizmo_drawPoint(&App->Render.Gizmo, l_intersectionPoints.at(i));
+			}
+		}
+		l_intersectionPoints.free();
+	
 	}
 
 }

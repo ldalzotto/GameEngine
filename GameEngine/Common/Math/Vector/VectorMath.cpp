@@ -77,7 +77,6 @@ namespace _GameEngine::_Math
 		p_out->z = p_vector->z - p_other->z;
 	};
 
-
 	float Vector3f_dot(Vector3f* p_vector, Vector3f* p_other)
 	{
 		return
