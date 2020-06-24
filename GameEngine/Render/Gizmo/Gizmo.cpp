@@ -4,6 +4,7 @@
 #include "Math/Box/BoxMath.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
+#include "Math/Transform/Transform.h"
 
 #include "Materials/MaterialInstance.h"
 #include "Resources/MaterialResourceProvider.h"
@@ -159,10 +160,15 @@ namespace _GameEngine::_Render
 	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end)
 	{
 		_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
+		Gizmo_drawLine(p_gizmo, p_begin, p_end, &l_color);
+	};
+
+	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Math::Vector3f* p_color)
+	{
 		GizmoIndiceType l_beginIndex;
-		Gizmo_pushVertex(p_gizmo, *p_begin, l_color, &l_beginIndex);
+		Gizmo_pushVertex(p_gizmo, *p_begin, *p_color, &l_beginIndex);
 		GizmoIndiceType l_endIndex;
-		Gizmo_pushVertex(p_gizmo, *p_end, l_color, &l_endIndex);
+		Gizmo_pushVertex(p_gizmo, *p_end, *p_color, &l_endIndex);
 		Gizmo_drawLine_indices(p_gizmo, l_beginIndex, l_endIndex);
 	};
 
@@ -201,5 +207,25 @@ namespace _GameEngine::_Render
 		Gizmo_drawLine_indices(p_gizmo, RUB_index, RUF_index);
 
 		Gizmo_drawPointV2(p_gizmo, l_boxPoints.Center, l_color);
+	};
+
+	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Transform* p_transform)
+	{
+		_Math::Vector3f l_center = _Math::Transform_getWorldPosition(p_transform);
+		_Math::Vector3f l_right = _Math::Transform_getRight(p_transform);
+		_Math::Vector3f_add(&l_center, &l_right, &l_right);
+		_Math::Vector3f l_up = _Math::Transform_getUp(p_transform);
+		_Math::Vector3f_add(&l_center, &l_up, &l_up);
+		_Math::Vector3f l_forward = _Math::Transform_getForward(p_transform);
+		_Math::Vector3f_add(&l_center, &l_forward, &l_forward);
+
+		_Math::Vector3f l_rightColor = { 1.0f, 0.0f, 0.0f };
+		_Math::Vector3f l_upColor = { 0.0f, 1.0f, 0.0f };
+		_Math::Vector3f l_forwardColor = { 0.0f, 0.0f, 1.0f };
+
+
+		Gizmo_drawLine(p_gizmo, &l_center, &l_right, &l_rightColor);
+		Gizmo_drawLine(p_gizmo, &l_center, &l_up, &l_upColor);
+		Gizmo_drawLine(p_gizmo, &l_center, &l_forward, &l_forwardColor);
 	};
 }

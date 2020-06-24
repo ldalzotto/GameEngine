@@ -165,13 +165,13 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 			l_transformRotate->Speed = 1.0f;
-			l_transformRotate->Axis = _Math::UP;
+			l_transformRotate->Axis = _Math::RIGHT;
 
 			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_parent, &l_component);
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
 		}
 
-
+		/*
 		{
 			l_child = _ECS::Entity_alloc(&App->ECS);
 			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_child);
@@ -189,8 +189,8 @@ void SandboxApplication_update(float p_delta)
 			};
 
 			_Render::MaterialUniqueKey l_materialKey{};
-			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/EditorVertex.spv";
-			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/EditorFragment.spv";
+			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
+			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
 
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.InputParameters = l_defaultMaterialInput;
@@ -203,7 +203,6 @@ void SandboxApplication_update(float p_delta)
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
 		}
 
-		/*
 		_ECS::TransformComponent* l_childTransform;
 		{
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
@@ -231,6 +230,12 @@ void SandboxApplication_update(float p_delta)
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
 		}
 
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererBoundType, sizeof(_ECS::MeshRendererBound));
+
+			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_child, &l_component);
+			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
+		}
 
 		_Math::Transform_addChild(
 			&l_parentTransform->Transform,
@@ -287,12 +292,20 @@ void SandboxApplication_update(float p_delta)
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
 		}
 
+
+		{
+			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::MeshRendererBoundType, sizeof(_ECS::MeshRendererBound));
+
+			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_child2, &l_component);
+			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
+		}
+
 		_Math::Transform_addChild(
 			&l_childTransform->Transform,
 			&l_child2Transform->Transform
 		);
-
 		*/
+
 		// _ECS::Transform_addChild((_ECS::Transform*)Entity_getComponent(l_child, _ECS::TransformType)->Child, (_ECS::Transform*)Entity_getComponent(l_child2, _ECS::TransformType)->Child);
 
 
@@ -317,10 +330,12 @@ void SandboxApplication_update(float p_delta)
 	}
 	else
 	{
-		_Math::Vector3f l_begin = {0.0f, -5.0f, -10.0f};
-		_Math::Vector3f l_end = {0.0f, 5.0f, 10.0f };
+		_Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_parent, _ECS::TransformComponentType)->Child)->Transform);
+
+		_Math::Vector3f l_begin = { 0.0f, -5.0f, -10.0f };
+		_Math::Vector3f l_end = { 0.0f, 5.0f, 10.0f };
 		_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_begin, &l_end);
-		
+
 
 		_Core::VectorT<_Math::Vector3f> l_intersectionPoints;
 		l_intersectionPoints.alloc();
@@ -333,7 +348,7 @@ void SandboxApplication_update(float p_delta)
 			}
 		}
 		l_intersectionPoints.free();
-	
+
 	}
 
 }

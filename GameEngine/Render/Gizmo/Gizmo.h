@@ -10,6 +10,7 @@ namespace _GameEngine::_Math
 {
 	struct Box;
 	struct Matrix4x4f;
+	struct Transform;
 }
 
 namespace _GameEngine::_Render
@@ -51,7 +52,8 @@ namespace _GameEngine::_Render
 	void Gizmo_clear(Gizmo* p_gizmo);
 
 	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end);
+	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Math::Vector3f* p_color);
 	void Gizmo_drawPoint(Gizmo* p_gizmo, _Math::Vector3f* p_point);
 	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix);
-
+	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Transform* p_transform);
 }
