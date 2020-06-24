@@ -172,7 +172,7 @@ namespace _GameEngine::_Render
 		Gizmo_drawLine_indices(p_gizmo, l_beginIndex, l_endIndex);
 	};
 
-	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix)
+	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix, bool p_withCenter)
 	{
 		_Core::ArrayT<_Math::Vector3f> l_points;
 		_Math::BoxPoints l_boxPoints;
@@ -206,7 +206,10 @@ namespace _GameEngine::_Render
 		Gizmo_drawLine_indices(p_gizmo, RUB_index, LUB_index);
 		Gizmo_drawLine_indices(p_gizmo, RUB_index, RUF_index);
 
-		Gizmo_drawPointV2(p_gizmo, l_boxPoints.Center, l_color);
+		if (p_withCenter)
+		{
+			Gizmo_drawPointV2(p_gizmo, l_boxPoints.Center, l_color);
+		}
 	};
 
 	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Transform* p_transform)

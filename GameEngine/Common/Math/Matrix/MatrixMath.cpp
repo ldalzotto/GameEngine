@@ -126,9 +126,13 @@ namespace _GameEngine::_Math
 
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector3f* p_vector, Vector3f* out)
 	{
-		out->x = (p_matrix->_00 * p_vector->x) + (p_matrix->_10 * p_vector->y) + (p_matrix->_20 * p_vector->z);
-		out->y = (p_matrix->_01 * p_vector->x) + (p_matrix->_11 * p_vector->y) + (p_matrix->_21 * p_vector->z);
-		out->z = (p_matrix->_02 * p_vector->x) + (p_matrix->_12 * p_vector->y) + (p_matrix->_22 * p_vector->z);
+		_Math::Vector4f l_vector4f;
+		_Math::Vector4f_build(p_vector, 1.0f, &l_vector4f);
+
+		_Math::Vector4f l_out4f;
+		Matrixf4x4_mul(p_matrix, &l_vector4f, &l_out4f);
+
+		*out = { l_out4f.x, l_out4f.y, l_out4f.z };
 	};
 
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Matrix4x4f* p_other, Matrix4x4f* out)
@@ -251,7 +255,7 @@ namespace _GameEngine::_Math
 		Matrix4x4f_c0(p_mat, &l_c0);
 		Matrix4x4f_c1(p_mat, &l_c1);
 		Matrix4x4f_c2(p_mat, &l_c2);
-		
+
 		out_scale->x = Vector4f_length(&l_c0);
 		out_scale->y = Vector4f_length(&l_c1);
 		out_scale->z = Vector4f_length(&l_c2);

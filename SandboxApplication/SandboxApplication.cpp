@@ -92,8 +92,8 @@ void SandboxApplication_update(float p_delta)
 			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)l_component->Child;
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, -4.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalPosition = { 3.0f, 1.5f, -3.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.30f, -0.70f, 0.04f }, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 
@@ -145,7 +145,7 @@ void SandboxApplication_update(float p_delta)
 			}
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
+			l_transformInitInfo.LocalPosition = { 0.15f, -0.15f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 2.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
@@ -241,8 +241,6 @@ void SandboxApplication_update(float p_delta)
 			&l_childTransform->Transform
 		);
 
-
-
 		{
 			l_child2 = _ECS::Entity_alloc(&App->ECS);
 			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_child2);
@@ -304,9 +302,6 @@ void SandboxApplication_update(float p_delta)
 			&l_child2Transform->Transform
 		);
 
-		// _ECS::Transform_addChild((_ECS::Transform*)Entity_getComponent(l_child, _ECS::TransformType)->Child, (_ECS::Transform*)Entity_getComponent(l_child2, _ECS::TransformType)->Child);
-
-
 
 		_ECS::SystemV2AllocInfo l_systemAllocInfo{};
 		_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, &App->ECS);
@@ -334,11 +329,12 @@ void SandboxApplication_update(float p_delta)
 			_Render::Gizmo_drawTransform(&App->Render.Gizmo, &l_rootCenter, &_Math::RIGHT, &_Math::UP, &_Math::FORWARD);
 		}
 #endif
-		_Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_child2, _ECS::TransformComponentType)->Child)->Transform);
+		// _Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_child, _ECS::TransformComponentType)->Child)->Transform);
+		// _Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_child2, _ECS::TransformComponentType)->Child)->Transform);
 
 		_Math::Vector3f l_begin = { -10.0f, -5.0f, 00.0f };
 		_Math::Vector3f l_end = { 10.0f, 5.0f, 00.0f };
-		_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_begin, &l_end);
+		// _Render::Gizmo_drawLine(&App->Render.Gizmo, &l_begin, &l_end);
 
 
 		_Core::VectorT<_Math::Vector3f> l_intersectionPoints;
