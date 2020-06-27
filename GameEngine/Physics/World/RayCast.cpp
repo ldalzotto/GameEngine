@@ -1,5 +1,7 @@
 #include "RayCast.h"
 
+#include "DataStructures/ElementComparators.h"
+
 #include "Math/Intersection/Intersection.h"
 #include "Math/Transform/Transform.h"
 #include "Math/Matrix/Matrix.h"
@@ -12,6 +14,35 @@
 #include <math.h>
 #include "World/World.h"
 #include "Collider/BoxCollider.h"
+
+namespace _GameEngine::_Physics
+{
+	struct RaycastHitDistanceComparatorObject
+	{
+		_Math::Vector3f* RayBegin;
+		bool DistanceCalculated;
+		float CachedDistance;
+	};
+
+	short RaycastHit_distanceMinComparator(RaycastHit* p_left, RaycastHit* p_right, RaycastHitDistanceComparatorObject* p_comparatorObject)
+	{
+		float l_leftDistance = 0.0f;
+		if (!p_comparatorObject->DistanceCalculated)
+		{
+			l_leftDistance = _Math::Vector3f_distance(p_comparatorObject->RayBegin, &(p_left)->HitPoint);
+		}
+		else
+		{
+			l_leftDistance = p_comparatorObject->CachedDistance;
+		}
+
+		float l_rightDistance = _Math::Vector3f_distance(p_comparatorObject->RayBegin, &(p_right)->HitPoint);
+		short l_comparisonResult = _Core::FloatSortComparator(l_leftDistance, l_rightDistance);
+
+		if (l_comparisonResult >= 0) { p_comparatorObject->CachedDistance = l_leftDistance; p_comparatorObject->DistanceCalculated = true; }
+		return l_comparisonResult;
+	};
+}
 
 namespace _GameEngine::_Physics
 {
@@ -57,23 +88,11 @@ namespace _GameEngine::_Physics
 
 			if (l_hits.size() > 0)
 			{
+				// We use a return value instead of directly returning to free the l_hits vector.
 				l_return = true;
-
-				// We get the nearest hit from begin
-				size_t l_currentIndex = 0;
-				float l_comparedDistacne = _Math::Vector3f_distance(p_begin, &(l_hits.at(l_currentIndex))->HitPoint);
-
-				for (size_t i = 1; i < l_hits.size(); i++)
-				{
-					float l_dst = _Math::Vector3f_distance(p_begin, &(l_hits.at(i))->HitPoint);
-					if (l_dst <= l_comparedDistacne)
-					{
-						l_currentIndex = i;
-						l_comparedDistacne = l_dst;
-					}
-				}
-
-				*out_hit = *l_hits.at(l_currentIndex);
+				RaycastHitDistanceComparatorObject l_raycastMinComparatorObject{};
+				l_raycastMinComparatorObject.RayBegin = p_begin;
+				*out_hit = *l_hits.min(RaycastHit_distanceMinComparator, &l_raycastMinComparatorObject);
 			}
 
 		}

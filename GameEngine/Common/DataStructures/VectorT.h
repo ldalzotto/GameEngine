@@ -31,6 +31,9 @@ namespace _GameEngine::_Core
 		template <class COMPARED_OBJECT>
 		size_t getIndex(bool(*p_comparator)(T*, COMPARED_OBJECT*), COMPARED_OBJECT* p_userObject) { return Vector_getIndex(&Vector, (VectorElementComparator)p_comparator, p_userObject); };
 
+		template <class USER_OBJECT>
+		T* min(short(*p_sortComparator)(T*, T*, USER_OBJECT*), USER_OBJECT* p_userObject) { return (T*)Vector_min(&Vector, (SortElementComparatorWithUserObject)p_sortComparator, p_userObject); };
+
 		template <class COMPARED_OBJECT>
 		bool contains(bool(*p_comparator)(T*, COMPARED_OBJECT*), COMPARED_OBJECT* p_userObject) { return Vector_contains(&Vector, (VectorElementComparator)p_comparator, p_userObject); };
 
