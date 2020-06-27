@@ -45,4 +45,6 @@ namespace _GameEngine::_Math
 	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out);
 	float Matrixf4x4_far(Matrix4x4f* p_matrix);
 	float Matrixf4x4_near(Matrix4x4f* p_matrix);
+
+	void Matrix3x3f_mul(Matrix3x3f* p_matrix, Vector3f* p_vector, Vector3f* p_out);
 }

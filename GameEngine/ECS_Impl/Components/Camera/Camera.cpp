@@ -44,18 +44,4 @@ namespace _GameEngine::_ECS
 			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 10.0f, &p_camera->ProjectionMatrix);
 	};
 
-	void Camera_convertWindowPixelPositionToNormalizedScreenRenderCoordinate(Camera* p_camera, _Math::Vector2f* p_screenSpaceCoordinates, _Math::Vector2f* out_renderNormalized)
-	{
-		out_renderNormalized->x = p_screenSpaceCoordinates->x  / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width;
-		out_renderNormalized->y = p_screenSpaceCoordinates->y / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height;
-
-		// center is 0,0
-		out_renderNormalized->x -= 0.5f;
-		out_renderNormalized->y -= 0.5f;
-
-		// Corners are 1,1
-		out_renderNormalized->x *= 2.0f;
-		out_renderNormalized->y *= 2.0f;
-	};
-
 }

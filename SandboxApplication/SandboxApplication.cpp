@@ -364,19 +364,6 @@ void SandboxApplication_update(float p_delta)
 
 			_ECS::CameraSystem_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
 
-			/*
-			{
-				_Core::String l_logMsg;
-				l_logMsg.alloc(0);
-				l_logMsg.append("begin : ");
-				_Math::Vector3f_toString(&l_ray.Begin, &l_logMsg);
-				l_logMsg.append(" , end : ");
-				_Math::Vector3f_toString(&l_ray.End, &l_logMsg);
-				MYLOG_PUSH(&App->Log, _Log::INFO, l_logMsg.c_str());
-				l_logMsg.free();
-			}
-			*/
-
 			_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_ray.Begin, &l_ray.End);
 
 			_Physics::RaycastHit l_hit;

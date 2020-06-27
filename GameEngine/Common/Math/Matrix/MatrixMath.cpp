@@ -359,4 +359,11 @@ namespace _GameEngine::_Math
 		float l_alpha = (-1 + p_matrix->_22) / (p_matrix->_22 + 1);
 		return ((p_matrix->_32 * (l_alpha - 1.0f) / (-2.0f * l_alpha)));
 	};
+
+	void Matrix3x3f_mul(Matrix3x3f* p_matrix, Vector3f* p_vector, Vector3f* p_out)
+	{
+		p_out->x = (p_matrix->_00 * p_vector->x) + (p_matrix->_10 * p_vector->y) + (p_matrix->_20 * p_vector->z);
+		p_out->y = (p_matrix->_01 * p_vector->x) + (p_matrix->_11 * p_vector->y) + (p_matrix->_21 * p_vector->z);
+		p_out->z = (p_matrix->_02 * p_vector->x) + (p_matrix->_12 * p_vector->y) + (p_matrix->_22 * p_vector->z);
+	};
 }

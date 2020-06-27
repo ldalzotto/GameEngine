@@ -3,6 +3,7 @@
 
 #include "Utils/Observer/Observer.h"
 
+#include "Math/Matrix/Matrix.h"
 
 #include "Includes/GLFWIncludes.h"
 
@@ -21,6 +22,8 @@ namespace _GameEngine::_Render
 	{
 		GLFWwindow* Window;
 		WindowSize WindowSize;
+
+		_Math::Matrix3x3f WindowToGraphicsAPIPixelCoordinates;
 		_Utils::Observer OnWindowSizeChanged;
 	};
 

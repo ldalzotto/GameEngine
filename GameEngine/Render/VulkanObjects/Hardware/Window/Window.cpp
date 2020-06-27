@@ -12,6 +12,20 @@ namespace _GameEngine::_Render
 	const std::string WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
 	void window_size_callback(GLFWwindow* window, int width, int height);
+	void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
+	{
+			p_window->WindowToGraphicsAPIPixelCoordinates._00 = 2.0f / (float)p_window->WindowSize.Width;
+			p_window->WindowToGraphicsAPIPixelCoordinates._01 = 0.0f;
+			p_window->WindowToGraphicsAPIPixelCoordinates._02 = 0.0f;
+
+			p_window->WindowToGraphicsAPIPixelCoordinates._10 = 0.0f;
+			p_window->WindowToGraphicsAPIPixelCoordinates._11 = 2.0f / (float)p_window->WindowSize.Height;
+			p_window->WindowToGraphicsAPIPixelCoordinates._12 = 0.0f;
+
+			p_window->WindowToGraphicsAPIPixelCoordinates._20 = -1.0f;
+			p_window->WindowToGraphicsAPIPixelCoordinates._21 = -1.0f;
+			p_window->WindowToGraphicsAPIPixelCoordinates._22 = 0.0f;
+	};
 
 	std::unordered_map<GLFWwindow*, Window*> WindowIndexedForGLFW{};
 
@@ -23,6 +37,7 @@ namespace _GameEngine::_Render
 		p_window->Window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan", nullptr, nullptr);
 		p_window->WindowSize.Width = WINDOW_WIDTH;
 		p_window->WindowSize.Height = WINDOW_HEIGHT;
+		Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
 		WindowIndexedForGLFW.emplace(p_window->Window, p_window);
 		glfwSetWindowSizeCallback(p_window->Window, window_size_callback);
 	}
@@ -74,7 +89,7 @@ namespace _GameEngine::_Render
 
 		l_window->WindowSize.Width = width;
 		l_window->WindowSize.Height = height;
-
+		Window_updateScreeToGraphicsAPIPixelCoordinates(l_window);
 		Observer_broadcast(&l_window->OnWindowSizeChanged, nullptr);
 	};
 

@@ -13,6 +13,7 @@
 
 #include "Render/RenderInterface.h"
 #include "Render/LoopStep/CameraBufferSetupStep.h"
+#include "Render/VulkanObjects/Hardware/Window/Window.h"
 
 namespace _GameEngine::_ECS
 {
@@ -87,8 +88,14 @@ namespace _GameEngine::_ECS
 
 	void CameraSystem_buildWorldSpaceRay(Camera* p_camera, _Math::Vector2f* p_screenPoint, _Math::Segment* out_ray)
 	{
-		_Math::Vector2f l_normalizedScreenPoint;
-		Camera_convertWindowPixelPositionToNormalizedScreenRenderCoordinate(p_camera, p_screenPoint, &l_normalizedScreenPoint);
+		_Math::Vector2f l_graphicsAPIPixelCoord;
+
+		{
+			_Math::Vector3f l_screenPoint3f = { p_screenPoint->x, p_screenPoint->y, 1.0f };
+			_Math::Vector3f l_graphicsAPIPixelCoord3f;
+			_Math::Matrix3x3f_mul(&p_camera->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates, &l_screenPoint3f, &l_graphicsAPIPixelCoord3f);
+			l_graphicsAPIPixelCoord = { l_graphicsAPIPixelCoord3f.x, l_graphicsAPIPixelCoord3f.y };
+		}
 
 		_Math::Matrix4x4f l_screenToWorldMatrix;
 		{
@@ -97,12 +104,12 @@ namespace _GameEngine::_ECS
 			_Math::Matrixf4x4_inv(&l_tmp, &l_screenToWorldMatrix);
 		}
 
-		_Math::Vector4f l_beginScreenSpace = { l_normalizedScreenPoint.x, l_normalizedScreenPoint.y, -1.0f, 1.0f };
+		_Math::Vector4f l_beginScreenSpace = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f };
 		_Math::Vector4f l_beginWorldSpace;
 		_Math::Matrixf4x4_mul(&l_screenToWorldMatrix, &l_beginScreenSpace, &l_beginWorldSpace);
 		_Math::Vector4f_mul(&l_beginWorldSpace, 1.0f / l_beginWorldSpace.w, &l_beginWorldSpace);
 
-		_Math::Vector4f l_endScreenSpace = { l_normalizedScreenPoint.x, l_normalizedScreenPoint.y, 1.0f, 1.0f };
+		_Math::Vector4f l_endScreenSpace = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f };
 		_Math::Vector4f l_endWorldSpace;
 		_Math::Matrixf4x4_mul(&l_screenToWorldMatrix, &l_endScreenSpace, &l_endWorldSpace);
 		_Math::Vector4f_mul(&l_endWorldSpace, 1.0f / l_endWorldSpace.w, &l_endWorldSpace);
