@@ -96,6 +96,24 @@ namespace _GameEngine::_Math
 
 	};
 
+	void Box_extractMinMax(Box* p_box, _Math::Vector3f* out_min, _Math::Vector3f* out_max)
+	{
+		// min
+		{
+			out_min->x = -p_box->Extend.x;
+			out_min->y = -p_box->Extend.y;
+			out_min->z = -p_box->Extend.z;
+			_Math::Vector3f_add(&p_box->Center, out_min, out_min);
+		}
+		// max
+		{
+			out_max->x = p_box->Extend.x;
+			out_max->y = p_box->Extend.y;
+			out_max->z = p_box->Extend.z;
+			_Math::Vector3f_add(&p_box->Center, out_max, out_max);
+		}
+	};
+
 	void BoxPoints_mul(BoxPoints* p_boxPoints, Matrix4x4f* p_matrix)
 	{
 		_Math::Vector4f l_pointAsVec4;

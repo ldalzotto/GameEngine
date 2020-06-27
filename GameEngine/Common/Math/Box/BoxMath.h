@@ -6,6 +6,7 @@
 namespace _GameEngine::_Math
 {
 	struct Box;
+	struct Vector3f;
 	struct Matrix4x4f;
 }
 
@@ -30,5 +31,6 @@ namespace _GameEngine::_Math
 
 	void Box_build(Box* p_box, _Core::VectorT<_Math::Vector3f>* p_points);
 	void Box_extractPoints(Box* p_box, BoxPoints* out_points);
+	void Box_extractMinMax(Box* p_box, _Math::Vector3f* out_min, _Math::Vector3f* out_max);
 	void BoxPoints_mul(BoxPoints* p_boxPoints, Matrix4x4f* p_matrix);
 }

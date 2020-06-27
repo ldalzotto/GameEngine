@@ -9,8 +9,8 @@ namespace _GameEngine::_Math
 {
 	bool Intersection_AABB_Ray(Box* p_AABB, Segment* p_ray, Vector3f* p_outIntersectionPoint)
 	{
-		_Math::BoxPoints l_localBoxPoints;
-		_Math::Box_extractPoints(p_AABB, &l_localBoxPoints);
+		_Math::Vector3f l_boxMin, l_boxMax;
+		_Math::Box_extractMinMax(p_AABB, &l_boxMin, &l_boxMax);
 
 		_Math::Vector3f l_fragmentInsideBoxVector;
 
@@ -22,8 +22,8 @@ namespace _GameEngine::_Math
 
 		float l_rayDistanceFractionX_min, l_rayDistanceFractionX_max;
 		{
-			float l_xMax = l_localBoxPoints.R_D_B.x;
-			float l_xMin = l_localBoxPoints.L_D_B.x;
+			float l_xMax = l_boxMax.x;
+			float l_xMin = l_boxMin.x;
 
 			l_rayDistanceFractionX_min = (l_xMin - p_ray->Begin.x) / (p_ray->End.x - p_ray->Begin.x);
 			l_rayDistanceFractionX_max = (l_xMax - p_ray->Begin.x) / (p_ray->End.x - p_ray->Begin.x);
@@ -41,8 +41,8 @@ namespace _GameEngine::_Math
 
 		float l_rayDistanceFractionY_min, l_rayDistanceFractionY_max;
 		{
-			float l_yMax = l_localBoxPoints.R_U_B.y;
-			float l_yMin = l_localBoxPoints.L_D_B.y;
+			float l_yMax = l_boxMax.y;
+			float l_yMin = l_boxMin.y;
 
 			l_rayDistanceFractionY_min = (l_yMin - p_ray->Begin.y) / (p_ray->End.y - p_ray->Begin.y);
 			l_rayDistanceFractionY_max = (l_yMax - p_ray->Begin.y) / (p_ray->End.y - p_ray->Begin.y);
@@ -71,8 +71,8 @@ namespace _GameEngine::_Math
 
 		float l_rayDistanceFractionZ_min, l_rayDistanceFractionZ_max;
 		{
-			float l_zMax = l_localBoxPoints.R_D_F.z;
-			float l_zMin = l_localBoxPoints.L_D_B.z;
+			float l_zMax = l_boxMax.z;
+			float l_zMin = l_boxMin.z;
 
 			l_rayDistanceFractionZ_min = (l_zMin - p_ray->Begin.z) / (p_ray->End.z - p_ray->Begin.z);
 			l_rayDistanceFractionZ_max = (l_zMax - p_ray->Begin.z) / (p_ray->End.z - p_ray->Begin.z);
