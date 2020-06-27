@@ -119,6 +119,22 @@ namespace _GameEngine::_Math
 		out->w = p_w;
 	};
 
+	void Vector4f_build(Vector2f* p_xy, float p_z, float p_w, Vector4f* out)
+	{
+		out->x = p_xy->x;
+		out->y = p_xy->y;
+		out->z = p_w;
+		out->w = p_w;
+	};
+
+	void Vector4f_mul(Vector4f* p_vect, float p_value, Vector4f* p_out)
+	{
+		p_out->x = p_vect->x * p_value;
+		p_out->y = p_vect->y * p_value;
+		p_out->z = p_vect->z * p_value;
+		p_out->w = p_vect->w * p_value;
+	};
+
 	float Vector4f_length(Vector4f* p_vec)
 	{
 		return

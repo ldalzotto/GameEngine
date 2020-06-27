@@ -16,4 +16,11 @@ namespace _GameEngine::_Core
 		snprintf(l_allocatedMemory, sizeof(char) * 50, "%f", p_value);
 		p_string->append(l_allocatedMemory);
 	};
+
+	void String_appendFloat(String* p_string, float p_value)
+	{
+		char l_allocatedMemory[50];
+		snprintf(l_allocatedMemory, sizeof(char) * 50, "%f", p_value);
+		p_string->append(l_allocatedMemory);
+	};
 }

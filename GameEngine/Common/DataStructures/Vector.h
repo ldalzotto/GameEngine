@@ -22,6 +22,7 @@ namespace _GameEngine::_Core
 	void Vector_erase(Vector* p_vector, size_t p_index);	
 	void Vector_erase(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 	void Vector_clear(Vector* p_vector);
+	void Vector_reserve(Vector* p_vector, size_t p_elementNumber);
 	void* Vector_at(Vector* p_vector, size_t p_index);
 	void* Vector_get(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 	size_t Vector_getIndex(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);

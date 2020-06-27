@@ -1,5 +1,10 @@
 #pragma once
 
+namespace _GameEngine::_Core
+{
+	struct String;
+}
+
 namespace _GameEngine::_Math
 {
 	struct Vector2f
@@ -24,6 +29,8 @@ namespace _GameEngine::_Math
 	extern Vector3f RIGHT;
 	extern Vector3f UP;
 	extern Vector3f FORWARD;
+
+	void Vector3f_toString(Vector3f* p_vector, _Core::String* p_string);
 
 	struct Vector4f
 	{

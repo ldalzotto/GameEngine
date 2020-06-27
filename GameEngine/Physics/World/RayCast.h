@@ -16,5 +16,7 @@ namespace _GameEngine::_Physics
 		_Math::Vector3f HitPoint;
 	};
 
+	/** Returned RayCastHits are not sorted. */
 	void RayCastAll(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
+	bool RayCast(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, RaycastHit* out_hit);
 }

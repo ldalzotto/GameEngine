@@ -6,6 +6,8 @@
 #include "DataStructures/String.h"
 #include "DataStructures/StringConverterPrimitives.h"
 
+#include "Math/Segment/Segment.h"
+
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
@@ -332,23 +334,57 @@ void SandboxApplication_update(float p_delta)
 		// _Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_child, _ECS::TransformComponentType)->Child)->Transform);
 		// _Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_child2, _ECS::TransformComponentType)->Child)->Transform);
 
-		_Math::Vector3f l_begin = { -10.0f, -10.0f, 00.0f };
-		_Math::Vector3f l_end = { 10.0f, 10.0f, 00.0f };
-		// _Render::Gizmo_drawLine(&App->Render.Gizmo, &l_begin, &l_end);
 
+#if comment
 
-		_Core::VectorT<_Physics::RaycastHit> l_intersectionPoints;
-		l_intersectionPoints.alloc();
 		{
-			_Physics::RayCastAll(&App->Physics.World, &l_begin, &l_end, &l_intersectionPoints);
+			_Math::Vector3f l_begin = { -10.0f, -10.0f, 00.0f };
+			_Math::Vector3f l_end = { 10.0f, 10.0f, 00.0f };
+			// _Render::Gizmo_drawLine(&App->Render.Gizmo, &l_begin, &l_end);
 
-			for (size_t i = 0; i < l_intersectionPoints.size(); i++)
+			_Core::VectorT<_Physics::RaycastHit> l_intersectionPoints;
+			l_intersectionPoints.alloc();
 			{
-				_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_intersectionPoints.at(i)->HitPoint);
+				_Physics::RayCastAll(&App->Physics.World, &l_begin, &l_end, &l_intersectionPoints);
+
+				for (size_t i = 0; i < l_intersectionPoints.size(); i++)
+				{
+					_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_intersectionPoints.at(i)->HitPoint);
+				}
+			}
+			l_intersectionPoints.free();
+
+		}
+#endif
+
+		{
+			_ECS::SystemV2* l_cameraSystem = _ECS::SystemContainer_getSystem(&App->ECS.SystemContainer, &_ECS::CameraSystemKey);
+			_Math::Vector2f l_screenPoint = { App->Input.InputMouse.ScreenPosition.x, App->Input.InputMouse.ScreenPosition.y };
+			_Math::Segment l_ray;
+
+			_ECS::CameraSystem_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
+
+			/*
+			{
+				_Core::String l_logMsg;
+				l_logMsg.alloc(0);
+				l_logMsg.append("begin : ");
+				_Math::Vector3f_toString(&l_ray.Begin, &l_logMsg);
+				l_logMsg.append(" , end : ");
+				_Math::Vector3f_toString(&l_ray.End, &l_logMsg);
+				MYLOG_PUSH(&App->Log, _Log::INFO, l_logMsg.c_str());
+				l_logMsg.free();
+			}
+			*/
+
+			_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_ray.Begin, &l_ray.End);
+
+			_Physics::RaycastHit l_hit;
+			if (_Physics::RayCast(&App->Physics.World, &l_ray.Begin, &l_ray.End, &l_hit))
+			{
+				_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_hit.HitPoint);
 			}
 		}
-		l_intersectionPoints.free();
-
 	}
 
 }

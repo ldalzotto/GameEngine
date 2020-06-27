@@ -26,7 +26,11 @@ namespace _GameEngine::_Core
 		{
 			this->Vector.insertAt(p_appended, l_appendSize, 0);
 		}
-		
+	};
+
+	void String::reserve(size_t p_charNb) 
+	{
+		this->Vector.reserve(p_charNb);
 	};
 
 	char* String::c_str()

@@ -10,6 +10,7 @@ namespace _GameEngine::_Core
 		void alloc(size_t p_charNb);
 		void free();
 		void append(char* p_appended);
+		void reserve(size_t p_charNb);
 		char* c_str();
 	};
 }

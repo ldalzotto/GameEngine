@@ -7,15 +7,9 @@
 
 namespace _GameEngine
 {
-	namespace _Render
-	{
-		struct RenderInterface;
-	}
-	
-	namespace _ECS
-	{
-		struct Component;
-	}
+	namespace _Render { struct RenderInterface; }
+	namespace _ECS { struct Component; }
+	namespace _Math { struct Vector2f; }
 }
 
 namespace _GameEngine::_ECS
@@ -33,4 +27,5 @@ namespace _GameEngine::_ECS
 
 	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::RenderInterface* p_renderInterface);
 	void Camera_buildProjectionMatrix(Camera* p_camera);
+	void Camera_convertWindowPixelPositionToNormalizedScreenRenderCoordinate(Camera* p_camera, _Math::Vector2f* p_screenSpaceCoordinates, _Math::Vector2f* out_renderNormalized);
 }

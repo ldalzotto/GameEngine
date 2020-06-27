@@ -2,6 +2,7 @@
 
 namespace _GameEngine::_Math
 {
+	struct Vector2f;
 	struct Vector3f;
 	struct Vector4f;
 }
@@ -27,6 +28,9 @@ namespace _GameEngine::_Math
 
 	bool Vector4f_equals(Vector4f* left, Vector4f* right);
 	void Vector4f_build(Vector3f* p_xyz, float p_w, Vector4f* out);
+	void Vector4f_build(Vector2f* p_xy, float p_z, float p_w, Vector4f* out);
+
+	void Vector4f_mul(Vector4f* p_vect, float p_value, Vector4f* p_out);
 
 	float Vector4f_length(Vector4f* p_vec);
 	void Vector4f_add(Vector4f* p_vector, Vector4f* p_other, Vector4f* p_out);

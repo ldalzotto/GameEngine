@@ -135,6 +135,17 @@ namespace _GameEngine::_Math
 		*out = { l_out4f.x, l_out4f.y, l_out4f.z };
 	};
 
+	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector2f* p_vector, Vector3f* out)
+	{
+		_Math::Vector4f l_vector4f;
+		_Math::Vector4f_build(p_vector, 1.0f, 1.0f, &l_vector4f);
+
+		_Math::Vector4f l_out4f;
+		Matrixf4x4_mul(p_matrix, &l_vector4f, &l_out4f);
+
+		*out = { l_out4f.x, l_out4f.y, l_out4f.z };
+	};
+
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Matrix4x4f* p_other, Matrix4x4f* out)
 	{
 		out->_00 = (p_matrix->_00 * p_other->_00) + (p_matrix->_10 * p_other->_01) + (p_matrix->_20 * p_other->_02) + (p_matrix->_30 * p_other->_03);
@@ -314,7 +325,7 @@ namespace _GameEngine::_Math
 
 	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out)
 	{
-		float l_halfTan = tanf(p_fov / 2.0f);
+		float l_halfTan = atanf(p_fov / 2.0f);
 
 		p_out->_00 = 1.0f / (p_aspect * l_halfTan);
 		p_out->_01 = 0.0f;
@@ -335,5 +346,17 @@ namespace _GameEngine::_Math
 		p_out->_31 = 0.0f;
 		p_out->_32 = (-2.0f * p_far * p_near) / (p_far - p_near);
 		p_out->_33 = 0.0f;
-	}
+	};
+
+	float Matrixf4x4_far(Matrix4x4f* p_matrix)
+	{
+		float l_alpha = (-1 + p_matrix->_22) / (p_matrix->_22 + 1);
+		return l_alpha * ((p_matrix->_32 * (l_alpha - 1.0f) / (-2.0f * l_alpha)));
+	};
+
+	float Matrixf4x4_near(Matrix4x4f* p_matrix)
+	{
+		float l_alpha = (-1 + p_matrix->_22) / (p_matrix->_22 + 1);
+		return ((p_matrix->_32 * (l_alpha - 1.0f) / (-2.0f * l_alpha)));
+	};
 }

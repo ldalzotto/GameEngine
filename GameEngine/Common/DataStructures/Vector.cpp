@@ -164,6 +164,11 @@ namespace _GameEngine::_Core
 		p_vector->Size = 0;
 	};
 
+	void Vector_reserve(Vector* p_vector, size_t p_elementNumber)
+	{
+		Vector_resize(p_vector, Vector_getTotalSize(p_vector) + (p_vector->ElementSize * p_elementNumber));
+	};
+
 	void* Vector_at(Vector* p_vector, size_t p_index)
 	{
 		if (p_index >= p_vector->Size)

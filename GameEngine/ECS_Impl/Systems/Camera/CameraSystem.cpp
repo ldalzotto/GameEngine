@@ -4,6 +4,7 @@
 
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/VectorMath.h"
+#include "Math/Segment/Segment.h"
 #include <vector>
 
 #include "ECS_Impl/Components/Camera/Camera.h"
@@ -82,5 +83,31 @@ namespace _GameEngine::_ECS
 			return GET_COMPONENT(Camera, l_entity);
 		}
 		return nullptr;
+	};
+
+	void CameraSystem_buildWorldSpaceRay(Camera* p_camera, _Math::Vector2f* p_screenPoint, _Math::Segment* out_ray)
+	{
+		_Math::Vector2f l_normalizedScreenPoint;
+		Camera_convertWindowPixelPositionToNormalizedScreenRenderCoordinate(p_camera, p_screenPoint, &l_normalizedScreenPoint);
+
+		_Math::Matrix4x4f l_screenToWorldMatrix;
+		{
+			_Math::Matrix4x4f l_tmp;
+			_Math::Matrixf4x4_mul(&p_camera->ProjectionMatrix, &p_camera->ViewMatrix, &l_tmp);
+			_Math::Matrixf4x4_inv(&l_tmp, &l_screenToWorldMatrix);
+		}
+
+		_Math::Vector4f l_beginScreenSpace = { l_normalizedScreenPoint.x, l_normalizedScreenPoint.y, -1.0f, 1.0f };
+		_Math::Vector4f l_beginWorldSpace;
+		_Math::Matrixf4x4_mul(&l_screenToWorldMatrix, &l_beginScreenSpace, &l_beginWorldSpace);
+		_Math::Vector4f_mul(&l_beginWorldSpace, 1.0f / l_beginWorldSpace.w, &l_beginWorldSpace);
+
+		_Math::Vector4f l_endScreenSpace = { l_normalizedScreenPoint.x, l_normalizedScreenPoint.y, 1.0f, 1.0f };
+		_Math::Vector4f l_endWorldSpace;
+		_Math::Matrixf4x4_mul(&l_screenToWorldMatrix, &l_endScreenSpace, &l_endWorldSpace);
+		_Math::Vector4f_mul(&l_endWorldSpace, 1.0f / l_endWorldSpace.w, &l_endWorldSpace);
+
+		_Math::Vector3f_build(&l_beginWorldSpace, &out_ray->Begin);
+		_Math::Vector3f_build(&l_endWorldSpace, &out_ray->End);
 	};
 }

@@ -18,6 +18,7 @@ namespace _GameEngine::_Core
 		void insertAt(T* p_value, size_t p_elementNb, size_t p_index) { Vector_insertAt(&Vector, p_value, p_elementNb, p_index); };
 		void erase(size_t p_index) { Vector_erase(&Vector, p_index); };
 		void clear() { Vector_clear(&Vector); };
+		void reserve(size_t p_elementNumber) { Vector_reserve(&Vector, p_elementNumber); };
 
 		template <class COMPARED_OBJECT>
 		void erase(bool(*p_comparator)(T*, COMPARED_OBJECT*), COMPARED_OBJECT* p_userObject) { Vector_erase(&Vector, (VectorElementComparator)p_comparator, p_userObject); };
