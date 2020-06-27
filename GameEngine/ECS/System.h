@@ -11,9 +11,12 @@ namespace _GameEngine::_ECS
 
 namespace _GameEngine::_ECS
 {
+	typedef size_t SystemV2Key;
+
 	struct SystemV2
 	{
 		ECS* ECS;
+		SystemV2Key SystemKey;
 		EntityConfigurableContainer EntityConfigurableContainer;
 		_Utils::SortedSequencerOperation Update;
 
@@ -24,6 +27,7 @@ namespace _GameEngine::_ECS
 	struct SystemV2AllocInfo
 	{
 		ECS* ECS;
+		SystemV2Key SystemKey;
 		EntityConfigurableContainerInitInfo EntityConfigurableContainerInitInfo;
 		_Utils::SortedSequencerOperation Update;
 
@@ -42,5 +46,6 @@ namespace _GameEngine::_ECS
 	void SystemContainer_alloc(SystemContainer* p_systemContainer);
 	void SystemContainer_addSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2);
 	void SystemContainer_removeSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2);
+	SystemV2* SystemContainer_getSystem(SystemContainer* p_systemContainer, SystemV2Key* p_key);
 	void SystemContainer_free(SystemContainer* p_systemContainer);
 }

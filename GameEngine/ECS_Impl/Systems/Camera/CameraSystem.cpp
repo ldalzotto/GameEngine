@@ -1,5 +1,7 @@
 #include "CameraSystem.h"
 
+#include "Utils/Algorithm/Algorithm.h"
+
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/VectorMath.h"
 #include <vector>
@@ -13,6 +15,8 @@
 
 namespace _GameEngine::_ECS
 {
+	SystemV2Key CameraSystemKey = _Utils::Hash_combineByVal(0, "CameraSystem");
+
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
 
 	_Utils::SortedSequencerPriority CameraSystem_getUpdatePriority()
@@ -29,6 +33,8 @@ namespace _GameEngine::_ECS
 	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
 	{
 		p_systemV2AllocInfo->ECS = p_ecs;
+		p_systemV2AllocInfo->SystemKey = CameraSystemKey;
+
 		p_systemV2AllocInfo->Update.Priority = CameraSystem_getUpdatePriority();
 		p_systemV2AllocInfo->Update.Callback = cameraSystem_update;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
@@ -66,5 +72,15 @@ namespace _GameEngine::_ECS
 			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;
 			_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(p_camera->RenderInterface->CameraBufferSetupStep, p_camera->RenderInterface->Device);
 		}
+	};
+
+	Camera* CameraSystem_getCurrentActiveCamera(SystemV2* p_system)
+	{
+		if (p_system->EntityConfigurableContainer.FilteredEntities.size() > 0)
+		{
+			_ECS::Entity* l_entity = (*p_system->EntityConfigurableContainer.FilteredEntities.at(0));
+			return GET_COMPONENT(Camera, l_entity);
+		}
+		return nullptr;
 	};
 }

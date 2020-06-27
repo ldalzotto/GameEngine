@@ -4,12 +4,22 @@
 
 #include "ECS.h"
 
+
+namespace _GameEngine::_ECS
+{
+	bool SystemV2Key_comparator(SystemV2** p_left, SystemV2Key* p_right)
+	{
+		return (*p_left)->SystemKey == *p_right;
+	}
+}
+
 namespace _GameEngine::_ECS
 {
 	SystemV2* SystemV2_alloc(SystemV2AllocInfo* p_systemV2AllocInfo)
 	{
 		SystemV2* l_system = (SystemV2*)calloc(1, sizeof(SystemV2));
 		l_system->ECS = p_systemV2AllocInfo->ECS;
+		l_system->SystemKey = p_systemV2AllocInfo->SystemKey;
 		EntityConfigurableContainer_init(&l_system->EntityConfigurableContainer, &p_systemV2AllocInfo->EntityConfigurableContainerInitInfo);
 		l_system->Update = p_systemV2AllocInfo->Update;
 		l_system->Child = p_systemV2AllocInfo->Child;
@@ -49,6 +59,11 @@ namespace _GameEngine::_ECS
 	void SystemContainer_removeSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)
 	{
 		p_systemContainer->SystemsV2.erase(SystemV2_comparator, &p_systemV2);
+	};
+
+	SystemV2* SystemContainer_getSystem(SystemContainer* p_systemContainer, SystemV2Key* p_key)
+	{	
+		return *p_systemContainer->SystemsV2.get(SystemV2Key_comparator, p_key);
 	};
 
 	void system_reverseLoop_erase(SystemV2** p_system, void* null)
