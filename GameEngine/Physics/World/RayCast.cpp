@@ -14,7 +14,7 @@
 namespace _GameEngine::_Physics
 {
 
-	void RayCastAll(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Core::VectorT<_Math::Vector3f>* out_intersectionPoints)
+	void RayCastAll(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
 		_Math::Segment l_segment;
 		{
@@ -34,11 +34,13 @@ namespace _GameEngine::_Physics
 			_Math::Vector3f l_intersectionPointLocal;
 			if (_Math::Intersection_AABB_Ray(l_boxCollider->Box, &l_localProjectedSegment, &l_intersectionPointLocal))
 			{
+				RaycastHit hit{};
+
 				// The intersection point is then projected back to world space.
-				_Math::Vector3f l_intersection1World;
 				_Math::Matrix4x4f* l_localToWorld = _Math::Transform_getLocalToWorldMatrix_ref(l_boxCollider->Transform);
-				_Math::Matrixf4x4_mul(l_localToWorld, &l_intersectionPointLocal, &l_intersection1World);
-				out_intersectionPoints->push_back(&l_intersection1World);
+				_Math::Matrixf4x4_mul(l_localToWorld, &l_intersectionPointLocal, &hit.HitPoint);
+				hit.Collider = l_boxCollider;
+				out_intersectionPoints->push_back(&hit);
 			}
 		}
 	};

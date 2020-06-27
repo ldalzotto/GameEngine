@@ -114,7 +114,7 @@ void SandboxApplication_update(float p_delta)
 			std::unordered_map<std::string, void*> l_defaultMaterialInput
 			{
 				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
-				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
+				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/MinecraftDirtV2.png"}
 			};
 
 			_Render::MaterialUniqueKey l_materialKey{};
@@ -145,9 +145,9 @@ void SandboxApplication_update(float p_delta)
 			}
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.15f, -0.15f, 0.0f };
+			l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
-			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 2.0f };
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 
 			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_parent, &l_component);
@@ -184,7 +184,7 @@ void SandboxApplication_update(float p_delta)
 			std::unordered_map<std::string, void*> l_defaultMaterialInput
 			{
 				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
-				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
+				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/MinecraftDirtV2.png"}
 			};
 
 			_Render::MaterialUniqueKey l_materialKey{};
@@ -223,7 +223,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformRotateType, sizeof(_ECS::TransformRotate));
 			_ECS::TransformRotate* l_transformRotate = (_ECS::TransformRotate*)l_component->Child;
 			l_transformRotate->Speed = 1.0f;
-			l_transformRotate->Axis = _Math::FORWARD;
+			l_transformRotate->Axis = _Math::UP;
 
 			auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_child, &l_component);
 			_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
@@ -254,7 +254,7 @@ void SandboxApplication_update(float p_delta)
 			std::unordered_map<std::string, void*> l_defaultMaterialInput
 			{
 				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
-				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/viking_room.png"}
+				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/MinecraftDirtV2.png"}
 			};
 
 			_Render::MaterialUniqueKey l_materialKey{};
@@ -332,19 +332,19 @@ void SandboxApplication_update(float p_delta)
 		// _Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_child, _ECS::TransformComponentType)->Child)->Transform);
 		// _Render::Gizmo_drawTransform(&App->Render.Gizmo, &((_ECS::TransformComponent*)_ECS::Entity_getComponent(l_child2, _ECS::TransformComponentType)->Child)->Transform);
 
-		_Math::Vector3f l_begin = { -10.0f, -5.0f, 00.0f };
-		_Math::Vector3f l_end = { 10.0f, 5.0f, 00.0f };
+		_Math::Vector3f l_begin = { -10.0f, -10.0f, 00.0f };
+		_Math::Vector3f l_end = { 10.0f, 10.0f, 00.0f };
 		// _Render::Gizmo_drawLine(&App->Render.Gizmo, &l_begin, &l_end);
 
 
-		_Core::VectorT<_Math::Vector3f> l_intersectionPoints;
+		_Core::VectorT<_Physics::RaycastHit> l_intersectionPoints;
 		l_intersectionPoints.alloc();
 		{
 			_Physics::RayCastAll(&App->Physics.World, &l_begin, &l_end, &l_intersectionPoints);
 
 			for (size_t i = 0; i < l_intersectionPoints.size(); i++)
 			{
-				_Render::Gizmo_drawPoint(&App->Render.Gizmo, l_intersectionPoints.at(i));
+				_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_intersectionPoints.at(i)->HitPoint);
 			}
 		}
 		l_intersectionPoints.free();
