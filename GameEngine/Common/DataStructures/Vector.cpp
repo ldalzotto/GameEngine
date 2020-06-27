@@ -78,28 +78,7 @@ namespace _GameEngine::_Core
 
 	void Vector_insertAt(Vector* p_vector, void* p_value, size_t p_index)
 	{
-		if (p_index > p_vector->Size)
-		{
-			throw std::runtime_error("Vector : Insert out of range.");
-		}
-
-		if (p_vector->Size >= p_vector->Capacity)
-		{
-			Vector_resize(p_vector, p_vector->Capacity == 0 ? 1 : (p_vector->Capacity * 2));
-			Vector_insertAt(p_vector, p_value, p_index);
-		}
-		else
-		{
-			void* l_initialElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
-			if (p_vector->Size - p_index > 0)
-			{
-				void* l_targetElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index + 1);
-				memmove(l_targetElement, l_initialElement, p_vector->ElementSize * (p_vector->Size - p_index));
-			}
-			memcpy(l_initialElement, p_value, p_vector->ElementSize);
-			p_vector->Size += 1;
-		}
-
+		Vector_insertAt(p_vector, p_value, 1, p_index);
 	};
 
 	void Vector_insertAt(Vector* p_vector, void* p_value, size_t p_elementNb, size_t p_index)
@@ -117,6 +96,7 @@ namespace _GameEngine::_Core
 		else
 		{
 			void* l_initialElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index);
+			// If we insert between existing elements, we move down memory to give space for new elements
 			if (p_vector->Size - p_index > 0)
 			{
 				void* l_targetElement = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_index + p_elementNb);
