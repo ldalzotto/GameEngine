@@ -1,7 +1,7 @@
 #include "SortedSequencer.h"
 
 #include "Utils/Algorithm/Algorithm.h"
-#include "Utils/Functional/Comparators.h"
+#include "DataStructures/ElementComparators.h"
 #include <stdexcept>
 #include "MYLog/MYLog.h"
 #include <limits>
@@ -15,7 +15,7 @@ namespace _GameEngine::_Utils
 
 	short SortedSequencerOperation_sortComparator(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right)
 	{
-		return Uint16tComparator(p_left->Priority, p_right->Priority);
+		return _Core::Uint16tSortComparator(p_left->Priority, p_right->Priority);
 	}
 
 	void SortedSequencer_alloc(SortedSequencer* p_sortedSequencer)

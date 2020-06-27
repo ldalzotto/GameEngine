@@ -1,13 +1,14 @@
 -- TODO --
 
+-- 1st Milestone -- 
+
+# Creating a first milestone application that showcase all implemented features :
+	## Transform parenting, rotation, ...
+	## AABB physics detection
+
 -- Materials --
 
-[X] # Adding configuration properties for rendering order
 # Adding configuration properties for blending (editor 3D gizmo may be transparent ?)
-
--- Inputs --
-
-[X] # Implementing mouse detection input and easily get it's screen position.
 
 -- ScreenSpace interactions --
 
@@ -26,6 +27,14 @@
 
 -- DONE --
 
+
+-- Materials --
+
+[X] # Adding configuration properties for rendering order
+
+-- Inputs --
+
+[X] # Implementing mouse detection input and easily get it's screen position.
 
 
 -- Gizmo Drawer --

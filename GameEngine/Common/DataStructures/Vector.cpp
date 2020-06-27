@@ -219,6 +219,32 @@ namespace _GameEngine::_Core
 		return std::numeric_limits<size_t>::max();
 	};
 
+	void* Vector_min(Vector* p_vector, SortElementComparatorWithUserObject p_sortComparator, void* p_userObject)
+	{
+		void* l_minValue = nullptr;
+
+		if (p_vector->Size > 0)
+		{
+			l_minValue = Vector_at_unchecked(p_vector, 0);
+		}
+		
+		for (size_t i = 1; i < p_vector->Size; i++)
+		{
+			void* l_comparedValue = Vector_at_unchecked(p_vector, i);
+			short int l_compareValue = p_sortComparator(l_minValue, l_comparedValue, p_userObject);
+			if (l_compareValue >= 0)
+			{
+				l_minValue = l_comparedValue;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		return l_minValue;
+	};
+
 	void Vector_forEachReverse(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject)
 	{
 		size_t l_size = p_vector->Size;
@@ -246,7 +272,7 @@ namespace _GameEngine::_Core
 		size_t l_insertIndex = 0;
 		for (size_t i = 0; i < p_vector->Vector.Size; i++)
 		{
-			short int l_compareValue = p_vector->SortComparator(p_value, Vector_at(&p_vector->Vector, i));
+			short int l_compareValue = p_vector->SortComparator(p_value, Vector_at_unchecked(&p_vector->Vector, i));
 			if (l_compareValue >= 0)
 			{
 				l_insertIndex = i + 1;

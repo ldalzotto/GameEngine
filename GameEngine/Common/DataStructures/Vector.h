@@ -12,6 +12,10 @@ namespace _GameEngine::_Core
 
 	using VectorElementComparator = bool(*)(void*, void*);
 
+	// < 0 means left < right ...
+	using SortElementComparator = short int(*)(void*, void*);
+	using SortElementComparatorWithUserObject = short int(*)(void*, void*, void*);
+
 	void Vector_alloc(Vector* p_vector, size_t p_initialCapacity, size_t p_elementSize);
 	void Vector_free(Vector* p_vector);
 	void Vector_resize(Vector* p_vector, size_t p_newCapacity);
@@ -26,13 +30,11 @@ namespace _GameEngine::_Core
 	void* Vector_at(Vector* p_vector, size_t p_index);
 	void* Vector_get(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 	size_t Vector_getIndex(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
+	void* Vector_min(Vector* p_vector, SortElementComparatorWithUserObject p_sortComparator, void* p_userObject = nullptr);
 	bool Vector_contains(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 
 	using VectorElementCallback = void(*)(void*, void*);
 	void Vector_forEachReverse(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject = nullptr);
-
-	// < 0 means left < right ...
-	using SortElementComparator = short int(*)(void*, void*);
 
 	struct SortedVector
 	{

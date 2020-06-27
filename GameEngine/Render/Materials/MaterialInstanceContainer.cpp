@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 #include "MyLog/MyLog.h"
-#include "Utils/Functional/Comparators.h"
+#include "DataStructures/ElementComparators.h"
 
 #include "RenderInterface.h"
 #include "MaterialInstance.h"
@@ -18,7 +18,7 @@ namespace _GameEngine::_Render
 
 	short Material_with_MaterialInstances_sortCompare(Material_with_MaterialInstances* p_left, Material_with_MaterialInstances* p_right)
 	{
-		return _Utils::SizeTCompararator(p_left->Material->RenderingOrder, p_right->Material->RenderingOrder);
+		return _Core::SizeTSortCompararator(p_left->Material->RenderingOrder, p_right->Material->RenderingOrder);
 	};
 
 	bool MaterialInstance_compare(MaterialInstance** p_left, MaterialInstance** p_right)
