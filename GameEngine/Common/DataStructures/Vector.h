@@ -34,6 +34,7 @@ namespace _GameEngine::_Core
 	bool Vector_contains(Vector* p_vector, VectorElementComparator p_comparator, void* p_userObject = nullptr);
 
 	using VectorElementCallback = void(*)(void*, void*);
+	void Vector_forEach(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject = nullptr);
 	void Vector_forEachReverse(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject = nullptr);
 
 	struct SortedVector

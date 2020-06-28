@@ -207,7 +207,7 @@ namespace _GameEngine::_Core
 		{
 			l_minValue = Vector_at_unchecked(p_vector, 0);
 		}
-		
+
 		for (size_t i = 1; i < p_vector->Size; i++)
 		{
 			void* l_comparedValue = Vector_at_unchecked(p_vector, i);
@@ -224,6 +224,16 @@ namespace _GameEngine::_Core
 
 		return l_minValue;
 	};
+
+	void Vector_forEach(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject)
+	{
+		size_t l_size = p_vector->Size;
+
+		for (size_t i = 0; i < l_size; i++)
+		{
+			p_callback(Vector_at_unchecked(p_vector, i), p_userObject);
+		}
+	}
 
 	void Vector_forEachReverse(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject)
 	{

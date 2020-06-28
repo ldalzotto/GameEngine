@@ -19,4 +19,9 @@ namespace _GameEngine::_Core
 		void push_back(T* p_value) { Array_pushBack(&Array, p_value); };
 		T* at(size_t p_index) { return (T*)Array_at(&Array, p_index); };
 	};
+
+	template<class T>
+	void ArrayT_interpret(ArrayT<T>* p_array, T* p_memory, size_t p_size) {
+		Array_interpret(&p_array->Array, p_memory, p_size, sizeof(T));
+	};
 }

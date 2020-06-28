@@ -1,6 +1,8 @@
 #include "Vector.h"
 
 #include "DataStructures/String.h"
+#include "DataStructures/StringAlgorithm.h"
+
 #include "DataStructures/StringConverterPrimitives.h"
 
 namespace _GameEngine::_Math
@@ -12,12 +14,12 @@ namespace _GameEngine::_Math
 	void Vector3f_toString(Vector3f* p_vector, _Core::String* p_string)
 	{
 		p_string->reserve(50);
-		p_string->append("[x : ");
+		_Core::String_append(p_string, "[x : ");
 		_Core::String_appendFloat(p_string, p_vector->x);
-		p_string->append(", y : ");
+		_Core::String_append(p_string, ", y : ");
 		_Core::String_appendFloat(p_string, p_vector->y);
-		p_string->append(", z : ");
+		_Core::String_append(p_string, ", z : ");
 		_Core::String_appendFloat(p_string, p_vector->z);
-		p_string->append("]");
+		_Core::String_append(p_string, "]");
 	}
 }

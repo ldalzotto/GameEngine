@@ -38,6 +38,9 @@ namespace _GameEngine::_Core
 		bool contains(bool(*p_comparator)(T*, COMPARED_OBJECT*), COMPARED_OBJECT* p_userObject) { return Vector_contains(&Vector, (VectorElementComparator)p_comparator, p_userObject); };
 
 		template <class USER_OBJECT>
+		void forEach(void(*p_callback)(T*, USER_OBJECT*), USER_OBJECT* p_userObject) { Vector_forEach(&Vector, (VectorElementCallback)p_callback, p_userObject); };
+
+		template <class USER_OBJECT>
 		void forEachReverse(void(*p_callback)(T*, USER_OBJECT*), USER_OBJECT* p_userObject) { Vector_forEachReverse(&Vector, (VectorElementCallback)p_callback, p_userObject); };
 	};
 

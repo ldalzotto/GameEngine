@@ -1,6 +1,9 @@
 #pragma once
 
-#include "DataStructures/String.h"
+namespace _GameEngine::_Core
+{
+	struct String;
+}
 
 namespace _GameEngine::_Core
 {

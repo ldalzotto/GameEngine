@@ -1,5 +1,5 @@
 #include "String.h"
-#include <string.h> 
+#include <string.h>
 
 namespace _GameEngine::_Core
 {
@@ -15,19 +15,6 @@ namespace _GameEngine::_Core
 		this->Vector.free();
 	};
 
-	void String::append(char* p_appended)
-	{
-		size_t l_appendSize = strlen(p_appended);
-		if (this->Vector.size() >= 2)
-		{
-			this->Vector.insertAt(p_appended, l_appendSize, this->Vector.size() - 1);
-		}
-		else
-		{
-			this->Vector.insertAt(p_appended, l_appendSize, 0);
-		}
-	};
-
 	void String::reserve(size_t p_charNb) 
 	{
 		this->Vector.reserve(p_charNb);
@@ -37,4 +24,22 @@ namespace _GameEngine::_Core
 	{
 		return (char*)this->Vector.Vector.Memory;
 	};
+
+	char* FixedString::c_str()
+	{
+		return (char*)this->Array.Array.Memory;
+	};
+
+	FixedString FixedString_interpret(char* p_source)
+	{
+		return FixedString_interpret(p_source, strlen(p_source) + 1);
+	};
+
+	FixedString FixedString_interpret(char* p_source, size_t p_sourceCharNb)
+	{
+		FixedString l_string{};
+		ArrayT_interpret(&l_string.Array, p_source, p_sourceCharNb);
+		return l_string;
+	}
+
 }

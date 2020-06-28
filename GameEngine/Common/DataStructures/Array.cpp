@@ -21,6 +21,14 @@ namespace _GameEngine::_Core
 		p_array->Memory = malloc(Array_getTotalSize(p_array));
 	};
 
+	void Array_interpret(Array* p_array, void* p_memory, size_t p_size, size_t p_elementSize)
+	{
+		p_array->Capacity = p_size;
+		p_array->Size = p_size;
+		p_array->ElementSize = p_elementSize;
+		p_array->Memory = p_memory;
+	};
+
 	void Array_build(Array* p_array, void* p_memory, size_t p_capacity, size_t p_elementSize)
 	{
 		p_array->Capacity = p_capacity;

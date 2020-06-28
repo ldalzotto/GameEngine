@@ -7,7 +7,7 @@ namespace _GameEngine::_Math
 
 namespace _GameEngine::_Math
 {
-
+	 
 	struct Quaternionf
 	{
 		float x;
