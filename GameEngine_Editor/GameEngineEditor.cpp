@@ -49,9 +49,10 @@ namespace _GameEngineEditor
 
 	void gameEngineEditor_systemInitialization(GameEngineEditor* p_gameEngineEditor)
 	{
-		
+		/*
 		_ECS::SystemV2AllocInfo	l_systemAllocInfo = {};
 		MeshRendererBoundGizmoSystem_init(&l_systemAllocInfo, p_gameEngineEditor->GameEngineApplicationInterface->ECS, p_gameEngineEditor->GameEngineApplicationInterface->RenderInterface);
 		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, p_gameEngineEditor->GameEngineApplicationInterface->UpdateSequencer);
+		*/
 	};
 }

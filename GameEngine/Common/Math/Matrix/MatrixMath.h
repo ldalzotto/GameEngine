@@ -39,8 +39,6 @@ namespace _GameEngine::_Math
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Matrix4x4f* p_other, Matrix4x4f* out);
 	void Matrixf4x4_inv(Matrix4x4f* p_matrix, Matrix4x4f* p_out);
 
-	void Matrixf4x4_lookAtRotation(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out);
-
 	void Matrixf4x4_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out);
 	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out);
 	float Matrixf4x4_far(Matrix4x4f* p_matrix);

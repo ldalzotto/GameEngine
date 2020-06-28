@@ -157,6 +157,11 @@ namespace _GameEngine::_Render
 		Gizmo_drawPointV2(p_gizmo, *p_point, l_color);
 	};
 
+	void Gizmo_drawPoint(Gizmo* p_gizmo, _Math::Vector3f* p_point, _Math::Vector3f* p_color)
+	{
+		Gizmo_drawPointV2(p_gizmo, *p_point, *p_color);
+	};
+
 	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end)
 	{
 		_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
@@ -172,14 +177,16 @@ namespace _GameEngine::_Render
 		Gizmo_drawLine_indices(p_gizmo, l_beginIndex, l_endIndex);
 	};
 
-	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix, bool p_withCenter)
+	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix, bool p_withCenter, _Math::Vector3f* p_color)
 	{
 		_Core::ArrayT<_Math::Vector3f> l_points;
 		_Math::BoxPoints l_boxPoints;
 		_Math::Box_extractPoints(p_box, &l_boxPoints);
 		_Math::BoxPoints_mul(&l_boxPoints, p_localToWorldMatrix);
 
-		_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
+		_Math::Vector3f l_color;
+		if (p_color) { l_color = *p_color; }
+		else { l_color = { 1.0f, 1.0f, 1.0f }; }
 
 		GizmoIndiceType LDF_index, LDB_index, LUF_index, RDF_index, LUB_index, RUF_index, RDB_index, RUB_index;
 		{

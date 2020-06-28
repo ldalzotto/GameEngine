@@ -273,31 +273,6 @@ namespace _GameEngine::_Math
 		out_scale->w = 0.0f;
 	};
 
-	void Matrixf4x4_lookAtRotation(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out)
-	{
-		Vector3f l_forward;
-		{
-			Vector3f_min(p_target, p_origin, &l_forward);
-			Vector3f_normalize(&l_forward);
-		}
-
-		Vector3f l_right;
-		{
-			Vector3f_cross(&l_forward, p_up, &l_right);
-			Vector3f_normalize(&l_right);
-		}
-
-		Vector3f l_up;
-		{
-			Vector3f_cross(&l_right, &l_forward, &l_up);
-			Vector3f_normalize(&l_up);
-		}
-
-		Vector3f l_scale{ 1.0f, 1.0f, 1.0f };
-		Matrif4x4_buildTRSV2(p_origin, &l_right, &l_up, &l_forward, &l_scale, p_out);
-	};
-
-
 	void Matrixf4x4_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out)
 	{
 		Vector3f l_forward;

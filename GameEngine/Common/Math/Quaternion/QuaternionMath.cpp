@@ -133,19 +133,11 @@ namespace _GameEngine::_Math
 
 	void Quaternion_fromAxis(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Quaternionf* out_quaternion)
 	{
-#if !comment
 		// We calculate the four square roots and get the higher one.
 		float qxDiag = fmaxf(1 + p_right->x - p_up->y - p_forward->z, 0.0f);
 		float qyDiag = fmaxf(1 + p_up->y - p_right->x - p_forward->z, 0.0f);
 		float qzDiag = fmaxf(1 + p_forward->z - p_right->x - p_up->y, 0.0f);
 		float qwDiag = fmaxf(1 + p_right->x + p_up->y + p_forward->z, 0.0f);
-
-		/*
-		float qxSr = fmaxf(0.5f * sqrtf(1 + p_right->x - p_up->y - p_forward->z), -std::numeric_limits<float>::max());
-		float qySr = fmaxf(0.5f * sqrtf(1 + p_up->y - p_right->x - p_forward->z), -std::numeric_limits<float>::max());
-		float qzSr = fmaxf(0.5f * sqrtf(1 + p_forward->z - p_right->x - p_up->y), -std::numeric_limits<float>::max());
-		float qwSr = fmaxf(0.5f * sqrtf(1 + p_right->x + p_up->y + p_forward->z), -std::numeric_limits<float>::max());
-		*/
 
 		int l_diagonalIndex = 0;
 		float l_biggestDiagonalValue = qxDiag;
@@ -204,81 +196,5 @@ namespace _GameEngine::_Math
 		break;
 		}
 
-#endif
-
-
-#if comment
-
-
-		float fourXSquaredMinus1 = p_right->x - p_up->y - p_forward->z;
-		float fourYSquaredMinus1 = p_up->y - p_right->x - p_forward->z;
-		float fourZSquaredMinus1 = p_forward->z - p_right->x - p_up->y;
-		float fourWSquaredMinus1 = p_right->x + p_up->y + p_forward->z;
-
-		int biggestIndex = 0;
-		float fourBiggestSquaredMinus1 = fourXSquaredMinus1;
-		if (fourYSquaredMinus1 > fourBiggestSquaredMinus1)
-		{
-			fourBiggestSquaredMinus1 = fourYSquaredMinus1;
-			biggestIndex = 1;
-		}
-		if (fourZSquaredMinus1 > fourBiggestSquaredMinus1)
-		{
-			fourBiggestSquaredMinus1 = fourZSquaredMinus1;
-			biggestIndex = 2;
-		}
-		if (fourWSquaredMinus1 > fourBiggestSquaredMinus1)
-		{
-			fourBiggestSquaredMinus1 = fourWSquaredMinus1;
-			biggestIndex = 3;
-		}
-
-		float biggestVal = sqrtf(fourBiggestSquaredMinus1 + 1.0f) * 0.5f;
-		float mult = 0.25f / biggestVal;
-
-		switch (biggestIndex)
-		{
-		case 0:
-		{
-			out_quaternion->x = biggestVal;
-			out_quaternion->y = (p_up->z - p_forward->y) * mult;
-			out_quaternion->z = (p_forward->x - p_right->z) * mult;
-			out_quaternion->w = (p_right->y - p_up->x) * mult;
-		}
-		break;
-		case 1:
-		{
-			out_quaternion->x = (p_up->z - p_forward->y) * mult;
-			out_quaternion->y = biggestVal;
-			out_quaternion->z = (p_right->y + p_up->x) * mult;
-			out_quaternion->w = (p_forward->x + p_right->z) * mult;
-		}
-		break;
-		case 2:
-		{
-			out_quaternion->x = (p_forward->x - p_right->z) * mult;
-			out_quaternion->y = (p_right->y + p_up->x) * mult;
-			out_quaternion->z = biggestVal;
-			out_quaternion->w = (p_up->z + p_forward->y) * mult;
-		}
-		break;
-		case 3:
-		{
-			out_quaternion->x = (p_right->y - p_up->x) * mult;
-			out_quaternion->y = (p_forward->x + p_right->z) * mult;
-			out_quaternion->z = (p_up->z + p_forward->y) * mult;
-			out_quaternion->w = biggestVal;
-		}
-		break;
-		default: // Silence a -Wswitch-default warning in GCC. Should never actually get here. Assert is just for sanity.
-		{
-			out_quaternion->x = 1;
-			out_quaternion->y = 0;
-			out_quaternion->z = 0;
-			out_quaternion->w = 0;
-		}
-		break;
-		};
-#endif
 	}
 }

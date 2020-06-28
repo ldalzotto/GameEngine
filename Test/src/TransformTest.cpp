@@ -58,6 +58,7 @@ namespace _GameEngine::_Test
 		_Math::Quaternionf l_localRotation{ 0.5f, 0.5f, 0.5f, 0.5f };
 		_Math::Transform_setLocalRotation(&l_transform.Transform, l_localRotation);
 		_Math::Quaternionf l_worldRot = _Math::Transform_getWorldRotation(&l_transform.Transform);
+
 		test_assert(l_worldRot, _Math::Quaternionf{ 0.5f, 0.5f, 0.5f, 0.5f });
 	}
 
@@ -193,10 +194,17 @@ namespace _GameEngine::_Test
 		}
 	};
 
+	// TODO -> Tests are in a failure state because the _Math::Quaternion_fromAxis() is not calculated with the proper axis.
+	/*
+		In the _Math::Quaternion_fromAxis() calculation, we have.
+			right -> (0,0,1)
+			up    -> (1,0,0)
+			fwd   -> (0,1,0)
+	*/
 	void TransformTest_test()
 	{
-		// Transform_simpleTransformation_test();
-		// Transform_parenting_test();
+		Transform_simpleTransformation_test();
+		Transform_parenting_test();
 		Transform_referenceSwitch();
 	};
 }

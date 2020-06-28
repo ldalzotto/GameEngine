@@ -54,7 +54,8 @@ namespace _GameEngine::_Render
 	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end);
 	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Math::Vector3f* p_color);
 	void Gizmo_drawPoint(Gizmo* p_gizmo, _Math::Vector3f* p_point);
-	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix, bool p_withCenter = true);
+	void Gizmo_drawPoint(Gizmo* p_gizmo, _Math::Vector3f* p_point, _Math::Vector3f* p_color);
+	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix, bool p_withCenter = true, _Math::Vector3f* p_color = nullptr);
 	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Transform* p_transform);
 	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Vector3f* p_center, _Math::Vector3f* p_right, _Math::Vector3f* p_up, _Math::Vector3f* p_forward);
 }
