@@ -11,8 +11,10 @@ namespace _GameEngine::_Utils
 		_Core::String Value;
 	};
 
+	//TODO -> This structure can be generalized to any graph-like structure (with Parent <1-*> Child relationship )
 	struct XMLNode
 	{
+		XMLNode* Parent;
 		_Core::VectorT<XMLAttribute> Attributes;
 		_Core::VectorT<XMLNode> Childs;
 
@@ -27,6 +29,19 @@ namespace _GameEngine::_Utils
 	{
 		XMLNode RootNode;
 	};
+
+	//TODO -> The same as XMLNode. This iterator can be generalized to any graph-like structure.
+	struct XMLGraphIterator
+	{
+		XMLNode* RootNode;
+		XMLNode* CurrentNode;
+	};
+
+	XMLGraphIterator XMLGraphIterator_build(XMLGraph* p_graph);
+	XMLGraphIterator XMLGraphIterator_build(XMLNode* p_startNode);
+
+	bool XMLGraphIterator_moveNext(XMLGraphIterator* p_graphIterator);
+	bool XMLGraphIterator_skipCurrentChildrens(XMLGraphIterator* p_graphIterator);
 
 	/**
 	//TODO -> Maybe having a custom allocator for temporary objects ?

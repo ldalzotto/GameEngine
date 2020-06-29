@@ -25,6 +25,8 @@ This documentation won't discuss of :
 # Instead of locking operations to only one king of structure, creating generic object (like Iterator, Writer, ...) that can be created from structures. Then
   algorithm are executed on them instead of data structures.
 
+# Moving XML graph to a generic graph-like structure
+
 -- Physics --
 
 # Adding Layers to BoxCollider.

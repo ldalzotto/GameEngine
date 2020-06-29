@@ -13,6 +13,74 @@ namespace _GameEngine::_Utils
 
 namespace _GameEngine::_Utils
 {
+	bool XMLNode_comparator(XMLNode* p_left, XMLNode* p_right)
+	{
+		return p_left == p_right;
+	}
+}
+
+namespace _GameEngine::_Utils
+{
+	XMLGraphIterator XMLGraphIterator_build(XMLGraph* p_graph)
+	{
+		return
+		{
+			&p_graph->RootNode,
+			nullptr
+		};
+	};
+
+	XMLGraphIterator XMLGraphIterator_build(XMLNode* p_startNode)
+	{
+		return
+		{
+			p_startNode,
+			nullptr
+		};
+	};
+
+	bool XMLGraphIterator_moveNext(XMLGraphIterator* p_graphIterator)
+	{
+		if (!p_graphIterator->CurrentNode) { p_graphIterator->CurrentNode = p_graphIterator->RootNode; }
+		else
+		{
+			if (p_graphIterator->CurrentNode == p_graphIterator->RootNode)
+			{
+				p_graphIterator->CurrentNode = p_graphIterator->CurrentNode->Childs.at(0);
+			}
+			else
+			{
+				size_t l_index = p_graphIterator->CurrentNode->Parent->Childs.getIndex(XMLNode_comparator, p_graphIterator->CurrentNode);
+				if (l_index < p_graphIterator->CurrentNode->Parent->Childs.size() - 1)
+				{
+					p_graphIterator->CurrentNode = p_graphIterator->CurrentNode->Parent->Childs.at(l_index + 1);
+				}
+				else
+				{
+					p_graphIterator->CurrentNode = p_graphIterator->CurrentNode->Parent;
+				}
+			}
+
+
+
+			if (p_graphIterator->CurrentNode == p_graphIterator->RootNode)
+			{
+				p_graphIterator->CurrentNode = nullptr;
+			}
+		}
+
+		return p_graphIterator->CurrentNode;
+	};
+
+	bool XMLGraphIterator_skipCurrentChildrens(XMLGraphIterator* p_graphIterator)
+	{
+		if (p_graphIterator->CurrentNode)
+		{
+			p_graphIterator->CurrentNode = p_graphIterator->CurrentNode->Parent;
+		}
+		return p_graphIterator->CurrentNode;
+	};
+
 	_Core::FixedString CHAR_INFERIOR = _Core::FixedString_interpret("<");
 	_Core::FixedString CHAR_SUPERIOR = _Core::FixedString_interpret(">");
 
@@ -215,30 +283,68 @@ namespace _GameEngine::_Utils
 			{
 				InstanciatedXMLNodeStack.selectionSort(XMLNode_StartIndexOrdering, (void*)nullptr);
 
-				for (size_t l_childIndex = InstanciatedXMLNodeStack.size() - 1; l_childIndex < InstanciatedXMLNodeStack.size(); l_childIndex--)
+				// Setting childs
 				{
-					XMLNode* l_childNode = InstanciatedXMLNodeStack.at(l_childIndex);
-					if (l_childIndex == 0)
+					for (size_t l_childIndex = InstanciatedXMLNodeStack.size() - 1; l_childIndex < InstanciatedXMLNodeStack.size(); l_childIndex--)
 					{
-						p_outGraph->RootNode = *l_childNode;
-					}
-					else
-					{
-						for (size_t l_parentIndex = l_childIndex - 1; l_parentIndex < l_childIndex; l_parentIndex--)
+						XMLNode* l_childNode = InstanciatedXMLNodeStack.at(l_childIndex);
+						if (l_childIndex == 0)
 						{
-							XMLNode* l_potentialParentNode = InstanciatedXMLNodeStack.at(l_parentIndex);
-							if (l_potentialParentNode->XMlEndIndex > l_childNode->XMlEndIndex)
+							p_outGraph->RootNode = *l_childNode;
+						}
+						else
+						{
+							for (size_t l_parentIndex = l_childIndex - 1; l_parentIndex < l_childIndex; l_parentIndex--)
 							{
-								l_potentialParentNode->Childs.push_back(l_childNode);
+								XMLNode* l_potentialParentNode = InstanciatedXMLNodeStack.at(l_parentIndex);
+								if (l_potentialParentNode->XMlEndIndex > l_childNode->XMlEndIndex)
+								{
+									l_potentialParentNode->Childs.push_back(l_childNode);
+								}
 							}
 						}
 					}
+				}
 
+				// Setting parents. We iterate on the final XMLGraph because pointer to pointer nodes must point to memory of the actual graph and not the temprary stack created from raw string.
+				{
+					struct IteratingNodeStack
+					{
+						XMLNode* Node;
+						size_t ChildNodeIndex;
+					};
 
+					_Core::VectorT<IteratingNodeStack> l_interatingNodeStack;
+					l_interatingNodeStack.alloc();
+					{
+						IteratingNodeStack l_root = { &p_outGraph->RootNode, 0 };
+						l_interatingNodeStack.push_back(&l_root);
+					}
+
+					{
+						while (l_interatingNodeStack.size() > 0)
+						{
+							IteratingNodeStack* l_currentIteratingNode = l_interatingNodeStack.at(l_interatingNodeStack.size() - 1);
+
+							if (l_currentIteratingNode->ChildNodeIndex < l_currentIteratingNode->Node->Childs.size())
+							{
+								XMLNode* l_childNode = l_currentIteratingNode->Node->Childs.at(l_currentIteratingNode->ChildNodeIndex);
+								l_childNode->Parent = l_currentIteratingNode->Node;
+								l_currentIteratingNode->ChildNodeIndex++;
+								IteratingNodeStack l_oneLevelDeepStack = { l_childNode, 0 };
+								l_interatingNodeStack.push_back(&l_oneLevelDeepStack);
+							}
+							else
+							{
+								l_interatingNodeStack.erase(l_interatingNodeStack.size() - 1);
+							}
+						}
+					}
+					l_interatingNodeStack.free();
 				}
 			}
 
-			// Individual nodes are not disposed because they copied recursively to p_outGraph
+			// Individual nodes are not disposed because they are copied recursively to p_outGraph
 			InstanciatedXMLNodeStack.free();
 
 			InstanciatedXMLNodeStack.free();

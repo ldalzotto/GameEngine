@@ -2,6 +2,7 @@
 
 #include "DataStructures/StringAlgorithm.h"
 #include "Utils/File/XMLParser/XMLParser.h"
+#include "DocumentationGeneration.h"
 
 using namespace _GameEngine;
 
@@ -13,6 +14,12 @@ int main()
 	_Utils::XMLGraph l_xmlGraph;
 	_Utils::XMLGraph_parse(&l_str, &l_xmlGraph);
 	{
+		_Core::String l_pageHtml;
+		l_pageHtml.alloc(0);
+		{		
+			_Documentation::GeneratePage(&l_xmlGraph, &l_pageHtml);
+		}
+		l_pageHtml.free();
 	}
 	_Utils::XMLGraph_free(&l_xmlGraph);
 	return 0;
