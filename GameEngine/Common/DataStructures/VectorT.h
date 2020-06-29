@@ -42,6 +42,10 @@ namespace _GameEngine::_Core
 
 		template <class USER_OBJECT>
 		void forEachReverse(void(*p_callback)(T*, USER_OBJECT*), USER_OBJECT* p_userObject) { Vector_forEachReverse(&Vector, (VectorElementCallback)p_callback, p_userObject); };
+
+		template <class USER_OBJECT>
+		void selectionSort(short(*p_sortComparator)(T*, T*, USER_OBJECT*), USER_OBJECT* p_userObject) { Vector_selectionSort(&Vector, (SortElementComparatorWithUserObject)p_sortComparator, p_userObject); };
+
 	};
 
 	template <class T>

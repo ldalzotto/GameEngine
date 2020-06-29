@@ -1,6 +1,15 @@
 #include "XMLParser.h"
 
 #include "DataStructures/StringAlgorithm.h"
+#include "DataStructures/ElementComparators.h"
+
+namespace _GameEngine::_Utils
+{
+	short XMLNode_StartIndexOrdering(XMLNode* p_left, XMLNode* p_right, void* p_null)
+	{
+		return _Core::SizeTSortCompararator(p_left->XmlBeginIndex, p_right->XmlBeginIndex);
+	}
+}
 
 namespace _GameEngine::_Utils
 {
@@ -56,11 +65,28 @@ namespace _GameEngine::_Utils
 		return false;
 	}
 
-	void XMLNode_allocXMLNode(XMLNode* p_node, XMLBalise* p_beging, XMLBalise* p_end, _Core::String* p_xml)
+	void XMLNode_alloc(XMLNode* p_node, XMLBalise* p_beging, XMLBalise* p_end, _Core::String* p_xml)
 	{
+		p_node->Name.alloc(p_beging->BaliseName.Vector.size());
+		_Core::String_append(&p_node->Name, p_beging->BaliseName.c_str());
+
 		p_node->Content.alloc(0);
 		_Core::String_substring(p_xml, p_beging->EndIndex + 1, p_end->BeginIndex - 1, &p_node->Content);
-	}
+
+		p_node->XmlBeginIndex = p_beging->BeginIndex;
+		p_node->XMlEndIndex = p_end->EndIndex;
+
+		p_node->Attributes.alloc();
+		p_node->Childs.alloc();
+	};
+
+	void XMLNode_free(XMLNode* p_node)
+	{
+		p_node->Name.free();
+		p_node->Content.free();
+		p_node->Attributes.free();
+		p_node->Childs.free();
+	};
 
 	void XMLGraph_parse(_Core::String* p_input, XMLGraph* p_outGraph)
 	{
@@ -78,34 +104,73 @@ namespace _GameEngine::_Utils
 				l_xmlCursor = l_balise.EndIndex;
 			}
 
-			_Core::VectorT<size_t> XmlOpenBaliseIndicesStack;
-			XmlOpenBaliseIndicesStack.alloc(XmlBalises.size());
+
+
+			_Core::VectorT<XMLNode> InstanciatedXMLNodeStack;
+			InstanciatedXMLNodeStack.alloc();
+
+			// XML Node instanciation
 			{
-				for (size_t i = 0; i < XmlBalises.size(); i++)
+				_Core::VectorT<size_t> XmlOpenBaliseIndicesStack;
+				XmlOpenBaliseIndicesStack.alloc(XmlBalises.size());
 				{
-					XMLBalise* p_xmlBalise = XmlBalises.at(i);
-					if (p_xmlBalise->IsStart)
+					for (size_t i = 0; i < XmlBalises.size(); i++)
 					{
-						XmlOpenBaliseIndicesStack.push_back(&i);
+						XMLBalise* p_xmlBalise = XmlBalises.at(i);
+						if (p_xmlBalise->IsStart)
+						{
+							XmlOpenBaliseIndicesStack.push_back(&i);
+						}
+						else
+						{
+							size_t l_beginBaliseArrayIndex = *XmlOpenBaliseIndicesStack.at(XmlOpenBaliseIndicesStack.size() - 1);
+
+							XMLBalise* p_beginXMLBalise = XmlBalises.at(l_beginBaliseArrayIndex);
+							XMLNode l_newNode{};
+							XMLNode_alloc(&l_newNode, p_beginXMLBalise, p_xmlBalise, p_input);
+							InstanciatedXMLNodeStack.push_back(&l_newNode);
+							XmlOpenBaliseIndicesStack.erase(XmlOpenBaliseIndicesStack.size() - 1);
+						}
+					}
+				}
+				XmlOpenBaliseIndicesStack.free();
+			}
+
+			// XML Node hierarchy
+			{
+				InstanciatedXMLNodeStack.selectionSort(XMLNode_StartIndexOrdering, (void*)nullptr);
+
+				for (size_t l_childIndex = InstanciatedXMLNodeStack.size() - 1; l_childIndex < InstanciatedXMLNodeStack.size(); l_childIndex--)
+				{
+					XMLNode* l_childNode = InstanciatedXMLNodeStack.at(l_childIndex);
+					if (l_childIndex == 0)
+					{
+						p_outGraph->RootNode = *l_childNode;
 					}
 					else
 					{
-						size_t l_beginBaliseArrayIndex = *XmlOpenBaliseIndicesStack.at(XmlOpenBaliseIndicesStack.size() - 1);
-
-						XMLBalise* p_beingXMLBalise = XmlBalises.at(l_beginBaliseArrayIndex);
-
-						XMLNode l_node;
-						XMLNode_allocXMLNode(&l_node, p_beingXMLBalise, p_xmlBalise, p_input);
-
-						XmlOpenBaliseIndicesStack.erase(XmlOpenBaliseIndicesStack.size() - 1);
+						for (size_t l_parentIndex = l_childIndex - 1; l_parentIndex < l_childIndex; l_parentIndex--)
+						{
+							XMLNode* l_potentialParentNode = InstanciatedXMLNodeStack.at(l_parentIndex);
+							if (l_potentialParentNode->XMlEndIndex > l_childNode->XMlEndIndex)
+							{
+								l_potentialParentNode->Childs.push_back(l_childNode);
+							}
+						}
 					}
+
+
 				}
 			}
-			XmlOpenBaliseIndicesStack.free();
+
+			// Individual nodes are not disposed because they copied recursively to p_outGraph
+			InstanciatedXMLNodeStack.free();
+
+			InstanciatedXMLNodeStack.free();
 		}
 		XmlBalises.forEach(XMLBalise_free, (void*)nullptr);
 		XmlBalises.free();
 
-		
+
 	};
 }

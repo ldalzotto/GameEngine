@@ -149,6 +149,23 @@ namespace _GameEngine::_Core
 		Vector_resize(p_vector, Vector_getTotalSize(p_vector) + (p_vector->ElementSize * p_elementNumber));
 	};
 
+	void Vector_swap(Vector* p_vector, size_t p_left, size_t p_right)
+	{
+		if (p_left >= p_vector->Size || p_right >= p_vector->Size) { throw std::runtime_error("Vector_swap : Out of range."); }
+		if (p_left > p_right) { throw std::out_of_range("Vector_swap : invalid indices."); }
+		if (p_left == p_right) { return; }
+
+		char* l_leftMemoryTarget = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_left);
+		char* l_rightMemoryTarget = (char*)p_vector->Memory + Vector_getElementOffset(p_vector, p_right);
+
+		for (size_t i = 0; i < p_vector->ElementSize; i++)
+		{
+			char l_rightTmp = l_rightMemoryTarget[i];
+			l_rightMemoryTarget[i] = l_leftMemoryTarget[i];
+			l_leftMemoryTarget[i] = l_rightTmp;
+		}
+	};
+
 	void* Vector_at(Vector* p_vector, size_t p_index)
 	{
 		if (p_index >= p_vector->Size)
@@ -216,13 +233,33 @@ namespace _GameEngine::_Core
 			{
 				l_minValue = l_comparedValue;
 			}
-			else
-			{
-				break;
-			}
 		}
 
 		return l_minValue;
+	};
+
+	size_t Vector_minIndex(Vector* p_vector, SortElementComparatorWithUserObject p_sortComparator, size_t p_beginIndex, void* p_userObject)
+	{
+		void* l_minValue = nullptr;
+		size_t l_minIndex = p_beginIndex;
+
+		if (p_vector->Size > 0)
+		{
+			l_minValue = Vector_at_unchecked(p_vector, p_beginIndex);
+		}
+
+		for (size_t i = p_beginIndex + 1; i < p_vector->Size; i++)
+		{
+			void* l_comparedValue = Vector_at_unchecked(p_vector, i);
+			short int l_compareValue = p_sortComparator(l_minValue, l_comparedValue, p_userObject);
+			if (l_compareValue >= 0)
+			{
+				l_minValue = l_comparedValue;
+				l_minIndex = i;
+			}
+		}
+
+		return l_minIndex;
 	};
 
 	void Vector_forEach(Vector* p_vector, VectorElementCallback p_callback, void* p_userObject)
@@ -245,6 +282,17 @@ namespace _GameEngine::_Core
 		}
 	};
 
+	void Vector_selectionSort(Vector* p_vector, SortElementComparatorWithUserObject p_sortComparator, void* p_userObject)
+	{
+		for (size_t i = 0; i < p_vector->Size; i++)
+		{
+			size_t l_minIndex = Vector_minIndex(p_vector, p_sortComparator, i, p_userObject);
+			if (l_minIndex != i)
+			{
+				Vector_swap(p_vector, i, l_minIndex);
+			}
+		}
+	};
 
 	void SortedVector_alloc(SortedVector* p_vector, size_t p_initialCapacity, size_t p_elementSize, SortElementComparator p_sortComparator)
 	{

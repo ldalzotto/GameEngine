@@ -18,6 +18,9 @@ namespace _GameEngine::_Utils
 
 		_Core::String Name;
 		_Core::String Content;
+
+		size_t XmlBeginIndex;
+		size_t XMlEndIndex;
 	};
 
 	struct XMLGraph
