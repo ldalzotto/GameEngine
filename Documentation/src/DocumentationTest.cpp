@@ -12,6 +12,9 @@ int main()
 	_Core::String_append(&l_str, "<Root> <Title>Bonjour</Title> <Section i=\"1\">Section 1</Section> </Root>");
 	_Utils::XMLGraph l_xmlGraph;
 	_Utils::XMLGraph_parse(&l_str, &l_xmlGraph);
+	{
+	}
+	_Utils::XMLGraph_free(&l_xmlGraph);
 	return 0;
 }
 

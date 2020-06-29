@@ -19,6 +19,12 @@ This documentation won't discuss of :
 	## Implementation details of algorithm.
 	## What every method is doing (we are never talking about code).
 
+-- Data Structures --
+
+# Separating Structure operation from object.
+# Instead of locking operations to only one king of structure, creating generic object (like Iterator, Writer, ...) that can be created from structures. Then
+  algorithm are executed on them instead of data structures.
+
 -- Physics --
 
 # Adding Layers to BoxCollider.

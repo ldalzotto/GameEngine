@@ -21,20 +21,20 @@ namespace _GameEngine::_Utils
 		bool IsStart;
 		size_t BeginIndex;
 		size_t EndIndex;
-		_Core::String BaliseName;
+		_Core::String BaliseContent;
 	};
 
 	void XMLBalise_allocFromString(XMLBalise* p_xmlBalise, _Core::String* p_baliseFullString, size_t p_beginIndex, size_t p_endIndex)
 	{
 		p_xmlBalise->IsStart = !(*p_baliseFullString->Vector.at(1) == '/');
-		p_xmlBalise->BaliseName.alloc((p_endIndex - p_beginIndex));
+		p_xmlBalise->BaliseContent.alloc((p_endIndex - p_beginIndex));
 		if (p_xmlBalise->IsStart)
 		{
-			_Core::String_substring(p_baliseFullString, 1, (p_endIndex - p_beginIndex) - 1, &p_xmlBalise->BaliseName);
+			_Core::String_substring(p_baliseFullString, 1, (p_endIndex - p_beginIndex) - 1, &p_xmlBalise->BaliseContent);
 		}
 		else
 		{
-			_Core::String_substring(p_baliseFullString, 2, (p_endIndex - p_beginIndex) - 1, &p_xmlBalise->BaliseName);
+			_Core::String_substring(p_baliseFullString, 2, (p_endIndex - p_beginIndex) - 1, &p_xmlBalise->BaliseContent);
 		}
 
 		p_xmlBalise->BeginIndex = p_beginIndex;
@@ -43,7 +43,30 @@ namespace _GameEngine::_Utils
 
 	void XMLBalise_free(XMLBalise* p_xmlBalise, void* p_null)
 	{
-		p_xmlBalise->BaliseName.free();
+		p_xmlBalise->BaliseContent.free();
+	};
+
+	void XMLAttribute_allocFromString(XMLAttribute* p_xmlAttribute, _Core::String* p_attributeFullString)
+	{
+
+		size_t l_equalIndex;
+		if (_Core::String_find(p_attributeFullString, "=", 1, 0, &l_equalIndex))
+		{
+			p_xmlAttribute->Name.alloc(l_equalIndex);
+			_Core::String_substring(p_attributeFullString, 0, l_equalIndex - 1, &p_xmlAttribute->Name);
+			size_t l_attributeValueBeginIndex, l_attributeValueEndIndex;
+			if (_Core::String_find(p_attributeFullString, "\"", 1, 0, &l_attributeValueBeginIndex) && _Core::String_find(p_attributeFullString, "\"", 1, l_attributeValueBeginIndex + 1, &l_attributeValueEndIndex))
+			{
+				p_xmlAttribute->Value.alloc(l_attributeValueEndIndex - l_attributeValueBeginIndex);
+				_Core::String_substring(p_attributeFullString, l_attributeValueBeginIndex + 1, l_attributeValueEndIndex - 1, &p_xmlAttribute->Value);
+			}
+		}
+	};
+
+	void XMLAttribute_free(XMLAttribute* p_attr, void* p_null)
+	{
+		p_attr->Name.free();
+		p_attr->Value.free();
 	};
 
 	bool XMLGraph_findNextBalise(_Core::String* p_input, size_t p_startIndex, XMLBalise* out_xmlBalise)
@@ -65,18 +88,63 @@ namespace _GameEngine::_Utils
 		return false;
 	}
 
-	void XMLNode_alloc(XMLNode* p_node, XMLBalise* p_beging, XMLBalise* p_end, _Core::String* p_xml)
+	void XMLNode_alloc(XMLNode* p_node, XMLBalise* p_begin, XMLBalise* p_end, _Core::String* p_xml)
 	{
-		p_node->Name.alloc(p_beging->BaliseName.Vector.size());
-		_Core::String_append(&p_node->Name, p_beging->BaliseName.c_str());
-
 		p_node->Content.alloc(0);
-		_Core::String_substring(p_xml, p_beging->EndIndex + 1, p_end->BeginIndex - 1, &p_node->Content);
+		_Core::String_substring(p_xml, p_begin->EndIndex + 1, p_end->BeginIndex - 1, &p_node->Content);
 
-		p_node->XmlBeginIndex = p_beging->BeginIndex;
+		p_node->XmlBeginIndex = p_begin->BeginIndex;
 		p_node->XMlEndIndex = p_end->EndIndex;
 
 		p_node->Attributes.alloc();
+		//Extracting name and attributes
+		{
+			bool l_nameFound = false;
+			bool l_iterating = true;
+			size_t l_beginBaliseContentCursor = 0;
+			size_t l_spaceFoundIndex;
+			while (l_iterating)
+			{
+				bool l_spaceFound = _Core::String_find(&p_begin->BaliseContent, " ", 1, l_beginBaliseContentCursor, &l_spaceFoundIndex);
+				if (!l_spaceFound)
+				{
+					if (l_beginBaliseContentCursor <= (_Core::String_charNb(&p_begin->BaliseContent) - 1))
+					{
+						l_spaceFoundIndex = _Core::String_charNb(&p_begin->BaliseContent);
+					}
+					else
+					{
+						l_iterating = false;
+					}
+				}
+
+				if (l_iterating)
+				{
+					if (!l_nameFound)
+					{
+						p_node->Name.alloc((l_spaceFoundIndex - l_beginBaliseContentCursor));
+						_Core::String_substring(&p_begin->BaliseContent, l_beginBaliseContentCursor, l_spaceFoundIndex - 1, &p_node->Name);
+
+						l_nameFound = true;
+					}
+					else
+					{
+						char* l_attributeStringBegin = p_begin->BaliseContent.Vector.at(l_beginBaliseContentCursor);
+						_Core::String singleAttributeSlice = _Core::String_interpret(l_attributeStringBegin, (l_spaceFoundIndex - l_beginBaliseContentCursor));
+						{
+							XMLAttribute l_attribute;
+							XMLAttribute_allocFromString(&l_attribute, &singleAttributeSlice);
+							p_node->Attributes.push_back(&l_attribute);
+						}
+						singleAttributeSlice.free();
+					}
+
+					l_beginBaliseContentCursor = l_spaceFoundIndex + 1;
+				}
+			}
+
+		}
+
 		p_node->Childs.alloc();
 	};
 
@@ -84,8 +152,15 @@ namespace _GameEngine::_Utils
 	{
 		p_node->Name.free();
 		p_node->Content.free();
+		p_node->Attributes.forEach(XMLAttribute_free, (void*)nullptr);
 		p_node->Attributes.free();
 		p_node->Childs.free();
+	};
+
+	void XMLNode_freeRecursive(XMLNode* p_node, void*)
+	{
+		p_node->Childs.forEach(XMLNode_freeRecursive, (void*)nullptr);
+		XMLNode_free(p_node);
 	};
 
 	void XMLGraph_parse(_Core::String* p_input, XMLGraph* p_outGraph)
@@ -172,5 +247,10 @@ namespace _GameEngine::_Utils
 		XmlBalises.free();
 
 
+	};
+
+	void XMLGraph_free(XMLGraph* p_xmlGraph)
+	{
+		XMLNode_freeRecursive(&p_xmlGraph->RootNode, (void*)nullptr);
 	};
 }

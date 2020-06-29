@@ -14,6 +14,11 @@ namespace _GameEngine::_Core
 		char* c_str();
 	};
 
+	/**
+	//TODO This method is temporary and must be replaced with a more generic string modification system (iterator, writer, ...)
+	*/
+	String String_interpret(char* p_source, size_t p_sourceCharNb);
+
 	struct FixedString
 	{
 		_Core::ArrayT<char> Array;

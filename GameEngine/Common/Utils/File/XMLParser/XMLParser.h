@@ -28,5 +28,9 @@ namespace _GameEngine::_Utils
 		XMLNode RootNode;
 	};
 
+	/**
+	//TODO -> Maybe having a custom allocator for temporary objects ?
+	*/
 	void XMLGraph_parse(_Core::String* p_input, XMLGraph* p_outGraph);
+	void XMLGraph_free(XMLGraph* p_xmlGraph);
 }

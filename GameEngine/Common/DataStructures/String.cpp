@@ -1,6 +1,8 @@
 #include "String.h"
 #include <string.h>
 
+#include "StringAlgorithm.h"
+
 namespace _GameEngine::_Core
 {
 	void String::alloc(size_t p_charNb)
@@ -23,6 +25,14 @@ namespace _GameEngine::_Core
 	char* String::c_str()
 	{
 		return (char*)this->Vector.Vector.Memory;
+	};
+
+	String String_interpret(char* p_source, size_t p_sourceCharNb)
+	{
+		String l_str;
+		l_str.alloc(p_sourceCharNb);
+		String_append(&l_str, p_source, p_sourceCharNb);
+		return l_str;
 	};
 
 	char* FixedString::c_str()
