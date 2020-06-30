@@ -12,7 +12,7 @@
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "VulkanObjects/Memory/VulkanBuffer.h"
-#include "LoopStep/PreRenderDeferedCommandBufferStep.h"
+#include "RenderStep/PreRenderDeferedCommandBufferStep.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLoadDeferredOperation.h"
 #include "Texture/InitializationConfigurations/TCColorShader.h"
 #include "Texture/InitializationConfigurations/TCDepth.h"
@@ -35,8 +35,8 @@ namespace _GameEngine::_Render
 
 	//////////////////// Texture internal object creation ////////////////////
 	void texture_buildCreationInfoObjects(TextureCreateInfo* p_textureCreateInfo, RenderInterface* p_renderInterface, TextureInfo* out_textureInfo, ImageViewCreateInfo* out_imageViewCreateInfo);
-	void texture_buildDeferredInitializationOperation_textureLoad(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels);
-	void texture_buildDeferredInitializationOperation_procedural(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface);
+	void texture_buildDeferredInitializationOperation(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels);
+	void texture_buildDeferredInitializationOperation(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface);
 	void texture_AllocateVulkanObjects(Texture* p_texture, ImageViewCreateInfo* p_imageViewCreateInfo, Device* p_device);
 	//////////////////////////////////////////////////////////////////////////
 
@@ -93,7 +93,7 @@ namespace _GameEngine::_Render
 			);
 		}
 		{
-			texture_buildDeferredInitializationOperation_textureLoad(&p_textureAllocInfo->TextureCreateInfo, p_texture, p_textureAllocInfo->RenderInterface, l_imageSize, l_pixels);
+			texture_buildDeferredInitializationOperation(&p_textureAllocInfo->TextureCreateInfo, p_texture, p_textureAllocInfo->RenderInterface, l_imageSize, l_pixels);
 		}
 
 		stbi_image_free(l_pixels);
@@ -110,7 +110,7 @@ namespace _GameEngine::_Render
 			p_textureAllocInfo->RenderInterface->Device
 		);
 
-		texture_buildDeferredInitializationOperation_procedural(&p_textureAllocInfo->TextureCreateInfo, p_texture, p_textureAllocInfo->RenderInterface);
+		texture_buildDeferredInitializationOperation(&p_textureAllocInfo->TextureCreateInfo, p_texture, p_textureAllocInfo->RenderInterface);
 	};
 
 	void Texture_free(Texture* p_texture, RenderInterface* p_renderInterface)
@@ -260,7 +260,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void texture_buildDeferredInitializationOperation_textureLoad(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels)
+	void texture_buildDeferredInitializationOperation(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface, VkDeviceSize p_imageSize, stbi_uc* p_pixels)
 	{
 		if (p_textureCreateInfo->TextureType == TextureType::COLOR
 			&& p_textureCreateInfo->TextureUsage == TextureUsage::SHADER_INPUT)
@@ -295,7 +295,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void texture_buildDeferredInitializationOperation_procedural(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface)
+	void texture_buildDeferredInitializationOperation(TextureCreateInfo* p_textureCreateInfo, Texture* p_texture, RenderInterface* p_renderInterface)
 	{
 		if (p_textureCreateInfo->TextureType == TextureType::DEPTH
 			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)

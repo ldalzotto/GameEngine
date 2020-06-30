@@ -3,12 +3,138 @@
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "MyLog/MyLog.h"
 
-#include "LoopStep/MaterialDrawStep.h"
+#include "RenderStep/MaterialDrawStep.h"
 
 #include <stdexcept>
 
 namespace _GameEngine::_Render
 {
+
+	bool render_acquireNextRenderInmage(Render* p_render, CurrentSynchronisationObject* p_synchronizationObject, uint32_t* p_outImageIntex);
+
+	inline void render_commandBufferBegin(VkCommandBuffer p_commandBuffer);
+	inline void render_commandBufferEnd(VkCommandBuffer p_commandBuffer);
+
+	inline void render_pushToScreen(Render* p_render, CurrentSynchronisationObject* p_synchronizationObject, VkCommandBuffer p_commandBuffer, uint32_t p_imageIndex);
+
+	void Render_render(Render* p_render)
+	{
+		RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
+		CurrentSynchronisationObject l_synchronizationObject = RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
+		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
+
+		PreRenderDeferedCommandBufferStep_execute(&p_render->PreRenderDeferedCommandBufferStep, &p_render->Device);
+
+		uint32_t l_imageIndex;
+		if (render_acquireNextRenderInmage(p_render, &l_synchronizationObject, &l_imageIndex))
+		{
+
+			VkCommandBuffer l_commandBuffer = p_render->SwapChain.SwapChainImages.at(l_imageIndex).CommandBuffer.CommandBuffer;
+
+			render_commandBufferBegin(l_commandBuffer);
+
+			{
+				PushCameraBuffer_buildCommandBuffer(&p_render->PushCameraBuffer, l_commandBuffer);
+				MaterialDrawStep_buildCommandBuffer(&p_render->RenderInterface, l_commandBuffer, l_imageIndex);
+
+				BeforeEndRecordingMainCommandBuffer_Input l_beforeEndRecordingMainCommandBuffer{};
+				l_beforeEndRecordingMainCommandBuffer.CommandBuffer = l_commandBuffer;
+				l_beforeEndRecordingMainCommandBuffer.ImageIndex = l_imageIndex;
+				l_beforeEndRecordingMainCommandBuffer.RenderInterface = &p_render->RenderInterface;
+				_Utils::Observer_broadcast(&p_render->RenderHookCallbacks.BeforeEndRecordingMainCommandBuffer, &l_beforeEndRecordingMainCommandBuffer);
+			}
+
+			render_commandBufferEnd(l_commandBuffer);
+			render_pushToScreen(p_render, &l_synchronizationObject, l_commandBuffer, l_imageIndex);
+			vkWaitForFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence, VK_FALSE, UINT64_MAX);
+		}
+
+		Gizmo_flushDrawStack(&p_render->Gizmo);
+	};
+
+	bool render_acquireNextRenderInmage(Render* p_render, CurrentSynchronisationObject* p_synchronizationObject, uint32_t* p_outImageIntex)
+	{
+		VkResult l_acquireNextImageResult = vkAcquireNextImageKHR(
+			p_render->Device.LogicalDevice.LogicalDevice,
+			p_render->SwapChain.VkSwapchainKHR,
+			99999999,
+			p_synchronizationObject->ImageAvailableSemaphore,
+			VK_NULL_HANDLE,
+			p_outImageIntex);
+
+		if (l_acquireNextImageResult == VK_ERROR_OUT_OF_DATE_KHR || l_acquireNextImageResult == VK_SUBOPTIMAL_KHR || p_render->SwapChain.MustBeRebuilt)
+		{
+			Render_recreateSwapChain(p_render);
+			return false;
+		}
+
+		if (l_acquireNextImageResult != VK_SUCCESS)
+		{
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
+		}
+
+		return true;
+	};
+
+	inline void render_commandBufferBegin(VkCommandBuffer p_commandBuffer)
+	{
+		VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
+		l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		l_commandBufferBeginInfo.flags = 0;
+		l_commandBufferBeginInfo.pInheritanceInfo = nullptr;
+
+		if (vkBeginCommandBuffer(p_commandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
+		{
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
+		}
+	};
+	
+	inline void render_commandBufferEnd(VkCommandBuffer p_commandBuffer)
+	{
+		if (vkEndCommandBuffer(p_commandBuffer) != VK_SUCCESS)
+		{
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
+		}
+	};
+
+	inline void render_pushToScreen(Render* p_render, CurrentSynchronisationObject* p_synchronizationObject, VkCommandBuffer p_commandBuffer, uint32_t p_imageIndex)
+	{
+		VkSubmitInfo l_submitInfo{};
+		l_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkSemaphore l_waitSemaphore[] = { p_synchronizationObject->ImageAvailableSemaphore };
+		VkPipelineStageFlags l_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+		l_submitInfo.waitSemaphoreCount = 1;
+		l_submitInfo.pWaitSemaphores = l_waitSemaphore;
+		l_submitInfo.pWaitDstStageMask = l_waitStages;
+		l_submitInfo.commandBufferCount = 1;
+		l_submitInfo.pCommandBuffers = &p_commandBuffer;
+
+		VkSemaphore l_signalSemaphores[] = { p_synchronizationObject->RenderFinishedSemaphore };
+		l_submitInfo.signalSemaphoreCount = 1;
+		l_submitInfo.pSignalSemaphores = l_signalSemaphores;
+
+		if (vkQueueSubmit(p_render->Device.LogicalDevice.Queues.GraphicsQueue, 1, &l_submitInfo, p_synchronizationObject->WaitForGraphicsQueueFence) != VK_SUCCESS)
+		{
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to submit draw command buffer!"));
+		}
+
+		VkPresentInfoKHR l_presentInfo{ };
+		l_presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		l_presentInfo.waitSemaphoreCount = 1;
+		l_presentInfo.pWaitSemaphores = l_signalSemaphores;
+
+		VkSwapchainKHR l_swapChains[] = { p_render->SwapChain.VkSwapchainKHR };
+		l_presentInfo.swapchainCount = 1;
+		l_presentInfo.pSwapchains = l_swapChains;
+		l_presentInfo.pImageIndices = &p_imageIndex;
+
+		l_presentInfo.pResults = nullptr;
+
+		vkQueuePresentKHR(p_render->Device.LogicalDevice.Queues.PresentQueue, &l_presentInfo);
+	};
+
 	void initializeVulkan(Render* p_render);
 	void freeVulkan(Render* p_render);
 
@@ -47,10 +173,11 @@ namespace _GameEngine::_Render
 	void initPreRenderStaging(Render* p_render);
 	void freePreRenderStaging(Render* p_render);
 
+
 	void Render_build(Render* p_render, _Log::MyLog* p_myLog)
 	{
 		RenderInterface_initialize(p_render, p_myLog);
-		
+
 		Window_init(&p_render->Window);
 
 		initValidationLayers(p_render);
@@ -65,7 +192,7 @@ namespace _GameEngine::_Render
 		initPreRenderStaging(p_render);
 		initDepthTexture(p_render);
 		initResourcesProvider(p_render);
-		CameraBufferSetupStep_init(&p_render->CameraBufferSetupStep, &p_render->Device);
+		PushCameraBuffer_init(&p_render->PushCameraBuffer, &p_render->Device);
 		MaterialInstanceContainer_alloc(&p_render->MaterialInstanceContainer);
 		Gizmo_alloc(&p_render->Gizmo, &p_render->RenderInterface);
 		p_render->MaterialInstanceContainer.RenderInterface = &p_render->RenderInterface;
@@ -81,7 +208,7 @@ namespace _GameEngine::_Render
 
 		Gizmo_free(&(p_render)->Gizmo, &(p_render)->RenderInterface);
 		MaterialInstanceContainer_free(&(p_render)->MaterialInstanceContainer);
-		CameraBufferSetupStep_free(&(p_render)->CameraBufferSetupStep, &(p_render)->Device);
+		PushCameraBuffer_free(&(p_render)->PushCameraBuffer, &(p_render)->Device);
 		freeResourcesProvider(p_render);
 		freeDepthTexture(p_render);
 		freePreRenderStaging(p_render);
@@ -407,7 +534,7 @@ namespace _GameEngine::_Render
 	void initResourcesProvider(Render* p_render)
 	{
 		p_render->ResourceProviders.TextureResourceProvider.RenderInterface = &p_render->RenderInterface;
-		p_render->ResourceProviders.MeshResourceProvider.RenderInterface = &p_render->RenderInterface; 
+		p_render->ResourceProviders.MeshResourceProvider.RenderInterface = &p_render->RenderInterface;
 		p_render->ResourceProviders.MaterialResourceProvider.RenderInterface = &p_render->RenderInterface;
 	};
 
@@ -433,120 +560,5 @@ namespace _GameEngine::_Render
 	};
 
 	/////// END PRE RENDER STAGGING
-
-	void preRenderStagginStep(Render* p_render)
-	{
-
-		if (PreRenderDeferedCommandBufferStep_buildCommandBuffer(&p_render->PreRenderDeferedCommandBufferStep, &p_render->Device) & PreRenderDeferredCommandBufferStepStatusBitFlag::CREATED)
-		{
-			VkSubmitInfo l_staginSubmit{};
-			l_staginSubmit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			l_staginSubmit.commandBufferCount = 1;
-			l_staginSubmit.pCommandBuffers = &p_render->PreRenderDeferedCommandBufferStep.DedicatedCommandBuffer.CommandBuffer;
-			vkQueueSubmit(p_render->Device.LogicalDevice.Queues.GraphicsQueue, 1, &l_staginSubmit, p_render->PreRenderDeferedCommandBufferStep.PreRenderStaggingFence);
-
-			PreRenderDeferedCommandBufferStep_WaitForFence(&p_render->PreRenderDeferedCommandBufferStep, &p_render->Device);
-		}
-	};
-
-	void Render_render(Render* p_render)
-	{
-		RenderSemaphore_incrementFrameCount(&p_render->RenderSemaphore);
-		CurrentSynchronisationObject l_synchronizationObject = RenderSemaphore_getCurrentSynchronisationObject(&p_render->RenderSemaphore);
-		vkResetFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence);
-
-		preRenderStagginStep(p_render);
-
-
-		uint32_t l_imageIndex;
-		VkResult l_acquireNextImageResult = vkAcquireNextImageKHR(
-			p_render->Device.LogicalDevice.LogicalDevice,
-			p_render->SwapChain.VkSwapchainKHR,
-			99999999,
-			l_synchronizationObject.ImageAvailableSemaphore,
-			VK_NULL_HANDLE,
-			&l_imageIndex);
-
-		if (l_acquireNextImageResult == VK_ERROR_OUT_OF_DATE_KHR || l_acquireNextImageResult == VK_SUBOPTIMAL_KHR || p_render->SwapChain.MustBeRebuilt)
-		{
-			Render_recreateSwapChain(p_render);
-			return;
-		}
-		
-		if (l_acquireNextImageResult != VK_SUCCESS)
-		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to acquire swap chain image!"));
-		}
-
-		std::vector<SwapChainImage>* l_swapChainImages = &p_render->SwapChain.SwapChainImages;
-
-		VkCommandBuffer l_commandBuffer = p_render->SwapChain.SwapChainImages.at(l_imageIndex).CommandBuffer.CommandBuffer;
-
-		VkCommandBufferBeginInfo l_commandBufferBeginInfo{};
-		l_commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		l_commandBufferBeginInfo.flags = 0;
-		l_commandBufferBeginInfo.pInheritanceInfo = nullptr;
-
-		if (vkBeginCommandBuffer(l_commandBuffer, &l_commandBufferBeginInfo) != VK_SUCCESS)
-		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to begin recording command buffer!"));
-		}
-
-		CameraBufferSetupStep_buildCommandBuffer(&p_render->CameraBufferSetupStep, l_commandBuffer);
-
-		MaterialDrawStep_buildCommandBuffer(&p_render->RenderInterface, l_commandBuffer, l_imageIndex);
-
-		BeforeEndRecordingMainCommandBuffer_Input l_beforeEndRecordingMainCommandBuffer{};
-		l_beforeEndRecordingMainCommandBuffer.CommandBuffer = l_commandBuffer;
-		l_beforeEndRecordingMainCommandBuffer.ImageIndex = l_imageIndex;
-		l_beforeEndRecordingMainCommandBuffer.RenderInterface = &p_render->RenderInterface;
-		_Utils::Observer_broadcast(&p_render->RenderHookCallbacks.BeforeEndRecordingMainCommandBuffer, &l_beforeEndRecordingMainCommandBuffer);
-
-		if (vkEndCommandBuffer(l_commandBuffer) != VK_SUCCESS)
-		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to record command buffer!"));
-		}
-
-		VkSubmitInfo l_submitInfo{};
-		l_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-		VkSemaphore l_waitSemaphore[] = { l_synchronizationObject.ImageAvailableSemaphore };
-		VkPipelineStageFlags l_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-
-		l_submitInfo.waitSemaphoreCount = 1;
-		l_submitInfo.pWaitSemaphores = l_waitSemaphore;
-		l_submitInfo.pWaitDstStageMask = l_waitStages;
-		l_submitInfo.commandBufferCount = 1;
-		l_submitInfo.pCommandBuffers = &p_render->SwapChain.SwapChainImages[l_imageIndex].CommandBuffer.CommandBuffer;
-
-		VkSemaphore l_signalSemaphores[] = { l_synchronizationObject.RenderFinishedSemaphore };
-		l_submitInfo.signalSemaphoreCount = 1;
-		l_submitInfo.pSignalSemaphores = l_signalSemaphores;
-
-		if (vkQueueSubmit(p_render->Device.LogicalDevice.Queues.GraphicsQueue, 1, &l_submitInfo, l_synchronizationObject.WaitForGraphicsQueueFence) != VK_SUCCESS)
-		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to submit draw command buffer!"));
-		}
-
-		VkPresentInfoKHR l_presentInfo{ };
-		l_presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		l_presentInfo.waitSemaphoreCount = 1;
-		l_presentInfo.pWaitSemaphores = l_signalSemaphores;
-
-		VkSwapchainKHR l_swapChains[] = { p_render->SwapChain.VkSwapchainKHR };
-		l_presentInfo.swapchainCount = 1;
-		l_presentInfo.pSwapchains = l_swapChains;
-		l_presentInfo.pImageIndices = &l_imageIndex;
-
-		l_presentInfo.pResults = nullptr;
-
-		vkQueuePresentKHR(p_render->Device.LogicalDevice.Queues.PresentQueue, &l_presentInfo);
-
-		vkWaitForFences(p_render->Device.LogicalDevice.LogicalDevice, 1, &l_synchronizationObject.WaitForGraphicsQueueFence, VK_FALSE, UINT64_MAX);
-
-		Gizmo_clear(&p_render->Gizmo);
-	};
-
-
 
 } // namespace _GameEngine

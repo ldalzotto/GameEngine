@@ -8,17 +8,14 @@
 
 #include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
-#include "LoopStep/CameraBufferSetupStep.h"
-
+#include "RenderStep/PushCameraBuffer.h"
 
 namespace _GameEngine::_Render
 {
-
 	size_t MaterialRenderingOrder_opaque = 100;
 	size_t MaterialRenderingOrder_gizmo = 200;
 
-
-	void createDescriptorSetLayout(Material_LocalInputParameters* p_localInputParameters, RenderInterface* p_renderInterface);
+	void createDescriptorSetLayout(Material_InputLayout* p_localInputParameters, RenderInterface* p_renderInterface);
 	void freeDescriptorSetLayout(DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface);
 
 	void createDescriptorPool(DescriptorPool* p_descriptorPool, DescriptorSetLayout* p_descriptorSetLayout, RenderInterface* p_renderInterface);
@@ -29,30 +26,21 @@ namespace _GameEngine::_Render
 
 	GraphicsPipelineAllocInfo buildPipelineAllocInfo(Material* p_defaultMaterial, RenderInterface* p_renderInterface);
 
-	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey)
-	{
-		size_t l_hash = 0;
-		_Utils::Hash_combine(l_hash, p_materialUniqueKey->VertexShaderPath);
-		_Utils::Hash_combine(l_hash, p_materialUniqueKey->FragmentShaderPath);
-		return l_hash;
-	};
-
 	Material* Material_alloc(RenderInterface* p_renderInterface, MaterialAllocInfo* p_materialAllocInfo)
 	{
-
 		Material* l_material = new Material();
 
 		l_material->RenderingOrder = p_materialAllocInfo->RenderingOrder;
-		l_material->Configuration.PrimitiveTopologyOverride = p_materialAllocInfo->PrimitiveTopologyOverride;
+		l_material->RenderingSpecifications.PrimitiveTopologyOverride = p_materialAllocInfo->PrimitiveTopologyOverride;
 		l_material->FinalDrawObjects.MaterialDrawFn = p_materialAllocInfo->MaterialDrawFn;
 		l_material->MaterialUniqueKey.VertexShaderPath = p_materialAllocInfo->VertexShader;
 		l_material->MaterialUniqueKey.FragmentShaderPath = p_materialAllocInfo->FragmentShader;
 
-		l_material->LocalInputParameters.ShaderParameters = p_materialAllocInfo->ShaderParameters;
+		l_material->InputLayout.ShaderParameters = p_materialAllocInfo->ShaderParameters;
 
 		if (p_materialAllocInfo->UseDepthBuffer)
 		{
-			l_material->InternalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
+			l_material->GlobalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
 		}
 
 		{
@@ -65,10 +53,10 @@ namespace _GameEngine::_Render
 		}
 
 		{
-			auto l_localInputParameters = &l_material->LocalInputParameters;
-			l_localInputParameters->VertexInput = p_materialAllocInfo->VertexInput;
-			createDescriptorSetLayout(l_localInputParameters, p_renderInterface);
-			createDescriptorPool(&l_localInputParameters->DescriptorPool, &l_localInputParameters->DescriptorSetLayout, p_renderInterface);
+			auto l_inputLayout = &l_material->InputLayout;
+			l_inputLayout->VertexInput = p_materialAllocInfo->VertexInput;
+			createDescriptorSetLayout(l_inputLayout, p_renderInterface);
+			createDescriptorPool(&l_inputLayout->DescriptorPool, &l_inputLayout->DescriptorSetLayout, p_renderInterface);
 		}
 
 		{
@@ -85,16 +73,16 @@ namespace _GameEngine::_Render
 	{
 		Material* l_material = *p_defaultMaterial;
 
-		for (ShaderParameter& l_shaderParameter : l_material->LocalInputParameters.ShaderParameters)
+		for (ShaderParameter& l_shaderParameter : l_material->InputLayout.ShaderParameters)
 		{
 			ShaderParameter_free(&l_shaderParameter);
 		}
-		l_material->LocalInputParameters.ShaderParameters.clear();
+		l_material->InputLayout.ShaderParameters.clear();
 
 		GraphicsPipeline_free(&l_material->FinalDrawObjects.GraphicsPipeline);
 		freePipelineLayout(l_material, p_renderInterface);
 		freeDescriptorPool(l_material, p_renderInterface);
-		freeDescriptorSetLayout(&l_material->LocalInputParameters.DescriptorSetLayout, p_renderInterface);
+		freeDescriptorSetLayout(&l_material->InputLayout.DescriptorSetLayout, p_renderInterface);
 
 		delete l_material;
 		l_material = nullptr;
@@ -106,7 +94,7 @@ namespace _GameEngine::_Render
 		GraphicsPipeline_reallocatePipeline(&p_defaultMaterial->FinalDrawObjects.GraphicsPipeline, &l_graphicsPipelineAllocInfo);
 	};
 
-	void createDescriptorSetLayout(Material_LocalInputParameters* p_localInputParameters, RenderInterface* p_renderInterface)
+	void createDescriptorSetLayout(Material_InputLayout* p_localInputParameters, RenderInterface* p_renderInterface)
 	{
 		DescriptorSetLayoutAllocInfo l_descriptorSetLayoutAllocInfo{};
 
@@ -139,14 +127,14 @@ namespace _GameEngine::_Render
 
 	void freeDescriptorPool(Material* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
-		DescriptorPool_free(&p_defaultMaterial->LocalInputParameters.DescriptorPool, p_renderInterface->Device);
+		DescriptorPool_free(&p_defaultMaterial->InputLayout.DescriptorPool, p_renderInterface->Device);
 	};
 
 	void createPipelineLayout(Material* p_defaultMaterial, RenderInterface* p_renderInterface)
 	{
 		std::array<VkDescriptorSetLayout, 2> l_descriptorSetLayouts = {
-					p_renderInterface->CameraBufferSetupStep->DescriptorSetLayout.DescriptorSetLayout,
-					p_defaultMaterial->LocalInputParameters.DescriptorSetLayout.DescriptorSetLayout
+					p_renderInterface->PushCameraBuffer->DescriptorSetLayout.DescriptorSetLayout,
+					p_defaultMaterial->InputLayout.DescriptorSetLayout.DescriptorSetLayout
 		};
 
 		VkPipelineLayoutCreateInfo l_pipelineLayoutCreateInfo{};
@@ -174,18 +162,30 @@ namespace _GameEngine::_Render
 		l_graphicsPipelineAllocInfo.VertexShader = &p_defaultMaterial->ExternalResources.VertexShader;
 		l_graphicsPipelineAllocInfo.FragmentShader = &p_defaultMaterial->ExternalResources.FragmentShader;
 		l_graphicsPipelineAllocInfo.PipelineLayout = p_defaultMaterial->FinalDrawObjects.PipelineLayout;
-		l_graphicsPipelineAllocInfo.VertexInput = &p_defaultMaterial->LocalInputParameters.VertexInput;
+		l_graphicsPipelineAllocInfo.VertexInput = &p_defaultMaterial->InputLayout.VertexInput;
 		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.Device = p_renderInterface->Device;
 		l_graphicsPipelineAllocInfo.GraphicsPipelineDependencies.SwapChain = p_renderInterface->SwapChain;
 
-		if (p_defaultMaterial->InternalResources.DepthBufferTexture != nullptr)
+		if (p_defaultMaterial->GlobalResources.DepthBufferTexture != nullptr)
 		{
-			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.DepthTexture = p_defaultMaterial->InternalResources.DepthBufferTexture;
+			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.DepthTexture = p_defaultMaterial->GlobalResources.DepthBufferTexture;
 		}
 
-		l_graphicsPipelineAllocInfo.PrimitiveTopology = p_defaultMaterial->Configuration.PrimitiveTopologyOverride;
+		l_graphicsPipelineAllocInfo.PrimitiveTopology = p_defaultMaterial->RenderingSpecifications.PrimitiveTopologyOverride;
 				
 		return l_graphicsPipelineAllocInfo;
 	};
 
+}
+
+
+namespace _GameEngine::_Render
+{
+	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey)
+	{
+		size_t l_hash = 0;
+		_Utils::Hash_combine(l_hash, p_materialUniqueKey->VertexShaderPath);
+		_Utils::Hash_combine(l_hash, p_materialUniqueKey->FragmentShaderPath);
+		return l_hash;
+	};
 }

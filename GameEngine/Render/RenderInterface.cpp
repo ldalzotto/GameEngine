@@ -29,7 +29,7 @@ namespace _GameEngine::_Render
 		l_renderInterface->ResourceProvidersInterface.MaterialResourceProvider = &p_render->ResourceProviders.MaterialResourceProvider;
 
 		l_renderInterface->PreRenderDeferedCommandBufferStep = &p_render->PreRenderDeferedCommandBufferStep;
-		l_renderInterface->CameraBufferSetupStep = &p_render->CameraBufferSetupStep;
+		l_renderInterface->PushCameraBuffer = &p_render->PushCameraBuffer;
 		l_renderInterface->Gizmo = &p_render->Gizmo;
 	};
 }

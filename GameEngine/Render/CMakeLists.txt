@@ -4,7 +4,7 @@ project(GameEngine_Render VERSION 0.0.1)
 file(GLOB_RECURSE GAME_ENGINE_RENDER_PRIVATE 
 	"./Gizmo/*.cpp"
 	"./Includes/*.cpp"
-	"./LoopStep/*.cpp"
+	"./RenderStep/*.cpp"
 	"./Materials/*.cpp"
 	"./Mesh/*.cpp"
 	"./Resources/*.cpp"
@@ -20,7 +20,7 @@ SET(GAME_ENGINE_RENDER_PRIVATE
 file(GLOB_RECURSE GAME_ENGINE_RENDER_PUBLIC 
 	"./Gizmo/*.h"
 	"./Includes/*.h"
-	"./LoopStep/*.h"
+	"./RenderStep/*.h"
 	"./Materials/*.h"
 	"./Mesh/*.h"
 	"./Resources/*.h"

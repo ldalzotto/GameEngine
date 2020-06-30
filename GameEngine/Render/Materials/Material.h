@@ -21,15 +21,15 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
+	struct Material_GlobalResources
+	{
+		Texture* DepthBufferTexture;
+	};
+
 	struct Material_ExternalResources
 	{
 		Shader VertexShader;
 		Shader FragmentShader;
-	};
-
-	struct Material_InternalResources
-	{
-		Texture* DepthBufferTexture;
 	};
 
 	struct ModelProjection
@@ -37,7 +37,7 @@ namespace _GameEngine::_Render
 		_Math::Matrix4x4f Model;
 	};
 
-	struct Material_LocalInputParameters
+	struct Material_InputLayout
 	{
 		VertexInput VertexInput;
 
@@ -47,7 +47,7 @@ namespace _GameEngine::_Render
 		DescriptorPool DescriptorPool;
 	};
 
-	struct Material_Configuration
+	struct Material_RenderingSpecifications
 	{
 		_Utils::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
 	};
@@ -75,10 +75,13 @@ namespace _GameEngine::_Render
 
 		MaterialUniqueKey MaterialUniqueKey;
 		MaterialRenderingOrder RenderingOrder;
+
+		Material_GlobalResources GlobalResources;
 		Material_ExternalResources ExternalResources;
-		Material_InternalResources InternalResources;
-		Material_LocalInputParameters LocalInputParameters;
-		Material_Configuration Configuration;
+
+		Material_InputLayout InputLayout;
+		Material_RenderingSpecifications RenderingSpecifications;
+
 		FinalDrawObjects FinalDrawObjects;
 	};
 

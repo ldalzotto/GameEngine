@@ -49,7 +49,7 @@ namespace _GameEngine::_Render
 
 	void Gizmo_alloc(Gizmo* p_gizmo, RenderInterface* p_renderInterface);
 	void Gizmo_free(Gizmo* p_gizmo, RenderInterface* p_renderInterface);
-	void Gizmo_clear(Gizmo* p_gizmo);
+	void Gizmo_flushDrawStack(Gizmo* p_gizmo);
 
 	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end);
 	void Gizmo_drawLine(Gizmo* p_gizmo, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Math::Vector3f* p_color);

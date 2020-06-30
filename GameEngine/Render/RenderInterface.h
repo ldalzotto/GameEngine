@@ -33,7 +33,7 @@ namespace _GameEngine::_Render
 	struct MaterialResourceProvider;
 
 	struct PreRenderDeferedCommandBufferStep;
-	struct CameraBufferSetupStep;
+	struct PushCameraBuffer;
 	struct Gizmo;
 }
 
@@ -79,7 +79,7 @@ namespace _GameEngine::_Render
 		ResourceProvidersInterface ResourceProvidersInterface;
 
 		PreRenderDeferedCommandBufferStep* PreRenderDeferedCommandBufferStep;
-		CameraBufferSetupStep* CameraBufferSetupStep;
+		PushCameraBuffer* PushCameraBuffer;
 		Gizmo* Gizmo;
 	};
 

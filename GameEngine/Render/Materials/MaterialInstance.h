@@ -22,15 +22,12 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	struct MaterialInstanceParameter
-	{
-		size_t Key;
-		void(*FreeCallback)(MaterialInstanceParameter*, RenderInterface*);
-		void* Parameter;
-	};
+	struct MaterialInstanceParameter;
 
-	void MaterialInstanceParameter_free(MaterialInstanceParameter** p_materialInstanceParameter, RenderInterface* p_renderInterface);
-
+	//TODO - When allocated, the material instance immediately instanciate resources from ResrouceProvider.
+	//       Thus, provoquing the allocation of any resources at potentially any places in the application. Polluting the execution flow of the application.
+	//       MaterialInstance (and it's subsequent resource) can be allocated asynchronously.
+	//       This can have benefits in the future where materials are instanciated in another thread. And remove the responsability of the MaterialInstance to load resources.
 	struct MaterialInstance
 	{
 		RenderInterface* RenderInterface;
@@ -40,7 +37,6 @@ namespace _GameEngine::_Render
 		_Core::VectorT<MaterialInstanceParameter*> Parameters;
 	};
 
-	//TODO This structure must be replaced with a generic Material object.
 	struct MaterialInstanceInitInfo
 	{
 		Material* SourceMaterial;
@@ -49,6 +45,19 @@ namespace _GameEngine::_Render
 
 	MaterialInstance* MaterialInstance_alloc(RenderInterface* p_renderInterface, MaterialInstanceInitInfo* p_materialInstanceInitInfo);
 	void MaterialInstance_free(MaterialInstance** p_materialInstance);
+
+
+
+
+	struct MaterialInstanceParameter
+	{
+		size_t Key;
+		void(*FreeCallback)(MaterialInstanceParameter*, RenderInterface*);
+		void* Parameter;
+	};
+
+	void MaterialInstanceParameter_free(MaterialInstanceParameter** p_materialInstanceParameter, RenderInterface* p_renderInterface);
+
 
 	struct MeshMaterialInstanceParameter
 	{

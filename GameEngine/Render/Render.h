@@ -17,8 +17,8 @@
 #include "VulkanObjects/Synchronisation/Semaphore.h"
 #include "Texture/TextureSamplers.h"
 #include "Texture/TextureSwapChainSizeSynchronizer.h"
-#include "LoopStep/PreRenderDeferedCommandBufferStep.h"
-#include "LoopStep/CameraBufferSetupStep.h"
+#include "RenderStep/PreRenderDeferedCommandBufferStep.h"
+#include "RenderStep/PushCameraBuffer.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Resources/MeshResourceProvider.h"
 #include "Resources/MaterialResourceProvider.h"
@@ -69,7 +69,7 @@ namespace _GameEngine::_Render
 		ResourceProviders ResourceProviders;
 
 		PreRenderDeferedCommandBufferStep PreRenderDeferedCommandBufferStep;
-		CameraBufferSetupStep CameraBufferSetupStep;
+		PushCameraBuffer PushCameraBuffer;
 		Gizmo Gizmo;
 	};
 

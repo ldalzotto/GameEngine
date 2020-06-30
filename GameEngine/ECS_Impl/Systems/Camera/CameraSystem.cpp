@@ -12,7 +12,7 @@
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
 #include "Render/RenderInterface.h"
-#include "Render/LoopStep/CameraBufferSetupStep.h"
+#include "Render/RenderStep/PushCameraBuffer.h"
 #include "Render/VulkanObjects/Hardware/Window/Window.h"
 
 namespace _GameEngine::_ECS
@@ -70,9 +70,9 @@ namespace _GameEngine::_ECS
 			}
 
 
-			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.Projection = p_camera->ProjectionMatrix;
-			p_camera->RenderInterface->CameraBufferSetupStep->CameraProjection.View = p_camera->ViewMatrix;
-			_Render::CameraBufferSetupStep_pushCameraPorjectionValueToGPU(p_camera->RenderInterface->CameraBufferSetupStep, p_camera->RenderInterface->Device);
+			p_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = p_camera->ProjectionMatrix;
+			p_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = p_camera->ViewMatrix;
+			_Render::PushCameraBuffer_pushToGPU(p_camera->RenderInterface->PushCameraBuffer, p_camera->RenderInterface->Device);
 		}
 	};
 

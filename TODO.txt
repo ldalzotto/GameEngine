@@ -47,6 +47,10 @@ This documentation won't discuss of :
 
 # Adding configuration properties for blending (editor 3D gizmo may be transparent ?)
 
+-- Rendering --
+
+# Refactoring the fact that MaterialInstances allocate external resource immediately.
+
 
 ~~ LONG TERM OBJECTIVES ~~
 

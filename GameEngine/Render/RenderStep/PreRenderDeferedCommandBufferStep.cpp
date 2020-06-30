@@ -8,6 +8,12 @@
 namespace _GameEngine::_Render
 {
 
+	enum PreRenderDeferredCommandBufferStepStatusBitFlag
+	{
+		CREATED = 0x01,
+		NOTHING = 0x02
+	};
+
 	void PreRenderDeferedCommandBufferStep_alloc(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, CommandPool* p_commandPool)
 	{
 		CommandBuffersDependencies l_commandBufferDependencies{};
@@ -23,7 +29,23 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	PreRenderDeferredCommandBufferStepStatusBitFlag PreRenderDeferedCommandBufferStep_buildCommandBuffer(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, Device* p_device)
+	PreRenderDeferredCommandBufferStepStatusBitFlag preRenderDeferedCommandBufferStep_buildCommandBuffer(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, Device* p_device);
+	void preRenderDeferedCommandBufferStep_WaitForFence(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, Device* p_device);
+
+	void PreRenderDeferedCommandBufferStep_execute(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, Device* p_device)
+	{
+		if (preRenderDeferedCommandBufferStep_buildCommandBuffer(p_preRenderDeferedCommandBufferStep, p_device) & PreRenderDeferredCommandBufferStepStatusBitFlag::CREATED)
+		{
+			VkSubmitInfo l_staginSubmit{};
+			l_staginSubmit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			l_staginSubmit.commandBufferCount = 1;
+			l_staginSubmit.pCommandBuffers = &p_preRenderDeferedCommandBufferStep->DedicatedCommandBuffer.CommandBuffer;
+			vkQueueSubmit(p_device->LogicalDevice.Queues.GraphicsQueue, 1, &l_staginSubmit, p_preRenderDeferedCommandBufferStep->PreRenderStaggingFence);
+			preRenderDeferedCommandBufferStep_WaitForFence(p_preRenderDeferedCommandBufferStep, p_device);
+		}
+	};
+
+	PreRenderDeferredCommandBufferStepStatusBitFlag preRenderDeferedCommandBufferStep_buildCommandBuffer(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, Device* p_device)
 	{
 		if (p_preRenderDeferedCommandBufferStep->DefferedOperations.size() > 0)
 		{
@@ -71,7 +93,7 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void PreRenderDeferedCommandBufferStep_WaitForFence(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, Device* p_device)
+	void preRenderDeferedCommandBufferStep_WaitForFence(PreRenderDeferedCommandBufferStep* p_preRenderDeferedCommandBufferStep, Device* p_device)
 	{
 		vkWaitForFences(p_device->LogicalDevice.LogicalDevice, 1, &p_preRenderDeferedCommandBufferStep->PreRenderStaggingFence, VK_TRUE, UINT64_MAX);
 		vkDestroyFence(p_device->LogicalDevice.LogicalDevice, p_preRenderDeferedCommandBufferStep->PreRenderStaggingFence, nullptr);

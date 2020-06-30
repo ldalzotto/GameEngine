@@ -79,7 +79,7 @@ namespace _GameEngine::_Render
 		_Render::MaterialResourceProvider_ReleaseResource(p_renderInterface->ResourceProvidersInterface.MaterialResourceProvider, &Gizmo_MaterialKey);
 	};
 
-	void Gizmo_clear(Gizmo* p_gizmo)
+	void Gizmo_flushDrawStack(Gizmo* p_gizmo)
 	{
 		gizmoMesh_clearBuffer(&p_gizmo->GizmoMesh);
 	}

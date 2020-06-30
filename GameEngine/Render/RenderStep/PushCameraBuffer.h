@@ -21,7 +21,7 @@ namespace _GameEngine::_Render
 		_Math::Matrix4x4f Projection;
 	};
 
-	struct CameraBufferSetupStep
+	struct PushCameraBuffer
 	{
 		CameraProjection CameraProjection;
 		VulkanBuffer CameraProjectionBuffer;
@@ -32,8 +32,8 @@ namespace _GameEngine::_Render
 		VkDescriptorSet MaterialDescriptorSet;
 	};
 
-	void CameraBufferSetupStep_init(CameraBufferSetupStep* p_cameraDrawStep, Device* p_device);
-	void CameraBufferSetupStep_free(CameraBufferSetupStep* p_cameraDrawStep, Device* p_device);
-	void CameraBufferSetupStep_pushCameraPorjectionValueToGPU(CameraBufferSetupStep* p_cameraDrawStep, Device* p_device);
-	void CameraBufferSetupStep_buildCommandBuffer(CameraBufferSetupStep* p_cameraDrawStep, VkCommandBuffer p_commandBuffer);
+	void PushCameraBuffer_init(PushCameraBuffer* p_pushCameraBuffer, Device* p_device);
+	void PushCameraBuffer_free(PushCameraBuffer* p_pushCameraBuffer, Device* p_device);
+	void PushCameraBuffer_pushToGPU(PushCameraBuffer* p_pushCameraBuffer, Device* p_device);
+	void PushCameraBuffer_buildCommandBuffer(PushCameraBuffer* p_pushCameraBuffer, VkCommandBuffer p_commandBuffer);
 }
