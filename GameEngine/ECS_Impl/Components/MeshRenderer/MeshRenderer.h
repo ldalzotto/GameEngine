@@ -13,8 +13,6 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_ECS
 {
-	extern ComponentType MeshRendererType;
-
 	struct MeshRenderer
 	{
 		_Render::RenderInterface* RenderInterface;
@@ -24,6 +22,9 @@ namespace _GameEngine::_ECS
 
 		_Utils::Subject OnComponentDetached;
 	};
+
+	template<>
+	extern inline ComponentType* extractComponentType<MeshRenderer>();
 
 	struct MeshRendererInitInfo
 	{

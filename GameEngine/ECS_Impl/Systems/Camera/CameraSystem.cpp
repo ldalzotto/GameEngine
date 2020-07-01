@@ -37,8 +37,8 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->Update.Callback = cameraSystem_update;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&CameraType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformComponentType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(extractComponentType<_ECS::Camera>());
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(extractComponentType<_ECS::TransformComponent>());
 	};
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface)

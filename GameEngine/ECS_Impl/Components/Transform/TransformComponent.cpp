@@ -3,6 +3,8 @@
 namespace _GameEngine::_ECS
 {
 	ComponentType TransformComponentType = "TransformComponent";
+	template<>
+	inline ComponentType* extractComponentType<TransformComponent>() { return &TransformComponentType; };
 
 	void TransformComponent_free(void* p_transformComponent, void* p_null)
 	{

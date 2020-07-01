@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "ECS/ComponentMacros.h"
 #include "Math/Math.h"
 #include "Math/Quaternion/QuaternionMath.h"
 #include "Math/Vector/VectorMath.h"
@@ -68,7 +69,7 @@ namespace _GameEngine::_Test
 			Component* l_rootComponent;
 			TransformComponent* l_root;
 			{
-				l_rootComponent = Component_alloc(TransformComponentType, sizeof(TransformComponent));
+				l_rootComponent = Component_allocV2<_ECS::TransformComponent>();
 				l_root = (TransformComponent*)l_rootComponent->Child;
 
 				TransformInitInfo l_rootInitInfo{};
@@ -84,7 +85,7 @@ namespace _GameEngine::_Test
 			Component* l_child1Component;
 			TransformComponent* l_child1;
 			{
-				l_child1Component = Component_alloc(TransformComponentType, sizeof(TransformComponent));
+				l_child1Component = Component_allocV2<_ECS::TransformComponent>();
 				l_child1 = (TransformComponent*)l_child1Component->Child;
 
 				TransformInitInfo l_rootInitInfo{};
@@ -102,7 +103,7 @@ namespace _GameEngine::_Test
 			Component* l_child2Component;
 			TransformComponent* l_child2;
 			{
-				l_child2Component = Component_alloc(TransformComponentType, sizeof(TransformComponent));
+				l_child2Component = Component_allocV2<_ECS::TransformComponent>();
 				l_child2 = (TransformComponent*)l_child2Component->Child;
 
 				TransformInitInfo l_rootInitInfo{};
@@ -148,9 +149,9 @@ namespace _GameEngine::_Test
 			Component* l_rootComponent;
 			TransformComponent* l_root;
 			{
-				l_rootComponent = Component_alloc(TransformComponentType, sizeof(TransformComponent));
-				l_root = (TransformComponent*)l_rootComponent->Child;
-
+				l_rootComponent = Component_allocV2<_ECS::TransformComponent>();
+				l_root = Component_getChild<_ECS::TransformComponent>(l_rootComponent);
+				
 				TransformInitInfo l_rootInitInfo{};
 				l_rootInitInfo.LocalPosition = { 1.0f, 0.0f, -1.0f };
 				{
@@ -164,7 +165,7 @@ namespace _GameEngine::_Test
 			Component* l_child1Component;
 			TransformComponent* l_child1;
 			{
-				l_child1Component = Component_alloc(TransformComponentType, sizeof(TransformComponent));
+				l_child1Component = Component_allocV2<_ECS::TransformComponent>();
 				l_child1 = (TransformComponent*)l_child1Component->Child;
 
 				TransformInitInfo l_rootInitInfo{};

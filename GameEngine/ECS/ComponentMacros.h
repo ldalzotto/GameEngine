@@ -5,11 +5,17 @@ namespace _GameEngine::_ECS
 	struct Component;
 }
 
-#define COMPONENT_ALLOC(ComponentTypeName, OutComponentPtrName) \
-	_GameEngine::_ECS::Component* ##OutComponentPtrName = _GameEngine::_ECS::Component_alloc(##ComponentTypeName##Type, sizeof(##ComponentTypeName));
+namespace _GameEngine::_ECS
+{
+	template<class COMPONENT_TYPE>
+	inline Component* Component_allocV2()
+	{
+		return Component_alloc(*_ECS::extractComponentType<COMPONENT_TYPE>(), sizeof(COMPONENT_TYPE));
+	};
 
-#define COMPONENT_GET_CHILD(ComponentTypeName, ComponentPtrName, OutComponentChildPtrName) \
-	ComponentTypeName* OutComponentChildPtrName; \
-	{ \
-		##OutComponentChildPtrName = (##ComponentTypeName*)##ComponentPtrName->Child; \
-	}
+	template<class COMPONENT_TYPE>
+	inline COMPONENT_TYPE* Component_getChild(Component* p_component)
+	{
+		return (COMPONENT_TYPE*) p_component->Child;
+	};
+}

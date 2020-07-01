@@ -10,11 +10,13 @@ namespace _GameEngine::_Physics
 
 namespace _GameEngine::_ECS
 {
-	extern ComponentType MeshRendererBoundType;
-
 	struct MeshRendererBound
 	{
 		_Math::Box BoundingBox;
 		_Physics::BoxCollider* Boxcollider;
 	};
+
+	template<>
+	extern inline ComponentType* extractComponentType<MeshRendererBound>();
+
 }

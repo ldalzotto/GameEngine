@@ -31,8 +31,8 @@ namespace _GameEngine::_ECS
 
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformComponentType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformRotateType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(_ECS::extractComponentType<_ECS::TransformComponent>());
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(_ECS::extractComponentType<_ECS::TransformRotate>());
 
 		p_systemV2AllocInfo->Update.Priority = TransformRotateSystem_getUpdatePritoriy();
 		p_systemV2AllocInfo->Update.Callback = TransformRotationSystemV2_update;

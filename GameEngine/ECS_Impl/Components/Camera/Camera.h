@@ -14,8 +14,6 @@ namespace _GameEngine
 
 namespace _GameEngine::_ECS
 {
-	extern ComponentType CameraType;
-
 	struct Camera
 	{
 		_Render::RenderInterface* RenderInterface;
@@ -24,6 +22,9 @@ namespace _GameEngine::_ECS
 		_Utils::Subject OnSwapChainBuilded;
 		_Utils::Subject OnComponentDetached;
 	};
+
+	template<>
+	extern inline ComponentType* extractComponentType<Camera>();
 
 	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::RenderInterface* p_renderInterface);
 	void Camera_buildProjectionMatrix(Camera* p_camera);

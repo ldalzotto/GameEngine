@@ -8,7 +8,7 @@ namespace _GameEngine::_Utils
 	inline _Utils::SortedSequencerPriority SortedSequencer_calculatePriorityT_b1(SortedSequencerPriorityProviderFn p_before1)
 	{
 		_Core::VectorT<_Utils::SortedSequencerPriority> l_before;
-		l_before.alloc(2);
+		l_before.alloc(1);
 		{
 			auto l_index = p_before1();
 			l_before.push_back(&l_index);

@@ -6,7 +6,10 @@
 
 namespace _GameEngine::_ECS
 {
-	ComponentType MeshRendererType = "MeshRenderer";
+	ComponentType MeshRendererComponentType = "MeshRenderer";
+
+	template<>
+	inline ComponentType* extractComponentType<MeshRenderer>() { return	&MeshRendererComponentType; };
 
 	void MeshRenderer_free(void* p_meshRenderer, void* p_null);
 
