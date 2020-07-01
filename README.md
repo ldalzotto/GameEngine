@@ -2,6 +2,10 @@
 
 This first milestone introduces the most essential features of what we can await of a Game Engine.
 
+Here is the current state of the application that showcase all features :
+
+![](http://i.imgur.com/MYlUv6k.gif)
+
 ## External dependencies
 
 The Game Engine has the following external dependencies :
