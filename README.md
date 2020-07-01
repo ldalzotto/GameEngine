@@ -4,7 +4,7 @@ This first milestone introduces the most essential features of what we can await
 
 Here is the current state of the application that showcase all features :
 
-![](http://i.imgur.com/MYlUv6k.gif)
+![](https://i.imgur.com/ORX1SBL.gif)
 
 ## External dependencies
 
