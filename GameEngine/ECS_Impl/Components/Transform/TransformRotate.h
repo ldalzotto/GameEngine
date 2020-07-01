@@ -4,12 +4,11 @@
 
 namespace _GameEngine::_ECS
 {
+	extern ComponentType TransformRotateType;
+
 	struct TransformRotate
 	{
 		float Speed;
 		_Math::Vector3f Axis;
 	};
-
-	template<>
-	extern inline ComponentType* extractComponentType<TransformRotate>();
 }

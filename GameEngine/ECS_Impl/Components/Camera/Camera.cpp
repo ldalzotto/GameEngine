@@ -2,10 +2,7 @@
 
 #include "VulkanObjects/SwapChain/SwapChain.h"
 
-#include "Utils/Algorithm/Algorithm.h"
-
 #include "ECS/Component.h"
-#include "ECS/ComponentType.h"
 #include "Render/RenderInterface.h"
 #include "Math/Math.h"
 #include "Math/Matrix/MatrixMath.h"
@@ -13,9 +10,7 @@
 
 namespace _GameEngine::_ECS
 {
-	ComponentType CameraComponentType = "Camera";
-	template<>
-	inline ComponentType* extractComponentType<Camera>() { return &CameraComponentType; };
+	ComponentType CameraType = "Camera";
 
 	void camera_onSwapChainBuild(void* p_camera, void* p_swapChain)
 	{

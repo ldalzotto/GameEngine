@@ -100,8 +100,9 @@ void SandboxApplication_createCubeEntity(SandboxApplicationCubeCreationInfo* p_s
 	}
 
 	{
-		auto l_component = _ECS::Component_allocV2<_ECS::TransformComponent>();
-		auto l_transformComponent = _ECS::Component_getChild<_ECS::TransformComponent>(l_component);
+		COMPONENT_ALLOC(_ECS::TransformComponent, l_component);
+		COMPONENT_GET_CHILD(_ECS::TransformComponent, l_component, l_transformComponent);
+
 		_ECS::TransformInitInfo l_transformInitInfo{};
 		l_transformInitInfo.LocalPosition = p_sandboxCubeCreationInfo->LocalPosition;
 		l_transformInitInfo.LocalRotation = p_sandboxCubeCreationInfo->LocalRotation;
@@ -115,8 +116,8 @@ void SandboxApplication_createCubeEntity(SandboxApplicationCubeCreationInfo* p_s
 
 	if (p_sandboxCubeCreationInfo->MeshRendererInitInfo)
 	{
-		auto l_component = _ECS::Component_allocV2<_ECS::MeshRenderer>();
-		auto l_meshRenderer = _ECS::Component_getChild<_ECS::MeshRenderer>(l_component);
+		COMPONENT_ALLOC(_ECS::MeshRenderer, l_component);
+		COMPONENT_GET_CHILD(_ECS::MeshRenderer, l_component, l_meshRenderer);
 		p_sandboxCubeCreationInfo->MeshRendererInitInfo->AssociatedComponent = l_component;
 		_ECS::MeshRenderer_init(l_meshRenderer, &App->Render.RenderInterface, p_sandboxCubeCreationInfo->MeshRendererInitInfo);
 
@@ -126,7 +127,7 @@ void SandboxApplication_createCubeEntity(SandboxApplicationCubeCreationInfo* p_s
 
 	if (p_sandboxCubeCreationInfo->WithMeshBound)
 	{
-		auto l_component = _ECS::Component_allocV2<_ECS::MeshRendererBound>();
+		COMPONENT_ALLOC(_ECS::MeshRendererBound, l_component);
 		auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(out_entity, &l_component);
 		_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
 	}
@@ -253,8 +254,8 @@ void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreatio
 
 	if (p_cubeCrossCreationInfo->RotationAxis)
 	{
-		auto l_component = _ECS::Component_allocV2<_ECS::TransformRotate>();
-		auto l_transformRotate = _ECS::Component_getChild<_ECS::TransformRotate>(l_component);
+		COMPONENT_ALLOC(_ECS::TransformRotate, l_component);
+		COMPONENT_GET_CHILD(_ECS::TransformRotate, l_component, l_transformRotate);
 		l_transformRotate->Speed = .5f;
 		l_transformRotate->Axis = *p_cubeCrossCreationInfo->RotationAxis;
 		_ECS::Entity_addComponentDeferred(l_parentEntity, l_component, &App->ECS);
@@ -274,8 +275,8 @@ void SandboxApplication_update(float p_delta)
 			}
 
 			{
-				auto l_component = _ECS::Component_allocV2<_ECS::Camera>();
-				auto l_camera = _ECS::Component_getChild<_ECS::Camera>(l_component);
+				COMPONENT_ALLOC(_ECS::Camera, l_component);
+				COMPONENT_GET_CHILD(_ECS::Camera, l_component, l_camera);
 				_ECS::Camera_init(l_camera, l_component, &App->Render.RenderInterface);
 
 				auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&l_cameraEntity, &l_component);
@@ -283,7 +284,7 @@ void SandboxApplication_update(float p_delta)
 			}
 
 			{
-				auto l_component = _ECS::Component_allocV2<_ECS::TransformComponent>();
+				COMPONENT_ALLOC(_ECS::TransformComponent, l_component);
 				_ECS::TransformInitInfo l_transformInitInfo{};
 				l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
 				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f }, &l_transformInitInfo.LocalRotation);
@@ -305,7 +306,7 @@ void SandboxApplication_update(float p_delta)
 
 			{
 
-				_ECS::Component* l_component = _ECS::Component_allocV2<_ECS::TransformComponent>();
+				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
 				l_rayEntityTransform = (_ECS::TransformComponent*)l_component->Child;
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
@@ -339,7 +340,7 @@ void SandboxApplication_update(float p_delta)
 				}
 
 				{
-					_ECS::Component* l_component = _ECS::Component_allocV2<_ECS::TransformComponent>();
+					_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
 					l_rayBeginEntityTransform = (_ECS::TransformComponent*)l_component->Child;
 
 					_ECS::TransformInitInfo l_transformInitInfo{};
@@ -363,7 +364,7 @@ void SandboxApplication_update(float p_delta)
 				}
 
 				{
-					_ECS::Component* l_component = _ECS::Component_allocV2<_ECS::TransformComponent>();
+					_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
 					l_rayEndEntityTransform = (_ECS::TransformComponent*)l_component->Child;
 
 					_ECS::TransformInitInfo l_transformInitInfo{};
@@ -392,7 +393,7 @@ void SandboxApplication_update(float p_delta)
 
 			{
 
-				_ECS::Component* l_component = _ECS::Component_allocV2<_ECS::TransformComponent>();
+				_ECS::Component* l_component = _ECS::Component_alloc(_ECS::TransformComponentType, sizeof(_ECS::TransformComponent));
 				l_sceneModelsRootTransform = (_ECS::TransformComponent*)l_component->Child;
 
 				_ECS::TransformInitInfo l_transformInitInfo{};

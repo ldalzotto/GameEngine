@@ -30,8 +30,8 @@ namespace _GameEngineEditor
 		for (size_t i = 0; i < l_system->EntityConfigurableContainer.FilteredEntities.size(); i++)
 		{
 			_ECS::Entity* l_entity = *l_system->EntityConfigurableContainer.FilteredEntities.at(i);
-			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)_ECS::Entity_getComponent(l_entity, *_ECS::extractComponentType<_ECS::TransformComponent>())->Child;
-			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, *_ECS::extractComponentType<_ECS::MeshRendererBound>())->Child;
+			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)_ECS::Entity_getComponent(l_entity, _ECS::TransformComponentType)->Child;
+			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, _ECS::MeshRendererBoundType)->Child;
 
 			_Math::Matrix4x4f l_localToWorld = _Math::Transform_getLocalToWorldMatrix(&l_transform->Transform);
 			_Render::Gizmo_drawBox(l_meshRendererBoundSystem->Gizmo, &l_meshRendererBound->BoundingBox, &l_localToWorld, false);
@@ -47,8 +47,8 @@ namespace _GameEngineEditor
 
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(_ECS::extractComponentType<_ECS::MeshRendererBound>());
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(_ECS::extractComponentType<_ECS::MeshRenderer>());
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&_ECS::MeshRendererBoundType);
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&_ECS::MeshRendererType);
 
 		p_systemV2AllocInfo->Child = l_meshRendererBoundSystem;
 		p_systemV2AllocInfo->Update.Priority = meshRendererBoundGizmoSystem_priority();

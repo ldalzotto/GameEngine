@@ -7,14 +7,13 @@
 
 namespace _GameEngine::_ECS
 {
+	extern ComponentType TransformComponentType;
+
 	struct TransformComponent
 	{
 		_Math::Transform Transform;
 		_Utils::Subject OnComponentDetached;
 	};
-
-	template<>
-	extern inline ComponentType* extractComponentType<TransformComponent>();
 
 	struct TransformInitInfo
 	{
