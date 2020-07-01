@@ -19,7 +19,7 @@ namespace _GameEngineEditor
 
 	_Utils::SortedSequencerPriority meshRendererBoundGizmoSystem_priority()
 	{
-		return EDITR_PRIORITY;
+		return EDITOR_PRIORITY;
 	}
 
 	void meshRendererBoundGizmoSystem_update(void* p_system, void* p_input)

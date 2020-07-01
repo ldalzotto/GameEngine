@@ -2,7 +2,7 @@
 
 #include "Math/Box/BoxMath.h"
 
-#include "Utils/SortedSequencer/SortedSequencerT.h"
+#include "Utils/SortedSequencer/SortedSequencerMacros.h"
 
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
@@ -111,15 +111,20 @@ namespace _GameEngine::_ECS
 
 		p_systemV2AllocInfo->ECS = p_ecs;
 
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererBoundType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = meshRendererBoundSystem_onComponentAttached;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAddedUserdata = l_meshRendererBoundSystem;
+		{
+			EntityConfigurableContainerInitInfo* l_entityContainerInfo = &p_systemV2AllocInfo->EntityConfigurableContainerInitInfo;
 
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = meshRendererBoundSystem_onComponentRemoved;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemovedUserData = l_meshRendererBoundSystem;
+			l_entityContainerInfo->ECS = p_ecs;
+			l_entityContainerInfo->ListenedComponentTypes.alloc(2);
+			l_entityContainerInfo->ListenedComponentTypes.push_back(&MeshRendererBoundType);
+			l_entityContainerInfo->ListenedComponentTypes.push_back(&MeshRendererType);
+
+			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAdded = meshRendererBoundSystem_onComponentAttached;
+			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAddedUserdata = l_meshRendererBoundSystem;
+
+			l_entityContainerInfo->OnEntityThatMatchesComponentTypesRemoved = meshRendererBoundSystem_onComponentRemoved;
+			l_entityContainerInfo->OnEntityThatMatchesComponentTypesRemovedUserData = l_meshRendererBoundSystem;
+		}
 
 		p_systemV2AllocInfo->OnSystemDestroyed = meshRendererBoundSystem_onSystemDestroyed;
 		p_systemV2AllocInfo->Child = l_meshRendererBoundSystem;

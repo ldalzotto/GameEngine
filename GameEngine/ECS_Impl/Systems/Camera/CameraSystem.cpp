@@ -7,7 +7,7 @@
 #include "Math/Segment/Segment.h"
 #include <vector>
 
-#include "Common/Utils/SortedSequencer/SortedSequencerT.h"
+#include "Common/Utils/SortedSequencer/SortedSequencerMacros.h"
 
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"

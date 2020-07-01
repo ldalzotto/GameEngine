@@ -6,8 +6,7 @@
 namespace _GameEngine
 {
 	_Utils::SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY = 600;
-	_Utils::SortedSequencerPriority EDITR_PRIORITY = 500;
-
+	_Utils::SortedSequencerPriority EDITOR_PRIORITY = 500;
 
 	void UpdateSequencer_alloc(UpdateSequencer* p_udpateSequencer, GameEngineApplicationInterface* p_gameEngineInterface)
 	{

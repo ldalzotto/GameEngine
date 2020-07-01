@@ -11,6 +11,6 @@ namespace _GameEngine::_ECS
 
 namespace _GameEngine::_ECS
 {
-	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy();
+	inline _Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy();
 	void TransformRotateSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
 }

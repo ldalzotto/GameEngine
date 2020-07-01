@@ -11,9 +11,9 @@ namespace _GameEngine
 
 namespace _GameEngine
 {
-	extern _Utils::SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY;	
-	extern _Utils::SortedSequencerPriority EDITR_PRIORITY;
-
+	/* When all data needed for graphics are pushed to the graphics engine */
+	extern _Utils::SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY;
+	extern _Utils::SortedSequencerPriority EDITOR_PRIORITY;
 
 	struct UpdateSequencer
 	{

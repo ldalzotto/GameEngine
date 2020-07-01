@@ -20,10 +20,10 @@ namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority MeshDrawSystem_updatePriorityBefore()
 	{
-		return EDITR_PRIORITY;
+		return EDITOR_PRIORITY;
 	};
 
-	_Utils::SortedSequencerPriority meshDrawSystem_getUpdatePriority()
+	inline _Utils::SortedSequencerPriority meshDrawSystem_getUpdatePriority()
 	{
 		return UPDATE_PUSH_TO_RENDER_PRIORITY;
 	};
