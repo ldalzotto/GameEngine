@@ -14,7 +14,7 @@ namespace _GameEngine::_ECS
 
 	void Component_free(Component** p_component)
 	{
-		_Utils::Observer_broadcast(&(*p_component)->ComponentFreeEvent, nullptr);
+		_Utils::Observer_broadcast(&(*p_component)->OnComponentFree, nullptr);
 		free((*p_component)->Child);
 		(*p_component)->Child = nullptr;
 		(*p_component)->AttachedEntity = nullptr;

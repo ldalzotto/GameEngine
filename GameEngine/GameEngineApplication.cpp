@@ -22,7 +22,7 @@ namespace _GameEngine
 		_Physics::Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
 		_Render::Render_build(&l_gameEngineApplication->Render, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
-		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->Log);
+		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
 
 		_GameLoop::set_newFrameCallback(&l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
 		_GameLoop::set_updateCallback(&l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);

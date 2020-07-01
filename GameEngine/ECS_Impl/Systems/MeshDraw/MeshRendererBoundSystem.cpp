@@ -2,6 +2,8 @@
 
 #include "Math/Box/BoxMath.h"
 
+#include "Utils/SortedSequencer/SortedSequencerT.h"
+
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
 
@@ -33,13 +35,7 @@ namespace _GameEngine::_ECS
 
 	_Utils::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
-		_Core::VectorT<_Utils::SortedSequencerPriority>  l_before;
-		l_before.alloc(1);
-		{
-			auto l_index = MeshDrawSystem_updatePriorityBefore();
-			l_before.push_back(&l_index);
-		}
-		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
+		return _Utils::SortedSequencer_calculatePriorityT_b1(MeshDrawSystem_updatePriorityBefore);
 	};
 
 	void meshRendererBoundSystem_onComponentAttached(Entity* p_entity, void* p_system)
@@ -47,15 +43,15 @@ namespace _GameEngine::_ECS
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 		MeshRendererBoundCalculationOperation l_operation;
 		{
-			l_operation.Bound = GET_COMPONENT(MeshRendererBound, p_entity);
-			l_operation.MeshRenderer = GET_COMPONENT(MeshRenderer, p_entity);
+			l_operation.Bound = ENTITY_GET_COMPONENT(MeshRendererBound, p_entity);
+			l_operation.MeshRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
 		}
 		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.push_back(&l_operation);
 
 		l_operation.Bound->Boxcollider = new _Physics::BoxCollider();
 		_Physics::BoxCollider l_boxCollider{};
 		l_boxCollider.Box = &l_operation.Bound->BoundingBox;
-		_ECS::TransformComponent* l_transformComponent = GET_COMPONENT(TransformComponent, p_entity);
+		_ECS::TransformComponent* l_transformComponent = ENTITY_GET_COMPONENT(TransformComponent, p_entity);
 		l_boxCollider.Transform = &l_transformComponent->Transform;
 		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_boxCollider);
 		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World , l_operation.Bound->Boxcollider);
@@ -64,7 +60,7 @@ namespace _GameEngine::_ECS
 	void meshRendererBoundSystem_onComponentRemoved(Entity* p_entity, void* p_system)
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
-		_ECS::MeshRendererBound* l_meshRendererBound = GET_COMPONENT(MeshRendererBound, p_entity);
+		_ECS::MeshRendererBound* l_meshRendererBound = ENTITY_GET_COMPONENT(MeshRendererBound, p_entity);
 		_Physics::World_removeBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_meshRendererBound->Boxcollider);
 	};
 

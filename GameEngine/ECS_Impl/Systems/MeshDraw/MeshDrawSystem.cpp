@@ -48,13 +48,13 @@ namespace _GameEngine::_ECS
 
 	void meshDrawSystem_onComponentsAttached(Entity* p_entity, void* p_null)
 	{
-		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
+		MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
 		_Render::MaterialInstanceContainer_addMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 	
 	void meshDrawSystem_onComponentsDetached(Entity* p_entity, void* p_null)
 	{
-		MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, p_entity);
+		MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
 		_Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 
@@ -66,8 +66,8 @@ namespace _GameEngine::_ECS
 		{
 			Entity** l_entity = l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.at(i);
 
-			MeshRenderer* l_mesRenderer = GET_COMPONENT(MeshRenderer, *l_entity);
-			TransformComponent* l_transform = GET_COMPONENT(TransformComponent, *l_entity);
+			MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, *l_entity);
+			TransformComponent* l_transform = ENTITY_GET_COMPONENT(TransformComponent, *l_entity);
 
 			if (l_transform->Transform.UserFlag_HasChanged)
 			{

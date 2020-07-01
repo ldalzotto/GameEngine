@@ -146,15 +146,6 @@ namespace _GameEngine::_Utils
 		end:
 
 		{
-			if (p_before)
-			{
-				p_before->free();
-			}
-			if (p_after)
-			{
-				p_after->free();
-			}
-
 			if (!l_returnValueFound)
 			{
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Cannot find a suitable priority value that executes before and after the associated inputs."));

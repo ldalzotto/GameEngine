@@ -33,7 +33,7 @@ namespace _GameEngine::_ECS
 
 		p_camera->OnComponentDetached.Closure = p_camera;
 		p_camera->OnComponentDetached.Callback = camera_onDetached;
-		_Utils::Observer_register(&p_associatedComponent->ComponentFreeEvent, &p_camera->OnComponentDetached);
+		_Utils::Observer_register(&p_associatedComponent->OnComponentFree, &p_camera->OnComponentDetached);
 
 		Camera_buildProjectionMatrix(p_camera);
 	};

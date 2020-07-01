@@ -7,6 +7,8 @@
 #include "Math/Segment/Segment.h"
 #include <vector>
 
+#include "Common/Utils/SortedSequencer/SortedSequencerT.h"
+
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -23,13 +25,7 @@ namespace _GameEngine::_ECS
 
 	_Utils::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
-		_Core::VectorT<_Utils::SortedSequencerPriority>  l_before;
-		l_before.alloc(1);
-		{
-			auto l_index = MeshDrawSystem_updatePriorityBefore();
-			l_before.push_back(&l_index);
-		}
-		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
+		return _Utils::SortedSequencer_calculatePriorityT_b1(MeshDrawSystem_updatePriorityBefore);
 	};
 
 	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
@@ -51,8 +47,8 @@ namespace _GameEngine::_ECS
 		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.size() > 0)
 		{
 			Entity* l_entity = *l_cameraSystem->EntityConfigurableContainer.FilteredEntities.at(0);
-			TransformComponent* p_transform = GET_COMPONENT(TransformComponent, l_entity);
-			Camera* p_camera = GET_COMPONENT(Camera, l_entity);
+			TransformComponent* p_transform = ENTITY_GET_COMPONENT(TransformComponent, l_entity);
+			Camera* p_camera = ENTITY_GET_COMPONENT(Camera, l_entity);
 
 			{
 				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(&p_transform->Transform);
@@ -81,7 +77,7 @@ namespace _GameEngine::_ECS
 		if (p_system->EntityConfigurableContainer.FilteredEntities.size() > 0)
 		{
 			_ECS::Entity* l_entity = (*p_system->EntityConfigurableContainer.FilteredEntities.at(0));
-			return GET_COMPONENT(Camera, l_entity);
+			return ENTITY_GET_COMPONENT(Camera, l_entity);
 		}
 		return nullptr;
 	};

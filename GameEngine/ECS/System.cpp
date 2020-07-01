@@ -10,7 +10,12 @@ namespace _GameEngine::_ECS
 	bool SystemV2Key_comparator(SystemV2** p_left, SystemV2Key* p_right)
 	{
 		return (*p_left)->SystemKey == *p_right;
-	}
+	};
+
+	bool SystemV2_comparator(SystemV2** left, SystemV2** right)
+	{
+		return *left == *right;
+	};
 }
 
 namespace _GameEngine::_ECS
@@ -44,11 +49,6 @@ namespace _GameEngine::_ECS
 		free(l_system);
 		l_system = nullptr;
 		p_systemV2 = nullptr;
-	};
-
-	bool SystemV2_comparator(SystemV2** left, SystemV2** right)
-	{
-		return *left == *right;
 	};
 
 	void SystemContainer_addSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)

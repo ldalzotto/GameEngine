@@ -18,6 +18,12 @@ namespace _GameEngine::_ECS
 		return *p_left == *p_right;
 	};
 
+	void Entity_addComponentDeferred(Entity* p_entity, Component* p_unlinkedComponent, ECS* p_ecs)
+	{
+		auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&p_entity, &p_unlinkedComponent);
+		_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_addComponentMessage);
+	};
+
 	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent)
 	{
 
@@ -121,7 +127,7 @@ namespace _GameEngine::_ECS
 	void entityComponentListener_onComponentDetachedCallback(void* p_entityComponentListener, void* p_component);
 	void entityComponentListener_registerEvents(EntityConfigurableContainer* p_entityComponentListener, ECS* p_ecs);
 	void entityComponentListener_pushEntity(EntityConfigurableContainer* l_entityComponentListener, Entity* p_entity);
-	void entityComponentListener_pushEntityToEntityIfElligible(EntityConfigurableContainer* l_entityComponentListener, Component* l_comparedComponent);
+	void entityComponentListener_pushEntityIfElligible(EntityConfigurableContainer* l_entityComponentListener, Component* l_comparedComponent);
 	void entityComponentListener_removeEntity(EntityConfigurableContainer* p_entityComponentListener, Entity* p_entity);
 
 	/**
@@ -179,7 +185,7 @@ namespace _GameEngine::_ECS
 	{
 		EntityConfigurableContainer* l_entityComponentListener = (EntityConfigurableContainer*)p_entityComponentListener;
 		Component* l_component = (Component*)p_component;
-		entityComponentListener_pushEntityToEntityIfElligible(l_entityComponentListener, l_component);
+		entityComponentListener_pushEntityIfElligible(l_entityComponentListener, l_component);
 	};
 
 	void entityComponentListener_onComponentDetachedCallback(void* p_entityComponentListener, void* p_component)
@@ -219,9 +225,9 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	void entityComponentListener_pushEntityToEntityIfElligible(_GameEngine::_ECS::EntityConfigurableContainer* l_entityComponentListener, _GameEngine::_ECS::Component* l_comparedComponent)
+	void entityComponentListener_pushEntityIfElligible(_GameEngine::_ECS::EntityConfigurableContainer* l_entityComponentListener, _GameEngine::_ECS::Component* l_comparedComponent)
 	{
-		if (l_entityComponentListener->ListenedComponentTypes.get(_Core::Vector_equalsStringComparator, &l_comparedComponent->ComponentType))
+		if (l_entityComponentListener->ListenedComponentTypes.contains(_Core::Vector_equalsStringComparator, &l_comparedComponent->ComponentType))
 		{
 			bool l_addEntity = true;
 			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.size(); i++)
@@ -229,9 +235,9 @@ namespace _GameEngine::_ECS
 				ComponentType* l_componentType = l_entityComponentListener->ListenedComponentTypes.at(i);
 				bool l_filteredComponentTypeIsAnEntityComponent = false;
 
-				for (size_t i = 0; i < l_comparedComponent->AttachedEntity->Components.size(); i++)
+				for (size_t j = 0; j < l_comparedComponent->AttachedEntity->Components.size(); j++)
 				{
-					Component* l_component = *l_comparedComponent->AttachedEntity->Components.at(i);
+					Component* l_component = *l_comparedComponent->AttachedEntity->Components.at(j);
 					if (l_component->ComponentType == *l_componentType)
 					{
 						l_filteredComponentTypeIsAnEntityComponent = true;
@@ -264,9 +270,9 @@ namespace _GameEngine::_ECS
 				ComponentType* l_askedComponentType = l_entityComponentListener->ListenedComponentTypes.at(i);
 				bool l_componentTypeMatchFound = false;
 
-				for (size_t i = 0; i < (*p_entity)->Components.size(); i++)
+				for (size_t j = 0; j < (*p_entity)->Components.size(); j++)
 				{
-					Component** l_component = (*p_entity)->Components.at(i);
+					Component** l_component = (*p_entity)->Components.at(j);
 					if (*l_askedComponentType == (*l_component)->ComponentType)
 					{
 						l_componentTypeMatchFound = true;

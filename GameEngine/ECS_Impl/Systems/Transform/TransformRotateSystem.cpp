@@ -4,6 +4,8 @@
 #include "Clock/Clock.h"
 #include "MyLog/MyLog.h"
 
+#include "Common/Utils/SortedSequencer/SortedSequencerT.h"
+
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -15,17 +17,10 @@ namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
 	{
-		_Core::VectorT<_Utils::SortedSequencerPriority>  l_before;
-		l_before.alloc(2);
-		{
-			auto l_index = MeshDrawSystem_updatePriorityBefore();
-			l_before.push_back(&l_index);
-		}
-		{
-			auto l_index = CameraSystem_getUpdatePriority();
-			l_before.push_back(&l_index);
-		}
-		return _Utils::SortedSequencer_calculatePriority(&l_before, nullptr);
+		return _Utils::SortedSequencer_calculatePriorityT_b2(
+			MeshDrawSystem_updatePriorityBefore, 
+			CameraSystem_getUpdatePriority
+		);
 	};
 
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_gameEngineInterface);
@@ -54,8 +49,8 @@ namespace _GameEngine::_ECS
 		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
 		{
 			Entity** l_entity = l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.at(i);
-			TransformComponent* l_transform = GET_COMPONENT(TransformComponent, *l_entity);
-			TransformRotate* l_transformRotate = GET_COMPONENT(TransformRotate, *l_entity);
+			TransformComponent* l_transform = ENTITY_GET_COMPONENT(TransformComponent, *l_entity);
+			TransformRotate* l_transformRotate = ENTITY_GET_COMPONENT(TransformRotate, *l_entity);
 
 			_Math::Quaternionf l_newLocalRotation;
 			_Math::Quaternion_rotateAround(&l_transform->Transform.LocalRotation, &l_transformRotate->Axis, l_transformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime, &l_newLocalRotation);

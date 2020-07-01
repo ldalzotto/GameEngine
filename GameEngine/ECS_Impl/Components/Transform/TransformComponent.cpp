@@ -20,7 +20,7 @@ namespace _GameEngine::_ECS
 
 		p_transformComponent->OnComponentDetached.Closure = p_transformComponent;
 		p_transformComponent->OnComponentDetached.Callback = TransformComponent_free;
-		_Utils::Observer_register(&p_component->ComponentFreeEvent, &p_transformComponent->OnComponentDetached);
+		_Utils::Observer_register(&p_component->OnComponentFree, &p_transformComponent->OnComponentDetached);
 	};
 
 }

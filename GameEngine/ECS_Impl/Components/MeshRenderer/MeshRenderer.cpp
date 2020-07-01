@@ -16,7 +16,7 @@ namespace _GameEngine::_ECS
 		p_meshRenderer->MaterialUniqueKey = *p_mehsRendererInfo->MaterialUniqueKey;
 		p_meshRenderer->OnComponentDetached.Closure = p_meshRenderer;
 		p_meshRenderer->OnComponentDetached.Callback = MeshRenderer_free;
-		_Utils::Observer_register(&p_mehsRendererInfo->AssociatedComponent->ComponentFreeEvent, &p_meshRenderer->OnComponentDetached);
+		_Utils::Observer_register(&p_mehsRendererInfo->AssociatedComponent->OnComponentFree, &p_meshRenderer->OnComponentDetached);
 
 
 		_Render::Material* l_material 
