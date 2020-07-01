@@ -17,10 +17,10 @@ namespace _GameEngine::_ECS
 {
 	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
 	{
-		return _Utils::SortedSequencer_calculatePriorityT_b2(
-			MeshDrawSystem_updatePriorityBefore, 
-			CameraSystem_getUpdatePriority
-		);
+		SORTED_SEQUENCER_CALCULATEPRIORITY_ALLOCATE_BEFORE(2)
+			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(MeshDrawSystem_updatePriorityBefore)
+			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(CameraSystem_getUpdatePriority)
+		SORTED_SEQUENCER_CALCULATEPRIORITY_CALCULATE_B(l_priority);
 	};
 
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_gameEngineInterface);

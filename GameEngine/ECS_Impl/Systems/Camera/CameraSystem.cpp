@@ -25,7 +25,9 @@ namespace _GameEngine::_ECS
 
 	_Utils::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
-		return _Utils::SortedSequencer_calculatePriorityT_b1(MeshDrawSystem_updatePriorityBefore);
+		SORTED_SEQUENCER_CALCULATEPRIORITY_ALLOCATE_BEFORE(1)
+			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(MeshDrawSystem_updatePriorityBefore)
+		SORTED_SEQUENCER_CALCULATEPRIORITY_CALCULATE_B(l_priority);
 	};
 
 	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)

@@ -35,7 +35,9 @@ namespace _GameEngine::_ECS
 
 	_Utils::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
-		return _Utils::SortedSequencer_calculatePriorityT_b1(MeshDrawSystem_updatePriorityBefore);
+		SORTED_SEQUENCER_CALCULATEPRIORITY_ALLOCATE_BEFORE(1)
+			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(MeshDrawSystem_updatePriorityBefore)
+		SORTED_SEQUENCER_CALCULATEPRIORITY_CALCULATE_B(l_priority);
 	};
 
 	void meshRendererBoundSystem_onComponentAttached(Entity* p_entity, void* p_system)

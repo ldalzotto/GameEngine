@@ -58,4 +58,5 @@ namespace _GameEngine::_Core
 		void push_back(T* p_value) { SortedVector_pushBack(&SortedVector, p_value); }
 		VectorT<T>* vector() { return (VectorT<T>*)&SortedVector.Vector; }
 	};
+
 }
