@@ -26,43 +26,42 @@ void Core_Vector_resize(Core_Vector* p_vector, size_t p_newCapacity)
 	}
 }
 
-void Core_Vector_pushBack(void* p_vector, void* p_value)
+void Core_Vector_pushBack(Core_Vector* p_vector, void* p_value)
 {
-	Core_Vector* l_vector = (Core_Vector*)p_vector;
-	if (l_vector->Size >= l_vector->Capacity)
+	if (p_vector->Size >= p_vector->Capacity)
 	{
-		Core_Vector_resize(p_vector, l_vector->Capacity == 0 ? 1 : (l_vector->Capacity * 2));
+		Core_Vector_resize(p_vector, p_vector->Capacity == 0 ? 1 : (p_vector->Capacity * 2));
 		Core_Vector_pushBack(p_vector, p_value);
 	}
 	else
 	{
-		void* p_targetMemory = (char*)l_vector->Memory + Core_Vector_getElementOffset(l_vector, l_vector->Size);
-		memcpy(p_targetMemory, p_value, l_vector->ElementSize);
-		l_vector->Size += 1;
+		void* p_targetMemory = (char*)p_vector->Memory + Core_Vector_getElementOffset(p_vector, p_vector->Size);
+		memcpy(p_targetMemory, p_value, p_vector->ElementSize);
+		p_vector->Size += 1;
 	}
 }
 
-void* Core_Vector_at_unchecked(Core_Vector* p_vector, size_t p_index)
+void* Core_Vector_VectorIterator_at_unchecked(Core_Vector* p_vector, size_t p_index)
 {
 	return (char*)p_vector->Memory + Core_Vector_getElementOffset(p_vector, p_index);
 };
 
-void* Core_Vector_VectorIterator_getNextElement(void* p_vector, size_t p_index)
+void* Core_Vector_VectorIterator_at(Core_Vector* p_vector, size_t p_index)
 {
-	Core_Vector* l_vector = (Core_Vector*)p_vector;
-	if (p_index >= l_vector->Size)
+	if (p_index >= p_vector->Size)
 	{
 		return NULL;
 	}
-	return Core_Vector_at_unchecked(l_vector, p_index);
+	return Core_Vector_VectorIterator_at_unchecked(p_vector, p_index);
 }
 
 void Core_Vector_buildIterator(Core_Vector* p_vector, Core_VectorIterator* p_vectorIterator)
 {
-	p_vectorIterator->Core_VectorIterator_UserObject = p_vector;
+	p_vectorIterator->Core_VectorIterator_DataStructure = p_vector;
 	p_vectorIterator->Current = NULL;
 	p_vectorIterator->CurrentIndex = -1;
-	p_vectorIterator->GetElement = Core_Vector_VectorIterator_getNextElement;
+	p_vectorIterator->At = Core_Vector_VectorIterator_at;
+	p_vectorIterator->At_unchecked = Core_Vector_VectorIterator_at_unchecked;
 };
 
 

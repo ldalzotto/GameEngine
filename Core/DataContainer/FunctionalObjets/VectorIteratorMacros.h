@@ -1,17 +1,23 @@
 #pragma once
 
-// #include "DataContainer/Structures/VectorMacros.h"
-
 #define CORE_VECTORITERATOR_TYPE(ElementTypeName) Core_##ElementTypeName##_VectorIterator
 
 #define CORE_VECTORITERATOR_DEFINE(DataStructureTypeName, ElementTypeName) \
 	typedef struct CORE_VECTORITERATOR_TYPE(##ElementTypeName) \
 	{ \
-		##DataStructureTypeName* Core_VectorIterator_UserObject; \
+		##DataStructureTypeName* Core_VectorIterator_DataStructure; \
 		##ElementTypeName* Current; \
 		size_t CurrentIndex; \
-		##ElementTypeName* (*GetElement)(DataStructureTypeName* p_userObject, size_t p_index); \
-	} CORE_VECTORITERATOR_TYPE(##ElementTypeName);
+		##ElementTypeName* (*At)(DataStructureTypeName* p_userObject, size_t p_index); \
+	} CORE_VECTORITERATOR_TYPE(##ElementTypeName); \
+	\
+	##ElementTypeName* CORE_VECTORITERATOR_TYPE(##ElementTypeName)_min(CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, int(*p_sortComparator)(##ElementTypeName*, ##ElementTypeName*, void*), void* p_userObject);
+
+#define CORE_VECTORITERATOR_DEFINE_IMPL(DataStructureTypeName, ElementTypeName) \
+	ElementTypeName* CORE_VECTORITERATOR_TYPE(##ElementTypeName)_min(CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, int(*p_sortComparator)(##ElementTypeName*, ##ElementTypeName*, void*),void* p_userObject) \
+	{ \
+		return (##ElementTypeName*)Core_VectorIterator_min((Core_VectorIterator*)p_iterator, (Core_SortElementComparatorWithUserObject)p_sortComparator, p_userObject); \
+	}
 
 
 #define CORE_VECTORITERATOR_BUILD(ElementTypeName, in_DataStructure, var_VectorIterator) \
