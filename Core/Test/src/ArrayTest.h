@@ -2,6 +2,7 @@
 
 extern "C" {
 	#include "DataContainer/Structures/VectorMacros.h"
+	#include "DataContainer/Structures/SortedVectorMacros.h"
 	#include "DataContainer/FunctionalObjets/VectorIteratorMacros.h"
 	#include "DataContainer/FunctionalObjets/VectorWriterMacros.h"
 	#include "DataContainer/Algorithm/SortingAlgorithmMacro.h"
@@ -20,6 +21,13 @@ namespace _Core::_Test
 	CORE_VECTORITERATOR_DEFINE(Core_Vector3f_Test_Vector, Vector3f_Test);
 
 	CORE_ALGORITHM_DEFINE(Core_Vector3f_Test_Vector, Vector3f_Test);
+	
+
+	CORE_ALGORITHM_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test);
+
+	CORE_VECTORWRITER_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test);
+	CORE_DEFINE_SORTEDVECTOR(Vector3f_Test);
+	CORE_VECTORITERATOR_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 
 	void ExecuteTest();
 }

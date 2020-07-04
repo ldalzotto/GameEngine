@@ -22,3 +22,5 @@ void* Core_GenericArray_at(Core_GenericArray* p_genericArray, size_t p_index);
 void Core_GenericArray_resize(Core_GenericArray* p_genericArray, size_t p_newCapacity);
 void Core_GenericArray_pushBack_realloc(Core_GenericArray* p_genericArray, void* p_value);
 void Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, size_t p_right);
+
+void Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index);

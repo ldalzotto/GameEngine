@@ -88,3 +88,29 @@ void Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, si
 		l_leftMemoryTarget[i] = l_rightTmp;
 	}
 };
+
+void Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index)
+{
+	if (p_index > p_genericArray->Size)
+	{
+		exit(EXIT_FAILURE); /* throw std::runtime_error("Vector : Insert out of range."); */
+	}
+
+	if (p_genericArray->Size + p_elementNb > p_genericArray->Capacity)
+	{
+		Core_GenericArray_resize(p_genericArray, p_genericArray->Capacity == 0 ? 1 : (p_genericArray->Capacity * 2));
+		Core_GenericArray_isertAt_realloc(p_genericArray, p_value, p_elementNb, p_index);
+	}
+	else
+	{
+		void* l_initialElement = (char*)p_genericArray->Memory + Core_GenericArray_getElementOffset(p_genericArray, p_index);
+		// If we insert between existing elements, we move down memory to give space for new elements
+		if (p_genericArray->Size - p_index > 0)
+		{
+			void* l_targetElement = (char*)p_genericArray->Memory + Core_GenericArray_getElementOffset(p_genericArray, p_index + p_elementNb);
+			memmove(l_targetElement, l_initialElement, p_genericArray->ElementSize * (p_genericArray->Size - p_index));
+		}
+		memcpy(l_initialElement, p_value, p_genericArray->ElementSize * p_elementNb);
+		p_genericArray->Size += p_elementNb;
+	}
+};

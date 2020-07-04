@@ -1,8 +1,6 @@
 #include "Vector.h"
 #include "DataContainer/FunctionalObjets/VectorIterator.h"
 
-#include <string.h>
-
 void Core_Vector_buildIterator(Core_Vector* p_vector, Core_VectorIterator* p_vectorIterator)
 {
 	p_vectorIterator->Core_VectorIterator_DataStructure = p_vector;
@@ -17,6 +15,8 @@ void Core_Vector_alloc(Core_Vector* p_vector, size_t p_initialCapacity)
 	p_vector->Writer.Core_VectorWriter_UserObject = p_vector;
 	p_vector->Writer.PushBack = Core_GenericArray_pushBack_realloc;
 	p_vector->Writer.Swap = Core_GenericArray_swap;
+
+	p_vector->BuildIterator = Core_Vector_buildIterator;
 
 	Core_GenericArray_alloc(&p_vector->GenericArray, p_initialCapacity);
 };

@@ -1,0 +1,3 @@
+
+#define CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName) DataContainerName##_SortElementComparatorWithUserObject
+#define CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, DataStructureTypeMacroProvider) DataStructureTypeMacroProvider(ElementTypeName)##_SortElementComparatorWithUserObject
