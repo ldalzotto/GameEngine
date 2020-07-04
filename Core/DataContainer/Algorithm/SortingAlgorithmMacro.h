@@ -7,8 +7,8 @@
 #define CORE_ALGORITHM_DEFINE(DataContainerName, ElementTypeName) \
 	typedef int(*CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName))(##ElementTypeName*, ##ElementTypeName*, void*); \
 	__forceinline ElementTypeName* CORE_ALGORITHM_METHOD_NAME(DataContainerName, min)(struct CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName) p_sortComparator, void* p_userObject); \
-	__forceinline size_t CORE_ALGORITHM_METHOD_NAME(minIndex)(struct CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName) p_sortComparator, size_t p_beginIndex, void* p_userObject); \
-	__forceinline void CORE_ALGORITHM_METHOD_NAME(selectionSort)(struct CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, struct CORE_VECTORWRITER_TYPE(##ElementTypeName)* p_writer, CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName) p_sortComparator, void* p_userObject);
+	__forceinline size_t CORE_ALGORITHM_METHOD_NAME(DataContainerName, minIndex)(struct CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName) p_sortComparator, size_t p_beginIndex, void* p_userObject); \
+	__forceinline void CORE_ALGORITHM_METHOD_NAME(DataContainerName, selectionSort)(struct CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, struct CORE_VECTORWRITER_TYPE(##ElementTypeName)* p_writer, CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName) p_sortComparator, void* p_userObject);
 
 #define CORE_ALGORITHM_DEFINE_IMPL(DataContainerName, ElementTypeName) \
 	__forceinline ElementTypeName* CORE_ALGORITHM_METHOD_NAME(DataContainerName, min)(CORE_VECTORITERATOR_TYPE(##ElementTypeName)* p_iterator, CORE_ALGORITHM_SORT_COMPARATOR_TYPE(DataContainerName) p_sortComparator, void* p_userObject) \
