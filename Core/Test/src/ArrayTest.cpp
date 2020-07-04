@@ -10,8 +10,12 @@ extern "C" {
 
 namespace _Core::_Test
 {
+	CORE_DEFINE_VECTOR_IMPL(Vector3f_Test);
+
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
 	CORE_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
+
+	CORE_DEFINE_SORTEDVECTOR_IMPL(Vector3f_Test);
 
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 	CORE_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
@@ -28,7 +32,7 @@ namespace _Core::_Test
 		// Core_Vector3f_Test_VectorWriter lzd;
 	
 		Core_Vector3f_Test_Vector l_vec3V;
-		Core_Vector_alloc((Core_Vector*)&l_vec3V, 10);
+		Core_Vector3f_Test_Vector_alloc(&l_vec3V, 10);
 		{
 			for (size_t i = 0; i < 11; i++)
 			{
@@ -43,11 +47,11 @@ namespace _Core::_Test
 			CORE_ALGO_MIN_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, l_min, Vector3f_Test_SortComparator_testV2);
 			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, Vector3f_Test_SortComparator_testV2);
 		}
-		Core_Vector_free((Core_Vector*)&l_vec3V);
+		Core_Vector3f_Test_Vector_free(&l_vec3V);
 
 
 		Core_Vector3f_Test_SortedVector l_vec3VSorted;
-		Core_SortedVector_alloc((Core_SortedVector*)&l_vec3VSorted, 10, (Core_SortElementComparatorWithUserObject)Vector3f_Test_SortComparator_testV2);
+		Core_Vector3f_Test_SortedVector_alloc(&l_vec3VSorted, 10, Vector3f_Test_SortComparator_testV2);
 		{
 			for (size_t i = 0; i < 11; i++)
 			{
@@ -62,6 +66,6 @@ namespace _Core::_Test
 			CORE_ALGO_MIN_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, &l_vec3VSorted, l_min, Vector3f_Test_SortComparator_testV2);
 			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, &l_vec3VSorted, Vector3f_Test_SortComparator_testV2);
 		}
-		Core_SortedVector_free((Core_SortedVector*)&l_vec3VSorted);
+		Core_Vector3f_Test_SortedVector_free(&l_vec3VSorted);
 	};
 }

@@ -18,4 +18,17 @@ typedef struct CORE_SORTEDVECTOR_TYPE(##ElementTypeName) \
 	CORE_VECTORWRITER_TYPE_FROMELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) Writer; \
 	void (*BuildIterator)(struct CORE_SORTEDVECTOR_TYPE(##ElementTypeName)* p_vector, struct CORE_VECTORITERATOR_TYPE_FROMELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE)* out_iterator); \
 	CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) SortComparator; \
-} CORE_SORTEDVECTOR_TYPE(##ElementTypeName);
+} CORE_SORTEDVECTOR_TYPE(##ElementTypeName); \
+\
+__forceinline void CORE_SORTEDVECTOR_TYPE(ElementTypeName)##_alloc(CORE_SORTEDVECTOR_TYPE(ElementTypeName)* p_vector, size_t p_initialCapacity, CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) p_sortComparator); \
+__forceinline void CORE_SORTEDVECTOR_TYPE(ElementTypeName)##_free(CORE_SORTEDVECTOR_TYPE(ElementTypeName)* p_vector);
+
+#define CORE_DEFINE_SORTEDVECTOR_IMPL(ElementTypeName) \
+__forceinline void CORE_SORTEDVECTOR_TYPE(ElementTypeName)##_alloc(CORE_SORTEDVECTOR_TYPE(ElementTypeName)* p_vector, size_t p_initialCapacity, CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) p_sortComparator) \
+{ \
+	Core_SortedVector_alloc((Core_SortedVector*)p_vector, p_initialCapacity, (Core_SortElementComparatorWithUserObject)p_sortComparator); \
+}; \
+__forceinline void CORE_SORTEDVECTOR_TYPE(ElementTypeName)##_free(CORE_SORTEDVECTOR_TYPE(ElementTypeName)* p_vector) \
+{ \
+	Core_SortedVector_free((Core_SortedVector*)p_vector); \
+};

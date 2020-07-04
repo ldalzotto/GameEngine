@@ -16,4 +16,18 @@ typedef struct CORE_VECTOR_TYPE(ElementTypeName) \
 	\
 	CORE_VECTORWRITER_TYPE_FROMELEMENT(ElementTypeName, CORE_VECTOR_TYPE) Writer; \
 	void (*BuildIterator)(struct CORE_VECTOR_TYPE(ElementTypeName)* p_vector, struct CORE_VECTORITERATOR_TYPE_FROMELEMENT(ElementTypeName, CORE_VECTOR_TYPE)* out_iterator); \
-} CORE_VECTOR_TYPE(ElementTypeName);
+} CORE_VECTOR_TYPE(ElementTypeName); \
+\
+__forceinline void CORE_VECTOR_TYPE(ElementTypeName)##_alloc(CORE_VECTOR_TYPE(ElementTypeName)* p_vector, size_t p_initialCapacity); \
+__forceinline void CORE_VECTOR_TYPE(ElementTypeName)##_free(CORE_VECTOR_TYPE(ElementTypeName)* p_vector);
+
+
+#define CORE_DEFINE_VECTOR_IMPL(ElementTypeName) \
+__forceinline void CORE_VECTOR_TYPE(ElementTypeName)##_alloc(CORE_VECTOR_TYPE(ElementTypeName)* p_vector, size_t p_initialCapacity) \
+{ \
+	Core_Vector_alloc((Core_Vector*)p_vector, p_initialCapacity); \
+}; \
+__forceinline void CORE_VECTOR_TYPE(ElementTypeName)##_free(CORE_VECTOR_TYPE(ElementTypeName)* p_vector) \
+{ \
+	Core_Vector_free((Core_Vector*)p_vector); \
+};
