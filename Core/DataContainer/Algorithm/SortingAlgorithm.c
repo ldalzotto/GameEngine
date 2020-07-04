@@ -1,5 +1,7 @@
 #include "SortingAlgorithm.h"
 
+#include "Error/ErrorHandling.h"
+
 #include "DataContainer/Structures/GenericArray.h"
 #include "DataContainer/FunctionalObjets/VectorIterator.h"
 #include "DataContainer/FunctionalObjets/VectorWriter.h"
@@ -60,7 +62,9 @@ void Core_selectionSort(Core_VectorIterator* p_iterator, Core_VectorWriter* p_wr
 		size_t l_minIndex = Core_minIndex(p_iterator, p_sortComparator, i, p_userObject);
 		if (l_minIndex != i)
 		{
-			p_writer->Swap(p_iterator->Core_VectorIterator_DataStructure, i, l_minIndex);
+			CORE_HANDLE_ERROR_BEGIN(err);
+				err = p_writer->Swap(p_iterator->Core_VectorIterator_DataStructure, i, l_minIndex);
+			CORE_HANDLE_ERROR_END(err);
 		}
 	}
 };

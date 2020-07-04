@@ -1,8 +1,8 @@
 #pragma once
 
-enum Core_ReturnCodes
+typedef enum Core_ReturnCodes
 {
-	OK,
-	OUT_OF_BOUND,
-	INVALID_INDICES
-};
+	CR_OK,
+	CR_OUT_OF_BOUND,
+	CR_INVALID_INDICES
+} Core_ReturnCodes;

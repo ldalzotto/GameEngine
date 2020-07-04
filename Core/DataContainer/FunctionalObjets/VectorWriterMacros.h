@@ -8,7 +8,7 @@
 	{ \
 		struct DataStructureTypeName* Core_VectorWriter_UserObject; \
 		void (*PushBack)(struct DataStructureTypeName* p_dataStructure, ElementTypeName* p_value); \
-		void (*Swap)(struct DataStructureTypeName* p_dataStructure, size_t p_left, size_t p_right); \
+		Core_ReturnCodes (*Swap)(struct DataStructureTypeName* p_dataStructure, size_t p_left, size_t p_right); \
 	} CORE_VECTORWRITER_TYPE(DataStructureTypeName); \
 	\
 	void CORE_VECTORWRITER_TYPE(##DataStructureTypeName)_pushBack(struct CORE_VECTORWRITER_TYPE(##DataStructureTypeName)* p_writer, ElementTypeName* p_value);

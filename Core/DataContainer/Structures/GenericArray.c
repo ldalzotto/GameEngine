@@ -1,5 +1,8 @@
 #include "GenericArray.h"
 
+#include "Error/ErrorHandling.h"
+#include "Error/ReturnCodes.h"
+
 #include <string.h>
 
 size_t Core_GenericArray_getTotalSize(Core_GenericArray* p_genericArray)
@@ -37,7 +40,7 @@ void* Core_GenericArray_at(Core_GenericArray* p_genericArray, size_t p_index)
 {
 	if (p_index >= p_genericArray->Size)
 	{
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
 	return Core_GenericArray_at_unchecked(p_genericArray, p_index);
 };
@@ -71,12 +74,11 @@ void Core_GenericArray_pushBack_realloc(Core_GenericArray* p_genericArray, void*
 }
 
 
-void Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, size_t p_right)
+Core_ReturnCodes Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, size_t p_right)
 {
-	if (p_left >= p_genericArray->Size || p_right >= p_genericArray->Size) { exit(EXIT_FAILURE); /*throw std::runtime_error("Vector_swap : Out of range.");*/ }
-	if (p_left > p_right) { exit(EXIT_FAILURE); /*throw std::out_of_range("Vector_swap : invalid indices.");*/ }
-	if (p_left == p_right) { return; }
-
+	if (p_left >= p_genericArray->Size || p_right >= p_genericArray->Size) { CORE_HANDLE_PUSH_GLOBAL(CR_OUT_OF_BOUND, "Core_GenericArray_swap : out_of_range"); }
+	if (p_left > p_right) { CORE_HANDLE_PUSH_GLOBAL(CR_INVALID_INDICES, "Core_GenericArray_swap : invalid indices."); }
+	if (p_left == p_right) { return CR_OK; }
 
 	char* l_leftMemoryTarget = (char*)p_genericArray->Memory + Core_GenericArray_getElementOffset(p_genericArray, p_left);
 	char* l_rightMemoryTarget = (char*)p_genericArray->Memory + Core_GenericArray_getElementOffset(p_genericArray, p_right);
@@ -87,19 +89,24 @@ void Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, si
 		l_rightMemoryTarget[i] = l_leftMemoryTarget[i];
 		l_leftMemoryTarget[i] = l_rightTmp;
 	}
+
+	return CR_OK;
 };
 
-void Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index)
+Core_ReturnCodes Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index)
 {
 	if (p_index > p_genericArray->Size)
 	{
-		exit(EXIT_FAILURE); /* throw std::runtime_error("Vector : Insert out of range."); */
+		CORE_HANDLE_PUSH_GLOBAL(CR_OUT_OF_BOUND, "Core_GenericArray_isertAt_realloc : out of range");
 	}
 
 	if (p_genericArray->Size + p_elementNb > p_genericArray->Capacity)
 	{
 		Core_GenericArray_resize(p_genericArray, p_genericArray->Capacity == 0 ? 1 : (p_genericArray->Capacity * 2));
-		Core_GenericArray_isertAt_realloc(p_genericArray, p_value, p_elementNb, p_index);
+
+		CORE_HANDLE_PUSH_GLOBAL_BEGIN(err);
+			err = Core_GenericArray_isertAt_realloc(p_genericArray, p_value, p_elementNb, p_index);
+		CORE_HANDLE_ERROR_END(err);
 	}
 	else
 	{
@@ -113,4 +120,6 @@ void Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericArray, void* 
 		memcpy(l_initialElement, p_value, p_genericArray->ElementSize * p_elementNb);
 		p_genericArray->Size += p_elementNb;
 	}
+
+	return CR_OK;
 };

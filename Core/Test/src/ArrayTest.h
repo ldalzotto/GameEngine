@@ -6,6 +6,7 @@ extern "C" {
 	#include "DataContainer/FunctionalObjets/VectorIteratorMacros.h"
 	#include "DataContainer/FunctionalObjets/VectorWriterMacros.h"
 	#include "DataContainer/Algorithm/SortingAlgorithmMacro.h"
+	#include "Error/ReturnCodes.h"
 }
 
 namespace _Core::_Test

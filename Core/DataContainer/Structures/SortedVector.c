@@ -1,5 +1,6 @@
 #include "SortedVector.h"
 #include "DataContainer/FunctionalObjets/VectorIterator.h"
+#include "Error/ErrorHandling.h"
 
 void Core_SortedVector_pushBack(Core_SortedVector* p_vector, void* p_value)
 {
@@ -17,7 +18,9 @@ void Core_SortedVector_pushBack(Core_SortedVector* p_vector, void* p_value)
 		}
 	}
 
-	Core_GenericArray_isertAt_realloc(&p_vector->GenericArray, p_value, 1, l_insertIndex);
+	CORE_HANDLE_ERROR_BEGIN(err);
+		err = Core_GenericArray_isertAt_realloc(&p_vector->GenericArray, p_value, 1, l_insertIndex);
+	CORE_HANDLE_ERROR_END(err);
 }
 
 

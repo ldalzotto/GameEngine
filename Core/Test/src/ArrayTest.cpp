@@ -6,6 +6,7 @@ extern "C" {
 	#include "DataContainer/FunctionalObjets/VectorIterator.h"
 	#include "DataContainer/Algorithm/SortingAlgorithm.h"
 	#include "DataContainer/Algorithm/SortingAlgorithmMacro.h"
+	#include "Error/ErrorHandling.h"
 }
 
 namespace _Core::_Test
@@ -27,8 +28,6 @@ namespace _Core::_Test
 
 	void ExecuteTest()
 	{
-		// Core_Vector3f_Test_VectorWriter lzd;
-	
 		Core_Vector3f_Test_Vector l_vec3V;
 		Core_Vector3f_Test_Vector_alloc(&l_vec3V, 10);
 		{
