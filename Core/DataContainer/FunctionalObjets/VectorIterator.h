@@ -14,6 +14,3 @@ typedef struct Core_VectorIterator
 
 bool Core_VectorIterator_moveNext(Core_VectorIterator* p_iterator);
 
-typedef int(*Core_SortElementComparatorWithUserObject)(void*, void*, void*);
-
-void* Core_VectorIterator_min(Core_VectorIterator* p_iterator, Core_SortElementComparatorWithUserObject p_sortComparator, void* p_userObject);
