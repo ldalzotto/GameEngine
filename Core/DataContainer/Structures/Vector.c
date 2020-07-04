@@ -55,6 +55,24 @@ void* Core_Vector_VectorIterator_at(Core_Vector* p_vector, size_t p_index)
 	return Core_Vector_VectorIterator_at_unchecked(p_vector, p_index);
 }
 
+void Core_Vector_VectorWriter_swap(Core_Vector* p_vector, size_t p_left, size_t p_right)
+{
+	if (p_left >= p_vector->GenericArray.Size || p_right >= p_vector->GenericArray.Size) { exit(EXIT_FAILURE); /*throw std::runtime_error("Vector_swap : Out of range.");*/ }
+	if (p_left > p_right) { exit(EXIT_FAILURE); /*throw std::out_of_range("Vector_swap : invalid indices.");*/ }
+	if (p_left == p_right) { return; }
+	
+
+	char* l_leftMemoryTarget = (char*)p_vector->GenericArray.Memory + Core_Vector_getElementOffset(p_vector, p_left);
+	char* l_rightMemoryTarget = (char*)p_vector->GenericArray.Memory + Core_Vector_getElementOffset(p_vector, p_right);
+
+	for (size_t i = 0; i < p_vector->GenericArray.ElementSize; i++)
+	{
+		char l_rightTmp = l_rightMemoryTarget[i];
+		l_rightMemoryTarget[i] = l_leftMemoryTarget[i];
+		l_leftMemoryTarget[i] = l_rightTmp;
+	}
+};
+
 void Core_Vector_buildIterator(Core_Vector* p_vector, Core_VectorIterator* p_vectorIterator)
 {
 	p_vectorIterator->Core_VectorIterator_DataStructure = p_vector;
@@ -64,11 +82,11 @@ void Core_Vector_buildIterator(Core_Vector* p_vector, Core_VectorIterator* p_vec
 	p_vectorIterator->At_unchecked = Core_Vector_VectorIterator_at_unchecked;
 };
 
-
 void Core_Vector_alloc(Core_Vector* p_vector, size_t p_initialCapacity)
 {
 	p_vector->Writer.Core_VectorWriter_UserObject = p_vector;
 	p_vector->Writer.PushBack = Core_Vector_pushBack;
+	p_vector->Writer.Swap = Core_Vector_VectorWriter_swap;
 
 	p_vector->GenericArray.Capacity = p_initialCapacity;
 	p_vector->GenericArray.Memory = malloc(Core_Vector_getTotalSize(p_vector));

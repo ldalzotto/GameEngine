@@ -9,8 +9,8 @@
 		##ElementTypeName* Current; \
 		size_t CurrentIndex; \
 		##ElementTypeName* (*At)(DataStructureTypeName* p_userObject, size_t p_index); \
+		##ElementTypeName* (*At_unchecked)(DataStructureTypeName* p_dataStructure, size_t p_index); \
 	} CORE_VECTORITERATOR_TYPE(##ElementTypeName);
-
 
 #define CORE_VECTORITERATOR_BUILD(ElementTypeName, in_DataStructure, var_VectorIterator) \
 	CORE_VECTORITERATOR_TYPE(ElementTypeName) var_VectorIterator; \
