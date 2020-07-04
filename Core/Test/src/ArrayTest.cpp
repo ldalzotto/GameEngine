@@ -11,12 +11,10 @@ extern "C" {
 namespace _Core::_Test
 {
 	CORE_DEFINE_VECTOR_IMPL(Vector3f_Test);
-
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
 	CORE_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
 
 	CORE_DEFINE_SORTEDVECTOR_IMPL(Vector3f_Test);
-
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 	CORE_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 
@@ -36,7 +34,7 @@ namespace _Core::_Test
 		{
 			for (size_t i = 0; i < 11; i++)
 			{
-				Vector3f_Test l_value = { i, i, i };
+				Vector3f_Test l_value = { (float)i, (float)i, (float)i };
 				Core_Vector3f_Test_VectorWriter_pushBack(&l_vec3V.Writer, &l_value);
 			}
 
@@ -55,7 +53,7 @@ namespace _Core::_Test
 		{
 			for (size_t i = 0; i < 11; i++)
 			{
-				Vector3f_Test l_value = { i, i, i };
+				Vector3f_Test l_value = { (float)i, (float)i, (float)i };
 				Core_Vector3f_Test_SortedVectorWriter_pushBack(&l_vec3VSorted.Writer, &l_value);
 			}
 

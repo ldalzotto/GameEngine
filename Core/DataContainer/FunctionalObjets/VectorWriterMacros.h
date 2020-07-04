@@ -19,14 +19,5 @@
 	    p_writer->PushBack(p_writer->Core_VectorWriter_UserObject, p_value); \
 	}
 
-/*
-typedef struct Core_Vector
-{
-	Core_GenericArray GenericArray;
-	Core_VectorWriter Writer;
-} Core_Vector;
-*/
-
-
 #define CORE_VECTORWRITER_BUILD(DataContainerName, in_DataStructure, var_VectorWriter) \
 	CORE_VECTORWRITER_TYPE(##DataContainerName)* ##var_VectorWriter =  (CORE_VECTORWRITER_TYPE(##DataContainerName)*) &((Core_Vector*)##in_DataStructure)->Writer;

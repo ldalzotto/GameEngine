@@ -10,7 +10,7 @@ typedef struct Core_SortedVector
 {
 	Core_GenericArray GenericArray;
 	Core_VectorWriter Writer;
-	void (*BuildIterator)(struct Core_Vector* p_vector, struct Core_VectorIterator* out_iterator);
+	void (*BuildIterator)(struct Core_SortedVector* p_vector, struct Core_VectorIterator* out_iterator);
 	Core_SortElementComparatorWithUserObject SortComparator;
 } Core_SortedVector;
 

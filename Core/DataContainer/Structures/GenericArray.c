@@ -2,6 +2,16 @@
 
 #include <string.h>
 
+size_t Core_GenericArray_getTotalSize(Core_GenericArray* p_genericArray)
+{
+	return p_genericArray->ElementSize * p_genericArray->Capacity;
+};
+
+size_t Core_GenericArray_getElementOffset(Core_GenericArray* p_genericArray, size_t p_index)
+{
+	return p_genericArray->ElementSize * p_index;
+};
+
 void Core_GenericArray_alloc(Core_GenericArray* p_genericArray, size_t p_initialCapacity)
 {
 	p_genericArray->Capacity = p_initialCapacity;
@@ -18,16 +28,6 @@ void Core_GenericArray_free(Core_GenericArray* p_genericArray)
 	p_genericArray->Size = 0;
 };
 
-size_t Core_GenericArray_getTotalSize(Core_GenericArray* p_genericArray)
-{
-	return p_genericArray->ElementSize * p_genericArray->Capacity;
-};
-
-size_t Core_GenericArray_getElementOffset(Core_GenericArray* p_genericArray, size_t p_index)
-{
-	return p_genericArray->ElementSize * p_index;
-};
-
 void* Core_GenericArray_at_unchecked(Core_GenericArray* p_genericArray, size_t p_index)
 {
 	return (char*)p_genericArray->Memory + Core_GenericArray_getElementOffset(p_genericArray, p_index);
@@ -37,7 +37,7 @@ void* Core_GenericArray_at(Core_GenericArray* p_genericArray, size_t p_index)
 {
 	if (p_index >= p_genericArray->Size)
 	{
-		return NULL;
+		exit(EXIT_FAILURE);
 	}
 	return Core_GenericArray_at_unchecked(p_genericArray, p_index);
 };

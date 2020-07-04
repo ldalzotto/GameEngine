@@ -13,13 +13,9 @@ typedef struct Core_GenericArray
 void Core_GenericArray_alloc(Core_GenericArray* p_genericArray, size_t p_initialCapacity);
 void Core_GenericArray_free(Core_GenericArray* p_genericArray);
 
-size_t Core_GenericArray_getTotalSize(Core_GenericArray* p_genericArray);
-size_t Core_GenericArray_getElementOffset(Core_GenericArray* p_genericArray, size_t p_index);
-
 void* Core_GenericArray_at_unchecked(Core_GenericArray* p_genericArray, size_t p_index);
 void* Core_GenericArray_at(Core_GenericArray* p_genericArray, size_t p_index);
 
-void Core_GenericArray_resize(Core_GenericArray* p_genericArray, size_t p_newCapacity);
 void Core_GenericArray_pushBack_realloc(Core_GenericArray* p_genericArray, void* p_value);
 void Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, size_t p_right);
 
