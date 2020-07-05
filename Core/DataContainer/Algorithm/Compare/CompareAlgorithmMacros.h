@@ -15,4 +15,10 @@
 		return (ElementTypeName*) Core_find((Core_VectorIterator*)p_iterator, (Core_VectorAccessor*)p_acccessor, (Core_CompareElementComparatorWithUserObject)p_comparator, p_other, p_userObject); \
 	};
 	
+#define CORE_COMPARE_ALGORITHM_FIND(DataContainerName, ElementTypeName, ComparedObjectTypeName, UserObjectTypeName, in_dataStructure, ComparatorFunctionName, p_other, p_userObject, out_findItem) \
+	ElementTypeName* out_findItem = NULL; \
+	{ \
+		CORE_VECTORITERATOR_BUILD(DataContainerName, in_dataStructure, l_core_compare_algorithm_fin_macro_it); \
+		out_findItem = CORE_COMPARE_ALGORITHM_FIND_METHOD_NAME(DataContainerName, ComparedObjectTypeName, UserObjectTypeName)(&l_core_compare_algorithm_fin_macro_it, &((in_dataStructure)->Accessor), ComparatorFunctionName, p_other, p_userObject); \
+	} \
 //DataContainerName, ComparedObjectTypeName, UserObjectTypeName

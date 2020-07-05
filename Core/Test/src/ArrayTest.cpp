@@ -61,6 +61,9 @@ namespace _Core::_Test
 
 			CORE_ALGO_MIN_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, l_min, Vector3f_Test_SortComparator_testV2);
 			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, Vector3f_Test_SortComparator_testV2);
+
+			float l_findingNumber = 3.0f;
+			CORE_COMPARE_ALGORITHM_FIND(Core_Vector3f_Test_Vector, Vector3f_Test, float, void, &l_vec3V, Vector3f_Test_float_compare, &l_findingNumber, NULL, l_found);
 		}
 
 		Core_Vector3f_Test_Vector_free(&l_vec3V);
