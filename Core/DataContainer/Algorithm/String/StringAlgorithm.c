@@ -4,6 +4,7 @@
 #include "DataContainer/Structures/GenericArray.h"
 #include "DataContainer/FunctionalObjets/VectorWriter.h"
 #include "DataContainer/FunctionalObjets/VectorIterator.h"
+#include "DataContainer/FunctionalObjets/VectorAccessor.h"
 #include <string.h>
 
 void Core_string_append(struct Core_GenericArray* p_string, struct Core_VectorWriter* p_writer, char* p_appended)
@@ -23,7 +24,7 @@ void Core_string_append(struct Core_GenericArray* p_string, struct Core_VectorWr
 	CORE_HANDLE_ERROR_END(err);
 };
 
-bool Core_string_find(struct Core_GenericArray* p_string, struct Core_VectorIterator* p_iterator, char* p_comparedStr, size_t p_startIndex, size_t* p_outfoundIndex)
+bool Core_string_find(struct Core_GenericArray* p_string, struct Core_VectorAccessor* p_accessor, char* p_comparedStr, size_t p_startIndex, size_t* p_outfoundIndex)
 {
 	Core_char_Array l_comparedStr;
 	Core_char_Array_fromRawArray(&l_comparedStr, p_comparedStr, strlen(p_comparedStr));
@@ -38,7 +39,7 @@ bool Core_string_find(struct Core_GenericArray* p_string, struct Core_VectorIter
 				break;
 			}
 
-			char* l_pstringCompareBegin = (char*)p_iterator->At(p_string, *p_outfoundIndex);
+			char* l_pstringCompareBegin = (char*)p_accessor->At(p_string, *p_outfoundIndex);
 			char* l_compareStringBegin = p_comparedStr;
 			if (*l_pstringCompareBegin == *l_compareStringBegin)
 			{

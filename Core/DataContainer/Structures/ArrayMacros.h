@@ -13,6 +13,7 @@ typedef struct CORE_ARRAY_TYPE(ElementTypeName) \
 	size_t Capacity; \
 	size_t ElementSize; \
 	\
+	CORE_VECTORACCESSOR_TYPE_FROMELEMENT(ElementTypeName, CORE_ARRAY_TYPE) Accessor; \
 	CORE_VECTORWRITER_TYPE_FROMELEMENT(ElementTypeName, CORE_ARRAY_TYPE) Writer; \
 	void (*BuildIterator)(struct CORE_ARRAY_TYPE(ElementTypeName)* p_vector, struct CORE_VECTORITERATOR_TYPE_FROMELEMENT(ElementTypeName, CORE_ARRAY_TYPE)* out_iterator); \
 } CORE_ARRAY_TYPE(ElementTypeName); \

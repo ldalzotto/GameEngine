@@ -4,11 +4,13 @@
 
 #include "DataContainer/Structures/GenericArray.h"
 #include "DataContainer/FunctionalObjets/VectorWriter.h"
+#include "DataContainer/FunctionalObjets/VectorAccessor.h"
 #include "DataContainer/Algorithm/Sort/SortComparators.h"
 
 typedef struct Core_SortedVector
 {
 	Core_GenericArray GenericArray;
+	Core_VectorAccessor Accessor;
 	Core_VectorWriter Writer;
 	void (*BuildIterator)(struct Core_SortedVector* p_vector, struct Core_VectorIterator* out_iterator);
 	Core_SortElementComparatorWithUserObject SortComparator;

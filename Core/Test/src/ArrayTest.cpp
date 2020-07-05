@@ -24,7 +24,6 @@ namespace _Core::_Test
 	CORE_DEFINE_VECTOR_IMPL(Vector3f_Test);
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
 	CORE_SORT_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
-
 	CORE_COMPARE_ALGORITHM_FIND_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test, float, void);
 
 	CORE_DEFINE_ARRAY_IMPL(Vector3f_Test);
@@ -91,8 +90,8 @@ namespace _Core::_Test
 			CORE_STRING_APPEND(Core_char_Vector, &l_string, "Hello");
 			CORE_STRING_APPEND(Core_char_Vector, &l_string, " World");
 
-			CORE_STRING_FIND_IT_BEGIN(Core_char_Vector, &l_string, "ld", 0, l_foundIndex);
-			CORE_STRING_FIND_IT_END();
+			CORE_STRING_FIND_BEGIN(Core_char_Vector, &l_string, "ld", 0, l_foundIndex);
+			CORE_STRING_FIND_END();
 		}
 		Core_char_Vector_free(&l_string);
 	};

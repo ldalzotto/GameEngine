@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "DataContainer/FunctionalObjets/VectorWriterMacros.h"
+#include "DataContainer/FunctionalObjets/VectorAccessorMacros.h"
 
 #define CORE_VECTOR_TYPE(ElementTypeName) Core_##ElementTypeName##_Vector
 
@@ -14,6 +15,7 @@ typedef struct CORE_VECTOR_TYPE(ElementTypeName) \
 	size_t Capacity; \
 	size_t ElementSize; \
 	\
+	CORE_VECTORACCESSOR_TYPE_FROMELEMENT(ElementTypeName, CORE_VECTOR_TYPE) Accessor; \
 	CORE_VECTORWRITER_TYPE_FROMELEMENT(ElementTypeName, CORE_VECTOR_TYPE) Writer; \
 	void (*BuildIterator)(struct CORE_VECTOR_TYPE(ElementTypeName)* p_vector, struct CORE_VECTORITERATOR_TYPE_FROMELEMENT(ElementTypeName, CORE_VECTOR_TYPE)* out_iterator); \
 } CORE_VECTOR_TYPE(ElementTypeName); \

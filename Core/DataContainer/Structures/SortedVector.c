@@ -31,8 +31,6 @@ void Core_SortedVector_buildIterator(Core_SortedVector* p_vector, struct Core_Ve
 	p_vectorIterator->Core_VectorIterator_DataStructure = p_vector;
 	p_vectorIterator->Current = NULL;
 	p_vectorIterator->CurrentIndex = -1;
-	p_vectorIterator->At = Core_GenericArray_at;
-	p_vectorIterator->At_unchecked = Core_GenericArray_at_unchecked;
 };
 
 void Core_SortedVector_alloc(Core_SortedVector* p_vector, size_t p_elementSize, size_t p_initialCapacity, Core_SortElementComparatorWithUserObject p_sortComparator)
@@ -40,6 +38,10 @@ void Core_SortedVector_alloc(Core_SortedVector* p_vector, size_t p_elementSize, 
 	p_vector->Writer.Core_VectorWriter_UserObject = p_vector;
 	p_vector->Writer.PushBack = Core_SortedVector_pushBack;
 	p_vector->Writer.Swap = Core_GenericArray_swap;
+
+	p_vector->Accessor.Core_VectorAccessor_DataStructure = p_vector;
+	p_vector->Accessor.At = Core_GenericArray_at;
+	p_vector->Accessor.At_unchecked = Core_GenericArray_at_unchecked;
 
 	p_vector->BuildIterator = Core_SortedVector_buildIterator;
 

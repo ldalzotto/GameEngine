@@ -18,6 +18,7 @@ typedef struct CORE_SORTEDVECTOR_TYPE(##ElementTypeName) \
 	size_t Capacity; \
 	size_t ElementSize; \
 	\
+	CORE_VECTORACCESSOR_TYPE_FROMELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) Accessor; \
 	CORE_VECTORWRITER_TYPE_FROMELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) Writer; \
 	void (*BuildIterator)(struct CORE_SORTEDVECTOR_TYPE(##ElementTypeName)* p_vector, struct CORE_VECTORITERATOR_TYPE_FROMELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE)* out_iterator); \
 	CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) SortComparator; \

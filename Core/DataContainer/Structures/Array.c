@@ -6,8 +6,6 @@ void Core_Array_buildIterator(Core_Array* p_array, Core_VectorIterator* p_vector
 	p_vectorIterator->Core_VectorIterator_DataStructure = p_array;
 	p_vectorIterator->Current = NULL;
 	p_vectorIterator->CurrentIndex = -1;
-	p_vectorIterator->At = Core_GenericArray_at;
-	p_vectorIterator->At_unchecked = Core_GenericArray_at_unchecked;
 };
 
 void Core_Array_alloc(Core_Array* p_array, size_t p_elementSize, size_t p_initialCapacity)
@@ -16,6 +14,10 @@ void Core_Array_alloc(Core_Array* p_array, size_t p_elementSize, size_t p_initia
 	p_array->Writer.PushBack = Core_GenericArray_pushBack_noRealloc;
 	p_array->Writer.Swap = Core_GenericArray_swap;
 	p_array->Writer.InsertArrayAt = Core_GenericArray_isertArrayAt_noRealloc;
+
+	p_array->Accessor.Core_VectorAccessor_DataStructure = p_array;
+	p_array->Accessor.At = Core_GenericArray_at;
+	p_array->Accessor.At_unchecked = Core_GenericArray_at_unchecked;
 
 	p_array->BuildIterator = Core_Array_buildIterator;
 

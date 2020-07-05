@@ -3,11 +3,13 @@
 #include <stdlib.h>
 
 #include "DataContainer/Structures/GenericArray.h"
+#include "DataContainer/FunctionalObjets/VectorAccessor.h"
 #include "DataContainer/FunctionalObjets/VectorWriter.h"
 
 typedef struct Core_Array
 {
 	Core_GenericArray GenericArray;
+	Core_VectorAccessor Accessor;
 	Core_VectorWriter Writer;
 	void (*BuildIterator)(struct Core_Array* p_array, struct Core_VectorIterator* out_iterator);
 } Core_Array;
