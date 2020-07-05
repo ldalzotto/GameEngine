@@ -1,9 +1,10 @@
-#include "String.h"
+#include "DataContainer/Types/String.h"
 
 #include "DataContainer/Structures/Vector.h"
 #include "DataContainer/Structures/Array.h"
 #include "DataContainer/Algorithm/SortComparators.h"
 #include "DataContainer/FunctionalObjets/VectorIterator.h"
+#include "DataContainer/Algorithm/StringAlgorithm.h"
 
 __forceinline void Core_char_Vector_alloc(Core_char_Vector* p_vector, size_t p_initialCapacity)
 {
@@ -20,10 +21,10 @@ __forceinline void Core_char_Vector_free(Core_char_Vector* p_vector)
 // CORE_DEFINE_VECTOR_IMPL(char);
 CORE_VECTORWRITER_DEFINE_IMPL(Core_char_Vector, char);
 CORE_ALGORITHM_DEFINE_IMPL(Core_char_Vector, char);
-
+CORE_STRING_ALGORITHM_DEFINE_IMPL(Core_char_Vector);
 
 CORE_DEFINE_ARRAY_IMPL(char);
 
 CORE_VECTORWRITER_DEFINE_IMPL(Core_char_Array, char);
 CORE_ALGORITHM_DEFINE_IMPL(Core_char_Array, char);
-
+CORE_STRING_ALGORITHM_DEFINE_IMPL(Core_char_Array);

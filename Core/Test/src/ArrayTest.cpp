@@ -79,11 +79,11 @@ namespace _Core::_Test
 		{
 			CORE_VECTORITERATOR_BUILD(Core_char_Vector, &l_string, l_string_it);
 
-			Core_string_append((Core_GenericArray*)&l_string, (Core_VectorWriter*)&l_string.Writer, "Hello");
-			Core_string_append((Core_GenericArray*)&l_string, (Core_VectorWriter*)&l_string.Writer, " World");
+			Core_char_Vector_append(&l_string, &l_string.Writer, "Hello");
+			Core_char_Vector_append(&l_string, &l_string.Writer, "World");
 
 			size_t l_foundIndex;
-			if (Core_string_find((Core_GenericArray*)&l_string, (Core_VectorIterator*)&l_string_it, "ld", 0, &l_foundIndex))
+			if (Core_char_Vector_find(&l_string, &l_string_it, "ld", 0, &l_foundIndex))
 			{
 				int lzd = 0;
 			};
