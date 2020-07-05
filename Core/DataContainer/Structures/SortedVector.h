@@ -4,7 +4,7 @@
 
 #include "DataContainer/Structures/GenericArray.h"
 #include "DataContainer/FunctionalObjets/VectorWriter.h"
-#include "DataContainer/Algorithm/SortComparators.h"
+#include "DataContainer/Algorithm/Sort/SortComparators.h"
 
 typedef struct Core_SortedVector
 {

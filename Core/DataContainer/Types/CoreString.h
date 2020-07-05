@@ -6,22 +6,22 @@
 #include "DataContainer/Structures/ArrayMacros.h"
 #include "DataContainer/FunctionalObjets/VectorIteratorMacros.h"
 #include "DataContainer/FunctionalObjets/VectorWriterMacros.h"
-#include "DataContainer/Algorithm/SortingAlgorithmMacro.h"
-#include "DataContainer/Algorithm/StringAlgorithmMacros.h"
+#include "DataContainer/Algorithm/Sort/SortingAlgorithmMacro.h"
+#include "DataContainer/Algorithm/String/StringAlgorithmMacros.h"
 #include "Error/ReturnCodes.h"
 
 CORE_VECTORWRITER_DEFINE(Core_char_Vector, char);
 CORE_DEFINE_VECTOR(char);
 CORE_VECTORITERATOR_DEFINE(Core_char_Vector, char);
 
-CORE_ALGORITHM_DEFINE(Core_char_Vector, char);
+CORE_SORT_ALGORITHM_DEFINE(Core_char_Vector, char);
 CORE_STRING_ALGORITHM_DEFINE(Core_char_Vector);
 
 CORE_VECTORWRITER_DEFINE(Core_char_Array, char);
 CORE_DEFINE_ARRAY(char);
 CORE_VECTORITERATOR_DEFINE(Core_char_Array, char);
 
-CORE_ALGORITHM_DEFINE(Core_char_Array, char);
+CORE_SORT_ALGORITHM_DEFINE(Core_char_Array, char);
 CORE_STRING_ALGORITHM_DEFINE(Core_char_Array);
 
 
