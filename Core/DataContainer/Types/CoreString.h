@@ -16,7 +16,7 @@ CORE_VECTORWRITER_DEFINE(Core_char_Vector, char);
 CORE_DEFINE_VECTOR(char);
 CORE_VECTORITERATOR_DEFINE(Core_char_Vector, char);
 
-CORE_SORT_ALGORITHM_DEFINE(Core_char_Vector, char);
+CORE_SORT_ALGORITHM_DEFINE(Core_char_Vector, char, void);
 CORE_STRING_ALGORITHM_DEFINE(Core_char_Vector);
 
 CORE_VECTORACCESSOR_DEFINE(Core_char_Array, char);
@@ -24,7 +24,7 @@ CORE_VECTORWRITER_DEFINE(Core_char_Array, char);
 CORE_DEFINE_ARRAY(char);
 CORE_VECTORITERATOR_DEFINE(Core_char_Array, char);
 
-CORE_SORT_ALGORITHM_DEFINE(Core_char_Array, char);
+CORE_SORT_ALGORITHM_DEFINE(Core_char_Array, char, void);
 CORE_STRING_ALGORITHM_DEFINE(Core_char_Array);
 
 

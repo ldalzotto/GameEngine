@@ -25,7 +25,7 @@ namespace _Core::_Test
 	CORE_VECTORITERATOR_DEFINE(Core_Vector3f_Test_Vector, Vector3f_Test);
 	CORE_DEFINE_VECTOR(Vector3f_Test);
 
-	CORE_SORT_ALGORITHM_DEFINE(Core_Vector3f_Test_Vector, Vector3f_Test);
+	CORE_SORT_ALGORITHM_DEFINE(Core_Vector3f_Test_Vector, Vector3f_Test, void);
 
 	CORE_COMPARE_ALGORITHM_FIND_DEFINE(Core_Vector3f_Test_Vector, Vector3f_Test, float, void);
 
@@ -34,14 +34,14 @@ namespace _Core::_Test
 	CORE_VECTORITERATOR_DEFINE(Core_Vector3f_Test_Array, Vector3f_Test);
 	CORE_DEFINE_ARRAY(Vector3f_Test);
 
-	CORE_SORT_ALGORITHM_DEFINE(Core_Vector3f_Test_Array, Vector3f_Test);
+	CORE_SORT_ALGORITHM_DEFINE(Core_Vector3f_Test_Array, Vector3f_Test, void);
 
 	CORE_VECTORACCESSOR_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 	CORE_VECTORWRITER_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 	CORE_VECTORITERATOR_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 	CORE_DEFINE_SORTEDVECTOR(Vector3f_Test);
 
-	CORE_SORT_ALGORITHM_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test);
+	CORE_SORT_ALGORITHM_DEFINE(Core_Vector3f_Test_SortedVector, Vector3f_Test, void);
 
 	void ExecuteTest();
 }

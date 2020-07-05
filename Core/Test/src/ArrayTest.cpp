@@ -23,16 +23,16 @@ namespace _Core::_Test
 {
 	CORE_DEFINE_VECTOR_IMPL(Vector3f_Test);
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
-	CORE_SORT_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
+	CORE_SORT_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test, void);
 	CORE_COMPARE_ALGORITHM_FIND_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test, float, void);
 
 	CORE_DEFINE_ARRAY_IMPL(Vector3f_Test);
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_Array, Vector3f_Test);
-	CORE_SORT_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Array, Vector3f_Test);
+	CORE_SORT_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Array, Vector3f_Test, void);
 
 	CORE_DEFINE_SORTEDVECTOR_IMPL(Vector3f_Test);
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
-	CORE_SORT_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
+	CORE_SORT_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test, void);
 
 	short int Vector3f_Test_SortComparator_testV2(Vector3f_Test* p_left, Vector3f_Test* p_right, void* p_null)
 	{
@@ -59,8 +59,8 @@ namespace _Core::_Test
 				l_it.Current->x += 1;
 			CORE_VECTORITERATOR_FOREACH_END();
 
-			CORE_ALGO_MIN_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, l_min, Vector3f_Test_SortComparator_testV2);
-			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, Vector3f_Test_SortComparator_testV2);
+			CORE_ALGO_MIN_IT(Core_Vector3f_Test_Vector, Vector3f_Test, void, &l_vec3V, NULL, Vector3f_Test_SortComparator_testV2, l_min);
+			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_Vector, Vector3f_Test, void, &l_vec3V, NULL, Vector3f_Test_SortComparator_testV2);
 
 			float l_findingNumber = 3.0f;
 			CORE_COMPARE_ALGORITHM_FIND(Core_Vector3f_Test_Vector, Vector3f_Test, float, void, &l_vec3V, Vector3f_Test_float_compare, &l_findingNumber, NULL, l_found);
@@ -82,8 +82,8 @@ namespace _Core::_Test
 				l_it.Current->x += 1;
 			CORE_VECTORITERATOR_FOREACH_END();
 
-			CORE_ALGO_MIN_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, &l_vec3VSorted, l_min, Vector3f_Test_SortComparator_testV2);
-			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, &l_vec3VSorted, Vector3f_Test_SortComparator_testV2);
+			CORE_ALGO_MIN_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, void, &l_vec3VSorted, NULL, Vector3f_Test_SortComparator_testV2, l_min);
+			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, void, &l_vec3VSorted, NULL, Vector3f_Test_SortComparator_testV2);
 		}
 		Core_Vector3f_Test_SortedVector_free(&l_vec3VSorted);
 
