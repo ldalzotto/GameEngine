@@ -8,8 +8,9 @@ extern "C" {
 #include "DataContainer/Algorithm/SortingAlgorithm.h"
 #include "DataContainer/Algorithm/SortingAlgorithmMacro.h"
 #include "Error/ErrorHandling.h"
-#include "DataContainer/Types/String.h"
-#include "DataContainer/Types/String.c"
+
+#include "DataContainer/Types/CoreString.h"
+#include "DataContainer/Types/CoreString.c"
 #include "DataContainer/Algorithm/StringAlgorithm.h"
 #include "DataContainer/Algorithm/StringAlgorithm.c"
 }
@@ -77,17 +78,11 @@ namespace _Core::_Test
 		Core_char_Vector l_string;
 		Core_char_Vector_alloc(&l_string, 5);
 		{
-			CORE_VECTORITERATOR_BUILD(Core_char_Vector, &l_string, l_string_it);
+			CORE_STRING_APPEND(Core_char_Vector, &l_string, "Hello");
+			CORE_STRING_APPEND(Core_char_Vector, &l_string, " World");
 
-			Core_char_Vector_append(&l_string, &l_string.Writer, "Hello");
-			Core_char_Vector_append(&l_string, &l_string.Writer, "World");
-
-			size_t l_foundIndex;
-			if (Core_char_Vector_find(&l_string, &l_string_it, "ld", 0, &l_foundIndex))
-			{
-				int lzd = 0;
-			};
-
+			CORE_STRING_FIND_IT_BEGIN(Core_char_Vector, &l_string, "ld", 0, l_foundIndex);
+			CORE_STRING_FIND_IT_END();
 		}
 		Core_char_Vector_free(&l_string);
 	};

@@ -1,4 +1,4 @@
-#include "DataContainer/Types/String.h"
+#include "CoreString.h"
 
 #include "DataContainer/Structures/Vector.h"
 #include "DataContainer/Structures/Array.h"

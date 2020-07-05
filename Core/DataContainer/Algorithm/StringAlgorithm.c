@@ -1,6 +1,6 @@
 #include "StringAlgorithm.h"
 
-#include "DataContainer/Types/String.h"
+#include "DataContainer/Types/CoreString.h"
 #include "DataContainer/Structures/GenericArray.h"
 #include "DataContainer/FunctionalObjets/VectorWriter.h"
 #include "DataContainer/FunctionalObjets/VectorIterator.h"
