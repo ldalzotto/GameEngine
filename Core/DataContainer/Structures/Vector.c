@@ -10,7 +10,7 @@ void Core_Vector_buildIterator(Core_Vector* p_vector, Core_VectorIterator* p_vec
 	p_vectorIterator->At_unchecked = Core_GenericArray_at_unchecked;
 };
 
-void Core_Vector_alloc(Core_Vector* p_vector, size_t p_initialCapacity)
+void Core_Vector_alloc(Core_Vector* p_vector, size_t p_elementSize, size_t p_initialCapacity)
 {
 	p_vector->Writer.Core_VectorWriter_UserObject = p_vector;
 	p_vector->Writer.PushBack = Core_GenericArray_pushBack_realloc;
@@ -18,7 +18,7 @@ void Core_Vector_alloc(Core_Vector* p_vector, size_t p_initialCapacity)
 
 	p_vector->BuildIterator = Core_Vector_buildIterator;
 
-	Core_GenericArray_alloc(&p_vector->GenericArray, p_initialCapacity);
+	Core_GenericArray_alloc(&p_vector->GenericArray, p_elementSize, p_initialCapacity);
 };
 
 void Core_Vector_free(Core_Vector* p_vector)

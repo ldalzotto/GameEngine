@@ -15,8 +15,9 @@ size_t Core_GenericArray_getElementOffset(Core_GenericArray* p_genericArray, siz
 	return p_genericArray->ElementSize * p_index;
 };
 
-void Core_GenericArray_alloc(Core_GenericArray* p_genericArray, size_t p_initialCapacity)
+void Core_GenericArray_alloc(Core_GenericArray* p_genericArray, size_t p_elementSize, size_t p_initialCapacity)
 {
+	p_genericArray->ElementSize = p_elementSize;
 	p_genericArray->Capacity = p_initialCapacity;
 	p_genericArray->Memory = malloc(Core_GenericArray_getTotalSize(p_genericArray));
 	p_genericArray->Size = 0;

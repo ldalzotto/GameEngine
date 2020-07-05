@@ -12,7 +12,7 @@ typedef struct Core_GenericArray
 	size_t ElementSize;
 } Core_GenericArray;
 
-void Core_GenericArray_alloc(Core_GenericArray* p_genericArray, size_t p_initialCapacity);
+void Core_GenericArray_alloc(Core_GenericArray* p_genericArray, size_t p_elementSize, size_t p_initialCapacity);
 void Core_GenericArray_free(Core_GenericArray* p_genericArray);
 
 void* Core_GenericArray_at_unchecked(Core_GenericArray* p_genericArray, size_t p_index);
