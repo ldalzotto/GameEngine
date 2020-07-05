@@ -19,7 +19,7 @@ namespace _Core::_Test
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 	CORE_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
 
-	int Vector3f_Test_SortComparator_testV2(Vector3f_Test* p_left, Vector3f_Test* p_right, void* p_null)
+	short int Vector3f_Test_SortComparator_testV2(Vector3f_Test* p_left, Vector3f_Test* p_right, void* p_null)
 	{
 		if (p_left->x > p_right->x) { return -1; }
 		else if (p_left->x < p_right->x) { return 1; }

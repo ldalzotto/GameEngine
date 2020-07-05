@@ -9,7 +9,7 @@
 
 #define CORE_DEFINE_SORTEDVECTOR(ElementTypeName) \
 \
-typedef int(*CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE))(##ElementTypeName*, ##ElementTypeName*, void*); \
+typedef short int(*CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE))(##ElementTypeName*, ##ElementTypeName*, void*); \
 \
 typedef struct CORE_SORTEDVECTOR_TYPE(##ElementTypeName) \
 { \

@@ -18,7 +18,7 @@ typedef struct CORE_VECTOR_TYPE(ElementTypeName) \
 	void (*BuildIterator)(struct CORE_VECTOR_TYPE(ElementTypeName)* p_vector, struct CORE_VECTORITERATOR_TYPE_FROMELEMENT(ElementTypeName, CORE_VECTOR_TYPE)* out_iterator); \
 } CORE_VECTOR_TYPE(ElementTypeName); \
 \
-typedef int(*CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_VECTOR_TYPE))(##ElementTypeName*, ##ElementTypeName*, void*); \
+typedef short int(*CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_VECTOR_TYPE))(##ElementTypeName*, ##ElementTypeName*, void*); \
 \
 __forceinline void CORE_VECTOR_TYPE(ElementTypeName)##_alloc(CORE_VECTOR_TYPE(ElementTypeName)* p_vector, size_t p_initialCapacity); \
 __forceinline void CORE_VECTOR_TYPE(ElementTypeName)##_free(CORE_VECTOR_TYPE(ElementTypeName)* p_vector);
