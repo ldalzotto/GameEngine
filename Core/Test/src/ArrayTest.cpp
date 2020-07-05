@@ -1,13 +1,17 @@
 #include "ArrayTest.h"
 
 extern "C" {
-	#include "DataContainer/Structures/Vector.h"
-	#include "DataContainer/Structures/Array.h"
-	#include "DataContainer/Structures/SortedVector.h"
-	#include "DataContainer/FunctionalObjets/VectorIterator.h"
-	#include "DataContainer/Algorithm/SortingAlgorithm.h"
-	#include "DataContainer/Algorithm/SortingAlgorithmMacro.h"
-	#include "Error/ErrorHandling.h"
+#include "DataContainer/Structures/Vector.h"
+#include "DataContainer/Structures/Array.h"
+#include "DataContainer/Structures/SortedVector.h"
+#include "DataContainer/FunctionalObjets/VectorIterator.h"
+#include "DataContainer/Algorithm/SortingAlgorithm.h"
+#include "DataContainer/Algorithm/SortingAlgorithmMacro.h"
+#include "Error/ErrorHandling.h"
+#include "DataContainer/Types/String.h"
+#include "DataContainer/Types/String.c"
+#include "DataContainer/Algorithm/StringAlgorithm.h"
+#include "DataContainer/Algorithm/StringAlgorithm.c"
 }
 
 namespace _Core::_Test
@@ -70,20 +74,21 @@ namespace _Core::_Test
 			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, &l_vec3VSorted, Vector3f_Test_SortComparator_testV2);
 		}
 
-		// Core_GenericArray_isertArrayAt_realloc((Core_GenericArray*)&l_vec3V, (Core_GenericArray*)&l_vec3VSorted, 3);
-
-		Core_Vector3f_Test_SortedVector_free(&l_vec3VSorted);
-
-
-		Core_Vector3f_Test_Array l_vec3VArray;
-		Core_Vector3f_Test_Array_alloc(&l_vec3VArray, 5);
+		Core_char_Vector l_string;
+		Core_char_Vector_alloc(&l_string, 5);
 		{
-			for (size_t i = 0; i < 10; i++)
+			CORE_VECTORITERATOR_BUILD(Core_char_Vector, &l_string, l_string_it);
+
+			Core_string_append((Core_GenericArray*)&l_string, (Core_VectorWriter*)&l_string.Writer, "Hello");
+			Core_string_append((Core_GenericArray*)&l_string, (Core_VectorWriter*)&l_string.Writer, " World");
+
+			size_t l_foundIndex;
+			if (Core_string_find((Core_GenericArray*)&l_string, (Core_VectorIterator*)&l_string_it, "ld", 0, &l_foundIndex))
 			{
-				Vector3f_Test l_value = { (float)i, (float)i, (float)i };
-				Core_Vector3f_Test_ArrayWriter_pushBack(&l_vec3VArray.Writer, &l_value);
-			}
+				int lzd = 0;
+			};
+
 		}
-		Core_Vector3f_Test_Array_free(&l_vec3VArray);
+		Core_char_Vector_free(&l_string);
 	};
 }
