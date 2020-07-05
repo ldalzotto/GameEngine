@@ -2,7 +2,7 @@
 #include "DataContainer/FunctionalObjets/VectorIterator.h"
 #include "Error/ErrorHandling.h"
 
-void Core_SortedVector_pushBack(Core_SortedVector* p_vector, void* p_value)
+Core_ReturnCodes Core_SortedVector_pushBack(Core_SortedVector* p_vector, void* p_value)
 {
 	size_t l_insertIndex = 0;
 	for (size_t i = 0; i < p_vector->GenericArray.Size; i++)
@@ -18,9 +18,11 @@ void Core_SortedVector_pushBack(Core_SortedVector* p_vector, void* p_value)
 		}
 	}
 
-	CORE_HANDLE_ERROR_BEGIN(err);
+	CORE_HANDLE_PUSH_GLOBAL_BEGIN(err)
 		err = Core_GenericArray_isertAt_realloc(&p_vector->GenericArray, p_value, 1, l_insertIndex);
-	CORE_HANDLE_ERROR_END(err);
+	CORE_HANDLE_PUSH_GLOBAL_END(err);
+
+	return CR_OK;
 }
 
 

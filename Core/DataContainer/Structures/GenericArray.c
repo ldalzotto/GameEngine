@@ -59,12 +59,15 @@ void Core_GenericArray_resize(Core_GenericArray* p_genericArray, size_t p_newCap
 	}
 }
 
-void Core_GenericArray_pushBack_realloc(Core_GenericArray* p_genericArray, void* p_value)
+Core_ReturnCodes Core_GenericArray_pushBack_realloc(Core_GenericArray* p_genericArray, void* p_value)
 {
 	if (p_genericArray->Size >= p_genericArray->Capacity)
 	{
 		Core_GenericArray_resize(p_genericArray, p_genericArray->Capacity == 0 ? 1 : (p_genericArray->Capacity * 2));
-		Core_GenericArray_pushBack_realloc(p_genericArray, p_value);
+
+		CORE_HANDLE_PUSH_GLOBAL_BEGIN(err)
+			Core_GenericArray_pushBack_realloc(p_genericArray, p_value);
+		CORE_HANDLE_PUSH_GLOBAL_END(err, "Core_GenericArray_pushBack_realloc");
 	}
 	else
 	{
@@ -72,8 +75,21 @@ void Core_GenericArray_pushBack_realloc(Core_GenericArray* p_genericArray, void*
 		memcpy(p_targetMemory, p_value, p_genericArray->ElementSize);
 		p_genericArray->Size += 1;
 	}
+
+	return CR_OK;
 }
 
+Core_ReturnCodes Core_GenericArray_pushBack_noRealloc(Core_GenericArray* p_genericArray, void* p_value)
+{
+	if (p_genericArray->Size >= p_genericArray->Capacity)
+	{
+		CORE_HANDLE_PUSH_GLOBAL(CR_OUT_OF_BOUND, "Core_GenericArray_pushBack_noRealloc : impossible to push back. array is already full.");
+	}
+
+	Core_GenericArray_pushBack_realloc(p_genericArray, p_value);
+
+	return CR_OK;
+};
 
 Core_ReturnCodes Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, size_t p_right)
 {
@@ -136,6 +152,20 @@ Core_ReturnCodes Core_GenericArray_isertArrayAt_realloc(Core_GenericArray* p_gen
 	CORE_HANDLE_PUSH_GLOBAL_BEGIN(err)
 		err = Core_GenericArray_isertAt_realloc(p_genericArray, p_insertedArray->Memory, p_insertedArray->Size, p_index);
 	CORE_HANDLE_PUSH_GLOBAL_END(err, "Core_GenericArray_isertAt_realloc : error");
+
+	return CR_OK;
+};
+
+Core_ReturnCodes Core_GenericArray_isertArrayAt_noRealloc(Core_GenericArray* p_genericArray, Core_GenericArray* p_insertedArray, size_t p_index)
+{
+	CORE_HANDLE_PUSH_GLOBAL_BEGIN(err)
+		if ((p_genericArray->Size + p_insertedArray->Size) > p_genericArray->Capacity)
+		{
+			err = CR_OUT_OF_BOUND;
+		}
+	CORE_HANDLE_PUSH_GLOBAL_END(err, "Core_GenericArray_isertArrayAt_noRealloc : inserted array is too large !");
+
+	Core_GenericArray_isertArrayAt_realloc(p_genericArray, p_insertedArray, p_index);
 
 	return CR_OK;
 };

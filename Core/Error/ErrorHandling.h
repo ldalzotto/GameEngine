@@ -43,6 +43,5 @@ void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingO
 			CoreLib_ErrorHandlingObject l_errorHandling = {NULL, ##in_returnCode, __FILE__, __LINE__, "Error top level."}; \
 			CoreLib_ErrorHandling_pushToGlobal(&l_errorHandling); \
 			CoreLib_global_errorHandler(); \
-			return in_returnCode; \
 		} \
 	}

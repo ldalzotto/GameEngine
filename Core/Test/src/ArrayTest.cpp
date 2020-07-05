@@ -2,6 +2,7 @@
 
 extern "C" {
 	#include "DataContainer/Structures/Vector.h"
+	#include "DataContainer/Structures/Array.h"
 	#include "DataContainer/Structures/SortedVector.h"
 	#include "DataContainer/FunctionalObjets/VectorIterator.h"
 	#include "DataContainer/Algorithm/SortingAlgorithm.h"
@@ -14,6 +15,10 @@ namespace _Core::_Test
 	CORE_DEFINE_VECTOR_IMPL(Vector3f_Test);
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
 	CORE_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Vector, Vector3f_Test);
+
+	CORE_DEFINE_ARRAY_IMPL(Vector3f_Test);
+	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_Array, Vector3f_Test);
+	CORE_ALGORITHM_DEFINE_IMPL(Core_Vector3f_Test_Array, Vector3f_Test);
 
 	CORE_DEFINE_SORTEDVECTOR_IMPL(Vector3f_Test);
 	CORE_VECTORWRITER_DEFINE_IMPL(Core_Vector3f_Test_SortedVector, Vector3f_Test);
@@ -44,7 +49,8 @@ namespace _Core::_Test
 			CORE_ALGO_MIN_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, l_min, Vector3f_Test_SortComparator_testV2);
 			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, Vector3f_Test_SortComparator_testV2);
 		}
-		
+
+		Core_Vector3f_Test_Vector_free(&l_vec3V);
 
 
 		Core_Vector3f_Test_SortedVector l_vec3VSorted;
@@ -66,7 +72,18 @@ namespace _Core::_Test
 
 		// Core_GenericArray_isertArrayAt_realloc((Core_GenericArray*)&l_vec3V, (Core_GenericArray*)&l_vec3VSorted, 3);
 
-		Core_Vector3f_Test_Vector_free(&l_vec3V);
 		Core_Vector3f_Test_SortedVector_free(&l_vec3VSorted);
+
+
+		Core_Vector3f_Test_Array l_vec3VArray;
+		Core_Vector3f_Test_Array_alloc(&l_vec3VArray, 5);
+		{
+			for (size_t i = 0; i < 10; i++)
+			{
+				Vector3f_Test l_value = { (float)i, (float)i, (float)i };
+				Core_Vector3f_Test_ArrayWriter_pushBack(&l_vec3VArray.Writer, &l_value);
+			}
+		}
+		Core_Vector3f_Test_Array_free(&l_vec3VArray);
 	};
 }
