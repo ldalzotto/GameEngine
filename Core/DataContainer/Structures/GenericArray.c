@@ -105,9 +105,9 @@ Core_ReturnCodes Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericA
 	{
 		Core_GenericArray_resize(p_genericArray, p_genericArray->Capacity == 0 ? 1 : (p_genericArray->Capacity * 2));
 
-		CORE_HANDLE_PUSH_GLOBAL_BEGIN(err);
+		CORE_HANDLE_PUSH_GLOBAL_BEGIN(err)
 			err = Core_GenericArray_isertAt_realloc(p_genericArray, p_value, p_elementNb, p_index);
-		CORE_HANDLE_ERROR_END(err);
+		CORE_HANDLE_PUSH_GLOBAL_END(err);
 	}
 	else
 	{
@@ -121,6 +121,21 @@ Core_ReturnCodes Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericA
 		memcpy(l_initialElement, p_value, p_genericArray->ElementSize * p_elementNb);
 		p_genericArray->Size += p_elementNb;
 	}
+
+	return CR_OK;
+};
+
+Core_ReturnCodes Core_GenericArray_isertArrayAt_realloc(Core_GenericArray* p_genericArray, Core_GenericArray* p_insertedArray, size_t p_index)
+{
+	CORE_HANDLE_PUSH_GLOBAL_BEGIN(err)
+		if (p_genericArray->ElementSize != p_insertedArray->ElementSize)
+		{
+			err = CR_INVALID_INDICES;
+		}
+	CORE_HANDLE_PUSH_GLOBAL_END(err, "Core_GenericArray_isertAt_realloc : element size doesn't match !");
+	CORE_HANDLE_PUSH_GLOBAL_BEGIN(err)
+		err = Core_GenericArray_isertAt_realloc(p_genericArray, p_insertedArray->Memory, p_insertedArray->Size, p_index);
+	CORE_HANDLE_PUSH_GLOBAL_END(err, "Core_GenericArray_isertAt_realloc : error");
 
 	return CR_OK;
 };

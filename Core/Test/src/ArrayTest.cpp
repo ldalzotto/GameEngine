@@ -44,7 +44,7 @@ namespace _Core::_Test
 			CORE_ALGO_MIN_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, l_min, Vector3f_Test_SortComparator_testV2);
 			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_Vector, Vector3f_Test, &l_vec3V, Vector3f_Test_SortComparator_testV2);
 		}
-		Core_Vector3f_Test_Vector_free(&l_vec3V);
+		
 
 
 		Core_Vector3f_Test_SortedVector l_vec3VSorted;
@@ -63,6 +63,10 @@ namespace _Core::_Test
 			CORE_ALGO_MIN_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, &l_vec3VSorted, l_min, Vector3f_Test_SortComparator_testV2);
 			CORE_ALGO_SELECTION_SORT_IT(Core_Vector3f_Test_SortedVector, Vector3f_Test, &l_vec3VSorted, Vector3f_Test_SortComparator_testV2);
 		}
+
+		// Core_GenericArray_isertArrayAt_realloc((Core_GenericArray*)&l_vec3V, (Core_GenericArray*)&l_vec3VSorted, 3);
+
+		Core_Vector3f_Test_Vector_free(&l_vec3V);
 		Core_Vector3f_Test_SortedVector_free(&l_vec3VSorted);
 	};
 }

@@ -29,7 +29,7 @@ __forceinline void CORE_SORTEDVECTOR_TYPE(ElementTypeName)##_free(CORE_SORTEDVEC
 #define CORE_DEFINE_SORTEDVECTOR_IMPL(ElementTypeName) \
 __forceinline void CORE_SORTEDVECTOR_TYPE(ElementTypeName)##_alloc(CORE_SORTEDVECTOR_TYPE(ElementTypeName)* p_vector, size_t p_initialCapacity, CORE_ALGORITHM_SORT_COMPARATOR_TYPE_FROM_ELEMENT(ElementTypeName, CORE_SORTEDVECTOR_TYPE) p_sortComparator) \
 { \
-	Core_SortedVector_alloc((Core_SortedVector*)p_vector, p_initialCapacity, sizeof(ElementTypeName), (Core_SortElementComparatorWithUserObject)p_sortComparator); \
+	Core_SortedVector_alloc((Core_SortedVector*)p_vector, sizeof(ElementTypeName), p_initialCapacity, (Core_SortElementComparatorWithUserObject)p_sortComparator); \
 }; \
 __forceinline void CORE_SORTEDVECTOR_TYPE(ElementTypeName)##_free(CORE_SORTEDVECTOR_TYPE(ElementTypeName)* p_vector) \
 { \
