@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 
-short Core_SizeTSortCompararator(size_t p_left, size_t p_right);
-short Core_Uint16tSortComparator(uint16_t p_left, uint16_t p_right);
-short Core_FloatSortComparator(float p_left, float p_right);
+#define SORT_COMPARTOR_FUNCTION_NAME(ComparedType) Core_##ComparedType##SortCompararator
+#define SORT_COMPARTOR_FUNCTION_DEFINE(ComparedType) short SORT_COMPARTOR_FUNCTION_NAME(ComparedType)(##ComparedType p_left, ##ComparedType p_right);
+
+SORT_COMPARTOR_FUNCTION_DEFINE(size_t)
+SORT_COMPARTOR_FUNCTION_DEFINE(uint16_t)
+SORT_COMPARTOR_FUNCTION_DEFINE(float)

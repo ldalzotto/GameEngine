@@ -36,7 +36,7 @@ namespace _Core::_Test
 
 	short int Vector3f_Test_SortComparator_testV2(Vector3f_Test* p_left, Vector3f_Test* p_right, void* p_null)
 	{
-		return -1 * Core_FloatSortComparator(p_left->x, p_right->x);
+		return -1 * SORT_COMPARTOR_FUNCTION_NAME(float)(p_left->x, p_right->x);
 	}
 
 	bool Vector3f_Test_float_compare(Vector3f_Test* p_left, float* p_right, void* p_null)

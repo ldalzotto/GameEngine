@@ -1,22 +1,13 @@
 #include "SortFunctions.h"
 
-short Core_SizeTSortCompararator(size_t p_left, size_t p_right)
-{
-	if (p_left > p_right) { return 1; }
-	else if (p_left < p_right) { return -1; }
-	else { return 0; }
-};
+#define SORT_COMPARTOR_FUNCTION_DEFINE_IMPL(ComparedType) \
+	short SORT_COMPARTOR_FUNCTION_NAME(ComparedType)(##ComparedType p_left, ##ComparedType p_right) \
+	{ \
+		if (p_left > p_right) { return 1; } \
+		else if (p_left < p_right) { return -1; } \
+		else { return 0; } \
+	};
 
-short Core_Uint16tSortComparator(uint16_t p_left, uint16_t p_right)
-{
-	if (p_left > p_right) { return 1; }
-	else if (p_left < p_right) { return -1; }
-	else { return 0; }
-}
-
-short Core_FloatSortComparator(float p_left, float p_right)
-{
-	if (p_left > p_right) { return 1; }
-	else if (p_left < p_right) { return -1; }
-	else { return 0; }
-};
+SORT_COMPARTOR_FUNCTION_DEFINE_IMPL(size_t)
+SORT_COMPARTOR_FUNCTION_DEFINE_IMPL(uint16_t)
+SORT_COMPARTOR_FUNCTION_DEFINE_IMPL(float)
