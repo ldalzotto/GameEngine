@@ -19,42 +19,9 @@ void CoreLib_ErrorHandler_initialize()
 	CoreLib_global_errorHandler->Handler = CoreLib_DefaultErrorHandle;
 };
 
-void CoreLib_ErrorHandling_chainErrorHandler(CoreLib_ErrorHandlerFunction p_handler)
-{
-	CoreLib_ErrorHandlerObject* l_newParentObject = calloc(1, sizeof(CoreLib_ErrorHandlerObject));
-	l_newParentObject->Handler = p_handler;
-
-	if (CoreLib_global_errorHandler != NULL)
-	{
-		l_newParentObject->HandlerChain = CoreLib_global_errorHandler;
-	}
-
-	CoreLib_global_errorHandler = l_newParentObject;
-};
-
 void CoreLib_ErrorHandler_terminate()
 {
-	if (CoreLib_global_errorHandler != NULL)
-	{
-		CORE_VECTOR_ALLOC(CoreLib_ErrorHandlerObjectHandle, 4, l_stackedErrorHandlers);
-		{
-			{
-				CoreLib_ErrorHandlerObject* l_currentErrorHandlerObject = CoreLib_global_errorHandler;
-				while (l_currentErrorHandlerObject != NULL)
-				{
-					CORE_VECTORWRITER_PUSHBACK(&l_stackedErrorHandlers, &l_currentErrorHandlerObject);
-					l_currentErrorHandlerObject = l_currentErrorHandlerObject->HandlerChain;
-				}
-			}
-
-			CORE_VECTORITERATOR_FOREACH_BEGIN(Core_CoreLib_ErrorHandlerObjectHandle_Vector, &l_stackedErrorHandlers, l_it)
-				CoreLib_ErrorHandlerObject_free(l_it.Current);
-			CORE_VECTORITERATOR_FOREACH_END();
-
-			CoreLib_global_errorHandler = NULL;
-		}
-		CORE_VECTOR_FREE(CoreLib_ErrorHandlerObjectHandle, &l_stackedErrorHandlers)
-	}
+	CoreLib_ErrorHandlerObject_free(&CoreLib_global_errorHandler);
 };
 
 void CoreLib_ErrorHandlerObject_free(CoreLib_ErrorHandlerObject** p_errorHandlerObject)
@@ -81,11 +48,10 @@ void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingO
 
 void CoreLib_ErrorHandling_handleError()
 {
-	CoreLib_ErrorHandlerObject* l_currentErrorHandler = CoreLib_global_errorHandler;
-	while (l_currentErrorHandler != NULL)
+	if (CoreLib_global_errorHandler != NULL)
 	{
-		if (l_currentErrorHandler->Handler != NULL) { l_currentErrorHandler->Handler(); }
-		l_currentErrorHandler = l_currentErrorHandler->HandlerChain;
+		if (CoreLib_global_errorHandler->Handler != NULL) { CoreLib_global_errorHandler->Handler(CoreLib_global_errorHandler); }
+
 	}
 	CoreLib_ErrorHandler_terminate();
 };

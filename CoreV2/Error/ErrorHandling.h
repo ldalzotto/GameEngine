@@ -10,19 +10,22 @@ typedef struct CoreLib_ErrorHandlingObject
 } CoreLib_ErrorHandlingObject;
 typedef CoreLib_ErrorHandlingObject* CoreLib_ErrorHandlingObject_Handle;
 
+extern CoreLib_ErrorHandlingObject* CoreLib_global_errorHandlingObject;
+
 void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingObject);
 void CoreLib_ErrorHandling_handleError();
 
 
-typedef void(*CoreLib_ErrorHandlerFunction)();
+typedef void(*CoreLib_ErrorHandlerFunction)(struct CoreLib_ErrorHandlerObject* p_errorHandlerObject);
 typedef struct CoreLib_ErrorHandlerObject
 {
-	struct CoreLib_ErrorHandlerObject* HandlerChain;
+	void* UserObject;
 	CoreLib_ErrorHandlerFunction Handler;
 } CoreLib_ErrorHandlerObject;
 
+extern CoreLib_ErrorHandlerObject* CoreLib_global_errorHandler;
+
 void CoreLib_ErrorHandler_initialize();
-void CoreLib_ErrorHandling_chainErrorHandler(CoreLib_ErrorHandlerFunction p_handler);
 void CoreLib_ErrorHandler_terminate();
 
 

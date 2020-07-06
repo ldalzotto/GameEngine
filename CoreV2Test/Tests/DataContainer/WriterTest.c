@@ -76,6 +76,16 @@ CORETEST_BEGIN(CoreTest_Writer_insertAt)
 			CORE_VECTORWRITER_INSERT_AT(&l_vec, &l_element, 1, 1);
 			CORETEST_ASSERT_EQUALS(l_element.x, CORE_VECTORACCESSOR_AT(&l_vec, 1)->x);
 		}
+
+		// An error is raised when we try to insert outside of vector size
+		{
+			CORETEST_ASSERT_ERROR_BEGIN();
+			{
+				CoreTest_Vector3f l_element = { 2.0f, 2.0f, 2.0f };
+				CORE_VECTORWRITER_INSERT_AT(&l_vec, &l_element, 1, l_vec.Capacity + 1);
+			}
+			CORETEST_ASSERT_ERROR_END(CR_OUT_OF_BOUND)
+		}
 	}
 	CORE_VECTOR_FREE(CoreTest_Vector3f, &l_vec);
 }
