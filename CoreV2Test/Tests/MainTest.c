@@ -1,0 +1,4 @@
+
+CoreTest_Execute()
+{
+}

@@ -6,5 +6,7 @@
 
 int main()
 {
+	CoreLib_ErrorHandling_initialize();
 	CoreTest_Execute();
+	CoreLib_ErrorHandling_terminate();
 }

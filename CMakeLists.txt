@@ -8,6 +8,7 @@ set(BUILD_TYPE "")
 
 add_subdirectory(ExternalDependencies)
 add_subdirectory(CoreV2)
+add_subdirectory(CoreV2Test)
 add_subdirectory(GameEngine)
 add_subdirectory(GameEngine_Editor)
 add_subdirectory(SandboxApplication)

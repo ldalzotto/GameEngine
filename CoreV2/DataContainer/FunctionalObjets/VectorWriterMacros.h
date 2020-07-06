@@ -7,18 +7,26 @@
 	typedef struct CORE_VECTORWRITER_TYPE(DataStructureTypeName) \
 	{ \
 		struct DataStructureTypeName* Core_VectorWriter_UserObject; \
+		void (*Clear)(ElementTypeName* p_dataStructure); \
 		Core_ReturnCodes (*PushBack)(struct DataStructureTypeName* p_dataStructure, ElementTypeName* p_value); \
 		Core_ReturnCodes (*Swap)(struct DataStructureTypeName* p_dataStructure, size_t p_left, size_t p_right); \
+		Core_ReturnCodes (*InsertAt)(struct DataStructureTypeName* p_dataStructure, ElementTypeName* p_insertedElement, size_t p_elementNb, size_t p_index); \
 		Core_ReturnCodes (*InsertArrayAt)(struct DataStructureTypeName* p_dataStructure, struct DataStructureTypeName* p_insertedDataStructure, size_t p_index); \
-	} CORE_VECTORWRITER_TYPE(DataStructureTypeName); \
-	\
-	void CORE_VECTORWRITER_TYPE(##DataStructureTypeName)_pushBack(struct CORE_VECTORWRITER_TYPE(##DataStructureTypeName)* p_writer, ElementTypeName* p_value);
+	} CORE_VECTORWRITER_TYPE(DataStructureTypeName);
 
-#define CORE_VECTORWRITER_DEFINE_IMPL(DataStructureTypeName, ElementTypeName) \
-	void CORE_VECTORWRITER_TYPE(##DataStructureTypeName)_pushBack(CORE_VECTORWRITER_TYPE(##DataStructureTypeName)* p_writer, ##ElementTypeName* p_value) \
+#define CORE_VECTORWRITER_CLEAR(in_out_dataStructure) (in_out_dataStructure)->Writer.Clear(in_out_dataStructure);
+
+#define CORE_VECTORWRITER_PUSHBACK(in_out_dataStructure, in_element) \
 	{ \
 		CORE_HANDLE_ERROR_BEGIN(err) \
-			err = p_writer->PushBack(p_writer->Core_VectorWriter_UserObject, p_value); \
+			err = (in_out_dataStructure)->Writer.PushBack(in_out_dataStructure, in_element); \
+		CORE_HANDLE_ERROR_END(err); \
+	}
+
+#define CORE_VECTORWRITER_INSERT_AT(in_out_dataStructure, in_insertedElement, in_elementNb, in_index) \
+	{ \
+		CORE_HANDLE_ERROR_BEGIN(err) \
+			err = (in_out_dataStructure)->Writer.InsertAt(in_out_dataStructure, in_insertedElement, in_elementNb, in_index); \
 		CORE_HANDLE_ERROR_END(err); \
 	}
 

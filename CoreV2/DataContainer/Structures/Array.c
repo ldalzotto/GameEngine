@@ -7,11 +7,13 @@ void Core_Array_buildIterator(Core_Array* p_array, Core_VectorIterator* p_vector
 	p_vectorIterator->CurrentIndex = -1;
 };
 
-void Core_Array_alloc(Core_Array* p_array, size_t p_elementSize, size_t p_initialCapacity)
+void core_Array_populateFunctions(Core_Array* p_array)
 {
 	p_array->Writer.Core_VectorWriter_UserObject = p_array;
 	p_array->Writer.PushBack = Core_GenericArray_pushBack_noRealloc;
 	p_array->Writer.Swap = Core_GenericArray_swap;
+	p_array->Writer.Clear = Core_GenericArray_clear;
+	p_array->Writer.InsertAt = Core_GenericArray_isertAt_noRealloc;
 	p_array->Writer.InsertArrayAt = Core_GenericArray_isertArrayAt_noRealloc;
 
 	p_array->Accessor.Core_VectorAccessor_DataStructure = p_array;
@@ -19,18 +21,17 @@ void Core_Array_alloc(Core_Array* p_array, size_t p_elementSize, size_t p_initia
 	p_array->Accessor.At_unchecked = Core_GenericArray_at_unchecked;
 
 	p_array->BuildIterator = Core_Array_buildIterator;
+};
 
+void Core_Array_alloc(Core_Array* p_array, size_t p_elementSize, size_t p_initialCapacity)
+{
+	core_Array_populateFunctions(p_array);
 	Core_GenericArray_alloc(&p_array->GenericArray, p_elementSize, p_initialCapacity);
 };
 
 void Core_Array_fromRawArray(Core_Array* p_array, void* p_rawArray, size_t p_elementSize, size_t p_elementCount)
 {
-	p_array->Writer.Core_VectorWriter_UserObject = p_array;
-	p_array->Writer.PushBack = Core_GenericArray_pushBack_noRealloc;
-	p_array->Writer.Swap = Core_GenericArray_swap;
-	p_array->Writer.InsertArrayAt = Core_GenericArray_isertArrayAt_noRealloc;
-
-	p_array->BuildIterator = Core_Array_buildIterator;
+	core_Array_populateFunctions(p_array);
 
 	// size_t l_rawArraywElementNb = (sizeof(p_rawArray) / sizeof(*p_rawArray));
 	p_array->GenericArray.Capacity = p_elementCount;

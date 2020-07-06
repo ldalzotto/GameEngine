@@ -1,5 +1,12 @@
 #pragma message (__FILE__)
 
+void Core_string_clear(struct Core_GenericArray* p_string, struct Core_VectorWriter* p_writer)
+{
+	p_string->Size = 0;
+	char l_nul = NULL;
+	p_writer->PushBack(p_string, &l_nul);
+};
+
 void Core_string_append(struct Core_GenericArray* p_string, struct Core_VectorWriter* p_writer, char* p_appended)
 {
 	Core_char_Array l_appededArray;

@@ -8,13 +8,21 @@ typedef struct CoreLib_ErrorHandlingObject
 	int LineNb;
 	char* CustomMessage;
 } CoreLib_ErrorHandlingObject;
+typedef CoreLib_ErrorHandlingObject* CoreLib_ErrorHandlingObject_Handle;
 
 typedef void(*CoreLib_ErrorHandler)();
 
-extern CoreLib_ErrorHandler CoreLib_global_errorHandler;
-extern CoreLib_ErrorHandlingObject* CoreLib_global_errorHandlingObject;
+typedef struct CoreLib_ErrorHandlerObject
+{
+	struct CoreLib_ErrorHandlerObject* HandlerChain;
+	CoreLib_ErrorHandler Handler;
+} CoreLib_ErrorHandlerObject;
+
+void CoreLib_ErrorHandling_initialize();
+void CoreLib_ErrorHandling_terminate();
 
 void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingObject);
+void COreLib_ErrorHandling_handleError();
 
 #define CORE_HANDLE_PUSH_GLOBAL(in_returnCode, in_message) \
 	if(##in_returnCode != CR_OK) { \
@@ -40,6 +48,6 @@ void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingO
 		{ \
 			CoreLib_ErrorHandlingObject l_errorHandling = {NULL, ##in_returnCode, __FILE__, __LINE__, "Error top level."}; \
 			CoreLib_ErrorHandling_pushToGlobal(&l_errorHandling); \
-			CoreLib_global_errorHandler(); \
+			COreLib_ErrorHandling_handleError(); \
 		} \
 	}

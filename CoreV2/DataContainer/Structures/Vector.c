@@ -12,6 +12,8 @@ void Core_Vector_alloc(Core_Vector* p_vector, size_t p_elementSize, size_t p_ini
 	p_vector->Writer.Core_VectorWriter_UserObject = p_vector;
 	p_vector->Writer.PushBack = Core_GenericArray_pushBack_realloc;
 	p_vector->Writer.Swap = Core_GenericArray_swap;
+	p_vector->Writer.Clear = Core_GenericArray_clear;
+	p_vector->Writer.InsertAt = Core_GenericArray_isertAt_realloc;
 	p_vector->Writer.InsertArrayAt = Core_GenericArray_isertArrayAt_realloc;
 
 	p_vector->Accessor.Core_VectorAccessor_DataStructure = p_vector;
