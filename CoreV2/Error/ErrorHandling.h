@@ -10,19 +10,21 @@ typedef struct CoreLib_ErrorHandlingObject
 } CoreLib_ErrorHandlingObject;
 typedef CoreLib_ErrorHandlingObject* CoreLib_ErrorHandlingObject_Handle;
 
-typedef void(*CoreLib_ErrorHandler)();
+void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingObject);
+void CoreLib_ErrorHandling_handleError();
 
+
+typedef void(*CoreLib_ErrorHandlerFunction)();
 typedef struct CoreLib_ErrorHandlerObject
 {
 	struct CoreLib_ErrorHandlerObject* HandlerChain;
-	CoreLib_ErrorHandler Handler;
+	CoreLib_ErrorHandlerFunction Handler;
 } CoreLib_ErrorHandlerObject;
 
-void CoreLib_ErrorHandling_initialize();
-void CoreLib_ErrorHandling_terminate();
+void CoreLib_ErrorHandler_initialize();
+void CoreLib_ErrorHandling_chainErrorHandler(CoreLib_ErrorHandlerFunction p_handler);
+void CoreLib_ErrorHandler_terminate();
 
-void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingObject);
-void COreLib_ErrorHandling_handleError();
 
 #define CORE_HANDLE_PUSH_GLOBAL(in_returnCode, in_message) \
 	if(##in_returnCode != CR_OK) { \
@@ -48,6 +50,6 @@ void COreLib_ErrorHandling_handleError();
 		{ \
 			CoreLib_ErrorHandlingObject l_errorHandling = {NULL, ##in_returnCode, __FILE__, __LINE__, "Error top level."}; \
 			CoreLib_ErrorHandling_pushToGlobal(&l_errorHandling); \
-			COreLib_ErrorHandling_handleError(); \
+			CoreLib_ErrorHandling_handleError(); \
 		} \
 	}

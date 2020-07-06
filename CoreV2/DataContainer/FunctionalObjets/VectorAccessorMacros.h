@@ -10,3 +10,5 @@
 		##ElementTypeName* (*At)(struct DataStructureTypeName* p_dataStructure, size_t p_index); \
 		##ElementTypeName* (*At_unchecked)(struct DataStructureTypeName* p_dataStructure, size_t p_index); \
 	} CORE_VECTORACCESSOR_TYPE(##DataStructureTypeName);
+
+#define CORE_VECTORACCESSOR_AT(in_DataStructure, in_index) ((in_DataStructure)->Accessor.At(in_DataStructure, in_index))

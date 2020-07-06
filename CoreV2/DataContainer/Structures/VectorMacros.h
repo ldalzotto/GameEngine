@@ -28,3 +28,9 @@ __forceinline void CORE_VECTOR_TYPE(ElementTypeName)##_free(CORE_VECTOR_TYPE(Ele
 { \
 	Core_Vector_free((Core_Vector*)p_vector); \
 };
+
+#define CORE_VECTOR_ALLOC(ElementTypeName, in_initialCapacity, var_createdDataStructure) \
+	CORE_VECTOR_TYPE(ElementTypeName) var_createdDataStructure; \
+	CORE_VECTOR_TYPE(ElementTypeName)##_alloc(&var_createdDataStructure, in_initialCapacity);
+
+#define CORE_VECTOR_FREE(ElementTypeName, in_dataStructure) CORE_VECTOR_TYPE(ElementTypeName)##_free(in_dataStructure);
