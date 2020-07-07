@@ -30,6 +30,12 @@ namespace _CoreV3
 	};
 
 	template <class T>
+	__forceinline T* At_unchecked(VectorT<T>* p_container, size_t p_index)
+	{
+		return (T*)GenericArray_at_unchecked((GenericArray*)p_container, p_index);
+	};
+
+	template <class T>
 	__forceinline void Clear(VectorT<T>* p_container)
 	{
 		GenericArray_clear((GenericArray*)p_container);
@@ -56,7 +62,13 @@ namespace _CoreV3
 	template <class T>
 	__forceinline void InsertAt(VectorT<T>* p_container, T* p_insertValue, size_t p_index)
 	{
-		GenericArray_isertAt_realloc((GenericArray*)p_container, p_insertValue, p_index);
+		GenericArray_isertAt_realloc((GenericArray*)p_container, p_insertValue, 1, p_index);
+	};
+
+	template <class T>
+	__forceinline void InsertAt(VectorT<T>* p_container, T&& p_insertValue, size_t p_index)
+	{
+		InsertAt(p_container, &p_insertValue, p_index);
 	};
 
 	template <class T>

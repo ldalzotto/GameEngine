@@ -13,7 +13,7 @@ namespace _CoreV3
 	void GenericArray_alloc(GenericArray* p_genericArray, size_t p_elementSize, size_t p_initialCapacity);
 	void GenericArray_free(GenericArray* p_genericArray);
 
-	void* GenericArray_at_unchecked(GenericArray* p_genericArray, size_t p_index);
+	__forceinline void* GenericArray_at_unchecked(GenericArray* p_genericArray, size_t p_index);
 	void* GenericArray_at(GenericArray* p_genericArray, size_t p_index);
 
 	void GenericArray_clear(GenericArray* p_genericArray);
