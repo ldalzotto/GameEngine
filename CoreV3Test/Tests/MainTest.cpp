@@ -1,75 +1,152 @@
 #pragma message(__FILE__)
 
-struct Vector3fTest
-{
-	float x, y, z;
-};
-
-Vector3fTest getOneingElement()
-{
-	return { 1.0f, 1.0f, 1.0f };
-}
-
-bool Equals(Vector3fTest* p_left, Vector3fTest* p_right, void* p_null)
-{
-	return _CoreV3::EqualsMethod<float, float, void>(&p_left->x, &p_right->x, NULL);
-}
-
-short int Compare(Vector3fTest* p_left, Vector3fTest* p_right, void* p_null)
-{
-	return _CoreV3::SortMethod<float, float, void>(&p_left->x, &p_right->x, NULL);
-}
-
-void CoreTest_Execute()
-{
+#define ASSERT_EXCEPTION_BEGIN() \
+	bool l_errorCatched = false; \
+	try \
 	{
-		_CoreV3::VectorT<float> l_vec;
-		_CoreV3::Alloc(&l_vec, 5);
-		for (size_t i = 0; i < 4; i++)
+
+#define ASSERT_EXCEPTION_END() \
+	} \
+	catch (const std::exception&) \
+	{ \
+		l_errorCatched = true; \
+	} \
+	if (!l_errorCatched) \
+	{ \
+		throw std::runtime_error("Test fail"); \
+	}
+
+namespace _CoreV3
+{
+	struct Vector3fTest
+	{
+		float x, y, z;
+	};
+
+	template<>
+	bool EqualsMethod<Vector3fTest, Vector3fTest, void>(Vector3fTest* p_left, Vector3fTest* p_right, void* p_null)
+	{
+		return EqualsMethod<float, float, void>(&p_left->x, &p_right->x, NULL)
+			&& EqualsMethod<float, float, void>(&p_left->y, &p_right->y, NULL)
+			&& EqualsMethod<float, float, void>(&p_left->z, &p_right->z, NULL);
+	}
+
+	template<class SOURCE_ELEMENT, class COMPARED_ELEMENT>
+	void Assert_Equals(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT* p_right)
+	{
+		if (!_CoreV3::EqualsMethod(p_left, p_right, (void*)NULL))
 		{
-			_CoreV3::InsertAt(&l_vec, (float)i, 0);
+			throw std::runtime_error("Assert_Equals : fail");
 		}
-		
-		_CoreV3::Sort_selection(&l_vec, _CoreV3::ElementSorterT<float, float, void>{ _CoreV3::SortMethod<float, float, void>, NULL });
-		_CoreV3::Free(&l_vec);
 	}
 
+	template<class SOURCE_ELEMENT, class COMPARED_ELEMENT>
+	__forceinline void Assert_Equals(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT&& p_right)
 	{
-		_CoreV3::VectorT<Vector3fTest> l_vec;
-		_CoreV3::Alloc(&l_vec, 0);
-		for (size_t i = 0; i < 5; i++)
+		Assert_Equals<SOURCE_ELEMENT, COMPARED_ELEMENT>(p_left, &p_right);
+	}
+
+	void CoreTest_Vector_pushBack()
+	{
+		// PushBack push at last position
 		{
-			_CoreV3::InsertAt(&l_vec, { (float)i, (float)i, (float)i }, 0);
+			VectorT<Vector3fTest> l_vec;
+			Alloc(&l_vec, 2);
+			{
+				PushBack(&l_vec, { 2.0f, 2.0f, 2.0f });
+				Assert_Equals(At(&l_vec, 0), Vector3fTest{ 2.0f, 2.0f, 2.0f });
+				Assert_Equals(&l_vec.Size, 1);
+			}
+			Free(&l_vec);
 		}
-		auto l_zd = _CoreV3::At(&l_vec, 2);
 
-		Vector3fTest* l_foundElement = _CoreV3::Find(&l_vec, _CoreV3::ElementComparatorT<Vector3fTest, Vector3fTest, void> {Equals, l_zd, NULL});
-		_CoreV3::ElementSorterT<Vector3fTest, Vector3fTest, void> l_minComp{ Compare, NULL };
-		_CoreV3::Min(&l_vec, &l_minComp);
-		_CoreV3::Sort_selection(&l_vec, _CoreV3::ElementSorterT<Vector3fTest, Vector3fTest, void>{ Compare, NULL });
-		_CoreV3::Free(&l_vec);
-
-	}
-
-	{
-		_CoreV3::SortedVectorT<Vector3fTest> l_vec;
-		_CoreV3::Alloc(&l_vec, 0, Compare);
-
-		for (size_t i = 5; i > 0; --i)
+		// PushBack re-allocate vector if not enough space
 		{
-			_CoreV3::PushBack(&l_vec, { (float)i, (float)i, (float)i });
+			VectorT<Vector3fTest> l_vec;
+			Alloc(&l_vec, 2);
+			{
+				for (size_t i = 0; i < 2; i++)
+				{
+					PushBack(&l_vec, { (float)i, (float)i , (float)i });
+				}
+
+				PushBack(&l_vec, { 2.0f, 2.0f, 2.0f });
+				Assert_Equals(At(&l_vec, 2), Vector3fTest{ 2.0f, 2.0f, 2.0f });
+				Assert_Equals(&l_vec.Size, 3);
+			}
+			Free(&l_vec);
+		}
+	}
+
+	void COreTest_Vector_pushBackArray()
+	{
+		// PushBackArray pushes another datastructure
+		{
+			VectorT<Vector3fTest> l_vec;
+			VectorT<Vector3fTest> l_otherVec;
+			Alloc(&l_vec, 2);
+			Alloc(&l_otherVec, 2);
+			{
+				for (size_t i = 0; i < 2; i++)
+				{
+					PushBack(&l_vec, { (float)i, (float)i , (float)i });
+					PushBack(&l_otherVec, { (float)(i + 1), (float)(i + 1), (float)(i + 1) });
+				}
+
+				PushBackArray(&l_vec, (GenericArray*) &l_otherVec);
+
+				Assert_Equals(&l_vec.Size, 4);
+
+				for (size_t i = 0; i < 2; i++)
+				{
+					Assert_Equals(At(&l_vec, 2 + i), Vector3fTest{ (float)(i + 1), (float)(i + 1), (float)(i + 1) });
+				}
+			}
+			Free(&l_vec);
+		}
+	}
+
+	void CoreTest_Vector_insertAt()
+	{
+		// InsertAt copy element at the desired index
+		{
+			VectorT<Vector3fTest> l_vec;
+			Alloc(&l_vec, 3);
+			{
+				for (size_t i = 0; i < 3; i++)
+				{
+					PushBack(&l_vec, { (float)i, (float)i , (float)i });
+				}
+
+				InsertAt(&l_vec, { 10.0f, 10.0f, 10.0f }, 1);
+				Assert_Equals(At(&l_vec, 1), Vector3fTest{ 10.0f, 10.0f, 10.0f });
+			}
+			Free(&l_vec);
 		}
 
-		_CoreV3::Free(&l_vec);
+		// InsertAt throw exception if the index is out ofr range
+		{
+			ASSERT_EXCEPTION_BEGIN();
+			VectorT<Vector3fTest> l_vec;
+			Alloc(&l_vec, 3);
+			{
+				InsertAt(&l_vec, { 10.0f, 10.0f, 10.0f }, 4);
+			}
+			Free(&l_vec);
+			ASSERT_EXCEPTION_END();
+		}
 	}
 
+	void CoreTest_Vector()
 	{
-		_CoreV3::String l_str;
-		_CoreV3::Alloc(&l_str, 3);
-		_CoreV3::PushBackArray(&l_str, STR("Test"));
-		_CoreV3::PushBack(&l_str, STR("C"));
-		_CoreV3::Free(&l_str);
+		CoreTest_Vector_pushBack();
+		CoreTest_Vector_insertAt();
+		COreTest_Vector_pushBackArray();
 	}
 
-
+	void CoreTest_Execute()
+	{
+		CoreTest_Vector();
+	}
 }
+

@@ -7,5 +7,5 @@
 
 int main()
 {
-	CoreTest_Execute();
+	_CoreV3::CoreTest_Execute();
 }

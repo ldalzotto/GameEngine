@@ -7,20 +7,6 @@ namespace _CoreV3
 {
 	typedef char Char;
 	
-	/*
-	template <>
-	__forceinline char* Convert<Char, char*>(Char p_from)
-	{
-		return p_from.character;
-	};
-
-	template <>
-	__forceinline Char Convert<char*, Char>(char* p_from)
-	{
-		return { p_from };
-	};
-	*/
-
 	typedef VectorT<Char> String;
 
 	template <>
