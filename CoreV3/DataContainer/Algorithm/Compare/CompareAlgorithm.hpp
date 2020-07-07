@@ -2,13 +2,7 @@
 
 namespace _CoreV3
 {
-	template <class SOURCE_ELEMENT, class COMPARED_ELEMENT, class USER_OBJECT>
-	struct ElementComparatorT
-	{
-		bool(*Function)(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT* p_right, USER_OBJECT* p_userObject);
-		COMPARED_ELEMENT* Right;
-		USER_OBJECT* UserObject;
-	};
+
 
 	template<class DATA_STRUCTURE, class SOURCE_ELEMENT, class COMPARED_ELEMENT, class USER_OBJECT>
 	SOURCE_ELEMENT* Find(DATA_STRUCTURE* p_array, ElementComparatorT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT>* p_comparator)

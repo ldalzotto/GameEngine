@@ -10,7 +10,7 @@ namespace _CoreV3
 		SortFunction Function;
 	};
 
-	void SortedVector_alloc(SortedVector* p_sortedVector, size_t p_elementSize, size_t p_initialCapcity, SortFunction p_function);
+	extern void SortedVector_alloc(SortedVector* p_sortedVector, size_t p_elementSize, size_t p_initialCapcity, SortFunction p_function);
 
-	void SortedVector_pushBack(SortedVector* p_sortedVector, void* p_value);
+	extern void SortedVector_pushBack(SortedVector* p_sortedVector, void* p_value);
 }

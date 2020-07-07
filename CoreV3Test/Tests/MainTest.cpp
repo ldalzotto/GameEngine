@@ -12,18 +12,28 @@ Vector3fTest getOneingElement()
 
 bool Equals(Vector3fTest* p_left, Vector3fTest* p_right, void* p_null)
 {
-	return p_left->x == p_right->x;
+	return _CoreV3::EqualsMethod<float, float, void>(&p_left->x, &p_right->x, NULL);
 }
 
 short int Compare(Vector3fTest* p_left, Vector3fTest* p_right, void* p_null)
 {
-	if (p_left->x > p_right->x) { return 1; }
-	else if (p_left->x < p_right->x) { return -1; }
-	else { return 0; }
+	return _CoreV3::SortMethod<float, float, void>(&p_left->x, &p_right->x, NULL);
 }
 
 void CoreTest_Execute()
 {
+	{
+		_CoreV3::VectorT<float> l_vec;
+		_CoreV3::Alloc(&l_vec, 5);
+		for (size_t i = 0; i < 4; i++)
+		{
+			_CoreV3::InsertAt(&l_vec, (float)i, 0);
+		}
+		
+		_CoreV3::Sort_selection(&l_vec, _CoreV3::ElementSorterT<float, float, void>{ _CoreV3::SortMethod<float, float, void>, NULL });
+		_CoreV3::Free(&l_vec);
+	}
+
 	{
 		_CoreV3::VectorT<Vector3fTest> l_vec;
 		_CoreV3::Alloc(&l_vec, 0);
@@ -49,8 +59,16 @@ void CoreTest_Execute()
 		{
 			_CoreV3::PushBack(&l_vec, { (float)i, (float)i, (float)i });
 		}
-		
+
 		_CoreV3::Free(&l_vec);
+	}
+
+	{
+		_CoreV3::String l_str;
+		_CoreV3::Alloc(&l_str, 3);
+		_CoreV3::PushBackArray(&l_str, STR("Test"));
+		_CoreV3::PushBack(&l_str, STR("C"));
+		_CoreV3::Free(&l_str);
 	}
 
 

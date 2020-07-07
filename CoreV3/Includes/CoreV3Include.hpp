@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <stdexcept>
 
+#include "../Functional/Convert/Converter.hpp"
+#include "../Functional/Sort/ElementSorter.hpp"
+#include "../Functional/Compare/Equals.hpp"
+
 #include "../DataContainer/Structures/GenericArray.hpp"
 
 #include "../DataContainer/Structures/VectorT.hpp"
@@ -15,3 +19,5 @@
 
 #include "../DataContainer/Structures/SortedVector.hpp"
 #include "../DataContainer/Structures/SortedVectorT.hpp"
+
+#include "../DataContainer/Types/String.hpp"
