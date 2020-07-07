@@ -24,18 +24,34 @@ short int Compare(Vector3fTest* p_left, Vector3fTest* p_right, void* p_null)
 
 void CoreTest_Execute()
 {
-	_CoreV3::VectorT<Vector3fTest> l_vec;
-	_CoreV3::Alloc(&l_vec, 0);
-	for (size_t i = 0; i < 5; i++)
 	{
-		_CoreV3::InsertAt(&l_vec, { (float)i, (float)i, (float)i }, 0);
-		// _CoreV3::PushBack(&l_vec, { (float)i, (float)i, (float)i });
+		_CoreV3::VectorT<Vector3fTest> l_vec;
+		_CoreV3::Alloc(&l_vec, 0);
+		for (size_t i = 0; i < 5; i++)
+		{
+			_CoreV3::InsertAt(&l_vec, { (float)i, (float)i, (float)i }, 0);
+		}
+		auto l_zd = _CoreV3::At(&l_vec, 2);
+
+		Vector3fTest* l_foundElement = _CoreV3::Find(&l_vec, _CoreV3::ElementComparatorT<Vector3fTest, Vector3fTest, void> {Equals, l_zd, NULL});
+		_CoreV3::ElementSorterT<Vector3fTest, Vector3fTest, void> l_minComp{ Compare, NULL };
+		_CoreV3::Min(&l_vec, &l_minComp);
+		_CoreV3::Sort_selection(&l_vec, _CoreV3::ElementSorterT<Vector3fTest, Vector3fTest, void>{ Compare, NULL });
+		_CoreV3::Free(&l_vec);
+
 	}
-	auto l_zd = _CoreV3::At(&l_vec, 2);
-	
-	Vector3fTest* l_foundElement = _CoreV3::Find(&l_vec, _CoreV3::ElementComparatorT<Vector3fTest, Vector3fTest, void> {Equals, l_zd, NULL});
-	_CoreV3::Sort_selection(&l_vec, _CoreV3::ElementSorterT<Vector3fTest, Vector3fTest, void>{ Compare, NULL });
-	_CoreV3::Free(&l_vec);
+
+	{
+		_CoreV3::SortedVectorT<Vector3fTest> l_vec;
+		_CoreV3::Alloc(&l_vec, 0, Compare);
+
+		for (size_t i = 5; i > 0; --i)
+		{
+			_CoreV3::PushBack(&l_vec, { (float)i, (float)i, (float)i });
+		}
+		
+		_CoreV3::Free(&l_vec);
+	}
 
 
 }

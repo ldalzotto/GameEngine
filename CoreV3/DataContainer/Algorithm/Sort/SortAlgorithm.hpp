@@ -3,12 +3,14 @@
 namespace _CoreV3
 {
 	template <class SOURCE_ELEMENT, class COMPARED_ELEMENT, class USER_OBJECT>
+	using SortFunctionT = short int (*)(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT* p_right, USER_OBJECT* p_userObject);
+
+	template <class SOURCE_ELEMENT, class COMPARED_ELEMENT, class USER_OBJECT>
 	struct ElementSorterT
 	{
-		short int (*Function)(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT* p_right, USER_OBJECT* p_userObject);
+		SortFunctionT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT> Function;
 		USER_OBJECT* UserObject;
 	};
-	
 
 	template <class DATA_CONTAINER, class SOURCE_ELEMENT, class COMPARED_ELEMENT, class USER_OBJECT>
 	SOURCE_ELEMENT* Min(DATA_CONTAINER* p_genericArray, ElementSorterT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT>* p_elementSorter)

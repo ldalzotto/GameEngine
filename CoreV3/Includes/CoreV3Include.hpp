@@ -12,3 +12,6 @@
 
 #include "../DataContainer/Algorithm/Compare/CompareAlgorithm.hpp"
 #include "../DataContainer/Algorithm/Sort/SortAlgorithm.hpp"
+
+#include "../DataContainer/Structures/SortedVector.hpp"
+#include "../DataContainer/Structures/SortedVectorT.hpp"
