@@ -37,6 +37,33 @@ namespace _CoreV3
 		return SortMethod<float, float, void>(&p_left->x, &p_right->x, NULL);
 	}
 
+	template<>
+	String ToString<Vector3fTest>(Vector3fTest* p_element)
+	{
+		String l_x = ToString(&p_element->x);
+		String l_y = ToString(&p_element->y);
+		String l_z = ToString(&p_element->z);
+		String l_str;
+		{
+			Alloc(&l_str, 300);
+			PushBackArray(&l_str, STR("[ x : "));
+			PushBackArray(&l_str, &l_x);
+			PushBackArray(&l_str, STR(", y : "));
+			PushBackArray(&l_str, &l_y);
+			PushBackArray(&l_str, STR(", z : "));
+			PushBackArray(&l_str, &l_z);
+			PushBackArray(&l_str, STR(" ]"));
+			Free(&l_x); Free(&l_y); Free(&l_z);
+		}
+		return l_str;
+	}
+
+	template<>
+	__forceinline String ToString<Vector3fTest>(Vector3fTest&& p_element)
+	{
+		return ToString(&p_element);
+	};
+
 	template<class SOURCE_ELEMENT, class COMPARED_ELEMENT>
 	void Assert_Equals(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT* p_right)
 	{
@@ -50,6 +77,22 @@ namespace _CoreV3
 	__forceinline void Assert_Equals(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT&& p_right)
 	{
 		Assert_Equals<SOURCE_ELEMENT, COMPARED_ELEMENT>(p_left, &p_right);
+	}
+
+
+	template<class SOURCE_ELEMENT, class COMPARED_ELEMENT>
+	void Assert_Superior(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT* p_right)
+	{
+		if (*p_left < *p_right)
+		{
+			throw std::runtime_error("Assert_Equals : fail");
+		}
+	}
+
+	template<class SOURCE_ELEMENT, class COMPARED_ELEMENT>
+	__forceinline void Assert_Superior(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT&& p_right)
+	{
+		Assert_Superior<SOURCE_ELEMENT, COMPARED_ELEMENT>(p_left, &p_right);
 	}
 
 	void CoreTest_Vector_pushBack()
@@ -445,7 +488,7 @@ namespace _CoreV3
 
 				for (size_t i = 0; i < 3; i++)
 				{
-					Assert_Equals(At(&l_vec, i + 1), Vector3fTest { (float)i, (float)i, (float)i });
+					Assert_Equals(At(&l_vec, i + 1), Vector3fTest{ (float)i, (float)i, (float)i });
 				}
 			}
 		}
@@ -455,7 +498,7 @@ namespace _CoreV3
 	{
 		CoreTest_GenericPushbackArrayAt();
 	}
-	
+
 	void CoreTest_String_pushBack()
 	{
 		//PushBack on string append one character
@@ -492,10 +535,17 @@ namespace _CoreV3
 		Free(&l_str);
 	}
 
+	void CoreTest_toString()
+	{
+		String l_str = ToString(Vector3fTest{1.0f, 1.5f, 2.0f});
+		Assert_Superior(&l_str.Size, 20);
+	}
+
 	void CoreTest_String()
 	{
 		CoreTest_String_pushBack();
 		CoreTest_String_pushBackArray();
+		CoreTest_toString();
 	}
 
 	void CoreTest_Execute()

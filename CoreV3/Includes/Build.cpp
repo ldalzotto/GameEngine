@@ -10,3 +10,4 @@
 
 #include "../Functional/Sort/ElementSorter.cpp"
 #include "../Functional/Compare/Equals.cpp"
+#include "../Functional/ToString/ToString.cpp"

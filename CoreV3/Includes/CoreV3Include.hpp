@@ -23,3 +23,4 @@
 #include "../DataContainer/Structures/SortedVectorT.hpp"
 
 #include "../DataContainer/Types/String.hpp"
+#include "../Functional/ToString/ToString.hpp"
