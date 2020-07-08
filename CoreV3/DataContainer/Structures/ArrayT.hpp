@@ -48,7 +48,7 @@ namespace _CoreV3
 	};
 
 	template <class T>
-	__forceinline void PushBackArray(ArrayT<T>* p_container, ArrayT<T>* p_insertedArray)
+	__forceinline void PushBackArray(ArrayT<T>* p_container, GenericArray* p_insertedArray)
 	{
 		InsertArrayAt(p_container, p_insertedArray, p_container->Size);
 	};
@@ -72,14 +72,8 @@ namespace _CoreV3
 	};
 
 	template <class T>
-	__forceinline void InsertArrayAt(ArrayT<T>* p_container, VectorT<T>* p_insertedArray, size_t p_index)
+	__forceinline void InsertArrayAt(ArrayT<T>* p_container, GenericArray* p_insertedArray, size_t p_index)
 	{
-		GenericArray_isertArrayAt_noRealloc((GenericArray*)p_container, (GenericArray*)p_insertedArray, p_index);
-	};
-
-	template <class T>
-	__forceinline void InsertArrayAt(ArrayT<T>* p_container, ArrayT<T>* p_insertedArray, size_t p_index)
-	{
-		GenericArray_isertArrayAt_noRealloc((GenericArray*)p_container, (GenericArray*)p_insertedArray, p_index);
+		GenericArray_isertArrayAt_noRealloc((GenericArray*)p_container, p_insertedArray, p_index);
 	};
 }

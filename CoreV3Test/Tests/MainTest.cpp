@@ -99,7 +99,7 @@ namespace _CoreV3
 					PushBack(&l_otherVec, { (float)(i + 1), (float)(i + 1), (float)(i + 1) });
 				}
 
-				PushBackArray(&l_vec, &l_otherVec);
+				PushBackArray(&l_vec, Convert(&l_otherVec));
 
 				Assert_Equals(&l_vec.Size, 4);
 
@@ -156,7 +156,7 @@ namespace _CoreV3
 					PushBack(&l_vec2, { (float)i, (float)i , (float)i });
 				}
 
-				InsertArrayAt(&l_vec, &l_vec2, 1);
+				InsertArrayAt(&l_vec, Convert(&l_vec2), 1);
 
 				for (size_t i = 1; i < 4; i++)
 				{
@@ -179,7 +179,8 @@ namespace _CoreV3
 					PushBack(&l_vec2, { (float)i, (float)i , (float)i });
 				}
 
-				InsertArrayAt(&l_vec, &l_vec2, 4);
+				InsertArrayAt(&l_vec, Convert(&l_vec), 4);
+				// InsertArrayAt(&l_vec, &l_vec2, 4);
 			}
 			Free(&l_vec); Free(&l_vec2);
 			ASSERT_EXCEPTION_END();
@@ -345,7 +346,7 @@ namespace _CoreV3
 				PushBack(&l_arr2, { 1.0f, 1.0f, 1.0f });
 
 				ASSERT_EXCEPTION_BEGIN();
-				PushBackArray(&l_arr, &l_arr2);
+				PushBackArray(&l_arr, Convert(&l_arr2));
 				ASSERT_EXCEPTION_END();
 			}
 			Free(&l_arr); Free(&l_arr2);
@@ -385,7 +386,7 @@ namespace _CoreV3
 				PushBack(&l_arr2, { 1.0f, 1.0f, 1.0f });
 
 				ASSERT_EXCEPTION_BEGIN();
-				InsertArrayAt(&l_arr, &l_arr2, 1);
+				InsertArrayAt(&l_arr, Convert(&l_arr2), 1);
 				ASSERT_EXCEPTION_END();
 			}
 			Free(&l_arr); Free(&l_arr2);
@@ -421,6 +422,38 @@ namespace _CoreV3
 	void CoreTest_SortedVector()
 	{
 		CoreTest_SortedVector_pushBack();
+	}
+
+	void CoreTest_GenericPushbackArrayAt()
+	{
+		// PushBack array can be called from a supported container to any other generic container
+		{
+			VectorT<Vector3fTest> l_vec;
+			ArrayT<Vector3fTest> l_arr;
+
+			Alloc(&l_vec, 0); Alloc(&l_arr, 3);
+			{
+				PushBack(&l_vec, { 10.0f, 10.0f , 10.0f });
+				for (size_t i = 0; i < 3; i++)
+				{
+					PushBack(&l_arr, { (float)i, (float)i, (float)i });
+				}
+
+				PushBackArray(&l_vec, Convert(&l_arr));
+
+				Assert_Equals(&l_vec.Size, 4);
+
+				for (size_t i = 0; i < 3; i++)
+				{
+					Assert_Equals(At(&l_vec, i + 1), Vector3fTest { (float)i, (float)i, (float)i });
+				}
+			}
+		}
+	}
+
+	void CoreTest_GenericOperationsBetweenDataStructures()
+	{
+		CoreTest_GenericPushbackArrayAt();
 	}
 	
 	void CoreTest_String_pushBack()
@@ -470,6 +503,7 @@ namespace _CoreV3
 		CoreTest_Vector();
 		CoreTest_Array();
 		CoreTest_SortedVector();
+		CoreTest_GenericOperationsBetweenDataStructures();
 		CoreTest_String();
 	}
 }

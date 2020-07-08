@@ -21,25 +21,18 @@ namespace _CoreV3
 	template <>
 	extern void PushBackArray<Char>(VectorT<Char>* p_container, GenericArray* p_insertedArray);
 
-	template <>
-	__forceinline GenericArray Convert<Char*, GenericArray>(Char* p_from)
+	__forceinline GenericArray Convert(Char* p_from)
 	{
-		size_t l_fromLength = strlen(p_from);
-		return { p_from, l_fromLength, l_fromLength, sizeof(Char) };
+		return Convert(p_from, strlen(p_from));
 	};
 
-	template <>
-	__forceinline GenericArray Convert<VectorT<Char>*, GenericArray>(VectorT<Char>* p_from)
+	__forceinline void PushBackArray(VectorT<Char>* p_container, Char* p_insertedArray)
 	{
-		Char* l_str = STR(p_from->Memory);
-		size_t l_fromLength = strlen((char*)l_str);
-		return { l_str, l_fromLength, l_fromLength, sizeof(Char) };
+		PushBackArray(p_container, Convert(p_insertedArray));
 	};
 
-	template <>
 	__forceinline void PushBackArray(VectorT<Char>* p_container, VectorT<Char>* p_insertedArray)
 	{
-		PushBackArray(p_container, Convert<VectorT<Char>*, GenericArray>(p_insertedArray));
+		PushBackArray(p_container, Convert(STR(p_insertedArray->Memory)));
 	};
-
 }
