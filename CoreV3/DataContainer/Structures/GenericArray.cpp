@@ -133,7 +133,7 @@ namespace _CoreV3
 
 	void GenericArray_isertAt_noRealloc(GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index)
 	{
-		if ((p_genericArray->Size + p_elementNb) >= p_genericArray->Capacity)
+		if ((p_genericArray->Size + p_elementNb) > p_genericArray->Capacity)
 		{
 			throw std::runtime_error("Core_GenericArray_isertAt_neRealloc : inserted array is too large !");
 		}

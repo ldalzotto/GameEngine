@@ -28,7 +28,7 @@ namespace _CoreV3
 	template <class T>
 	__forceinline T* At(SortedVectorT<T>* p_container, size_t p_index)
 	{
-		GenericArray_at((GenericArray*)p_container, p_index);
+		return (T*) GenericArray_at((GenericArray*)p_container, p_index);
 	};
 
 	template <class T>

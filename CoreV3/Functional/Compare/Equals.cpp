@@ -27,4 +27,16 @@ namespace _CoreV3
 	{
 		return genericExactEqualsMethod<size_t, int, void>(p_left, p_right, NULL);
 	};
+
+	template <>
+	bool EqualsMethod<char, char, void>(char* p_left, char* p_right, void* p_userObject)
+	{
+		return genericExactEqualsMethod(p_right, p_right, (void*)NULL);
+	};
+
+	template <>
+	bool EqualsMethod<void*, void, void>(void** p_left, void* p_right, void* p_userObject)
+	{
+		return genericExactEqualsMethod<void*, void*, void>(p_left, &p_right, p_userObject);
+	};
 }

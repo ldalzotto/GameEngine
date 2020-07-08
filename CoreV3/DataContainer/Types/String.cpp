@@ -20,7 +20,7 @@ namespace _CoreV3
 
 
 	template <>
-	extern void PushBack<Char>(VectorT<Char>* p_container, Char* p_value)
+	void PushBack<Char>(VectorT<Char>* p_container, Char* p_value)
 	{
 		if (p_container->Size >= 2)
 		{
@@ -33,7 +33,7 @@ namespace _CoreV3
 	};
 
 	template <>
-	extern void PushBackArray<Char>(VectorT<Char>* p_container, GenericArray* p_insertedArray)
+	void PushBackArray<Char>(VectorT<Char>* p_container, GenericArray* p_insertedArray)
 	{
 		if (p_container->Size >= 2)
 		{

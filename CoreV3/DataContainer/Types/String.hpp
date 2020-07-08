@@ -27,4 +27,19 @@ namespace _CoreV3
 		size_t l_fromLength = strlen(p_from);
 		return { p_from, l_fromLength, l_fromLength, sizeof(Char) };
 	};
+
+	template <>
+	__forceinline GenericArray Convert<VectorT<Char>*, GenericArray>(VectorT<Char>* p_from)
+	{
+		Char* l_str = STR(p_from->Memory);
+		size_t l_fromLength = strlen((char*)l_str);
+		return { l_str, l_fromLength, l_fromLength, sizeof(Char) };
+	};
+
+	template <>
+	__forceinline void PushBackArray(VectorT<Char>* p_container, VectorT<Char>* p_insertedArray)
+	{
+		PushBackArray(p_container, Convert<VectorT<Char>*, GenericArray>(p_insertedArray));
+	};
+
 }
