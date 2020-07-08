@@ -1,12 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <string>
-
-#include "DataStructures/String.h"
+#include "CoreV3Include.hpp"
 
 namespace _GameEngine::_Utils
 {
-	std::vector<char> File_readFile(const std::string& p_absoluteFilePath);
-	void File_readFileV2(_Core::String* p_absoluteFilePath, _Core::String* out_file);
+	void File_readFileV2(_CoreV3::ArrayT<char>* p_absoluteFilePath, _CoreV3::String* out_file);
+	
 }
