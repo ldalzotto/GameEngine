@@ -5,9 +5,19 @@ namespace _CoreV3
 	template <>
 	void Alloc<Char>(VectorT<Char>* p_container, size_t p_initialCapacity)
 	{
-		GenericArray_alloc((GenericArray*)p_container, sizeof(char), p_initialCapacity + 1);
+		GenericArray_alloc(Convert(p_container), sizeof(char), p_initialCapacity + 1);
 		Char l_nul = CHAR(NULL);
 		PushBack(p_container, &l_nul);
+	};
+
+	template <>
+	VectorT<Char> Alloc(size_t p_initialCapacity)
+	{
+		VectorT<Char> l_vector;
+		GenericArray_alloc(Convert(&l_vector), sizeof(char), p_initialCapacity);
+		Char l_nul = CHAR(NULL);
+		PushBack(&l_vector, &l_nul);
+		return std::move(l_vector);
 	};
 
 	template <>

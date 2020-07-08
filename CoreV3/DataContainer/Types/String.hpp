@@ -13,6 +13,9 @@ namespace _CoreV3
 	extern void Alloc<Char>(VectorT<Char>* p_container, size_t p_initialCapacity);
 
 	template <>
+	extern VectorT<Char> Alloc(size_t p_initialCapacity);
+
+	template <>
 	extern void Clear<Char>(VectorT<Char>* p_container);
 
 	template <>

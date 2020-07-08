@@ -155,6 +155,29 @@ namespace _CoreV3
 		}
 	}
 
+	void COreTest_Vector_pushBackArrays()
+	{
+		// PushBackArrays pushes an infinite number of arrays
+		{
+			VectorT<Vector3fTest> l_vec, l_otherVec, l_otherVec2, l_otherVec3;
+			Alloc(&l_vec, 2); Alloc(&l_otherVec, 2); Alloc(&l_otherVec2, 2); Alloc(&l_otherVec3, 2);
+			{
+				for (size_t i = 0; i < 2; i++)
+				{
+					PushBack(&l_vec, { (float)i, (float)i , (float)i });
+					PushBack(&l_otherVec, { (float)(i + 1), (float)(i + 1), (float)(i + 1) });
+					PushBack(&l_otherVec2, { (float)(i + 1), (float)(i + 1), (float)(i + 1) });
+					PushBack(&l_otherVec3, { (float)(i + 1), (float)(i + 1), (float)(i + 1) });
+				}
+
+				PushBackArrays(&l_vec, Convert(&l_otherVec), Convert(&l_otherVec2), Convert(&l_otherVec3));
+
+				Assert_Equals(&l_vec.Size, 8);
+			}
+			Free(&l_vec); Free(&l_otherVec); Free(&l_otherVec2); Free(&l_otherVec3);
+		}
+	}
+
 	void CoreTest_Vector_insertAt()
 	{
 		// InsertAt copy element at the desired index
@@ -351,6 +374,7 @@ namespace _CoreV3
 	{
 		CoreTest_Vector_pushBack();
 		COreTest_Vector_pushBackArray();
+		COreTest_Vector_pushBackArrays();
 		CoreTest_Vector_insertAt();
 		CoreTest_Vector_insertArrayAt();
 		CoreTest_Vector_swap();

@@ -14,8 +14,16 @@ namespace _CoreV3
 	template <class T>
 	__forceinline void Alloc(VectorT<T>* p_container, size_t p_initialCapacity)
 	{
-		GenericArray_alloc((GenericArray*)p_container, sizeof(T), p_initialCapacity);
+		GenericArray_alloc(Convert(p_container), sizeof(T), p_initialCapacity);
 	};
+
+	template <class T>
+	__forceinline VectorT<T> Alloc(size_t p_initialCapacity)
+	{
+		VectorT<T> l_vec;
+		GenericArray_alloc(Convert(&l_vec), sizeof(T), p_initialCapacity);
+		return std::move(l_vec);
+	}
 
 	template <class T>
 	__forceinline void Free(VectorT<T>* p_container)
@@ -87,6 +95,27 @@ namespace _CoreV3
 	__forceinline void PushBackArray(VectorT<T>* p_container, GenericArray&& p_insertedArray)
 	{
 		PushBackArray(p_container, &p_insertedArray);
+	};
+
+	template <class T, typename INSERTED_ARRAY_0>
+	__forceinline void PushBackArrays(VectorT<T>* p_container, INSERTED_ARRAY_0* p_insertedArray0)
+	{
+		PushBackArray(p_container, p_insertedArray0);
+	};
+
+	template <class T, typename INSERTED_ARRAY_0, typename... INSERTED_ARRAYS>
+	__forceinline void PushBackArrays(VectorT<T>* p_container, INSERTED_ARRAY_0* p_insertedArray0, INSERTED_ARRAYS... p_insertedArray)
+	{
+		PushBackArray(p_container, p_insertedArray0);
+		PushBackArrays(p_container, p_insertedArray...);
+	};
+
+	template <class T, typename INSERTED_ARRAY_0, typename... INSERTED_ARRAYS>
+	__forceinline VectorT<T> PushBackArrays(VectorT<T>&& p_container, INSERTED_ARRAY_0* p_insertedArray0, INSERTED_ARRAYS... p_insertedArray)
+	{
+		PushBackArray(&p_container, p_insertedArray0);
+		PushBackArrays(&p_container, p_insertedArray...);
+		return std::move(p_container);
 	};
 
 }
