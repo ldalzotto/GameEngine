@@ -9,7 +9,7 @@
 
 namespace _GameEngine::_Utils
 {
-	void File_readFileV2(_CoreV3::ArrayT<char>* p_absoluteFilePath, _CoreV3::String* out_file)
+	void File_readFileV2(_CoreV3::ArrayT<char>* p_absoluteFilePath, _CoreV3::ArrayT<char>* out_file)
 	{
 		std::ifstream file(p_absoluteFilePath->Memory, std::ios::ate | std::ios::binary);
 
@@ -21,6 +21,7 @@ namespace _GameEngine::_Utils
 
 		size_t l_fileSize = (size_t)file.tellg();
 		_CoreV3::Alloc(out_file, l_fileSize);
+		out_file->Size = out_file->Capacity;
 		
 		file.seekg(0);
 		file.read(out_file->Memory, l_fileSize);

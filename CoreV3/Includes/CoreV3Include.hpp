@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdexcept>
+#include <functional>
 
 #include "../Functional/Convert/Converter.hpp"
 #include "../Functional/Sort/ElementSorter.hpp"
@@ -21,6 +22,8 @@
 
 #include "../DataContainer/Structures/SortedVector.hpp"
 #include "../DataContainer/Structures/SortedVectorT.hpp"
+
+#include "../Functional/Hash/Hash.hpp"
 
 #include "../DataContainer/Types/String.hpp"
 #include "../Functional/ToString/ToString.hpp"

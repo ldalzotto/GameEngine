@@ -35,7 +35,7 @@ namespace _GameEngine::_Render
 	VkShaderModule Shader_allocateShaderModule(Shader* p_shader, Device* p_device)
 	{
 		VkShaderModule l_shaderModule;
-		String l_compiledShader;
+		ArrayT<char> l_compiledShader;
 		ArrayT<Char> l_shaderPath = Convert<Char*, ArrayT<Char>>(STR(p_shader->ShaderPath.c_str()));
 		_Utils::File_readFileV2(&l_shaderPath, &l_compiledShader);
 		VkShaderModuleCreateInfo l_shaderModuleCreateInfo{};

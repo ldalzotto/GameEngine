@@ -47,3 +47,18 @@ namespace _CoreV3
 		PushBackArray(p_container, Convert<Char*, GenericArray>(STR(p_insertedArray->Memory)));
 	};
 }
+
+namespace _CoreV3
+{
+	template <>
+	__forceinline size_t Hash<Char>(Char* p_value)
+	{
+		return std::hash<std::string>()(p_value);
+	};
+
+	template <template < class Char > class DATA_STRUCTURE>
+	__forceinline size_t Hash(DATA_STRUCTURE<Char>* p_value)
+	{
+		return Hash(p_value->Memory);
+	}
+}

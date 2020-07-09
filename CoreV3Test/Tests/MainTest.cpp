@@ -64,6 +64,14 @@ namespace _CoreV3
 		return ToString(&p_element);
 	};
 
+	/*
+	template<>
+	__forceinline size_t Hash<Vector3fTest>(Vector3fTest* p_element)
+	{
+		return HashCombine(0, &p_element->x, &p_element->y, &p_element->z);
+	};
+	*/
+
 	template<class SOURCE_ELEMENT, class COMPARED_ELEMENT>
 	void Assert_Equals(SOURCE_ELEMENT* p_left, COMPARED_ELEMENT* p_right)
 	{

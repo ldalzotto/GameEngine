@@ -1,5 +1,7 @@
 #include "CameraSystem.h"
 
+#include "CoreV3Include.hpp"
+
 #include "Utils/Algorithm/Algorithm.h"
 
 #include "Math/Matrix/MatrixMath.h"
@@ -19,7 +21,7 @@
 
 namespace _GameEngine::_ECS
 {
-	SystemV2Key CameraSystemKey = _Utils::Hash_combineByVal(0, "CameraSystem");
+	SystemV2Key CameraSystemKey =  _CoreV3::HashCombine(0, STR("CameraSystem"));
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
 

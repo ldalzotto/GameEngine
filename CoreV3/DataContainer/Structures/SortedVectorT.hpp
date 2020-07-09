@@ -22,25 +22,25 @@ namespace _CoreV3
 	template <class T>
 	__forceinline void Free(SortedVectorT<T>* p_container)
 	{
-		GenericArray_free((GenericArray*)p_container);
+		GenericArray_free(Convert(p_container));
 	};
 
 	template <class T>
 	__forceinline T* At(SortedVectorT<T>* p_container, size_t p_index)
 	{
-		return (T*) GenericArray_at((GenericArray*)p_container, p_index);
+		return (T*) GenericArray_at(Convert(p_container), p_index);
 	};
 
 	template <class T>
 	__forceinline T* Clear(SortedVectorT<T>* p_container)
 	{
-		GenericArray_clear((GenericArray*)p_container);
+		GenericArray_clear(Convert(p_container));
 	};
 
 	template <class T>
 	__forceinline void PushBack(SortedVectorT<T>* p_container, T* p_value)
 	{
-		SortedVector_pushBack((SortedVector*)p_container, p_value);
+		SortedVector_pushBack(Convert(p_container), p_value);
 	};
 
 	template <class T>

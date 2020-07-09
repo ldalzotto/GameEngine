@@ -28,49 +28,49 @@ namespace _CoreV3
 	template <class T>
 	__forceinline void Free(VectorT<T>* p_container)
 	{
-		GenericArray_free((GenericArray*)p_container);
+		GenericArray_free(Convert(p_container));
 	};
 
 	template <class T>
 	__forceinline T* At(VectorT<T>* p_container, size_t p_index)
 	{
-		return (T*)GenericArray_at((GenericArray*)p_container, p_index);
+		return (T*)GenericArray_at(Convert(p_container), p_index);
 	};
 
 	template <class T>
 	__forceinline T* At_unchecked(VectorT<T>* p_container, size_t p_index)
 	{
-		return (T*)GenericArray_at_unchecked((GenericArray*)p_container, p_index);
+		return (T*)GenericArray_at_unchecked(Convert(p_container), p_index);
 	};
 
 	template <class T>
 	__forceinline void Clear(VectorT<T>* p_container)
 	{
-		GenericArray_clear((GenericArray*)p_container);
+		GenericArray_clear(Convert(p_container));
 	};
 
 	template <class T>
 	__forceinline void PushBack(VectorT<T>* p_container, T* p_value)
 	{
-		GenericArray_pushBack_realloc((GenericArray*)p_container, p_value);
+		GenericArray_pushBack_realloc(Convert(p_container), p_value);
 	};
 
 	template <class T>
 	__forceinline void PushBack(VectorT<T>* p_container, T&& p_value)
 	{
-		GenericArray_pushBack_realloc((GenericArray*)p_container, &p_value);
+		GenericArray_pushBack_realloc(Convert(p_container), &p_value);
 	};
 
 	template <class T>
 	__forceinline void Swap(VectorT<T>* p_container, size_t p_left, size_t p_right)
 	{
-		GenericArray_swap((GenericArray*)p_container, p_left, p_right);
+		GenericArray_swap(Convert(p_container), p_left, p_right);
 	};
 
 	template <class T>
 	__forceinline void InsertAt(VectorT<T>* p_container, T* p_insertValue, size_t p_index)
 	{
-		GenericArray_isertAt_realloc((GenericArray*)p_container, p_insertValue, 1, p_index);
+		GenericArray_isertAt_realloc(Convert(p_container), p_insertValue, 1, p_index);
 	};
 
 	template <class T>
@@ -82,7 +82,7 @@ namespace _CoreV3
 	template <class T>
 	__forceinline void InsertArrayAt(VectorT<T>* p_container, GenericArray* p_insertedArray, size_t p_index)
 	{
-		GenericArray_isertArrayAt_realloc((GenericArray*)p_container, p_insertedArray, p_index);
+		GenericArray_isertArrayAt_realloc(Convert(p_container), p_insertedArray, p_index);
 	};
 
 	template <class T>

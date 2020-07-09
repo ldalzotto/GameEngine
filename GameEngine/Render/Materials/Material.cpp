@@ -183,9 +183,6 @@ namespace _GameEngine::_Render
 {
 	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey)
 	{
-		size_t l_hash = 0;
-		_Utils::Hash_combine(l_hash, p_materialUniqueKey->VertexShaderPath);
-		_Utils::Hash_combine(l_hash, p_materialUniqueKey->FragmentShaderPath);
-		return l_hash;
+		return _CoreV3::HashCombine(0, STR(p_materialUniqueKey->VertexShaderPath.c_str()), STR(p_materialUniqueKey->FragmentShaderPath.c_str()));
 	};
 }
