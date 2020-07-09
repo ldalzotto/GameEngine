@@ -3,24 +3,16 @@
 #include "MyLog/MyLog.h"
 
 #include "RenderInterface.h"
-#include "Utils/Algorithm/Algorithm.h"
 #include "Mesh/MeshLoader.h"
 
 namespace _GameEngine::_Render
 {
 
-	size_t MeshUniqueKey_buildHash(MeshUniqueKey* p_key)
-	{
-		size_t l_hash = 0;
-		_Utils::Hash_combine(l_hash, p_key->MeshAssetPath);
-		return l_hash;
-	};
-
 	Mesh* MeshResourceProvider_UseResource(MeshResourceProvider* p_meshResourceProvider, MeshResourceProviderUseResourceInfo* p_meshResourceProviderResourceInfo)
 	{
 		MeshUniqueKey l_meshUniqueKey{};
 		l_meshUniqueKey.MeshAssetPath = p_meshResourceProviderResourceInfo->Meshpath;
-		size_t l_hash = MeshUniqueKey_buildHash(&l_meshUniqueKey);
+		size_t l_hash = _CoreV3::Hash(&l_meshUniqueKey);
 
 		if (!p_meshResourceProvider->MeshResources.contains(l_hash))
 		{
@@ -55,7 +47,7 @@ namespace _GameEngine::_Render
 
 	void MeshResourceProvider_ReleaseResource(MeshResourceProvider* p_meshResourceProvider, MeshUniqueKey* p_key)
 	{
-		size_t l_hash = MeshUniqueKey_buildHash(p_key);
+		size_t l_hash = _CoreV3::Hash(p_key);
 		MeshResourceWithCounter* l_resourceWithCounter = &p_meshResourceProvider->MeshResources.at(l_hash);
 		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)

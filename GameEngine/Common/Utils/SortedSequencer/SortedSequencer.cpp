@@ -1,6 +1,5 @@
 #include "SortedSequencer.h"
 
-#include "Utils/Algorithm/Algorithm.h"
 #include "DataStructures/ElementComparators.h"
 #include <stdexcept>
 #include "MYLog/MYLog.h"

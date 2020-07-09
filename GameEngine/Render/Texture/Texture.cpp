@@ -338,3 +338,13 @@ namespace _GameEngine::_Render
 		}
 	}
 }
+
+
+namespace _CoreV3
+{
+	template <>
+	size_t Hash<_GameEngine::_Render::TextureUniqueKey>(_GameEngine::_Render::TextureUniqueKey* p_textureUniqueKeu)
+	{
+		return Hash(STR(p_textureUniqueKeu->TexturePath.c_str()));
+	};
+}

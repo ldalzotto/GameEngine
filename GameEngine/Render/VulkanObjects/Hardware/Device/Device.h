@@ -74,3 +74,11 @@ namespace _GameEngine::_Render
 	uint32_t Device_findMemoryType(Device* p_device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	bool Device_isFormatSupported(Device* p_device, FormatSupportKey* p_formatSupportKey);
 }
+
+#include "CoreV3Include.hpp"
+
+namespace _CoreV3
+{
+	template <>
+	extern size_t Hash<_GameEngine::_Render::FormatSupportKey>(_GameEngine::_Render::FormatSupportKey* p_formatSupportKey);
+}

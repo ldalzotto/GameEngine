@@ -1,7 +1,5 @@
 #include "Mesh.h"
 
-#include "Utils/Algorithm/Algorithm.h"
-
 #include "RenderStep/PreRenderDeferedCommandBufferStep.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/BufferCopyDeferredOperation.h"
 
@@ -89,3 +87,11 @@ namespace _GameEngine::_Render
 }
 
 
+namespace _CoreV3
+{
+	template <>
+	inline size_t Hash<_GameEngine::_Render::MeshUniqueKey>(_GameEngine::_Render::MeshUniqueKey* p_meshUniqueKey)
+	{
+		return Hash(STR(p_meshUniqueKey->MeshAssetPath.c_str()));
+	}
+}

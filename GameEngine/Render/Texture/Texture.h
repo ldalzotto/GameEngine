@@ -98,3 +98,11 @@ namespace _GameEngine::_Render
 
 	VkImageSubresourceRange Texture_buildSubResource(Texture* p_texture);
 }
+
+#include "CoreV3Include.hpp"
+
+namespace _CoreV3
+{
+	template <>
+	extern size_t Hash<_GameEngine::_Render::TextureUniqueKey>(_GameEngine::_Render::TextureUniqueKey* p_textureUniqueKeu);
+}
