@@ -2,12 +2,12 @@
 
 namespace _CoreV3
 {
-	__forceinline size_t GenericArray_getTotalSize(GenericArray* p_genericArray)
+	inline size_t GenericArray_getTotalSize(GenericArray* p_genericArray)
 	{
 		return p_genericArray->ElementSize * p_genericArray->Capacity;
 	};
 
-	__forceinline size_t GenericArray_getElementOffset(GenericArray* p_genericArray, size_t p_index)
+	inline size_t GenericArray_getElementOffset(GenericArray* p_genericArray, size_t p_index)
 	{
 		return p_genericArray->ElementSize * p_index;
 	};
@@ -29,7 +29,7 @@ namespace _CoreV3
 		p_genericArray->Size = 0;
 	};
 
-	__forceinline void* GenericArray_at_unchecked(GenericArray* p_genericArray, size_t p_index)
+	inline void* GenericArray_at_unchecked(GenericArray* p_genericArray, size_t p_index)
 	{
 		return (char*)p_genericArray->Memory + GenericArray_getElementOffset(p_genericArray, p_index);
 	};

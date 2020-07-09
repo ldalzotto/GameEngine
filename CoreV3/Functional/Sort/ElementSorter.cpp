@@ -3,7 +3,7 @@
 namespace _CoreV3
 {
 	template <class SOURCE_ELEMENT, class COMPARED_ELEMENT>
-	__forceinline short int genericSortMethod(SOURCE_ELEMENT p_left, COMPARED_ELEMENT p_right)
+	inline short int genericSortMethod(SOURCE_ELEMENT p_left, COMPARED_ELEMENT p_right)
 	{
 		if (p_left > p_right) { return 1; }
 		else if (p_left < p_right) { return -1; }

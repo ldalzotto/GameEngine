@@ -10,19 +10,15 @@ namespace _CoreV3
 		size_t ElementSize;
 	};
 
-	template <typename T, template < class T > class DATA_STRUCTURE >
-	__forceinline GenericArray* Convert(DATA_STRUCTURE<T>* p_from)
-	{
-		return (GenericArray*)p_from;
-	};
-
 	template <typename T>
-	__forceinline GenericArray Convert(T* p_from, size_t p_elementNumber)
+	inline GenericArray Convert(T* p_from, size_t p_elementNumber)
 	{
 		return GenericArray{
 			p_from, p_elementNumber, p_elementNumber, sizeof(T)
 		};
 	};
+
+
 
 	extern void GenericArray_alloc(GenericArray* p_genericArray, size_t p_elementSize, size_t p_initialCapacity);
 	extern void GenericArray_free(GenericArray* p_genericArray);

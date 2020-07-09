@@ -15,7 +15,7 @@ namespace _GameEngine::_Utils
 
 		if (!file.is_open())
 		{
-			_CoreV3::String l_error = _CoreV3::PushBackArrays(_CoreV3::Alloc<char>(20), STR("Failed to open file : "), _CoreV3::Convert(p_absoluteFilePath));
+			_CoreV3::String l_error = _CoreV3::PushBackArrays(_CoreV3::Alloc<char>(20), STR("Failed to open file : "), (_CoreV3::GenericArray*) p_absoluteFilePath);
 			throw std::runtime_error(l_error.Memory);
 		}
 

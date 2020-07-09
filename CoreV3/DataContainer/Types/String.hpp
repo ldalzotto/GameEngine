@@ -25,24 +25,24 @@ namespace _CoreV3
 	extern void PushBackArray<Char>(VectorT<Char>* p_container, GenericArray* p_insertedArray);
 
 	template <>
-	__forceinline GenericArray Convert<Char*, GenericArray>(Char* p_from)
+	inline GenericArray Convert(Char* p_from)
 	{
 		return Convert(p_from, strlen(p_from));
 	};
 
 	template <>
-	__forceinline ArrayT<Char> Convert<Char*, ArrayT<Char>>(Char* p_from)
+	inline ArrayT<Char> Convert<Char*, ArrayT<Char>>(Char* p_from)
 	{
 		size_t l_size = strlen(p_from);
 		return ArrayT<Char>{ p_from, l_size, l_size, sizeof(char)};
 	}
 
-	__forceinline void PushBackArray(VectorT<Char>* p_container, Char* p_insertedArray)
+	inline void PushBackArray(VectorT<Char>* p_container, Char* p_insertedArray)
 	{
 		PushBackArray(p_container, Convert<Char*, GenericArray>(p_insertedArray));
 	};
 
-	__forceinline void PushBackArray(VectorT<Char>* p_container, VectorT<Char>* p_insertedArray)
+	inline void PushBackArray(VectorT<Char>* p_container, VectorT<Char>* p_insertedArray)
 	{
 		PushBackArray(p_container, Convert<Char*, GenericArray>(STR(p_insertedArray->Memory)));
 	};
@@ -51,13 +51,13 @@ namespace _CoreV3
 namespace _CoreV3
 {
 	template <>
-	__forceinline size_t Hash<Char>(Char* p_value)
+	inline size_t Hash<Char>(Char* p_value)
 	{
 		return std::hash<std::string>()(p_value);
 	};
 
 	template <template < class Char > class DATA_STRUCTURE>
-	__forceinline size_t Hash(DATA_STRUCTURE<Char>* p_value)
+	inline size_t Hash(DATA_STRUCTURE<Char>* p_value)
 	{
 		return Hash(p_value->Memory);
 	}

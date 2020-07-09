@@ -21,7 +21,7 @@ namespace _CoreV3
 	};
 
 	template<class DATA_STRUCTURE, class SOURCE_ELEMENT, class COMPARED_ELEMENT, class USER_OBJECT>
-	__forceinline SOURCE_ELEMENT* Find(DATA_STRUCTURE* p_array, ElementComparatorT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT>&& p_comparator)
+	inline SOURCE_ELEMENT* Find(DATA_STRUCTURE* p_array, ElementComparatorT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT>&& p_comparator)
 	{
 		return Find(p_array, (ElementComparatorT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT>*) & p_comparator);
 	};

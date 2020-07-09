@@ -63,7 +63,7 @@ namespace _CoreV3
 	};
 
 	template <class DATA_CONTAINER, class SOURCE_ELEMENT, class COMPARED_ELEMENT, class USER_OBJECT>
-	__forceinline void Sort_selection(DATA_CONTAINER* p_genericArray, ElementSorterT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT>&& p_elementSorter)
+	inline void Sort_selection(DATA_CONTAINER* p_genericArray, ElementSorterT<SOURCE_ELEMENT, COMPARED_ELEMENT, USER_OBJECT>&& p_elementSorter)
 	{
 		Sort_selection(p_genericArray, &p_elementSorter);
 	};

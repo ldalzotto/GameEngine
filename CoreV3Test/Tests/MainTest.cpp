@@ -150,7 +150,7 @@ namespace _CoreV3
 					PushBack(&l_otherVec, { (float)(i + 1), (float)(i + 1), (float)(i + 1) });
 				}
 
-				PushBackArray(&l_vec, Convert(&l_otherVec));
+				PushBackArray(&l_vec, (GenericArray*)&l_otherVec);
 
 				Assert_Equals(&l_vec.Size, 4);
 
@@ -178,7 +178,7 @@ namespace _CoreV3
 					PushBack(&l_otherVec3, { (float)(i + 1), (float)(i + 1), (float)(i + 1) });
 				}
 
-				PushBackArrays(&l_vec, Convert(&l_otherVec), Convert(&l_otherVec2), Convert(&l_otherVec3));
+				PushBackArrays(&l_vec, (GenericArray*)&l_otherVec, (GenericArray*)&l_otherVec2, (GenericArray*)&l_otherVec3);
 
 				Assert_Equals(&l_vec.Size, 8);
 			}
@@ -230,7 +230,7 @@ namespace _CoreV3
 					PushBack(&l_vec2, { (float)i, (float)i , (float)i });
 				}
 
-				InsertArrayAt(&l_vec, Convert(&l_vec2), 1);
+				InsertArrayAt(&l_vec, (GenericArray*)&l_vec2, 1);
 
 				for (size_t i = 1; i < 4; i++)
 				{
@@ -253,7 +253,7 @@ namespace _CoreV3
 					PushBack(&l_vec2, { (float)i, (float)i , (float)i });
 				}
 
-				InsertArrayAt(&l_vec, Convert(&l_vec), 4);
+				InsertArrayAt(&l_vec, (GenericArray*)&l_vec, 4);
 				// InsertArrayAt(&l_vec, &l_vec2, 4);
 			}
 			Free(&l_vec); Free(&l_vec2);
@@ -421,7 +421,7 @@ namespace _CoreV3
 				PushBack(&l_arr2, { 1.0f, 1.0f, 1.0f });
 
 				ASSERT_EXCEPTION_BEGIN();
-				PushBackArray(&l_arr, Convert(&l_arr2));
+				PushBackArray(&l_arr, (GenericArray*)&l_arr2);
 				ASSERT_EXCEPTION_END();
 			}
 			Free(&l_arr); Free(&l_arr2);
@@ -461,7 +461,7 @@ namespace _CoreV3
 				PushBack(&l_arr2, { 1.0f, 1.0f, 1.0f });
 
 				ASSERT_EXCEPTION_BEGIN();
-				InsertArrayAt(&l_arr, Convert(&l_arr2), 1);
+				InsertArrayAt(&l_arr, (GenericArray*)&l_arr2, 1);
 				ASSERT_EXCEPTION_END();
 			}
 			Free(&l_arr); Free(&l_arr2);
@@ -514,7 +514,7 @@ namespace _CoreV3
 					PushBack(&l_arr, { (float)i, (float)i, (float)i });
 				}
 
-				PushBackArray(&l_vec, Convert(&l_arr));
+				PushBackArray(&l_vec, (GenericArray*)&l_arr);
 
 				Assert_Equals(&l_vec.Size, 4);
 
