@@ -9,6 +9,8 @@ namespace _CoreV3
 	
 	typedef VectorT<Char> String;
 
+	typedef ArrayT<Char> FixedString;
+
 	template <>
 	extern void Alloc<Char>(VectorT<Char>* p_container, size_t p_initialCapacity);
 
@@ -31,10 +33,10 @@ namespace _CoreV3
 	};
 
 	template <>
-	inline ArrayT<Char> Convert<Char*, ArrayT<Char>>(Char* p_from)
+	inline FixedString Convert<Char*, FixedString>(Char* p_from)
 	{
 		size_t l_size = strlen(p_from);
-		return ArrayT<Char>{ p_from, l_size, l_size, sizeof(char)};
+		return FixedString{ p_from, l_size, l_size, sizeof(char)};
 	}
 
 	inline void PushBackArray(VectorT<Char>* p_container, Char* p_insertedArray)

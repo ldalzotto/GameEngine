@@ -9,7 +9,7 @@
 
 namespace _GameEngine::_Utils
 {
-	void File_readFileV2(_CoreV3::ArrayT<char>* p_absoluteFilePath, _CoreV3::ArrayT<char>* out_file)
+	void File_readFileV2(_CoreV3::ArrayT<char>* p_absoluteFilePath, _CoreV3::FixedString* out_file)
 	{
 		std::ifstream file(p_absoluteFilePath->Memory, std::ios::ate | std::ios::binary);
 
