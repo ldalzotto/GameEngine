@@ -100,12 +100,23 @@ namespace _GameEngine::_Log
 
 	};
 
-	std::string MyLog_formatError(const std::string& p_file, int p_line, const std::string& p_message)
+	Core_String MyLog_formatError(char* p_file, int p_line, char* p_message)
 	{
-		return p_file + " " + std::to_string(p_line) + " : " + p_message;
+		Core_String l_str;
+		Core_string_alloc(&l_str, 100);
+
+		char l_intContainer[50];
+		Core_toString_intv(l_intContainer, &p_line);
+
+		Core_string_append(&l_str, p_file);
+		Core_string_append(&l_str, " ");
+		Core_string_append(&l_str, l_intContainer);
+		Core_string_append(&l_str, p_message);
+
+		return l_str;
 	};
 
-	Core_GenericArray MyLog_formatError_string(const char* p_file, int p_line, Core_GenericArray&& p_message)
+	Core_GenericArray MyLog_formatError_string(const char* p_file, int p_line, Core_GenericArray* p_message)
 	{
 		Core_GenericArray l_errorMessage;
 		Core_string_alloc(&l_errorMessage, 0);
@@ -116,10 +127,10 @@ namespace _GameEngine::_Log
 		Core_toString_int(&l_lineString, &p_line);
 		
 		Core_string_append(&l_errorMessage, (char*)l_lineString.Memory);
-		Core_string_append(&l_errorMessage, (char*)p_message.Memory);
+		Core_string_append(&l_errorMessage, (char*)p_message->Memory);
 
 		Core_GenericArray_free(&l_lineString);
-		Core_GenericArray_free(&p_message);
-		return std::move(l_errorMessage);
+		Core_GenericArray_free(p_message);
+		return l_errorMessage;
 	};
 }

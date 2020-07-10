@@ -255,7 +255,13 @@ namespace _GameEngine::_Render
 			}
 			break;
 			default:
-				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to populate ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
+				Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+				{
+				Core_string_append(&l_errorMessage, "Failed to populate ShaderParameter with type : ");
+				char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
+				Core_string_append(&l_errorMessage, l_intContainer);
+				}
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 				break;
 			}
 		}
@@ -317,7 +323,13 @@ namespace _GameEngine::_Render
 			}
 			break;
 			default:
-				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to update ShaderParameter with type : " + std::to_string((int)l_shaderParameter.Type)));
+				{
+					Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+					Core_string_append(&l_errorMessage, "Failed to update ShaderParameter with type : ");
+					char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
+					Core_string_append(&l_errorMessage, l_intContainer);
+					throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
+				}
 				break;
 			}
 

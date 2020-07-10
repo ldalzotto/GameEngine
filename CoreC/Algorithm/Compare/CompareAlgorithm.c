@@ -2,6 +2,9 @@
 
 #include <stdlib.h>
 
+#include "Functional/Vector/VectorIterator.h"
+#include "Functional/Comparator/Comparator.h"
+
 void* Core_find(struct Core_VectorIterator* p_iterator, struct Core_Comparator* p_comparator)
 {
 	while (p_iterator->Functions->MoveNext(p_iterator))

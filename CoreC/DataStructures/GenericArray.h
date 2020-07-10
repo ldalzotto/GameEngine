@@ -4,8 +4,6 @@
 #include "Functional/Vector/VectorIterator.h"
 #include "ErrorHandling/ReturnCodes.h"
 
-struct Core_GenericArray;
-
 typedef struct Core_GenericArray_functions
 {
     const struct Core_VectorAccessor* Accessor;

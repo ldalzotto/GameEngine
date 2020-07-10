@@ -3,6 +3,8 @@
 #include "ErrorHandling/Errorhandling.h"
 #include "Functional/Vector/VectorAccessor.h"
 #include "Functional/Vector/VectorWriter.h"
+#include "DataStructures/GenericArray.h"
+#include "Functional/Sort/ElementSorter.h"
 
 void* Core_min(struct Core_GenericArray* p_genericArray, struct Core_ElementSorter* p_sortComparator)
 {

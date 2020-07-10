@@ -70,7 +70,14 @@ namespace _GameEngine::_Render
 		else
 		{
 			delete l_texture;
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureAllocation : the TextureAllocationType " + std::to_string((uint8_t)p_textureAllocInfo->TextureAllocationType) + " is not supported."));
+			{
+				Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+				Core_string_append(&l_errorMessage, "TextureAllocation : the TextureAllocationType ");
+				TOSTRING_INT(l_textureAllocType, (int*)p_textureAllocInfo->TextureAllocationType);
+				Core_string_append(&l_errorMessage, l_textureAllocType);
+				Core_string_append(&l_errorMessage, " is not supported.");
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
+			}
 		}
 	};
 
@@ -260,8 +267,15 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureBuildCreationInfoObject : Texture build creation object with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
-				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
+			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_string_append(&l_errorMessage, "TextureBuildCreationInfoObject : Texture build creation object with TextureType : ");
+			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
+			Core_string_append(&l_errorMessage, l_textureType);
+			Core_string_append(&l_errorMessage, "and TextureUsage : ");
+			TOSTRING_INT(l_textureUsage, (int*)p_textureCreateInfo->TextureUsage);
+			Core_string_append(&l_errorMessage, l_textureUsage);
+			Core_string_append(&l_errorMessage, " is not supported.");
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 	};
 
@@ -295,8 +309,15 @@ namespace _GameEngine::_Render
 		else if (p_textureCreateInfo->TextureType == TextureType::DEPTH
 			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)
 		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for texture load with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) + 
-				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
+			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_string_append(&l_errorMessage, "TextureDeferredOperation : DeferredOperation for texture load with TextureType : ");
+			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
+			Core_string_append(&l_errorMessage, l_textureType);
+			Core_string_append(&l_errorMessage, "and TextureUsage : ");
+			TOSTRING_INT(l_textureUsage, (int*)p_textureCreateInfo->TextureUsage);
+			Core_string_append(&l_errorMessage, l_textureUsage);
+			Core_string_append(&l_errorMessage, " is not supported.");
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 	};
 
@@ -311,8 +332,15 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("TextureDeferredOperation : DeferredOperation for procedural texture with TextureType : " + std::to_string((uint8_t)p_textureCreateInfo->TextureType) +
-				"and TextureUsage : " + std::to_string((uint8_t)p_textureCreateInfo->TextureUsage) + " is not supported."));
+			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_string_append(&l_errorMessage, "TextureDeferredOperation : DeferredOperation for texture load with TextureType : ");
+			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
+			Core_string_append(&l_errorMessage, l_textureType);
+			Core_string_append(&l_errorMessage, "and TextureUsage : ");
+			TOSTRING_INT(l_textureUsage, (int*)p_textureCreateInfo->TextureUsage);
+			Core_string_append(&l_errorMessage, l_textureUsage);
+			Core_string_append(&l_errorMessage, " is not supported.");
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 	};
 

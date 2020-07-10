@@ -9,7 +9,7 @@ namespace _GameEngine::_Render
 	const uint32_t WINDOW_WIDTH = 800;
 	const uint32_t WINDOW_HEIGHT = 600;
 
-	const std::string WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
+	const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
 	void window_size_callback(GLFWwindow* window, int width, int height);
 	void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
@@ -66,7 +66,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 		if (!p_window->Window)
 		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE(WINDOW_ERROR_NOT_INITIALIZED));
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE((char*)WINDOW_ERROR_NOT_INITIALIZED));
 		}
 #endif
 

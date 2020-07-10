@@ -29,7 +29,11 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (p_entity->Components.get(Component_comparator, &p_unlinkedComponent->ComponentType))
 		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Trying to add a component were it's type ( " + p_unlinkedComponent->ComponentType + " ) is aleady present as a component."));
+			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_string_append(&l_errorMessage, "Trying to add a component were it's type ( ");
+			Core_string_append(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType.c_str());
+			Core_string_append(&l_errorMessage, " ) is aleady present as a component.");
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 #endif
 

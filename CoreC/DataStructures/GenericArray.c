@@ -5,6 +5,7 @@
 
 #include "ErrorHandling/Errorhandling.h"
 #include "Functional/Vector/VectorIterator.h"
+#include "Functional/Vector/VectorIterator.h"
 #include "Functional/Vector/VectorAccessor.h"
 
 size_t Core_GenericArray_getTotalSize(Core_GenericArray* p_genericArray)

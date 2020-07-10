@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "DataStructures/GenericArray.h"
 #include "ErrorHandling/Errorhandling.h"
 #include "DataStructures/Specifications/Array.h"
 #include "Functional/Vector/VectorWriter.h"

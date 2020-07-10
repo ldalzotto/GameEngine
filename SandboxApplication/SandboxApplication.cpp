@@ -8,9 +8,6 @@ extern "C"
 #include "GameEngineApplication.h"
 #include "GameEngineEditor.h"
 
-#include "DataStructures/String.h"
-#include "DataStructures/StringConverterPrimitives.h"
-
 #include "Math/Segment/Segment.h"
 #include "Math/Math.h"
 
