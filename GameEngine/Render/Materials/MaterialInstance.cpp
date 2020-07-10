@@ -1,7 +1,14 @@
+
 #include "MaterialInstance.h"
 
-#include <functional>
+extern "C"
+{
+#include "DataStructures/Specifications/String.h"
+#include "Algorithm/String/StringAlgorithm.h"
+#include "Functional/ToString/ToString.h"
+}
 
+#include <functional>
 #include <stdexcept>
 #include "MYLog/MYLog.h"
 
@@ -169,7 +176,7 @@ namespace _GameEngine::_Render
 		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
 	};
 
-	
+
 	void UniformBufferInstanceParameter_free(MaterialInstanceParameter* p_materialInstanceParameter, RenderInterface* p_renderInterface)
 	{
 		UniformBufferInstanceParameter* l_uniformBufferParameter = (UniformBufferInstanceParameter*)p_materialInstanceParameter->Parameter;
@@ -196,7 +203,7 @@ namespace _GameEngine::_Render
 		}
 		return nullptr;
 	};
-	
+
 	void MaterialInstance_setUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, UniformBufferParameter* p_uniformBufferParameter)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
@@ -219,7 +226,7 @@ namespace _GameEngine::_Render
 		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
 		if (l_foundParameter)
 		{
-			UniformBufferInstanceParameter* l_uniformBufferParameter = (UniformBufferInstanceParameter*) (*l_foundParameter)->Parameter;
+			UniformBufferInstanceParameter* l_uniformBufferParameter = (UniformBufferInstanceParameter*)(*l_foundParameter)->Parameter;
 			VulkanBuffer_pushToGPU(&l_uniformBufferParameter->UniformBuffer, p_materialInstance->RenderInterface->Device, p_data, l_uniformBufferParameter->UniformBuffer.BufferAllocInfo.Size);
 		}
 	};
@@ -255,11 +262,11 @@ namespace _GameEngine::_Render
 			}
 			break;
 			default:
-				Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
 				{
-				Core_string_append(&l_errorMessage, "Failed to populate ShaderParameter with type : ");
-				char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
-				Core_string_append(&l_errorMessage, l_intContainer);
+					Core_string_append(&l_errorMessage, "Failed to populate ShaderParameter with type : ");
+					char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
+					Core_string_append(&l_errorMessage, l_intContainer);
 				}
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 				break;
@@ -323,14 +330,14 @@ namespace _GameEngine::_Render
 			}
 			break;
 			default:
-				{
-					Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-					Core_string_append(&l_errorMessage, "Failed to update ShaderParameter with type : ");
-					char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
-					Core_string_append(&l_errorMessage, l_intContainer);
-					throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
-				}
-				break;
+			{
+				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+				Core_string_append(&l_errorMessage, "Failed to update ShaderParameter with type : ");
+				char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
+				Core_string_append(&l_errorMessage, l_intContainer);
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
+			}
+			break;
 			}
 
 			i += 1;
@@ -338,7 +345,7 @@ namespace _GameEngine::_Render
 
 		vkUpdateDescriptorSets(p_materialInstance->RenderInterface->Device->LogicalDevice.LogicalDevice, l_writeDescirptorSets.size(), l_writeDescirptorSets.data(), 0, nullptr);
 	};
-	
+
 	void materialInstance_freeDescriptorSet(MaterialInstance* p_materialInstance)
 	{
 		if (p_materialInstance->SourceMaterial->InputLayout.DescriptorPool.DescriptorPool != VK_NULL_HANDLE)

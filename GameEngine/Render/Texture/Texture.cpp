@@ -71,7 +71,7 @@ namespace _GameEngine::_Render
 		{
 			delete l_texture;
 			{
-				Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
 				Core_string_append(&l_errorMessage, "TextureAllocation : the TextureAllocationType ");
 				TOSTRING_INT(l_textureAllocType, (int*)p_textureAllocInfo->TextureAllocationType);
 				Core_string_append(&l_errorMessage, l_textureAllocType);
@@ -267,7 +267,7 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
 			Core_string_append(&l_errorMessage, "TextureBuildCreationInfoObject : Texture build creation object with TextureType : ");
 			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
 			Core_string_append(&l_errorMessage, l_textureType);
@@ -309,7 +309,7 @@ namespace _GameEngine::_Render
 		else if (p_textureCreateInfo->TextureType == TextureType::DEPTH
 			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)
 		{
-			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
 			Core_string_append(&l_errorMessage, "TextureDeferredOperation : DeferredOperation for texture load with TextureType : ");
 			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
 			Core_string_append(&l_errorMessage, l_textureType);
@@ -332,7 +332,7 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
 			Core_string_append(&l_errorMessage, "TextureDeferredOperation : DeferredOperation for texture load with TextureType : ");
 			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
 			Core_string_append(&l_errorMessage, l_textureType);

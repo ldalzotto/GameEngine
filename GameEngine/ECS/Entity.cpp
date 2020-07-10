@@ -2,6 +2,11 @@
 
 #include <stdexcept>
 
+extern "C"
+{
+#include "Algorithm/String/StringAlgorithm.h"
+}
+
 #include "ECS/ECS.h"
 #include "MyLog/MyLog.h"
 
@@ -29,7 +34,7 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (p_entity->Components.get(Component_comparator, &p_unlinkedComponent->ComponentType))
 		{
-			Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
 			Core_string_append(&l_errorMessage, "Trying to add a component were it's type ( ");
 			Core_string_append(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType.c_str());
 			Core_string_append(&l_errorMessage, " ) is aleady present as a component.");

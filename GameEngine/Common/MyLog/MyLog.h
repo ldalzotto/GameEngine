@@ -2,7 +2,7 @@
 
 extern "C"
 {
-#include "Include/CoreV2.h"
+#include "Log/LogFormatting.h"
 }
 #include <string>
 
@@ -45,11 +45,8 @@ namespace _GameEngine::_Log
 	void MyLog_pushLog_string(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, Core_GenericArray* p_message);
 	void MyLog_processLogs(MyLog* p_myLog);
 
-	Core_String MyLog_formatError(char* p_file, int p_line, char* p_message);
-	Core_GenericArray MyLog_formatError_string(const char* p_file, int p_line, Core_GenericArray* p_message);
-
-#define MYLOG_BUILD_ERRORMESSAGE(MESSAGE) (char*)_Log::MyLog_formatError(__FILE__, __LINE__, MESSAGE).Memory
-#define MYLOG_BUILD_ERRORMESSAGE_STRING(MESSAGE) (char*)_Log::MyLog_formatError_string(__FILE__, __LINE__, MESSAGE).Memory
+#define MYLOG_BUILD_ERRORMESSAGE(MESSAGE) (char*)Core_log_formatError(__FILE__, __LINE__, MESSAGE).Memory
+#define MYLOG_BUILD_ERRORMESSAGE_STRING(MESSAGE) (char*)Core_log_formatError_string(__FILE__, __LINE__, (Core_String*)MESSAGE).Memory
 #define MYLOG_PUSH(MYLOGPTR, LOGLEVEL, MESSAGE)  _Log::MyLog_pushLog(MYLOGPTR, LOGLEVEL,__FILE__, __LINE__, MESSAGE)
 #define MYLOG_PUSH_STRING(MYLOGPTR, LOGLEVEL, MESSAGE)  _Log::MyLog_pushLog_string(MYLOGPTR, LOGLEVEL,__FILE__, __LINE__, MESSAGE)
 }

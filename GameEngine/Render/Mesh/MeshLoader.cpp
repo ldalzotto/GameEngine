@@ -2,6 +2,12 @@
 
 #include <stdexcept>
 
+extern "C"
+{
+#include "DataStructures/Specifications/String.h"
+#include "Algorithm/String/StringAlgorithm.h"
+}
+
 #include <Assimp/Importer.hpp>
 #include <Assimp/scene.h>
 #include <Assimp/postprocess.h>
@@ -26,7 +32,7 @@ namespace _GameEngine::_Render
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			{
-				Core_String l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
 				Core_string_append(&l_errorMessage, "Cannot load the model : ");
 				Core_string_append(&l_errorMessage, (char*)p_readMeshFromFileInfo->Path.c_str());
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));

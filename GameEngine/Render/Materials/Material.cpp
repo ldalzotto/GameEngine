@@ -5,6 +5,11 @@
 
 #include "MYLog/MYLog.h"
 
+extern "C"
+{
+#include "Functional/Hash/Hash.h"
+}
+
 #include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "RenderStep/PushCameraBuffer.h"

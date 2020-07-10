@@ -14,9 +14,10 @@ namespace _GameEngine::_Utils
 
 		if (!file.is_open())
 		{
-			Core_GenericArray l_error; Core_string_alloc(&l_error, 0);
-			Core_string_append(&l_error, "Failed to open file : "); Core_string_append(&l_error, (char*)p_absoluteFilePath->Memory);
-			throw std::runtime_error((char*)l_error.Memory);
+			Core_GenericArray l_error; Core_string_alloc(&l_error, 100);
+			Core_string_append(&l_error, "Failed to open file : ");
+			Core_string_append(&l_error, (char*)p_absoluteFilePath->Memory);
+			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_error));
 		}
 
 		size_t l_fileSize = (size_t)file.tellg();
