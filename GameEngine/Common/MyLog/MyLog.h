@@ -3,13 +3,9 @@
 extern "C"
 {
 #include "Log/LogFormatting.h"
+#include "Clock/Clock.h"
 }
 #include <string>
-
-namespace _GameEngine::_Clock
-{
-	struct Clock;
-}
 
 namespace _GameEngine::_Log
 {
@@ -34,12 +30,12 @@ namespace _GameEngine::_Log
 	struct MyLog
 	{
 		Core_GenericArray LogMessages;
-		_Clock::Clock* Clock;
+		struct Core_Clock* Clock;
 
 		char TmpFinalMessage[LOG_FINAL_MESSAGE_MAX_SIZE];
 	};
 
-	void MyLog_build(MyLog* p_myLog, _Clock::Clock* p_clock);
+	void MyLog_build(MyLog* p_myLog, struct Core_Clock* p_clock);
 	void MyLog_free(MyLog* p_myLog);
 	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, char* p_message);
 	void MyLog_pushLog_string(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, Core_GenericArray* p_message);

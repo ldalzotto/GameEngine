@@ -2,13 +2,14 @@
 
 #include <functional>
 
+struct Core_Clock;
+
 namespace _GameEngine
 {
 	struct GameEngineApplication;
 	struct GameLoop;
 	struct UpdateSequencer;
 	namespace _Log { struct MyLog; }
-	namespace _Clock { struct Clock; }
 	namespace _Render { struct RenderInterface; }
 	namespace _Input { struct Input; }
 	namespace _ECS { struct ECS; }
@@ -26,7 +27,7 @@ namespace _GameEngine
 
 		GameLoop* GameLoop;
 		_Log::MyLog* Log;
-		_Clock::Clock* Clock;
+		Core_Clock* Clock;
 		_Render::RenderInterface* RenderInterface;
 		_Input::Input* Input;
 		_ECS::ECS* ECS;

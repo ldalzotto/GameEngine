@@ -56,7 +56,7 @@ namespace _GameEngine
 	void app_newFrame(void* p_gameEngineApplication)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
-		_Clock::Clock_newFrame(&l_app->Clock);
+		 Clock_newFrame(&l_app->Clock);
 		_Input::Input_update(&l_app->Input);
 		_Utils::Observer_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
 	};
@@ -64,7 +64,7 @@ namespace _GameEngine
 	void app_update(void* p_closure, float p_delta)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		_Clock::Clock_newUpdate(&l_app->Clock, p_delta);
+		Clock_newUpdate(&l_app->Clock, p_delta);
 		l_app->SandboxUpdateHook(p_delta);
 
 		_ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);

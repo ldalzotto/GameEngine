@@ -1,7 +1,5 @@
 #include "MyLog.h"
 
-#include "Clock/Clock.h"
-
 extern "C"
 {
 #include "DataStructures/Specifications/Vector.h"
@@ -11,7 +9,7 @@ extern "C"
 
 namespace _GameEngine::_Log
 {
-	void MyLog_build(MyLog* p_myLog, _Clock::Clock* p_clock)
+	void MyLog_build(MyLog* p_myLog, struct Core_Clock* p_clock)
 	{
 		p_myLog->Clock = p_clock;
 		Core_Vector_alloc(&p_myLog->LogMessages, sizeof(LogMessage), 0);

@@ -1,6 +1,9 @@
 #include "GameLoop.h"
 
-#include "Utils/Time/Time.h"
+extern "C"
+{
+#include "Clock/Clock.h"
+}
 
 namespace _GameEngine
 {
@@ -13,7 +16,7 @@ namespace _GameEngine
 		{
 			p_gameLoop->TimeBetweenUpdates_mics = static_cast<int>(p_timeBetweenUpdates_mics);
 			p_gameLoop->AccumulatedElapsedTime_mics = 0;
-			p_gameLoop->PreviousUpdateTime_mics = _Utils::get_currentTime_mics();
+			p_gameLoop->PreviousUpdateTime_mics = core_currentTime_mics();
 		};
 
 		void GameLoop_free(GameLoop* p_gameLoop)
@@ -46,7 +49,7 @@ namespace _GameEngine
 
 		void update(GameLoop* p_gameLoop)
 		{
-			TimeClockPrecision l_currentTime = _Utils::get_currentTime_mics();
+			TimeClockPrecision l_currentTime = core_currentTime_mics();
 			TimeClockPrecision l_elapsed = l_currentTime - p_gameLoop->PreviousUpdateTime_mics;
 
 			if (l_elapsed > static_cast<TimeClockPrecision>(p_gameLoop->TimeBetweenUpdates_mics) * MAX_UPDATE_CALL_PER_FRAME)

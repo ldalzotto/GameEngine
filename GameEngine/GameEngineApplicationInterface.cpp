@@ -3,14 +3,6 @@
 
 #include "Render/Render.h"
 
-/*
-	{
-		_Utils::Observer* NewFrame;
-		_Utils::Observer* PreRender;
-		UpdateSequencer* UpdateSequencer;
-		std::function<void(float)>* SandboxUpdateHook;
-*/
-
 namespace _GameEngine
 {
 	void GameEngineApplicationInterface_build(GameEngineApplicationInterface* p_interface, GameEngineApplication* p_gameEngineApplication)

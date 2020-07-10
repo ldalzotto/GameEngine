@@ -2,6 +2,11 @@
 
 #include <functional>
 
+extern "C"
+{
+#include "Clock/Clock.h"
+}
+
 #include "GameLoop/GameLoop.h"
 #include "EngineSequencers/EngineSequencers.h"
 #include "Utils/Observer/Observer.h"
@@ -9,7 +14,6 @@
 #include "Physics/Physics.h"
 #include "Render/Render.h"
 #include "MyLog/MyLog.h"
-#include "Clock/Clock.h"
 #include "ECS/ECS.h"
 #include "Input/Input.h"
 
@@ -28,7 +32,7 @@ namespace _GameEngine
 
 		GameLoop GameLoop;
 		_Log::MyLog Log;
-		_Clock::Clock Clock;
+		Core_Clock Clock;
 		_Physics::Physics Physics;
 		_Render::Render Render;
 		_Input::Input Input;
