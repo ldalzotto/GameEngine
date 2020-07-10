@@ -4,7 +4,11 @@
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 
-#include "DataStructures/ArrayT.h"
+extern "C"
+{
+#include "DataStructures/GenericArray.h"
+#include "DataStructures/Specifications/Array.h"
+}
 
 namespace _GameEngine::_Math
 {
@@ -29,14 +33,17 @@ namespace _GameEngine::_Render
 		_Math::Vector3f Color;
 	};
 
+	typedef Core_GenericArray Array_GizmoVertex;
+
 	typedef uint16_t GizmoIndiceType;
+	typedef Core_GenericArray Array_GizmoIndices;
 
 	struct GizmoMesh
 	{
-		_Core::ArrayT<GizmoVertex> GizmoVerticesV2;
+		Array_GizmoVertex GizmoVerticesV2;
 		VulkanBuffer VertexBuffer;
 
-		_Core::ArrayT<GizmoIndiceType> GizmoIndicesV2;
+		Array_GizmoIndices GizmoIndicesV2;
 		VulkanBuffer IndicesBuffer;
 	};
 

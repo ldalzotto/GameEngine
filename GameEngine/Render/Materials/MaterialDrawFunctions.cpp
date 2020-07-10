@@ -22,13 +22,13 @@ namespace _GameEngine::_Render
 	void MaterialDrawFn_gizmoDraw(VkCommandBuffer p_commandBuffer, MaterialInstance*, RenderInterface* p_renderInterface)
 	{
 		GizmoMesh* l_gizmoMesh = &p_renderInterface->Gizmo->GizmoMesh;
-		if (l_gizmoMesh->GizmoVerticesV2.size() > 0)
+		if (l_gizmoMesh->GizmoVerticesV2.Size > 0)
 		{
 			VkBuffer l_vertexBuffers[] = { l_gizmoMesh->VertexBuffer.Buffer };
 			VkDeviceSize l_offsets[] = { 0 };
 			vkCmdBindVertexBuffers(p_commandBuffer, 0, 1, l_vertexBuffers, l_offsets);
 			vkCmdBindIndexBuffer(p_commandBuffer, l_gizmoMesh->IndicesBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
-			vkCmdDrawIndexed(p_commandBuffer, l_gizmoMesh->GizmoIndicesV2.size(), 1, 0, 0, 0);
+			vkCmdDrawIndexed(p_commandBuffer, l_gizmoMesh->GizmoIndicesV2.Size, 1, 0, 0, 0);
 		}
 	};
 }

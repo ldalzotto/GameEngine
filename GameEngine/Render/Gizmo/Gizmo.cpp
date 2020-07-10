@@ -1,6 +1,11 @@
 #include "Gizmo.h"
 #include "RenderInterface.h"
 
+extern "C"
+{
+#include "Functional/Vector/VectorWriter.h"
+}
+
 #include "Math/Box/BoxMath.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
@@ -26,10 +31,10 @@ namespace _GameEngine::_Render
 			l_bufferAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 			l_bufferAllocInfo.Size = sizeof(GizmoVertex) * p_maxVerticesNb;
 			VulkanBuffer_alloc(&p_gizmoMesh->VertexBuffer, &l_bufferAllocInfo, p_device);
-			p_gizmoMesh->GizmoVerticesV2.Array.Capacity = p_maxVerticesNb;
-			p_gizmoMesh->GizmoVerticesV2.Array.Size = 0;
-			p_gizmoMesh->GizmoVerticesV2.Array.ElementSize = sizeof(GizmoVertex);
-			VulkanBuffer_map(&p_gizmoMesh->VertexBuffer, p_device, &p_gizmoMesh->GizmoVerticesV2.Array.Memory, l_bufferAllocInfo.Size);
+			
+			void* l_gizmoVerticesBufferMemory;
+			VulkanBuffer_map(&p_gizmoMesh->VertexBuffer, p_device, &l_gizmoVerticesBufferMemory, l_bufferAllocInfo.Size);
+			p_gizmoMesh->GizmoVerticesV2 =	Core_array_fromCStyle(l_gizmoVerticesBufferMemory, sizeof(GizmoVertex), p_maxVerticesNb);
 		}
 
 		{
@@ -38,10 +43,10 @@ namespace _GameEngine::_Render
 			l_bufferAllocInfo.MemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 			l_bufferAllocInfo.Size = sizeof(GizmoIndiceType) * p_maxVerticesNb;
 			VulkanBuffer_alloc(&p_gizmoMesh->IndicesBuffer, &l_bufferAllocInfo, p_device);
-			p_gizmoMesh->GizmoIndicesV2.Array.Capacity = p_maxVerticesNb;
-			p_gizmoMesh->GizmoIndicesV2.Array.Size = 0;
-			p_gizmoMesh->GizmoIndicesV2.Array.ElementSize = sizeof(GizmoIndiceType);
-			VulkanBuffer_map(&p_gizmoMesh->IndicesBuffer, p_device, &p_gizmoMesh->GizmoIndicesV2.Array.Memory, l_bufferAllocInfo.Size);
+			
+			void* l_gizmoIndicesBufferMemory;
+			VulkanBuffer_map(&p_gizmoMesh->IndicesBuffer, p_device, &l_gizmoIndicesBufferMemory, l_bufferAllocInfo.Size);
+			p_gizmoMesh->GizmoIndicesV2 = Core_array_fromCStyle(l_gizmoIndicesBufferMemory, sizeof(GizmoIndiceType), p_maxVerticesNb);
 		}
 	};
 
@@ -56,8 +61,8 @@ namespace _GameEngine::_Render
 
 	void gizmoMesh_clearBuffer(GizmoMesh* p_gizmoMesh)
 	{
-		p_gizmoMesh->GizmoVerticesV2.clear();
-		p_gizmoMesh->GizmoIndicesV2.clear();
+		p_gizmoMesh->GizmoVerticesV2.Functions->Writer->Clear(&p_gizmoMesh->GizmoVerticesV2);
+		p_gizmoMesh->GizmoIndicesV2.Functions->Writer->Clear(&p_gizmoMesh->GizmoIndicesV2);
 	}
 
 	void Gizmo_alloc(Gizmo* p_gizmo, RenderInterface* p_renderInterface)
@@ -86,8 +91,8 @@ namespace _GameEngine::_Render
 
 	void Gizmo_drawLine_indices(Gizmo* p_gizmo, GizmoIndiceType& p_begin, GizmoIndiceType& p_end)
 	{
-		p_gizmo->GizmoMesh.GizmoIndicesV2.push_back(&p_begin);
-		p_gizmo->GizmoMesh.GizmoIndicesV2.push_back(&p_end);
+		p_gizmo->GizmoMesh.GizmoIndicesV2.Functions->Writer->PushBack(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_begin);
+		p_gizmo->GizmoMesh.GizmoIndicesV2.Functions->Writer->PushBack(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_end);
 	}
 
 	void Gizmo_pushVertex(Gizmo* p_gizmo, _Math::Vector3f& p_position, _Math::Vector3f& p_color, GizmoIndiceType* p_out_index)
@@ -95,8 +100,9 @@ namespace _GameEngine::_Render
 		GizmoVertex l_gizmoVertex{};
 		l_gizmoVertex.Position = p_position;
 		l_gizmoVertex.Color = p_color;
-		p_gizmo->GizmoMesh.GizmoVerticesV2.push_back(&l_gizmoVertex);
-		*p_out_index = static_cast<uint16_t>(p_gizmo->GizmoMesh.GizmoVerticesV2.size()) - 1;
+
+		p_gizmo->GizmoMesh.GizmoVerticesV2.Functions->Writer->PushBack(&p_gizmo->GizmoMesh.GizmoVerticesV2, &l_gizmoVertex);
+		*p_out_index = static_cast<uint16_t>(p_gizmo->GizmoMesh.GizmoVerticesV2.Size) - 1;
 	};
 
 	void Gizmo_drawPointV2(Gizmo* p_gizmo, _Math::Vector3f& p_point, _Math::Vector3f& p_color)
@@ -179,7 +185,6 @@ namespace _GameEngine::_Render
 
 	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, _Math::Matrix4x4f* p_localToWorldMatrix, bool p_withCenter, _Math::Vector3f* p_color)
 	{
-		_Core::ArrayT<_Math::Vector3f> l_points;
 		_Math::BoxPoints l_boxPoints;
 		_Math::Box_extractPoints(p_box, &l_boxPoints);
 		_Math::BoxPoints_mul(&l_boxPoints, p_localToWorldMatrix);
