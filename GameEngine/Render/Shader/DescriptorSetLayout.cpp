@@ -1,7 +1,11 @@
 #include "DescriptorSetLayout.h"
 
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
+
 #include <stdexcept>
-#include "MYLog/MYLog.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 

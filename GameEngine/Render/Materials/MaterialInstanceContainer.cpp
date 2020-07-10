@@ -1,7 +1,13 @@
 #include "MaterialInstanceContainer.h"
 
 #include <stdexcept>
-#include "MyLog/MyLog.h"
+
+extern "C"
+{
+#include "Log/LogFormatting.h"
+#include "Log/Log.h"
+}
+
 #include "DataStructures/ElementComparators.h"
 
 #include "RenderInterface.h"
@@ -116,7 +122,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 		if (p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.vector()->size() > 0)
 		{
-			MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, _Log::WARN, "Potential Memory leak. When the MaterialInstanceContainer is being freed, there was still materials or material instance with it."
+			MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, LOGLEVEL_WARN, "Potential Memory leak. When the MaterialInstanceContainer is being freed, there was still materials or material instance with it."
 				" It is recommended to free material instances manually before freeing the container.");
 		}
 #endif
@@ -139,7 +145,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 				if (p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.vector()->contains(Material_with_MaterialInstances_equals, l_materialInstances->Material))
 				{
-					MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, _Log::WARN, "Memory leak detected. When the MaterialInstanceContainer is being freed, releasing a Material resource didn't induce it's destruction.");
+					MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, LOGLEVEL_WARN, "Memory leak detected. When the MaterialInstanceContainer is being freed, releasing a Material resource didn't induce it's destruction.");
 				}
 #endif
 			}

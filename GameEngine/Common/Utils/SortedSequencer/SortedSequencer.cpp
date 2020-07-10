@@ -1,8 +1,12 @@
 #include "SortedSequencer.h"
 
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
+
 #include "DataStructures/ElementComparators.h"
 #include <stdexcept>
-#include "MYLog/MYLog.h"
 #include <limits>
 
 namespace _GameEngine::_Utils

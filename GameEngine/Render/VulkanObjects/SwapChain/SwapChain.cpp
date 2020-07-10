@@ -3,7 +3,10 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "MYLog/MYLog.h"
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
 
 #include "RenderInterface.h"
 #include "VulkanObjects/Hardware/Device/Device.h"

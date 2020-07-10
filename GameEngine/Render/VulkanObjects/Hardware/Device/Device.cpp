@@ -2,9 +2,9 @@
 
 extern "C"
 {
-#include "Include/CoreV2.h"
+#include "Functional/Hash/Hash.h"
+#include "Log/LogFormatting.h"
 }
-#include "MYLog/MYLog.h"
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Queue.h"
 

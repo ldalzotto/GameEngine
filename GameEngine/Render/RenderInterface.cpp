@@ -4,7 +4,7 @@
 
 namespace _GameEngine::_Render
 {
-	void RenderInterface_initialize(Render* p_render, _Log::MyLog* p_myLog)
+	void RenderInterface_initialize(Render* p_render, Core_Log* p_myLog)
 	{
 		RenderInterface* l_renderInterface = &p_render->RenderInterface;
 		l_renderInterface->MyLog = p_myLog;

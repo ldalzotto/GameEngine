@@ -2,10 +2,7 @@
 
 #include "vulkan/vulkan.h"
 
-namespace _GameEngine::_Log
-{
-	struct MyLog;
-}
+struct Core_Log;
 
 namespace _GameEngine::_Render
 {
@@ -58,7 +55,7 @@ namespace _GameEngine::_Render
 
 	struct RenderInterface
 	{
-		_Log::MyLog* MyLog;
+		Core_Log* MyLog;
 
 		RenderHookCallbacksInterface RenderHookCallbacksInterface;
 
@@ -83,5 +80,5 @@ namespace _GameEngine::_Render
 		Gizmo* Gizmo;
 	};
 
-	void RenderInterface_initialize(Render* p_render, _Log::MyLog* p_myLog);
+	void RenderInterface_initialize(Render* p_render, Core_Log* p_myLog);
 }

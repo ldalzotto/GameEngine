@@ -13,10 +13,7 @@ namespace _GameEngine::_Render
 	struct Window;
 }
 
-namespace _GameEngine::_Log
-{
-	struct MyLog;
-}
+struct Core_Log;
 
 namespace _GameEngine::_Input
 {
@@ -183,7 +180,7 @@ namespace _GameEngine::_Input
 	struct Input
 	{
 		_Render::Window* Window;
-		_Log::MyLog* Log;
+		Core_Log* Log;
 
 		std::vector<KeyStateFlag> InputState;
 		std::queue<InputEvent> InputEventsLastFrame;
@@ -192,7 +189,7 @@ namespace _GameEngine::_Input
 		InputMouse InputMouse;
 	};
 
-	void Input_build(Input* p_input, _Render::Window* p_window, _Log::MyLog* Log);
+	void Input_build(Input* p_input, _Render::Window* p_window, Core_Log* Log);
 	void Input_free(Input* p_input);
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);

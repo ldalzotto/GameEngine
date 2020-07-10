@@ -16,7 +16,7 @@ namespace _GameEngine
 
 		GameEngineApplicationInterface_build(&l_gameEngineApplication->GameEngineApplicationInterface, l_gameEngineApplication);
 
-		_Log::MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
+		MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
 		UpdateSequencer_alloc(&l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->GameEngineApplicationInterface);
 		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window, &l_gameEngineApplication->Log);
 		_Physics::Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
@@ -39,7 +39,7 @@ namespace _GameEngine
 		_Physics::Physics_free(&p_app->Physics);
 		_Input::Input_free(&p_app->Input);
 		UpdateSequencer_free(&p_app->UpdateSequencer);
-		_Log::MyLog_free(&p_app->Log);
+		MyLog_free(&p_app->Log);
 
 		delete p_app;
 	}
@@ -82,7 +82,7 @@ namespace _GameEngine
 	void app_endOfFrame(void* p_closure)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		_Log::MyLog_processLogs(&l_app->Log);
+		MyLog_processLogs(&l_app->Log);
 	};
 
 	void app_cleanup(GameEngineApplication* p_app)

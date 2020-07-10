@@ -2,7 +2,8 @@
 
 extern "C"
 {
-#include "Include/CoreV2.h"
+#include "Algorithm/String/StringAlgorithm.h"
+#include "Functional/ToString/ToString.h"
 }
 
 namespace _GameEngine::_Math
@@ -11,7 +12,7 @@ namespace _GameEngine::_Math
 	Vector3f UP{ 0.0f, 1.0f, 0.0f };
 	Vector3f FORWARD{ 0.0f, 0.0f, 1.0f };
 
-	void Vector3f_toString(Vector3f* p_vector, Core_String* p_string)
+	void Vector3f_toString(Vector3f* p_vector, Core_GenericArray* p_string)
 	{
 		Core_string_append(p_string, "[x : ");
 		Core_toString_float(p_string, &p_vector->x);

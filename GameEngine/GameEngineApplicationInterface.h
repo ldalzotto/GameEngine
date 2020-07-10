@@ -3,13 +3,13 @@
 #include <functional>
 
 struct Core_Clock;
+struct Core_Log;
 
 namespace _GameEngine
 {
 	struct GameEngineApplication;
 	struct GameLoop;
 	struct UpdateSequencer;
-	namespace _Log { struct MyLog; }
 	namespace _Render { struct RenderInterface; }
 	namespace _Input { struct Input; }
 	namespace _ECS { struct ECS; }
@@ -26,7 +26,7 @@ namespace _GameEngine
 		std::function<void(float)>* SandboxUpdateHook;
 
 		GameLoop* GameLoop;
-		_Log::MyLog* Log;
+		Core_Log* Log;
 		Core_Clock* Clock;
 		_Render::RenderInterface* RenderInterface;
 		_Input::Input* Input;

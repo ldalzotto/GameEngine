@@ -4,7 +4,11 @@
 
 #include "GameEngineApplicationInterface.h"
 
-#include "MyLog/MyLog.h"
+extern "C"
+{
+#include "Log/Log.h"
+}
+
 #include "imgui.h"
 
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
@@ -32,7 +36,7 @@ namespace _GameEngineEditor
 			DebugCommand_handleError(DebugCommand_parse(&l_debugCommand, &l_consoleInput), &l_return);
 			if (!l_return.empty())
 			{
-				MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, _Log::WARN, (char*)l_return.c_str());
+				MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, LOGLEVEL_WARN, (char*)l_return.c_str());
 			}
 			else
 			{
@@ -47,7 +51,7 @@ namespace _GameEngineEditor
 	{
 		if (p_debugCommand->Verb == "print")
 		{
-			MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, _Log::WARN, (char*)p_debugCommand->Arguments.at(0).Value.c_str());
+			MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, LOGLEVEL_WARN, (char*)p_debugCommand->Arguments.at(0).Value.c_str());
 		}
 		else if (p_debugCommand->Verb == "transform_show")
 		{

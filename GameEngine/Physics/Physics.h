@@ -3,10 +3,7 @@
 #include "PhysicsInterface.h"
 #include "World/World.h"
 
-namespace _GameEngine::_Log
-{
-	struct MyLog;
-}
+struct Core_Log;
 
 namespace _GameEngine::_Physics
 {
@@ -16,6 +13,6 @@ namespace _GameEngine::_Physics
 		World World;
 	};
 
-	void Physics_alloc(Physics* p_physics, _Log::MyLog* p_myLog);
+	void Physics_alloc(Physics* p_physics, Core_Log* p_myLog);
 	void Physics_free(Physics* p_physics);
 }

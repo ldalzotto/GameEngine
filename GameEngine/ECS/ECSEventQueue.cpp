@@ -1,7 +1,10 @@
 #include "ECSEventQueue.h"
 
 #include <cstdlib>
-#include "MyLog/MyLog.h"
+extern "C"
+{
+#include "Log/Log.h"
+}
 
 #include "ECS/ECS.h"
 
@@ -19,7 +22,7 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (p_ecsEventQueue->Messages.size() > 0)
 		{
-			MYLOG_PUSH(p_ecsEventQueue->ECS->MyLog, _Log::WARN, "Potential mmory leak. When the ECSEventQueue is beeing freed, there was still messages pending. Consider corretcly processing messages before free.");
+			MYLOG_PUSH(p_ecsEventQueue->ECS->MyLog, LOGLEVEL_WARN, "Potential mmory leak. When the ECSEventQueue is beeing freed, there was still messages pending. Consider corretcly processing messages before free.");
 		}
 #endif // !NDEBUG
 

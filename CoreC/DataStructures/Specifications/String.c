@@ -1,5 +1,6 @@
 #include "String.h"
 
+#include "DataStructures/GenericArray.h"
 #include "Functional/Vector/VectorWriter.h"
 #include "Functional/Vector/VectorAccessor.h"
 

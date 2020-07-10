@@ -9,7 +9,10 @@
 #include "Texture/Texture.h"
 
 #include "vulkan/vulkan.h"
-#include "MYLog/MYLog.h"
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
 
 namespace _GameEngine::_Render
 {

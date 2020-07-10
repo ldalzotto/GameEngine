@@ -1,7 +1,10 @@
 #include "CommandBufferSingleExecution.h"
 
 #include <stdexcept>
-#include "MYLog/MYLog.h"
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 

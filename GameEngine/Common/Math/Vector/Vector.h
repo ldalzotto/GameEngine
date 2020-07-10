@@ -1,9 +1,6 @@
 #pragma once
 
-extern "C"
-{
-#include "DataStructures/Specifications/String.h"
-}
+struct Core_GenericArray;
 
 namespace _GameEngine::_Math
 {
@@ -30,7 +27,7 @@ namespace _GameEngine::_Math
 	extern Vector3f UP;
 	extern Vector3f FORWARD;
 
-	void Vector3f_toString(Vector3f* p_vector, Core_String* p_string);
+	void Vector3f_toString(Vector3f* p_vector, Core_GenericArray* p_string);
 
 	struct Vector4f
 	{

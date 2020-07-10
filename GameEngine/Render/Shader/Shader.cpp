@@ -4,7 +4,10 @@
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 
-#include "MYLog/MYLog.h"
+extern "C"
+{
+#include "Log/Log.h"
+}
 #include "Utils/File/File.h"
 
 namespace _GameEngine::_Render

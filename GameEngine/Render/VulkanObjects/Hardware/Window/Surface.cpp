@@ -4,7 +4,10 @@
 #include "Window.h"
 
 #include <stdexcept>
-#include "MYLog/MYLog.h"
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
 #include "Includes/GLFWIncludes.h"
 
 namespace _GameEngine::_Render

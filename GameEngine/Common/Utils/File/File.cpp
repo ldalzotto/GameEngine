@@ -1,6 +1,9 @@
 #include "File.h"
 
-#include "MYLog/MYLog.h"
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
 
 #include <stdexcept>
 #include <fstream>

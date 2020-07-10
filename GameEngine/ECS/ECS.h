@@ -5,19 +5,13 @@
 #include "System.h"
 #include "ECSEventQueue.h"
 
-namespace _GameEngine
-{
-	namespace _Log
-	{
-		struct MyLog;
-	}
-}
+struct Core_Log;
 
 namespace _GameEngine::_ECS
 {
 	struct ECS
 	{
-		_Log::MyLog* MyLog;
+		Core_Log* MyLog;
 
 		ECSEventQueue EventQueue;
 		EntityContainer EntityContainer;
@@ -25,6 +19,6 @@ namespace _GameEngine::_ECS
 		SystemContainer SystemContainer;
 	};
 
-	void EntityComponent_build(ECS* p_ecs, _Log::MyLog* p_myLog);
+	void EntityComponent_build(ECS* p_ecs, Core_Log* p_myLog);
 	void EntityComponent_free(ECS* p_entityComponent);
 };

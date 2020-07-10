@@ -2,7 +2,6 @@
 
 #include "GameEngineApplicationInterface.h"
 #include "Clock/Clock.h"
-#include "MyLog/MyLog.h"
 
 #include "Common/Utils/SortedSequencer/SortedSequencerMacros.h"
 
@@ -43,8 +42,6 @@ namespace _GameEngine::_ECS
 		_ECS::SystemV2* l_transformRotateSystem = (_ECS::SystemV2*)p_transformRotateSystem;
 
 		GameEngineApplicationInterface* l_gameEngineInterface = (GameEngineApplicationInterface*)p_gameEngineInterface;
-
-		// _Log::MyLog_pushLog(l_gameEngineInterface->Log, _Log::LogLevel::DEBUG, "This is a debug");
 		
 		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
 		{

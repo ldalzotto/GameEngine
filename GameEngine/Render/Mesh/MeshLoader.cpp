@@ -4,6 +4,7 @@
 
 extern "C"
 {
+#include "Log/LogFormatting.h"
 #include "DataStructures/Specifications/String.h"
 #include "Algorithm/String/StringAlgorithm.h"
 }
@@ -12,7 +13,6 @@ extern "C"
 #include <Assimp/scene.h>
 #include <Assimp/postprocess.h>
 
-#include "MYLog/MYLog.h"
 
 namespace _GameEngine::_Render
 {

@@ -3,6 +3,7 @@
 extern "C"
 {
 #include "Include/CoreV2.h"
+#include "Log/Log.h"
 }
 
 #include "GameEngineApplication.h"
@@ -28,8 +29,6 @@ extern "C"
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
 
-#include "MyLog/MyLog.h"
-
 #include "Math/Quaternion/QuaternionMath.h"
 
 #include <iostream>
@@ -53,7 +52,7 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-		_Log::MyLog_pushLog(&App->Log, _Log::ERROR, __FILE__, __LINE__, (char*)e.what());
+		MyLog_pushLog(&App->Log, LOGLEVEL_ERROR, __FILE__, __LINE__, (char*)e.what());
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		CoreLib_ErrorHandler_terminate();
@@ -61,7 +60,7 @@ int main()
 	}
 	catch (...)
 	{
-		_Log::MyLog_pushLog(&App->Log, _Log::ERROR, __FILE__, __LINE__, "Unexpected Error");
+		MyLog_pushLog(&App->Log, LOGLEVEL_ERROR, __FILE__, __LINE__, "Unexpected Error");
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		CoreLib_ErrorHandler_terminate();

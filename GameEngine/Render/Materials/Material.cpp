@@ -3,10 +3,10 @@
 #include <array>
 #include <stdexcept>
 
-#include "MYLog/MYLog.h"
 
 extern "C"
 {
+#include "Log/LogFormatting.h"
 #include "Functional/Hash/Hash.h"
 }
 

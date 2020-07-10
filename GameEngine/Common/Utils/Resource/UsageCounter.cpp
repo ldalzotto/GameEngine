@@ -1,7 +1,11 @@
 #include "UsageCounter.h"
 
 #include <stdexcept>
-#include "MyLog/MyLog.h"
+
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
 
 namespace _GameEngine::_Utils
 {

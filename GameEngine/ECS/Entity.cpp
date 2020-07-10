@@ -5,10 +5,12 @@
 extern "C"
 {
 #include "Algorithm/String/StringAlgorithm.h"
+#include "Log/LogFormatting.h"
+#include "Log/Log.h"
+#include "DataStructures/Specifications/String.h"
 }
 
 #include "ECS/ECS.h"
-#include "MyLog/MyLog.h"
 
 #include "DataStructures/ElementComparators.h"
 
@@ -119,7 +121,7 @@ namespace _GameEngine::_ECS
 		EntityContainer* l_entityContainer = &(*p_entity)->ECS->EntityContainer;
 		if (l_entityContainer->Entities.get(Entity_comparator, p_entity))
 		{
-			MYLOG_PUSH((*p_entity)->ECS->MyLog, _Log::WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
+			MYLOG_PUSH((*p_entity)->ECS->MyLog, LOGLEVEL_WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
 		}
 #endif
 

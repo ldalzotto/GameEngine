@@ -3,6 +3,7 @@
 
 extern "C"
 {
+#include "Log/LogFormatting.h"
 #include "DataStructures/Specifications/String.h"
 #include "Algorithm/String/StringAlgorithm.h"
 #include "Functional/ToString/ToString.h"
@@ -10,7 +11,6 @@ extern "C"
 
 #include <functional>
 #include <stdexcept>
-#include "MYLog/MYLog.h"
 
 #include "RenderInterface.h"
 #include "Resources/MeshResourceProvider.h"
