@@ -7,13 +7,13 @@ namespace _GameEngine::_Log
 	void MyLog_build(MyLog* p_myLog, _Clock::Clock* p_clock)
 	{
 		p_myLog->Clock = p_clock;
-		_CoreV3::Alloc(&p_myLog->LogMessages, 0);
+		Core_Vector_alloc(&p_myLog->LogMessages, sizeof(LogMessage), 0);
 	};
 
 	void MyLog_free(MyLog* p_myLog)
 	{
 		MyLog_processLogs(p_myLog);
-		_CoreV3::Free(&p_myLog->LogMessages);
+		Core_GenericArray_free(&p_myLog->LogMessages);
 	};
 
 	void logMessage_free(LogMessage* p_logMessage)
@@ -21,7 +21,7 @@ namespace _GameEngine::_Log
 		//	free(p_logMessage->Message);
 	};
 
-	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, _CoreV3::Char* p_filePath, int p_line, _CoreV3::Char* p_message)
+	void MyLog_pushLog(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, char* p_message)
 	{
 		LogMessage l_logMessage{};
 		l_logMessage.LogLevel = p_logLevel;
@@ -29,27 +29,27 @@ namespace _GameEngine::_Log
 		l_logMessage.FileLine = p_line;
 
 		{
-			strcpy_s(l_logMessage.Message, p_message);
+			strcpy((char*)l_logMessage.Message, p_message);
 		}
 
 		{
 			l_logMessage.FrameNb = p_myLog->Clock->FrameCount;
 		}
 
-		_CoreV3::PushBack(&p_myLog->LogMessages, &l_logMessage);
+		p_myLog->LogMessages.Functions->Writer->PushBack(&p_myLog->LogMessages, &l_logMessage);
 	};
 
-	void MyLog_pushLog_string(MyLog* p_myLog, LogLevel p_logLevel, _CoreV3::Char* p_filePath, int p_line, _CoreV3::String* p_message)
+	void MyLog_pushLog_string(MyLog* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, Core_GenericArray* p_message)
 	{
-		MyLog_pushLog(p_myLog, p_logLevel, p_filePath, p_line, p_message->Memory);
-		Free(p_message);
+		MyLog_pushLog(p_myLog, p_logLevel, p_filePath, p_line, (char*)p_message->Memory);
+		Core_GenericArray_free(p_message);
 	};
 
 	void MyLog_processLogs(MyLog* p_myLog)
 	{
 		for (size_t i = 0; i < p_myLog->LogMessages.Size; i++)
 		{
-			LogMessage* l_message = At(&p_myLog->LogMessages, i);
+			LogMessage* l_message = (LogMessage*)p_myLog->LogMessages.Functions->Accessor->At(&p_myLog->LogMessages, i);
 			char* l_logLevemMessage = nullptr;
 
 			switch (l_message->LogLevel)
@@ -96,7 +96,7 @@ namespace _GameEngine::_Log
 			logMessage_free(l_message);
 		}
 
-		_CoreV3::Clear(&p_myLog->LogMessages);
+		p_myLog->LogMessages.Functions->Writer->Clear(&p_myLog->LogMessages);
 
 	};
 
@@ -105,15 +105,21 @@ namespace _GameEngine::_Log
 		return p_file + " " + std::to_string(p_line) + " : " + p_message;
 	};
 
-	_CoreV3::String MyLog_formatError_string(const char* p_file, int p_line, _CoreV3::String&& p_message)
+	Core_GenericArray MyLog_formatError_string(const char* p_file, int p_line, Core_GenericArray&& p_message)
 	{
-		_CoreV3::String l_errorMessage = _CoreV3::Alloc<char>(0);
-		_CoreV3::String l_lineString = _CoreV3::ToString(&p_line);
-		
-		_CoreV3::PushBackArrays(&l_errorMessage, STR(p_file), &l_lineString, &p_message);
+		Core_GenericArray l_errorMessage;
+		Core_string_alloc(&l_errorMessage, 0);
 
-		Free(&l_lineString);
-		Free(&p_message);
+		Core_GenericArray l_lineString;
+		Core_string_alloc(&l_lineString, 0);
+
+		Core_toString_int(&l_lineString, &p_line);
+		
+		Core_string_append(&l_errorMessage, (char*)l_lineString.Memory);
+		Core_string_append(&l_errorMessage, (char*)p_message.Memory);
+
+		Core_GenericArray_free(&l_lineString);
+		Core_GenericArray_free(&p_message);
 		return std::move(l_errorMessage);
 	};
 }

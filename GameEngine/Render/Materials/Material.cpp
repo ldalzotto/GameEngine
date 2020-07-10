@@ -171,17 +171,16 @@ namespace _GameEngine::_Render
 		}
 
 		l_graphicsPipelineAllocInfo.PrimitiveTopology = p_defaultMaterial->RenderingSpecifications.PrimitiveTopologyOverride;
-				
+
 		return l_graphicsPipelineAllocInfo;
 	};
 
-}
-
-
-namespace _GameEngine::_Render
-{
 	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey)
 	{
-		return _CoreV3::HashCombine(0, STR(p_materialUniqueKey->VertexShaderPath.c_str()), STR(p_materialUniqueKey->FragmentShaderPath.c_str()));
+		return
+			Core_HashCombine_string(
+				Core_HashCombine_string(0, (char*)p_materialUniqueKey->FragmentShaderPath.c_str())
+				, (char*)p_materialUniqueKey->VertexShaderPath.c_str());
 	};
+
 }

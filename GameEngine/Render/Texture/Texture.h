@@ -24,6 +24,8 @@ namespace _GameEngine::_Render
 		std::string TexturePath;
 	};
 
+	size_t TextureUniqueKey_Hash(TextureUniqueKey* p_key);
+
 	struct TextureInfo
 	{
 		VkImageType ImageType;
@@ -97,12 +99,4 @@ namespace _GameEngine::_Render
 	void Texture_free(Texture** p_texture, RenderInterface* p_renderInterface);
 
 	VkImageSubresourceRange Texture_buildSubResource(Texture* p_texture);
-}
-
-#include "CoreV3Include.hpp"
-
-namespace _CoreV3
-{
-	template <>
-	extern size_t Hash<_GameEngine::_Render::TextureUniqueKey>(_GameEngine::_Render::TextureUniqueKey* p_textureUniqueKeu);
 }

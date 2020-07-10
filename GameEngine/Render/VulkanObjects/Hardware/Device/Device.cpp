@@ -1,5 +1,9 @@
-
 #include "Device.h"
+
+extern "C"
+{
+#include "Include/CoreV2.h"
+}
 #include "MYLog/MYLog.h"
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Queue.h"
@@ -136,7 +140,7 @@ namespace _GameEngine::_Render
 
 	bool Device_isFormatSupported(Device* p_device, FormatSupportKey* p_formatSupportKey)
 	{
-		size_t p_formatSupportHash = _CoreV3::Hash(p_formatSupportKey);
+		size_t p_formatSupportHash = FormatSupportKey_buildHashKey(p_formatSupportKey);
 
 		if (!p_device->PhysicalDevice.ImageFormatSupportCache.contains(p_formatSupportHash))
 		{
@@ -157,13 +161,9 @@ namespace _GameEngine::_Render
 
 		return p_device->PhysicalDevice.ImageFormatSupportCache[p_formatSupportHash];
 	};
-}
 
-namespace _CoreV3
-{
-	template <>
-	size_t Hash<_GameEngine::_Render::FormatSupportKey>(_GameEngine::_Render::FormatSupportKey* p_formatSupportKey)
+	size_t FormatSupportKey_buildHashKey(FormatSupportKey* p_formatSupportKey)
 	{
-		return HashCombine(0, &p_formatSupportKey->Format, &p_formatSupportKey->FormatFeature, &p_formatSupportKey->ImageTiling);
+		return Core_HashCombine_uint(Core_HashCombine_uint(Core_HashCombine_uint(0, (unsigned int*)&p_formatSupportKey->FormatFeature), (unsigned int*)&p_formatSupportKey->Format), (unsigned int*)&p_formatSupportKey->ImageTiling);
 	};
 }

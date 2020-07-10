@@ -2,6 +2,11 @@
 
 #include <stdexcept>
 
+extern "C"
+{
+#include "Include/CoreV2.h"
+}
+
 #include "stb_image.h"
 #include "MyLog/MyLog.h"
 
@@ -337,14 +342,9 @@ namespace _GameEngine::_Render
 			TextureSwapChainSizeSynchronizer_removeSynchronizer(p_renderInterface->TextureSwapChainSizeSynchronizer, p_texture);
 		}
 	}
-}
 
-
-namespace _CoreV3
-{
-	template <>
-	size_t Hash<_GameEngine::_Render::TextureUniqueKey>(_GameEngine::_Render::TextureUniqueKey* p_textureUniqueKeu)
+	size_t TextureUniqueKey_Hash(TextureUniqueKey* p_key)
 	{
-		return Hash(STR(p_textureUniqueKeu->TexturePath.c_str()));
+		return Core_HashCombine_string(0, (char*)p_key->TexturePath.c_str());
 	};
 }

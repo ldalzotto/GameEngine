@@ -1,5 +1,10 @@
 #include "SandboxApplication.h"
 
+extern "C"
+{
+#include "Include/CoreV2.h"
+}
+
 #include "GameEngineApplication.h"
 #include "GameEngineEditor.h"
 
@@ -40,6 +45,8 @@ void SandboxApplication_update(float p_delta);
 
 int main()
 {
+	CoreLib_ErrorHandler_initialize();
+
 	App = app_alloc(SandboxApplication_update);
 	App_Editor = _GameEngineEditor::GameEngineEditor_alloc(&App->GameEngineApplicationInterface);
 
@@ -52,6 +59,7 @@ int main()
 		_Log::MyLog_pushLog(&App->Log, _Log::ERROR, __FILE__, __LINE__, (char*)e.what());
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
+		CoreLib_ErrorHandler_terminate();
 		return EXIT_FAILURE;
 	}
 	catch (...)
@@ -59,11 +67,13 @@ int main()
 		_Log::MyLog_pushLog(&App->Log, _Log::ERROR, __FILE__, __LINE__, "Unexpected Error");
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
+		CoreLib_ErrorHandler_terminate();
 		return EXIT_FAILURE;
 	}
 
 	_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 	app_free(App);
+	CoreLib_ErrorHandler_terminate();
 	return EXIT_SUCCESS;
 };
 

@@ -7,10 +7,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(BUILD_TYPE "")
 
 add_subdirectory(ExternalDependencies)
-add_subdirectory(CoreV3)
+add_subdirectory(CoreC)
 add_subdirectory(GameEngine)
 add_subdirectory(GameEngine_Editor)
 
-add_subdirectory(CoreV3Test)
 add_subdirectory(SandboxApplication)
 add_subdirectory(Test)

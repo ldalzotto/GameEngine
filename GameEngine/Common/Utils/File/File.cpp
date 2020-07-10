@@ -1,6 +1,5 @@
 #include "File.h"
 
-#include "DataStructures/StringAlgorithm.h"
 #include "MYLog/MYLog.h"
 
 #include <stdexcept>
@@ -9,22 +8,23 @@
 
 namespace _GameEngine::_Utils
 {
-	void File_readFileV2(_CoreV3::ArrayT<char>* p_absoluteFilePath, _CoreV3::FixedString* out_file)
+	void File_readFileV2(Core_GenericArray* p_absoluteFilePath, Core_GenericArray* out_file)
 	{
-		std::ifstream file(p_absoluteFilePath->Memory, std::ios::ate | std::ios::binary);
+		std::ifstream file((char*)p_absoluteFilePath->Memory, std::ios::ate | std::ios::binary);
 
 		if (!file.is_open())
 		{
-			_CoreV3::String l_error = _CoreV3::PushBackArrays(_CoreV3::Alloc<char>(20), STR("Failed to open file : "), (_CoreV3::GenericArray*) p_absoluteFilePath);
-			throw std::runtime_error(l_error.Memory);
+			Core_GenericArray l_error; Core_string_alloc(&l_error, 0);
+			Core_string_append(&l_error, "Failed to open file : "); Core_string_append(&l_error, (char*)p_absoluteFilePath->Memory);
+			throw std::runtime_error((char*)l_error.Memory);
 		}
 
 		size_t l_fileSize = (size_t)file.tellg();
-		_CoreV3::Alloc(out_file, l_fileSize);
+		Core_Array_alloc(out_file, sizeof(char), l_fileSize);
 		out_file->Size = out_file->Capacity;
 		
 		file.seekg(0);
-		file.read(out_file->Memory, l_fileSize);
+		file.read((char*)out_file->Memory, l_fileSize);
 		file.close();
 	};
 }

@@ -1,5 +1,9 @@
 #include "MeshResourceProvider.h"
 
+extern "C"
+{
+#include "Include/CoreV2.h"
+}
 #include "MyLog/MyLog.h"
 
 #include "RenderInterface.h"
@@ -12,7 +16,7 @@ namespace _GameEngine::_Render
 	{
 		MeshUniqueKey l_meshUniqueKey{};
 		l_meshUniqueKey.MeshAssetPath = p_meshResourceProviderResourceInfo->Meshpath;
-		size_t l_hash = _CoreV3::Hash(&l_meshUniqueKey);
+		size_t l_hash = MeshUniqueKey_Hash(&l_meshUniqueKey);
 
 		if (!p_meshResourceProvider->MeshResources.contains(l_hash))
 		{
@@ -47,7 +51,7 @@ namespace _GameEngine::_Render
 
 	void MeshResourceProvider_ReleaseResource(MeshResourceProvider* p_meshResourceProvider, MeshUniqueKey* p_key)
 	{
-		size_t l_hash = _CoreV3::Hash(p_key);
+		size_t l_hash = MeshUniqueKey_Hash(p_key);
 		MeshResourceWithCounter* l_resourceWithCounter = &p_meshResourceProvider->MeshResources.at(l_hash);
 		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)

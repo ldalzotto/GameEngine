@@ -7,8 +7,6 @@
 #include "MYLog/MYLog.h"
 #include "Utils/File/File.h"
 
-using namespace _CoreV3;
-
 namespace _GameEngine::_Render
 {
 
@@ -35,8 +33,8 @@ namespace _GameEngine::_Render
 	VkShaderModule Shader_allocateShaderModule(Shader* p_shader, Device* p_device)
 	{
 		VkShaderModule l_shaderModule;
-		ArrayT<char> l_compiledShader;
-		ArrayT<Char> l_shaderPath = Convert<Char*, ArrayT<Char>>(STR(p_shader->ShaderPath.c_str()));
+		Core_GenericArray l_compiledShader;
+		Core_GenericArray l_shaderPath = Core_array_fromCStyle((void*)p_shader->ShaderPath.c_str(), sizeof(char), strlen(p_shader->ShaderPath.c_str()));
 		_Utils::File_readFileV2(&l_shaderPath, &l_compiledShader);
 		VkShaderModuleCreateInfo l_shaderModuleCreateInfo{};
 		l_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

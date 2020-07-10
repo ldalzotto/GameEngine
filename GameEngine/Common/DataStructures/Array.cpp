@@ -1,6 +1,6 @@
 #include "Array.h"
 
-#include <stdlib.h>
+#include <string.h>
 #include <cstdint>
 #include <string>
 

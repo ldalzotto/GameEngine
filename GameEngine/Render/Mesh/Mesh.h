@@ -27,6 +27,8 @@ namespace _GameEngine::_Render
 		std::string MeshAssetPath;
 	};
 
+	size_t MeshUniqueKey_Hash(MeshUniqueKey* p_key);
+
 	struct Mesh
 	{
 		MeshUniqueKey MeshUniqueKey;
@@ -53,14 +55,4 @@ namespace _GameEngine::_Render
 
 	Mesh* Mesh_allocProcedural(MeshAllocProceduralInfo* p_meshAllocProceduralInfo);
 	void Mesh_free(Mesh** p_mesh, Device* p_device);
-}
-
-
-
-#include "CoreV3Include.hpp"
-
-namespace _CoreV3
-{
-	template <>
-	extern size_t Hash<_GameEngine::_Render::MeshUniqueKey>(_GameEngine::_Render::MeshUniqueKey* p_meshUniqueKey);
 }

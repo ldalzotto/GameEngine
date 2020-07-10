@@ -1,5 +1,9 @@
 #include "TextureResourceProvider.h"
 
+extern "C"
+{
+#include "Include/CoreV2.h"
+}
 #include "MyLog/MyLog.h"
 #include "RenderInterface.h"
 
@@ -8,7 +12,7 @@ namespace _GameEngine::_Render
 
 	Texture* TextureResourceProvider_UseResource(TextureResourceProvider* p_textureResourceProvider, TextureUniqueKey* p_key)
 	{
-		size_t l_hash = _CoreV3::Hash(p_key);
+		size_t l_hash = TextureUniqueKey_Hash(p_key);
 
 		if (!p_textureResourceProvider->TextureResources.contains(l_hash))
 		{
@@ -35,7 +39,7 @@ namespace _GameEngine::_Render
 
 	void TextureResourceProvider_ReleaseResource(TextureResourceProvider* p_textureResourceProvider, TextureUniqueKey* p_key)
 	{
-		size_t l_hash = _CoreV3::Hash(p_key);
+		size_t l_hash = TextureUniqueKey_Hash(p_key);
 		TextureResourceWithCounter* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
 		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
 		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)

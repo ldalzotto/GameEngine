@@ -1,9 +1,11 @@
 #pragma once
 
-#include "CoreV3Include.hpp"
+extern "C"
+{
+#include "Include/CoreV2.h"
+}
 
 namespace _GameEngine::_Utils
 {
-	void File_readFileV2(_CoreV3::ArrayT<char>* p_absoluteFilePath, _CoreV3::FixedString* out_file);
-	
+	void File_readFileV2(Core_GenericArray* p_absoluteFilePath, Core_GenericArray* out_file);
 }
