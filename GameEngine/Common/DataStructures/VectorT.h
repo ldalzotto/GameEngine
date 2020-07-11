@@ -48,15 +48,4 @@ namespace _GameEngine::_Core
 
 	};
 
-	template <class T>
-	struct SortedVectorT
-	{
-		SortedVector SortedVector;
-
-		void alloc(size_t p_initialCapacity, short(*p_sortComparator)(T*, T*)) { SortedVector_alloc(&SortedVector, p_initialCapacity, sizeof(T), (SortElementComparator)p_sortComparator); }
-		void free() { SortedVector_free(&SortedVector); }
-		void push_back(T* p_value) { SortedVector_pushBack(&SortedVector, p_value); }
-		VectorT<T>* vector() { return (VectorT<T>*)&SortedVector.Vector; }
-	};
-
 }

@@ -294,34 +294,4 @@ namespace _GameEngine::_Core
 		}
 	};
 
-	void SortedVector_alloc(SortedVector* p_vector, size_t p_initialCapacity, size_t p_elementSize, SortElementComparator p_sortComparator)
-	{
-		p_vector->SortComparator = p_sortComparator;
-		Vector_alloc(&p_vector->Vector, p_initialCapacity, p_elementSize);
-	};
-
-	void SortedVector_free(SortedVector* p_vector)
-	{
-		Vector_free(&p_vector->Vector);
-	};
-
-	void SortedVector_pushBack(SortedVector* p_vector, void* p_value)
-	{
-		size_t l_insertIndex = 0;
-		for (size_t i = 0; i < p_vector->Vector.Size; i++)
-		{
-			short int l_compareValue = p_vector->SortComparator(p_value, Vector_at_unchecked(&p_vector->Vector, i));
-			if (l_compareValue >= 0)
-			{
-				l_insertIndex = i + 1;
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		Vector_insertAt(&p_vector->Vector, p_value, l_insertIndex);
-	};
-
 }

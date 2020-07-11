@@ -43,3 +43,8 @@ Core_ReturnCodes Core_GenericArray_isertArrayAt_realloc(Core_GenericArray* p_gen
 Core_ReturnCodes Core_GenericArray_isertArrayAt_noRealloc(Core_GenericArray* p_genericArray, Core_GenericArray* p_insertedArray, size_t p_index);
 
 Core_GenericArray Core_GenericArray_deepCopy(Core_GenericArray* p_genericArray);
+
+
+#define Core_GenericArray_BuildIterator(GenericArrayPtr) (GenericArrayPtr)->Functions->BuildIterator(GenericArrayPtr);
+#define Core_GenericArray_At(GenericArrayPtr, Index) (GenericArrayPtr)->Functions->Accessor->At(GenericArrayPtr, (Index))
+#define Core_GenericArray_PushBack(GenericArrayPtr, Value) (GenericArrayPtr)->Functions->Writer->PushBack(GenericArrayPtr, (Value))

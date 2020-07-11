@@ -1,5 +1,7 @@
 #include "SortedVector.h"
 
+#include <string.h>
+
 #include "ErrorHandling/Errorhandling.h"
 #include "DataStructures/GenericArray.h"
 #include "Functional/Vector/VectorAccessor.h"
@@ -38,7 +40,8 @@ static const Core_VectorWriter Core_sortedVector_writer = {
 	   Core_GenericArray_swap,
 	   NULL, //TODO
 	   NULL, //TODO
-	   NULL //TODO
+	   Core_GenericArray_erase,
+	   Core_GenericArray_eraseCompare
 };
 
 static const Core_GenericArray_functions Core_sortedVector_functions =
@@ -57,3 +60,11 @@ void Core_SortedVector_free(Core_SortedVector* p_sortedVector)
 {
 	Core_GenericArray_free(&p_sortedVector->GenericArray);
 };
+
+Core_SortedVector Core_SortedVector_deepCopy(Core_SortedVector* p_sortedVector)
+{
+	Core_SortedVector l_copiedVector;
+	memcpy(&l_copiedVector, p_sortedVector, sizeof(Core_SortedVector));
+	l_copiedVector.GenericArray = Core_GenericArray_deepCopy(&p_sortedVector->GenericArray);
+	return l_copiedVector;
+}

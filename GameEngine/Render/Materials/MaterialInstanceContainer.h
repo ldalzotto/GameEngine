@@ -1,13 +1,10 @@
 #pragma once
 
-#include <unordered_map>
-#include <vector>
-#include "DataStructures/VectorT.h"
-
 extern "C"
 {
 #include "DataStructures/GenericArrayNameMacros.h"
 #include "DataStructures/Specifications/Vector.h"
+#include "DataStructures/Specifications/SortedVector.h"
 }
 
 namespace _GameEngine::_Render
@@ -27,9 +24,11 @@ namespace _GameEngine::_Render
 		CORE_VECTOR_NAME(MaterialInstanceHandle) MaterialInstanceV2;
 	};
 
+	typedef Core_SortedVector CORE_SORTEDVECTOR_NAME(Material_with_MaterialInstances);
+
 	struct InstancedMaterialsDataStructure
 	{
-		_Core::SortedVectorT<Material_with_MaterialInstances> InstanciatedMaterialsV3;
+		CORE_SORTEDVECTOR_NAME(Material_with_MaterialInstances) InstanciatedMaterialsV3;
 	};
 
 	struct MaterialInstanceContainer

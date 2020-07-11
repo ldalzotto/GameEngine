@@ -36,9 +36,10 @@ namespace _GameEngine::_Render
 			TextureLayoutTransition_executeTransition(p_commandBuffer, *(p_renderInterface->DepthTexture), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 		}
 
-		for (size_t i = 0; i < l_materialInstanceConctainer->DataStructure.InstanciatedMaterialsV3.vector()->size(); i++)
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&l_materialInstanceConctainer->DataStructure.InstanciatedMaterialsV3.GenericArray);
+		while (Core_VectorIterator_MoveNext(&l_instanciatedMaterialsIterator))
 		{
-			Material_with_MaterialInstances* l_materialWithInstance = l_materialInstanceConctainer->DataStructure.InstanciatedMaterialsV3.vector()->at(i);
+			Material_with_MaterialInstances* l_materialWithInstance = (Material_with_MaterialInstances*)l_instanciatedMaterialsIterator.Current;
 
 			Material* l_defaultMaterial = l_materialWithInstance->Material;
 

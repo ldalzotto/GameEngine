@@ -17,3 +17,5 @@ typedef struct Core_VectorIterator
 	size_t CurrentIndex;
 	const struct Core_VectorIterator_function* Functions;
 } Core_VectorIterator;
+
+#define Core_VectorIterator_MoveNext(CoreVectorIteratorPtr) (CoreVectorIteratorPtr)->Functions->MoveNext(CoreVectorIteratorPtr)

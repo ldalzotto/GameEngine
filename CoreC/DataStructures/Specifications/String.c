@@ -27,6 +27,7 @@ static const Core_VectorWriter Core_string_writer =
     Core_GenericArray_swap,
     Core_GenericArray_isertAt_realloc,
     Core_GenericArray_isertArrayAt_realloc,
+    Core_GenericArray_erase,
     Core_GenericArray_eraseCompare
 };
 
