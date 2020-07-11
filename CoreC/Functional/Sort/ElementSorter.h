@@ -10,3 +10,4 @@ typedef struct Core_ElementSorter
 } Core_ElementSorter;
 
 short int Core_sortCompare_float_float(float* p_left, float* p_right);
+short int Core_sortCompare_uint16_uint16(unsigned __int16* p_left, unsigned __int16* p_right);

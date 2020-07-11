@@ -17,3 +17,8 @@ void* Core_find(struct Core_VectorIterator* p_iterator, struct Core_Comparator* 
 
 	return NULL;
 };
+
+bool Core_contains(struct Core_VectorIterator* p_iterator, struct Core_Comparator* p_comparator)
+{
+	return Core_find(p_iterator, p_comparator) != NULL;
+};

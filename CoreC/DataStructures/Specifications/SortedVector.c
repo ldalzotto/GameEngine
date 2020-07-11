@@ -51,3 +51,8 @@ void Core_SortedVector_alloc(Core_SortedVector* p_sortedVector, size_t p_element
 	p_sortedVector->GenericArray.Functions = &Core_sortedVector_functions;
 	p_sortedVector->SortFunction = p_sortFunction;
 };
+
+void Core_SortedVector_free(Core_SortedVector* p_sortedVector)
+{
+	Core_GenericArray_free(&p_sortedVector->GenericArray);
+};

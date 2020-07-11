@@ -16,12 +16,12 @@
 
 namespace _GameEngine::_ECS
 {
-	_Utils::SortedSequencerPriority MeshDrawSystem_updatePriorityBefore()
+	SortedSequencerPriority MeshDrawSystem_updatePriorityBefore()
 	{
 		return EDITOR_PRIORITY;
 	};
 
-	inline _Utils::SortedSequencerPriority meshDrawSystem_getUpdatePriority()
+	inline SortedSequencerPriority meshDrawSystem_getUpdatePriority()
 	{
 		return UPDATE_PUSH_TO_RENDER_PRIORITY;
 	};
@@ -35,7 +35,7 @@ namespace _GameEngine::_ECS
 	{
 		p_systemV2AllocInfo->ECS = p_ecs;
 		p_systemV2AllocInfo->Update.Priority = meshDrawSystem_getUpdatePriority();
-		p_systemV2AllocInfo->Update.Callback = MeshDrawSystem_update;
+		p_systemV2AllocInfo->Update.OperationCallback = { MeshDrawSystem_update , NULL};
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);

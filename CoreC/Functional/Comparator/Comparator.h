@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 typedef bool(*Core_comparator_function)(void* p_sourceObject, void* p_comparedObject, void* p_userObject);
 
 typedef struct Core_Comparator

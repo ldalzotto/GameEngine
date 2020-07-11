@@ -10,6 +10,11 @@
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 
+extern "C"
+{
+#include "Functional/Sequencer/SortedSequencer.h"
+}
+
 namespace _GameEngineEditor
 {
 	struct MeshRendererBoundGizmoSystem
@@ -17,7 +22,7 @@ namespace _GameEngineEditor
 		_Render::Gizmo* Gizmo;
 	};
 
-	_Utils::SortedSequencerPriority meshRendererBoundGizmoSystem_priority()
+	SortedSequencerPriority meshRendererBoundGizmoSystem_priority()
 	{
 		return EDITOR_PRIORITY;
 	}
@@ -52,6 +57,6 @@ namespace _GameEngineEditor
 
 		p_systemV2AllocInfo->Child = l_meshRendererBoundSystem;
 		p_systemV2AllocInfo->Update.Priority = meshRendererBoundGizmoSystem_priority();
-		p_systemV2AllocInfo->Update.Callback = meshRendererBoundGizmoSystem_update;
+		p_systemV2AllocInfo->Update.OperationCallback.Function = meshRendererBoundGizmoSystem_update;
 	};
 }

@@ -3,7 +3,12 @@
 #include "GameEngineApplicationInterface.h"
 #include "Clock/Clock.h"
 
-#include "Common/Utils/SortedSequencer/SortedSequencerMacros.h"
+extern "C"
+{
+#include "DataStructures/GenericArrayNameMacros.h"
+#include "DataStructures/Specifications/Vector.h"
+#include "Functional/Vector/VectorWriter.h"
+}
 
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
@@ -14,12 +19,14 @@
 
 namespace _GameEngine::_ECS
 {
-	_Utils::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
+	SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
 	{
-		SORTED_SEQUENCER_CALCULATEPRIORITY_ALLOCATE_BEFORE(2)
-			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(MeshDrawSystem_updatePriorityBefore)
-			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(CameraSystem_getUpdatePriority)
-		SORTED_SEQUENCER_CALCULATEPRIORITY_CALCULATE_B(l_priority);
+		CORE_VECTOR_NAME(SortedSequencerPriority) l_before; Core_Vector_alloc(&l_before, sizeof(SortedSequencerPriority), 2);
+		SortedSequencerPriority l_meshDrawSystebBeforePriotity = MeshDrawSystem_updatePriorityBefore();
+		SortedSequencerPriority l_cameraSystemBeforepriority = CameraSystem_getUpdatePriority();
+		l_before.Functions->Writer->PushBack(&l_before, &l_meshDrawSystebBeforePriotity);
+		l_before.Functions->Writer->PushBack(&l_before, &l_cameraSystemBeforepriority);
+		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
 	};
 
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_gameEngineInterface);
@@ -34,7 +41,7 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformRotateType);
 
 		p_systemV2AllocInfo->Update.Priority = TransformRotateSystem_getUpdatePritoriy();
-		p_systemV2AllocInfo->Update.Callback = TransformRotationSystemV2_update;
+		p_systemV2AllocInfo->Update.OperationCallback.Function = TransformRotationSystemV2_update;
 	};
 
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_gameEngineInterface)

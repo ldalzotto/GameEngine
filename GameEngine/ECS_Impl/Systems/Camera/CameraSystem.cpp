@@ -10,7 +10,14 @@ extern "C"
 #include "Math/Segment/Segment.h"
 #include <vector>
 
-#include "Common/Utils/SortedSequencer/SortedSequencerMacros.h"
+extern "C"
+{
+#include "DataStructures/GenericArray.h"
+#include "DataStructures/GenericArrayNameMacros.h"
+#include "DataStructures/Specifications/Vector.h"
+
+#include "Functional/Vector/VectorWriter.h"
+}
 
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
@@ -26,11 +33,12 @@ namespace _GameEngine::_ECS
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
 
-	_Utils::SortedSequencerPriority CameraSystem_getUpdatePriority()
+	SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
-		SORTED_SEQUENCER_CALCULATEPRIORITY_ALLOCATE_BEFORE(1)
-			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(MeshDrawSystem_updatePriorityBefore)
-		SORTED_SEQUENCER_CALCULATEPRIORITY_CALCULATE_B(l_priority);
+		CORE_VECTOR_NAME(SortedSequencerPriority) l_before; Core_Vector_alloc(&l_before, sizeof(SortedSequencerPriority), 1);
+		SortedSequencerPriority l_meshDrawBeforePriority = MeshDrawSystem_updatePriorityBefore();
+		l_before.Functions->Writer->PushBack(&l_before, &l_meshDrawBeforePriority);
+		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
 	};
 
 	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
@@ -39,7 +47,7 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->SystemKey = CameraSystemKey;
 
 		p_systemV2AllocInfo->Update.Priority = CameraSystem_getUpdatePriority();
-		p_systemV2AllocInfo->Update.Callback = cameraSystem_update;
+		p_systemV2AllocInfo->Update.OperationCallback = { cameraSystem_update, NULL } ;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&CameraType);

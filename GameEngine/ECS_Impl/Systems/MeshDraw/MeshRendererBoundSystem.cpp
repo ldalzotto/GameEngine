@@ -2,7 +2,14 @@
 
 #include "Math/Box/BoxMath.h"
 
-#include "Utils/SortedSequencer/SortedSequencerMacros.h"
+extern "C"
+{
+#include "DataStructures/GenericArray.h"
+#include "DataStructures/GenericArrayNameMacros.h"
+#include "DataStructures/Specifications/Vector.h"
+
+#include "Functional/Vector/VectorWriter.h"
+}
 
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
@@ -33,11 +40,14 @@ namespace _GameEngine::_ECS
 		_Core::VectorT<MeshRendererBoundCalculationOperation> MeshRendererBoundsToCaluclate;
 	};
 
-	_Utils::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
+	SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
-		SORTED_SEQUENCER_CALCULATEPRIORITY_ALLOCATE_BEFORE(1)
-			SORTED_SEQUENCER_CALCULATEPRIORITY_SET_BEFORE(MeshDrawSystem_updatePriorityBefore)
-		SORTED_SEQUENCER_CALCULATEPRIORITY_CALCULATE_B(l_priority);
+		CORE_VECTOR_NAME(SortedSequencerPriority) l_before;
+		Core_Vector_alloc(&l_before, sizeof(SortedSequencerPriority), 1);
+		SortedSequencerPriority l_meshDrawBeforePriority = MeshDrawSystem_updatePriorityBefore();
+		l_before.Functions->Writer->PushBack(&l_before, &l_meshDrawBeforePriority);
+
+		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
 	};
 
 	void meshRendererBoundSystem_onComponentAttached(Entity* p_entity, void* p_system)
@@ -129,6 +139,6 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->OnSystemDestroyed = meshRendererBoundSystem_onSystemDestroyed;
 		p_systemV2AllocInfo->Child = l_meshRendererBoundSystem;
 		p_systemV2AllocInfo->Update.Priority = MeshRendererBoundSystem_getUpdatePriority();
-		p_systemV2AllocInfo->Update.Callback = meshRendererBoundSystem_update;
+		p_systemV2AllocInfo->Update.OperationCallback = { meshRendererBoundSystem_update, NULL };
 	};
 }

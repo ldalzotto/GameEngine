@@ -62,3 +62,14 @@ void CoreLib_ErrorHandler_terminate();
 				CoreLib_ErrorHandling_handleError(); \
 		} \
 	}
+
+#define ERR_THROW_MESSAGE(Expression, Message) \
+	{ \
+		Core_ReturnCodes var_returnCode = Expression; \
+		if (var_returnCode != CR_OK) \
+		{ \
+				CoreLib_ErrorHandlingObject l_errorHandling = {NULL, var_returnCode, __FILE__, __LINE__, Message}; \
+				CoreLib_ErrorHandling_pushToGlobal(&l_errorHandling); \
+				CoreLib_ErrorHandling_handleError(); \
+		} \
+	}

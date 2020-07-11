@@ -2,12 +2,17 @@
 
 #include "Constants.h"
 
-#define DEFINE_SORT_NUMERIC(LeftTypeName, RightTypeName) \
-short int Core_sortCompare_##LeftTypeName##_##RightTypeName(LeftTypeName* p_left, RightTypeName* p_right) \
-	{ \
-		if  ((*p_left - *p_right) >= FLOAT_TOLERANCE) { return 1; } \
-		else if ((*p_left -*p_right) <= FLOAT_TOLERANCE ) { return -1; } \
-		else { return 0; } \
-	};
+#define NUMERIC_SORT_COMPARE(Left, Right) \
+	if  ((*Left - *Right) >= FLOAT_TOLERANCE) { return 1; } \
+	else if ((*Left -*Right) <= FLOAT_TOLERANCE ) { return -1; } \
+	else { return 0; }
 
-DEFINE_SORT_NUMERIC(float, float);
+short int Core_sortCompare_float_float(float* p_left, float* p_right)
+{
+	NUMERIC_SORT_COMPARE(p_left, p_right);
+};
+
+short int Core_sortCompare_uint16_uint16(unsigned __int16* p_left, unsigned __int16* p_right)
+{
+	NUMERIC_SORT_COMPARE(p_left, p_right);
+};
