@@ -37,6 +37,7 @@ static const Core_VectorWriter Core_sortedVector_writer = {
 	   Core_SortedVector_pushBack,
 	   Core_GenericArray_swap,
 	   NULL, //TODO
+	   NULL, //TODO
 	   NULL //TODO
 };
 

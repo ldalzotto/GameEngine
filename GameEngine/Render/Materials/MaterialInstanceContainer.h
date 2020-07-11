@@ -4,6 +4,12 @@
 #include <vector>
 #include "DataStructures/VectorT.h"
 
+extern "C"
+{
+#include "DataStructures/GenericArrayNameMacros.h"
+#include "DataStructures/Specifications/Vector.h"
+}
+
 namespace _GameEngine::_Render
 {
 	struct Material;
@@ -13,10 +19,12 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
+	typedef Core_GenericArray CORE_VECTOR_NAME(MaterialInstanceHandle);
+
 	struct Material_with_MaterialInstances
 	{
 		Material* Material;
-		_Core::VectorT<MaterialInstance*> MaterialInstance;
+		CORE_VECTOR_NAME(MaterialInstanceHandle) MaterialInstanceV2;
 	};
 
 	struct InstancedMaterialsDataStructure

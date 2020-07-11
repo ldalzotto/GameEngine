@@ -12,3 +12,8 @@ bool CORE_EQUALS(uint16, uint16)(unsigned __int16* p_left, unsigned __int16* p_r
 {
 	return *p_left == *p_right;
 };
+
+bool CORE_EQUALS(sizet, sizet)(size_t* p_left, size_t* p_right)
+{
+	return *p_left == *p_right;
+};

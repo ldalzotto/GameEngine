@@ -13,7 +13,8 @@ static const Core_VectorWriter Core_array_writer = {
        Core_GenericArray_pushBack_noRealloc,
        Core_GenericArray_swap,
        Core_GenericArray_isertAt_noRealloc,
-       Core_GenericArray_isertArrayAt_noRealloc
+       Core_GenericArray_isertArrayAt_noRealloc,
+       Core_GenericArray_eraseCompare
 };
 
 static const Core_GenericArray_functions Core_array_functions =

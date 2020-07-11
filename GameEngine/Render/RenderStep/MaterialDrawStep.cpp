@@ -7,6 +7,12 @@
 #include "Materials/Material.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
+extern "C"
+{
+#include "DataStructures/GenericArray.h"
+#include "Functional/Vector/VectorAccessor.h"
+}
+
 namespace _GameEngine::_Render
 {
 	void MaterialDrawStep_buildCommandBuffer(RenderInterface* p_renderInterface, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
@@ -51,9 +57,9 @@ namespace _GameEngine::_Render
 			vkCmdBeginRenderPass(p_commandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdBindPipeline(p_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, l_graphicsPipeline->PipelineInternals.Pipeline);
 
-			for (size_t j = 0; j < l_materialWithInstance->MaterialInstance.size(); j++)
+			for (size_t j = 0; j < l_materialWithInstance->MaterialInstanceV2.Size; j++)
 			{
-				MaterialInstance* l_materialInstance = *l_materialWithInstance->MaterialInstance.at(j);
+				MaterialInstance* l_materialInstance = *(MaterialInstance**)l_materialWithInstance->MaterialInstanceV2.Functions->Accessor->At(&l_materialWithInstance->MaterialInstanceV2, j);
 				l_defaultMaterial->FinalDrawObjects.MaterialDrawFn(p_commandBuffer, l_materialInstance, p_renderInterface);
 			}
 

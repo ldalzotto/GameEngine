@@ -6,6 +6,9 @@ extern "C"
 {
 #include "Log/LogFormatting.h"
 #include "Log/Log.h"
+#include "Constants.h"
+#include "Functional/Vector/VectorWriter.h"
+#include "Functional/Vector/VectorAccessor.h"
 }
 
 #include "DataStructures/ElementComparators.h"
@@ -22,6 +25,11 @@ namespace _GameEngine::_Render
 		return p_left->Material == p_right;
 	};
 
+	bool MaterialInstanceHandle_equals(MaterialInstanceHandle* p_left, MaterialInstanceHandle p_right, void* p_null)
+	{
+		return *p_left == p_right;
+	};
+
 	short Material_with_MaterialInstances_sortCompare(Material_with_MaterialInstances* p_left, Material_with_MaterialInstances* p_right)
 	{
 		return _Core::SizeTSortCompararator(p_left->Material->RenderingOrder, p_right->Material->RenderingOrder);
@@ -35,12 +43,12 @@ namespace _GameEngine::_Render
 	void Material_with_MaterialInstances_alloc(Material_with_MaterialInstances* p_materialInstances, Material* p_material)
 	{
 		p_materialInstances->Material = p_material;
-		p_materialInstances->MaterialInstance.alloc();
+		Core_Vector_alloc(&p_materialInstances->MaterialInstanceV2, sizeof(MaterialInstance*), 0);
 	};
 
 	void Material_with_MaterialInstances_free(Material_with_MaterialInstances* p_materialInstances)
 	{
-		p_materialInstances->MaterialInstance.free();
+		Core_GenericArray_free(&p_materialInstances->MaterialInstanceV2);
 	};
 
 
@@ -65,10 +73,8 @@ namespace _GameEngine::_Render
 		p_dataStructure->InstanciatedMaterialsV3.vector()->deepCopy(p_out->InstanciatedMaterialsV3.vector());
 		for (size_t i = 0; i < p_dataStructure->InstanciatedMaterialsV3.vector()->size(); i++)
 		{
-			Material_with_MaterialInstances* l_materialInstances = p_dataStructure->InstanciatedMaterialsV3.vector()->at(i);
-			_Core::VectorT<MaterialInstance*> l_newMaterialInstances;
-			l_materialInstances->MaterialInstance.deepCopy(&l_newMaterialInstances);
-			l_materialInstances->MaterialInstance = l_newMaterialInstances;
+			Material_with_MaterialInstances* l_materialInstances = p_out->InstanciatedMaterialsV3.vector()->at(i);
+			l_materialInstances->MaterialInstanceV2 = Core_GenericArray_deepCopy(&l_materialInstances->MaterialInstanceV2);
 		}
 	}
 
@@ -84,21 +90,34 @@ namespace _GameEngine::_Render
 		p_dataStructure->InstanciatedMaterialsV3.push_back(&l_materialInstances);
 	}
 
-	void InstancedMaterialsDataStructure_removeMaterial(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material)
+	void InstancedMaterialsDataStructure_removeMaterial(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, RenderInterface* p_renderInterface)
 	{
 		size_t l_eraseIndex = p_dataStructure->InstanciatedMaterialsV3.vector()->getIndex(Material_with_MaterialInstances_equals, p_material);
+
+#ifndef NDEBUG
+		if (p_dataStructure->InstanciatedMaterialsV3.vector()->at(l_eraseIndex)->MaterialInstanceV2.Size > 0)
+		{
+			MYLOG_PUSH(p_renderInterface->MyLog, LOGLEVEL_WARN, "Potential Memory leak. When Material is disposed, there was still MaterialInstances derived from this Material. Consider disposing MaterialInstance first.");
+		}
+#endif
+
 		Material_with_MaterialInstances_free(p_dataStructure->InstanciatedMaterialsV3.vector()->at(l_eraseIndex));
 		p_dataStructure->InstanciatedMaterialsV3.vector()->erase(l_eraseIndex);
 	};
 
 	void InstancedMaterialsDataStructure_addMaterialInstance(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, MaterialInstance* p_materialInstance)
 	{
-		p_dataStructure->InstanciatedMaterialsV3.vector()->get(Material_with_MaterialInstances_equals, p_material)->MaterialInstance.push_back(&p_materialInstance);
+		CORE_VECTOR_NAME(MaterialInstanceHandle)* l_materialInstances = &p_dataStructure->InstanciatedMaterialsV3.vector()->get(Material_with_MaterialInstances_equals, p_material)->MaterialInstanceV2;
+		l_materialInstances->Functions->Writer->PushBack(l_materialInstances, &p_materialInstance);
 	};
 
 	void InstancedMaterialsDataStructure_removeMaterialInstance(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, MaterialInstance* p_materialInstance)
 	{
-		 p_dataStructure->InstanciatedMaterialsV3.vector()->get(Material_with_MaterialInstances_equals, p_material)->MaterialInstance.erase(MaterialInstance_compare, &p_materialInstance);
+		CORE_VECTOR_NAME(MaterialInstanceHandle)* l_materialInstances = &p_dataStructure->InstanciatedMaterialsV3.vector()->get(Material_with_MaterialInstances_equals, p_material)->MaterialInstanceV2;
+		Core_Comparator l_materialInstancesComparator; ZEROING(Core_Comparator, &l_materialInstancesComparator);
+		l_materialInstancesComparator.ComparedObject = p_materialInstance;
+		l_materialInstancesComparator.Function = (Core_comparator_function)MaterialInstanceHandle_equals;
+		l_materialInstances->Functions->Writer->EraseCompare(l_materialInstances, &l_materialInstancesComparator);
 	};
 
 
@@ -134,9 +153,9 @@ namespace _GameEngine::_Render
 			for (size_t i = 0; i < l_copy.InstanciatedMaterialsV3.vector()->size(); i++)
 			{
 				Material_with_MaterialInstances* l_materialInstances = l_copy.InstanciatedMaterialsV3.vector()->at(i);
-				for (size_t j = 0; j < l_materialInstances->MaterialInstance.size(); j++)
+				for (size_t j = 0; j < l_materialInstances->MaterialInstanceV2.Size; j++)
 				{
-					MaterialInstance** l_materialInstance = l_materialInstances->MaterialInstance.at(j);
+					MaterialInstanceHandle*l_materialInstance = (MaterialInstanceHandle*)l_materialInstances->MaterialInstanceV2.Functions->Accessor->At(&l_materialInstances->MaterialInstanceV2, j);
 					MaterialInstance_free(l_materialInstance);
 				}
 
@@ -163,7 +182,7 @@ namespace _GameEngine::_Render
 
 	void MaterialInstanceContainer_removeMaterial(MaterialInstanceContainer* p_materialInstanceContainer, Material* p_material)
 	{
-		InstancedMaterialsDataStructure_removeMaterial(&p_materialInstanceContainer->DataStructure, p_material);
+		InstancedMaterialsDataStructure_removeMaterial(&p_materialInstanceContainer->DataStructure, p_material, p_materialInstanceContainer->RenderInterface);
 	};
 
 	void MaterialInstanceContainer_addMaterialInstance(MaterialInstanceContainer* p_materialInstanceContainer, Material* p_material, MaterialInstance* p_materialInstance)

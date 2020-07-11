@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include "Functional/Vector/VectorIterator.h"
+#include "Functional/Comparator/Comparator.h"
 #include "ErrorHandling/ReturnCodes.h"
 
 typedef struct Core_GenericArray_functions
@@ -33,7 +34,12 @@ Core_ReturnCodes Core_GenericArray_pushBack_realloc(Core_GenericArray* p_generic
 Core_ReturnCodes Core_GenericArray_pushBack_noRealloc(Core_GenericArray* p_genericArray, void* p_value);
 Core_ReturnCodes Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, size_t p_right);
 
+Core_ReturnCodes Core_GenericArray_erase(Core_GenericArray* p_genericArray, size_t p_index);
+void Core_GenericArray_eraseCompare(Core_GenericArray* p_genericArray, Core_Comparator* p_comparator);
+
 Core_ReturnCodes Core_GenericArray_isertAt_realloc(Core_GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index);
 Core_ReturnCodes Core_GenericArray_isertAt_noRealloc(Core_GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index);
 Core_ReturnCodes Core_GenericArray_isertArrayAt_realloc(Core_GenericArray* p_genericArray, Core_GenericArray* p_insertedArray, size_t p_index);
 Core_ReturnCodes Core_GenericArray_isertArrayAt_noRealloc(Core_GenericArray* p_genericArray, Core_GenericArray* p_insertedArray, size_t p_index);
+
+Core_GenericArray Core_GenericArray_deepCopy(Core_GenericArray* p_genericArray);
