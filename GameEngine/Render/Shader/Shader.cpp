@@ -39,17 +39,20 @@ namespace _GameEngine::_Render
 	{
 		VkShaderModule l_shaderModule;
 		Core_GenericArray l_compiledShader;
-		Core_GenericArray l_shaderPath = Core_array_fromCStyle((void*)p_shader->ShaderPath.c_str(), sizeof(char), strlen(p_shader->ShaderPath.c_str()));
-		ERR_THROW(Core_File_readFile_byte(&l_shaderPath, &l_compiledShader));
-		VkShaderModuleCreateInfo l_shaderModuleCreateInfo{};
-		l_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		l_shaderModuleCreateInfo.codeSize = l_compiledShader.Size;
-		l_shaderModuleCreateInfo.pCode = reinterpret_cast<const uint32_t*>(l_compiledShader.Memory);
-
-		if (vkCreateShaderModule(p_device->LogicalDevice.LogicalDevice, &l_shaderModuleCreateInfo, nullptr, &l_shaderModule) != VK_SUCCESS)
 		{
-			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create shader module!"));
+			Core_GenericArray l_shaderPath = Core_array_fromCStyle((void*)p_shader->ShaderPath.c_str(), sizeof(char), strlen(p_shader->ShaderPath.c_str()));
+			ERR_THROW(Core_File_readFile_byte(&l_shaderPath, &l_compiledShader));
+			VkShaderModuleCreateInfo l_shaderModuleCreateInfo{};
+			l_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			l_shaderModuleCreateInfo.codeSize = l_compiledShader.Size;
+			l_shaderModuleCreateInfo.pCode = reinterpret_cast<const uint32_t*>(l_compiledShader.Memory);
+
+			if (vkCreateShaderModule(p_device->LogicalDevice.LogicalDevice, &l_shaderModuleCreateInfo, nullptr, &l_shaderModule) != VK_SUCCESS)
+			{
+				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create shader module!"));
+			}
 		}
+		Core_GenericArray_free(&l_compiledShader);
 		return l_shaderModule;
 	};
 
