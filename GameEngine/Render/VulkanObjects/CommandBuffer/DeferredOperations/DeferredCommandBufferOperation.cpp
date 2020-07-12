@@ -28,7 +28,7 @@ namespace _GameEngine::_Render
 
 	void DeferredCommandBufferOperation_free(DeferredCommandBufferOperation* p_deferredCommandBufferOperation)
 	{
-		_Utils::Callback_invoke(&p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken->OnTokenDestructed, nullptr);
+		Core_Callback_call(&p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken->OnTokenDestructed, NULL);
 		delete p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken;
 		p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken = nullptr;
 	};

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Utils/Observer/Callback.h"
+extern "C"
+{
+#include "Functional/Callback/Callback.h"
+}
 
 namespace _GameEngine::_Render
 {
@@ -20,7 +23,7 @@ namespace _GameEngine::_Render
 	{
 		bool IsCompleted;
 		bool IsCancelled;
-		_Utils::Callback OnTokenDestructed;
+		Callback OnTokenDestructed;
 	};
 
 	/**

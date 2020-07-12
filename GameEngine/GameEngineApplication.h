@@ -6,11 +6,11 @@ extern "C"
 {
 #include "Clock/Clock.h"
 #include "Log/Log.h"
+#include "Functional/Callback/Observer.h"
 }
 
 #include "GameLoop/GameLoop.h"
 #include "EngineSequencers/EngineSequencers.h"
-#include "Utils/Observer/Observer.h"
 
 #include "Physics/Physics.h"
 #include "Render/Render.h"
@@ -25,8 +25,8 @@ namespace _GameEngine
 	{
 		GameEngineApplicationInterface GameEngineApplicationInterface;
 
-		_Utils::Observer NewFrame;
-		_Utils::Observer PreRender;
+		Core_Observer NewFrame;
+		Core_Observer PreRender;
 		UpdateSequencer UpdateSequencer;
 		std::function<void(float)> SandboxUpdateHook;
 

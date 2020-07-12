@@ -19,8 +19,8 @@ namespace _GameEngine::_ECS
 		_Math::Transform_alloc(&p_transformComponent->Transform);
 
 		p_transformComponent->OnComponentDetached.Closure = p_transformComponent;
-		p_transformComponent->OnComponentDetached.Callback = TransformComponent_free;
-		_Utils::Observer_register(&p_component->OnComponentFree, &p_transformComponent->OnComponentDetached);
+		p_transformComponent->OnComponentDetached.Function = TransformComponent_free;
+		Core_Observer_register(&p_component->OnComponentFree, &p_transformComponent->OnComponentDetached);
 	};
 
 }

@@ -18,5 +18,6 @@ namespace _GameEngine::_ECS
 		EntityContainer_free(&(p_entityComponent)->EntityContainer, &(p_entityComponent)->ComponentEvents);
 		SystemContainer_free(&(p_entityComponent)->SystemContainer);
 		ECSEventQueue_free(&(p_entityComponent)->EventQueue);
+		ComponentEvents_free(&(p_entityComponent)->ComponentEvents, p_entityComponent);
 	};
 };

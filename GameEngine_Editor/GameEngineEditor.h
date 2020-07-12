@@ -1,7 +1,12 @@
 #pragma once
 
 #include "IMGuiRender/IMGuiRender.h"
-#include "Utils/Observer/Observer.h"
+
+extern "C"
+{
+#include "Functional/Callback/Callback.h"
+}
+
 #include "DebugConsole/DebugConsole.h"
 #include "IMGuiRender/DrawableWindow.h"
 
@@ -17,7 +22,7 @@ namespace _GameEngineEditor
 	struct GameEngineEditor
 	{
 		GameEngineApplicationInterface* GameEngineApplicationInterface;
-		_Utils::Subject OnPreRender;
+		Callback OnPreRender;
 		IMGuiRender IMGuiRender;
 		DebugConsole DebugConsole;
 		DrawableWindows DrawableWindows;

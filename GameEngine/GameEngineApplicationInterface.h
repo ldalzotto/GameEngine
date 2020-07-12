@@ -4,6 +4,7 @@
 
 struct Core_Clock;
 struct Core_Log;
+struct Core_Observer;
 
 namespace _GameEngine
 {
@@ -13,15 +14,14 @@ namespace _GameEngine
 	namespace _Render { struct RenderInterface; }
 	namespace _Input { struct Input; }
 	namespace _ECS { struct ECS; }
-	namespace _Utils { struct Observer; }
 }
 
 namespace _GameEngine
 {
 	struct GameEngineApplicationInterface
 	{
-		_Utils::Observer* NewFrame;
-		_Utils::Observer* PreRender;
+		Core_Observer* NewFrame;
+		Core_Observer* PreRender;
 		UpdateSequencer* UpdateSequencer;
 		std::function<void(float)>* SandboxUpdateHook;
 

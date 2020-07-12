@@ -48,3 +48,4 @@ Core_GenericArray Core_GenericArray_deepCopy(Core_GenericArray* p_genericArray);
 #define Core_GenericArray_BuildIterator(GenericArrayPtr) (GenericArrayPtr)->Functions->BuildIterator(GenericArrayPtr);
 #define Core_GenericArray_At(GenericArrayPtr, Index) (GenericArrayPtr)->Functions->Accessor->At(GenericArrayPtr, (Index))
 #define Core_GenericArray_PushBack(GenericArrayPtr, Value) (GenericArrayPtr)->Functions->Writer->PushBack(GenericArrayPtr, (Value))
+#define Core_GenericArray_Erase(GenericArrayPtr, Index) (GenericArrayPtr)->Functions->Writer->EraseAt(GenericArrayPtr, (Index))

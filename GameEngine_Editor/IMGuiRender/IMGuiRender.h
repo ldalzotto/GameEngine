@@ -5,7 +5,11 @@
 #include <vector>
 
 #include "GameEngineApplicationInterface.h"
-#include "Utils/Observer/Observer.h"
+
+extern "C"
+{
+#include "Functional/Callback/Callback.h"
+}
 
 #include "VulkanObjects/GraphcisPipeline/RenderPass.h"
 #include "VulkanObjects/GraphcisPipeline/FrameBuffer.h"
@@ -27,10 +31,10 @@ namespace _GameEngineEditor
 		_Render::RenderPass Renderpass;
 		std::vector<_Render::FrameBuffer> FrameBuffers;
 
-		_Utils::Subject NewFrame;
-		_Utils::Subject DrawFrame;
-		_Utils::Subject SwapChainRebuild;
-		_Utils::Subject OnRenderDestroyed;
+		Callback NewFrame;
+		Callback DrawFrame;
+		Callback SwapChainRebuild;
+		Callback OnRenderDestroyed;
 
 		bool FontInitialized;
 	};

@@ -14,6 +14,8 @@ namespace _GameEngine
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
 		l_gameEngineApplication->SandboxUpdateHook = p_sandboxUpdateHook;
 
+		Core_ObserverAlloc(&l_gameEngineApplication->NewFrame);
+		Core_ObserverAlloc(&l_gameEngineApplication->PreRender);
 		GameEngineApplicationInterface_build(&l_gameEngineApplication->GameEngineApplicationInterface, l_gameEngineApplication);
 
 		MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
@@ -39,8 +41,11 @@ namespace _GameEngine
 		_Physics::Physics_free(&p_app->Physics);
 		_Input::Input_free(&p_app->Input);
 		UpdateSequencer_free(&p_app->UpdateSequencer);
-		MyLog_free(&p_app->Log);
 
+		Core_ObserverFree(&p_app->NewFrame);
+		Core_ObserverFree(&p_app->PreRender);
+
+		MyLog_free(&p_app->Log);
 		delete p_app;
 	}
 
@@ -58,7 +63,7 @@ namespace _GameEngine
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
 		 Clock_newFrame(&l_app->Clock);
 		_Input::Input_update(&l_app->Input);
-		_Utils::Observer_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
+		Core_Observer_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
 	};
 
 	void app_update(void* p_closure, float p_delta)
@@ -75,7 +80,7 @@ namespace _GameEngine
 	void app_render(void* p_closure)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		_Utils::Observer_broadcast(&l_app->PreRender, l_app);
+		Core_Observer_broadcast(&l_app->PreRender, l_app);
 		Render_render(&l_app->Render);
 	};
 

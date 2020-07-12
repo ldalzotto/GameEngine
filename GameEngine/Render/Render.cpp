@@ -45,7 +45,7 @@ namespace _GameEngine::_Render
 				l_beforeEndRecordingMainCommandBuffer.CommandBuffer = l_commandBuffer;
 				l_beforeEndRecordingMainCommandBuffer.ImageIndex = l_imageIndex;
 				l_beforeEndRecordingMainCommandBuffer.RenderInterface = &p_render->RenderInterface;
-				_Utils::Observer_broadcast(&p_render->RenderHookCallbacks.BeforeEndRecordingMainCommandBuffer, &l_beforeEndRecordingMainCommandBuffer);
+				Core_Observer_broadcast(&p_render->RenderHookCallbacks.BeforeEndRecordingMainCommandBuffer, &l_beforeEndRecordingMainCommandBuffer);
 			}
 
 			render_commandBufferEnd(l_commandBuffer);
@@ -181,6 +181,7 @@ namespace _GameEngine::_Render
 	void Render_build(Render* p_render, Core_Log* p_myLog)
 	{
 		RenderInterface_initialize(p_render, p_myLog);
+		RenderHookCallbacks_alloc(&p_render->RenderHookCallbacks);
 
 		Window_init(&p_render->Window);
 
@@ -225,6 +226,8 @@ namespace _GameEngine::_Render
 		freeSurface(p_render);
 		freeVulkanDebugger((p_render));
 		freeVulkan(p_render);
+
+		RenderHookCallbacks_free(&p_render->RenderHookCallbacks);
 	};
 
 	void Render_recreateSwapChain(Render* p_render)

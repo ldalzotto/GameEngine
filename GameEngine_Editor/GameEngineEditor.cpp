@@ -2,7 +2,6 @@
 
 #include "GameEngineApplicationInterface.h"
 
-#include "Utils/Observer/Observer.h"
 #include "ECS/ECS.h"
 #include "ECS_Impl/Systems/SystemV2Factory.h"
 #include "ECS/Systems/MeshRendererBoundGizmoSystem.h"
@@ -19,8 +18,8 @@ namespace _GameEngineEditor
 		l_gameEngineEditor->GameEngineApplicationInterface = p_gameEngineApplicationInterface;
 
 		l_gameEngineEditor->OnPreRender.Closure = l_gameEngineEditor;
-		l_gameEngineEditor->OnPreRender.Callback = GameEngineEditor_draw;
-		_Utils::Observer_register(l_gameEngineEditor->GameEngineApplicationInterface->PreRender, &l_gameEngineEditor->OnPreRender);
+		l_gameEngineEditor->OnPreRender.Function = GameEngineEditor_draw;
+		Core_Observer_register(l_gameEngineEditor->GameEngineApplicationInterface->PreRender, &l_gameEngineEditor->OnPreRender);
 
 		IMGuiRender_init(&l_gameEngineEditor->IMGuiRender, l_gameEngineEditor->GameEngineApplicationInterface);
 

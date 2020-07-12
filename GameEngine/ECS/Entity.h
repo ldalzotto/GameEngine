@@ -4,6 +4,11 @@
 
 #include "ECS/Component.h"
 
+extern "C"
+{
+#include "Functional/Callback/Callback.h"
+}
+
 namespace _GameEngine::_ECS
 {
 	struct ECS;
@@ -55,12 +60,12 @@ namespace _GameEngine::_ECS
 		/**
 			Called when a @ref Component with type contained in @ref ListenedComponentTypes is attached.
 		*/
-		_Utils::Subject OnComponentAttachedEventListener;
+		Callback OnComponentAttachedEventListener;
 
 		/**
 			Called when a @ref Component with type contained in @ref ListenedComponentTypes is detached.
 		*/
-		_Utils::Subject OnComponentDetachedEventListener;
+		Callback OnComponentDetachedEventListener;
 	};
 
 	struct EntityConfigurableContainerInitInfo

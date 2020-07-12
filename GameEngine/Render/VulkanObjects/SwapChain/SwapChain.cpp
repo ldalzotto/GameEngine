@@ -54,10 +54,12 @@ namespace _GameEngine::_Render
 
 	void SwapChain_build(SwapChain* p_swapChain, RenderInterface* p_renderInterface)
 	{
+		Core_ObserverAlloc(&p_swapChain->OnSwapChainBuilded);
+
 		p_swapChain->RenderInterface = p_renderInterface;
-		p_swapChain->OnWindowSizeChangeCallback.Callback = onWindowSizeChanged;
+		p_swapChain->OnWindowSizeChangeCallback.Function = onWindowSizeChanged;
 		p_swapChain->OnWindowSizeChangeCallback.Closure = p_swapChain;
-		_Utils::Observer_register(&p_renderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
+		Core_Observer_register(&p_renderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
 
 		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
 
@@ -143,12 +145,13 @@ namespace _GameEngine::_Render
 	void SwapChain_broadcastRebuildEvent(SwapChain* p_swapChain, RenderInterface* p_renderInterface)
 	{
 		p_swapChain->MustBeRebuilt = false;
-		_Utils::Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_renderInterface);
+		Core_Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_renderInterface);
 	};
 
 	void SwapChain_free(SwapChain* p_swapChain)
 	{
-		Observer_unRegister(&p_swapChain->RenderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
+		Core_ObserverFree(&p_swapChain->OnSwapChainBuilded);
+		Core_Observer_unRegister(&p_swapChain->RenderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
 
 		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)
 		{

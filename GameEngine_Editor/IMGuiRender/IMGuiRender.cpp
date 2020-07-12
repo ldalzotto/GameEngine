@@ -27,16 +27,16 @@ namespace _GameEngineEditor
 		_Render::RenderInterface* p_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
 
 		p_IMGuiRender->NewFrame.Closure = p_IMGuiRender;
-		p_IMGuiRender->NewFrame.Callback = newFrame;
-		_Utils::Observer_register(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
+		p_IMGuiRender->NewFrame.Function = newFrame;
+		Core_Observer_register(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
 
 		p_IMGuiRender->DrawFrame.Closure = p_IMGuiRender;
-		p_IMGuiRender->DrawFrame.Callback = drawFrame;
-		_Utils::Observer_register(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
+		p_IMGuiRender->DrawFrame.Function = drawFrame;
+		Core_Observer_register(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
 
 		p_IMGuiRender->SwapChainRebuild.Closure = p_IMGuiRender;
-		p_IMGuiRender->SwapChainRebuild.Callback = onSwapChainRebuilded;
-		_Utils::Observer_register(&p_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
+		p_IMGuiRender->SwapChainRebuild.Function = onSwapChainRebuilded;
+		Core_Observer_register(&p_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
 
 		ImGuiContext* l_imGuicontext = ImGui::CreateContext();
 		ImGui::SetCurrentContext(l_imGuicontext);
@@ -69,12 +69,12 @@ namespace _GameEngineEditor
 
 	void IMGuiRender_free(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
-		_Utils::Observer_unRegister(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
+		Core_Observer_unRegister(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
 
 		_Render::RenderInterface* l_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
 
-		_Utils::Observer_unRegister(&l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
-		_Utils::Observer_unRegister(&l_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
+		Core_Observer_unRegister(&l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
+		Core_Observer_unRegister(&l_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
 
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();

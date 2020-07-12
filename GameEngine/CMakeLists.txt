@@ -7,6 +7,7 @@ file(GLOB_RECURSE GAME_ENGINE_PRIVATE
 	"./GameLoop/*.cpp"
 	"./Input/*.cpp"
 	"./EngineSequencers/*.cpp"
+	"RenderHook.cpp"
 )
 SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.cpp ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.cpp)
 
@@ -16,6 +17,7 @@ file(GLOB_RECURSE GAME_ENGINE_PUBLIC
 	"./GameLoop/*.h"
 	"./Input/*.h"
 	"./EngineSequencers/*.h"
+	"RenderHook.h"
 )
 SET(GAME_ENGINE_PUBLIC ${GAME_ENGINE_PUBLIC} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.h)
 

@@ -160,10 +160,10 @@ namespace _GameEngine::_ECS
 		p_entityComponentListener->OnEntityThatMatchesComponentTypesRemovedUserData = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesRemovedUserData;
 
 		p_entityComponentListener->OnComponentAttachedEventListener.Closure = p_entityComponentListener;
-		p_entityComponentListener->OnComponentAttachedEventListener.Callback = entityComponentListener_onComponentAttachedCallback;
+		p_entityComponentListener->OnComponentAttachedEventListener.Function = entityComponentListener_onComponentAttachedCallback;
 
 		p_entityComponentListener->OnComponentDetachedEventListener.Closure = p_entityComponentListener;
-		p_entityComponentListener->OnComponentDetachedEventListener.Callback = entityComponentListener_onComponentDetachedCallback;
+		p_entityComponentListener->OnComponentDetachedEventListener.Function = entityComponentListener_onComponentDetachedCallback;
 
 		entityComponentListener_pushAllElligibleEntities(p_entityComponentListener, &p_entityComponentListenerInitInfo->ECS->EntityContainer.Entities);
 		entityComponentListener_registerEvents(p_entityComponentListener, p_entityComponentListenerInitInfo->ECS);
@@ -176,8 +176,8 @@ namespace _GameEngine::_ECS
 		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.size(); i++)
 		{
 			ComponentType* l_componentType = p_entityComponentListener->ListenedComponentTypes.at(i);
-			_Utils::Observer_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentAttachedEventListener);
-			_Utils::Observer_unRegister(&l_componentEvents->ComponentDetachedEvents[*l_componentType], &p_entityComponentListener->OnComponentDetachedEventListener);
+			Core_Observer_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentAttachedEventListener);
+			Core_Observer_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentDetachedEventListener);
 		}
 
 		for (size_t i = 0; i < p_entityComponentListener->FilteredEntities.size(); i++)
@@ -222,16 +222,21 @@ namespace _GameEngine::_ECS
 
 			if (!l_componentEvents->ComponentAttachedEvents.contains(*l_componentType))
 			{
-				l_componentEvents->ComponentAttachedEvents[*l_componentType] = _Utils::Observer{};
+				Core_Observer l_createdObserver;
+				Core_ObserverAlloc(&l_createdObserver);
+				l_componentEvents->ComponentAttachedEvents[*l_componentType] = l_createdObserver;
 			}
-			_Utils::Observer_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentAttachedEventListener);
+			Core_Observer_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentAttachedEventListener);
 
 
 			if (!l_componentEvents->ComponentDetachedEvents.contains(*l_componentType))
 			{
-				l_componentEvents->ComponentDetachedEvents[*l_componentType] = _Utils::Observer{};
+
+				Core_Observer l_createdObserver;
+				Core_ObserverAlloc(&l_createdObserver);
+				l_componentEvents->ComponentDetachedEvents[*l_componentType] = l_createdObserver;
 			}
-			_Utils::Observer_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], &p_entityComponentListener->OnComponentDetachedEventListener);
+			Core_Observer_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], &p_entityComponentListener->OnComponentDetachedEventListener);
 		}
 	};
 

@@ -1,7 +1,10 @@
 #pragma once
 
 
-#include "Utils/Observer/Observer.h"
+extern "C"
+{
+#include "Functional/Callback/Observer.h"
+}
 
 #include "Math/Matrix/Matrix.h"
 
@@ -24,7 +27,7 @@ namespace _GameEngine::_Render
 		WindowSize WindowSize;
 
 		_Math::Matrix3x3f WindowToGraphicsAPIPixelCoordinates;
-		_Utils::Observer OnWindowSizeChanged;
+		Core_Observer OnWindowSizeChanged;
 	};
 
 	void Window_init(Window* p_window);

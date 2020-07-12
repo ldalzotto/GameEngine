@@ -6,18 +6,23 @@
 #include <unordered_map>
 
 #include "ComponentType.h"
-#include "Utils/Observer/Observer.h"
+
+extern "C"
+{
+#include "Functional/Callback/Observer.h"
+}
 
 namespace _GameEngine::_ECS
 {
 	struct Entity;
+	struct ECS;
 
 	struct Component
 	{
 		Entity* AttachedEntity;
 		ComponentType ComponentType;
 		void* Child;
-		_Utils::Observer OnComponentFree;
+		Core_Observer OnComponentFree;
 	};
 
 	Component* Component_alloc(ComponentType& p_type, size_t p_componentChildSize);
@@ -40,10 +45,12 @@ namespace _GameEngine::_ECS
 	struct ComponentEvents
 	{
 		/** Triggered when any Component with  the specified ComponentType is attached to an Entity. */
-		std::unordered_map<ComponentType, _Utils::Observer> ComponentAttachedEvents;
+		std::unordered_map<ComponentType, Core_Observer> ComponentAttachedEvents;
 		/** Triggered when any Component with  the specified ComponentType is dettached to an Entity. */
-		std::unordered_map<ComponentType, _Utils::Observer> ComponentDetachedEvents;
+		std::unordered_map<ComponentType, Core_Observer> ComponentDetachedEvents;
 	};
+
+	void ComponentEvents_free(ComponentEvents* p_componentEvents, ECS* p_ecs);
 
 	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, Component* p_component);
 	void ComponentEvents_onComponentDetached(ComponentEvents* p_componentEvents, Component* p_component);
