@@ -43,6 +43,23 @@ void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingO
     }
 };
 
+void CoreLib_ErrorHandling_pushToGlobal_string(CoreLib_ErrorHandlingObject* p_handlingObject)
+{
+    if (CoreLib_global_errorHandlingObject == NULL)
+    {
+        CoreLib_global_errorHandlingObject = malloc(sizeof(CoreLib_ErrorHandlingObject));
+        memcpy(CoreLib_global_errorHandlingObject, p_handlingObject, sizeof(CoreLib_ErrorHandlingObject));
+    }
+    else
+    {
+        CoreLib_ErrorHandlingObject* l_child = CoreLib_global_errorHandlingObject;
+        CoreLib_global_errorHandlingObject = malloc(sizeof(CoreLib_ErrorHandlingObject));
+        memcpy(CoreLib_global_errorHandlingObject, p_handlingObject, sizeof(CoreLib_ErrorHandlingObject));
+        CoreLib_global_errorHandlingObject->Child = l_child;
+    }
+    CoreLib_global_errorHandlingObject->CustomMessageDynamicallyAlloced = true;
+}
+
 void CoreLib_ErrorHandling_handleError()
 {
     if (CoreLib_global_errorHandler != NULL)
@@ -73,6 +90,12 @@ void CoreLib_DefaultErrorHandle(struct CoreLib_ErrorHandlerObject* p_errorhandle
         strcat(l_buffer, l_currentObject->CustomMessage);
         strcat(l_buffer, "\n");
         puts(l_buffer);
+        
+        if (l_currentObject->CustomMessageDynamicallyAlloced)
+        {
+            free(l_currentObject->CustomMessage);
+        }
+        
         l_currentObject = l_currentObject->Child;
     }
 

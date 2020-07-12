@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include "ReturnCodes.h"
 
 typedef struct CoreLib_ErrorHandlingObject
@@ -9,12 +10,14 @@ typedef struct CoreLib_ErrorHandlingObject
     char* FileName;
     int LineNb;
     char* CustomMessage;
+	bool CustomMessageDynamicallyAlloced;
 } CoreLib_ErrorHandlingObject;
 typedef CoreLib_ErrorHandlingObject* CoreLib_ErrorHandlingObject_Handle;
 
 extern CoreLib_ErrorHandlingObject* CoreLib_global_errorHandlingObject;
 
 void CoreLib_ErrorHandling_pushToGlobal(CoreLib_ErrorHandlingObject* p_handlingObject);
+void CoreLib_ErrorHandling_pushToGlobal_string(CoreLib_ErrorHandlingObject* p_handlingObject);
 void CoreLib_ErrorHandling_handleError();
 
 struct CoreLib_ErrorHandlerObject;
@@ -48,6 +51,16 @@ void CoreLib_ErrorHandler_terminate();
 		{ \
 				CoreLib_ErrorHandlingObject l_errorHandling = {NULL, ReturnCode, __FILE__, __LINE__, Message}; \
 				CoreLib_ErrorHandling_pushToGlobal(&l_errorHandling); \
+				return ReturnCode; \
+		} \
+	}
+
+#define ERR_PUSH_STRING(ReturnCode, StringPtr) \
+	{ \
+		if (ReturnCode != CR_OK) \
+		{ \
+				CoreLib_ErrorHandlingObject l_errorHandling = {NULL, ReturnCode, __FILE__, __LINE__, (char*)(StringPtr)->Memory}; \
+				CoreLib_ErrorHandling_pushToGlobal_string(&l_errorHandling); \
 				return ReturnCode; \
 		} \
 	}

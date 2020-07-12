@@ -7,8 +7,10 @@
 extern "C"
 {
 #include "Log/Log.h"
+#include "Read/File/File.h"
+#include "DataStructures/Specifications/Array.h"
+#include "ErrorHandling/Errorhandling.h"
 }
-#include "Utils/File/File.h"
 
 namespace _GameEngine::_Render
 {
@@ -38,7 +40,7 @@ namespace _GameEngine::_Render
 		VkShaderModule l_shaderModule;
 		Core_GenericArray l_compiledShader;
 		Core_GenericArray l_shaderPath = Core_array_fromCStyle((void*)p_shader->ShaderPath.c_str(), sizeof(char), strlen(p_shader->ShaderPath.c_str()));
-		_Utils::File_readFileV2(&l_shaderPath, &l_compiledShader);
+		ERR_THROW(Core_File_readFile_byte(&l_shaderPath, &l_compiledShader));
 		VkShaderModuleCreateInfo l_shaderModuleCreateInfo{};
 		l_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		l_shaderModuleCreateInfo.codeSize = l_compiledShader.Size;
