@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+typedef bool(*Core_Equals_function)(void* p_left, void* p_right);
+
 #define CORE_EQUALS(LeftTypeName, RightTypeName) Core_Equals_##LeftTypeName##_##RightTypeName
 
 bool CORE_EQUALS(float, float)(float* p_left, float* p_right);

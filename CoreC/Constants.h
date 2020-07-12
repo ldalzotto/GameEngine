@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <string.h>
 
 # define FLOAT_TOLERANCE 0.000001f
 

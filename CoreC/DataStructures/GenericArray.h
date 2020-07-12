@@ -24,6 +24,7 @@ void Core_GenericArray_clear(Core_GenericArray* p_genericArray);
 
 Core_ReturnCodes Core_GenericArray_pushBack_realloc(Core_GenericArray* p_genericArray, void* p_value);
 Core_ReturnCodes Core_GenericArray_pushBack_noRealloc(Core_GenericArray* p_genericArray, void* p_value);
+
 Core_ReturnCodes Core_GenericArray_swap(Core_GenericArray* p_genericArray, size_t p_left, size_t p_right);
 
 Core_ReturnCodes Core_GenericArray_erase(Core_GenericArray* p_genericArray, size_t p_index);

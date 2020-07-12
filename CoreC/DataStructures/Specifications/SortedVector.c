@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "Constants.h"
+#include "Algorithm/Sort/SortAlgorithm.h"
 #include "ErrorHandling/Errorhandling.h"
 #include "DataStructures/GenericArray.h"
 #include "Functional/Vector/VectorAccessor.h"
@@ -11,20 +13,9 @@ Core_ReturnCodes Core_SortedVector_pushBack(Core_SortedVector* p_sortedVector, v
 {
 	Core_elementSort_function l_sortFunction = p_sortedVector->SortFunction;
 
-	size_t l_insertIndex = 0;
-	for (size_t i = 0; i < p_sortedVector->GenericArray.Size; i++)
-	{
-		short int l_compareValue = l_sortFunction(p_value, Core_GenericArray_at(&p_sortedVector->GenericArray, i), NULL);
-		if (l_compareValue >= 0)
-		{
-			l_insertIndex = i + 1;
-		}
-		else
-		{
-			break;
-		}
-	}
-
+	Core_ElementSorter l_elementSorter; ZEROING(Core_ElementSorter, &l_elementSorter);
+	l_elementSorter.Function = p_sortedVector->SortFunction;
+	size_t l_insertIndex = Core_minIndex(&p_sortedVector->GenericArray, 0, &l_elementSorter);
 	ERR_PASS(Core_GenericArray_isertAt_realloc(&p_sortedVector->GenericArray, p_value, 1, l_insertIndex), "Core_SortedVector_pushBack : Error while inserting");
 	return CR_OK;
 }

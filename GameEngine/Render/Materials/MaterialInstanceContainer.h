@@ -3,7 +3,7 @@
 extern "C"
 {
 #include "DataStructures/GenericArrayNameMacros.h"
-#include "DataStructures/Specifications/SortedVector.h"
+#include "DataStructures/Specifications/SortedLinearMap.h"
 }
 
 namespace _GameEngine::_Render
@@ -23,11 +23,11 @@ namespace _GameEngine::_Render
 		CORE_VECTOR_NAME(MaterialInstanceHandle) MaterialInstanceV2;
 	};
 
-	typedef Core_SortedVector CORE_SORTEDVECTOR_NAME(Material_with_MaterialInstances);
+	typedef Core_SortedLinearMap InstanciatedMaterialsMap_Material_MaterialInstance;
 
 	struct InstancedMaterialsDataStructure
 	{
-		CORE_SORTEDVECTOR_NAME(Material_with_MaterialInstances) InstanciatedMaterialsV3;
+		InstanciatedMaterialsMap_Material_MaterialInstance InstanciatedMaterialsV3;
 	};
 
 	struct MaterialInstanceContainer
