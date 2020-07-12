@@ -28,13 +28,13 @@ void Core_SortedSequencer_free(Core_SortedSequencer* p_sequencer)
 
 void Core_SortedSequencer_addOperation(Core_SortedSequencer* p_sortedSequencer, Core_SortedSequencerOperation* p_sortedSequencerOperation)
 {
-	p_sortedSequencer->Operations.GenericArray.Functions->Writer->PushBack(&p_sortedSequencer->Operations.GenericArray, p_sortedSequencerOperation);
+	Core_SortedVector_pushBack(&p_sortedSequencer->Operations, p_sortedSequencerOperation);
 };
 
 void Core_SortedSequencer_execute(Core_SortedSequencer* p_sortedSequencer, void* p_input)
 {
-	Core_VectorIterator l_it = p_sortedSequencer->Operations.GenericArray.Functions->BuildIterator(&p_sortedSequencer->Operations.GenericArray);
-	while (l_it.Functions->MoveNext(&l_it))
+	Core_VectorIterator l_it = Core_GenericArray_buildIterator(&p_sortedSequencer->Operations.GenericArray);
+	while (Core_VectorIterator_moveNext(&l_it))
 	{
 		Core_SortedSequencerOperation* l_oprtation = (Core_SortedSequencerOperation*)l_it.Current;
 		Core_Callback_call(&l_oprtation->OperationCallback, p_input);
@@ -60,7 +60,7 @@ SortedSequencerPriority Core_SortedSequencer_calculatePriority(CORE_VECTOR_NAME(
 		SortedSequencerPriority l_zeroPriority = (SortedSequencerPriority)0;
 
 		Core_Comparator l_zeroPriority_comparator = { CORE_EQUALS(uint16, uint16), &l_zeroPriority, NULL };
-		Core_VectorIterator l_beforeIterator = p_before->Functions->BuildIterator((Core_GenericArray*)p_before);
+		Core_VectorIterator l_beforeIterator = Core_GenericArray_buildIterator((Core_GenericArray*)p_before);
 
 		if (Core_contains(&l_beforeIterator, &l_zeroPriority_comparator))
 		{
@@ -80,7 +80,7 @@ SortedSequencerPriority Core_SortedSequencer_calculatePriority(CORE_VECTOR_NAME(
 		SortedSequencerPriority l_minBefore = USHRT_MAX;
 		for (size_t i = 0; i < p_before->Size; i++)
 		{
-			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)p_before->Functions->Accessor->At(p_before, i);
+			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)Core_GenericArray_at(p_before, i);
 			if (l_priority <= l_minBefore)
 			{
 				l_minBefore = l_priority;
@@ -94,7 +94,7 @@ SortedSequencerPriority Core_SortedSequencer_calculatePriority(CORE_VECTOR_NAME(
 		SortedSequencerPriority l_maxAfter = 0;
 		for (size_t i = 0; i < p_after->Size; i++)
 		{
-			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)p_after->Functions->Accessor->At(p_after, i);
+			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)Core_GenericArray_at(p_after, i);
 			if (l_priority >= l_maxAfter)
 			{
 				l_maxAfter = l_priority;
@@ -108,7 +108,7 @@ SortedSequencerPriority Core_SortedSequencer_calculatePriority(CORE_VECTOR_NAME(
 		SortedSequencerPriority l_minBefore = USHRT_MAX;
 		for (size_t i = 0; i < p_before->Size; i++)
 		{
-			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)p_before->Functions->Accessor->At(p_before, i);
+			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)Core_GenericArray_at(p_before, i);
 			if (l_priority <= l_minBefore)
 			{
 				l_minBefore = l_priority;
@@ -118,7 +118,7 @@ SortedSequencerPriority Core_SortedSequencer_calculatePriority(CORE_VECTOR_NAME(
 		SortedSequencerPriority l_maxAfter = 0;
 		for (size_t i = 0; i < p_after->Size; i++)
 		{
-			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)p_after->Functions->Accessor->At(p_after, i);
+			SortedSequencerPriority l_priority = *(SortedSequencerPriority*)Core_GenericArray_at(p_after, i);
 			if (l_priority >= l_maxAfter)
 			{
 				l_maxAfter = l_priority;

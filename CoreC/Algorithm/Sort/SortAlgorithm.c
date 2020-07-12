@@ -11,12 +11,12 @@ void* Core_min(struct Core_GenericArray* p_genericArray, struct Core_ElementSort
 	void* l_minValue = NULL;
 	if (p_genericArray->Size > 0)
 	{
-		l_minValue = p_genericArray->Functions->Accessor->At_unchecked(p_genericArray, 0);
+		l_minValue = Core_GenericArray_at_unchecked(p_genericArray, 0);
 	}
 
 	for (size_t i = 1; i < p_genericArray->Size; i++)
 	{
-		void* l_comparedValue = p_genericArray->Functions->Accessor->At_unchecked(p_genericArray, i);
+		void* l_comparedValue = Core_GenericArray_at(p_genericArray, i);
 		short int l_compareValue = p_sortComparator->Function(l_minValue, l_comparedValue, p_sortComparator->UserObject);
 		if (l_compareValue >= 0)
 		{
@@ -34,12 +34,12 @@ size_t Core_minIndex(struct Core_GenericArray* p_genericArray, size_t p_beginInd
 
 	if (p_genericArray->Size > 0)
 	{
-		l_minValue = p_genericArray->Functions->Accessor->At_unchecked(p_genericArray, p_beginIndex);
+		l_minValue = Core_GenericArray_at_unchecked(p_genericArray, p_beginIndex);
 	}
 
 	for (size_t i = p_beginIndex + 1; i < p_genericArray->Size; i++)
 	{
-		void* l_comparedValue = p_genericArray->Functions->Accessor->At_unchecked(p_genericArray, i);
+		void* l_comparedValue = Core_GenericArray_at_unchecked(p_genericArray, i);
 		short int l_compareValue = p_sortComparator->Function(l_minValue, l_comparedValue, p_sortComparator->UserObject);
 		if (l_compareValue >= 0)
 		{
@@ -58,7 +58,7 @@ void Core_selectionSort(struct Core_GenericArray* p_genericArray, struct Core_El
 		size_t l_minIndex = Core_minIndex(p_genericArray, i, p_sortComparator);
 		if (l_minIndex != i)
 		{
-			ERR_THROW(p_genericArray->Functions->Writer->Swap(p_genericArray, i, l_minIndex));
+			ERR_THROW(Core_GenericArray_swap(p_genericArray, i, l_minIndex));
 		}
 	}
 };

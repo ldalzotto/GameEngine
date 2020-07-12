@@ -27,7 +27,6 @@
 #include "../Algorithm/Compare/CompareAlgorithm.h"
 #include "../Algorithm/Sort/SortAlgorithm.h"
 
-#include "../DataStructures/Specifications/Vector.h"
 #include "../DataStructures/Specifications/SortedVector.h"
 #include "../DataStructures/Specifications/Array.h"
 #include "../DataStructures/Specifications/String.h"

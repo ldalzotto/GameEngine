@@ -3,7 +3,6 @@
 extern "C"
 {
 #include "DataStructures/GenericArrayNameMacros.h"
-#include "DataStructures/Specifications/Vector.h"
 #include "DataStructures/Specifications/SortedVector.h"
 }
 

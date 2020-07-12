@@ -49,22 +49,12 @@ void* Core_GenericArray_at(Core_GenericArray* p_genericArray, size_t p_index)
 	return Core_GenericArray_at_unchecked(p_genericArray, p_index);
 };
 
-bool Core_GenericArray_vectorIterator_moveNext(Core_VectorIterator* p_vectorIterator)
-{
-	p_vectorIterator->CurrentIndex += 1;
-	p_vectorIterator->Current = p_vectorIterator->Array->Functions->Accessor->At(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
-	return p_vectorIterator->Current != NULL;
-};
-
-static const Core_VectorIterator_function Core_GenericArray_VectorIterator_function = { Core_GenericArray_vectorIterator_moveNext };
-
 Core_VectorIterator Core_GenericArray_buildIterator(Core_GenericArray* p_genericArray)
 {
 	Core_VectorIterator l_it;
 	l_it.Array = p_genericArray;
 	l_it.Current = NULL;
 	l_it.CurrentIndex = -1;
-	l_it.Functions = &Core_GenericArray_VectorIterator_function;
 	return l_it;
 };
 

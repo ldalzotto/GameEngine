@@ -5,20 +5,12 @@
 #include "Functional/Comparator/Comparator.h"
 #include "ErrorHandling/ReturnCodes.h"
 
-typedef struct Core_GenericArray_functions
-{
-    const struct Core_VectorAccessor* Accessor;
-    const struct Core_VectorWriter* Writer;
-    const struct Core_VectorIterator (*BuildIterator)(struct Core_GenericArray* p_genericArray);
-} Core_GenericArray_functions;
-
 typedef struct Core_GenericArray
 {
     void* Memory;
     size_t Size;
     size_t Capacity;
     size_t ElementSize;
-    const struct Core_GenericArray_functions* Functions;
 } Core_GenericArray;
 
 void Core_GenericArray_alloc(Core_GenericArray* p_genericArray, size_t p_elementSize, size_t p_initialCapacity);
@@ -43,9 +35,3 @@ Core_ReturnCodes Core_GenericArray_isertArrayAt_realloc(Core_GenericArray* p_gen
 Core_ReturnCodes Core_GenericArray_isertArrayAt_noRealloc(Core_GenericArray* p_genericArray, Core_GenericArray* p_insertedArray, size_t p_index);
 
 Core_GenericArray Core_GenericArray_deepCopy(Core_GenericArray* p_genericArray);
-
-
-#define Core_GenericArray_BuildIterator(GenericArrayPtr) (GenericArrayPtr)->Functions->BuildIterator(GenericArrayPtr);
-#define Core_GenericArray_At(GenericArrayPtr, Index) (GenericArrayPtr)->Functions->Accessor->At(GenericArrayPtr, (Index))
-#define Core_GenericArray_PushBack(GenericArrayPtr, Value) (GenericArrayPtr)->Functions->Writer->PushBack(GenericArrayPtr, (Value))
-#define Core_GenericArray_Erase(GenericArrayPtr, Index) (GenericArrayPtr)->Functions->Writer->EraseAt(GenericArrayPtr, (Index))

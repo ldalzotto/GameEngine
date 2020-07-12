@@ -6,7 +6,6 @@
 extern "C"
 {
 #include "DataStructures/GenericArrayNameMacros.h"
-#include "DataStructures/Specifications/Vector.h"
 #include "Functional/Vector/VectorWriter.h"
 }
 
@@ -21,11 +20,11 @@ namespace _GameEngine::_ECS
 {
 	SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
 	{
-		CORE_VECTOR_NAME(SortedSequencerPriority) l_before; Core_Vector_alloc(&l_before, sizeof(SortedSequencerPriority), 2);
+		CORE_VECTOR_NAME(SortedSequencerPriority) l_before; Core_GenericArray_alloc(&l_before, sizeof(SortedSequencerPriority), 2);
 		SortedSequencerPriority l_meshDrawSystebBeforePriotity = MeshDrawSystem_updatePriorityBefore();
 		SortedSequencerPriority l_cameraSystemBeforepriority = CameraSystem_getUpdatePriority();
-		l_before.Functions->Writer->PushBack(&l_before, &l_meshDrawSystebBeforePriotity);
-		l_before.Functions->Writer->PushBack(&l_before, &l_cameraSystemBeforepriority);
+		Core_GenericArray_pushBack_noRealloc(&l_before, &l_meshDrawSystebBeforePriotity);
+		Core_GenericArray_pushBack_noRealloc(&l_before, &l_cameraSystemBeforepriority);
 		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
 	};
 

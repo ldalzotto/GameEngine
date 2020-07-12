@@ -43,7 +43,7 @@ namespace _GameEngine::_Render
 	void Material_with_MaterialInstances_alloc(Material_with_MaterialInstances* p_materialInstances, Material* p_material)
 	{
 		p_materialInstances->Material = p_material;
-		Core_Vector_alloc(&p_materialInstances->MaterialInstanceV2, sizeof(MaterialInstance*), 0);
+		Core_GenericArray_alloc(&p_materialInstances->MaterialInstanceV2, sizeof(MaterialInstance*), 0);
 	};
 
 	void Material_with_MaterialInstances_free(Material_with_MaterialInstances* p_materialInstances)
@@ -62,7 +62,7 @@ namespace _GameEngine::_Render
 	{
 		for (size_t i = 0; i < p_dataStructure->InstanciatedMaterialsV3.GenericArray.Size; i++)
 		{
-			Material_with_MaterialInstances_free((Material_with_MaterialInstances*)Core_GenericArray_At(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, 1));
+			Material_with_MaterialInstances_free((Material_with_MaterialInstances*)Core_GenericArray_at(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, 1));
 		}
 
 		Core_SortedVector_free(&p_dataStructure->InstanciatedMaterialsV3);
@@ -71,8 +71,8 @@ namespace _GameEngine::_Render
 	void InstancedMaterialsDataStructure_deepCopy(InstancedMaterialsDataStructure* p_dataStructure, InstancedMaterialsDataStructure* p_out)
 	{
 		p_out->InstanciatedMaterialsV3 = Core_SortedVector_deepCopy(&p_dataStructure->InstanciatedMaterialsV3);
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&p_out->InstanciatedMaterialsV3.GenericArray);
-		while (Core_VectorIterator_MoveNext(&l_instanciatedMaterialsIterator))
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_out->InstanciatedMaterialsV3.GenericArray);
+		while (Core_VectorIterator_moveNext(&l_instanciatedMaterialsIterator))
 		{
 			Material_with_MaterialInstances* l_materialInstances = (Material_with_MaterialInstances*)l_instanciatedMaterialsIterator.Current;
 			l_materialInstances->MaterialInstanceV2 = Core_GenericArray_deepCopy(&l_materialInstances->MaterialInstanceV2);
@@ -81,7 +81,7 @@ namespace _GameEngine::_Render
 
 	void InstancedMaterialsDataStructure_addMaterial(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material)
 	{
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
 		Core_Comparator l_findMaterialComparator; ZEROING(Core_Comparator, &l_findMaterialComparator);
 		l_findMaterialComparator.ComparedObject = p_material;
 		l_findMaterialComparator.Function = (Core_comparator_function)Material_with_MaterialInstances_equals;
@@ -92,12 +92,12 @@ namespace _GameEngine::_Render
 
 		Material_with_MaterialInstances l_materialInstances{};
 		Material_with_MaterialInstances_alloc(&l_materialInstances, p_material);
-		Core_GenericArray_PushBack(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, &l_materialInstances);
+		Core_SortedVector_pushBack(&p_dataStructure->InstanciatedMaterialsV3, &l_materialInstances);
 	}
 
 	void InstancedMaterialsDataStructure_removeMaterial(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, RenderInterface* p_renderInterface)
 	{
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
 		Core_Comparator l_findMaterialComparator; ZEROING(Core_Comparator, &l_findMaterialComparator);
 		l_findMaterialComparator.ComparedObject = p_material;
 		l_findMaterialComparator.Function = (Core_comparator_function)Material_with_MaterialInstances_equals;
@@ -105,7 +105,7 @@ namespace _GameEngine::_Render
 		{
 			size_t l_eraseIndex = l_instanciatedMaterialsIterator.CurrentIndex;
 
-			Material_with_MaterialInstances* l_involedMaterialWithMaterialInstances = (Material_with_MaterialInstances*)Core_GenericArray_At(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, l_eraseIndex);
+			Material_with_MaterialInstances* l_involedMaterialWithMaterialInstances = (Material_with_MaterialInstances*)Core_GenericArray_at(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, l_eraseIndex);
 #ifndef NDEBUG
 
 			if (l_involedMaterialWithMaterialInstances->MaterialInstanceV2.Size > 0)
@@ -115,38 +115,38 @@ namespace _GameEngine::_Render
 #endif
 
 			Material_with_MaterialInstances_free(l_involedMaterialWithMaterialInstances);
-			ERR_THROW(p_dataStructure->InstanciatedMaterialsV3.GenericArray.Functions->Writer->EraseAt(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, l_eraseIndex));
+			ERR_THROW(Core_GenericArray_erase(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, l_eraseIndex));
 		};
 	};
 
 	void InstancedMaterialsDataStructure_addMaterialInstance(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, MaterialInstance* p_materialInstance)
 	{
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
 		Core_Comparator l_findMaterialInstanceComparator; ZEROING(Core_Comparator, &l_findMaterialInstanceComparator);
 		l_findMaterialInstanceComparator.ComparedObject = p_material;
 		l_findMaterialInstanceComparator.Function = (Core_comparator_function)Material_with_MaterialInstances_equals;
 		Material_with_MaterialInstances* l_foundMaterialWithInstances = (Material_with_MaterialInstances*)Core_find(&l_instanciatedMaterialsIterator, &l_findMaterialInstanceComparator);
-		CORE_VECTOR_NAME(MaterialInstanceHandle)* l_materialInstances = (CORE_VECTOR_NAME(MaterialInstanceHandle)*) &l_foundMaterialWithInstances->MaterialInstanceV2;
-		l_materialInstances->Functions->Writer->PushBack(l_materialInstances, &p_materialInstance);
+		CORE_VECTOR_NAME(MaterialInstanceHandle)* l_materialInstances = (CORE_VECTOR_NAME(MaterialInstanceHandle)*) & l_foundMaterialWithInstances->MaterialInstanceV2;
+		Core_GenericArray_pushBack_realloc(l_materialInstances, &p_materialInstance);
 	};
 
 	void InstancedMaterialsDataStructure_removeMaterialInstance(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, MaterialInstance* p_materialInstance)
 	{
 		CORE_VECTOR_NAME(MaterialInstanceHandle)* l_materialInstances = NULL;
 		{
-			Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
+			Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_dataStructure->InstanciatedMaterialsV3.GenericArray);
 			Core_Comparator l_findMaterialInstanceComparator; ZEROING(Core_Comparator, &l_findMaterialInstanceComparator);
 			l_findMaterialInstanceComparator.ComparedObject = p_material;
 			l_findMaterialInstanceComparator.Function = (Core_comparator_function)Material_with_MaterialInstances_equals;
 			Material_with_MaterialInstances* l_foundMaterialWithInstances = (Material_with_MaterialInstances*)Core_find(&l_instanciatedMaterialsIterator, &l_findMaterialInstanceComparator);
 			l_materialInstances = (CORE_VECTOR_NAME(MaterialInstanceHandle)*) & l_foundMaterialWithInstances->MaterialInstanceV2;
 		}
-		
+
 		{
 			Core_Comparator l_materialInstancesComparator; ZEROING(Core_Comparator, &l_materialInstancesComparator);
 			l_materialInstancesComparator.ComparedObject = p_materialInstance;
 			l_materialInstancesComparator.Function = (Core_comparator_function)MaterialInstanceHandle_equals;
-			l_materialInstances->Functions->Writer->EraseCompare(l_materialInstances, &l_materialInstancesComparator);
+			Core_GenericArray_eraseCompare(l_materialInstances, &l_materialInstancesComparator);
 		}
 	};
 
@@ -158,8 +158,8 @@ namespace _GameEngine::_Render
 
 	void MaterialInstanceContainer_reAllocGraphicsPipeline(MaterialInstanceContainer* p_materialInstanceContainer)
 	{
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.GenericArray);
-		while (Core_VectorIterator_MoveNext(&l_instanciatedMaterialsIterator))
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.GenericArray);
+		while (Core_VectorIterator_moveNext(&l_instanciatedMaterialsIterator))
 		{
 			Material_with_MaterialInstances* l_materialInstances = (Material_with_MaterialInstances*)l_instanciatedMaterialsIterator.Current;
 			Material_reAllocGraphicsPipeline(l_materialInstances->Material, p_materialInstanceContainer->RenderInterface);
@@ -180,20 +180,20 @@ namespace _GameEngine::_Render
 		{
 			InstancedMaterialsDataStructure_deepCopy(&p_materialInstanceContainer->DataStructure, &l_copy);
 
-			Core_VectorIterator l_copiedInstanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&l_copy.InstanciatedMaterialsV3.GenericArray);
-			while(Core_VectorIterator_MoveNext(&l_copiedInstanciatedMaterialsIterator))
+			Core_VectorIterator l_copiedInstanciatedMaterialsIterator = Core_GenericArray_buildIterator(&l_copy.InstanciatedMaterialsV3.GenericArray);
+			while (Core_VectorIterator_moveNext(&l_copiedInstanciatedMaterialsIterator))
 			{
 				Material_with_MaterialInstances* l_materialInstances = (Material_with_MaterialInstances*)l_copiedInstanciatedMaterialsIterator.Current;
 				for (size_t j = 0; j < l_materialInstances->MaterialInstanceV2.Size; j++)
 				{
-					MaterialInstanceHandle* l_materialInstance = (MaterialInstanceHandle*)l_materialInstances->MaterialInstanceV2.Functions->Accessor->At(&l_materialInstances->MaterialInstanceV2, j);
+					MaterialInstanceHandle* l_materialInstance = (MaterialInstanceHandle*)Core_GenericArray_at(&l_materialInstances->MaterialInstanceV2, j);
 					MaterialInstance_free(l_materialInstance);
 				}
 
 				MaterialResourceProvider_ReleaseResource(p_materialInstanceContainer->RenderInterface->ResourceProvidersInterface.MaterialResourceProvider, &l_materialInstances->Material->MaterialUniqueKey);
 
 #ifndef NDEBUG
-				Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_BuildIterator(&p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.GenericArray);
+				Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.GenericArray);
 				Core_Comparator l_findMaterialComparator; ZEROING(Core_Comparator, &l_findMaterialComparator);
 				l_findMaterialComparator.ComparedObject = l_materialInstances->Material;
 				l_findMaterialComparator.Function = (Core_comparator_function)Material_with_MaterialInstances_equals;

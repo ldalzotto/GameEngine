@@ -6,8 +6,6 @@ extern "C"
 {
 #include "DataStructures/GenericArray.h"
 #include "DataStructures/GenericArrayNameMacros.h"
-#include "DataStructures/Specifications/Vector.h"
-
 #include "Functional/Vector/VectorWriter.h"
 }
 
@@ -43,9 +41,9 @@ namespace _GameEngine::_ECS
 	SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
 		CORE_VECTOR_NAME(SortedSequencerPriority) l_before;
-		Core_Vector_alloc(&l_before, sizeof(SortedSequencerPriority), 1);
+		Core_GenericArray_alloc(&l_before, sizeof(SortedSequencerPriority), 1);
 		SortedSequencerPriority l_meshDrawBeforePriority = MeshDrawSystem_updatePriorityBefore();
-		l_before.Functions->Writer->PushBack(&l_before, &l_meshDrawBeforePriority);
+		Core_GenericArray_pushBack_noRealloc(&l_before, &l_meshDrawBeforePriority);
 
 		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
 	};

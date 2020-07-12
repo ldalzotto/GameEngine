@@ -3,6 +3,7 @@
 
 extern "C"
 {
+#include "ErrorHandling/Errorhandling.h"
 #include "Functional/Vector/VectorWriter.h"
 }
 
@@ -61,8 +62,8 @@ namespace _GameEngine::_Render
 
 	void gizmoMesh_clearBuffer(GizmoMesh* p_gizmoMesh)
 	{
-		p_gizmoMesh->GizmoVerticesV2.Functions->Writer->Clear(&p_gizmoMesh->GizmoVerticesV2);
-		p_gizmoMesh->GizmoIndicesV2.Functions->Writer->Clear(&p_gizmoMesh->GizmoIndicesV2);
+		Core_GenericArray_clear(&p_gizmoMesh->GizmoVerticesV2);
+		Core_GenericArray_clear(&p_gizmoMesh->GizmoIndicesV2);
 	}
 
 	void Gizmo_alloc(Gizmo* p_gizmo, RenderInterface* p_renderInterface)
@@ -91,8 +92,8 @@ namespace _GameEngine::_Render
 
 	void Gizmo_drawLine_indices(Gizmo* p_gizmo, GizmoIndiceType& p_begin, GizmoIndiceType& p_end)
 	{
-		p_gizmo->GizmoMesh.GizmoIndicesV2.Functions->Writer->PushBack(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_begin);
-		p_gizmo->GizmoMesh.GizmoIndicesV2.Functions->Writer->PushBack(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_end);
+	 	ERR_THROW_MESSAGE(Core_GenericArray_pushBack_noRealloc(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_begin), "Gizmo_drawLine_indices : cannot push gizmo indices");
+		ERR_THROW_MESSAGE(Core_GenericArray_pushBack_noRealloc(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_end), "Gizmo_drawLine_indices : cannot push vertices");
 	}
 
 	void Gizmo_pushVertex(Gizmo* p_gizmo, _Math::Vector3f& p_position, _Math::Vector3f& p_color, GizmoIndiceType* p_out_index)
@@ -101,7 +102,7 @@ namespace _GameEngine::_Render
 		l_gizmoVertex.Position = p_position;
 		l_gizmoVertex.Color = p_color;
 
-		p_gizmo->GizmoMesh.GizmoVerticesV2.Functions->Writer->PushBack(&p_gizmo->GizmoMesh.GizmoVerticesV2, &l_gizmoVertex);
+		ERR_THROW_MESSAGE(Core_GenericArray_pushBack_noRealloc(&p_gizmo->GizmoMesh.GizmoVerticesV2, &l_gizmoVertex), "Gizmo_pushVertex : cannot push gizmo vertex");
 		*p_out_index = static_cast<uint16_t>(p_gizmo->GizmoMesh.GizmoVerticesV2.Size) - 1;
 	};
 

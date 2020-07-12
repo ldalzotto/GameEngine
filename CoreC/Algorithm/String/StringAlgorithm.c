@@ -16,11 +16,11 @@ void Core_string_append(struct Core_GenericArray* p_string, char* p_appended)
 
 	if (p_string->Size >= 2)
 	{
-		ERR_THROW(p_string->Functions->Writer->InsertArrayAt(p_string, &l_appededArray, CORE_STRING_CHAR_NB(p_string)));
+		ERR_THROW(Core_GenericArray_isertArrayAt_realloc(p_string, &l_appededArray, CORE_STRING_CHAR_NB(p_string)));
 	}
 	else
 	{
-		ERR_THROW(p_string->Functions->Writer->InsertArrayAt(p_string, &l_appededArray, 0));
+		ERR_THROW(Core_GenericArray_isertArrayAt_realloc(p_string, &l_appededArray, 0));
 	}
 };
 
@@ -39,7 +39,7 @@ bool Core_string_find(struct Core_GenericArray* p_string, char* p_comparedStr, s
 				break;
 			}
 
-			char* l_pstringCompareBegin = (char*)l_comparedStr.Functions->Accessor->At(p_string, *p_outfoundIndex);
+			char* l_pstringCompareBegin = (char*)Core_GenericArray_at(p_string, *p_outfoundIndex);
 			char* l_compareStringBegin = p_comparedStr;
 			if (*l_pstringCompareBegin == *l_compareStringBegin)
 			{

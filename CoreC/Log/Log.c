@@ -1,14 +1,13 @@
 #include "Log.h"
 
 #include "Constants.h"
-#include "DataStructures/Specifications/Vector.h"
 #include "Functional/Vector/VectorWriter.h"
 #include "Functional/Vector/VectorAccessor.h"
 
 void MyLog_build(struct Core_Log* p_myLog, struct Core_Clock* p_clock)
 {
 	p_myLog->Clock = p_clock;
-	Core_Vector_alloc(&p_myLog->LogMessages, sizeof(Core_LogMessage), 0);
+	Core_GenericArray_alloc(&p_myLog->LogMessages, sizeof(Core_LogMessage), 0);
 };
 
 void MyLog_free(struct Core_Log* p_myLog)
@@ -34,7 +33,7 @@ void MyLog_pushLog(struct Core_Log* p_myLog, enum Core_LogLevel p_logLevel, char
 		l_logMessage.FrameNb = p_myLog->Clock->FrameCount;
 	}
 
-	p_myLog->LogMessages.Functions->Writer->PushBack(&p_myLog->LogMessages, &l_logMessage);
+	Core_GenericArray_pushBack_realloc(&p_myLog->LogMessages, &l_logMessage);
 };
 
 void MyLog_pushLog_string(struct Core_Log* p_myLog, enum Core_LogLevel p_logLevel, char* p_filePath, int p_line, Core_GenericArray* p_message)
@@ -47,7 +46,7 @@ void MyLog_processLogs(struct Core_Log* p_myLog)
 {
 	for (size_t i = 0; i < p_myLog->LogMessages.Size; i++)
 	{
-		Core_LogMessage* l_message = p_myLog->LogMessages.Functions->Accessor->At(&p_myLog->LogMessages, i);
+		Core_LogMessage* l_message = Core_GenericArray_at(&p_myLog->LogMessages, i);
 		char* l_logLevemMessage = NULL;
 
 		switch (l_message->LogLevel)
@@ -94,6 +93,5 @@ void MyLog_processLogs(struct Core_Log* p_myLog)
 		// logMessage_free(l_message);
 	}
 
-	p_myLog->LogMessages.Functions->Writer->Clear(&p_myLog->LogMessages);
-
+	Core_GenericArray_clear(&p_myLog->LogMessages);
 };

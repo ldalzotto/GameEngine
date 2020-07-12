@@ -7,7 +7,7 @@
 
 void* Core_find(struct Core_VectorIterator* p_iterator, struct Core_Comparator* p_comparator)
 {
-	while (p_iterator->Functions->MoveNext(p_iterator))
+	while (Core_VectorIterator_moveNext(p_iterator))
 	{
 		if (p_comparator->Function(p_iterator->Current, p_comparator->ComparedObject, p_comparator->UserObject))
 		{
@@ -20,7 +20,7 @@ void* Core_find(struct Core_VectorIterator* p_iterator, struct Core_Comparator* 
 
 bool Core_findIndex(struct Core_VectorIterator* p_iterator, struct Core_Comparator* p_comparator)
 {
-	while (Core_VectorIterator_MoveNext(p_iterator))
+	while (Core_VectorIterator_moveNext(p_iterator))
 	{
 		if (p_comparator->Function(p_iterator->Current, p_comparator->ComparedObject, p_comparator->UserObject))
 		{
