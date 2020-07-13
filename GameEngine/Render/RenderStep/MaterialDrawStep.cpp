@@ -36,7 +36,7 @@ namespace _GameEngine::_Render
 			TextureLayoutTransition_executeTransition(p_commandBuffer, *(p_renderInterface->DepthTexture), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 		}
 
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&l_materialInstanceConctainer->DataStructure.InstanciatedMaterialsV3.GenericArray);
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&l_materialInstanceConctainer->DataStructure.SortedLinearMap_Material_MaterialInstances.GenericArray);
 		while (Core_VectorIterator_moveNext(&l_instanciatedMaterialsIterator))
 		{
 			Material_with_MaterialInstances* l_materialWithInstance = (Material_with_MaterialInstances*)l_instanciatedMaterialsIterator.Current;

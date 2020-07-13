@@ -48,32 +48,32 @@ namespace _GameEngine::_Render
 
 	void InstancedMaterialsDataStructure_alloc(InstancedMaterialsDataStructure* p_dataStructure)
 	{
-		Core_SortedLinearMap_alloc(&p_dataStructure->InstanciatedMaterialsV3, sizeof(Material_with_MaterialInstances), 2, (Core_elementSort_function)Material_with_MaterialInstances_sortCompare,
+		Core_SortedLinearMap_alloc(&p_dataStructure->SortedLinearMap_Material_MaterialInstances, sizeof(Material_with_MaterialInstances), 2, (Core_elementSort_function)Material_with_MaterialInstances_sortCompare,
 			(Core_Equals_function)Material_with_MaterialInstances_equals);
 	}
 
 	void InstancedMaterialsDataStructure_free(InstancedMaterialsDataStructure* p_dataStructure)
 	{
-		for (size_t i = 0; i < p_dataStructure->InstanciatedMaterialsV3.GenericArray.Size; i++)
+		for (size_t i = 0; i < p_dataStructure->SortedLinearMap_Material_MaterialInstances.GenericArray.Size; i++)
 		{
-			Material_with_MaterialInstances_free((Material_with_MaterialInstances*)Core_GenericArray_at(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, 1));
+			Material_with_MaterialInstances_free((Material_with_MaterialInstances*)Core_GenericArray_at(&p_dataStructure->SortedLinearMap_Material_MaterialInstances.GenericArray, 1));
 		}
 
-		Core_SortedLinearMap_free(&p_dataStructure->InstanciatedMaterialsV3);
+		Core_SortedLinearMap_free(&p_dataStructure->SortedLinearMap_Material_MaterialInstances);
 	}
 
 	void InstancedMaterialsDataStructure_deepCopy(InstancedMaterialsDataStructure* p_dataStructure, InstancedMaterialsDataStructure* p_out)
 	{
-		p_out->InstanciatedMaterialsV3 = Core_SortedLinearMap_deepCopy(&p_dataStructure->InstanciatedMaterialsV3);
+		p_out->SortedLinearMap_Material_MaterialInstances = Core_SortedLinearMap_deepCopy(&p_dataStructure->SortedLinearMap_Material_MaterialInstances);
 	}
 
 	void InstancedMaterialsDataStructure_addMaterial(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material)
 	{
-		Material_with_MaterialInstances l_materialInstances{};
-		l_materialInstances.Material = p_material;
+		Material_with_MaterialInstances l_key{};
+		l_key.Material = p_material;
 
 		Material_with_MaterialInstances* l_insertedMaterialInstances = NULL;
-		ERR_THROW_MESSAGE(Core_SortedLinearMap_pushBack_realloc(&p_dataStructure->InstanciatedMaterialsV3, &l_materialInstances, (void**)&l_insertedMaterialInstances), "Key already present");
+		ERR_THROW_MESSAGE(Core_SortedLinearMap_pushBack_realloc(&p_dataStructure->SortedLinearMap_Material_MaterialInstances, &l_key, (void**)&l_insertedMaterialInstances), "Key already present");
 		Material_with_MaterialInstances_alloc(l_insertedMaterialInstances, p_material);
 	}
 
@@ -83,7 +83,7 @@ namespace _GameEngine::_Render
 		l_key.Material = p_material;
 
 		Core_VectorIterator l_foundmaterialsIterator;
-		if (!Core_SortedLinearMap_find(&p_dataStructure->InstanciatedMaterialsV3, &l_key, &l_foundmaterialsIterator))
+		if (!Core_SortedLinearMap_find(&p_dataStructure->SortedLinearMap_Material_MaterialInstances, &l_key, &l_foundmaterialsIterator))
 		{
 			ERR_THROW_MESSAGE(CR_OUT_OF_BOUND, "InstancedMaterialsDataStructure_removeMaterial : trying to remove a material that is not indexed.")
 		};
@@ -99,35 +99,35 @@ namespace _GameEngine::_Render
 #endif
 
 		Material_with_MaterialInstances_free(l_foundMateials);
-		ERR_THROW(Core_GenericArray_erase(&p_dataStructure->InstanciatedMaterialsV3.GenericArray, l_foundmaterialsIterator.CurrentIndex));
+		ERR_THROW(Core_GenericArray_erase(&p_dataStructure->SortedLinearMap_Material_MaterialInstances.GenericArray, l_foundmaterialsIterator.CurrentIndex));
 	};
 
 	void InstancedMaterialsDataStructure_addMaterialInstance(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, MaterialInstance* p_materialInstance)
 	{
-		Material_with_MaterialInstances l_comparedMaterial;
-		l_comparedMaterial.Material = p_material;
+		Material_with_MaterialInstances l_key;
+		l_key.Material = p_material;
 		Core_VectorIterator l_materialsFoundIterator;
-		if (!Core_SortedLinearMap_find(&p_dataStructure->InstanciatedMaterialsV3, &l_comparedMaterial, &l_materialsFoundIterator))
+		if (!Core_SortedLinearMap_find(&p_dataStructure->SortedLinearMap_Material_MaterialInstances, &l_key, &l_materialsFoundIterator))
 		{
 			ERR_THROW_MESSAGE(CR_OUT_OF_BOUND, "Trying to instanciated a material where the template material has not already been reigsterd. Make sure to register the Material before instanciating it.");
 		}
 
 		Material_with_MaterialInstances* l_foundMaterialWithInstances = (Material_with_MaterialInstances*)l_materialsFoundIterator.Current;
-		CORE_VECTOR_NAME(MaterialInstanceHandle)* l_materialInstances = (CORE_VECTOR_NAME(MaterialInstanceHandle)*) & l_foundMaterialWithInstances->MaterialInstanceV2;
+		Vector_MaterialInstance* l_materialInstances = (Vector_MaterialInstance*) &l_foundMaterialWithInstances->MaterialInstanceV2;
 		Core_GenericArray_pushBack_realloc(l_materialInstances, &p_materialInstance);
 	};
 
 	void InstancedMaterialsDataStructure_removeMaterialInstance(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, MaterialInstance* p_materialInstance)
 	{
-		CORE_VECTOR_NAME(MaterialInstanceHandle)* l_materialInstances = NULL;
+		Vector_MaterialInstance* l_materialInstances = NULL;
 		{
 			Material_with_MaterialInstances l_comparedMaterial;
 			l_comparedMaterial.Material = p_material;
 			Core_VectorIterator l_materialsFoundIterator;
-			if (Core_SortedLinearMap_find(&p_dataStructure->InstanciatedMaterialsV3, &l_comparedMaterial, &l_materialsFoundIterator))
+			if (Core_SortedLinearMap_find(&p_dataStructure->SortedLinearMap_Material_MaterialInstances, &l_comparedMaterial, &l_materialsFoundIterator))
 			{
 				Material_with_MaterialInstances* l_foundMaterialWithInstances = (Material_with_MaterialInstances*)l_materialsFoundIterator.Current;
-				l_materialInstances = (CORE_VECTOR_NAME(MaterialInstanceHandle)*) & l_foundMaterialWithInstances->MaterialInstanceV2;
+				l_materialInstances = (Vector_MaterialInstance*) & l_foundMaterialWithInstances->MaterialInstanceV2;
 			}
 		}
 
@@ -147,7 +147,7 @@ namespace _GameEngine::_Render
 
 	void MaterialInstanceContainer_reAllocGraphicsPipeline(MaterialInstanceContainer* p_materialInstanceContainer)
 	{
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.GenericArray);
+		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&p_materialInstanceContainer->DataStructure.SortedLinearMap_Material_MaterialInstances.GenericArray);
 		while (Core_VectorIterator_moveNext(&l_instanciatedMaterialsIterator))
 		{
 			Material_with_MaterialInstances* l_materialInstances = (Material_with_MaterialInstances*)l_instanciatedMaterialsIterator.Current;
@@ -158,20 +158,20 @@ namespace _GameEngine::_Render
 	void MaterialInstanceContainer_free(MaterialInstanceContainer* p_materialInstanceContainer)
 	{
 #ifndef NDEBUG
-		if (p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.GenericArray.Size > 0)
+		if (p_materialInstanceContainer->DataStructure.SortedLinearMap_Material_MaterialInstances.GenericArray.Size > 0)
 		{
 			MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, LOGLEVEL_WARN, "Potential Memory leak. When the MaterialInstanceContainer is being freed, there was still materials or material instance with it."
 				" It is recommended to free material instances manually before freeing the container.");
 		}
 #endif
 		// We still clear materials if there is still instances
-		if (p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3.GenericArray.Size > 0)
+		if (p_materialInstanceContainer->DataStructure.SortedLinearMap_Material_MaterialInstances.GenericArray.Size > 0)
 		{
 			InstancedMaterialsDataStructure l_copy;
 			{
 				InstancedMaterialsDataStructure_deepCopy(&p_materialInstanceContainer->DataStructure, &l_copy);
 
-				Core_VectorIterator l_copiedInstanciatedMaterialsIterator = Core_GenericArray_buildIterator(&l_copy.InstanciatedMaterialsV3.GenericArray);
+				Core_VectorIterator l_copiedInstanciatedMaterialsIterator = Core_GenericArray_buildIterator(&l_copy.SortedLinearMap_Material_MaterialInstances.GenericArray);
 				while (Core_VectorIterator_moveNext(&l_copiedInstanciatedMaterialsIterator))
 				{
 					Material_with_MaterialInstances* l_materialInstances = (Material_with_MaterialInstances*)l_copiedInstanciatedMaterialsIterator.Current;
@@ -186,7 +186,7 @@ namespace _GameEngine::_Render
 					Material_with_MaterialInstances l_compatedMaterial;
 					l_compatedMaterial.Material = l_materialInstances->Material;
 					Core_VectorIterator l_foundMaterialsIterator;
-					if (Core_SortedLinearMap_find(&p_materialInstanceContainer->DataStructure.InstanciatedMaterialsV3, &l_compatedMaterial, &l_foundMaterialsIterator))
+					if (Core_SortedLinearMap_find(&p_materialInstanceContainer->DataStructure.SortedLinearMap_Material_MaterialInstances, &l_compatedMaterial, &l_foundMaterialsIterator))
 					{
 						MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, LOGLEVEL_WARN, "Memory leak detected. When the MaterialInstanceContainer is being freed, releasing a Material resource didn't induce it's destruction.");
 					}

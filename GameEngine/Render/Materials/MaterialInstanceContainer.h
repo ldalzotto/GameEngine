@@ -2,7 +2,6 @@
 
 extern "C"
 {
-#include "DataStructures/GenericArrayNameMacros.h"
 #include "DataStructures/Specifications/SortedLinearMap.h"
 }
 
@@ -15,19 +14,17 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	typedef Core_GenericArray CORE_VECTOR_NAME(MaterialInstanceHandle);
+	typedef Core_GenericArray Vector_MaterialInstance;
 
 	struct Material_with_MaterialInstances
 	{
 		Material* Material;
-		CORE_VECTOR_NAME(MaterialInstanceHandle) MaterialInstanceV2;
+		Vector_MaterialInstance MaterialInstanceV2;
 	};
-
-	typedef Core_SortedLinearMap InstanciatedMaterialsMap_Material_MaterialInstance;
 
 	struct InstancedMaterialsDataStructure
 	{
-		InstanciatedMaterialsMap_Material_MaterialInstance InstanciatedMaterialsV3;
+		Core_SortedLinearMap SortedLinearMap_Material_MaterialInstances;
 	};
 
 	struct MaterialInstanceContainer
