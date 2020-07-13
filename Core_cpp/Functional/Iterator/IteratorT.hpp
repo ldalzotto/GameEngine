@@ -1,0 +1,20 @@
+#pragma once
+
+#include "Iterator.hpp"
+
+namespace _Core
+{
+	template <typename ELEMENT_TYPE>
+	struct VectorIteratorT
+	{
+		GenericArray* Array;
+		ELEMENT_TYPE* Current;
+		size_t CurrentIndex;
+	};
+
+	template <typename ELEMENT_TYPE>
+	inline bool VectorIteratorT_moveNext(VectorIteratorT<ELEMENT_TYPE>* p_vectorIterator)
+	{
+		return VectorIterator_moveNext((VectorIterator*)p_vectorIterator);
+	};
+}
