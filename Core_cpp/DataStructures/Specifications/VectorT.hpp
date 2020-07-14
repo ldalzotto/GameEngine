@@ -2,6 +2,7 @@
 
 #include "DataStructures/GenericArray.hpp"
 #include "Functional/Iterator/IteratorT.hpp"
+#include "Functional/Comparator/ComparatorT.hpp"
 
 namespace _Core
 {
@@ -39,9 +40,23 @@ namespace _Core
 	}
 
 	template <typename ELEMENT_TYPE>
+	inline void VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE& p_element)
+	{
+		GenericArray_pushBack_realloc((GenericArray*)p_array, &p_element);
+	}
+
+	template <typename ELEMENT_TYPE>
 	inline void VectorT_buildIterator(VectorT<ELEMENT_TYPE>* p_array, VectorIteratorT<ELEMENT_TYPE>* out_iterator)
 	{
 		GenericArray_buildIterator((GenericArray*)p_array, (VectorIterator*)out_iterator);
+	}
+
+	template <typename ELEMENT_TYPE>
+	inline VectorIteratorT<ELEMENT_TYPE> VectorT_buildIterator(VectorT<ELEMENT_TYPE>* p_array)
+	{
+		VectorIteratorT<ELEMENT_TYPE> l_it;
+		GenericArray_buildIterator((GenericArray*)p_array, (VectorIterator*)&l_it);
+		return l_it;
 	}
 
 	template <typename ELEMENT_TYPE>
@@ -49,4 +64,10 @@ namespace _Core
 	{
 		GenericArray_clear((GenericArray*)p_array);
 	}
+
+	template <typename ELEMENT_TYPE, typename COMPARED_TYPE, typename USER_TYPE>
+	inline void VectorT_eraseCompare(VectorT<ELEMENT_TYPE>* p_array, ComparatorT<ELEMENT_TYPE, COMPARED_TYPE, USER_TYPE>* p_comparator)
+	{
+		GenericArray_eraseCompare((GenericArray*)p_array, (Comparator*)p_comparator);
+	};
 }

@@ -11,4 +11,10 @@ namespace _Core
 		void* UserObject;
 	};
 
+	struct Asserter
+	{
+		Comparator_function Function;
+		void* UserObject;
+	};
+
 }

@@ -4,6 +4,8 @@ namespace _Core
 {
 	struct VectorIterator;
 	struct ElementSorter;
+	struct Comparator;
+	struct Asserter;
 }
 
 namespace _Core
@@ -31,10 +33,13 @@ namespace _Core
 	void GenericArray_pushBack_realloc(GenericArray* p_genericArray, void* p_value);
 	void GenericArray_pushBack_noRealloc(GenericArray* p_genericArray, void* p_value);
 	void GenericArray_pushBack_realloc_sorted(GenericArray* p_genericArray, void* p_value, ElementSorter* p_elementSorter);
+	void GenericArray_pushBack_realloc_guarded(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard);
+	void GenericArray_pushBack_realloc_guarded_sorted(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard, ElementSorter* p_elementSorter);
 
 	void GenericArray_swap(GenericArray* p_genericArray, size_t p_left, size_t p_right);
 
 	void GenericArray_erase(GenericArray* p_genericArray, size_t p_index);
+	void GenericArray_eraseCompare(GenericArray* p_genericArray, Comparator* p_comparator);
 
 	void GenericArray_isertAt_realloc(GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index);
 	void GenericArray_isertAt_noRealloc(GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index);

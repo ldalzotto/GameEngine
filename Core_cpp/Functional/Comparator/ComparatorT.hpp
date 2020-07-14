@@ -16,13 +16,12 @@ namespace _Core
 	};
 
 	template <typename SOURCE_TYPE, typename COMPARED_TYPE, typename USER_TYPE>
-	inline ComparatorT<SOURCE_TYPE, COMPARED_TYPE, USER_TYPE> ComparatorT_build(ComparatorT_function<SOURCE_TYPE, COMPARED_TYPE, USER_TYPE> p_function, COMPARED_TYPE* p_comparedObject, USER_TYPE* p_userObject)
+	struct AsserterT
 	{
-		return
-		{
-			p_function,
-			p_comparedObject,
-			p_userObject
-		};
-	}
+		ComparatorT_function<SOURCE_TYPE, COMPARED_TYPE, USER_TYPE> Function;
+		USER_TYPE* UserObject;
+	};
+
+
+
 }

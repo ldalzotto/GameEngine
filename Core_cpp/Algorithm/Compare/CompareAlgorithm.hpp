@@ -8,6 +8,6 @@ namespace _Core
 
 namespace _Core
 {
-	bool Compare_find(VectorIterator* p_iterator, Comparator* p_comparator);
-	bool Compare_contains(VectorIterator* p_iterator, Comparator* p_comparator);
+	bool Compare_find(VectorIterator* p_iterator, const Comparator* p_comparator);
+	bool Compare_contains(VectorIterator* p_iterator, const Comparator* p_comparator);
 }

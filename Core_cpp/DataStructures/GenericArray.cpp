@@ -5,6 +5,8 @@
 #include "Functional/Iterator/Iterator.hpp"
 #include "Functional/Sort/ElementSorter.hpp"
 #include "Algorithm/Sort/SortAlgorithm.hpp"
+#include "Functional/Comparator/Comaprator.hpp"
+#include "Algorithm/Compare/CompareAlgorithm.hpp"
 
 namespace _Core
 {
@@ -103,6 +105,46 @@ namespace _Core
 		GenericArray_isertAt_realloc(p_genericArray, p_value, 1, l_it.CurrentIndex);
 	};
 
+	void GenericArray_pushBack_realloc_guarded(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard)
+	{
+		VectorIterator l_it;
+		GenericArray_buildIterator(p_genericArray, &l_it);
+		Comparator l_comparator;
+		l_comparator.Function = p_insertGuard->Function;
+		l_comparator.UserObject = p_insertGuard->UserObject;
+		l_comparator.ComparedObject = p_value;
+
+		if (Compare_contains(&l_it, &l_comparator))
+		{
+			throw std::runtime_error("GenericArray_pushBack_realloc_guarded : cannot insert an element that is already present.");
+		}
+		GenericArray_pushBack_realloc(p_genericArray, p_value);
+	};
+
+	void GenericArray_pushBack_realloc_guarded_sorted(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard, ElementSorter* p_elementSorter)
+	{
+		{
+			VectorIterator l_it;
+			GenericArray_buildIterator(p_genericArray, &l_it);
+			Comparator l_comparator;
+			l_comparator.Function = p_insertGuard->Function;
+			l_comparator.UserObject = p_insertGuard->UserObject;
+			l_comparator.ComparedObject = p_value;
+
+			if (Compare_contains(&l_it, &l_comparator))
+			{
+				throw std::runtime_error("GenericArray_pushBack_realloc_guarded : cannot insert an element that is already present.");
+			}
+		}
+
+		{
+			VectorIterator l_it;
+			GenericArray_buildIterator(p_genericArray, &l_it);
+			Sort_min(&l_it, 0, p_elementSorter);
+			GenericArray_isertAt_realloc(p_genericArray, p_value, 1, l_it.CurrentIndex);
+		}
+	};
+
 	void GenericArray_swap(GenericArray* p_genericArray, size_t p_left, size_t p_right)
 	{
 		if (p_left >= p_genericArray->Size || p_right >= p_genericArray->Size) { throw std::runtime_error("Core_GenericArray_swap : out_of_range"); }
@@ -136,6 +178,21 @@ namespace _Core
 
 		p_genericArray->Size -= 1;
 	}
+
+	void GenericArray_eraseCompare(GenericArray* p_genericArray, Comparator* p_comparator)
+	{
+		void* l_cursor = p_genericArray->Memory;
+		for (size_t i = 0; i < p_genericArray->Size; i++)
+		{
+			if (p_comparator->Function(l_cursor, p_comparator->ComparedObject, p_comparator->UserObject))
+			{
+				GenericArray_erase(p_genericArray, i);
+				break;
+			}
+
+			l_cursor = (char*)l_cursor + p_genericArray->ElementSize;
+		};
+	};
 
 	void GenericArray_isertAt_realloc(GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index)
 	{

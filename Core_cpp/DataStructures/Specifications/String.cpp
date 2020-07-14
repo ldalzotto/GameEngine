@@ -24,6 +24,10 @@ namespace _Core
 		VectorT_pushBack(p_string, &l_nulChar);
 	};
 
+	void String_free(String* p_string)
+	{
+		VectorT_free((VectorT<char>*)p_string);
+	};
 
 	void String_append(String* p_string, char* p_appended)
 	{

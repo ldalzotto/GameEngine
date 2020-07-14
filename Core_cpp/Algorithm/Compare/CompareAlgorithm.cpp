@@ -5,7 +5,7 @@
 
 namespace _Core
 {
-	bool Compare_find(VectorIterator* p_iterator, Comparator* p_comparator)
+	bool Compare_find(VectorIterator* p_iterator, const Comparator* p_comparator)
 	{
 		while (VectorIterator_moveNext(p_iterator))
 		{
@@ -15,10 +15,12 @@ namespace _Core
 			}
 		}
 
+		p_iterator->Current = nullptr;
+		p_iterator->CurrentIndex = -1;
 		return false;
 	};
 	
-	bool Compare_contains(VectorIterator* p_iterator, Comparator* p_comparator)
+	bool Compare_contains(VectorIterator* p_iterator, const Comparator* p_comparator)
 	{
 		return Compare_find(p_iterator, p_comparator);
 	};
