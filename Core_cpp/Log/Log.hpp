@@ -18,7 +18,10 @@ namespace _Core
 
 	enum LogLevel : short int
 	{
-		LOGLEVEL_INFO, LOGLEVEL_DEBUG, LOGLEVEL_WARN, LOGLEVEL_ERROR
+		INFO, 
+		DEBUG, 
+		WARN, 
+		ERROR
 	};
 
 #define LOG_MESSAGE_MAX_SIZE 1500

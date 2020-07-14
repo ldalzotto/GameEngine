@@ -14,7 +14,7 @@ namespace _GameEngine::_Input
 
 	void initializeGLFWLookup(Input* p_input);
 
-	void Input_build(Input* p_input, _Render::Window* p_window, Core_Log* Log)
+	void Input_build(Input* p_input, _Render::Window* p_window, ::_Core::Log* Log)
 	{
 		InputInstance = p_input;
 		p_input->Window = p_window;

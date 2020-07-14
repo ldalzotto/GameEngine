@@ -1,11 +1,8 @@
 #include "Render.h"
 
 #include "VulkanObjects/Extensions/Extensions.h"
-extern "C"
-{
-#include "Log/Log.h"
-#include "Log/LogFormatting.h"
-}
+
+#include "Log/Log.hpp"
 
 #include "RenderStep/MaterialDrawStep.h"
 
@@ -178,7 +175,7 @@ namespace _GameEngine::_Render
 	void freePreRenderStaging(Render* p_render);
 
 
-	void Render_build(Render* p_render, Core_Log* p_myLog)
+	void Render_build(Render* p_render, ::_Core::Log* p_myLog)
 	{
 		RenderInterface_initialize(p_render, p_myLog);
 		RenderHookCallbacks_alloc(&p_render->RenderHookCallbacks);
@@ -345,16 +342,16 @@ namespace _GameEngine::_Render
 		switch (p_messageSeverity)
 		{
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, LOGLEVEL_INFO, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::INFO, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, LOGLEVEL_INFO, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::INFO, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, LOGLEVEL_WARN, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::WARN, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, LOGLEVEL_ERROR, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::ERROR, (char*)p_callbackData->pMessage);
 			break;
 		}
 

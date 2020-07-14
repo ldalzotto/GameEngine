@@ -4,15 +4,17 @@
 
 extern "C"
 {
-#include "Log/LogFormatting.h"
 #include "DataStructures/Specifications/String.h"
 #include "Algorithm/String/StringAlgorithm.h"
 }
+
+#include "Log/LogFormatting.hpp"
 
 #include <Assimp/Importer.hpp>
 #include <Assimp/scene.h>
 #include <Assimp/postprocess.h>
 
+using namespace ::_Core;
 
 namespace _GameEngine::_Render
 {
@@ -32,9 +34,9 @@ namespace _GameEngine::_Render
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			{
-				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-				Core_string_append(&l_errorMessage, "Cannot load the model : ");
-				Core_string_append(&l_errorMessage, (char*)p_readMeshFromFileInfo->Path.c_str());
+				String l_errorMessage; String_alloc(&l_errorMessage, 100);
+				String_append(&l_errorMessage, "Cannot load the model : ");
+				String_append(&l_errorMessage, (char*)p_readMeshFromFileInfo->Path.c_str());
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 			}
 		}

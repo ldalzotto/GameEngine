@@ -2,8 +2,6 @@
 
 extern "C"
 {
-#include "Log/LogFormatting.h"
-#include "Log/Log.h"
 #include "ErrorHandling/Errorhandling.h"
 #include "Constants.h"
 #include "Algorithm/Compare/CompareAlgorithm.h"
@@ -12,6 +10,9 @@ extern "C"
 #include "Functional/Vector/VectorIterator.h"
 #include "Functional/Sort/ElementSorter.h"
 }
+
+
+#include "Log/Log.hpp"
 
 #include "RenderInterface.h"
 #include "MaterialInstance.h"
@@ -94,7 +95,7 @@ namespace _GameEngine::_Render
 
 		if (l_foundMateials->MaterialInstanceV2.Size > 0)
 		{
-			MYLOG_PUSH(p_renderInterface->MyLog, LOGLEVEL_WARN, "Potential Memory leak. When Material is disposed, there was still MaterialInstances derived from this Material. Consider disposing MaterialInstance first.");
+			MYLOG_PUSH(p_renderInterface->MyLog, ::_Core::LogLevel::WARN, "Potential Memory leak. When Material is disposed, there was still MaterialInstances derived from this Material. Consider disposing MaterialInstance first.");
 		}
 #endif
 
@@ -160,7 +161,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 		if (p_materialInstanceContainer->DataStructure.SortedLinearMap_Material_MaterialInstances.GenericArray.Size > 0)
 		{
-			MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, LOGLEVEL_WARN, "Potential Memory leak. When the MaterialInstanceContainer is being freed, there was still materials or material instance with it."
+			MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, ::_Core::LogLevel::WARN, "Potential Memory leak. When the MaterialInstanceContainer is being freed, there was still materials or material instance with it."
 				" It is recommended to free material instances manually before freeing the container.");
 		}
 #endif
@@ -188,7 +189,7 @@ namespace _GameEngine::_Render
 					Core_VectorIterator l_foundMaterialsIterator;
 					if (Core_SortedLinearMap_find(&p_materialInstanceContainer->DataStructure.SortedLinearMap_Material_MaterialInstances, &l_compatedMaterial, &l_foundMaterialsIterator))
 					{
-						MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, LOGLEVEL_WARN, "Memory leak detected. When the MaterialInstanceContainer is being freed, releasing a Material resource didn't induce it's destruction.");
+						MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, ::_Core::LogLevel::WARN, "Memory leak detected. When the MaterialInstanceContainer is being freed, releasing a Material resource didn't induce it's destruction.");
 					}
 #endif
 				}

@@ -1,10 +1,7 @@
 #include "TextureSwapChainSizeSynchronizer.h"
 
 #include "RenderInterface.h"
-extern "C"
-{
-#include "Log/Log.h"
-}
+#include "Log/Log.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -47,7 +44,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 		if (p_textureSwapChainSynchronizer->Syncronizers.size() > 0)
 		{
-			MYLOG_PUSH(p_renderInterface->MyLog, LOGLEVEL_WARN, "Potential Memory Leak. The TextureSwapChainSizeSynchronizer wasn't empty when freed.");
+			MYLOG_PUSH(p_renderInterface->MyLog, _Core::LogLevel::WARN, "Potential Memory Leak. The TextureSwapChainSizeSynchronizer wasn't empty when freed.");
 		}
 #endif
 	};

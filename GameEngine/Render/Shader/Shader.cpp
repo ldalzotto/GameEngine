@@ -4,13 +4,8 @@
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 
-extern "C"
-{
-#include "Log/Log.h"
-#include "Read/File/File.h"
-#include "DataStructures/Specifications/Array.h"
-#include "ErrorHandling/Errorhandling.h"
-}
+#include "Log/Log.hpp"
+#include "Read/File/File.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -38,10 +33,9 @@ namespace _GameEngine::_Render
 	VkShaderModule Shader_allocateShaderModule(Shader* p_shader, Device* p_device)
 	{
 		VkShaderModule l_shaderModule;
-		Core_GenericArray l_compiledShader;
+		_Core::String l_compiledShader;
 		{
-			Core_GenericArray l_shaderPath = Core_array_fromCStyle((void*)p_shader->ShaderPath.c_str(), sizeof(char), strlen(p_shader->ShaderPath.c_str()));
-			ERR_THROW(Core_File_readFile_byte(&l_shaderPath, &l_compiledShader));
+			_Core::File_readFile_byte((char*)p_shader->ShaderPath.c_str(), &l_compiledShader);
 			VkShaderModuleCreateInfo l_shaderModuleCreateInfo{};
 			l_shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 			l_shaderModuleCreateInfo.codeSize = l_compiledShader.Size;
@@ -52,7 +46,7 @@ namespace _GameEngine::_Render
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create shader module!"));
 			}
 		}
-		Core_GenericArray_free(&l_compiledShader);
+		_Core::String_free(&l_compiledShader);
 		return l_shaderModule;
 	};
 

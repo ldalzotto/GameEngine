@@ -2,7 +2,7 @@
 
 namespace _GameEngine::_ECS
 {
-	void EntityComponent_build(ECS* p_ecs, Core_Log* p_myLog)
+	void EntityComponent_build(ECS* p_ecs, ::_Core::Log* p_myLog)
 	{
 		p_ecs->MyLog = p_myLog;
 		ECSEventQueue_alloc(&p_ecs->EventQueue, p_ecs);

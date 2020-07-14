@@ -4,10 +4,11 @@
 
 extern "C"
 {
-#include "Clock/Clock.h"
-#include "Log/Log.h"
 #include "Functional/Callback/Observer.h"
 }
+
+#include "Clock/Clock.hpp"
+#include "Log/Log.hpp"
 
 #include "GameLoop/GameLoop.h"
 #include "EngineSequencers/EngineSequencers.h"
@@ -31,8 +32,8 @@ namespace _GameEngine
 		std::function<void(float)> SandboxUpdateHook;
 
 		GameLoop GameLoop;
-		Core_Log Log;
-		Core_Clock Clock;
+		::_Core::Log Log;
+		::_Core::Clock Clock;
 		_Physics::Physics Physics;
 		_Render::Render Render;
 		_Input::Input Input;

@@ -53,22 +53,22 @@ namespace _Core
 
 			switch (l_message->LogLevel)
 			{
-			case LOGLEVEL_INFO:
+			case LogLevel::INFO:
 				l_logLevemMessage = " [INFO] - ";
 				printf("\033[0;32m");
 				break;
 
-			case LOGLEVEL_DEBUG:
+			case LogLevel::DEBUG:
 				l_logLevemMessage = " [DEBUG] - ";
 				printf("\033[1;32m");
 				break;
 
-			case LOGLEVEL_WARN:
+			case LogLevel::WARN:
 				l_logLevemMessage = " [WARN] - ";
 				printf("\033[0;33m");
 				break;
 
-			case LOGLEVEL_ERROR:
+			case LogLevel::ERROR:
 				l_logLevemMessage = " [ERROR] - ";
 				printf("\033[0;31m");
 				break;

@@ -2,13 +2,7 @@
 
 #include <stdexcept>
 
-extern "C"
-{
-#include "Algorithm/String/StringAlgorithm.h"
-#include "Log/LogFormatting.h"
-#include "Log/Log.h"
-#include "DataStructures/Specifications/String.h"
-}
+#include "Log/Log.hpp"
 
 #include "ECS/ECS.h"
 
@@ -36,10 +30,10 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (p_entity->Components.get(Component_comparator, &p_unlinkedComponent->ComponentType))
 		{
-			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-			Core_string_append(&l_errorMessage, "Trying to add a component were it's type ( ");
-			Core_string_append(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType.c_str());
-			Core_string_append(&l_errorMessage, " ) is aleady present as a component.");
+			::_Core::String l_errorMessage; ::_Core::String_alloc(&l_errorMessage, 100);
+			::_Core::String_append(&l_errorMessage, "Trying to add a component were it's type ( ");
+			::_Core::String_append(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType.c_str());
+			::_Core::String_append(&l_errorMessage, " ) is aleady present as a component.");
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 #endif
@@ -121,7 +115,7 @@ namespace _GameEngine::_ECS
 		EntityContainer* l_entityContainer = &(*p_entity)->ECS->EntityContainer;
 		if (l_entityContainer->Entities.get(Entity_comparator, p_entity))
 		{
-			MYLOG_PUSH((*p_entity)->ECS->MyLog, LOGLEVEL_WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
+			MYLOG_PUSH((*p_entity)->ECS->MyLog, ::_Core::LogLevel::WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
 		}
 #endif
 

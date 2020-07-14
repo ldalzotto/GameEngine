@@ -3,7 +3,7 @@
 
 namespace _Core
 {
-	String Core_log_formatError(char* p_file, int p_line, char* p_message)
+	String Log_formatError(char* p_file, int p_line, char* p_message)
 	{
 		String l_str;
 		String_alloc(&l_str, 100);
@@ -19,7 +19,7 @@ namespace _Core
 		return l_str;
 	};
 
-	String Core_log_formatError_string(const char* p_file, int p_line, String* p_message)
+	String Log_formatError_string(const char* p_file, int p_line, String* p_message)
 	{
 		String l_errorMessage;
 		String_alloc(&l_errorMessage, 0);

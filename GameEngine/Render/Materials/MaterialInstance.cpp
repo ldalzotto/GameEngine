@@ -1,18 +1,14 @@
 
 #include "MaterialInstance.h"
 
-extern "C"
-{
-#include "Log/LogFormatting.h"
-#include "DataStructures/Specifications/String.h"
-#include "Algorithm/String/StringAlgorithm.h"
-#include "Functional/ToString/ToString.h"
-}
 
 #include <functional>
 #include <stdexcept>
 
 #include "RenderInterface.h"
+#include "Log/LogFormatting.hpp"
+#include "Functional/ToString/ToString.hpp"
+#include "DataStructures/Specifications/String.hpp"
 #include "Resources/MeshResourceProvider.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Mesh/Mesh.h"
@@ -22,6 +18,8 @@ extern "C"
 #include "Shader/DescriptorSetLayout.h"
 #include "Shader/ShaderParameterKeys.h"
 #include "Material.h"
+
+using namespace ::_Core;
 
 namespace _GameEngine::_Render
 {
@@ -262,11 +260,12 @@ namespace _GameEngine::_Render
 			}
 			break;
 			default:
-				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
+				String l_errorMessage;
+				String_alloc(&l_errorMessage, 0);
 				{
-					Core_string_append(&l_errorMessage, "Failed to populate ShaderParameter with type : ");
-					char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
-					Core_string_append(&l_errorMessage, l_intContainer);
+					String_append(&l_errorMessage, "Failed to populate ShaderParameter with type : ");
+					char l_intContainer[50]; ToString_intv(l_intContainer, (int*)&l_shaderParameter.Type);
+					String_append(&l_errorMessage, l_intContainer);
 				}
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 				break;
@@ -331,10 +330,10 @@ namespace _GameEngine::_Render
 			break;
 			default:
 			{
-				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-				Core_string_append(&l_errorMessage, "Failed to update ShaderParameter with type : ");
-				char l_intContainer[50]; Core_toString_intv(l_intContainer, (int*)l_shaderParameter.Type);
-				Core_string_append(&l_errorMessage, l_intContainer);
+				String l_errorMessage; String_alloc(&l_errorMessage, 100);
+				String_append(&l_errorMessage, "Failed to update ShaderParameter with type : ");
+				char l_intContainer[50]; ToString_intv(l_intContainer, (int*)l_shaderParameter.Type);
+				String_append(&l_errorMessage, l_intContainer);
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 			}
 			break;

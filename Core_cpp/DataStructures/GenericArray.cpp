@@ -71,6 +71,11 @@ namespace _Core
 		out_iterator->CurrentIndex = -1;
 	};
 
+	void GenericArray_clear(GenericArray* p_genericArray)
+	{
+		p_genericArray->Size = 0;
+	};
+
 	void GenericArray_pushBack_realloc(GenericArray* p_genericArray, void* p_value)
 	{
 		if (p_genericArray->Size >= p_genericArray->Capacity)
@@ -230,6 +235,32 @@ namespace _Core
 		return GenericArray_isertAt_realloc(p_genericArray, p_value, p_elementNb, p_index);
 	};
 
+	void GenericArray_isertArrayAt_realloc(GenericArray* p_genericArray, GenericArray* p_insertedArray, size_t p_index)
+	{
+		if (p_index > p_genericArray->Size)
+		{
+			throw std::runtime_error("GenericArray_isertArrayAt_realloc : out of range");
+		}
+
+		if (p_genericArray->Size + p_insertedArray->Size > p_genericArray->Capacity)
+		{
+			GenericArray_resize(p_genericArray, p_genericArray->Capacity == 0 ? 1 : (p_genericArray->Capacity * 2));
+			GenericArray_isertAt_realloc(p_genericArray, p_insertedArray->Memory, p_insertedArray->Size, p_index);
+		}
+		else
+		{
+			void* l_initialElement = (char*)p_genericArray->Memory + GenericArray_getElementOffset(p_genericArray, p_index);
+			// If we insert between existing elements, we move down memory to give space for new elements
+			if (p_genericArray->Size - p_index > 0)
+			{
+				void* l_targetElement = (char*)p_genericArray->Memory + GenericArray_getElementOffset(p_genericArray, p_index + p_insertedArray->Size);
+				memmove(l_targetElement, l_initialElement, p_genericArray->ElementSize * (p_genericArray->Size - p_index));
+			}
+			memcpy(l_initialElement, p_insertedArray->Memory, p_genericArray->ElementSize * p_insertedArray->Size);
+			p_genericArray->Size += p_insertedArray->Size;
+		}
+	};
+	
 	GenericArray GenericArray_deepCopy(GenericArray* p_genericArray)
 	{
 		GenericArray l_copiedArray;

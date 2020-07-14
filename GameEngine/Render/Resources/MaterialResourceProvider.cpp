@@ -1,19 +1,16 @@
 #include "MaterialResourceProvider.h"
 
-extern "C"
-{
-#include "Log/LogFormatting.h"
-#include "Log/Log.h"
-}
 
 #include <stdexcept>
 
 #include "Math/Vector/Vector.h"
-
+#include "Log/Log.hpp"
 #include "Shader/ShaderParameterKeys.h"
 #include "Materials/MaterialInstanceContainer.h"
 #include "RenderInterface.h"
 #include "Texture/TextureSamplers.h"
+
+using namespace ::_Core;
 
 namespace _GameEngine::_Render
 {
@@ -70,7 +67,7 @@ namespace _GameEngine::_Render
 				l_textureResourcesNotDisposed += ",";
 			}
 			l_textureResourcesNotDisposed += "]";
-			MYLOG_PUSH(p_materialResourceProvider->RenderInterface->MyLog, LOGLEVEL_WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
+			MYLOG_PUSH(p_materialResourceProvider->RenderInterface->MyLog, ::_Core::LogLevel::WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
 #endif
 
 			for (auto&& l_textureResourceEntry : p_materialResourceProvider->MaterialResources)

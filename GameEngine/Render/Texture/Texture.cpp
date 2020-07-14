@@ -1,19 +1,18 @@
 #include "Texture.h"
 
 #include <stdexcept>
+#include "stb_image.h"
+
+#include "RenderInterface.h"
+#include "TextureSwapChainSizeSynchronizer.h"
+
+#include "Log/Log.hpp"
+#include "Functional/ToString/ToString.hpp"
 
 extern "C"
 {
-#include "Include/CoreV2.h"
-#include "Log/LogFormatting.h"
-#include "Log/Log.h"
+#include "Functional/Hash/Hash.h"
 }
-
-#include "stb_image.h"
-
-
-#include "TextureSwapChainSizeSynchronizer.h"
-#include "RenderInterface.h"
 
 #include "VulkanObjects/SwapChain/SwapChain.h"
 
@@ -73,11 +72,10 @@ namespace _GameEngine::_Render
 		{
 			delete l_texture;
 			{
-				Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-				Core_string_append(&l_errorMessage, "TextureAllocation : the TextureAllocationType ");
-				TOSTRING_INT(l_textureAllocType, (int*)p_textureAllocInfo->TextureAllocationType);
-				Core_string_append(&l_errorMessage, l_textureAllocType);
-				Core_string_append(&l_errorMessage, " is not supported.");
+				_Core::String l_errorMessage; _Core::String_alloc(&l_errorMessage, 100);
+				_Core::String_append(&l_errorMessage, "TextureAllocation : the TextureAllocationType ");
+				_Core::ToString_int(&l_errorMessage, (int*)p_textureAllocInfo->TextureAllocationType);
+				_Core::String_append(&l_errorMessage, " is not supported.");
 				throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 			}
 		}
@@ -241,7 +239,7 @@ namespace _GameEngine::_Render
 
 			if (!l_tokenFoundInDeferrendOperations)
 			{
-				MYLOG_PUSH(p_renderInterface->MyLog, LOGLEVEL_WARN,
+				MYLOG_PUSH(p_renderInterface->MyLog, _Core::LogLevel::WARN ,
 					"The local reference of DeferredCommandBufferCompletionToken is not null. However, it's reference is not found inside the PreRenderDeferedCommandBufferStep."
 					" Because it is up to the PreRenderDeferedCommandBufferStep to dispose the token, this means that it's duplicated reference has not been cleared on completion. This may lead to undefined behavior."
 					" Be sure that the token reference is nullified when destroyed.");
@@ -269,14 +267,12 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-			Core_string_append(&l_errorMessage, "TextureBuildCreationInfoObject : Texture build creation object with TextureType : ");
-			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
-			Core_string_append(&l_errorMessage, l_textureType);
-			Core_string_append(&l_errorMessage, "and TextureUsage : ");
-			TOSTRING_INT(l_textureUsage, (int*)p_textureCreateInfo->TextureUsage);
-			Core_string_append(&l_errorMessage, l_textureUsage);
-			Core_string_append(&l_errorMessage, " is not supported.");
+			_Core::String l_errorMessage; _Core::String_alloc(&l_errorMessage, 100);
+			_Core::String_append(&l_errorMessage, "TextureBuildCreationInfoObject : Texture build creation object with TextureType : ");
+			_Core::ToString_int(&l_errorMessage, (int*)p_textureCreateInfo->TextureType);
+			_Core::String_append(&l_errorMessage, "and TextureUsage : ");
+			_Core::ToString_int(&l_errorMessage, (int*)p_textureCreateInfo->TextureUsage);
+			_Core::String_append(&l_errorMessage, " is not supported.");
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 	};
@@ -311,14 +307,12 @@ namespace _GameEngine::_Render
 		else if (p_textureCreateInfo->TextureType == TextureType::DEPTH
 			&& p_textureCreateInfo->TextureUsage == TextureUsage::PIPELINE_ATTACHMENT)
 		{
-			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-			Core_string_append(&l_errorMessage, "TextureDeferredOperation : DeferredOperation for texture load with TextureType : ");
-			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
-			Core_string_append(&l_errorMessage, l_textureType);
-			Core_string_append(&l_errorMessage, "and TextureUsage : ");
-			TOSTRING_INT(l_textureUsage, (int*)p_textureCreateInfo->TextureUsage);
-			Core_string_append(&l_errorMessage, l_textureUsage);
-			Core_string_append(&l_errorMessage, " is not supported.");
+			_Core::String l_errorMessage; _Core::String_alloc(&l_errorMessage, 100);
+			_Core::String_append(&l_errorMessage, "TextureDeferredOperation : Texture build creation object with TextureType : ");
+			_Core::ToString_int(&l_errorMessage, (int*)p_textureCreateInfo->TextureType);
+			_Core::String_append(&l_errorMessage, "and TextureUsage : ");
+			_Core::ToString_int(&l_errorMessage, (int*)p_textureCreateInfo->TextureUsage);
+			_Core::String_append(&l_errorMessage, " is not supported.");
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 	};
@@ -334,14 +328,12 @@ namespace _GameEngine::_Render
 		}
 		else
 		{
-			Core_GenericArray l_errorMessage; Core_string_alloc(&l_errorMessage, 100);
-			Core_string_append(&l_errorMessage, "TextureDeferredOperation : DeferredOperation for texture load with TextureType : ");
-			TOSTRING_INT(l_textureType, (int*)p_textureCreateInfo->TextureType);
-			Core_string_append(&l_errorMessage, l_textureType);
-			Core_string_append(&l_errorMessage, "and TextureUsage : ");
-			TOSTRING_INT(l_textureUsage, (int*)p_textureCreateInfo->TextureUsage);
-			Core_string_append(&l_errorMessage, l_textureUsage);
-			Core_string_append(&l_errorMessage, " is not supported.");
+			_Core::String l_errorMessage; _Core::String_alloc(&l_errorMessage, 100);
+			_Core::String_append(&l_errorMessage, "TextureDeferredOperation : Texture build creation object with TextureType : ");
+			_Core::ToString_int(&l_errorMessage, (int*)p_textureCreateInfo->TextureType);
+			_Core::String_append(&l_errorMessage, "and TextureUsage : ");
+			_Core::ToString_int(&l_errorMessage, (int*)p_textureCreateInfo->TextureUsage);
+			_Core::String_append(&l_errorMessage, " is not supported.");
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 	};

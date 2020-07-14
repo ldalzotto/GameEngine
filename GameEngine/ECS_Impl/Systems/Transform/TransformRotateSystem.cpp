@@ -1,7 +1,7 @@
 #include "TransformRotateSystem.h"
 
 #include "GameEngineApplicationInterface.h"
-#include "Clock/Clock.h"
+#include "Clock/Clock.hpp"
 
 extern "C"
 {

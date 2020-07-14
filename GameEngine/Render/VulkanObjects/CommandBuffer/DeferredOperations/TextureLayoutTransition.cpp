@@ -1,11 +1,8 @@
 #include "TextureLayoutTransition.h"
 
 #include <stdexcept>
-extern "C"
-{
-#include "Log/LogFormatting.h"
-}
 
+#include "Log/LogFormatting.hpp"
 #include "Texture/Texture.h"
 #include "VulkanObjects/SwapChain/Image/SwapChainImage.h"
 

@@ -1,15 +1,12 @@
 #include "World.h"
 
-extern "C"
-{
-#include "Log/Log.h"
-}
+#include "Log/Log.hpp"
 
 #include "Collider/BoxCollider.h"
 
 namespace _GameEngine::_Physics
 {
-	void World_alloc(World* p_world, Core_Log* p_myLog)
+	void World_alloc(World* p_world, ::_Core::Log* p_myLog)
 	{
 		p_world->Log = p_myLog;
 		p_world->BoxColliders.alloc();
@@ -21,7 +18,7 @@ namespace _GameEngine::_Physics
 #ifndef NDEBUG
 		if (p_world->BoxColliders.size() > 0)
 		{
-			MYLOG_PUSH(p_world->Log, LOGLEVEL_WARN, "Potential memory leak. When freeing the physics world, there was still BoxColliders. Consider cleaning them before freeing the World.");
+			MYLOG_PUSH(p_world->Log, ::_Core::LogLevel::WARN, "Potential memory leak. When freeing the physics world, there was still BoxColliders. Consider cleaning them before freeing the World.");
 		}
 #endif
 

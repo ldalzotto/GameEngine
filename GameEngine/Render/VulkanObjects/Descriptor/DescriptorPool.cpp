@@ -6,10 +6,7 @@
 #include "Shader/DescriptorSetLayout.h"
 
 #include <stdexcept>
-extern "C"
-{
-#include "Log/LogFormatting.h"
-}
+#include "Log/LogFormatting.hpp"
 
 namespace _GameEngine::_Render
 {

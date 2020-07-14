@@ -1,11 +1,6 @@
 #include "TextureResourceProvider.h"
 
-extern "C"
-{
-#include "Include/CoreV2.h"
-#include "Log/Log.h"
-}
-
+#include "Log/Log.hpp"
 #include "RenderInterface.h"
 
 namespace _GameEngine::_Render
@@ -62,7 +57,7 @@ namespace _GameEngine::_Render
 				l_textureResourcesNotDisposed += ",";
 			}
 			l_textureResourcesNotDisposed += "]";
-			MYLOG_PUSH(p_textureResourceProvider->RenderInterface->MyLog, LOGLEVEL_WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
+			MYLOG_PUSH(p_textureResourceProvider->RenderInterface->MyLog, _Core::LogLevel::WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
 #endif
 
 			for (auto&& l_textureResourceEntry : p_textureResourceProvider->TextureResources)

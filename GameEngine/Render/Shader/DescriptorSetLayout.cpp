@@ -1,9 +1,7 @@
 #include "DescriptorSetLayout.h"
 
-extern "C"
-{
-#include "Log/LogFormatting.h"
-}
+
+#include "Log/LogFormatting.hpp"
 
 #include <stdexcept>
 

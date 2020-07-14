@@ -3,8 +3,9 @@
 extern "C"
 {
 #include "Include/CoreV2.h"
-#include "Log/Log.h"
 }
+
+#include "Log/Log.hpp"
 
 #include "GameEngineApplication.h"
 #include "GameEngineEditor.h"
@@ -52,7 +53,7 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-		MyLog_pushLog(&App->Log, LOGLEVEL_ERROR, __FILE__, __LINE__, (char*)e.what());
+		MyLog_pushLog(&App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, (char*)e.what());
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		CoreLib_ErrorHandler_terminate();
@@ -60,7 +61,7 @@ int main()
 	}
 	catch (...)
 	{
-		MyLog_pushLog(&App->Log, LOGLEVEL_ERROR, __FILE__, __LINE__, "Unexpected Error");
+		MyLog_pushLog(&App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, "Unexpected Error");
 		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
 		app_free(App);
 		CoreLib_ErrorHandler_terminate();
@@ -463,7 +464,7 @@ void SandboxApplication_update(float p_delta)
 
 			_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
 
-			_Core::VectorT<_Physics::RaycastHit> l_hits{};
+			_GameEngine::_Core::VectorT<_Physics::RaycastHit> l_hits{};
 			l_hits.alloc();
 			{
 				_Physics::RayCastAll(&App->Physics.World, &l_rayBeginPoint, &l_rayEndPoint, &l_hits);

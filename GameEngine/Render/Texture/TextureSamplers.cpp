@@ -2,10 +2,7 @@
 
 #include <stdexcept>
 
-extern "C"
-{
-#include "Log/LogFormatting.h"
-}
+#include "Log/LogFormatting.hpp"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
 

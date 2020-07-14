@@ -6,11 +6,11 @@
 
 extern "C"
 {
-#include "Log/LogFormatting.h"
 #include "Functional/Hash/Hash.h"
 }
 
 #include "RenderInterface.h"
+#include "Log/LogFormatting.hpp"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "RenderStep/PushCameraBuffer.h"
 
