@@ -33,6 +33,7 @@ namespace _GameEngine::_Render
 		// The swap chain can be rebuild if the @ref MustBeRebuilt is set to true.
 		// This event notify when such an event has occured.
 		// Input parameter is (SwapChain*)
+		// /!\ WARNING - This observer is not cleaned up when the SwapChain is being rebuilded. It is up to program that register to it to unregister when they need it.
 		_Core::ObserverT<_Render::RenderInterface> OnSwapChainBuilded;
 	};
 

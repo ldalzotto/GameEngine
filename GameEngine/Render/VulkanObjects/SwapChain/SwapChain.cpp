@@ -51,7 +51,11 @@ namespace _GameEngine::_Render
 
 	void SwapChain_build(SwapChain* p_swapChain, RenderInterface* p_renderInterface)
 	{
-		_Core::ObserverT_alloc(&p_swapChain->OnSwapChainBuilded);
+		// See SwapChain_free for a reason of why this condition exists.
+		if (!p_swapChain->MustBeRebuilt)
+		{
+			_Core::ObserverT_alloc(&p_swapChain->OnSwapChainBuilded);
+		}
 
 		p_swapChain->RenderInterface = p_renderInterface;
 		p_swapChain->OnWindowSizeChangeCallback = { onWindowSizeChanged, p_swapChain };
@@ -146,7 +150,13 @@ namespace _GameEngine::_Render
 
 	void SwapChain_free(SwapChain* p_swapChain)
 	{
-		_Core::ObserverT_free(&p_swapChain->OnSwapChainBuilded);
+		// We are making a distinction between when the swap chain is rebuilded or the application is ending.
+		// When the swap chain is rebuiliding, we don't want to destroy external callback registered because they may persist even if the swap chain is rebuilded. (Example, the Editor rebuild pipeline based on this event).
+		// Thus, we don't destroy it.
+		if (!p_swapChain->MustBeRebuilt)
+		{
+			_Core::ObserverT_free(&p_swapChain->OnSwapChainBuilded);
+		}
 		_Core::ObserverT_unRegister(&p_swapChain->RenderInterface->Window->OnWindowSizeChanged, (_Core::CallbackT<void, void>*) &p_swapChain->OnWindowSizeChangeCallback);
 
 		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)

@@ -1,31 +1,14 @@
 -- TODO --
 
--- 1st Milestone -- 
+# Does some template type can be forward declared ?
 
-# Creating a first milestone application that showcase all implemented features :
-	## Transform parenting, rotation, ...
-	## AABB physics detection
+-- ECS --
 
--- Documentation --
+# Adding type safety to system and components with the new template system.
 
-# Creating a documentation format in html/css that will be used to functionaly describe the architecture of the GameEngine.
-This documentation will discuss about : 
-	## The main execution flow of the game engine.
-	## Generalization of procedures. (Like MaterialInstance creation for render)
-	## How data is organized. (Like Texture, Material ...). Maybe having a data hierarchy graph ?
-	## Why some system implementation details are made.
-	## A very small description of what systems/algorithm can do with their limitation and future improvements.
-This documentation won't discuss of :
-	## Implementation details of algorithm.
-	## What every method is doing (we are never talking about code).
+-- Testing --
 
--- Data Structures --
-
-# Separating Structure operation from object.
-# Instead of locking operations to only one king of structure, creating generic object (like Iterator, Writer, ...) that can be created from structures. Then
-  algorithm are executed on them instead of data structures.
-
-# Moving XML graph to a generic graph-like structure
+# Moving the Sandbox application to a test package. Were multiple case can be easily tested.
 
 -- Physics --
 
@@ -62,18 +45,44 @@ This documentation won't discuss of :
 
 # Removing dependencies to the IMGui library. This will involve :
 	## Creating my own GUI Layout system. (maybe we can have somthing similar to unity ?)
-	## 
 
 -- Graphics improvements --
 
 # Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
-# Simplifying the creation of a VulkanBuffer that is not host visible (push is done with a temporary buffer).
+# Simplifying the creation of a VulkanBuffer that is not host visible (staged buffer) (push is done with a temporary buffer).
 	## Switching some ShaderParameter to the new smart staging buffer ?
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 -- DONE --
+
+-- 1st Milestone -- 
+
+[X] Creating a first milestone application that showcase all implemented features :
+	## Transform parenting, rotation, ...
+	## AABB physics detection
+
+-- Documentation --
+
+[X] Creating a documentation format in html/css that will be used to functionaly describe the architecture of the GameEngine.
+This documentation will discuss about : 
+	## The main execution flow of the game engine.
+	## Generalization of procedures. (Like MaterialInstance creation for render)
+	## How data is organized. (Like Texture, Material ...). Maybe having a data hierarchy graph ?
+	## Why some system implementation details are made.
+	## A very small description of what systems/algorithm can do with their limitation and future improvements.
+This documentation won't discuss of :
+	## Implementation details of algorithm.
+	## What every method is doing (we are never talking about code)..
+
+-> NO, documentation is test.
+
+-- Data Structures --
+
+[X] Separating Structure operation from object.
+[X] Instead of locking operations to only one king of structure, creating generic object (like Iterator, Writer, ...) that can be created from structures. Then
+    algorithm are executed on them instead of data structures.
 
 
 -- Materials --
