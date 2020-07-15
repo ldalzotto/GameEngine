@@ -1,10 +1,7 @@
 
 #include "ECS/Entity.h"
 
-extern "C"
-{
-#include "Functional/Sequencer/SortedSequencer.h"
-}
+#include "Functional/Sequencer/SortedSequencer.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -14,6 +11,6 @@ namespace _GameEngine::_ECS
 
 namespace _GameEngine::_ECS
 {
-	inline SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy();
+	inline ::_Core::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy();
 	void TransformRotateSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
 }

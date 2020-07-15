@@ -3,9 +3,7 @@
 #include <stdexcept>
 
 #include "Log/Log.hpp"
-
 #include "ECS/ECS.h"
-
 #include "DataStructures/ElementComparators.h"
 
 namespace _GameEngine::_ECS

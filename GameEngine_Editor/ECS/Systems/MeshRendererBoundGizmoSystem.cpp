@@ -10,10 +10,7 @@
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 
-extern "C"
-{
-#include "Functional/Sequencer/SortedSequencer.h"
-}
+#include "Functional/Sequencer/SortedSequencer.hpp"
 
 namespace _GameEngineEditor
 {
@@ -22,7 +19,7 @@ namespace _GameEngineEditor
 		_Render::Gizmo* Gizmo;
 	};
 
-	SortedSequencerPriority meshRendererBoundGizmoSystem_priority()
+	::_Core::SortedSequencerPriority meshRendererBoundGizmoSystem_priority()
 	{
 		return EDITOR_PRIORITY;
 	}

@@ -3,11 +3,7 @@
 #include "GameEngineApplicationInterface.h"
 #include "Clock/Clock.hpp"
 
-extern "C"
-{
-#include "DataStructures/GenericArrayNameMacros.h"
-#include "Functional/Vector/VectorWriter.h"
-}
+#include "DataStructures/Specifications/VectorT.hpp"
 
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
@@ -18,14 +14,13 @@ extern "C"
 
 namespace _GameEngine::_ECS
 {
-	SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
+	::_Core::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
 	{
-		CORE_VECTOR_NAME(SortedSequencerPriority) l_before; Core_GenericArray_alloc(&l_before, sizeof(SortedSequencerPriority), 2);
-		SortedSequencerPriority l_meshDrawSystebBeforePriotity = MeshDrawSystem_updatePriorityBefore();
-		SortedSequencerPriority l_cameraSystemBeforepriority = CameraSystem_getUpdatePriority();
-		Core_GenericArray_pushBack_noRealloc(&l_before, &l_meshDrawSystebBeforePriotity);
-		Core_GenericArray_pushBack_noRealloc(&l_before, &l_cameraSystemBeforepriority);
-		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
+		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
+		::_Core::VectorT_alloc(&l_before, 2);
+		::_Core::VectorT_pushBack(&l_before, MeshDrawSystem_updatePriorityBefore());
+		::_Core::VectorT_pushBack(&l_before, CameraSystem_getUpdatePriority());
+		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_gameEngineInterface);

@@ -1,9 +1,6 @@
 #pragma once
 
-extern "C"
-{
-#include "Functional/Sequencer/SortedSequencer.h"
-}
+#include "Functional/Sequencer/SortedSequencer.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -24,6 +21,6 @@ namespace _GameEngine::_ECS
 
 namespace _GameEngine::_ECS
 {
-	SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority();
+	::_Core::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority();
 	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs, _Physics::PhysicsInterface* p_physicsInterface);
 }

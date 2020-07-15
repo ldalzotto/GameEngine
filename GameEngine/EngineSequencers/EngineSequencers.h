@@ -1,9 +1,6 @@
 #pragma once
 
-extern "C"
-{
-#include "Functional/Sequencer/SortedSequencer.h"
-}
+#include "Functional/Sequencer/SortedSequencerT.hpp"
 
 namespace _GameEngine
 {
@@ -15,13 +12,13 @@ namespace _GameEngine
 namespace _GameEngine
 {
 	/* When all data needed for graphics are pushed to the graphics engine */
-	extern SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY;
-	extern SortedSequencerPriority EDITOR_PRIORITY;
+	extern ::_Core::SortedSequencerPriority UPDATE_PUSH_TO_RENDER_PRIORITY;
+	extern ::_Core::SortedSequencerPriority EDITOR_PRIORITY;
 
 	struct UpdateSequencer
 	{
 		_ECS::ECS* ECS;
-		Core_SortedSequencer UpdateSequencer;
+		::_Core::SortedSequencerT<GameEngineApplicationInterface> UpdateSequencer;
 	};
 
 	void UpdateSequencer_alloc(UpdateSequencer* p_udpateSequencer, GameEngineApplicationInterface* p_gameEngineInterface);

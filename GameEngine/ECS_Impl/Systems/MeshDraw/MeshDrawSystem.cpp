@@ -16,12 +16,12 @@
 
 namespace _GameEngine::_ECS
 {
-	SortedSequencerPriority MeshDrawSystem_updatePriorityBefore()
+	::_Core::SortedSequencerPriority MeshDrawSystem_updatePriorityBefore()
 	{
 		return EDITOR_PRIORITY;
 	};
 
-	inline SortedSequencerPriority meshDrawSystem_getUpdatePriority()
+	inline ::_Core::SortedSequencerPriority meshDrawSystem_getUpdatePriority()
 	{
 		return UPDATE_PUSH_TO_RENDER_PRIORITY;
 	};

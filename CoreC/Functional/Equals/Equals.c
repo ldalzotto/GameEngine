@@ -3,6 +3,11 @@
 #include <math.h>
 #include "Constants.h"
 
+bool CORE_EQUALS(voidP, voidP)(void** p_left, void** p_right)
+{
+	return *p_left == *p_right;
+};
+
 bool CORE_EQUALS(float, float)(float* p_left, float* p_right)
 {
 	return fabsf((*p_left) - (*p_right)) <= FLOAT_TOLERANCE;

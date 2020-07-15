@@ -2,12 +2,7 @@
 
 #include "Math/Box/BoxMath.h"
 
-extern "C"
-{
-#include "DataStructures/GenericArray.h"
-#include "DataStructures/GenericArrayNameMacros.h"
-#include "Functional/Vector/VectorWriter.h"
-}
+#include "DataStructures/Specifications/VectorT.hpp"
 
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
@@ -38,14 +33,12 @@ namespace _GameEngine::_ECS
 		_Core::VectorT<MeshRendererBoundCalculationOperation> MeshRendererBoundsToCaluclate;
 	};
 
-	SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
+	::_Core::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
-		CORE_VECTOR_NAME(SortedSequencerPriority) l_before;
-		Core_GenericArray_alloc(&l_before, sizeof(SortedSequencerPriority), 1);
-		SortedSequencerPriority l_meshDrawBeforePriority = MeshDrawSystem_updatePriorityBefore();
-		Core_GenericArray_pushBack_noRealloc(&l_before, &l_meshDrawBeforePriority);
-
-		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
+		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
+		::_Core::VectorT_alloc(&l_before, 1);
+		::_Core::VectorT_pushBack(&l_before, MeshDrawSystem_updatePriorityBefore());
+		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
 	void meshRendererBoundSystem_onComponentAttached(Entity* p_entity, void* p_system)

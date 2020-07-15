@@ -34,4 +34,12 @@ namespace _Core
 		GenericArray_pushBack_realloc_sorted((GenericArray*)p_sortedVector, p_element, &l_sorter);
 	};
 
+	template <typename ELEMENT_TYPE>
+	inline VectorIteratorT<ELEMENT_TYPE> SortedVectorT_buildIterator(SortedVectorT<ELEMENT_TYPE>* p_array)
+	{
+		VectorIteratorT<ELEMENT_TYPE> l_it;
+		GenericArray_buildIterator((GenericArray*)p_array, (VectorIterator*)&l_it);
+		return l_it;
+	}
+
 }

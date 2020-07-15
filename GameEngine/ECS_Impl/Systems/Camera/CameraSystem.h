@@ -2,10 +2,7 @@
 
 #include "ECS/ECS.h"
 
-extern "C"
-{
-#include "Functional/Sequencer/SortedSequencer.h"
-}
+#include "Functional/Sequencer/SortedSequencer.hpp"
 
 namespace _GameEngine
 {
@@ -20,7 +17,7 @@ namespace _GameEngine::_ECS
 {
 	extern SystemV2Key CameraSystemKey;
 
-	SortedSequencerPriority CameraSystem_getUpdatePriority();
+	::_Core::SortedSequencerPriority CameraSystem_getUpdatePriority();
 	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
 	Camera* CameraSystem_getCurrentActiveCamera(SystemV2* p_system);
 	void CameraSystem_buildWorldSpaceRay(Camera* p_camera, _Math::Vector2f* p_screenPoint, _Math::Segment* out_ray);

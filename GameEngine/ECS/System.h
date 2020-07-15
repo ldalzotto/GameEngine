@@ -3,10 +3,7 @@
 #include "DataStructures/VectorT.h"
 #include "Entity.h"
 
-extern "C"
-{
-#include "Functional/Sequencer/SortedSequencer.h"
-}
+#include "Functional/Sequencer/SortedSequencer.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -22,7 +19,7 @@ namespace _GameEngine::_ECS
 		ECS* ECS;
 		SystemV2Key SystemKey;
 		EntityConfigurableContainer EntityConfigurableContainer;
-		Core_SortedSequencerOperation Update;
+		::_Core::SortedSequencerOperation Update;
 
 		void* Child;
 		void(*OnSystemDestroyed)(SystemV2* p_system);
@@ -33,7 +30,7 @@ namespace _GameEngine::_ECS
 		ECS* ECS;
 		SystemV2Key SystemKey;
 		EntityConfigurableContainerInitInfo EntityConfigurableContainerInitInfo;
-		Core_SortedSequencerOperation Update;
+		::_Core::SortedSequencerOperation Update;
 
 		void* Child;
 		void(*OnSystemDestroyed)(SystemV2* p_system);

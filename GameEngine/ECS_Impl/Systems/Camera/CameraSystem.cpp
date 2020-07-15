@@ -1,20 +1,14 @@
 #include "CameraSystem.h"
 
-extern "C"
-{
-#include "Include/CoreV2.h"
-}
-
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Segment/Segment.h"
-#include <vector>
+
+#include "DataStructures/Specifications/VectorT.hpp"
 
 extern "C"
 {
-#include "DataStructures/GenericArray.h"
-#include "DataStructures/GenericArrayNameMacros.h"
-#include "Functional/Vector/VectorWriter.h"
+#include "Functional/Hash/Hash.h"
 }
 
 #include "ECS_Impl/Components/Camera/Camera.h"
@@ -31,12 +25,13 @@ namespace _GameEngine::_ECS
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
 
-	SortedSequencerPriority CameraSystem_getUpdatePriority()
+	::_Core::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
-		CORE_VECTOR_NAME(SortedSequencerPriority) l_before; Core_GenericArray_alloc(&l_before, sizeof(SortedSequencerPriority), 1);
-		SortedSequencerPriority l_meshDrawBeforePriority = MeshDrawSystem_updatePriorityBefore();
-		Core_GenericArray_pushBack_realloc(&l_before, &l_meshDrawBeforePriority);
-		return Core_SortedSequencer_calculatePriority(&l_before, NULL);
+		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
+		::_Core::VectorT_alloc(&l_before, 1);		
+		::_Core::SortedSequencerPriority l_meshDrawBeforePriority = MeshDrawSystem_updatePriorityBefore();
+		::_Core::VectorT_pushBack(&l_before, &l_meshDrawBeforePriority);
+		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
 	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)

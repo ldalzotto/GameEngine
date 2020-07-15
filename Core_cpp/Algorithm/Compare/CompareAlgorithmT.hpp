@@ -27,6 +27,6 @@ namespace _Core
 	template <typename ELEMENT_TYPE>
 	bool CompareT_contains(VectorIteratorT<ELEMENT_TYPE>& p_iterator, ComparatorT<ELEMENT_TYPE, ELEMENT_TYPE, void>& p_comparator)
 	{
-		return CompareT_contains((VectorIterator*)&p_iterator, (Comparator*)&p_comparator);
+		return Compare_contains((VectorIterator*)&p_iterator, (Comparator*)&p_comparator);
 	};
 }
