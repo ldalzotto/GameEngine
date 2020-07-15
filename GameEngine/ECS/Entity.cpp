@@ -126,8 +126,8 @@ namespace _GameEngine::_ECS
 	///////////////////////////////////  EntityConfigurableContainer
 	///////////////////////////////////
 
-	void entityComponentListener_onComponentAttachedCallback(void* p_entityComponentListener, void* p_component);
-	void entityComponentListener_onComponentDetachedCallback(void* p_entityComponentListener, void* p_component);
+	void entityComponentListener_onComponentAttachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component);
+	void entityComponentListener_onComponentDetachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component);
 	void entityComponentListener_registerEvents(EntityConfigurableContainer* p_entityComponentListener, ECS* p_ecs);
 	void entityComponentListener_pushEntity(EntityConfigurableContainer* l_entityComponentListener, Entity* p_entity);
 	void entityComponentListener_pushEntityIfElligible(EntityConfigurableContainer* l_entityComponentListener, Component* l_comparedComponent);
@@ -147,16 +147,10 @@ namespace _GameEngine::_ECS
 		_Core::VectorT_alloc(&p_entityComponentListener->FilteredEntities, 16);
 
 		p_entityComponentListener->OnEntityThatMatchesComponentTypesAdded = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesAdded;
-		p_entityComponentListener->OnEntityThatMatchesComponentTypesAddedUserdata = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesAddedUserdata;
-
 		p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesRemoved;
-		p_entityComponentListener->OnEntityThatMatchesComponentTypesRemovedUserData = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesRemovedUserData;
 
-		p_entityComponentListener->OnComponentAttachedEventListener.Closure = p_entityComponentListener;
-		p_entityComponentListener->OnComponentAttachedEventListener.Function = entityComponentListener_onComponentAttachedCallback;
-
-		p_entityComponentListener->OnComponentDetachedEventListener.Closure = p_entityComponentListener;
-		p_entityComponentListener->OnComponentDetachedEventListener.Function = entityComponentListener_onComponentDetachedCallback;
+		p_entityComponentListener->OnComponentAttachedEventListener = { entityComponentListener_onComponentAttachedCallback, p_entityComponentListener };
+		p_entityComponentListener->OnComponentDetachedEventListener = { entityComponentListener_onComponentDetachedCallback , p_entityComponentListener };
 
 		entityComponentListener_pushAllElligibleEntities(p_entityComponentListener, &p_entityComponentListenerInitInfo->ECS->EntityContainer.Entities);
 		entityComponentListener_registerEvents(p_entityComponentListener, p_entityComponentListenerInitInfo->ECS);
@@ -169,8 +163,8 @@ namespace _GameEngine::_ECS
 		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.Size; i++)
 		{
 			ComponentType* l_componentType = _Core::VectorT_at(&p_entityComponentListener->ListenedComponentTypes, i);
-			Core_Observer_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentAttachedEventListener);
-			Core_Observer_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentDetachedEventListener);
+			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, _ECS::Component>*) &p_entityComponentListener->OnComponentAttachedEventListener);
+			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, _ECS::Component>*) &p_entityComponentListener->OnComponentDetachedEventListener);
 		}
 
 		for (size_t i = 0; i < p_entityComponentListener->FilteredEntities.Size; i++)
@@ -184,23 +178,18 @@ namespace _GameEngine::_ECS
 		_Core::VectorT_free(&p_entityComponentListener->FilteredEntities);
 	};
 
-	void entityComponentListener_onComponentAttachedCallback(void* p_entityComponentListener, void* p_component)
+	void entityComponentListener_onComponentAttachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component)
 	{
-		EntityConfigurableContainer* l_entityComponentListener = (EntityConfigurableContainer*)p_entityComponentListener;
-		Component* l_component = (Component*)p_component;
-		entityComponentListener_pushEntityIfElligible(l_entityComponentListener, l_component);
+		entityComponentListener_pushEntityIfElligible(p_entityComponentListener, p_component);
 	};
 
-	void entityComponentListener_onComponentDetachedCallback(void* p_entityComponentListener, void* p_component)
+	void entityComponentListener_onComponentDetachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component)
 	{
-		EntityConfigurableContainer* l_entityComponentListener = (EntityConfigurableContainer*)p_entityComponentListener;
-		Component* l_component = (Component*)p_component;
 
-
-		if (_Core::CompareT_find(_Core::VectorT_buildIterator(&l_entityComponentListener->ListenedComponentTypes),
-			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, & l_component->ComponentType }).Current)
+		if (_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entityComponentListener->ListenedComponentTypes),
+			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, & p_component->ComponentType }).Current)
 		{
-			entityComponentListener_removeEntity(l_entityComponentListener, l_component->AttachedEntity);
+			entityComponentListener_removeEntity(p_entityComponentListener, p_component->AttachedEntity);
 		}
 	};
 
@@ -215,21 +204,21 @@ namespace _GameEngine::_ECS
 
 			if (!l_componentEvents->ComponentAttachedEvents.contains(*l_componentType))
 			{
-				Core_Observer l_createdObserver;
-				Core_ObserverAlloc(&l_createdObserver);
+				_Core::ObserverT<Component> l_createdObserver;
+				_Core::ObserverT_alloc(&l_createdObserver);
 				l_componentEvents->ComponentAttachedEvents[*l_componentType] = l_createdObserver;
 			}
-			Core_Observer_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentAttachedEventListener);
+			_Core::ObserverT_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) &p_entityComponentListener->OnComponentAttachedEventListener);
 
 
 			if (!l_componentEvents->ComponentDetachedEvents.contains(*l_componentType))
 			{
 
-				Core_Observer l_createdObserver;
-				Core_ObserverAlloc(&l_createdObserver);
+				_Core::ObserverT<Component> l_createdObserver;
+				_Core::ObserverT_alloc(&l_createdObserver);
 				l_componentEvents->ComponentDetachedEvents[*l_componentType] = l_createdObserver;
 			}
-			Core_Observer_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], &p_entityComponentListener->OnComponentDetachedEventListener);
+			_Core::ObserverT_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) &p_entityComponentListener->OnComponentDetachedEventListener);
 		}
 	};
 
@@ -309,10 +298,7 @@ namespace _GameEngine::_ECS
 			_Core::VectorT_pushBack(&l_entityComponentListener->FilteredEntities, &p_entity);
 		}
 
-		if (l_entityComponentListener->OnEntityThatMatchesComponentTypesAdded)
-		{
-			l_entityComponentListener->OnEntityThatMatchesComponentTypesAdded(p_entity, l_entityComponentListener->OnEntityThatMatchesComponentTypesAddedUserdata);
-		}
+		_Core::CallbackT_call(&l_entityComponentListener->OnEntityThatMatchesComponentTypesAdded, p_entity);
 	};
 
 	void entityComponentListener_removeEntity(EntityConfigurableContainer* p_entityComponentListener, Entity* p_entity)
@@ -321,10 +307,7 @@ namespace _GameEngine::_ECS
 		if (l_foundEntityIt.Current)
 		{
 			_Core::VectorT_erase(&p_entityComponentListener->FilteredEntities, l_foundEntityIt.CurrentIndex);
-			if (p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved)
-			{
-				p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved(p_entity, p_entityComponentListener->OnEntityThatMatchesComponentTypesRemovedUserData);
-			}
+			_Core::CallbackT_call(&p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved, p_entity);
 		}
 	};
 

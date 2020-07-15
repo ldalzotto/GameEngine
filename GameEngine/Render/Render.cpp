@@ -42,7 +42,7 @@ namespace _GameEngine::_Render
 				l_beforeEndRecordingMainCommandBuffer.CommandBuffer = l_commandBuffer;
 				l_beforeEndRecordingMainCommandBuffer.ImageIndex = l_imageIndex;
 				l_beforeEndRecordingMainCommandBuffer.RenderInterface = &p_render->RenderInterface;
-				Core_Observer_broadcast(&p_render->RenderHookCallbacks.BeforeEndRecordingMainCommandBuffer, &l_beforeEndRecordingMainCommandBuffer);
+				_Core::ObserverT_broadcast(&p_render->RenderHookCallbacks.BeforeEndRecordingMainCommandBuffer, &l_beforeEndRecordingMainCommandBuffer);
 			}
 
 			render_commandBufferEnd(l_commandBuffer);

@@ -8,7 +8,7 @@
 
 namespace _GameEngineEditor
 {
-	void GameEngineEditor_draw(void* p_gameEngineApplication, void* null);
+	void GameEngineEditor_draw(GameEngineEditor* p_gameEngineEditor, void* null);
 	void gameEngineEditor_systemInitialization(GameEngineEditor* p_gameEngineEditor);
 
 
@@ -17,9 +17,8 @@ namespace _GameEngineEditor
 		GameEngineEditor* l_gameEngineEditor = new GameEngineEditor();
 		l_gameEngineEditor->GameEngineApplicationInterface = p_gameEngineApplicationInterface;
 
-		l_gameEngineEditor->OnPreRender.Closure = l_gameEngineEditor;
-		l_gameEngineEditor->OnPreRender.Function = GameEngineEditor_draw;
-		Core_Observer_register(l_gameEngineEditor->GameEngineApplicationInterface->PreRender, &l_gameEngineEditor->OnPreRender);
+		l_gameEngineEditor->OnPreRender = { GameEngineEditor_draw, l_gameEngineEditor };
+		_Core::ObserverT_register(l_gameEngineEditor->GameEngineApplicationInterface->PreRender,(_Core::CallbackT<void, GameEngineApplicationInterface>*) &l_gameEngineEditor->OnPreRender);
 
 		IMGuiRender_init(&l_gameEngineEditor->IMGuiRender, l_gameEngineEditor->GameEngineApplicationInterface);
 
@@ -39,11 +38,10 @@ namespace _GameEngineEditor
 		p_gameEngineEditor = nullptr;
 	};
 
-	void GameEngineEditor_draw(void* p_gameEngineEditor, void* null)
+	void GameEngineEditor_draw(GameEngineEditor* p_gameEngineEditor, void* null)
 	{
-		GameEngineEditor* l_gameEngineEditor = (GameEngineEditor*)p_gameEngineEditor;
-		DebugConsole_draw(&l_gameEngineEditor->DebugConsole);
-		DrawableWindows_draw(&l_gameEngineEditor->DrawableWindows);
+		DebugConsole_draw(&p_gameEngineEditor->DebugConsole);
+		DrawableWindows_draw(&p_gameEngineEditor->DrawableWindows);
 	};
 
 	void gameEngineEditor_systemInitialization(GameEngineEditor* p_gameEngineEditor)

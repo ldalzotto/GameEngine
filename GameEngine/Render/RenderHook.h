@@ -2,10 +2,7 @@
 
 #include "vulkan/vulkan.h"
 
-extern "C"
-{
-#include "Functional/Callback/Observer.h"
-}
+#include "Functional/Callback/ObserverT.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -23,7 +20,7 @@ namespace _GameEngine::_Render
 
 	struct RenderHookCallbacks
 	{
-		Core_Observer BeforeEndRecordingMainCommandBuffer;
+		_Core::ObserverT<BeforeEndRecordingMainCommandBuffer_Input> BeforeEndRecordingMainCommandBuffer;
 	};
 
 	void RenderHookCallbacks_alloc(RenderHookCallbacks* p_hook);

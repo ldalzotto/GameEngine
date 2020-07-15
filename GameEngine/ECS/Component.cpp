@@ -11,17 +11,17 @@ namespace _GameEngine::_ECS
 		Component* l_component = new Component();
 		l_component->ComponentType = p_type;
 		l_component->Child = calloc(1, p_componentChildSize);
-		Core_ObserverAlloc(&l_component->OnComponentFree);
+		_Core::ObserverT_alloc(&l_component->OnComponentFree);
 		return l_component;
 	};
 
 	void Component_free(Component** p_component)
 	{
-		Core_Observer_broadcast(&(*p_component)->OnComponentFree, NULL);
+		_Core::ObserverT_broadcast(&(*p_component)->OnComponentFree, (void*)nullptr);
 		free((*p_component)->Child);
 		(*p_component)->Child = nullptr;
 		(*p_component)->AttachedEntity = nullptr;
-		Core_ObserverFree(&(*p_component)->OnComponentFree);
+		_Core::ObserverT_free(&(*p_component)->OnComponentFree);
 		delete (*p_component);
 		*p_component = nullptr;
 	};
@@ -41,11 +41,11 @@ namespace _GameEngine::_ECS
 #endif
 		for (auto&& p_componentAttachedEventsEntry : p_componentEvents->ComponentAttachedEvents)
 		{
-			Core_ObserverFree(&p_componentAttachedEventsEntry.second);
+			_Core::ObserverT_free(&p_componentAttachedEventsEntry.second);
 		}
 		for (auto&& p_cimponentDetachedEventsEntry : p_componentEvents->ComponentDetachedEvents)
 		{
-			Core_ObserverFree(&p_cimponentDetachedEventsEntry.second);
+			_Core::ObserverT_free(&p_cimponentDetachedEventsEntry.second);
 		}
 	};
 
@@ -53,7 +53,7 @@ namespace _GameEngine::_ECS
 	{
 		if (p_componentEvents->ComponentAttachedEvents.contains(p_component->ComponentType))
 		{
-			Core_Observer_broadcast(&p_componentEvents->ComponentAttachedEvents[p_component->ComponentType], p_component);
+			_Core::ObserverT_broadcast(&p_componentEvents->ComponentAttachedEvents[p_component->ComponentType], p_component);
 		}
 	};
 
@@ -61,7 +61,7 @@ namespace _GameEngine::_ECS
 	{
 		if (p_componentEvents->ComponentDetachedEvents.contains(p_component->ComponentType))
 		{
-			Core_Observer_broadcast(&p_componentEvents->ComponentDetachedEvents[p_component->ComponentType], p_component);
+			_Core::ObserverT_broadcast(&p_componentEvents->ComponentDetachedEvents[p_component->ComponentType], p_component);
 		}
 	};
 };

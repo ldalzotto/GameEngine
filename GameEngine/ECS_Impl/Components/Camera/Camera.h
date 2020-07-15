@@ -2,10 +2,7 @@
 
 #include "Math/Matrix/Matrix.h"
 
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
 #include "ECS/ComponentType.h"
 
 namespace _GameEngine
@@ -24,8 +21,8 @@ namespace _GameEngine::_ECS
 		_Render::RenderInterface* RenderInterface;
 		_Math::Matrix4x4f ProjectionMatrix;
 		_Math::Matrix4x4f ViewMatrix;
-		Callback OnSwapChainBuilded;
-		Callback OnComponentDetached;
+		_Core::CallbackT<Camera, _Render::RenderInterface> OnSwapChainBuilded;
+		_Core::CallbackT<Camera, void> OnComponentDetached;
 	};
 
 	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::RenderInterface* p_renderInterface);

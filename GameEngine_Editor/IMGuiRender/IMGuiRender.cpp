@@ -5,6 +5,7 @@
 #include "imgui_impl_vulkan.h"
 #include "imgui_impl_glfw.h"
 
+#include "GameEngineApplicationInterface.h"
 #include "RenderInterface.h"
 
 #include "RenderHook.h"
@@ -17,26 +18,24 @@
 
 namespace _GameEngineEditor
 {
-	void newFrame(void* p_IMGuiRender, void* p_gameEngineApplication);
-	void drawFrame(void* p_IMGuiRender, void* p_beforeEndRecordingMainCommandBuffer_Input);
+	void newFrame(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplication);
+	void drawFrame(IMGuiRender* p_IMGuiRender, _Render::BeforeEndRecordingMainCommandBuffer_Input* p_beforeEndRecordingMainCommandBuffer_Input);
 	void createFinalDrawObjects(_Render::RenderInterface* p_renderInterface, IMGuiRender* p_IMGuiRender);
-	void onSwapChainRebuilded(void* p_IMGuiRender, void* p_renderInterface);
+	void onSwapChainRebuilded(IMGuiRender* p_IMGuiRender, _Render::RenderInterface* p_renderInterface);
 
 	void IMGuiRender_init(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
 		_Render::RenderInterface* p_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
 
-		p_IMGuiRender->NewFrame.Closure = p_IMGuiRender;
-		p_IMGuiRender->NewFrame.Function = newFrame;
-		Core_Observer_register(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
+		p_IMGuiRender->NewFrame = { newFrame, p_IMGuiRender };
+		_Core::ObserverT_register(p_gameEngineApplicationInterface->NewFrame, (_Core::CallbackT<void, GameEngineApplicationInterface>*) &p_IMGuiRender->NewFrame);
 
-		p_IMGuiRender->DrawFrame.Closure = p_IMGuiRender;
-		p_IMGuiRender->DrawFrame.Function = drawFrame;
-		Core_Observer_register(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
+		p_IMGuiRender->DrawFrame = { drawFrame, p_IMGuiRender };
+		_Core::ObserverT_register(&p_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, 
+				(_Core::CallbackT<void, _Render::BeforeEndRecordingMainCommandBuffer_Input>*) &p_IMGuiRender->DrawFrame);
 
-		p_IMGuiRender->SwapChainRebuild.Closure = p_IMGuiRender;
-		p_IMGuiRender->SwapChainRebuild.Function = onSwapChainRebuilded;
-		Core_Observer_register(&p_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
+		p_IMGuiRender->SwapChainRebuild = { onSwapChainRebuilded, p_IMGuiRender };
+		_Core::ObserverT_register(&p_renderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) &p_IMGuiRender->SwapChainRebuild);
 
 		ImGuiContext* l_imGuicontext = ImGui::CreateContext();
 		ImGui::SetCurrentContext(l_imGuicontext);
@@ -69,12 +68,13 @@ namespace _GameEngineEditor
 
 	void IMGuiRender_free(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
-		Core_Observer_unRegister(p_gameEngineApplicationInterface->NewFrame, &p_IMGuiRender->NewFrame);
+		_Core::ObserverT_unRegister(p_gameEngineApplicationInterface->NewFrame, (_Core::CallbackT<void, GameEngineApplicationInterface>*) &p_IMGuiRender->NewFrame);
 
 		_Render::RenderInterface* l_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
 
-		Core_Observer_unRegister(&l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, &p_IMGuiRender->DrawFrame);
-		Core_Observer_unRegister(&l_renderInterface->SwapChain->OnSwapChainBuilded, &p_IMGuiRender->SwapChainRebuild);
+		_Core::ObserverT_unRegister(&l_renderInterface->RenderHookCallbacksInterface.RenderHookCallbacks->BeforeEndRecordingMainCommandBuffer, 
+			(_Core::CallbackT<void, _Render::BeforeEndRecordingMainCommandBuffer_Input>*)  &p_IMGuiRender->DrawFrame);
+		_Core::ObserverT_unRegister(&l_renderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) &p_IMGuiRender->SwapChainRebuild);
 
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -91,35 +91,30 @@ namespace _GameEngineEditor
 		p_IMGuiRender->FontInitialized = false;
 	};
 
-	void onSwapChainRebuilded(void* p_IMGuiRender, void* p_renderInterface)
+	void onSwapChainRebuilded(IMGuiRender* p_IMGuiRender, _Render::RenderInterface* p_renderInterface)
 	{
-		IMGuiRender* l_IMGuiRender = (IMGuiRender*)p_IMGuiRender;
-		_Render::RenderInterface* l_renderInterface = (_Render::RenderInterface*)p_renderInterface;
-
 		ImGui::EndFrame();
 
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 
-		RenderPass_free(&l_IMGuiRender->Renderpass);
-		for (size_t i = 0; i < l_IMGuiRender->FrameBuffers.size(); i++)
+		RenderPass_free(&p_IMGuiRender->Renderpass);
+		for (size_t i = 0; i < p_IMGuiRender->FrameBuffers.size(); i++)
 		{
-			FrameBuffer_free(&l_IMGuiRender->FrameBuffers.at(i));
+			FrameBuffer_free(&p_IMGuiRender->FrameBuffers.at(i));
 		}
-		l_IMGuiRender->FrameBuffers.clear();
+		p_IMGuiRender->FrameBuffers.clear();
 
-		createFinalDrawObjects(l_renderInterface, l_IMGuiRender);
+		createFinalDrawObjects(p_renderInterface, p_IMGuiRender);
 
-		l_IMGuiRender->FontInitialized = false;
+		p_IMGuiRender->FontInitialized = false;
 	};
 
-	void newFrame(void* p_IMGuiRender, void* p_gameEngineApplicationInterface)
+	void newFrame(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplication)
 	{
-		IMGuiRender* l_imGuiRender = (IMGuiRender*)p_IMGuiRender;
-		GameEngineApplicationInterface* l_gameEngineApplcationInterface = (GameEngineApplicationInterface*)p_gameEngineApplicationInterface;
-		_Render::RenderInterface* l_renderInterface = l_gameEngineApplcationInterface->RenderInterface;
+		_Render::RenderInterface* l_renderInterface = p_gameEngineApplication->RenderInterface;
 
-		if (!l_imGuiRender->FontInitialized)
+		if (!p_IMGuiRender->FontInitialized)
 		{
 			_Render::CommandBufferSingleExecution l_commandBufferSingleExecution{};
 			{
@@ -131,7 +126,7 @@ namespace _GameEngineEditor
 			CommandBufferSingleExecution_startRecording(&l_commandBufferSingleExecution);
 			ImGui_ImplVulkan_CreateFontsTexture(l_commandBufferSingleExecution.CommandBuffer.CommandBuffer);
 			CommandBufferSingleExecution_execute(&l_commandBufferSingleExecution, l_renderInterface->Device);
-			l_imGuiRender->FontInitialized = true;
+			p_IMGuiRender->FontInitialized = true;
 		}
 
 		ImGui_ImplVulkan_NewFrame();
@@ -140,28 +135,25 @@ namespace _GameEngineEditor
 
 	};
 
-	void drawFrame(void* p_IMGuiRender, void* p_beforeEndRecordingMainCommandBuffer_Input)
+	void drawFrame(IMGuiRender* p_IMGuiRender, _Render::BeforeEndRecordingMainCommandBuffer_Input* p_beforeEndRecordingMainCommandBuffer_Input)
 	{
-		IMGuiRender* l_IMGuiRender = (IMGuiRender*)p_IMGuiRender;
-		_Render::BeforeEndRecordingMainCommandBuffer_Input* l_input = (_Render::BeforeEndRecordingMainCommandBuffer_Input*)p_beforeEndRecordingMainCommandBuffer_Input;
-
-		if (l_IMGuiRender->FontInitialized)
+		if (p_IMGuiRender->FontInitialized)
 		{
 			VkRenderPassBeginInfo l_renderPassBeginInfo{};
 			l_renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			l_renderPassBeginInfo.renderPass = l_IMGuiRender->Renderpass.renderPass;
-			l_renderPassBeginInfo.framebuffer = l_IMGuiRender->FrameBuffers.at(l_input->ImageIndex).FrameBuffer;
+			l_renderPassBeginInfo.renderPass = p_IMGuiRender->Renderpass.renderPass;
+			l_renderPassBeginInfo.framebuffer = p_IMGuiRender->FrameBuffers.at(p_beforeEndRecordingMainCommandBuffer_Input->ImageIndex).FrameBuffer;
 			l_renderPassBeginInfo.renderArea.offset = { 0,0 };
-			l_renderPassBeginInfo.renderArea.extent = l_input->RenderInterface->SwapChain->SwapChainInfo.SwapExtend;
+			l_renderPassBeginInfo.renderArea.extent = p_beforeEndRecordingMainCommandBuffer_Input->RenderInterface->SwapChain->SwapChainInfo.SwapExtend;
 			l_renderPassBeginInfo.clearValueCount = 0;
 			l_renderPassBeginInfo.pClearValues = nullptr;
 
-			vkCmdBeginRenderPass(l_input->CommandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdBeginRenderPass(p_beforeEndRecordingMainCommandBuffer_Input->CommandBuffer, &l_renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			ImGui::Render();
-			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), l_input->CommandBuffer);
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), p_beforeEndRecordingMainCommandBuffer_Input->CommandBuffer);
 
-			vkCmdEndRenderPass(l_input->CommandBuffer);
+			vkCmdEndRenderPass(p_beforeEndRecordingMainCommandBuffer_Input->CommandBuffer);
 		}
 
 

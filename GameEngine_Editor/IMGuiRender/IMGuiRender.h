@@ -4,12 +4,7 @@
 
 #include <vector>
 
-#include "GameEngineApplicationInterface.h"
-
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
 
 #include "VulkanObjects/GraphcisPipeline/RenderPass.h"
 #include "VulkanObjects/GraphcisPipeline/FrameBuffer.h"
@@ -19,7 +14,13 @@ using namespace _GameEngine;
 
 namespace _GameEngine
 {
-	struct GameEngineApplication;
+	struct GameEngineApplicationInterface;
+
+	namespace _Render
+	{
+		struct BeforeEndRecordingMainCommandBuffer_Input;
+		struct RenderInterface;
+	}
 }
 
 namespace _GameEngineEditor
@@ -31,10 +32,9 @@ namespace _GameEngineEditor
 		_Render::RenderPass Renderpass;
 		std::vector<_Render::FrameBuffer> FrameBuffers;
 
-		Callback NewFrame;
-		Callback DrawFrame;
-		Callback SwapChainRebuild;
-		Callback OnRenderDestroyed;
+		_Core::CallbackT<IMGuiRender, GameEngineApplicationInterface> NewFrame;
+		_Core::CallbackT<IMGuiRender, _Render::BeforeEndRecordingMainCommandBuffer_Input> DrawFrame;
+		_Core::CallbackT<IMGuiRender, _Render::RenderInterface> SwapChainRebuild;
 
 		bool FontInitialized;
 	};

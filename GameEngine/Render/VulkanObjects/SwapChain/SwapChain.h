@@ -6,11 +6,8 @@
 #include "VulkanObjects/SwapChain/SwapChainSharedStructures.h"
 #include "VulkanObjects/SwapChain/Image/SwapChainImage.h"
 
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-#include "Functional/Callback/Observer.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
+#include "Functional/Callback/ObserverT.hpp"
 
 #include "vulkan/vulkan.h"
 
@@ -31,12 +28,12 @@ namespace _GameEngine::_Render
 		std::vector<SwapChainImage> SwapChainImages;
 
 		bool MustBeRebuilt;
-		Callback OnWindowSizeChangeCallback;
+		_Core::CallbackT<SwapChain, void> OnWindowSizeChangeCallback;
 
 		// The swap chain can be rebuild if the @ref MustBeRebuilt is set to true.
 		// This event notify when such an event has occured.
 		// Input parameter is (SwapChain*)
-		Core_Observer OnSwapChainBuilded;
+		_Core::ObserverT<_Render::RenderInterface> OnSwapChainBuilded;
 	};
 
 	struct SwapChainSupportDetails

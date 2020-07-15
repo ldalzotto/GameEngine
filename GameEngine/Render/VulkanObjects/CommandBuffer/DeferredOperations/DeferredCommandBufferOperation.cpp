@@ -1,19 +1,18 @@
 #include "DeferredCommandBufferOperation.h"
+#include <stdlib.h>
 
 namespace _GameEngine::_Render
 {
-	void smartDeferredCommandBufferCompletionToken_clearReference(void* p_smartToken, void* null)
+	void smartDeferredCommandBufferCompletionToken_clearReference(SmartDeferredCommandBufferCompletionToken* p_smartToken, void* null)
 	{
-		auto l_smartToken = (SmartDeferredCommandBufferCompletionToken*)p_smartToken;
-		l_smartToken->TokenReference = nullptr;
+		p_smartToken->TokenReference = nullptr;
 	};
 
 	void SmartDeferredCommandBufferCompletionToken_build(SmartDeferredCommandBufferCompletionToken* p_smartToken, DeferredCommandBufferCompletionToken** p_token)
 	{
 		auto l_token = *p_token;
 		p_smartToken->TokenReference = l_token;
-		l_token->OnTokenDestructed.Closure = p_smartToken;
-		l_token->OnTokenDestructed.Function = smartDeferredCommandBufferCompletionToken_clearReference;
+		l_token->OnTokenDestructed = { smartDeferredCommandBufferCompletionToken_clearReference, p_smartToken };
 	};
 
 	bool SmartDeferredCommandBufferCompletionToken_isNull(SmartDeferredCommandBufferCompletionToken* p_smartToken)
@@ -23,13 +22,13 @@ namespace _GameEngine::_Render
 
 	void DeferredCommandBufferOperation_alloc(DeferredCommandBufferOperation* p_deferredCommandBufferOperation)
 	{
-		p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken = new DeferredCommandBufferCompletionToken();
+		p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken = (DeferredCommandBufferCompletionToken*)calloc(1, sizeof(DeferredCommandBufferCompletionToken));
 	};
 
 	void DeferredCommandBufferOperation_free(DeferredCommandBufferOperation* p_deferredCommandBufferOperation)
 	{
-		Core_Callback_call(&p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken->OnTokenDestructed, NULL);
-		delete p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken;
+		_Core::CallbackT_call(&p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken->OnTokenDestructed, (void*) NULL);
+		free(p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken);
 		p_deferredCommandBufferOperation->DeferredCommandBufferCompletionToken = nullptr;
 	};
 };

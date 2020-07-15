@@ -17,7 +17,7 @@ namespace _GameEngine::_Render
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& p_availablePresentModes);
 	VkExtent2D chooseSwapExtent(Window* p_window, const VkSurfaceCapabilitiesKHR& p_capabilities);
-	void onWindowSizeChanged(void* p_swapChain, void* p_input);
+	void onWindowSizeChanged(SwapChain* p_swapChain, void* p_input);
 
 	SwapChainSupportDetails SwapChain_getSupportDetails(VkPhysicalDevice p_physicalDevice, Surface* p_surface)
 	{
@@ -51,12 +51,11 @@ namespace _GameEngine::_Render
 
 	void SwapChain_build(SwapChain* p_swapChain, RenderInterface* p_renderInterface)
 	{
-		Core_ObserverAlloc(&p_swapChain->OnSwapChainBuilded);
+		_Core::ObserverT_alloc(&p_swapChain->OnSwapChainBuilded);
 
 		p_swapChain->RenderInterface = p_renderInterface;
-		p_swapChain->OnWindowSizeChangeCallback.Function = onWindowSizeChanged;
-		p_swapChain->OnWindowSizeChangeCallback.Closure = p_swapChain;
-		Core_Observer_register(&p_renderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
+		p_swapChain->OnWindowSizeChangeCallback = { onWindowSizeChanged, p_swapChain };
+		_Core::ObserverT_register(&p_renderInterface->Window->OnWindowSizeChanged, (_Core::CallbackT<void, void>*) &p_swapChain->OnWindowSizeChangeCallback);
 
 		SwapChainInfo* l_swapChainInfo = &p_swapChain->SwapChainInfo;
 
@@ -142,13 +141,13 @@ namespace _GameEngine::_Render
 	void SwapChain_broadcastRebuildEvent(SwapChain* p_swapChain, RenderInterface* p_renderInterface)
 	{
 		p_swapChain->MustBeRebuilt = false;
-		Core_Observer_broadcast(&p_swapChain->OnSwapChainBuilded, p_renderInterface);
+		_Core::ObserverT_broadcast(&p_swapChain->OnSwapChainBuilded, p_renderInterface);
 	};
 
 	void SwapChain_free(SwapChain* p_swapChain)
 	{
-		Core_ObserverFree(&p_swapChain->OnSwapChainBuilded);
-		Core_Observer_unRegister(&p_swapChain->RenderInterface->Window->OnWindowSizeChanged, &p_swapChain->OnWindowSizeChangeCallback);
+		_Core::ObserverT_free(&p_swapChain->OnSwapChainBuilded);
+		_Core::ObserverT_unRegister(&p_swapChain->RenderInterface->Window->OnWindowSizeChanged, (_Core::CallbackT<void, void>*) &p_swapChain->OnWindowSizeChangeCallback);
 
 		for (size_t i = 0; i < p_swapChain->SwapChainImages.size(); i++)
 		{
@@ -163,10 +162,9 @@ namespace _GameEngine::_Render
 		p_swapChain->MustBeRebuilt = true;
 	};
 
-	void onWindowSizeChanged(void* p_swapChain, void* p_input)
+	void onWindowSizeChanged(SwapChain* p_swapChain, void* p_input)
 	{
-		SwapChain* l_swapChain = (SwapChain*)p_swapChain;
-        swapChainInvalidate(l_swapChain);
+        swapChainInvalidate(p_swapChain);
 	};
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> p_surfaceFormats)

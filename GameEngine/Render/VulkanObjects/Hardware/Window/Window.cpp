@@ -32,7 +32,7 @@ namespace _GameEngine::_Render
 
 	void Window_init(Window* p_window)
 	{
-		Core_ObserverAlloc(&p_window->OnWindowSizeChanged);
+		_Core::ObserverT_alloc(&p_window->OnWindowSizeChanged);
 
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -47,7 +47,7 @@ namespace _GameEngine::_Render
 
 	void Window_closeWindow(Window* p_window)
 	{
-		Core_ObserverFree(&p_window->OnWindowSizeChanged);
+		_Core::ObserverT_free(&p_window->OnWindowSizeChanged);
 
 		glfwDestroyWindow(p_window->Window);
 		glfwTerminate();
@@ -95,7 +95,7 @@ namespace _GameEngine::_Render
 		l_window->WindowSize.Width = width;
 		l_window->WindowSize.Height = height;
 		Window_updateScreeToGraphicsAPIPixelCoordinates(l_window);
-		Core_Observer_broadcast(&l_window->OnWindowSizeChanged, nullptr);
+		_Core::ObserverT_broadcast(&l_window->OnWindowSizeChanged, (void*)nullptr);
 	};
 
 } // namespace _GameEngine

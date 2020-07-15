@@ -28,8 +28,8 @@ namespace _GameEngine::_ECS
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_gameEngineInterface);
 
-	void meshDrawSystem_onComponentsAttached(Entity* p_entity, void* p_null);
-	void meshDrawSystem_onComponentsDetached(Entity* p_entity, void* p_null);
+	void meshDrawSystem_onComponentsAttached(void* p_null, Entity* p_entity);
+	void meshDrawSystem_onComponentsDetached(void* p_null, Entity* p_entity);
 
 	void MeshDrawSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
 	{
@@ -40,17 +40,17 @@ namespace _GameEngine::_ECS
 		_Core::VectorT_alloc(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, 2);
 		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &MeshRendererType);
 		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &TransformComponentType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = meshDrawSystem_onComponentsAttached;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = meshDrawSystem_onComponentsDetached;
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = { meshDrawSystem_onComponentsAttached, (void*)nullptr};
+		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = { meshDrawSystem_onComponentsDetached, (void*)nullptr};
 	};
 
-	void meshDrawSystem_onComponentsAttached(Entity* p_entity, void* p_null)
+	void meshDrawSystem_onComponentsAttached(void* p_null, Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
 		_Render::MaterialInstanceContainer_addMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 	
-	void meshDrawSystem_onComponentsDetached(Entity* p_entity, void* p_null)
+	void meshDrawSystem_onComponentsDetached(void* p_null, Entity* p_entity)
 	{
 		MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
 		_Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);

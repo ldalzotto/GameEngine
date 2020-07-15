@@ -4,10 +4,7 @@
 
 #include "Materials/Material.h"
 
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -27,7 +24,7 @@ namespace _GameEngine::_ECS
 		_Render::MaterialInstance* MaterialInstance;
 		_Render::MaterialUniqueKey MaterialUniqueKey;
 
-		Callback OnComponentDetached;
+		_Core::CallbackT<MeshRenderer, void> OnComponentDetached;
 	};
 
 	struct MeshRendererInitInfo

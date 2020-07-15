@@ -37,8 +37,6 @@ namespace _GameEngine::_Render
 		_Core::VectorT<MaterialInstanceParameter*> Parameters;
 	};
 
-	typedef MaterialInstance* MaterialInstanceHandle;
-
 	struct MaterialInstanceInitInfo
 	{
 		Material* SourceMaterial;

@@ -1,9 +1,6 @@
 #pragma once
 
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -12,6 +9,8 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
+
+	struct SmartDeferredCommandBufferCompletionToken;
 
 
 	/**
@@ -23,7 +22,7 @@ namespace _GameEngine::_Render
 	{
 		bool IsCompleted;
 		bool IsCancelled;
-		Callback OnTokenDestructed;
+		_Core::CallbackT<SmartDeferredCommandBufferCompletionToken, void> OnTokenDestructed;
 	};
 
 	/**

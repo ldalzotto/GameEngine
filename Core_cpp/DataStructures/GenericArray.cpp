@@ -27,7 +27,7 @@ namespace _Core
 		p_genericArray->Memory = malloc(GenericArray_getTotalSize(p_genericArray));
 		p_genericArray->Size = 0;
 	};
-	
+
 	void GenericArray_free(GenericArray* p_genericArray)
 	{
 		free(p_genericArray->Memory);
@@ -54,7 +54,7 @@ namespace _Core
 	{
 		return (char*)p_genericArray->Memory + GenericArray_getElementOffset(p_genericArray, p_index);
 	};
-	
+
 	void* GenericArray_at(GenericArray* p_genericArray, size_t p_index)
 	{
 		if (p_index >= p_genericArray->Size)
@@ -133,7 +133,7 @@ namespace _Core
 		GenericArray_pushBack_realloc(p_genericArray, p_value);
 	};
 
-	void GenericArray_pushBack_realloc_guarded_sorted(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard, ElementSorter* p_elementSorter)
+	void* GenericArray_pushBack_realloc_guarded_sorted(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard, ElementSorter* p_elementSorter)
 	{
 		{
 			VectorIterator l_it;
@@ -149,12 +149,11 @@ namespace _Core
 			}
 		}
 
-		{
-			VectorIterator l_it;
-			GenericArray_buildIterator(p_genericArray, &l_it);
-			Sort_min(&l_it, 0, p_elementSorter);
-			GenericArray_isertAt_realloc(p_genericArray, p_value, 1, l_it.CurrentIndex);
-		}
+		VectorIterator l_it;
+		GenericArray_buildIterator(p_genericArray, &l_it);
+		Sort_min(&l_it, 0, p_elementSorter);
+		GenericArray_isertAt_realloc(p_genericArray, p_value, 1, l_it.CurrentIndex);
+		return GenericArray_at_unchecked(p_genericArray, l_it.CurrentIndex);
 	};
 
 	void GenericArray_swap(GenericArray* p_genericArray, size_t p_left, size_t p_right)
@@ -267,7 +266,7 @@ namespace _Core
 			p_genericArray->Size += p_insertedArray->Size;
 		}
 	};
-	
+
 	GenericArray GenericArray_deepCopy(GenericArray* p_genericArray)
 	{
 		GenericArray l_copiedArray;

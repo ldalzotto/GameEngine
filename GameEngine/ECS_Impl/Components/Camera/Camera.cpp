@@ -12,28 +12,24 @@ namespace _GameEngine::_ECS
 {
 	ComponentType CameraType = "Camera";
 
-	void camera_onSwapChainBuild(void* p_camera, void* p_swapChain)
+	void camera_onSwapChainBuild(Camera* p_camera, _Render::RenderInterface* p_renderInterface)
 	{
-		Camera* l_camera = (Camera*)p_camera;
-		Camera_buildProjectionMatrix(l_camera);
+		Camera_buildProjectionMatrix(p_camera);
 	};
 
-	void camera_onDetached(void* p_camera, void* p_notUsed)
+	void camera_onDetached(Camera* p_camera, void* p_notUsed)
 	{
-		Camera* l_camera = (Camera*)p_camera;
-		Core_Observer_register(&l_camera->RenderInterface->SwapChain->OnSwapChainBuilded, &l_camera->OnSwapChainBuilded);
+		_Core::ObserverT_unRegister(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) & p_camera->OnSwapChainBuilded);
 	};
 
 	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::RenderInterface* p_renderInterface)
 	{
 		p_camera->RenderInterface = p_renderInterface;
-		p_camera->OnSwapChainBuilded.Closure = p_camera;
-		p_camera->OnSwapChainBuilded.Function = camera_onSwapChainBuild;
-		Core_Observer_register(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, &p_camera->OnSwapChainBuilded);
+		p_camera->OnSwapChainBuilded = { camera_onSwapChainBuild, p_camera };
+		_Core::ObserverT_register(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) &p_camera->OnSwapChainBuilded);
 
-		p_camera->OnComponentDetached.Closure = p_camera;
-		p_camera->OnComponentDetached.Function = camera_onDetached;
-		Core_Observer_register(&p_associatedComponent->OnComponentFree, &p_camera->OnComponentDetached);
+		p_camera->OnComponentDetached = { camera_onDetached, p_camera };
+		_Core::ObserverT_register(&p_associatedComponent->OnComponentFree, (_Core::CallbackT<void, void>*) &p_camera->OnComponentDetached);
 
 		Camera_buildProjectionMatrix(p_camera);
 	};

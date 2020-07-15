@@ -2,10 +2,7 @@
 
 #include <functional>
 
-extern "C"
-{
-#include "Functional/Callback/Observer.h"
-}
+#include "Functional/Callback/ObserverT.hpp"
 
 #include "Clock/Clock.hpp"
 #include "Log/Log.hpp"
@@ -26,8 +23,8 @@ namespace _GameEngine
 	{
 		GameEngineApplicationInterface GameEngineApplicationInterface;
 
-		Core_Observer NewFrame;
-		Core_Observer PreRender;
+		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> NewFrame;
+		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> PreRender;
 		UpdateSequencer UpdateSequencer;
 		std::function<void(float)> SandboxUpdateHook;
 

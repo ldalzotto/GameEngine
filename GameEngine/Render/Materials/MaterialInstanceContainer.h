@@ -1,9 +1,7 @@
 #pragma once
 
-extern "C"
-{
-#include "DataStructures/Specifications/SortedLinearMap.h"
-}
+#include "DataStructures/Specifications/VectorT.hpp"
+#include "DataStructures/Specifications/SortedLinearMapT.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -14,17 +12,15 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	typedef Core_GenericArray Vector_MaterialInstance;
-
 	struct Material_with_MaterialInstances
 	{
 		Material* Material;
-		Vector_MaterialInstance MaterialInstanceV2;
+		_Core::VectorT<MaterialInstance*> MaterialInstanceV2;
 	};
 
 	struct InstancedMaterialsDataStructure
 	{
-		Core_SortedLinearMap SortedLinearMap_Material_MaterialInstances;
+		_Core::SortedLinearMapT<Material_with_MaterialInstances> MaterialWithMaterialInstances;
 	};
 
 	struct MaterialInstanceContainer

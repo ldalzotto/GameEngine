@@ -7,12 +7,6 @@
 #include "Materials/Material.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/TextureLayoutTransition.h"
 
-extern "C"
-{
-#include "DataStructures/GenericArray.h"
-#include "Functional/Vector/VectorAccessor.h"
-}
-
 namespace _GameEngine::_Render
 {
 	void MaterialDrawStep_buildCommandBuffer(RenderInterface* p_renderInterface, VkCommandBuffer p_commandBuffer, size_t l_imageIndex)
@@ -36,8 +30,8 @@ namespace _GameEngine::_Render
 			TextureLayoutTransition_executeTransition(p_commandBuffer, *(p_renderInterface->DepthTexture), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 		}
 
-		Core_VectorIterator l_instanciatedMaterialsIterator = Core_GenericArray_buildIterator(&l_materialInstanceConctainer->DataStructure.SortedLinearMap_Material_MaterialInstances.GenericArray);
-		while (Core_VectorIterator_moveNext(&l_instanciatedMaterialsIterator))
+		_Core::VectorIteratorT<Material_with_MaterialInstances> l_instanciatedMaterialsIterator = _Core::SortedLinearMapT_buildIterator(&l_materialInstanceConctainer->DataStructure.MaterialWithMaterialInstances);
+		while (_Core::VectorIteratorT_moveNext(&l_instanciatedMaterialsIterator))
 		{
 			Material_with_MaterialInstances* l_materialWithInstance = (Material_with_MaterialInstances*)l_instanciatedMaterialsIterator.Current;
 
@@ -60,7 +54,7 @@ namespace _GameEngine::_Render
 
 			for (size_t j = 0; j < l_materialWithInstance->MaterialInstanceV2.Size; j++)
 			{
-				MaterialInstance* l_materialInstance = *(MaterialInstance**)Core_GenericArray_at(&l_materialWithInstance->MaterialInstanceV2, j);
+				MaterialInstance* l_materialInstance = *_Core::VectorT_at(&l_materialWithInstance->MaterialInstanceV2, j);
 				l_defaultMaterial->FinalDrawObjects.MaterialDrawFn(p_commandBuffer, l_materialInstance, p_renderInterface);
 			}
 

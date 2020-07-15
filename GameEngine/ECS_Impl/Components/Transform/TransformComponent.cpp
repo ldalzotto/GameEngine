@@ -4,7 +4,7 @@ namespace _GameEngine::_ECS
 {
 	ComponentType TransformComponentType = "TransformComponent";
 
-	void TransformComponent_free(void* p_transformComponent, void* p_null)
+	void TransformComponent_free(TransformComponent* p_transformComponent, void* p_null)
 	{
 		TransformComponent* l_transformComponent = (TransformComponent*)p_transformComponent;
 		_Math::Transform_free(&l_transformComponent->Transform);
@@ -18,9 +18,8 @@ namespace _GameEngine::_ECS
 		p_transformComponent->Transform.LocalScale = p_transformInitInfo->LocalScale;
 		_Math::Transform_alloc(&p_transformComponent->Transform);
 
-		p_transformComponent->OnComponentDetached.Closure = p_transformComponent;
-		p_transformComponent->OnComponentDetached.Function = TransformComponent_free;
-		Core_Observer_register(&p_component->OnComponentFree, &p_transformComponent->OnComponentDetached);
+		p_transformComponent->OnComponentDetached = { TransformComponent_free , p_transformComponent };
+		_Core::ObserverT_register(&p_component->OnComponentFree, (_Core::CallbackT<void, void>*)&p_transformComponent->OnComponentDetached);
 	};
 
 }

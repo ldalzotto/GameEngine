@@ -4,10 +4,8 @@
 
 #include "ECS/Component.h"
 
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
+
 
 namespace _GameEngine::_ECS
 {
@@ -51,21 +49,18 @@ namespace _GameEngine::_ECS
 		_Core::VectorT<ComponentType> ListenedComponentTypes;
 		_Core::VectorT<Entity*> FilteredEntities;
 
-		void(*OnEntityThatMatchesComponentTypesAdded)(Entity*, void*);
-		void* OnEntityThatMatchesComponentTypesAddedUserdata;
-
-		void(*OnEntityThatMatchesComponentTypesRemoved)(Entity*, void* p_userData);
-		void* OnEntityThatMatchesComponentTypesRemovedUserData;
+		_Core::CallbackT<void, Entity> OnEntityThatMatchesComponentTypesAdded;
+		_Core::CallbackT<void, Entity> OnEntityThatMatchesComponentTypesRemoved;
 
 		/**
 			Called when a @ref Component with type contained in @ref ListenedComponentTypes is attached.
 		*/
-		Callback OnComponentAttachedEventListener;
+		_Core::CallbackT<EntityConfigurableContainer, Component> OnComponentAttachedEventListener;
 
 		/**
 			Called when a @ref Component with type contained in @ref ListenedComponentTypes is detached.
 		*/
-		Callback OnComponentDetachedEventListener;
+		_Core::CallbackT<EntityConfigurableContainer, Component> OnComponentDetachedEventListener;
 	};
 
 	struct EntityConfigurableContainerInitInfo
@@ -74,13 +69,11 @@ namespace _GameEngine::_ECS
 
 		/** This callback is called when the components listed in ListenedComponentTypes are attached to the Entity.
 			It is called after component initialization. */
-		void(*OnEntityThatMatchesComponentTypesAdded)(Entity*, void* p_userData);
-		void* OnEntityThatMatchesComponentTypesAddedUserdata;
+		_Core::CallbackT<void, Entity> OnEntityThatMatchesComponentTypesAdded;
 
 		/** This callback is called when the components liste in the ListenedComponentTypes are no more attached to the Entity.
 			It is called before the components are freed. */
-		void(*OnEntityThatMatchesComponentTypesRemoved)(Entity*, void* p_userData);
-		void* OnEntityThatMatchesComponentTypesRemovedUserData;
+		_Core::CallbackT<void, Entity> OnEntityThatMatchesComponentTypesRemoved;
 
 		ECS* ECS;
 	};

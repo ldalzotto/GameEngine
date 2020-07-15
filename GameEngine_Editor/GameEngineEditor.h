@@ -2,10 +2,7 @@
 
 #include "IMGuiRender/IMGuiRender.h"
 
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
 
 #include "DebugConsole/DebugConsole.h"
 #include "IMGuiRender/DrawableWindow.h"
@@ -22,7 +19,7 @@ namespace _GameEngineEditor
 	struct GameEngineEditor
 	{
 		GameEngineApplicationInterface* GameEngineApplicationInterface;
-		Callback OnPreRender;
+		_Core::CallbackT<GameEngineEditor, void> OnPreRender;
 		IMGuiRender IMGuiRender;
 		DebugConsole DebugConsole;
 		DrawableWindows DrawableWindows;

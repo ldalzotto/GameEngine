@@ -2,12 +2,18 @@
 
 #include <functional>
 
-struct Core_Observer;
+namespace _GameEngine
+{
+	struct GameEngineApplicationInterface;
+}
 
 namespace _Core
 {
 	struct Log;
 	struct Clock;
+
+	template <typename INPUT_TYPE = _GameEngine::GameEngineApplicationInterface>
+	struct ObserverT;
 }
 
 namespace _GameEngine
@@ -24,8 +30,8 @@ namespace _GameEngine
 {
 	struct GameEngineApplicationInterface
 	{
-		Core_Observer* NewFrame;
-		Core_Observer* PreRender;
+		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface>* NewFrame;
+		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface>* PreRender;
 		UpdateSequencer* UpdateSequencer;
 		std::function<void(float)>* SandboxUpdateHook;
 

@@ -41,7 +41,7 @@ namespace _GameEngine::_ECS
 		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
-	void meshRendererBoundSystem_onComponentAttached(Entity* p_entity, void* p_system)
+	void meshRendererBoundSystem_onComponentAttached(void* p_system, Entity* p_entity)
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 		MeshRendererBoundCalculationOperation l_operation;
@@ -60,7 +60,7 @@ namespace _GameEngine::_ECS
 		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World , l_operation.Bound->Boxcollider);
 	};
 
-	void meshRendererBoundSystem_onComponentRemoved(Entity* p_entity, void* p_system)
+	void meshRendererBoundSystem_onComponentRemoved(void* p_system, Entity* p_entity)
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 		_ECS::MeshRendererBound* l_meshRendererBound = ENTITY_GET_COMPONENT(MeshRendererBound, p_entity);
@@ -120,11 +120,8 @@ namespace _GameEngine::_ECS
 			_Core::VectorT_pushBack(&l_entityContainerInfo->ListenedComponentTypes, &MeshRendererBoundType);
 			_Core::VectorT_pushBack(&l_entityContainerInfo->ListenedComponentTypes, &MeshRendererType);
 
-			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAdded = meshRendererBoundSystem_onComponentAttached;
-			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAddedUserdata = l_meshRendererBoundSystem;
-
-			l_entityContainerInfo->OnEntityThatMatchesComponentTypesRemoved = meshRendererBoundSystem_onComponentRemoved;
-			l_entityContainerInfo->OnEntityThatMatchesComponentTypesRemovedUserData = l_meshRendererBoundSystem;
+			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAdded = { meshRendererBoundSystem_onComponentAttached, (void*)l_meshRendererBoundSystem } ;
+			l_entityContainerInfo->OnEntityThatMatchesComponentTypesRemoved = { meshRendererBoundSystem_onComponentRemoved, (void*)l_meshRendererBoundSystem };
 		}
 
 		p_systemV2AllocInfo->OnSystemDestroyed = meshRendererBoundSystem_onSystemDestroyed;

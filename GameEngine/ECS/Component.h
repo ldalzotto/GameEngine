@@ -7,10 +7,7 @@
 
 #include "ComponentType.h"
 
-extern "C"
-{
-#include "Functional/Callback/Observer.h"
-}
+#include "Functional/Callback/ObserverT.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -22,7 +19,7 @@ namespace _GameEngine::_ECS
 		Entity* AttachedEntity;
 		ComponentType ComponentType;
 		void* Child;
-		Core_Observer OnComponentFree;
+		_Core::ObserverT<void> OnComponentFree;
 	};
 
 	Component* Component_alloc(ComponentType& p_type, size_t p_componentChildSize);
@@ -45,9 +42,9 @@ namespace _GameEngine::_ECS
 	struct ComponentEvents
 	{
 		/** Triggered when any Component with  the specified ComponentType is attached to an Entity. */
-		std::unordered_map<ComponentType, Core_Observer> ComponentAttachedEvents;
+		std::unordered_map<ComponentType, _Core::ObserverT<Component>> ComponentAttachedEvents;
 		/** Triggered when any Component with  the specified ComponentType is dettached to an Entity. */
-		std::unordered_map<ComponentType, Core_Observer> ComponentDetachedEvents;
+		std::unordered_map<ComponentType, _Core::ObserverT<Component>> ComponentDetachedEvents;
 	};
 
 	void ComponentEvents_free(ComponentEvents* p_componentEvents, ECS* p_ecs);

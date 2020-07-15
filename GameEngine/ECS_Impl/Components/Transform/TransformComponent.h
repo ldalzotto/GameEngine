@@ -5,10 +5,7 @@
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "ECS/Component.h"
 
-extern "C"
-{
-#include "Functional/Callback/Callback.h"
-}
+#include "Functional/Callback/CallbackT.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -17,7 +14,7 @@ namespace _GameEngine::_ECS
 	struct TransformComponent
 	{
 		_Math::Transform Transform;
-		Callback OnComponentDetached;
+		_Core::CallbackT<TransformComponent, void> OnComponentDetached;
 	};
 
 	struct TransformInitInfo
