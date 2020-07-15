@@ -49,7 +49,7 @@ namespace _GameEngine::_Render
 
 	struct Material_RenderingSpecifications
 	{
-		_Utils::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
+		_Core::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
 	};
 
 	struct MaterialUniqueKey
@@ -94,7 +94,7 @@ namespace _GameEngine::_Render
 		VertexInput VertexInput;
 
 		/** OPTIONAL - Default value is VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST */
-		_Utils::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
+		_Core::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
 
 		MaterialDrawFn MaterialDrawFn;
 		std::vector<ShaderParameter> ShaderParameters;

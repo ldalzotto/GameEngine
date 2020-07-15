@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include "Utils/Resource/UsageCounter.h"
+#include "Functional/RAII/SharedRAIIT.hpp"
 #include "Texture/Texture.h"
 
 namespace _GameEngine::_Render
@@ -11,16 +12,10 @@ namespace _GameEngine::_Render
 
 namespace _GameEngine::_Render
 {
-	struct TextureResourceWithCounter
-	{
-		Texture* Texture;
-		_Utils::UsageCounter UsageCounter;
-	};
-
 	struct TextureResourceProvider
 	{
 		RenderInterface* RenderInterface;
-		std::unordered_map<size_t, TextureResourceWithCounter> TextureResources;
+		std::unordered_map<size_t, _Core::SharedRAIIT<Texture, TextureResourceProvider>> TextureResources;
 	};
 
 	void TextureResourceProvider_Clear(TextureResourceProvider* p_textureResourceProvider);

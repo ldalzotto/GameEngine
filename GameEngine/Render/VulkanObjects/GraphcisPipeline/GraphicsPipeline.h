@@ -2,8 +2,8 @@
 
 #include <vector>
 #include <string>
-#include "Utils/Functional/OptionalT.h"
 
+#include "Functional/Optional/OptionalT.hpp"
 #include "VulkanObjects/GraphcisPipeline/RenderPass.h"
 #include "VulkanObjects/GraphcisPipeline/FrameBuffer.h"
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
@@ -58,7 +58,7 @@ namespace _GameEngine::_Render
 		GraphicsPipeline_DepthTest GraphicsPipeline_DepthTest;
 
 		/** OPTIONAL - Default value is VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST */
-		_Utils::OptionalT<VkPrimitiveTopology> PrimitiveTopology;
+		_Core::OptionalT<VkPrimitiveTopology> PrimitiveTopology;
 	};
 
 	void GraphicsPipeline_alloc(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineAllocInfo* p_graphicsPipelineGetOrAllocInfo);

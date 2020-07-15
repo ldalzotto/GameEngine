@@ -17,7 +17,7 @@ namespace _GameEngine::_Render
 	void GraphicsPipeline_free(GraphicsPipeline** p_graphicsPipeline);
 
 	VkPipelineVertexInputStateCreateInfo createVertexInputState(GraphicsPipeline* p_graphicsPipeline, VertexInput* p_vertexInput);
-	VkPipelineInputAssemblyStateCreateInfo createInputAssemblyState(GraphicsPipeline* p_graphcisPipeline, _Utils::OptionalT<VkPrimitiveTopology>* p_primitiveTopology);
+	VkPipelineInputAssemblyStateCreateInfo createInputAssemblyState(GraphicsPipeline* p_graphcisPipeline, _Core::OptionalT<VkPrimitiveTopology>* p_primitiveTopology);
 	VkViewport createViewport(GraphicsPipeline* p_graphicsPipeline);
 	VkRect2D createScissor(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineViewportStateCreateInfo createViewportState(GraphicsPipeline* p_graphicsPipeline, VkViewport* p_viewPort, VkRect2D* p_scissor);
@@ -160,7 +160,7 @@ namespace _GameEngine::_Render
 		return l_vertexInputStateCreate;
 	};
 
-	VkPipelineInputAssemblyStateCreateInfo createInputAssemblyState(GraphicsPipeline* p_graphcisPipeline, _Utils::OptionalT<VkPrimitiveTopology>* p_primitiveTopology)
+	VkPipelineInputAssemblyStateCreateInfo createInputAssemblyState(GraphicsPipeline* p_graphcisPipeline, _Core::OptionalT<VkPrimitiveTopology>* p_primitiveTopology)
 	{
 		VkPipelineInputAssemblyStateCreateInfo l_inputAssemblyState{};
 		l_inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

@@ -5,6 +5,12 @@
 
 namespace _GameEngine::_Render
 {
+	void textureResourceProvider_disposeResource(TextureResourceProvider* p_textureResourceProvider, _Core::SharedRAIIT<Texture, TextureResourceProvider>* p_texture)
+	{
+		size_t l_hash = TextureUniqueKey_Hash(&p_texture->Resource->TextureUniqueKey);
+		Texture_free(&p_texture->Resource, p_textureResourceProvider->RenderInterface);
+		p_textureResourceProvider->TextureResources.erase(l_hash);
+	};
 
 	Texture* TextureResourceProvider_UseResource(TextureResourceProvider* p_textureResourceProvider, TextureUniqueKey* p_key)
 	{
@@ -19,30 +25,24 @@ namespace _GameEngine::_Render
 			l_textureAllocInfo.TextureCreateInfo.TextureType = TextureType::COLOR;
 			l_textureAllocInfo.TextureCreateInfo.TextureUsage = TextureUsage::SHADER_INPUT;
 
-			Texture* l_texture = Texture_alloc(&l_textureAllocInfo);
-			TextureResourceWithCounter l_resouceWithCounter{};
+			_Core::SharedRAIIT<Texture, TextureResourceProvider> l_sharedTexture;
+			l_sharedTexture.UsageCount = 0;
+			l_sharedTexture.Resource = Texture_alloc(&l_textureAllocInfo);
+			l_sharedTexture.ReleaseResource = { textureResourceProvider_disposeResource, p_textureResourceProvider };
 
-			l_resouceWithCounter.Texture = l_texture;
-			l_resouceWithCounter.UsageCounter.UsageCount = 0;
-			p_textureResourceProvider->TextureResources.emplace(l_hash, l_resouceWithCounter);
+			p_textureResourceProvider->TextureResources.emplace(l_hash, l_sharedTexture);
 		}
 
-		TextureResourceWithCounter* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
-		_Utils::UsageCounter_use(&l_resourceWithCounter->UsageCounter);
-		return l_resourceWithCounter->Texture;
+		_Core::SharedRAIIT<Texture, TextureResourceProvider>* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
+		_Core::SharedRAIIT_use(l_resourceWithCounter);
+		return l_resourceWithCounter->Resource;
 	};
 
 
 	void TextureResourceProvider_ReleaseResource(TextureResourceProvider* p_textureResourceProvider, TextureUniqueKey* p_key)
 	{
 		size_t l_hash = TextureUniqueKey_Hash(p_key);
-		TextureResourceWithCounter* l_resourceWithCounter = &p_textureResourceProvider->TextureResources.at(l_hash);
-		_Utils::UsageCounter_release(&l_resourceWithCounter->UsageCounter);
-		if (l_resourceWithCounter->UsageCounter.UsageCount == 0)
-		{
-			Texture_free(&l_resourceWithCounter->Texture, p_textureResourceProvider->RenderInterface);
-			p_textureResourceProvider->TextureResources.erase(l_hash);
-		}
+		_Core::SharedRAIIT_release(&p_textureResourceProvider->TextureResources.at(l_hash));
 	};
 
 	void TextureResourceProvider_Clear(TextureResourceProvider* p_textureResourceProvider)
@@ -53,7 +53,7 @@ namespace _GameEngine::_Render
 			std::string l_textureResourcesNotDisposed = "[";
 			for (auto&& l_textureResourceEntry : p_textureResourceProvider->TextureResources)
 			{
-				l_textureResourcesNotDisposed += l_textureResourceEntry.second.Texture->TextureUniqueKey.TexturePath;
+				l_textureResourcesNotDisposed += l_textureResourceEntry.second.Resource->TextureUniqueKey.TexturePath;
 				l_textureResourcesNotDisposed += ",";
 			}
 			l_textureResourcesNotDisposed += "]";
@@ -62,7 +62,7 @@ namespace _GameEngine::_Render
 
 			for (auto&& l_textureResourceEntry : p_textureResourceProvider->TextureResources)
 			{
-				Texture_free(&l_textureResourceEntry.second.Texture, p_textureResourceProvider->RenderInterface);
+				Texture_free(&l_textureResourceEntry.second.Resource, p_textureResourceProvider->RenderInterface);
 			}
 			p_textureResourceProvider->TextureResources.clear();
 		}
