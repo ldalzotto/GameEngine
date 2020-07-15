@@ -4,7 +4,7 @@
 
 namespace _GameEngine::_Physics
 {
-	bool BoxCollider_equals(BoxCollider** p_left, BoxCollider** p_right)
+	bool BoxCollider_equals(BoxCollider** p_left, BoxCollider** p_right, void*)
 	{
 		return *p_left == *p_right;
 	};

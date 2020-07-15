@@ -1,6 +1,7 @@
 #include "RayCast.h"
 
-#include "DataStructures/ElementComparators.h"
+#include "Functional/Sort/ElementSorter.hpp"
+#include "Algorithm/Sort/SortAlgorithmT.hpp"
 
 #include "Math/Intersection/Intersection.h"
 #include "Math/Transform/Transform.h"
@@ -37,7 +38,7 @@ namespace _GameEngine::_Physics
 		}
 
 		float l_rightDistance = _Math::Vector3f_distance(p_comparatorObject->RayBegin, &(p_right)->HitPoint);
-		short l_comparisonResult = _Core::FloatSortComparator(l_leftDistance, l_rightDistance);
+		short l_comparisonResult = _Core::SortCompare_float_float(&l_leftDistance, &l_rightDistance);
 
 		if (l_comparisonResult >= 0) { p_comparatorObject->CachedDistance = l_leftDistance; p_comparatorObject->DistanceCalculated = true; }
 		return l_comparisonResult;
@@ -55,9 +56,10 @@ namespace _GameEngine::_Physics
 			l_segment.End = *p_end;
 		}
 
-		for (size_t i = 0; i < p_world->BoxColliders.size(); i++)
+		auto l_boxCollidersIt = _Core::VectorT_buildIterator(&p_world->BoxColliders);
+		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
-			BoxCollider* l_boxCollider = *p_world->BoxColliders.at(i);
+			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
 			_Math::Matrix4x4f l_worldToLocal = _Math::Transform_getWorldToLocalMatrix(l_boxCollider->Transform);
 
 			// We project the ray to the box local space, to perform an AABB test.
@@ -73,7 +75,7 @@ namespace _GameEngine::_Physics
 				_Math::Matrix4x4f* l_localToWorld = _Math::Transform_getLocalToWorldMatrix_ref(l_boxCollider->Transform);
 				_Math::Matrixf4x4_mul(l_localToWorld, &l_intersectionPointLocal, &hit.HitPoint);
 				hit.Collider = l_boxCollider;
-				out_intersectionPoints->push_back(&hit);
+				_Core::VectorT_pushBack(out_intersectionPoints, &hit);
 			}
 		}
 	};
@@ -82,21 +84,22 @@ namespace _GameEngine::_Physics
 	{
 		bool l_return = false;
 		_Core::VectorT<RaycastHit> l_hits;
-		l_hits.alloc();
+		_Core::VectorT_alloc(&l_hits, 0);
 		{
 			RayCastAll(p_world, p_begin, p_end, &l_hits);
 
-			if (l_hits.size() > 0)
+			if (l_hits.Size > 0)
 			{
 				// We use a return value instead of directly returning to free the l_hits vector.
 				l_return = true;
 				RaycastHitDistanceComparatorObject l_raycastMinComparatorObject{};
 				l_raycastMinComparatorObject.RayBegin = p_begin;
-				*out_hit = *l_hits.min(RaycastHit_distanceMinComparator, &l_raycastMinComparatorObject);
+				*out_hit = *_Core::SortT_min(_Core::VectorT_buildIterator(&l_hits), 0,
+							_Core::ElementSorterT<RaycastHit, RaycastHit, RaycastHitDistanceComparatorObject> { RaycastHit_distanceMinComparator, & l_raycastMinComparatorObject });
 			}
 
 		}
-		l_hits.free();
+		_Core::VectorT_free(&l_hits);
 
 		return l_return;
 	};

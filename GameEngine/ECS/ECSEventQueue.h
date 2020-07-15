@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DataStructures/VectorT.h"
+#include "DataStructures/Specifications/VectorT.hpp"
 
 namespace _GameEngine::_ECS
 {

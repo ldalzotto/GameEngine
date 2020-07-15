@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DataStructures/VectorT.h"
+#include "DataStructures/Specifications/VectorT.hpp"
 #include "Math/Vector/Vector.h"
 
 namespace _GameEngine

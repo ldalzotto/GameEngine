@@ -30,9 +30,9 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->ECS = p_ecs;
 
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformComponentType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformRotateType);
+		_Core::VectorT_alloc(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, 2);
+		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &TransformComponentType);
+		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &TransformRotateType);
 
 		p_systemV2AllocInfo->Update.Priority = TransformRotateSystem_getUpdatePritoriy();
 		p_systemV2AllocInfo->Update.OperationCallback.Function = TransformRotationSystemV2_update;
@@ -44,9 +44,9 @@ namespace _GameEngine::_ECS
 
 		GameEngineApplicationInterface* l_gameEngineInterface = (GameEngineApplicationInterface*)p_gameEngineInterface;
 		
-		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
+		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.Size; i++)
 		{
-			Entity** l_entity = l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.at(i);
+			Entity** l_entity = _Core::VectorT_at(&l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities, i);
 			TransformComponent* l_transform = ENTITY_GET_COMPONENT(TransformComponent, *l_entity);
 			TransformRotate* l_transformRotate = ENTITY_GET_COMPONENT(TransformRotate, *l_entity);
 

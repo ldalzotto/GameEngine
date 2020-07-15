@@ -42,17 +42,17 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->Update.Priority = CameraSystem_getUpdatePriority();
 		p_systemV2AllocInfo->Update.OperationCallback = { cameraSystem_update, NULL } ;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&CameraType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformComponentType);
+		_Core::VectorT_alloc(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, 2);
+		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &CameraType);
+		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &TransformComponentType);
 	};
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface)
 	{
 		_ECS::SystemV2* l_cameraSystem = (_ECS::SystemV2*)p_cameraSystem;
-		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.size() > 0)
+		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.Size > 0)
 		{
-			Entity* l_entity = *l_cameraSystem->EntityConfigurableContainer.FilteredEntities.at(0);
+			Entity* l_entity = *_Core::VectorT_at(&l_cameraSystem->EntityConfigurableContainer.FilteredEntities, 0);
 			TransformComponent* p_transform = ENTITY_GET_COMPONENT(TransformComponent, l_entity);
 			Camera* p_camera = ENTITY_GET_COMPONENT(Camera, l_entity);
 
@@ -80,9 +80,9 @@ namespace _GameEngine::_ECS
 
 	Camera* CameraSystem_getCurrentActiveCamera(SystemV2* p_system)
 	{
-		if (p_system->EntityConfigurableContainer.FilteredEntities.size() > 0)
+		if (p_system->EntityConfigurableContainer.FilteredEntities.Size > 0)
 		{
-			_ECS::Entity* l_entity = (*p_system->EntityConfigurableContainer.FilteredEntities.at(0));
+			_ECS::Entity* l_entity = (*_Core::VectorT_at(&p_system->EntityConfigurableContainer.FilteredEntities, 0));
 			return ENTITY_GET_COMPONENT(Camera, l_entity);
 		}
 		return nullptr;

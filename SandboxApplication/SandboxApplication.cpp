@@ -464,17 +464,18 @@ void SandboxApplication_update(float p_delta)
 
 			_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
 
-			_GameEngine::_Core::VectorT<_Physics::RaycastHit> l_hits{};
-			l_hits.alloc();
+			_Core::VectorT<_Physics::RaycastHit> l_hits{};
+			_Core::VectorT_alloc(&l_hits, 0);
 			{
 				_Physics::RayCastAll(&App->Physics.World, &l_rayBeginPoint, &l_rayEndPoint, &l_hits);
-				for (size_t i = 0; i < l_hits.size(); i++)
+				_Core::VectorIteratorT<_Physics::RaycastHit> l_hitsIt = _Core::VectorT_buildIterator(&l_hits);
+				while (_Core::VectorIteratorT_moveNext(&l_hitsIt))
 				{
-					_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_hits.at(i)->HitPoint, &l_color);
-					_Render::Gizmo_drawBox(&App->Render.Gizmo, l_hits.at(i)->Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hits.at(i)->Collider->Transform), false, &l_color);
+					_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_hitsIt.Current->HitPoint, &l_color);
+					_Render::Gizmo_drawBox(&App->Render.Gizmo, l_hitsIt.Current->Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hitsIt.Current->Collider->Transform), false, &l_color);
 				}
 			}
-			l_hits.free();
+			_Core::VectorT_free(&l_hits);
 		}
 
 		// Mouse raycast

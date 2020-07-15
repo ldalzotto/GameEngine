@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <vulkan/vulkan.h>
 #include <string>
-#include "DataStructures/VectorT.h"
+#include "DataStructures/Specifications/VectorT.hpp"
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "Shader/ShaderParameter.h"
 

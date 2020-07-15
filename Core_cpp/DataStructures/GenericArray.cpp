@@ -71,6 +71,13 @@ namespace _Core
 		out_iterator->CurrentIndex = -1;
 	};
 
+	void GenericArray_buildReverseIterator(GenericArray* p_genericArray, VectorReverseIterator* out_iterator)
+	{
+		out_iterator->Array = p_genericArray;
+		out_iterator->Current = NULL;
+		out_iterator->CurrentIndex = p_genericArray->Size;
+	};
+
 	void GenericArray_clear(GenericArray* p_genericArray)
 	{
 		p_genericArray->Size = 0;

@@ -40,7 +40,7 @@ namespace _GameEngine::_ECS
 
 	void Component_free(Component** p_component);
 
-	bool Component_comparator(Component** left, ComponentType* right);
+	bool Component_comparator(Component** left, ComponentType* right, void*);
 
 	struct ComponentEvents
 	{

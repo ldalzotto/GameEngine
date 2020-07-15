@@ -17,4 +17,19 @@ namespace _Core
 		p_vectorIterator->Current = GenericArray_at(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
 		return p_vectorIterator->Current != nullptr;
 	};
+
+	bool VectorReverseIterator_moveNext(VectorIterator* p_vectorIterator)
+	{
+		p_vectorIterator->CurrentIndex -= 1;
+		if (p_vectorIterator->CurrentIndex + 1 > p_vectorIterator->Array->Size)
+		{
+			p_vectorIterator->Current = nullptr;
+		}
+		else
+		{
+			p_vectorIterator->Current = GenericArray_at(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
+		}
+
+		return p_vectorIterator->Current != nullptr;
+	};
 }

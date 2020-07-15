@@ -10,7 +10,6 @@ namespace _Core
 		GenericArray* Array;
 		ELEMENT_TYPE* Current;
 		size_t CurrentIndex;
-
 	};
 
 	template <typename ELEMENT_TYPE>
@@ -25,5 +24,18 @@ namespace _Core
 		return VectorIterator_moveNext((VectorIterator*)p_vectorIterator);
 	};
 
+	template <typename ELEMENT_TYPE>
+	struct VectorReverseIteratorT
+	{
+		GenericArray* Array;
+		ELEMENT_TYPE* Current;
+		size_t CurrentIndex;
+	};
+
+	template <typename ELEMENT_TYPE>
+	inline bool VectorReverseIteratorT_moveNext(VectorReverseIteratorT<ELEMENT_TYPE>* p_vectorIterator)
+	{
+		return VectorReverseIterator_moveNext((VectorIterator*)p_vectorIterator);
+	};
 
 }

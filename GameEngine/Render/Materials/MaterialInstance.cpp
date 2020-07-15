@@ -8,6 +8,7 @@
 #include "RenderInterface.h"
 #include "Log/LogFormatting.hpp"
 #include "Functional/ToString/ToString.hpp"
+#include "Algorithm/Compare/CompareAlgorithmT.hpp"
 #include "DataStructures/Specifications/String.hpp"
 #include "Resources/MeshResourceProvider.h"
 #include "Resources/TextureResourceProvider.h"
@@ -23,7 +24,7 @@ using namespace ::_Core;
 
 namespace _GameEngine::_Render
 {
-	bool MaterialInstanceParameter_vectorFind(MaterialInstanceParameter** left, size_t* right)
+	bool MaterialInstanceParameter_vectorFind(MaterialInstanceParameter** left, size_t* right, void*)
 	{
 		return (*left)->Key == *right;
 	};
@@ -42,7 +43,7 @@ namespace _GameEngine::_Render
 		MaterialInstance* l_materialInstance = new MaterialInstance();
 		l_materialInstance->RenderInterface = p_renderInterface;
 		l_materialInstance->SourceMaterial = p_materialInstanceInitInfo->SourceMaterial;
-		l_materialInstance->Parameters.alloc(4);
+		VectorT_alloc(&l_materialInstance->Parameters, 4);
 
 		materialInstance_populateParameters(l_materialInstance, &p_materialInstanceInitInfo->MaterialInstanceInputParameters);
 		materialInstance_createDescriptorSet(l_materialInstance);
@@ -56,13 +57,13 @@ namespace _GameEngine::_Render
 		MaterialInstance* l_materialInstance = *p_materialInstance;
 		materialInstance_freeDescriptorSet(l_materialInstance);
 
-		for (size_t i = 0; i < l_materialInstance->Parameters.size(); i++)
+		for (size_t i = 0; i < l_materialInstance->Parameters.Size; i++)
 		{
-			MaterialInstanceParameter* l_materialInstanceParameter = *l_materialInstance->Parameters.at(i);
+			MaterialInstanceParameter* l_materialInstanceParameter = *VectorT_at(&l_materialInstance->Parameters, i);
 			MaterialInstanceParameter_free(&l_materialInstanceParameter, l_materialInstance->RenderInterface);
 		}
 
-		l_materialInstance->Parameters.free();
+		VectorT_free(&l_materialInstance->Parameters);
 		delete l_materialInstance;
 		l_materialInstance = nullptr;
 	};
@@ -84,7 +85,8 @@ namespace _GameEngine::_Render
 	Mesh* MaterialInstance_getMesh(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
 		size_t l_key = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundMaterialInstanceParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_key);
+		MaterialInstanceParameter** l_foundMaterialInstanceParameter =
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_key}).Current;
 		if (l_foundMaterialInstanceParameter)
 		{
 			MaterialInstanceParameter* l_materialInstanceParameter = *l_foundMaterialInstanceParameter;
@@ -98,17 +100,18 @@ namespace _GameEngine::_Render
 	void MaterialInstance_setMesh(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, MeshUniqueKey* p_meshUniqueKey)
 	{
 		size_t l_key = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundMaterialInstanceParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_key);
+		MaterialInstanceParameter** l_foundMaterialInstanceParameter =
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_key}).Current;
 		if (l_foundMaterialInstanceParameter)
 		{
 			MaterialInstanceParameter_free(l_foundMaterialInstanceParameter, p_materialInstance->RenderInterface);
-			p_materialInstance->Parameters.erase(MaterialInstanceParameter_vectorFind, &l_key);
+			VectorT_eraseCompare(&p_materialInstance->Parameters, ComparatorT<MaterialInstanceParameter*, size_t, void>{ MaterialInstanceParameter_vectorFind, &l_key });
 		}
 
 		MaterialInstanceParameter* l_materialInstanceParameter = (MaterialInstanceParameter*)calloc(1, sizeof(MaterialInstanceParameter));
 		MeshMaterialInstanceParameter_alloc(l_materialInstanceParameter, p_materialInstance->RenderInterface, p_meshUniqueKey);
 		l_materialInstanceParameter->Key = l_key;
-		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
+		VectorT_pushBack(&p_materialInstance->Parameters, &l_materialInstanceParameter);
 	};
 
 	void MeshMaterialInstanceParameter_free(MaterialInstanceParameter* p_materialInstanceParameter, RenderInterface* p_renderInterface)
@@ -150,7 +153,8 @@ namespace _GameEngine::_Render
 	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		MaterialInstanceParameter** l_foundParameter = 
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, &l_hash}).Current;
 		if (l_foundParameter)
 		{
 			return ((TextureMaterialInstanceParameter*)(*l_foundParameter)->Parameter)->Texture;
@@ -161,17 +165,18 @@ namespace _GameEngine::_Render
 	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, TextureUniqueKey* p_textureKey)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		MaterialInstanceParameter** l_foundParameter = 
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, &l_hash}).Current;
 		if (l_foundParameter)
 		{
 			MaterialInstanceParameter_free(l_foundParameter, p_materialInstance->RenderInterface);
-			p_materialInstance->Parameters.erase(MaterialInstanceParameter_vectorFind, &l_hash);
+			VectorT_eraseCompare(&p_materialInstance->Parameters, ComparatorT<MaterialInstanceParameter*, size_t, void>{ MaterialInstanceParameter_vectorFind, &l_hash });
 		}
 
 		MaterialInstanceParameter* l_materialInstanceParameter = (MaterialInstanceParameter*)calloc(1, sizeof(MaterialInstanceParameter));
 		TextureMaterialInstanceParameter_alloc(l_materialInstanceParameter, p_materialInstance->RenderInterface, p_textureKey);
 		l_materialInstanceParameter->Key = l_hash;
-		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
+		VectorT_pushBack(&p_materialInstance->Parameters, &l_materialInstanceParameter);
 	};
 
 
@@ -194,7 +199,8 @@ namespace _GameEngine::_Render
 	VulkanBuffer* MaterialInstance_getUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		MaterialInstanceParameter** l_foundParameter = 
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_hash}).Current;
 		if (l_foundParameter)
 		{
 			return &((UniformBufferInstanceParameter*)(*l_foundParameter)->Parameter)->UniformBuffer;
@@ -205,23 +211,25 @@ namespace _GameEngine::_Render
 	void MaterialInstance_setUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, UniformBufferParameter* p_uniformBufferParameter)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		MaterialInstanceParameter** l_foundParameter = 
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, &l_hash}).Current;
 		if (l_foundParameter)
 		{
 			MaterialInstanceParameter_free(l_foundParameter, p_materialInstance->RenderInterface);
-			p_materialInstance->Parameters.erase(MaterialInstanceParameter_vectorFind, &l_hash);
+			VectorT_eraseCompare(&p_materialInstance->Parameters, ComparatorT<MaterialInstanceParameter*, size_t, void>{ MaterialInstanceParameter_vectorFind, &l_hash });
 		}
 
 		MaterialInstanceParameter* l_materialInstanceParameter = (MaterialInstanceParameter*)calloc(1, sizeof(MaterialInstanceParameter));
 		UniformBufferInstanceParameter_alloc(l_materialInstanceParameter, p_materialInstance->RenderInterface, p_uniformBufferParameter);
 		l_materialInstanceParameter->Key = l_hash;
-		p_materialInstance->Parameters.push_back(&l_materialInstanceParameter);
+		VectorT_pushBack(&p_materialInstance->Parameters, &l_materialInstanceParameter);
 	};
 
 	void MaterialInstance_pushUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, void* p_data)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = p_materialInstance->Parameters.get(MaterialInstanceParameter_vectorFind, &l_hash);
+		MaterialInstanceParameter** l_foundParameter = 
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_hash}).Current;
 		if (l_foundParameter)
 		{
 			UniformBufferInstanceParameter* l_uniformBufferParameter = (UniformBufferInstanceParameter*)(*l_foundParameter)->Parameter;

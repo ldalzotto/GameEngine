@@ -3,16 +3,16 @@
 #include <cstdlib>
 
 #include "ECS.h"
-
+#include "Algorithm/Compare/CompareAlgorithmT.hpp"
 
 namespace _GameEngine::_ECS
 {
-	bool SystemV2Key_comparator(SystemV2** p_left, SystemV2Key* p_right)
+	bool SystemV2Key_comparator(SystemV2** p_left, SystemV2Key* p_right, void*)
 	{
 		return (*p_left)->SystemKey == *p_right;
 	};
 
-	bool SystemV2_comparator(SystemV2** left, SystemV2** right)
+	bool SystemV2_comparator(SystemV2** left, SystemV2** right, void*)
 	{
 		return *left == *right;
 	};
@@ -53,33 +53,32 @@ namespace _GameEngine::_ECS
 
 	void SystemContainer_addSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)
 	{
-		p_systemContainer->SystemsV2.push_back(&p_systemV2);
+		_Core::VectorT_pushBack(&p_systemContainer->SystemsV2, &p_systemV2);
 	};
 
 	void SystemContainer_removeSystemV2(SystemContainer* p_systemContainer, SystemV2* p_systemV2)
 	{
-		p_systemContainer->SystemsV2.erase(SystemV2_comparator, &p_systemV2);
+		_Core::VectorT_eraseCompare(&p_systemContainer->SystemsV2, _Core::ComparatorT<SystemV2*, SystemV2*, void>{ SystemV2_comparator, &p_systemV2 });
 	};
 
 	SystemV2* SystemContainer_getSystem(SystemContainer* p_systemContainer, SystemV2Key* p_key)
-	{	
-		return *p_systemContainer->SystemsV2.get(SystemV2Key_comparator, p_key);
-	};
-
-	void system_reverseLoop_erase(SystemV2** p_system, void* null)
 	{
-		SystemV2_free(p_system);
-	}
+		return *_Core::CompareT_find(_Core::VectorT_buildIterator(&p_systemContainer->SystemsV2), _Core::ComparatorT<SystemV2*, SystemV2Key, void>{SystemV2Key_comparator, p_key}).Current;
+	};
 
 
 	void SystemContainer_alloc(SystemContainer* p_systemContainer)
 	{
-		p_systemContainer->SystemsV2.alloc();
+		_Core::VectorT_alloc(&p_systemContainer->SystemsV2, 0);
 	};
 
 	void SystemContainer_free(SystemContainer* p_systemContainer)
 	{
-		p_systemContainer->SystemsV2.forEachReverse(system_reverseLoop_erase, (void*)nullptr);
-		p_systemContainer->SystemsV2.free();
+		_Core::VectorReverseIteratorT<SystemV2*> l_it = _Core::VectorT_buildReverseIterator(&p_systemContainer->SystemsV2);
+		while (_Core::VectorReverseIteratorT_moveNext(&l_it))
+		{
+			SystemV2_free(l_it.Current);
+		}
+		_Core::VectorT_free(&p_systemContainer->SystemsV2);
 	};
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DataStructures/VectorT.h"
+#include "DataStructures/Specifications/VectorT.hpp"
 
 #include "ECS/Component.h"
 
@@ -19,7 +19,7 @@ namespace _GameEngine::_ECS
 		_Core::VectorT<Component*> Components;
 	};
 
-	bool Entity_comparator(Entity** p_left, Entity** p_right);
+	bool Entity_comparator(Entity** p_left, Entity** p_right, void*);
 
 	Entity* Entity_alloc(ECS* p_ecs);
 

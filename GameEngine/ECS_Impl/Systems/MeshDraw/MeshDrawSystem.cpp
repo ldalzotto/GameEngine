@@ -37,9 +37,9 @@ namespace _GameEngine::_ECS
 		p_systemV2AllocInfo->Update.Priority = meshDrawSystem_getUpdatePriority();
 		p_systemV2AllocInfo->Update.OperationCallback = { MeshDrawSystem_update , NULL};
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.alloc(2);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&MeshRendererType);
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes.push_back(&TransformComponentType);
+		_Core::VectorT_alloc(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, 2);
+		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &MeshRendererType);
+		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &TransformComponentType);
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesAdded = meshDrawSystem_onComponentsAttached;
 		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.OnEntityThatMatchesComponentTypesRemoved = meshDrawSystem_onComponentsDetached;
 	};
@@ -60,9 +60,9 @@ namespace _GameEngine::_ECS
 	{
 		_ECS::SystemV2* l_meshDrawSystem = (_ECS::SystemV2*)p_meshDrawSystem;
 
-		for (size_t i = 0; i < l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.size(); i++)
+		for (size_t i = 0; i < l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.Size; i++)
 		{
-			Entity** l_entity = l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities.at(i);
+			Entity** l_entity =  _Core::VectorT_at(&l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities, i);
 
 			MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, *l_entity);
 			TransformComponent* l_transform = ENTITY_GET_COMPONENT(TransformComponent, *l_entity);

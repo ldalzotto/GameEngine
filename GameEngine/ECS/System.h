@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DataStructures/VectorT.h"
+#include "DataStructures/Specifications/VectorT.hpp"
 #include "Entity.h"
 
 #include "Functional/Sequencer/SortedSequencer.hpp"

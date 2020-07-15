@@ -49,7 +49,7 @@ namespace _GameEngine::_ECS
 			l_operation.Bound = ENTITY_GET_COMPONENT(MeshRendererBound, p_entity);
 			l_operation.MeshRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
 		}
-		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.push_back(&l_operation);
+		_Core::VectorT_pushBack(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, &l_operation);
 
 		l_operation.Bound->Boxcollider = new _Physics::BoxCollider();
 		_Physics::BoxCollider l_boxCollider{};
@@ -70,7 +70,7 @@ namespace _GameEngine::_ECS
 	void meshRendererBoundSystem_onSystemDestroyed(SystemV2* p_system)
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system->Child;
-		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.free();
+		_Core::VectorT_free(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate);
 	};
 
 	void meshRendererBoundSystem_update(void* p_system, void* p_gameEngineInterface)
@@ -78,28 +78,28 @@ namespace _GameEngine::_ECS
 		SystemV2* l_system = (SystemV2*)p_system;
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)((SystemV2*)p_system)->Child;
 
-		for (size_t i = 0; i < l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.size(); i++)
+		for (size_t i = 0; i < l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.Size; i++)
 		{
-			MeshRendererBoundCalculationOperation* l_operation = l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.at(i);
+			MeshRendererBoundCalculationOperation* l_operation = _Core::VectorT_at(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, i);
 
 			_Render::Mesh* l_mesh = _Render::MaterialInstance_getMesh(l_operation->MeshRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MESH_KEY);
 
 			//TODO - This is not the most optimal as we copy vertices to a temporary vector.
 			_Core::VectorT<_Math::Vector3f> l_vertices;
-			l_vertices.alloc(l_mesh->Vertices.size());
+			_Core::VectorT_alloc(&l_vertices, l_mesh->Vertices.size());
 			{
-				for (size_t i = 0; i < l_vertices.capacity(); i++)
+				for (size_t i = 0; i < l_vertices.Capacity; i++)
 				{
-					l_vertices.push_back(&l_mesh->Vertices.at(i).pos);
+					_Core::VectorT_pushBack(&l_vertices, &l_mesh->Vertices.at(i).pos);
 				}
 				_Math::Box_build(&l_operation->Bound->BoundingBox, &l_vertices);
 
 
 			}
-			l_vertices.free();
+			_Core::VectorT_free(&l_vertices);
 		}
 
-		l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.clear();
+		_Core::VectorT_clear(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate);
 	};
 
 
@@ -108,7 +108,7 @@ namespace _GameEngine::_ECS
 
 		MeshRendererBoundSystem* l_meshRendererBoundSystem = (MeshRendererBoundSystem*)malloc(sizeof(MeshRendererBoundSystem));;
 		l_meshRendererBoundSystem->PhysicsInterface = p_physicsInterface;
-		l_meshRendererBoundSystem->MeshRendererBoundsToCaluclate.alloc(2);
+		_Core::VectorT_alloc(&l_meshRendererBoundSystem->MeshRendererBoundsToCaluclate, 2);
 
 		p_systemV2AllocInfo->ECS = p_ecs;
 
@@ -116,9 +116,9 @@ namespace _GameEngine::_ECS
 			EntityConfigurableContainerInitInfo* l_entityContainerInfo = &p_systemV2AllocInfo->EntityConfigurableContainerInitInfo;
 
 			l_entityContainerInfo->ECS = p_ecs;
-			l_entityContainerInfo->ListenedComponentTypes.alloc(2);
-			l_entityContainerInfo->ListenedComponentTypes.push_back(&MeshRendererBoundType);
-			l_entityContainerInfo->ListenedComponentTypes.push_back(&MeshRendererType);
+			_Core::VectorT_alloc(&l_entityContainerInfo->ListenedComponentTypes, 2);
+			_Core::VectorT_pushBack(&l_entityContainerInfo->ListenedComponentTypes, &MeshRendererBoundType);
+			_Core::VectorT_pushBack(&l_entityContainerInfo->ListenedComponentTypes, &MeshRendererType);
 
 			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAdded = meshRendererBoundSystem_onComponentAttached;
 			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAddedUserdata = l_meshRendererBoundSystem;

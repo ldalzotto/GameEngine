@@ -3,6 +3,7 @@
 namespace _Core
 {
 	struct VectorIterator;
+	struct VectorReverseIterator;
 	struct ElementSorter;
 	struct Comparator;
 	struct Asserter;
@@ -27,6 +28,7 @@ namespace _Core
 	void* GenericArray_at(GenericArray* p_genericArray, size_t p_index);
 
 	void GenericArray_buildIterator(GenericArray* p_genericArray, VectorIterator* out_iterator);
+	void GenericArray_buildReverseIterator(GenericArray* p_genericArray, VectorReverseIterator* out_iterator);
 
 	void GenericArray_clear(GenericArray* p_genericArray);
 

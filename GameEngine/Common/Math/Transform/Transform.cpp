@@ -6,7 +6,7 @@
 
 namespace _GameEngine::_Math
 {
-	bool Vector_transformComparator(Transform** left, Transform** right)
+	bool Vector_transformComparator(Transform** left, Transform** right, void*)
 	{
 		return *left == *right;
 	}
@@ -23,11 +23,11 @@ namespace _GameEngine::_Math
 		{
 			if (p_newChild->Parent)
 			{
-				p_newChild->Parent->Childs.erase(Vector_transformComparator, &p_newChild);
+				_Core::VectorT_eraseCompare(&p_newChild->Parent->Childs, _Core::ComparatorT<Transform*, Transform*, void>{ Vector_transformComparator, &p_newChild });
 			}
 
 			p_newChild->Parent = p_transform;
-			p_transform->Childs.push_back(&p_newChild);
+			_Core::VectorT_pushBack(&p_transform->Childs, &p_newChild);
 
 			Transform_markMatricsForRecalculation(p_newChild);
 		}
@@ -42,7 +42,7 @@ namespace _GameEngine::_Math
 			Transform_setLocalRotation(p_transform, Transform_getWorldRotation(p_transform));
 			Transform_setLocalScale(p_transform, Transform_getWorldScale(p_transform));
 
-			p_transform->Parent->Childs.erase(Vector_transformComparator, &p_transform);
+			_Core::VectorT_eraseCompare(&p_transform->Parent->Childs, _Core::ComparatorT<Transform*, Transform*, void>{ Vector_transformComparator, &p_transform });
 		}
 
 		p_transform->Parent = nullptr;
@@ -176,9 +176,9 @@ namespace _GameEngine::_Math
 	{
 		p_transform->MatricesMustBeRecalculated = true;
 		p_transform->UserFlag_HasChanged = true;
-		for (size_t i = 0; i < p_transform->Childs.size(); i++)
+		for (size_t i = 0; i < p_transform->Childs.Size; i++)
 		{
-			Transform_markMatricsForRecalculation(*p_transform->Childs.at(i));
+			Transform_markMatricsForRecalculation(*_Core::VectorT_at(&p_transform->Childs, i));
 		}
 	};
 
@@ -209,13 +209,13 @@ namespace _GameEngine::_Math
 
 	void Transform_alloc(Transform* p_transform)
 	{
-		p_transform->Childs.alloc(0);
+		_Core::VectorT_alloc(&p_transform->Childs, 0);
 		Transform_markMatricsForRecalculation(p_transform);
 	};
 
 	void Transform_free(Transform* p_transform)
 	{
-		p_transform->Childs.free();
+		_Core::VectorT_free(&p_transform->Childs);
 	};
 
 }

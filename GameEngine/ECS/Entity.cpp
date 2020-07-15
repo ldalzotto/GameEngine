@@ -4,14 +4,19 @@
 
 #include "Log/Log.hpp"
 #include "ECS/ECS.h"
-#include "DataStructures/ElementComparators.h"
+#include "Algorithm/Compare/CompareAlgorithmT.hpp"
 
 namespace _GameEngine::_ECS
 {
 
+	bool ComponentType_comparator(ComponentType* p_left, ComponentType* p_right, void*)
+	{
+		return *p_left == *p_right;
+	};
+
 	void entity_free(Entity** p_entity);
 
-	bool Entity_comparator(Entity** p_left, Entity** p_right)
+	bool Entity_comparator(Entity** p_left, Entity** p_right, void*)
 	{
 		return *p_left == *p_right;
 	};
@@ -26,7 +31,7 @@ namespace _GameEngine::_ECS
 	{
 
 #ifndef NDEBUG
-		if (p_entity->Components.get(Component_comparator, &p_unlinkedComponent->ComponentType))
+		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{Component_comparator, & p_unlinkedComponent->ComponentType}))
 		{
 			::_Core::String l_errorMessage; ::_Core::String_alloc(&l_errorMessage, 100);
 			::_Core::String_append(&l_errorMessage, "Trying to add a component were it's type ( ");
@@ -35,8 +40,7 @@ namespace _GameEngine::_ECS
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 #endif
-
-		p_entity->Components.push_back(&p_unlinkedComponent);
+		_Core::VectorT_pushBack(&p_entity->Components, &p_unlinkedComponent);
 		p_unlinkedComponent->AttachedEntity = p_entity;
 		ComponentEvents_onComponentAttached(&p_entity->ECS->ComponentEvents, p_unlinkedComponent);
 	};
@@ -44,13 +48,14 @@ namespace _GameEngine::_ECS
 	void Entity_freeComponent(Entity* p_entity, Component** p_component)
 	{
 		ComponentEvents_onComponentDetached(&p_entity->ECS->ComponentEvents, (*p_component));
-		p_entity->Components.erase(Component_comparator, &(*p_component)->ComponentType);
+		_Core::VectorT_eraseCompare(&p_entity->Components, _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, &(*p_component)->ComponentType });
 		Component_free(p_component);
 	};
 
 	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType)
 	{
-		Component** l_foundComponent = p_entity->Components.get(Component_comparator, (ComponentType*)&p_componentType);
+		Component** l_foundComponent =
+			_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, (ComponentType*)&p_componentType }).Current;
 		if (l_foundComponent)
 		{
 			return *l_foundComponent;
@@ -60,26 +65,26 @@ namespace _GameEngine::_ECS
 
 	void EntityContainer_alloc(EntityContainer* p_entityContainer)
 	{
-		p_entityContainer->Entities.alloc();
+		_Core::VectorT_alloc(&p_entityContainer->Entities, 10);
 	};
 
 	void EntityContainer_free(EntityContainer* p_entityContainer, ComponentEvents* p_componentEvents)
 	{
-		p_entityContainer->Entities.free();
+		_Core::VectorT_free(&p_entityContainer->Entities);
 	};
 
 	void EntityContainer_sendEventToDeleteAllEntities(EntityContainer* p_entityContainer, ECS* p_ecs)
 	{
-		for (size_t i = 0; i < p_entityContainer->Entities.size(); i++)
+		for (size_t i = 0; i < p_entityContainer->Entities.Size; i++)
 		{
-			auto l_message = ECSEventMessage_removeEntity_alloc(p_entityContainer->Entities.at(i));
+			auto l_message = ECSEventMessage_removeEntity_alloc(_Core::VectorT_at(&p_entityContainer->Entities, i));
 			ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_message);
 		}
 	};
 
 	void EntityContainer_freeEntity(Entity** p_entity)
 	{
-		(*p_entity)->ECS->EntityContainer.Entities.erase(Entity_comparator, p_entity);
+		_Core::VectorT_eraseCompare(&(*p_entity)->ECS->EntityContainer.Entities, _Core::ComparatorT<Entity*, Entity*, void>{Entity_comparator, p_entity});
 		entity_free(p_entity);
 	};
 
@@ -87,7 +92,7 @@ namespace _GameEngine::_ECS
 	{
 		Entity* l_instanciatedEntity = (Entity*)malloc(sizeof(Entity));
 		l_instanciatedEntity->ECS = p_ecs;
-		l_instanciatedEntity->Components.alloc(2);
+		_Core::VectorT_alloc(&l_instanciatedEntity->Components, 2);
 		return l_instanciatedEntity;
 	};
 
@@ -95,23 +100,19 @@ namespace _GameEngine::_ECS
 	{
 		{
 			// We copy components vector because operations inside the loop writes to the initial array
-			_Core::VectorT<Component*> l_copiedComponents{};
-
-			(*p_entity)->Components.deepCopy(&l_copiedComponents);
-			for (size_t i = 0; i < l_copiedComponents.size(); i++)
+			_Core::VectorT<Component*> l_copiedComponents = _Core::VectorT_deepCopy(&(*p_entity)->Components);
+			for (size_t i = 0; i < l_copiedComponents.Size; i++)
 			{
-				Entity_freeComponent((*p_entity), l_copiedComponents.at(i));
+				Entity_freeComponent((*p_entity), _Core::VectorT_at(&l_copiedComponents, i));
 			}
 
-			l_copiedComponents.free();
+			_Core::VectorT_free(&l_copiedComponents);
 		}
-
-
-		(*p_entity)->Components.free();
+		_Core::VectorT_free(&(*p_entity)->Components);
 
 #ifndef NDEBUG
 		EntityContainer* l_entityContainer = &(*p_entity)->ECS->EntityContainer;
-		if (l_entityContainer->Entities.get(Entity_comparator, p_entity))
+		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&l_entityContainer->Entities), _Core::ComparatorT<Entity*, Entity*, void>{ Entity_comparator, p_entity }))
 		{
 			MYLOG_PUSH((*p_entity)->ECS->MyLog, ::_Core::LogLevel::WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
 		}
@@ -143,7 +144,7 @@ namespace _GameEngine::_ECS
 	void EntityConfigurableContainer_init(EntityConfigurableContainer* p_entityComponentListener, EntityConfigurableContainerInitInfo* p_entityComponentListenerInitInfo)
 	{
 		p_entityComponentListener->ListenedComponentTypes = p_entityComponentListenerInitInfo->ListenedComponentTypes;
-		p_entityComponentListener->FilteredEntities.alloc(16);
+		_Core::VectorT_alloc(&p_entityComponentListener->FilteredEntities, 16);
 
 		p_entityComponentListener->OnEntityThatMatchesComponentTypesAdded = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesAdded;
 		p_entityComponentListener->OnEntityThatMatchesComponentTypesAddedUserdata = p_entityComponentListenerInitInfo->OnEntityThatMatchesComponentTypesAddedUserdata;
@@ -165,22 +166,22 @@ namespace _GameEngine::_ECS
 	{
 		ComponentEvents* l_componentEvents = &p_ecs->ComponentEvents;
 
-		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.size(); i++)
+		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.Size; i++)
 		{
-			ComponentType* l_componentType = p_entityComponentListener->ListenedComponentTypes.at(i);
+			ComponentType* l_componentType = _Core::VectorT_at(&p_entityComponentListener->ListenedComponentTypes, i);
 			Core_Observer_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentAttachedEventListener);
 			Core_Observer_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], &p_entityComponentListener->OnComponentDetachedEventListener);
 		}
 
-		for (size_t i = 0; i < p_entityComponentListener->FilteredEntities.size(); i++)
+		for (size_t i = 0; i < p_entityComponentListener->FilteredEntities.Size; i++)
 		{
-			Entity* l_entity = *p_entityComponentListener->FilteredEntities.at(i);
+			Entity* l_entity = *_Core::VectorT_at(&p_entityComponentListener->FilteredEntities, i);
 			entityComponentListener_removeEntity(p_entityComponentListener, l_entity);
 
 		}
 
-		p_entityComponentListener->ListenedComponentTypes.free();
-		p_entityComponentListener->FilteredEntities.free();
+		_Core::VectorT_free(&p_entityComponentListener->ListenedComponentTypes);
+		_Core::VectorT_free(&p_entityComponentListener->FilteredEntities);
 	};
 
 	void entityComponentListener_onComponentAttachedCallback(void* p_entityComponentListener, void* p_component)
@@ -196,8 +197,8 @@ namespace _GameEngine::_ECS
 		Component* l_component = (Component*)p_component;
 
 
-		ComponentType* l_foundComponentType = l_entityComponentListener->ListenedComponentTypes.get(_Core::Vector_equalsStringComparator, &l_component->ComponentType);
-		if (l_foundComponentType)
+		if (_Core::CompareT_find(_Core::VectorT_buildIterator(&l_entityComponentListener->ListenedComponentTypes),
+			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, & l_component->ComponentType }).Current)
 		{
 			entityComponentListener_removeEntity(l_entityComponentListener, l_component->AttachedEntity);
 		}
@@ -208,9 +209,9 @@ namespace _GameEngine::_ECS
 		ComponentEvents* l_componentEvents = &p_ecs->ComponentEvents;
 
 
-		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.size(); i++)
+		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.Size; i++)
 		{
-			ComponentType* l_componentType = p_entityComponentListener->ListenedComponentTypes.at(i);
+			ComponentType* l_componentType = _Core::VectorT_at(&p_entityComponentListener->ListenedComponentTypes, i);
 
 			if (!l_componentEvents->ComponentAttachedEvents.contains(*l_componentType))
 			{
@@ -234,17 +235,18 @@ namespace _GameEngine::_ECS
 
 	void entityComponentListener_pushEntityIfElligible(_GameEngine::_ECS::EntityConfigurableContainer* l_entityComponentListener, _GameEngine::_ECS::Component* l_comparedComponent)
 	{
-		if (l_entityComponentListener->ListenedComponentTypes.contains(_Core::Vector_equalsStringComparator, &l_comparedComponent->ComponentType))
+		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&l_entityComponentListener->ListenedComponentTypes),
+			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, & l_comparedComponent->ComponentType }))
 		{
 			bool l_addEntity = true;
-			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.size(); i++)
+			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.Size; i++)
 			{
-				ComponentType* l_componentType = l_entityComponentListener->ListenedComponentTypes.at(i);
+				ComponentType* l_componentType = _Core::VectorT_at(&l_entityComponentListener->ListenedComponentTypes, i);
 				bool l_filteredComponentTypeIsAnEntityComponent = false;
 
-				for (size_t j = 0; j < l_comparedComponent->AttachedEntity->Components.size(); j++)
+				for (size_t j = 0; j < l_comparedComponent->AttachedEntity->Components.Size; j++)
 				{
-					Component* l_component = *l_comparedComponent->AttachedEntity->Components.at(j);
+					Component* l_component = *_Core::VectorT_at(&l_comparedComponent->AttachedEntity->Components, j);
 					if (l_component->ComponentType == *l_componentType)
 					{
 						l_filteredComponentTypeIsAnEntityComponent = true;
@@ -269,17 +271,17 @@ namespace _GameEngine::_ECS
 
 	void entityComponentListener_pushAllElligibleEntities(EntityConfigurableContainer* l_entityComponentListener, _Core::VectorT<Entity*>* p_queriedEntities)
 	{
-		for (size_t i = 0; i < p_queriedEntities->size(); i++)
+		for (size_t i = 0; i < p_queriedEntities->Size; i++)
 		{
-			Entity** p_entity = p_queriedEntities->at(i);
-			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.size(); i++)
+			Entity** p_entity = _Core::VectorT_at(p_queriedEntities, i);
+			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.Size; i++)
 			{
-				ComponentType* l_askedComponentType = l_entityComponentListener->ListenedComponentTypes.at(i);
+				ComponentType* l_askedComponentType = _Core::VectorT_at(&l_entityComponentListener->ListenedComponentTypes, i);
 				bool l_componentTypeMatchFound = false;
 
-				for (size_t j = 0; j < (*p_entity)->Components.size(); j++)
+				for (size_t j = 0; j < (*p_entity)->Components.Size; j++)
 				{
-					Component** l_component = (*p_entity)->Components.at(j);
+					Component** l_component = _Core::VectorT_at(&(*p_entity)->Components, j);
 					if (*l_askedComponentType == (*l_component)->ComponentType)
 					{
 						l_componentTypeMatchFound = true;
@@ -301,9 +303,10 @@ namespace _GameEngine::_ECS
 
 	void entityComponentListener_pushEntity(EntityConfigurableContainer* l_entityComponentListener, Entity* p_entity)
 	{
-		if (!l_entityComponentListener->FilteredEntities.get(Entity_comparator, &p_entity))
+		if (!_Core::CompareT_contains(_Core::VectorT_buildIterator(&l_entityComponentListener->FilteredEntities),
+			_Core::ComparatorT<Entity*, Entity*, void>{Entity_comparator, & p_entity}))
 		{
-			l_entityComponentListener->FilteredEntities.push_back(&p_entity);
+			_Core::VectorT_pushBack(&l_entityComponentListener->FilteredEntities, &p_entity);
 		}
 
 		if (l_entityComponentListener->OnEntityThatMatchesComponentTypesAdded)
@@ -314,10 +317,10 @@ namespace _GameEngine::_ECS
 
 	void entityComponentListener_removeEntity(EntityConfigurableContainer* p_entityComponentListener, Entity* p_entity)
 	{
-		size_t l_foundEntityIndex = p_entityComponentListener->FilteredEntities.getIndex(Entity_comparator, &p_entity);
-		if (l_foundEntityIndex != std::numeric_limits<size_t>::max())
+		_Core::VectorIteratorT<Entity*> l_foundEntityIt = _Core::CompareT_find(_Core::VectorT_buildIterator(&p_entityComponentListener->FilteredEntities), _Core::ComparatorT<Entity*, Entity*, void>{Entity_comparator, & p_entity});
+		if (l_foundEntityIt.Current)
 		{
-			p_entityComponentListener->FilteredEntities.erase(l_foundEntityIndex);
+			_Core::VectorT_erase(&p_entityComponentListener->FilteredEntities, l_foundEntityIt.CurrentIndex);
 			if (p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved)
 			{
 				p_entityComponentListener->OnEntityThatMatchesComponentTypesRemoved(p_entity, p_entityComponentListener->OnEntityThatMatchesComponentTypesRemovedUserData);

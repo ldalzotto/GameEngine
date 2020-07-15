@@ -16,4 +16,13 @@ namespace _Core
 
 	bool VectorIterator_moveNext(VectorIterator* p_vectorIterator);
 	bool VectorIterator_moveToIndex(VectorIterator* p_vectorIterator, size_t p_index);
+
+	struct VectorReverseIterator
+	{
+		GenericArray* Array;
+		void* Current;
+		size_t CurrentIndex;
+	};
+
+	bool VectorReverseIterator_moveNext(VectorIterator* p_vectorIterator);
 }

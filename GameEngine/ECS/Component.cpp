@@ -26,7 +26,7 @@ namespace _GameEngine::_ECS
 		*p_component = nullptr;
 	};
 
-	bool Component_comparator(Component** left, ComponentType* right)
+	bool Component_comparator(Component** left, ComponentType* right, void*)
 	{
 		return (*left)->ComponentType == *right;
 	};

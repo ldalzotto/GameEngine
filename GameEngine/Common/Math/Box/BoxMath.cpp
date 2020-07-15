@@ -33,17 +33,19 @@ namespace _GameEngine::_Math
 		//calculate center
 		{
 			p_box->Center = { 0.0f, 0.0f, 0.0f };
-			for (size_t i = 0; i < p_points->size(); i++)
+			auto l_pointsIt = _Core::VectorT_buildIterator(p_points);
+			while (_Core::VectorIteratorT_moveNext(&l_pointsIt))
 			{
-				_Math::Vector3f_add(&p_box->Center, p_points->at(i), &p_box->Center);
+				_Math::Vector3f_add(&p_box->Center, l_pointsIt.Current, &p_box->Center);
 			}
-			_Math::Vector3f_mul(&p_box->Center, 1.0f / p_points->size(), &p_box->Center);
+			_Math::Vector3f_mul(&p_box->Center, 1.0f / p_points->Size, &p_box->Center);
 		}
 
 		{
-			for (size_t i = 0; i < p_points->size(); i++)
+			auto l_pointsIt = _Core::VectorT_buildIterator(p_points);
+			while (_Core::VectorIteratorT_moveNext(&l_pointsIt))
 			{
-				box_grow(p_box, p_points->at(i));
+				box_grow(p_box, l_pointsIt.Current);
 			}
 		}
 	};

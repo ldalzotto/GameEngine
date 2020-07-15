@@ -12,19 +12,19 @@ namespace _GameEngine::_ECS
 	void ECSEventQueue_alloc(ECSEventQueue* p_ecsEventQueue, ECS* p_ecs)
 	{
 		p_ecsEventQueue->ECS = p_ecs;
-		p_ecsEventQueue->Messages.alloc();
+		_Core::VectorT_alloc(&p_ecsEventQueue->Messages, 0);
 	};
 	
 	void ECSEventQueue_free(ECSEventQueue* p_ecsEventQueue)
 	{
 #ifndef NDEBUG
-		if (p_ecsEventQueue->Messages.size() > 0)
+		if (p_ecsEventQueue->Messages.Size > 0)
 		{
 			MYLOG_PUSH(p_ecsEventQueue->ECS->MyLog, ::_Core::LogLevel::WARN, "Potential mmory leak. When the ECSEventQueue is beeing freed, there was still messages pending. Consider corretcly processing messages before free.");
 		}
 #endif // !NDEBUG
 
-		p_ecsEventQueue->Messages.free();
+		_Core::VectorT_free(&p_ecsEventQueue->Messages);
 	};
 
 	ECSEventMessage* ECSEventMessage_addEntity_alloc(Entity** l_allocatedEntity)
@@ -54,21 +54,21 @@ namespace _GameEngine::_ECS
 
 	void ECSEventQueue_pushMessage(ECSEventQueue* p_ecsEventQueue, ECSEventMessage** p_ecsEventQueueMessage)
 	{
-		p_ecsEventQueue->Messages.push_back(p_ecsEventQueueMessage);
+		_Core::VectorT_pushBack(&p_ecsEventQueue->Messages, p_ecsEventQueueMessage);
 	};
 	
 	void ECSEventQueue_processMessages(ECSEventQueue* p_ecsEventQueue)
 	{
-		while (p_ecsEventQueue->Messages.size() > 0)
+		while (p_ecsEventQueue->Messages.Size > 0)
 		{
 			size_t l_index = 0;
-			ECSEventMessage* l_ecsEventMessage = *p_ecsEventQueue->Messages.at(l_index);
+			ECSEventMessage* l_ecsEventMessage = *_Core::VectorT_at(&p_ecsEventQueue->Messages, l_index);
 			switch (l_ecsEventMessage->MessageType)
 			{
 			case ECSEventMessageType::ECS_ADD_ENTITY:
 			{
 				ECSEventMessage_addEntity* l_message = (ECSEventMessage_addEntity*)l_ecsEventMessage;
-				p_ecsEventQueue->ECS->EntityContainer.Entities.push_back(&l_message->AllocatedEntityPointer);
+				_Core::VectorT_pushBack(&p_ecsEventQueue->ECS->EntityContainer.Entities, &l_message->AllocatedEntityPointer);
 			}
 			break;
 			case ECSEventMessageType::ECS_REMOVE_ENTITY:
@@ -88,7 +88,7 @@ namespace _GameEngine::_ECS
 			}
 
 			free(l_ecsEventMessage);
-			p_ecsEventQueue->Messages.erase(l_index);
+			_Core::VectorT_erase(&p_ecsEventQueue->Messages, l_index);
 		}
 	};
 

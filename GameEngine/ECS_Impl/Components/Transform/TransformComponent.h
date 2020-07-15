@@ -2,7 +2,7 @@
 
 #include "Math/Transform/Transform.h"
 
-#include "DataStructures/VectorT.h"
+#include "DataStructures/Specifications/VectorT.hpp"
 #include "ECS/Component.h"
 
 extern "C"
