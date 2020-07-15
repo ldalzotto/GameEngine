@@ -31,6 +31,31 @@ namespace _Core
 		return (ELEMENT_TYPE*) GenericArray_at((GenericArray*)p_array, p_index);
 	}
 
+	template <typename ELEMENT_TYPE>
+	inline void ArrayT_pushBack(ArrayT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE* p_element)
+	{
+		GenericArray_pushBack_noRealloc((GenericArray*)p_array, p_element);
+	}
+
+	template <typename ELEMENT_TYPE>
+	inline void ArrayT_pushBack(ArrayT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE& p_element)
+	{
+		GenericArray_pushBack_noRealloc((GenericArray*)p_array, &p_element);
+	}
+
+	template <typename ELEMENT_TYPE>
+	inline void ArrayT_pushBack(ArrayT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE&& p_element)
+	{
+		GenericArray_pushBack_noRealloc((GenericArray*)p_array, &p_element);
+	}
+
+	template <typename ELEMENT_TYPE>
+	inline void ArrayT_clear(ArrayT<ELEMENT_TYPE>* p_array)
+	{
+		GenericArray_clear((GenericArray*)p_array);
+	}
+
+
 
 	template <typename ELEMENT_TYPE>
 	inline ArrayT<ELEMENT_TYPE> ArrayT_fromCStyleArray(ELEMENT_TYPE* p_array, size_t p_size)

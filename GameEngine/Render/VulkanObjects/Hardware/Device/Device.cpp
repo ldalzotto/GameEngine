@@ -1,10 +1,6 @@
 #include "Device.h"
 
-extern "C"
-{
-#include "Functional/Hash/Hash.h"
-}
-
+#include "Functional/Hash/Hash.hpp"
 #include "Log/LogFormatting.hpp"
 #include "VulkanObjects/Extensions/Extensions.h"
 #include "Queue.h"
@@ -165,6 +161,6 @@ namespace _GameEngine::_Render
 
 	size_t FormatSupportKey_buildHashKey(FormatSupportKey* p_formatSupportKey)
 	{
-		return Core_HashCombine_uint(Core_HashCombine_uint(Core_HashCombine_uint(0, (unsigned int*)&p_formatSupportKey->FormatFeature), (unsigned int*)&p_formatSupportKey->Format), (unsigned int*)&p_formatSupportKey->ImageTiling);
+		return _Core::HashCombine_uint(_Core::HashCombine_uint(_Core::HashCombine_uint(0, (unsigned int*)&p_formatSupportKey->FormatFeature), (unsigned int*)&p_formatSupportKey->Format), (unsigned int*)&p_formatSupportKey->ImageTiling);
 	};
 }

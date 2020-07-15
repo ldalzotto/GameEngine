@@ -1,10 +1,7 @@
 #include "Vector.h"
 
-extern "C"
-{
-#include "Algorithm/String/StringAlgorithm.h"
-#include "Functional/ToString/ToString.h"
-}
+#include "DataStructures/Specifications/String.hpp"
+#include "Functional/ToString/ToString.hpp"
 
 namespace _GameEngine::_Math
 {
@@ -12,14 +9,14 @@ namespace _GameEngine::_Math
 	Vector3f UP{ 0.0f, 1.0f, 0.0f };
 	Vector3f FORWARD{ 0.0f, 0.0f, 1.0f };
 
-	void Vector3f_toString(Vector3f* p_vector, Core_GenericArray* p_string)
+	void Vector3f_toString(Vector3f* p_vector, _Core::String* p_string)
 	{
-		Core_string_append(p_string, "[x : ");
-		Core_toString_float(p_string, &p_vector->x);
-		Core_string_append(p_string, ", y : ");
-		Core_toString_float(p_string, &p_vector->y);
-		Core_string_append(p_string, ", z : ");
-		Core_toString_float(p_string, &p_vector->z);
-		Core_string_append(p_string, "]");
+		_Core::String_append(p_string, "[x : ");
+		_Core::ToString_float(p_string, &p_vector->x);
+		_Core::String_append(p_string, ", y : ");
+		_Core::ToString_float(p_string, &p_vector->y);
+		_Core::String_append(p_string, ", z : ");
+		_Core::ToString_float(p_string, &p_vector->z);
+		_Core::String_append(p_string, "]");
 	}
 }

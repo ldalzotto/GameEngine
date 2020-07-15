@@ -4,13 +4,9 @@
 #include <stdexcept>
 
 
-extern "C"
-{
-#include "Functional/Hash/Hash.h"
-}
-
 #include "RenderInterface.h"
 #include "Log/LogFormatting.hpp"
+#include "Functional/Hash/Hash.hpp"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "RenderStep/PushCameraBuffer.h"
 
@@ -183,8 +179,8 @@ namespace _GameEngine::_Render
 	size_t MaterialUniqueKey_buildHash(MaterialUniqueKey* p_materialUniqueKey)
 	{
 		return
-			Core_HashCombine_string(
-				Core_HashCombine_string(0, (char*)p_materialUniqueKey->FragmentShaderPath.c_str())
+			 _Core::HashCombine_string(
+				 _Core::HashCombine_string(0, (char*)p_materialUniqueKey->FragmentShaderPath.c_str())
 				, (char*)p_materialUniqueKey->VertexShaderPath.c_str());
 	};
 

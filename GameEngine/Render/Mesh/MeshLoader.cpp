@@ -2,12 +2,6 @@
 
 #include <stdexcept>
 
-extern "C"
-{
-#include "DataStructures/Specifications/String.h"
-#include "Algorithm/String/StringAlgorithm.h"
-}
-
 #include "Log/LogFormatting.hpp"
 
 #include <Assimp/Importer.hpp>

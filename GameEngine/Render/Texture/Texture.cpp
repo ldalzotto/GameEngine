@@ -9,11 +9,7 @@
 #include "Log/Log.hpp"
 #include "Functional/ToString/ToString.hpp"
 
-extern "C"
-{
-#include "Functional/Hash/Hash.h"
-}
-
+#include "Functional/Hash/Hash.hpp"
 #include "VulkanObjects/SwapChain/SwapChain.h"
 
 #include "VulkanObjects/Hardware/Device/Device.h"
@@ -367,6 +363,6 @@ namespace _GameEngine::_Render
 
 	size_t TextureUniqueKey_Hash(TextureUniqueKey* p_key)
 	{
-		return Core_HashCombine_string(0, (char*)p_key->TexturePath.c_str());
+		return _Core::HashCombine_string(0, (char*)p_key->TexturePath.c_str());
 	};
 }

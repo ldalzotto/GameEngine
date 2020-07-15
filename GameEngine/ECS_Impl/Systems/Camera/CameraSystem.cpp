@@ -6,10 +6,7 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
-extern "C"
-{
-#include "Functional/Hash/Hash.h"
-}
+#include "Functional/Hash/Hash.hpp"
 
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
@@ -21,7 +18,7 @@ extern "C"
 
 namespace _GameEngine::_ECS
 {
-	SystemV2Key CameraSystemKey = Core_Hash_string("CameraSystem");
+	SystemV2Key CameraSystemKey = _Core::Hash_string("CameraSystem");
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
 

@@ -1,10 +1,6 @@
 #include "Mesh.h"
 
-extern "C"
-{
-#include "Include/CoreV2.h"
-}
-
+#include "Functional/Hash/Hash.hpp"
 #include "RenderStep/PreRenderDeferedCommandBufferStep.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/BufferCopyDeferredOperation.h"
 
@@ -91,7 +87,7 @@ namespace _GameEngine::_Render
 
 	size_t MeshUniqueKey_Hash(MeshUniqueKey* p_key)
 	{
-		return Core_HashCombine_string(0, (char*)p_key->MeshAssetPath.c_str());
+		return _Core::HashCombine_string(0, (char*)p_key->MeshAssetPath.c_str());
 	};
 
 }

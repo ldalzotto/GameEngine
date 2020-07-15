@@ -1,12 +1,6 @@
 #include "Gizmo.h"
 #include "RenderInterface.h"
 
-extern "C"
-{
-#include "ErrorHandling/Errorhandling.h"
-#include "Functional/Vector/VectorWriter.h"
-}
-
 #include "Math/Box/BoxMath.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
@@ -35,7 +29,7 @@ namespace _GameEngine::_Render
 			
 			void* l_gizmoVerticesBufferMemory;
 			VulkanBuffer_map(&p_gizmoMesh->VertexBuffer, p_device, &l_gizmoVerticesBufferMemory, l_bufferAllocInfo.Size);
-			p_gizmoMesh->GizmoVerticesV2 =	Core_array_fromCStyle(l_gizmoVerticesBufferMemory, sizeof(GizmoVertex), p_maxVerticesNb);
+			p_gizmoMesh->GizmoVerticesV2 = _Core::ArrayT_fromCStyleArray((GizmoVertex*)l_gizmoVerticesBufferMemory, p_maxVerticesNb);
 		}
 
 		{
@@ -47,7 +41,7 @@ namespace _GameEngine::_Render
 			
 			void* l_gizmoIndicesBufferMemory;
 			VulkanBuffer_map(&p_gizmoMesh->IndicesBuffer, p_device, &l_gizmoIndicesBufferMemory, l_bufferAllocInfo.Size);
-			p_gizmoMesh->GizmoIndicesV2 = Core_array_fromCStyle(l_gizmoIndicesBufferMemory, sizeof(GizmoIndiceType), p_maxVerticesNb);
+			p_gizmoMesh->GizmoIndicesV2 = _Core::ArrayT_fromCStyleArray((GizmoIndiceType*)l_gizmoIndicesBufferMemory, p_maxVerticesNb);
 		}
 	};
 
@@ -62,8 +56,8 @@ namespace _GameEngine::_Render
 
 	void gizmoMesh_clearBuffer(GizmoMesh* p_gizmoMesh)
 	{
-		Core_GenericArray_clear(&p_gizmoMesh->GizmoVerticesV2);
-		Core_GenericArray_clear(&p_gizmoMesh->GizmoIndicesV2);
+		_Core::ArrayT_clear(&p_gizmoMesh->GizmoVerticesV2);
+		_Core::ArrayT_clear(&p_gizmoMesh->GizmoIndicesV2);
 	}
 
 	void Gizmo_alloc(Gizmo* p_gizmo, RenderInterface* p_renderInterface)
@@ -92,8 +86,8 @@ namespace _GameEngine::_Render
 
 	void Gizmo_drawLine_indices(Gizmo* p_gizmo, GizmoIndiceType& p_begin, GizmoIndiceType& p_end)
 	{
-	 	ERR_THROW_MESSAGE(Core_GenericArray_pushBack_noRealloc(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_begin), "Gizmo_drawLine_indices : cannot push gizmo indices");
-		ERR_THROW_MESSAGE(Core_GenericArray_pushBack_noRealloc(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_end), "Gizmo_drawLine_indices : cannot push vertices");
+		_Core::ArrayT_pushBack(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_begin);
+		_Core::ArrayT_pushBack(&p_gizmo->GizmoMesh.GizmoIndicesV2, &p_end);
 	}
 
 	void Gizmo_pushVertex(Gizmo* p_gizmo, _Math::Vector3f& p_position, _Math::Vector3f& p_color, GizmoIndiceType* p_out_index)
@@ -102,7 +96,7 @@ namespace _GameEngine::_Render
 		l_gizmoVertex.Position = p_position;
 		l_gizmoVertex.Color = p_color;
 
-		ERR_THROW_MESSAGE(Core_GenericArray_pushBack_noRealloc(&p_gizmo->GizmoMesh.GizmoVerticesV2, &l_gizmoVertex), "Gizmo_pushVertex : cannot push gizmo vertex");
+		_Core::ArrayT_pushBack(&p_gizmo->GizmoMesh.GizmoVerticesV2, &l_gizmoVertex);
 		*p_out_index = static_cast<uint16_t>(p_gizmo->GizmoMesh.GizmoVerticesV2.Size) - 1;
 	};
 

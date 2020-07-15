@@ -1,14 +1,9 @@
 #pragma once
 
 #include "Math/Vector/Vector.h"
-
+#include "DataStructures/Specifications/ArrayT.hpp"
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 
-extern "C"
-{
-#include "DataStructures/GenericArray.h"
-#include "DataStructures/Specifications/Array.h"
-}
 
 namespace _GameEngine::_Math
 {
@@ -33,17 +28,14 @@ namespace _GameEngine::_Render
 		_Math::Vector3f Color;
 	};
 
-	typedef Core_GenericArray Array_GizmoVertex;
-
 	typedef uint16_t GizmoIndiceType;
-	typedef Core_GenericArray Array_GizmoIndices;
 
 	struct GizmoMesh
 	{
-		Array_GizmoVertex GizmoVerticesV2;
+		_Core::ArrayT<GizmoVertex> GizmoVerticesV2;
 		VulkanBuffer VertexBuffer;
 
-		Array_GizmoIndices GizmoIndicesV2;
+		_Core::ArrayT<GizmoIndiceType> GizmoIndicesV2;
 		VulkanBuffer IndicesBuffer;
 	};
 
