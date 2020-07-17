@@ -17,19 +17,19 @@ namespace _GameEngine::_ECS
 		Camera_buildProjectionMatrix(p_camera);
 	};
 
-	void camera_onDetached(Camera* p_camera, void* p_notUsed)
+	void camera_onDetached(Camera** p_camera)
 	{
-		_Core::ObserverT_unRegister(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) & p_camera->OnSwapChainBuilded);
+		Camera* l_camera = *p_camera;
+		_Core::ObserverT_unRegister(&l_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) &l_camera->OnSwapChainBuilded);
 	};
 
-	void Camera_init(Camera* p_camera, Component* p_associatedComponent, _Render::RenderInterface* p_renderInterface)
+	void Camera_init(Camera* p_camera, _Render::RenderInterface* p_renderInterface)
 	{
 		p_camera->RenderInterface = p_renderInterface;
 		p_camera->OnSwapChainBuilded = { camera_onSwapChainBuild, p_camera };
 		_Core::ObserverT_register(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) &p_camera->OnSwapChainBuilded);
 
-		p_camera->OnComponentDetached = { camera_onDetached, p_camera };
-		_Core::ObserverT_register(&p_associatedComponent->OnComponentFree, (_Core::CallbackT<void, void>*) &p_camera->OnComponentDetached);
+		((Component*)p_camera)->OnComponentFree = (OnComponentFunction)camera_onDetached;
 
 		Camera_buildProjectionMatrix(p_camera);
 	};

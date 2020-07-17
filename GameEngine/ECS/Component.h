@@ -14,26 +14,20 @@ namespace _GameEngine::_ECS
 	struct Entity;
 	struct ECS;
 
+	struct Component;
+
+	typedef void(*OnComponentFunction)(Component*);
+
 	struct Component
 	{
-		Entity* AttachedEntity;
-		ComponentType ComponentType;
 		void* Child;
-		_Core::ObserverT<void> OnComponentFree;
+		Entity* AttachedEntity;
+		ComponentType* ComponentType;
+
+		OnComponentFunction OnComponentFree;
 	};
 
-	Component* Component_alloc(ComponentType& p_type, size_t p_componentChildSize);
-
-	template<class COMPONENT_TYPE>
-	inline Component* Component_alloc(ComponentType& p_type, COMPONENT_TYPE** out_componentChild)
-	{
-		Component* l_instanciatedCOmponent = Component_alloc(p_type, sizeof(COMPONENT_TYPE));
-		if (out_componentChild)
-		{
-			*out_componentChild = (COMPONENT_TYPE*)l_instanciatedCOmponent->Child;
-		}
-		return l_instanciatedCOmponent;
-	};
+	Component* Component_alloc(ComponentType* p_type, size_t p_componentChildSize);
 
 	void Component_free(Component** p_component);
 

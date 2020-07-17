@@ -8,6 +8,7 @@
 
 #include "Functional/Hash/Hash.hpp"
 
+#include "ECS/EntityT.hpp"
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -50,8 +51,8 @@ namespace _GameEngine::_ECS
 		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.Size > 0)
 		{
 			Entity* l_entity = *_Core::VectorT_at(&l_cameraSystem->EntityConfigurableContainer.FilteredEntities, 0);
-			TransformComponent* p_transform = ENTITY_GET_COMPONENT(TransformComponent, l_entity);
-			Camera* p_camera = ENTITY_GET_COMPONENT(Camera, l_entity);
+			TransformComponent* p_transform = *EntityT_getComponent<TransformComponent>(l_entity);
+			Camera* p_camera = *EntityT_getComponent<Camera>(l_entity);
 
 			{
 				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(&p_transform->Transform);
@@ -80,7 +81,7 @@ namespace _GameEngine::_ECS
 		if (p_system->EntityConfigurableContainer.FilteredEntities.Size > 0)
 		{
 			_ECS::Entity* l_entity = (*_Core::VectorT_at(&p_system->EntityConfigurableContainer.FilteredEntities, 0));
-			return ENTITY_GET_COMPONENT(Camera, l_entity);
+			return *EntityT_getComponent<Camera>(l_entity);
 		}
 		return nullptr;
 	};

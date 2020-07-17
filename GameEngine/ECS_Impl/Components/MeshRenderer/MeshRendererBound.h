@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECS/Component.h"
+#include "ECS/ComponentT.hpp"
 #include "Math/Box/Box.h"
 
 namespace _GameEngine::_Physics
@@ -16,5 +16,11 @@ namespace _GameEngine::_ECS
 	{
 		_Math::Box BoundingBox;
 		_Physics::BoxCollider* Boxcollider;
+	};
+
+	template <>
+	inline ComponentType* ComponentT_getComponentType<MeshRendererBound>()
+	{
+		return &MeshRendererBoundType;
 	};
 }

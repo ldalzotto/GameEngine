@@ -5,6 +5,7 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
+#include "ECS/EntityT.hpp"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -47,8 +48,8 @@ namespace _GameEngine::_ECS
 		for (size_t i = 0; i < l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities.Size; i++)
 		{
 			Entity** l_entity = _Core::VectorT_at(&l_transformRotateSystem->EntityConfigurableContainer.FilteredEntities, i);
-			TransformComponent* l_transform = ENTITY_GET_COMPONENT(TransformComponent, *l_entity);
-			TransformRotate* l_transformRotate = ENTITY_GET_COMPONENT(TransformRotate, *l_entity);
+			TransformComponent* l_transform = *EntityT_getComponent<TransformComponent>(*l_entity);
+			TransformRotate* l_transformRotate = *EntityT_getComponent<TransformRotate>(*l_entity);
 
 			_Math::Quaternionf l_newLocalRotation;
 			_Math::Quaternion_rotateAround(&l_transform->Transform.LocalRotation, &l_transformRotate->Axis, l_transformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime, &l_newLocalRotation);

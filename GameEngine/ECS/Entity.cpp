@@ -31,11 +31,11 @@ namespace _GameEngine::_ECS
 	{
 
 #ifndef NDEBUG
-		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{Component_comparator, & p_unlinkedComponent->ComponentType}))
+		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{Component_comparator, p_unlinkedComponent->ComponentType}))
 		{
 			::_Core::String l_errorMessage; ::_Core::String_alloc(&l_errorMessage, 100);
 			::_Core::String_append(&l_errorMessage, "Trying to add a component were it's type ( ");
-			::_Core::String_append(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType.c_str());
+			::_Core::String_append(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType->c_str());
 			::_Core::String_append(&l_errorMessage, " ) is aleady present as a component.");
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
@@ -48,14 +48,14 @@ namespace _GameEngine::_ECS
 	void Entity_freeComponent(Entity* p_entity, Component** p_component)
 	{
 		ComponentEvents_onComponentDetached(&p_entity->ECS->ComponentEvents, (*p_component));
-		_Core::VectorT_eraseCompare(&p_entity->Components, _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, &(*p_component)->ComponentType });
+		_Core::VectorT_eraseCompare(&p_entity->Components, _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, (*p_component)->ComponentType });
 		Component_free(p_component);
 	};
 
-	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType)
+	Component* Entity_getComponent(Entity* p_entity, ComponentType* p_componentType)
 	{
 		Component** l_foundComponent =
-			_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, (ComponentType*)&p_componentType }).Current;
+			_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, p_componentType }).Current;
 		if (l_foundComponent)
 		{
 			return *l_foundComponent;
@@ -187,7 +187,7 @@ namespace _GameEngine::_ECS
 	{
 
 		if (_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entityComponentListener->ListenedComponentTypes),
-			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, & p_component->ComponentType }).Current)
+			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, p_component->ComponentType }).Current)
 		{
 			entityComponentListener_removeEntity(p_entityComponentListener, p_component->AttachedEntity);
 		}
@@ -225,7 +225,7 @@ namespace _GameEngine::_ECS
 	void entityComponentListener_pushEntityIfElligible(_GameEngine::_ECS::EntityConfigurableContainer* l_entityComponentListener, _GameEngine::_ECS::Component* l_comparedComponent)
 	{
 		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&l_entityComponentListener->ListenedComponentTypes),
-			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, & l_comparedComponent->ComponentType }))
+			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, l_comparedComponent->ComponentType }))
 		{
 			bool l_addEntity = true;
 			for (size_t i = 0; i < l_entityComponentListener->ListenedComponentTypes.Size; i++)
@@ -236,7 +236,7 @@ namespace _GameEngine::_ECS
 				for (size_t j = 0; j < l_comparedComponent->AttachedEntity->Components.Size; j++)
 				{
 					Component* l_component = *_Core::VectorT_at(&l_comparedComponent->AttachedEntity->Components, j);
-					if (l_component->ComponentType == *l_componentType)
+					if (*l_component->ComponentType == *l_componentType)
 					{
 						l_filteredComponentTypeIsAnEntityComponent = true;
 						break;
@@ -271,7 +271,7 @@ namespace _GameEngine::_ECS
 				for (size_t j = 0; j < (*p_entity)->Components.Size; j++)
 				{
 					Component** l_component = _Core::VectorT_at(&(*p_entity)->Components, j);
-					if (*l_askedComponentType == (*l_component)->ComponentType)
+					if (*l_askedComponentType == *(*l_component)->ComponentType)
 					{
 						l_componentTypeMatchFound = true;
 						break;

@@ -11,6 +11,7 @@
 #include "Physics/World/World.h"
 #include "Physics/World/Collider/BoxCollider.h"
 
+#include "ECS/EntityT.hpp"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
@@ -46,15 +47,15 @@ namespace _GameEngine::_ECS
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 		MeshRendererBoundCalculationOperation l_operation;
 		{
-			l_operation.Bound = ENTITY_GET_COMPONENT(MeshRendererBound, p_entity);
-			l_operation.MeshRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
+			l_operation.Bound = *EntityT_getComponent<MeshRendererBound>(p_entity);
+			l_operation.MeshRenderer = *EntityT_getComponent<MeshRenderer>(p_entity);
 		}
 		_Core::VectorT_pushBack(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, &l_operation);
 
 		l_operation.Bound->Boxcollider = new _Physics::BoxCollider();
 		_Physics::BoxCollider l_boxCollider{};
 		l_boxCollider.Box = &l_operation.Bound->BoundingBox;
-		_ECS::TransformComponent* l_transformComponent = ENTITY_GET_COMPONENT(TransformComponent, p_entity);
+		_ECS::TransformComponent* l_transformComponent = *EntityT_getComponent<TransformComponent>(p_entity);
 		l_boxCollider.Transform = &l_transformComponent->Transform;
 		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_boxCollider);
 		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World , l_operation.Bound->Boxcollider);
@@ -63,7 +64,7 @@ namespace _GameEngine::_ECS
 	void meshRendererBoundSystem_onComponentRemoved(void* p_system, Entity* p_entity)
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
-		_ECS::MeshRendererBound* l_meshRendererBound = ENTITY_GET_COMPONENT(MeshRendererBound, p_entity);
+		_ECS::MeshRendererBound* l_meshRendererBound = *EntityT_getComponent<MeshRendererBound>(p_entity);
 		_Physics::World_removeBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_meshRendererBound->Boxcollider);
 	};
 

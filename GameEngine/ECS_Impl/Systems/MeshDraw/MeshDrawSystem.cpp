@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "ECS/EntityT.hpp"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "EngineSequencers/EngineSequencers.h"
@@ -46,13 +47,13 @@ namespace _GameEngine::_ECS
 
 	void meshDrawSystem_onComponentsAttached(void* p_null, Entity* p_entity)
 	{
-		MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
+		MeshRenderer* l_mesRenderer = *EntityT_getComponent<MeshRenderer>(p_entity);
 		_Render::MaterialInstanceContainer_addMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 	
 	void meshDrawSystem_onComponentsDetached(void* p_null, Entity* p_entity)
 	{
-		MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, p_entity);
+		MeshRenderer* l_mesRenderer = *EntityT_getComponent<MeshRenderer>(p_entity);
 		_Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 	};
 
@@ -64,8 +65,8 @@ namespace _GameEngine::_ECS
 		{
 			Entity** l_entity =  _Core::VectorT_at(&l_meshDrawSystem->EntityConfigurableContainer.FilteredEntities, i);
 
-			MeshRenderer* l_mesRenderer = ENTITY_GET_COMPONENT(MeshRenderer, *l_entity);
-			TransformComponent* l_transform = ENTITY_GET_COMPONENT(TransformComponent, *l_entity);
+			MeshRenderer* l_mesRenderer = *EntityT_getComponent<MeshRenderer>(*l_entity);
+			TransformComponent* l_transform = *EntityT_getComponent<TransformComponent>(*l_entity);
 
 			if (l_transform->Transform.UserFlag_HasChanged)
 			{

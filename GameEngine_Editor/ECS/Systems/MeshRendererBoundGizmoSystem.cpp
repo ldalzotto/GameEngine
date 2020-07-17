@@ -32,8 +32,8 @@ namespace _GameEngineEditor
 		for (size_t i = 0; i < l_system->EntityConfigurableContainer.FilteredEntities.Size; i++)
 		{
 			_ECS::Entity* l_entity = * _Core::VectorT_at(&l_system->EntityConfigurableContainer.FilteredEntities, i);
-			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)_ECS::Entity_getComponent(l_entity, _ECS::TransformComponentType)->Child;
-			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, _ECS::MeshRendererBoundType)->Child;
+			_ECS::TransformComponent* l_transform = (_ECS::TransformComponent*)_ECS::Entity_getComponent(l_entity, &_ECS::TransformComponentType)->Child;
+			_ECS::MeshRendererBound* l_meshRendererBound = (_ECS::MeshRendererBound*)_ECS::Entity_getComponent(l_entity, &_ECS::MeshRendererBoundType)->Child;
 
 			_Math::Matrix4x4f l_localToWorld = _Math::Transform_getLocalToWorldMatrix(&l_transform->Transform);
 			_Render::Gizmo_drawBox(l_meshRendererBoundSystem->Gizmo, &l_meshRendererBound->BoundingBox, &l_localToWorld, false);

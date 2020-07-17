@@ -1,10 +1,9 @@
 -- TODO --
 
-# Does some template type can be forward declared ?
-
 -- ECS --
 
-# Adding type safety to system and components with the new template system.
+[X] # Adding type safety to system and components with the new template system.
+# For Systems, reimplement system so that involved components are cached.
 
 -- Testing --
 

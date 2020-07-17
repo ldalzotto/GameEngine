@@ -25,9 +25,7 @@ namespace _GameEngine::_ECS
 	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent);
 	void Entity_freeComponent(Entity* p_entity, Component** p_component);
 
-	Component* Entity_getComponent(Entity* p_entity, const ComponentType& p_componentType);
-
-#define ENTITY_GET_COMPONENT(ComponentTypeName, EntityPointer) (ComponentTypeName*) _GameEngine::_ECS::Entity_getComponent(EntityPointer, #ComponentTypeName)->Child
+	Component* Entity_getComponent(Entity* p_entity, ComponentType* p_componentType);
 
 	struct EntityContainer
 	{

@@ -1,10 +1,8 @@
 #pragma once
 
-#include "ECS/Component.h"
+#include "ECS/ComponentT.hpp"
 
 #include "Materials/Material.h"
-
-#include "Functional/Callback/CallbackT.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -23,16 +21,19 @@ namespace _GameEngine::_ECS
 		
 		_Render::MaterialInstance* MaterialInstance;
 		_Render::MaterialUniqueKey MaterialUniqueKey;
+	};
 
-		_Core::CallbackT<MeshRenderer, void> OnComponentDetached;
+	template <>
+	inline ComponentType* ComponentT_getComponentType<MeshRenderer>()
+	{
+		return &MeshRendererType;
 	};
 
 	struct MeshRendererInitInfo
 	{
-		Component* AssociatedComponent;
 		_Render::MaterialUniqueKey* MaterialUniqueKey;
 		std::unordered_map<std::string, void*> InputParameters;
 	};
 
-	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
+	void MeshRenderer_init(MeshRenderer** p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
 }

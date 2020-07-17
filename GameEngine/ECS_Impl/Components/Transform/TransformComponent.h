@@ -3,9 +3,7 @@
 #include "Math/Transform/Transform.h"
 
 #include "DataStructures/Specifications/VectorT.hpp"
-#include "ECS/Component.h"
-
-#include "Functional/Callback/CallbackT.hpp"
+#include "ECS/ComponentT.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -14,8 +12,13 @@ namespace _GameEngine::_ECS
 	struct TransformComponent
 	{
 		_Math::Transform Transform;
-		_Core::CallbackT<TransformComponent, void> OnComponentDetached;
 	};
+
+	template <>
+	inline ComponentType* ComponentT_getComponentType<TransformComponent>()
+	{
+		return &TransformComponentType;
+	}
 
 	struct TransformInitInfo
 	{
@@ -24,6 +27,6 @@ namespace _GameEngine::_ECS
 		_Math::Vector3f LocalScale;
 	};
 
-	void TransformComponent_init(Component* p_component, TransformInitInfo* p_transformInitInfo);
+	void TransformComponent_init(TransformComponent** p_component, TransformInitInfo* p_transformInitInfo);
 
 }
