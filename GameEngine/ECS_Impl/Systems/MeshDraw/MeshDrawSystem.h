@@ -1,16 +1,45 @@
 #pragma once
 
-#include "ECS/ECS.h"
-
+#include "ECS/EntityFilter.hpp"
+#include "ECS/System.h"
 #include "Functional/Sequencer/SortedSequencer.hpp"
 
-namespace _GameEngine::_Render
+namespace _GameEngine
 {
-	struct Render;
+	struct UpdateSequencer;
+
+	namespace _Render
+	{
+		struct Render;
+	}
+
+	namespace _ECS
+	{
+		struct ECS;
+		struct Entity;
+		struct TransformComponent;
+		struct MeshRenderer;
+	}
 }
 
 namespace _GameEngine::_ECS
 {
 	::_Core::SortedSequencerPriority MeshDrawSystem_updatePriorityBefore();
-	void MeshDrawSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
+	
+
+	struct MeshDrawSystemOperation
+	{
+		Entity* Entity;
+		TransformComponent* TransformComponent;
+		MeshRenderer* MeshRenderer;
+	};
+
+	struct MeshDrawSystem
+	{
+		SystemHeader Header;
+		EntityFilter EntityFilter;
+		_Core::VectorT<MeshDrawSystemOperation> MeshDrawSystemOperations;
+	};
+
+	void MeshDrawSystem_alloc(UpdateSequencer* p_updateSequencer, ECS* p_ecs);
 }

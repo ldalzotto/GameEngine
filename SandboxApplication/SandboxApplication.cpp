@@ -418,9 +418,7 @@ void SandboxApplication_update(float p_delta)
 			_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, &App->ECS);
 			_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
 
-			l_systemAllocInfo = {};
-			_ECS::MeshDrawSystemV2_init(&l_systemAllocInfo, &App->ECS);
-			_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
+			_ECS::MeshDrawSystem_alloc(&App->UpdateSequencer, &App->ECS);
 
 			l_systemAllocInfo = {};
 			_ECS::CameraSystem_init(&l_systemAllocInfo, &App->ECS);

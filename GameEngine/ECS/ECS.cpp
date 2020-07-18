@@ -7,6 +7,7 @@ namespace _GameEngine::_ECS
 		p_ecs->MyLog = p_myLog;
 		ECSEventQueue_alloc(&p_ecs->EventQueue, p_ecs);
 		SystemContainer_alloc(&p_ecs->SystemContainer);
+		SystemContainerV2_alloc(&p_ecs->SystemContainerV2);
 		EntityContainer_alloc(&p_ecs->EntityContainer, p_ecs);
 	};
 
@@ -17,6 +18,7 @@ namespace _GameEngine::_ECS
 
 		EntityContainer_free(&(p_entityComponent)->EntityContainer, &(p_entityComponent)->ComponentEvents);
 		SystemContainer_free(&(p_entityComponent)->SystemContainer);
+		SystemContainerV2_free(&(p_entityComponent)->SystemContainerV2);
 		ECSEventQueue_free(&(p_entityComponent)->EventQueue);
 		ComponentEvents_free(&(p_entityComponent)->ComponentEvents, p_entityComponent);
 	};

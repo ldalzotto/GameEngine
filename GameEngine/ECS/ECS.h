@@ -20,6 +20,7 @@ namespace _GameEngine::_ECS
 		EntityContainer EntityContainer;
 		ComponentEvents ComponentEvents;
 		SystemContainer SystemContainer;
+		SystemContainerV2 SystemContainerV2;
 	};
 
 	void EntityComponent_build(ECS* p_ecs, ::_Core::Log* p_myLog);

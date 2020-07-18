@@ -16,6 +16,11 @@ namespace _GameEngine::_ECS
 	{
 		return *left == *right;
 	};
+
+	bool SystemHeader_comparator(SystemHeader** left, SystemHeader** right, void*)
+	{
+		return *left == *right;
+	};
 }
 
 namespace _GameEngine::_ECS
@@ -80,5 +85,29 @@ namespace _GameEngine::_ECS
 			SystemV2_free(l_it.Current);
 		}
 		_Core::VectorT_free(&p_systemContainer->SystemsV2);
+	};
+
+
+	void SystemContainerV2_alloc(SystemContainerV2* p_systemContainer)
+	{
+		_Core::VectorT_alloc(&p_systemContainer->SystemV2, 0);
+	};
+	void SystemContainerV2_addSystemV2(SystemContainerV2* p_systemContainer, SystemHeader* p_systemV2)
+	{
+		_Core::VectorT_pushBack(&p_systemContainer->SystemV2, &p_systemV2);
+	};
+	void SystemContainerV2_removeSystemV2(SystemContainerV2* p_systemContainer, SystemHeader* p_systemV2)
+	{
+		_Core::VectorT_eraseCompare(&p_systemContainer->SystemV2, _Core::ComparatorT<SystemHeader*, SystemHeader*, void>{ SystemHeader_comparator, &p_systemV2 });
+	};
+
+	void SystemContainerV2_free(SystemContainerV2* p_systemContainer)
+	{
+		_Core::VectorReverseIteratorT<SystemHeader*> l_it = _Core::VectorT_buildReverseIterator(&p_systemContainer->SystemV2);
+		while (_Core::VectorReverseIteratorT_moveNext(&l_it))
+		{
+			_Core::CallbackT_call(&(*l_it.Current)->OnSystemDestroyed, (void*)nullptr);
+		}
+		_Core::VectorT_free(&p_systemContainer->SystemV2);
 	};
 }

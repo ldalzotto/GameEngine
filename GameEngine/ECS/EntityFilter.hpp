@@ -27,6 +27,6 @@ namespace _GameEngine::_ECS
 	};
 
 	void EntityFilter_init(EntityFilter* p_entityFiler, ECS* p_ecs);
-	void EntityFilter_free(EntityFilter* p_entityFiler);
+	void EntityFilter_free(EntityFilter* p_entityFiler, ECS* p_ecs);
 
 }
