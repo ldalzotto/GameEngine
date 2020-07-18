@@ -21,7 +21,6 @@
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
-#include "ECS_Impl/Systems/SystemV2Factory.h"
 
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
@@ -414,19 +413,10 @@ void SandboxApplication_update(float p_delta)
 
 		// System initialization
 		{
-			_ECS::SystemV2AllocInfo l_systemAllocInfo{};
-			_ECS::TransformRotateSystemV2_init(&l_systemAllocInfo, &App->ECS);
-			_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
-
+			_ECS::TransformRotateSystemV2_alloc(&App->UpdateSequencer, &App->ECS);
 			_ECS::MeshDrawSystem_alloc(&App->UpdateSequencer, &App->ECS);
-
-			l_systemAllocInfo = {};
-			_ECS::CameraSystem_init(&l_systemAllocInfo, &App->ECS);
-			_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
-
-			l_systemAllocInfo = {};
-			_ECS::MeshRendererBoundSystem_init(&l_systemAllocInfo, &App->ECS, &App->Physics.PhysicsInterface);
-			_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, &App->UpdateSequencer);
+			_ECS::CameraSystem_alloc(&App->UpdateSequencer, &App->ECS);
+			_ECS::MeshRendererBoundSystem_alloc(&App->ECS, &App->Physics.PhysicsInterface, &App->UpdateSequencer);
 		}
 
 		HasAlreadyUpdated = true;
@@ -463,7 +453,7 @@ void SandboxApplication_update(float p_delta)
 
 		// Mouse raycast
 		{
-			_ECS::SystemV2* l_cameraSystem = _ECS::SystemContainer_getSystem(&App->ECS.SystemContainer, &_ECS::CameraSystemKey);
+			_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&App->ECS.SystemContainerV2, &_ECS::CameraSystemKey);
 			_Math::Vector2f l_screenPoint = { App->Input.InputMouse.ScreenPosition.x, App->Input.InputMouse.ScreenPosition.y };
 			_Math::Segment l_ray;
 

@@ -3,7 +3,8 @@
 -- ECS --
 
 [X] # Adding type safety to system and components with the new template system.
-# For Systems, reimplement system so that involved components are cached.
+[X] # For Systems, reimplement system so that involved components are cached.
+# Simplifying sytem initialization with function toolbox (and templates ?).
 
 -- Testing --
 

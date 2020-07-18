@@ -2,7 +2,9 @@
 
 #include "Math/Box/BoxMath.h"
 
+#include "Algorithm/Compare/CompareAlgorithmT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
+#include "EngineSequencers.h"
 
 #include "Render/Mesh/Mesh.h"
 #include "Render/Materials/MaterialInstance.h"
@@ -11,6 +13,7 @@
 #include "Physics/World/World.h"
 #include "Physics/World/Collider/BoxCollider.h"
 
+#include "ECS/ECS.h"
 #include "ECS/EntityT.hpp"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
@@ -22,18 +25,7 @@
 
 namespace _GameEngine::_ECS
 {
-	struct MeshRendererBoundCalculationOperation
-	{
-		MeshRenderer* MeshRenderer;
-		MeshRendererBound* Bound;
-	};
-
-	struct MeshRendererBoundSystem
-	{
-		_Physics::PhysicsInterface* PhysicsInterface;
-		_Core::VectorT<MeshRendererBoundCalculationOperation> MeshRendererBoundsToCaluclate;
-	};
-
+	
 	::_Core::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
 		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
@@ -42,6 +34,12 @@ namespace _GameEngine::_ECS
 		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
+	bool MeshRendererBoundOperation_EqualsEntity(MeshRendererBoundCalculationOperation* p_operation, Entity** p_entity, void* p_null)
+	{
+		return p_operation->Entity == *p_entity;
+	}
+
+
 	void meshRendererBoundSystem_onComponentAttached(void* p_system, Entity* p_entity)
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
@@ -49,6 +47,7 @@ namespace _GameEngine::_ECS
 		{
 			l_operation.Bound = *EntityT_getComponent<MeshRendererBound>(p_entity);
 			l_operation.MeshRenderer = *EntityT_getComponent<MeshRenderer>(p_entity);
+			l_operation.Entity = p_entity;
 		}
 		_Core::VectorT_pushBack(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, &l_operation);
 
@@ -58,26 +57,19 @@ namespace _GameEngine::_ECS
 		_ECS::TransformComponent* l_transformComponent = *EntityT_getComponent<TransformComponent>(p_entity);
 		l_boxCollider.Transform = &l_transformComponent->Transform;
 		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_boxCollider);
-		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World , l_operation.Bound->Boxcollider);
+		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_operation.Bound->Boxcollider);
 	};
 
 	void meshRendererBoundSystem_onComponentRemoved(void* p_system, Entity* p_entity)
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
-		_ECS::MeshRendererBound* l_meshRendererBound = *EntityT_getComponent<MeshRendererBound>(p_entity);
-		_Physics::World_removeBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_meshRendererBound->Boxcollider);
-	};
-
-	void meshRendererBoundSystem_onSystemDestroyed(SystemV2* p_system)
-	{
-		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system->Child;
-		_Core::VectorT_free(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate);
+		MeshRendererBound* l_rendererBound = *EntityT_getComponent<MeshRendererBound>(p_entity);
+		_Physics::World_removeBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_rendererBound->Boxcollider);
 	};
 
 	void meshRendererBoundSystem_update(void* p_system, void* p_gameEngineInterface)
 	{
-		SystemV2* l_system = (SystemV2*)p_system;
-		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)((SystemV2*)p_system)->Child;
+		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 
 		for (size_t i = 0; i < l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.Size; i++)
 		{
@@ -103,31 +95,35 @@ namespace _GameEngine::_ECS
 		_Core::VectorT_clear(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate);
 	};
 
-
-	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs, _Physics::PhysicsInterface* p_physicsInterface)
+	void MeshrendererBoundSystem_free(void* p_system, void* p_null)
 	{
+		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 
-		MeshRendererBoundSystem* l_meshRendererBoundSystem = (MeshRendererBoundSystem*)malloc(sizeof(MeshRendererBoundSystem));;
+		EntityFilter_free(&l_meshrendererBoundSystem->EntityFilter, l_meshrendererBoundSystem->SystemHeader.ECS);
+		SystemContainerV2_removeSystemV2(&l_meshrendererBoundSystem->SystemHeader.ECS->SystemContainerV2, &l_meshrendererBoundSystem->SystemHeader);
+		free(l_meshrendererBoundSystem);
+	};
+
+	void MeshRendererBoundSystem_alloc(ECS* p_ecs, _Physics::PhysicsInterface* p_physicsInterface, UpdateSequencer* p_updateSequencer)
+	{
+		MeshRendererBoundSystem* l_meshRendererBoundSystem = (MeshRendererBoundSystem*)calloc(1, sizeof(MeshRendererBoundSystem));
+		l_meshRendererBoundSystem->SystemHeader.ECS = p_ecs;
+		l_meshRendererBoundSystem->SystemHeader.Update = { MeshRendererBoundSystem_getUpdatePriority(), {meshRendererBoundSystem_update, l_meshRendererBoundSystem} };
+		l_meshRendererBoundSystem->SystemHeader.OnSystemDestroyed = { MeshrendererBoundSystem_free, l_meshRendererBoundSystem };
+
 		l_meshRendererBoundSystem->PhysicsInterface = p_physicsInterface;
 		_Core::VectorT_alloc(&l_meshRendererBoundSystem->MeshRendererBoundsToCaluclate, 2);
 
-		p_systemV2AllocInfo->ECS = p_ecs;
-
 		{
-			EntityConfigurableContainerInitInfo* l_entityContainerInfo = &p_systemV2AllocInfo->EntityConfigurableContainerInitInfo;
-
-			l_entityContainerInfo->ECS = p_ecs;
-			_Core::VectorT_alloc(&l_entityContainerInfo->ListenedComponentTypes, 2);
-			_Core::VectorT_pushBack(&l_entityContainerInfo->ListenedComponentTypes, &MeshRendererBoundType);
-			_Core::VectorT_pushBack(&l_entityContainerInfo->ListenedComponentTypes, &MeshRendererType);
-
-			l_entityContainerInfo->OnEntityThatMatchesComponentTypesAdded = { meshRendererBoundSystem_onComponentAttached, (void*)l_meshRendererBoundSystem } ;
-			l_entityContainerInfo->OnEntityThatMatchesComponentTypesRemoved = { meshRendererBoundSystem_onComponentRemoved, (void*)l_meshRendererBoundSystem };
+			_Core::VectorT_alloc(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, 2);
+			_Core::VectorT_pushBack(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, &MeshRendererBoundType);
+			_Core::VectorT_pushBack(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, &MeshRendererType);
+			l_meshRendererBoundSystem->EntityFilter.OnEntityThatMatchesComponentTypesAdded = { meshRendererBoundSystem_onComponentAttached, (void*)l_meshRendererBoundSystem };
+			l_meshRendererBoundSystem->EntityFilter.OnEntityThatMatchesComponentTypesRemoved = { meshRendererBoundSystem_onComponentRemoved, (void*)l_meshRendererBoundSystem };
+			EntityFilter_init(&l_meshRendererBoundSystem->EntityFilter, p_ecs);
 		}
 
-		p_systemV2AllocInfo->OnSystemDestroyed = meshRendererBoundSystem_onSystemDestroyed;
-		p_systemV2AllocInfo->Child = l_meshRendererBoundSystem;
-		p_systemV2AllocInfo->Update.Priority = MeshRendererBoundSystem_getUpdatePriority();
-		p_systemV2AllocInfo->Update.OperationCallback = { meshRendererBoundSystem_update, NULL };
+		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) & l_meshRendererBoundSystem->SystemHeader.Update);
+		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, &l_meshRendererBoundSystem->SystemHeader);
 	};
 }

@@ -1,6 +1,14 @@
 #pragma once
 
+#include "DataStructures/Specifications/VectorT.hpp"
 #include "Functional/Sequencer/SortedSequencer.hpp"
+#include "ECS/System.h"
+#include "ECS/EntityFilter.hpp"
+
+namespace _GameEngine
+{
+	struct UpdateSequencer;
+}
 
 namespace _GameEngine::_Render
 {
@@ -15,12 +23,31 @@ namespace _GameEngine::_Physics
 namespace _GameEngine::_ECS
 {
 	struct ECS;
+	struct Entity;
 	struct SystemV2AllocInfo;
+	struct MeshRenderer;
+	struct MeshRendererBound;
 }
 
 
 namespace _GameEngine::_ECS
 {
 	::_Core::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority();
-	void MeshRendererBoundSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs, _Physics::PhysicsInterface* p_physicsInterface);
+
+	struct MeshRendererBoundCalculationOperation
+	{
+		Entity* Entity;
+		MeshRenderer* MeshRenderer;
+		MeshRendererBound* Bound;
+	};
+
+	struct MeshRendererBoundSystem
+	{
+		SystemHeader SystemHeader;
+		EntityFilter EntityFilter;
+		_Physics::PhysicsInterface* PhysicsInterface;
+		_Core::VectorT<MeshRendererBoundCalculationOperation> MeshRendererBoundsToCaluclate;
+	};
+
+	void MeshRendererBoundSystem_alloc(ECS* p_ecs, _Physics::PhysicsInterface* p_physicsInterface, UpdateSequencer* p_updateSequencer);
 }

@@ -1,18 +1,44 @@
 #pragma once
 
-namespace _GameEngine::_Render
-{
-	struct RenderInterface;
-}
+#include "DataStructures/Specifications/VectorT.hpp"
+#include "ECS/EntityFilter.hpp"
+#include "ECS/System.h"
 
-namespace _GameEngine::_ECS
+namespace _GameEngine
 {
-	struct ECS;
-	struct SystemV2AllocInfo;
+	struct UpdateSequencer;
+
+	namespace _Render
+	{
+		struct RenderInterface;
+	}
+
+	namespace _ECS
+	{
+		struct ECS;
+		struct SystemV2AllocInfo;
+		struct Entity;
+		struct TransformComponent;
+		struct MeshRendererBound;
+	}
 }
 
 using namespace _GameEngine;
 namespace _GameEngineEditor
 {
-	void MeshRendererBoundGizmoSystem_init(_ECS::SystemV2AllocInfo* p_systemV2AllocInfo, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
+	struct MeshRendererBoundGizmoSystemOperation
+	{
+		_ECS::Entity* Entity;
+		_ECS::TransformComponent* TransformComponent;
+		_ECS::MeshRendererBound* MeshRendererBound;
+	};
+
+	struct MeshRendererBoundGizmoSystem
+	{
+		_ECS::SystemHeader SystemHeader;
+		_Core::VectorT<MeshRendererBoundGizmoSystemOperation> Operations;
+		_ECS::EntityFilter EntityFilter;
+	};
+
+	void MeshRendererBoundGizmoSystem_alloc(_GameEngine::UpdateSequencer* p_updateSequencer, _ECS::ECS* p_ecs);
 }

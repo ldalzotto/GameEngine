@@ -19,7 +19,6 @@ namespace _GameEngine::_ECS
 		ECSEventQueue EventQueue;
 		EntityContainer EntityContainer;
 		ComponentEvents ComponentEvents;
-		SystemContainer SystemContainer;
 		SystemContainerV2 SystemContainerV2;
 	};
 

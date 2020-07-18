@@ -8,6 +8,9 @@
 
 #include "Functional/Hash/Hash.hpp"
 
+#include "EngineSequencers.h"
+
+#include "ECS/ECS.h"
 #include "ECS/EntityT.hpp"
 #include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
@@ -21,8 +24,6 @@ namespace _GameEngine::_ECS
 {
 	SystemV2Key CameraSystemKey = _Core::Hash_string("CameraSystem");
 
-	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
-
 	::_Core::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
 		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
@@ -32,55 +33,91 @@ namespace _GameEngine::_ECS
 		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
-	void CameraSystem_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs)
-	{
-		p_systemV2AllocInfo->ECS = p_ecs;
-		p_systemV2AllocInfo->SystemKey = CameraSystemKey;
+	bool CameraSystemOperation_EqualsEntity(CameraSystemOperation* p_left, Entity** p_right, void* p_null) { return p_left->Entity == *p_right; }
 
-		p_systemV2AllocInfo->Update.Priority = CameraSystem_getUpdatePriority();
-		p_systemV2AllocInfo->Update.OperationCallback = { cameraSystem_update, NULL } ;
-		p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ECS = p_ecs;
-		_Core::VectorT_alloc(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, 2);
-		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &CameraType);
-		_Core::VectorT_pushBack(&p_systemV2AllocInfo->EntityConfigurableContainerInitInfo.ListenedComponentTypes, &TransformComponentType);
+	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface);
+
+	void cameraSystem_onEntityElligible(void* p_cameraSystem, Entity* p_entity)
+	{
+		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
+		CameraSystemOperation l_operation{};
+		l_operation.Entity = p_entity;
+		l_operation.Camera = *EntityT_getComponent<Camera>(p_entity);
+		l_operation.TransformComponent = *EntityT_getComponent<TransformComponent>(p_entity);
+		_Core::VectorT_pushBack(&l_cameraSystem->Operations, &l_operation);
+	}
+
+	void cameraSystem_onEntityNoMoreElligible(void* p_cameraSystem, Entity* p_entity)
+	{
+		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
+		_Core::VectorT_eraseCompare(&l_cameraSystem->Operations, _Core::ComparatorT<CameraSystemOperation, Entity*, void>{ CameraSystemOperation_EqualsEntity , &p_entity});
+	}
+
+	void CmaeraSystem_free(void* p_cameraSystem, void* p_null)
+	{
+		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
+		EntityFilter_free(&l_cameraSystem->EntityFilter, l_cameraSystem->SystemHeader.ECS);
+		SystemContainerV2_removeSystemV2(&l_cameraSystem->SystemHeader.ECS->SystemContainerV2, &l_cameraSystem->SystemHeader);
+		_Core::VectorT_free(&l_cameraSystem->Operations);
+		free(l_cameraSystem);
+	}
+
+	void CameraSystem_alloc(UpdateSequencer* p_updateSequencer, ECS* p_ecs)
+	{
+		CameraSystem* l_cameraSystem = (CameraSystem*)malloc(sizeof(CameraSystem));
+		_Core::VectorT_alloc(&l_cameraSystem->Operations, 0);
+
+		l_cameraSystem->SystemHeader.ECS = p_ecs;
+		l_cameraSystem->SystemHeader.OnSystemDestroyed = { CmaeraSystem_free, l_cameraSystem };
+		l_cameraSystem->SystemHeader.SystemKey = CameraSystemKey;
+		l_cameraSystem->SystemHeader.Update = { CameraSystem_getUpdatePriority() , {cameraSystem_update, l_cameraSystem} };
+
+		_Core::VectorT_alloc(&l_cameraSystem->EntityFilter.ListenedComponentTypes, 2);
+		_Core::VectorT_pushBack(&l_cameraSystem->EntityFilter.ListenedComponentTypes, &CameraType);
+		_Core::VectorT_pushBack(&l_cameraSystem->EntityFilter.ListenedComponentTypes, &TransformComponentType);
+		l_cameraSystem->EntityFilter.OnEntityThatMatchesComponentTypesAdded = { cameraSystem_onEntityElligible , l_cameraSystem };
+		l_cameraSystem->EntityFilter.OnEntityThatMatchesComponentTypesRemoved = { cameraSystem_onEntityNoMoreElligible , l_cameraSystem };
+		EntityFilter_init(&l_cameraSystem->EntityFilter, p_ecs);
+
+		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, &l_cameraSystem->SystemHeader);
+		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) &l_cameraSystem->SystemHeader.Update);
 	};
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface)
 	{
-		_ECS::SystemV2* l_cameraSystem = (_ECS::SystemV2*)p_cameraSystem;
-		if (l_cameraSystem->EntityConfigurableContainer.FilteredEntities.Size > 0)
+		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
+		_Core::VectorIteratorT<CameraSystemOperation> l_operations = _Core::VectorT_buildIterator(&l_cameraSystem->Operations);
+		while (_Core::VectorIteratorT_moveNext(&l_operations))
 		{
-			Entity* l_entity = *_Core::VectorT_at(&l_cameraSystem->EntityConfigurableContainer.FilteredEntities, 0);
-			TransformComponent* p_transform = *EntityT_getComponent<TransformComponent>(l_entity);
-			Camera* p_camera = *EntityT_getComponent<Camera>(l_entity);
+			TransformComponent* l_transform = l_operations.Current->TransformComponent;
+			Camera* l_camera = l_operations.Current->Camera;
 
 			{
-				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(&p_transform->Transform);
+				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(&l_transform->Transform);
 
 				_Math::Vector3f l_target;
-				_Math::Vector3f l_foward = Transform_getForward(&p_transform->Transform);
+				_Math::Vector3f l_foward = Transform_getForward(&l_transform->Transform);
 				_Math::Vector3f_add(&l_worldPosition, &l_foward, &l_target);
 
-				_Math::Vector3f l_up = Transform_getUp(&p_transform->Transform);
+				_Math::Vector3f l_up = Transform_getUp(&l_transform->Transform);
 				_Math::Vector3f_mul(&l_up, -1.0f, &l_up);
 
 				_Math::Matrix4x4f l_lookAt;
 				_Math::Matrixf4x4_lookAt(&l_worldPosition, &l_target, &l_up, &l_lookAt);
-				_Math::Matrixf4x4_inv(&l_lookAt, &p_camera->ViewMatrix);
+				_Math::Matrixf4x4_inv(&l_lookAt, &l_camera->ViewMatrix);
 			}
 
-
-			p_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = p_camera->ProjectionMatrix;
-			p_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = p_camera->ViewMatrix;
-			_Render::PushCameraBuffer_pushToGPU(p_camera->RenderInterface->PushCameraBuffer, p_camera->RenderInterface->Device);
+			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = l_camera->ProjectionMatrix;
+			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = l_camera->ViewMatrix;
+			_Render::PushCameraBuffer_pushToGPU(l_camera->RenderInterface->PushCameraBuffer, l_camera->RenderInterface->Device);
 		}
 	};
 
-	Camera* CameraSystem_getCurrentActiveCamera(SystemV2* p_system)
+	Camera* CameraSystem_getCurrentActiveCamera(CameraSystem* p_system)
 	{
-		if (p_system->EntityConfigurableContainer.FilteredEntities.Size > 0)
+		if (p_system->Operations.Size > 0)
 		{
-			_ECS::Entity* l_entity = (*_Core::VectorT_at(&p_system->EntityConfigurableContainer.FilteredEntities, 0));
+			_ECS::Entity* l_entity = (*_Core::VectorT_at(&p_system->Operations, 0)).Entity;
 			return *EntityT_getComponent<Camera>(l_entity);
 		}
 		return nullptr;

@@ -1,16 +1,41 @@
+#pragma once
 
-#include "ECS/Entity.h"
-
+#include "ECS/System.h"
 #include "Functional/Sequencer/SortedSequencer.hpp"
+#include "DataStructures/Specifications/VectorT.hpp"
+#include "ECS/EntityFilter.hpp"
 
-namespace _GameEngine::_ECS
+namespace _GameEngine
 {
-	struct ECS;
-	struct SystemV2AllocInfo;
+	struct UpdateSequencer;
+
+	namespace _ECS
+	{
+		struct ECS;
+		struct Entity;
+		struct SystemV2AllocInfo;
+		struct TransformComponent;
+		struct TransformRotate;
+	}
 }
 
 namespace _GameEngine::_ECS
 {
 	inline ::_Core::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy();
-	void TransformRotateSystemV2_init(SystemV2AllocInfo* p_systemV2AllocInfo, ECS* p_ecs);
+
+	struct TransformRotateOperation
+	{
+		Entity* Entity;
+		TransformComponent* TransformComponent;
+		TransformRotate* TransformRotate;
+	};
+
+	struct TransformRotateSystem
+	{
+		SystemHeader SystemHeader;
+		EntityFilter EntityFilter;
+		_Core::VectorT<TransformRotateOperation> TransformRotateOperations;
+	};
+
+	void TransformRotateSystemV2_alloc(UpdateSequencer* p_updateSequencer, ECS* p_ecs);
 }
