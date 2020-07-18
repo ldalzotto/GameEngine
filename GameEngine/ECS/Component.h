@@ -27,6 +27,8 @@ namespace _GameEngine::_ECS
 		OnComponentFunction OnComponentFree;
 	};
 
+	bool Component_comparator(Component** left, ComponentType* right, void*);
+
 	Component* Component_alloc(ComponentType* p_type, size_t p_componentChildSize);
 
 	void Component_free(Component** p_component);

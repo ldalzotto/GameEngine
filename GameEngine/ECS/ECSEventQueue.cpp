@@ -74,13 +74,13 @@ namespace _GameEngine::_ECS
 			case ECSEventMessageType::ECS_REMOVE_ENTITY:
 			{
 				ECSEventMessage_RemoveEntity* l_message = (ECSEventMessage_RemoveEntity*)l_ecsEventMessage;
-				_ECS::EntityContainer_freeEntity(&l_message->Entity);
+				_ECS::EntityContainer_freeEntity(&p_ecsEventQueue->ECS->EntityContainer, &l_message->Entity);
 			}
 			break;
 			case ECSEventMessageType::ECS_ADD_COMPONENT:
 			{
 				ECSEventMessage_AddComponent* l_addComponent = (ECSEventMessage_AddComponent*)l_ecsEventMessage;
-				Entity_addComponent(l_addComponent->Entity, l_addComponent->AllocatedComponent);
+				Entity_addComponent(l_addComponent->Entity, l_addComponent->AllocatedComponent, p_ecsEventQueue->ECS);
 			}
 			break;
 			default:

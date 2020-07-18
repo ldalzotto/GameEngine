@@ -2,9 +2,9 @@
 
 namespace _Core
 {
-	bool CallbackP_equals(Callback** p_left, Callback** p_right, void* p_null)
+	bool Callback_equals(Callback* p_left, Callback* p_right, void* p_null)
 	{
-		return *p_left == *p_right;
+		return (p_left->Closure == p_right->Closure) && (p_left->Function == p_right->Function);
 	};
 
 	void Callback_call(Callback* p_callback, void* p_input)

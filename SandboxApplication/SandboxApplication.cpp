@@ -93,7 +93,7 @@ void SandboxApplication_createCubeEntity(SandboxApplicationCubeCreationInfo* p_s
 {
 
 	{
-		*out_entity = _ECS::Entity_alloc(&App->ECS);
+		*out_entity = _ECS::Entity_alloc();
 		auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(out_entity);
 		_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
 	}
@@ -264,7 +264,7 @@ void SandboxApplication_update(float p_delta)
 		// Camera
 		{
 			{
-				l_cameraEntity = _ECS::Entity_alloc(&App->ECS);
+				l_cameraEntity = _ECS::Entity_alloc();
 				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
 				_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
 			}
@@ -289,7 +289,7 @@ void SandboxApplication_update(float p_delta)
 		// Ray
 		{
 			{
-				l_rayEntity = _ECS::Entity_alloc(&App->ECS);
+				l_rayEntity = _ECS::Entity_alloc();
 				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayEntity);
 				_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
 			}
@@ -309,7 +309,7 @@ void SandboxApplication_update(float p_delta)
 			//Ray Begin
 			{
 				{
-					l_rayBeginEntity = _ECS::Entity_alloc(&App->ECS);
+					l_rayBeginEntity = _ECS::Entity_alloc();
 					auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayBeginEntity);
 					_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
 				}
@@ -333,7 +333,7 @@ void SandboxApplication_update(float p_delta)
 			//Ray End
 			{
 				{
-					l_rayEndEntity = _ECS::Entity_alloc(&App->ECS);
+					l_rayEndEntity = _ECS::Entity_alloc();
 					auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayEndEntity);
 					_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
 				}
@@ -361,7 +361,7 @@ void SandboxApplication_update(float p_delta)
 		// Scene root
 		{
 			{
-				l_sceneModelsRootEntity = _ECS::Entity_alloc(&App->ECS);
+				l_sceneModelsRootEntity = _ECS::Entity_alloc();
 				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_sceneModelsRootEntity);
 				_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
 			}

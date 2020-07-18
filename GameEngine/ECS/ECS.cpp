@@ -7,12 +7,12 @@ namespace _GameEngine::_ECS
 		p_ecs->MyLog = p_myLog;
 		ECSEventQueue_alloc(&p_ecs->EventQueue, p_ecs);
 		SystemContainer_alloc(&p_ecs->SystemContainer);
-		EntityContainer_alloc(&p_ecs->EntityContainer);
+		EntityContainer_alloc(&p_ecs->EntityContainer, p_ecs);
 	};
 
 	void EntityComponent_free(ECS* p_entityComponent)
 	{
-		EntityContainer_sendEventToDeleteAllEntities(&(p_entityComponent)->EntityContainer, p_entityComponent);
+		EntityContainer_sendEventToDeleteAllEntities(&(p_entityComponent)->EntityContainer);
 		ECSEventQueue_processMessages(&p_entityComponent->EventQueue);
 
 		EntityContainer_free(&(p_entityComponent)->EntityContainer, &(p_entityComponent)->ComponentEvents);

@@ -1,17 +1,13 @@
 #pragma once
 
 #include "DataStructures/Specifications/VectorT.hpp"
-
-namespace _Core
-{
-	struct Callback;
-}
+#include "Functional/Callback/Callback.hpp"
 
 namespace _Core
 {
 	struct Observer
 	{
-		VectorT<Callback*> Subjects;
+		VectorT<Callback> Subjects;
 	};
 
 	void ObserverAlloc(Observer* p_observer);

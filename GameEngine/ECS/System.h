@@ -16,13 +16,13 @@ namespace _GameEngine::_ECS
 
 	struct SystemV2
 	{
-		ECS* ECS;
 		SystemV2Key SystemKey;
-		EntityConfigurableContainer EntityConfigurableContainer;
 		::_Core::SortedSequencerOperation Update;
-
-		void* Child;
 		void(*OnSystemDestroyed)(SystemV2* p_system);
+
+		ECS* ECS;
+		EntityConfigurableContainer EntityConfigurableContainer;
+		void* Child;
 	};
 
 	struct SystemV2AllocInfo
