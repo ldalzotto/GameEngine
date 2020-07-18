@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DataStructures/GenericArray.hpp"
+#include "Functional/Iterator/IteratorT.hpp"
 
 namespace _Core
 {
@@ -55,7 +56,13 @@ namespace _Core
 		GenericArray_clear((GenericArray*)p_array);
 	}
 
-
+	template <typename ELEMENT_TYPE>
+	inline VectorIteratorT<ELEMENT_TYPE> ArrayT_buildIterator(ArrayT<ELEMENT_TYPE>* p_array)
+	{
+		VectorIteratorT<ELEMENT_TYPE> l_it;
+		GenericArray_buildIterator((GenericArray*)p_array, (VectorIterator*)&l_it);
+		return l_it;
+	}
 
 	template <typename ELEMENT_TYPE>
 	inline ArrayT<ELEMENT_TYPE> ArrayT_fromCStyleArray(ELEMENT_TYPE* p_array, size_t p_size)

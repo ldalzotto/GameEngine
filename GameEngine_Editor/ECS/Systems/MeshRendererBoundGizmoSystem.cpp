@@ -33,7 +33,8 @@ namespace _GameEngineEditor
 	void meshRendererBoundGizmoSystem_free(void* p_system, void* p_null)
 	{
 		MeshRendererBoundGizmoSystem* l_meshRendererBoundSystem = (MeshRendererBoundGizmoSystem*)p_system;
-		_ECS::EntityFilter_free(&l_meshRendererBoundSystem->EntityFilter, l_meshRendererBoundSystem->SystemHeader.ECS);
+		_ECS::SystemHeader_free((_ECS::SystemHeader*)l_meshRendererBoundSystem);
+		_ECS::EntityFilterT_free(&l_meshRendererBoundSystem->EntityFilter, l_meshRendererBoundSystem->SystemHeader.ECS);
 		_Core::VectorT_free(&l_meshRendererBoundSystem->Operations);
 		free(l_meshRendererBoundSystem);
 	}
@@ -50,39 +51,28 @@ namespace _GameEngineEditor
 		}
 	}
 
-	void meshRendererBoundGizmoSystem_onEntityElligible(void* p_system, _ECS::Entity* p_entity)
+	void meshRendererBoundGizmoSystem_onEntityElligible(MeshRendererBoundGizmoSystem* p_system, _ECS::Entity* p_entity)
 	{
-		MeshRendererBoundGizmoSystem* l_meshRendererBoundSystem = (MeshRendererBoundGizmoSystem*)p_system;
 		MeshRendererBoundGizmoSystemOperation l_operation{};
 		l_operation.Entity = p_entity;
 		l_operation.MeshRendererBound = *_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entity);
 		l_operation.TransformComponent = *_ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entity);
-		_Core::VectorT_pushBack(&l_meshRendererBoundSystem->Operations, &l_operation);
+		_Core::VectorT_pushBack(&p_system->Operations, &l_operation);
 	}
 
-	void meshRendererBoundGizmoSystem_onEntityNotElligible(void* p_system, _ECS::Entity* p_entity)
+	void meshRendererBoundGizmoSystem_onEntityNotElligible(MeshRendererBoundGizmoSystem* p_system, _ECS::Entity* p_entity)
 	{
-		MeshRendererBoundGizmoSystem* l_meshRendererBoundSystem = (MeshRendererBoundGizmoSystem*)p_system;
-		_Core::VectorT_eraseCompare(&l_meshRendererBoundSystem->Operations, _Core::ComparatorT<MeshRendererBoundGizmoSystemOperation, _ECS::Entity*, void>{ MeshRendererBoundGizmoSystemOperation_EntityEquals, &p_entity });
+		_Core::VectorT_eraseCompare(&p_system->Operations, _Core::ComparatorT<MeshRendererBoundGizmoSystemOperation, _ECS::Entity*, void>{ MeshRendererBoundGizmoSystemOperation_EntityEquals, &p_entity });
 	}
 
 	void MeshRendererBoundGizmoSystem_alloc(_GameEngine::UpdateSequencer* p_updateSequencer, _ECS::ECS* p_ecs)
 	{
 		MeshRendererBoundGizmoSystem* l_meshRendererBoundSystem = (MeshRendererBoundGizmoSystem*)malloc(sizeof(MeshRendererBoundGizmoSystem));
-		l_meshRendererBoundSystem->SystemHeader.ECS = p_ecs;
 		l_meshRendererBoundSystem->SystemHeader.OnSystemDestroyed = { meshRendererBoundGizmoSystem_free , l_meshRendererBoundSystem };
 		l_meshRendererBoundSystem->SystemHeader.Update = { meshRendererBoundGizmoSystem_priority(), {meshRendererBoundGizmoSystem_update, l_meshRendererBoundSystem} };
-
 		_Core::VectorT_alloc(&l_meshRendererBoundSystem->Operations, 0);
 
-		_Core::VectorT_alloc(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, 2);
-		_Core::VectorT_pushBack(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, &_ECS::MeshRendererBoundType);
-		_Core::VectorT_pushBack(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, &_ECS::MeshRendererType);
-		l_meshRendererBoundSystem->EntityFilter.OnEntityThatMatchesComponentTypesAdded = { meshRendererBoundGizmoSystem_onEntityElligible , l_meshRendererBoundSystem };
-		l_meshRendererBoundSystem->EntityFilter.OnEntityThatMatchesComponentTypesRemoved = { meshRendererBoundGizmoSystem_onEntityNotElligible, l_meshRendererBoundSystem };
-		_ECS::EntityFilter_init(&l_meshRendererBoundSystem->EntityFilter, p_ecs);
-
-		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*)&l_meshRendererBoundSystem->SystemHeader.Update);
-
+		_ECS::EntityFilterT_alloc(&l_meshRendererBoundSystem->EntityFilter, p_ecs, l_meshRendererBoundSystem, meshRendererBoundGizmoSystem_onEntityElligible, meshRendererBoundGizmoSystem_onEntityNotElligible);
+		_ECS::SystemHeader_init((_ECS::SystemHeader*)l_meshRendererBoundSystem, p_ecs, (_Core::SortedSequencer*)&p_updateSequencer->UpdateSequencer);
 	};
 }

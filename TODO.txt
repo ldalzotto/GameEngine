@@ -1,11 +1,5 @@
 -- TODO --
 
--- ECS --
-
-[X] # Adding type safety to system and components with the new template system.
-[X] # For Systems, reimplement system so that involved components are cached.
-# Simplifying sytem initialization with function toolbox (and templates ?).
-
 -- Testing --
 
 # Moving the Sandbox application to a test package. Were multiple case can be easily tested.
@@ -56,6 +50,12 @@
 
 
 -- DONE --
+
+-- ECS --
+
+[X] # Adding type safety to system and components with the new template system.
+[X] # For Systems, reimplement system so that involved components are cached.
+[X] # Simplifying sytem initialization with function toolbox (and templates ?).
 
 -- 1st Milestone -- 
 

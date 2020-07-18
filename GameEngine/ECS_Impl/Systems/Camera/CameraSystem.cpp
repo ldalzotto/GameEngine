@@ -57,7 +57,7 @@ namespace _GameEngine::_ECS
 	{
 		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
 		EntityFilter_free(&l_cameraSystem->EntityFilter, l_cameraSystem->SystemHeader.ECS);
-		SystemContainerV2_removeSystemV2(&l_cameraSystem->SystemHeader.ECS->SystemContainerV2, &l_cameraSystem->SystemHeader);
+		_ECS::SystemHeader_free(&l_cameraSystem->SystemHeader);
 		_Core::VectorT_free(&l_cameraSystem->Operations);
 		free(l_cameraSystem);
 	}
@@ -72,14 +72,8 @@ namespace _GameEngine::_ECS
 		l_cameraSystem->SystemHeader.SystemKey = CameraSystemKey;
 		l_cameraSystem->SystemHeader.Update = { CameraSystem_getUpdatePriority() , {cameraSystem_update, l_cameraSystem} };
 
-		_Core::VectorT_alloc(&l_cameraSystem->EntityFilter.ListenedComponentTypes, 2);
-		_Core::VectorT_pushBack(&l_cameraSystem->EntityFilter.ListenedComponentTypes, &CameraType);
-		_Core::VectorT_pushBack(&l_cameraSystem->EntityFilter.ListenedComponentTypes, &TransformComponentType);
-		l_cameraSystem->EntityFilter.OnEntityThatMatchesComponentTypesAdded = { cameraSystem_onEntityElligible , l_cameraSystem };
-		l_cameraSystem->EntityFilter.OnEntityThatMatchesComponentTypesRemoved = { cameraSystem_onEntityNoMoreElligible , l_cameraSystem };
-		EntityFilter_init(&l_cameraSystem->EntityFilter, p_ecs);
-
-		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, &l_cameraSystem->SystemHeader);
+		EntityFilter_alloc_2c(&l_cameraSystem->EntityFilter, p_ecs, &CameraType, &TransformComponentType, l_cameraSystem, cameraSystem_onEntityElligible, cameraSystem_onEntityNoMoreElligible);
+		_ECS::SystemHeader_init(&l_cameraSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*) & p_updateSequencer->UpdateSequencer);
 		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) &l_cameraSystem->SystemHeader.Update);
 	};
 

@@ -46,8 +46,7 @@ namespace _GameEngine::_ECS
 		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
 		_Core::VectorT_free(&l_meshDrawSystem->MeshDrawSystemOperations);
 		EntityFilter_free(&l_meshDrawSystem->EntityFilter, l_meshDrawSystem->Header.ECS);
-
-		SystemContainerV2_removeSystemV2(&l_meshDrawSystem->Header.ECS->SystemContainerV2, &l_meshDrawSystem->Header);
+		_ECS::SystemHeader_free(&l_meshDrawSystem->Header);
 		free(l_meshDrawSystem);
 	}
 
@@ -61,15 +60,8 @@ namespace _GameEngine::_ECS
 
 		l_meshDrawSystem->Header.Update = { meshDrawSystem_getUpdatePriority(), {MeshDrawSystem_update, l_meshDrawSystem} };
 
-		_Core::VectorT_alloc(&l_meshDrawSystem->EntityFilter.ListenedComponentTypes, 2);
-		_Core::VectorT_pushBack(&l_meshDrawSystem->EntityFilter.ListenedComponentTypes, &MeshRendererType);
-		_Core::VectorT_pushBack(&l_meshDrawSystem->EntityFilter.ListenedComponentTypes, &TransformComponentType);
-		l_meshDrawSystem->EntityFilter.OnEntityThatMatchesComponentTypesAdded = { meshDrawSystem_onComponentsAttached, l_meshDrawSystem };
-		l_meshDrawSystem->EntityFilter.OnEntityThatMatchesComponentTypesRemoved = { meshDrawSystem_onComponentsDetached, l_meshDrawSystem };
-		EntityFilter_init(&l_meshDrawSystem->EntityFilter, p_ecs);
-
-		::_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (::_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) &l_meshDrawSystem->Header.Update);
-		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, (SystemHeader*)l_meshDrawSystem);
+		EntityFilter_alloc_2c(&l_meshDrawSystem->EntityFilter, p_ecs, &MeshRendererType, &TransformComponentType, l_meshDrawSystem, meshDrawSystem_onComponentsAttached, meshDrawSystem_onComponentsDetached);
+		_ECS::SystemHeader_init(&l_meshDrawSystem->Header, p_ecs, (_Core::SortedSequencer*)&p_updateSequencer->UpdateSequencer);
 	}
 
 

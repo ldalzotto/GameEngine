@@ -5,6 +5,11 @@
 
 #include "Functional/Sequencer/SortedSequencer.hpp"
 
+namespace _Core
+{
+	struct SortedSequencer;
+}
+
 namespace _GameEngine::_ECS
 {
 	struct ECS;
@@ -21,6 +26,9 @@ namespace _GameEngine::_ECS
 		::_Core::SortedSequencerOperation Update;
 		_Core::CallbackT<void, void> OnSystemDestroyed;
 	};
+
+	void SystemHeader_init(SystemHeader* p_systemHeader, ECS* p_ecs, _Core::SortedSequencer* p_sequencer);
+	void SystemHeader_free(SystemHeader* p_systemHeader);
 
 	struct SystemContainerV2
 	{

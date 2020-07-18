@@ -68,12 +68,9 @@ namespace _GameEngine::_ECS
 
 		_Core::VectorT_alloc(&l_transformRotateSystem->TransformRotateOperations, 0);
 
-		_Core::VectorT_alloc(&l_transformRotateSystem->EntityFilter.ListenedComponentTypes, 2);
-		_Core::VectorT_pushBack(&l_transformRotateSystem->EntityFilter.ListenedComponentTypes, &TransformComponentType);
-		_Core::VectorT_pushBack(&l_transformRotateSystem->EntityFilter.ListenedComponentTypes, &TransformRotateType);
-		l_transformRotateSystem->EntityFilter.OnEntityThatMatchesComponentTypesAdded = { TransformRotationSystemV2_onComponentMatchAdded, l_transformRotateSystem };
-		l_transformRotateSystem->EntityFilter.OnEntityThatMatchesComponentTypesRemoved = { TransformRotationSystemV2_onComponentmathRemoved, l_transformRotateSystem };
-		EntityFilter_init(&l_transformRotateSystem->EntityFilter, p_ecs);
+		EntityFilter_alloc_2c(&l_transformRotateSystem->EntityFilter, p_ecs,
+			&TransformComponentType, &TransformRotateType,
+			l_transformRotateSystem, TransformRotationSystemV2_onComponentMatchAdded, TransformRotationSystemV2_onComponentmathRemoved);
 
 		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) & l_transformRotateSystem->SystemHeader.Update);
 		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, &l_transformRotateSystem->SystemHeader);

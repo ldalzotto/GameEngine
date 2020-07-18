@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DataStructures/Specifications/VectorT.hpp"
-#include "ECS/EntityFilter.hpp"
+#include "ECS/EntityFilterT.hpp"
 #include "ECS/System.h"
 
 namespace _GameEngine
@@ -37,7 +37,7 @@ namespace _GameEngineEditor
 	{
 		_ECS::SystemHeader SystemHeader;
 		_Core::VectorT<MeshRendererBoundGizmoSystemOperation> Operations;
-		_ECS::EntityFilter EntityFilter;
+		_ECS::EntityFilterT_2C<MeshRendererBoundGizmoSystem, _ECS::TransformComponent, _ECS::MeshRendererBound> EntityFilter;
 	};
 
 	void MeshRendererBoundGizmoSystem_alloc(_GameEngine::UpdateSequencer* p_updateSequencer, _ECS::ECS* p_ecs);

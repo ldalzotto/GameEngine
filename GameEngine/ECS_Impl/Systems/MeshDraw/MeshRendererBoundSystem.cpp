@@ -25,7 +25,7 @@
 
 namespace _GameEngine::_ECS
 {
-	
+
 	::_Core::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
 		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
@@ -100,7 +100,7 @@ namespace _GameEngine::_ECS
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 
 		EntityFilter_free(&l_meshrendererBoundSystem->EntityFilter, l_meshrendererBoundSystem->SystemHeader.ECS);
-		SystemContainerV2_removeSystemV2(&l_meshrendererBoundSystem->SystemHeader.ECS->SystemContainerV2, &l_meshrendererBoundSystem->SystemHeader);
+		_ECS::SystemHeader_free(&l_meshrendererBoundSystem->SystemHeader);
 		free(l_meshrendererBoundSystem);
 	};
 
@@ -114,16 +114,10 @@ namespace _GameEngine::_ECS
 		l_meshRendererBoundSystem->PhysicsInterface = p_physicsInterface;
 		_Core::VectorT_alloc(&l_meshRendererBoundSystem->MeshRendererBoundsToCaluclate, 2);
 
-		{
-			_Core::VectorT_alloc(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, 2);
-			_Core::VectorT_pushBack(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, &MeshRendererBoundType);
-			_Core::VectorT_pushBack(&l_meshRendererBoundSystem->EntityFilter.ListenedComponentTypes, &MeshRendererType);
-			l_meshRendererBoundSystem->EntityFilter.OnEntityThatMatchesComponentTypesAdded = { meshRendererBoundSystem_onComponentAttached, (void*)l_meshRendererBoundSystem };
-			l_meshRendererBoundSystem->EntityFilter.OnEntityThatMatchesComponentTypesRemoved = { meshRendererBoundSystem_onComponentRemoved, (void*)l_meshRendererBoundSystem };
-			EntityFilter_init(&l_meshRendererBoundSystem->EntityFilter, p_ecs);
-		}
+		EntityFilter_alloc_2c(&l_meshRendererBoundSystem->EntityFilter, p_ecs, 
+			&MeshRendererBoundType, &MeshRendererType, 
+			l_meshRendererBoundSystem, meshRendererBoundSystem_onComponentAttached, meshRendererBoundSystem_onComponentRemoved);
 
-		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) & l_meshRendererBoundSystem->SystemHeader.Update);
-		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, &l_meshRendererBoundSystem->SystemHeader);
+		_ECS::SystemHeader_init(&l_meshRendererBoundSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*)&p_updateSequencer->UpdateSequencer);
 	};
 }
