@@ -23,6 +23,7 @@ namespace _GameEngine::_ECS
 	{
 		SystemV2Key SystemKey;
 		ECS* ECS;
+		::_Core::SortedSequencer* UpdateSequencer;
 		::_Core::SortedSequencerOperation Update;
 		_Core::CallbackT<void, void> OnSystemDestroyed;
 	};

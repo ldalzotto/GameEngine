@@ -13,6 +13,12 @@ namespace _Core
 		return Equals_int16t((int16_t*)p_left, (int16_t*)p_right);
 	};
 
+	bool SortedSequencerOperations_equal(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right, void* p_null)
+	{
+		return SortedSequencerPriority_equals(&p_left->Priority, &p_right->Priority, nullptr) 
+			&& Callback_equals(&p_left->OperationCallback, &p_right->OperationCallback, nullptr);
+	}
+
 	short int SortedSequencerOperation_elementSorter(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right, void* p_null)
 	{
 		return SortCompare_uint16_uint16(&p_left->Priority, &p_right->Priority);
@@ -31,6 +37,11 @@ namespace _Core
 	void SortedSequencer_addOperation(SortedSequencer* p_sortedSequencer, SortedSequencerOperation* p_sortedSequencerOperation)
 	{
 		SortedVectorT_pushBack(&p_sortedSequencer->Operations, p_sortedSequencerOperation, SortedSequencerOperation_elementSorter);
+	};
+
+	void SortedSequencer_removeOperation(SortedSequencer* p_sortedSequencer, SortedSequencerOperation* p_sortedSequencerOperation)
+	{
+		SortedVectorT_eraseCompare(&p_sortedSequencer->Operations, _Core::ComparatorT<SortedSequencerOperation, SortedSequencerOperation, void>{ SortedSequencerOperations_equal, p_sortedSequencerOperation });
 	};
 
 	void SortedSequencer_execute(SortedSequencer* p_sortedSequencer, void* p_input)
@@ -59,8 +70,8 @@ namespace _Core
 		if (p_before)
 		{
 			SortedSequencerPriority l_zeroPriority = (SortedSequencerPriority)0;
-			
-			if (CompareT_contains(VectorT_buildIterator(p_before), ComparatorT<SortedSequencerPriority, SortedSequencerPriority, void>{ SortedSequencerPriority_equals, &l_zeroPriority, nullptr }))
+
+			if (CompareT_contains(VectorT_buildIterator(p_before), ComparatorT<SortedSequencerPriority, SortedSequencerPriority, void>{ SortedSequencerPriority_equals, & l_zeroPriority, nullptr }))
 			{
 				VectorT_free(p_before);
 				if (p_after) { VectorT_free(p_after); }

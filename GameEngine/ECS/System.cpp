@@ -23,13 +23,15 @@ namespace _GameEngine::_ECS
 {
 	void SystemHeader_init(SystemHeader* p_systemHeader, ECS* p_ecs, _Core::SortedSequencer* p_sequencer)
 	{
+		p_systemHeader->ECS = p_ecs;
+		p_systemHeader->UpdateSequencer = p_sequencer;
 		_Core::SortedSequencer_addOperation(p_sequencer, &p_systemHeader->Update);
 		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, p_systemHeader);
 	};
 
 	void SystemHeader_free(SystemHeader* p_systemHeader)
 	{
-		// TODO, remove sorted sequencer
+		_Core::SortedSequencer_removeOperation(p_systemHeader->UpdateSequencer, &p_systemHeader->Update);
 		SystemContainerV2_removeSystemV2(&p_systemHeader->ECS->SystemContainerV2, p_systemHeader);
 	};
 

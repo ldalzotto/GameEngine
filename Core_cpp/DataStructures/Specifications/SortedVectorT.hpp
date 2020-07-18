@@ -42,4 +42,9 @@ namespace _Core
 		return l_it;
 	}
 
+	template <typename ELEMENT_TYPE, typename COMPARED_TYPE, typename USER_TYPE>
+	inline void SortedVectorT_eraseCompare(SortedVectorT<ELEMENT_TYPE>* p_sortedVector, ComparatorT<ELEMENT_TYPE, COMPARED_TYPE, USER_TYPE>&& p_comparator)
+	{
+		GenericArray_eraseCompare((GenericArray*)p_sortedVector, (Comparator*)&p_comparator);
+	};
 }

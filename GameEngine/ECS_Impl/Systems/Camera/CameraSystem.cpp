@@ -74,7 +74,6 @@ namespace _GameEngine::_ECS
 
 		EntityFilter_alloc_2c(&l_cameraSystem->EntityFilter, p_ecs, &CameraType, &TransformComponentType, l_cameraSystem, cameraSystem_onEntityElligible, cameraSystem_onEntityNoMoreElligible);
 		_ECS::SystemHeader_init(&l_cameraSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*) & p_updateSequencer->UpdateSequencer);
-		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) &l_cameraSystem->SystemHeader.Update);
 	};
 
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface)

@@ -25,6 +25,7 @@ namespace _Core
 	void SortedSequencer_free(SortedSequencer* p_sequencer);
 
 	void SortedSequencer_addOperation(SortedSequencer* p_sortedSequencer, SortedSequencerOperation* p_sortedSequencerOperation);
+	void SortedSequencer_removeOperation(SortedSequencer* p_sortedSequencer, SortedSequencerOperation* p_sortedSequencerOperation);
 	void SortedSequencer_execute(SortedSequencer* p_sortedSequencer, void* p_input);
 	void SortedSequencer_execute_afterCallback(SortedSequencer* p_sortedSequencer, void* p_input, Callback* p_afterEveryExecutionCallback);
 
