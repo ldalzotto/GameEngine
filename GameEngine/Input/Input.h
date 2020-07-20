@@ -191,6 +191,8 @@ namespace _GameEngine::_Input
 		std::vector<KeyStateFlag> InputState;
 		std::queue<InputEvent> InputEventsLastFrame;
 		std::vector<InputKey> InputKeysReleasedThisFrame;
+		// We store juste pressed events for mouse because glfw doesn't trigger hold events. Thus, we manually trigger them.
+		std::vector<int> MouseInputKeyCodeJustPressedThisFrame;
 		std::unordered_map<int, InputKey> GLFWKeyToInputKeyLookup;
 		InputMouse InputMouse;
 	};

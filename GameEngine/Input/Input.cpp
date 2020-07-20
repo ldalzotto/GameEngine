@@ -12,6 +12,7 @@ namespace _GameEngine::_Input
 
 	void OnKeyEvent(GLFWwindow* p_window, int key, int scancode, int action, int mods);
 	void OnMouseEvent(GLFWwindow* window, int button, int action, int mods);
+	bool InputKey_isMouse(InputKey p_inputKey);
 
 	void initializeGLFWLookup(Input* p_input);
 
@@ -34,7 +35,7 @@ namespace _GameEngine::_Input
 
 		glfwSetKeyCallback(p_window->Window, OnKeyEvent);
 		glfwSetMouseButtonCallback(p_window->Window, OnMouseEvent);
-		
+
 		if (p_input->InputMouse.MouseEnabled)
 		{
 			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition.x, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition.y);
@@ -59,12 +60,19 @@ namespace _GameEngine::_Input
 			p_input->InputKeysReleasedThisFrame.clear();
 		}
 
+		while (p_input->MouseInputKeyCodeJustPressedThisFrame.size() > 0)
+		{
+			int l_inputKeyCode = p_input->MouseInputKeyCodeJustPressedThisFrame.at(p_input->MouseInputKeyCodeJustPressedThisFrame.size() - 1);
+			p_input->InputEventsLastFrame.push(InputEvent{ l_inputKeyCode, GLFW_REPEAT });
+			p_input->MouseInputKeyCodeJustPressedThisFrame.pop_back();
+		}
+
 		while (p_input->InputEventsLastFrame.size() > 0)
 		{
-			InputEvent l_inputEvent = p_input->InputEventsLastFrame.front();			
+			InputEvent l_inputEvent = p_input->InputEventsLastFrame.front();
 			InputKey l_inputKey = p_input->GLFWKeyToInputKeyLookup.at(l_inputEvent.KeyCode);
 			KeyStateFlag* l_oldStateFlag = &p_input->InputState.at(l_inputKey);
-			
+
 			if ((*l_oldStateFlag & (KeyStateFlag::PRESSED | KeyStateFlag::PRESSED_THIS_FRAME)) && l_inputEvent.Action == GLFW_RELEASE)
 			{
 				*l_oldStateFlag = KeyStateFlag::RELEASED_THIS_FRAME;
@@ -77,8 +85,17 @@ namespace _GameEngine::_Input
 			else if ((*l_oldStateFlag & (KeyStateFlag::NONE | KeyStateFlag::RELEASED_THIS_FRAME)) && l_inputEvent.Action == GLFW_PRESS)
 			{
 				*l_oldStateFlag = KeyStateFlag::PRESSED_THIS_FRAME;
+
+				if (p_input->InputMouse.MouseEnabled)
+				{
+					// We manually push the repeat event because glfw event is doesn't triggered by glfw
+					if (InputKey_isMouse(l_inputKey))
+					{
+						p_input->MouseInputKeyCodeJustPressedThisFrame.push_back(l_inputEvent.KeyCode);
+					}
+				}
 			}
-			
+
 			p_input->InputEventsLastFrame.pop();
 		}
 
@@ -252,5 +269,21 @@ namespace _GameEngine::_Input
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_MOUSE_BUTTON_LEFT, InputKey::MOUSE_BUTTON_LEFT);
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_MOUSE_BUTTON_RIGHT, InputKey::MOUSE_BUTTON_RIGHT);
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_MOUSE_BUTTON_MIDDLE, InputKey::MOUSE_BUTTON_MIDDLE);
+	};
+
+	bool InputKey_isMouse(InputKey p_inputKey)
+	{
+		return
+			p_inputKey == InputKey::MOUSE_BUTTON_1 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_2 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_3 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_4 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_5 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_6 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_7 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_8 ||
+			p_inputKey == InputKey::MOUSE_BUTTON_LAST ||
+			p_inputKey == InputKey::MOUSE_BUTTON_RIGHT ||
+			p_inputKey == InputKey::MOUSE_BUTTON_MIDDLE;
 	};
 }

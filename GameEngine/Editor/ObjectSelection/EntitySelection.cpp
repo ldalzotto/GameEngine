@@ -61,6 +61,10 @@ namespace _GameEngineEditor
 				}
 			}
 		}
+		else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::RELEASED_THIS_FRAME))
+		{
+			p_entitySelection->SelectedEntity = nullptr;
+		}
 
 		if (p_entitySelection->SelectedEntity)
 		{
