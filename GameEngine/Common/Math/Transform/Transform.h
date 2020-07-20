@@ -19,6 +19,8 @@ namespace _GameEngine::_Math
 		_Math::Vector3f LocalPosition;
 		_Math::Quaternionf LocalRotation;
 		_Math::Vector3f LocalScale;
+
+		/** This matrix will always be relative to the top level Transform (a Transform without parent). */
 		_Math::Matrix4x4f LocalToWorldMatrix;
 	};
 

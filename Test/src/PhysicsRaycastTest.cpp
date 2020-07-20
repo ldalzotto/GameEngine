@@ -1,139 +1,40 @@
-#include "SandboxApplication.h"
+#include "Lib/IntegrationTest.h"
 
-#include "Log/Log.hpp"
+#include "Lib/EntityCreation.h"
 
 #include "GameEngineApplication.h"
-#include "EngineSequencers/EngineSequencers.h"
 
-#include "Math/Segment/Segment.h"
 #include "Math/Math.h"
+#include "Math/Transform/Transform.h"
+#include "Math/Quaternion/QuaternionMath.h"
+#include "Math/Segment/Segment.h"
 
-#include "ECS/EntityT.hpp"
 #include "ECS/ComponentT.hpp"
 #include "ECS/ECSEventQueueT.hpp"
+#include "ECS/EntityT.hpp"
 
 #include "ECS_Impl/Components/Camera/Camera.h"
-#include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
-#include "ECS_Impl/Components/Transform/TransformComponent.h"
-#include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
-#include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
-#include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
-#include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
+#include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Components/Transform/TransformRotate.h"
+#include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
 
-#include "Math/Quaternion/QuaternionMath.h"
+using namespace _GameEngine::_Test;
 
-#include <iostream>
-#include <stdexcept>
-#include <cstdlib>
 
-using namespace _GameEngine;
-
-void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication);
-void SandboxApplication_update(void* p_null, _GameEngine::GameEngineApplicationInterface* l_interface);
-
-int main()
+struct TestIntTest
 {
-	SandboxApplication l_app = SanboxApplication_alloc();
-	SandboxApplication_initialize(&l_app);
-	return SandboxApplication_run(&l_app);
+	_ECS::TransformComponent** PhysicsRayBegin;
+	_ECS::TransformComponent** PhysicsRayEnd;
 };
 
-SandboxApplication SanboxApplication_alloc()
-{
-	SandboxApplication l_sandboxApplication{};
-	l_sandboxApplication.App = app_alloc();
-	return l_sandboxApplication;
-};
+void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_gameEngine);
 
-int SandboxApplication_run(SandboxApplication* p_sandboxApplication)
-{
-	try
-	{
-		app_run(p_sandboxApplication->App);
-	}
-	catch (const std::exception& e)
-	{
-		MyLog_pushLog(&p_sandboxApplication->App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, (char*)e.what());
-		app_free(p_sandboxApplication->App);
-		return EXIT_FAILURE;
-	}
-	catch (...)
-	{
-		MyLog_pushLog(&p_sandboxApplication->App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, "Unexpected Error");
-		app_free(p_sandboxApplication->App);
-		return EXIT_FAILURE;
-	}
-
-	app_free(p_sandboxApplication->App);
-	return EXIT_SUCCESS;
-};
-
-_ECS::Entity* l_cameraEntity;
-
-_ECS::Entity* l_sceneModelsRootEntity;
-_ECS::TransformComponent* l_sceneModelsRootTransform;
-
-_ECS::Entity* l_rayEntity;
-_ECS::TransformComponent* l_rayEntityTransform;
-_ECS::Entity* l_rayBeginEntity;
-_ECS::TransformComponent* l_rayBeginEntityTransform;
-_ECS::Entity* l_rayEndEntity;
-_ECS::TransformComponent* l_rayEndEntityTransform;
-
-struct SandboxApplicationCubeCreationInfo
-{
-	_Math::Vector3f LocalPosition;
-	_Math::Quaternionf LocalRotation;
-	_Math::Vector3f LocalScale;
-	bool WithMeshBound;
-	_ECS::MeshRendererInitInfo* MeshRendererInitInfo;
-};
-
-void SandboxApplication_createCubeEntity(SandboxApplication* p_sandboxApplication, SandboxApplicationCubeCreationInfo* p_sandboxCubeCreationInfo, _ECS::Entity** out_entity, _ECS::TransformComponent** out_entitytransform)
-{
-
-	{
-		*out_entity = _ECS::Entity_alloc();
-		auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(out_entity);
-		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addEntityMessage);
-	}
-
-	{
-		_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-
-		_ECS::TransformInitInfo l_transformInitInfo{};
-		l_transformInitInfo.LocalPosition = p_sandboxCubeCreationInfo->LocalPosition;
-		l_transformInitInfo.LocalRotation = p_sandboxCubeCreationInfo->LocalRotation;
-		l_transformInitInfo.LocalScale = p_sandboxCubeCreationInfo->LocalScale;
-		_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
-		*out_entitytransform = *l_transformComponent;
-
-		auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_transformComponent);
-		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addComponentMessage);
-	}
-
-	if (p_sandboxCubeCreationInfo->MeshRendererInitInfo)
-	{
-		_ECS::MeshRenderer** l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
-		_ECS::MeshRenderer_init(l_meshRenderer, &p_sandboxApplication->App->Render.RenderInterface, p_sandboxCubeCreationInfo->MeshRendererInitInfo);
-
-		auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_meshRenderer);
-		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addComponentMessage);
-	}
-
-	if (p_sandboxCubeCreationInfo->WithMeshBound)
-	{
-		auto l_meshRendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
-		auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_meshRendererBound);
-		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addComponentMessage);
-	}
-
-};
+_Render::MaterialUniqueKey CubeMeshRendererMaterialKey;
+_ECS::MeshRendererInitInfo CubeMeshRendererInit;
 
 struct CubeCrossCreationInfo
 {
@@ -144,7 +45,7 @@ struct CubeCrossCreationInfo
 	_Math::Vector3f* RotationAxis;
 };
 
-void SanboxApplication_createCubeCross(SandboxApplication* p_sandboxApplication, CubeCrossCreationInfo* p_cubeCrossCreationInfo)
+void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeCrossCreationInfo* p_cubeCrossCreationInfo)
 {
 	_ECS::Entity* l_parentEntity;
 	_ECS::TransformComponent* l_parentEntityTransform;
@@ -162,37 +63,22 @@ void SanboxApplication_createCubeCross(SandboxApplication* p_sandboxApplication,
 	_ECS::TransformComponent* l_bottomRightEntityTransform;
 
 	{
-		SandboxApplicationCubeCreationInfo l_parentCreationInfo{};
+		CubeCreationInfo l_parentCreationInfo{};
 		l_parentCreationInfo.LocalPosition = p_cubeCrossCreationInfo->LocalPosition;
 		l_parentCreationInfo.LocalRotation = p_cubeCrossCreationInfo->LocalRotation;
 		l_parentCreationInfo.LocalScale = p_cubeCrossCreationInfo->LocalScale;
-		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_parentEntity, &l_parentEntityTransform);
+		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_parentEntity, &l_parentEntityTransform);
 	}
 
 
-	std::unordered_map<std::string, void*> l_defaultMaterialInput
 	{
-		{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
-		{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/MinecraftDirtV2.png"}
-	};
-
-	_Render::MaterialUniqueKey l_materialKey{};
-	l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
-	l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
-
-	_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-	l_meshRendererInitInfo.InputParameters = l_defaultMaterialInput;
-	l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
-
-
-	{
-		SandboxApplicationCubeCreationInfo l_parentCreationInfo{};
+		CubeCreationInfo l_parentCreationInfo{};
 		l_parentCreationInfo.LocalPosition = { -1.0f, 1.0f, 0.0f };
 		l_parentCreationInfo.LocalRotation = _Math::Quaternionf_identity();
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
-		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_upLeftEntity, &l_upLeftEntityTransform);
+		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
+		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_upLeftEntity, &l_upLeftEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -201,13 +87,13 @@ void SanboxApplication_createCubeCross(SandboxApplication* p_sandboxApplication,
 	}
 
 	{
-		SandboxApplicationCubeCreationInfo l_parentCreationInfo{};
+		CubeCreationInfo l_parentCreationInfo{};
 		l_parentCreationInfo.LocalPosition = { 1.0f, 1.0f, 0.0f };
 		l_parentCreationInfo.LocalRotation = _Math::Quaternionf_identity();
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
-		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_upRightEntity, &l_upRightEntityTransform);
+		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
+		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_upRightEntity, &l_upRightEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -216,13 +102,13 @@ void SanboxApplication_createCubeCross(SandboxApplication* p_sandboxApplication,
 	}
 
 	{
-		SandboxApplicationCubeCreationInfo l_parentCreationInfo{};
+		CubeCreationInfo l_parentCreationInfo{};
 		l_parentCreationInfo.LocalPosition = { -1.0f, -1.0f, 0.0f };
 		l_parentCreationInfo.LocalRotation = _Math::Quaternionf_identity();
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
-		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_bottomLeftEntity, &l_bottomLeftEntityTransform);
+		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
+		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_bottomLeftEntity, &l_bottomLeftEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -231,13 +117,13 @@ void SanboxApplication_createCubeCross(SandboxApplication* p_sandboxApplication,
 	}
 
 	{
-		SandboxApplicationCubeCreationInfo l_parentCreationInfo{};
+		CubeCreationInfo l_parentCreationInfo{};
 		l_parentCreationInfo.LocalPosition = { 1.0f, -1.0f, 0.0f };
 		l_parentCreationInfo.LocalRotation = _Math::Quaternionf_identity();
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
-		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_bottomRightEntity, &l_bottomRightEntityTransform);
+		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
+		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_bottomRightEntity, &l_bottomRightEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -258,13 +144,32 @@ void SanboxApplication_createCubeCross(SandboxApplication* p_sandboxApplication,
 		auto l_transformRotate = _ECS::ComponentT_alloc<_ECS::TransformRotate>();
 		(*l_transformRotate)->Speed = .5f;
 		(*l_transformRotate)->Axis = *p_cubeCrossCreationInfo->RotationAxis;
-		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, &p_sandboxApplication->App->ECS);
+		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, l_gameEngine->ECS);
 	}
 };
 
-void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
+
+
+void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test)
 {
-	GameEngineApplication* l_app = p_sandboxApplication->App;
+	{
+		std::unordered_map<std::string, void*> l_defaultMaterialInput
+		{
+			{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
+			{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/MinecraftDirtV2.png"}
+		};
+
+		CubeMeshRendererMaterialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
+		CubeMeshRendererMaterialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
+
+		CubeMeshRendererInit.InputParameters = l_defaultMaterialInput;
+		CubeMeshRendererInit.MaterialUniqueKey = &CubeMeshRendererMaterialKey;
+	}
+
+	_ECS::Entity* l_cameraEntity;
+	_ECS::TransformComponent** l_rayTransform;
+	_ECS::TransformComponent** l_sceneModelsRootTransform;
+
 	// Camera
 	{
 		{
@@ -289,9 +194,9 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
 		}
 	}
-
 	// Ray
 	{
+		_ECS::Entity* l_rayEntity;
 		{
 			l_rayEntity = _ECS::Entity_alloc();
 			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayEntity);
@@ -300,8 +205,7 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 
 		{
 			_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-			l_rayEntityTransform = *l_transformComponent;
-
+			l_rayTransform = l_transformComponent;
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
@@ -309,6 +213,9 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_rayEntity, l_transformComponent, &l_app->ECS);
 		}
+
+		_ECS::Entity* l_rayBeginEntity;
+		_ECS::Entity* l_rayEndEntity;
 
 		//Ray Begin
 		{
@@ -320,7 +227,7 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 
 			{
 				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-				l_rayBeginEntityTransform = *l_transformComponent;
+				p_test->PhysicsRayBegin = l_transformComponent;
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
 				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -100.0f };
@@ -344,7 +251,7 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 
 			{
 				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-				l_rayEndEntityTransform = *l_transformComponent;
+				p_test->PhysicsRayEnd = l_transformComponent;
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
 				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, 100.0f };
@@ -358,12 +265,13 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 			}
 		}
 
-		_Math::Transform_addChild(&l_rayEntityTransform->Transform, &l_rayBeginEntityTransform->Transform);
-		_Math::Transform_addChild(&l_rayEntityTransform->Transform, &l_rayEndEntityTransform->Transform);
+		_Math::Transform_addChild(&(*l_rayTransform)->Transform, &(*p_test->PhysicsRayBegin)->Transform);
+		_Math::Transform_addChild(&(*l_rayTransform)->Transform, &(*p_test->PhysicsRayEnd)->Transform);
 	}
 
 	// Scene root
 	{
+		_ECS::Entity* l_sceneModelsRootEntity;
 		{
 			l_sceneModelsRootEntity = _ECS::Entity_alloc();
 			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_sceneModelsRootEntity);
@@ -372,8 +280,8 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 
 		{
 			_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-			l_sceneModelsRootTransform = *l_transformComponent;
-
+			l_sceneModelsRootTransform = l_transformComponent;
+			
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
@@ -386,42 +294,43 @@ void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 		}
 	}
 	_Math::Transform_addChild(
-		&l_sceneModelsRootTransform->Transform,
-		&l_rayEntityTransform->Transform
+		&(*l_sceneModelsRootTransform)->Transform,
+		&(*l_rayTransform)->Transform
 	);
+
 
 	// Cubes
 	{
 		{
 			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 1.0f };
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
-			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
+			l_cubeCrossCreationInfo.Parent = *l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 1.0f, 0.0f, 0.0f };
 			l_cubeCrossCreationInfo.LocalRotation = _Math::Quaternionf_identity();
 			l_cubeCrossCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
-			SanboxApplication_createCubeCross(p_sandboxApplication, &l_cubeCrossCreationInfo);
+			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
 		}
 
 		{
 			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 0.0f };
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
-			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
+			l_cubeCrossCreationInfo.Parent = *l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 0.0f, -1.0f, 2.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, &l_cubeCrossCreationInfo.LocalRotation);
 			l_cubeCrossCreationInfo.LocalScale = { 2.0f, 1.0f, 1.0f };
 			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
-			SanboxApplication_createCubeCross(p_sandboxApplication, &l_cubeCrossCreationInfo);
+			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
 		}
 	}
 
-	_Core::SortedSequencerOperationT<GameEngineApplicationInterface> l_sandboxApplicationUpdate;
-	l_sandboxApplicationUpdate.Priority = _GameEngine::END_OF_UPDATE;
-	l_sandboxApplicationUpdate.OperationCallback = { SandboxApplication_update };
-	_Core::SortedSequencerT_addOperation(&l_app->UpdateSequencer.UpdateSequencer, &l_sandboxApplicationUpdate);
-};
 
-void SandboxApplication_update(void* p_null, _GameEngine::GameEngineApplicationInterface* l_interface)
+	_Core::CallbackT<TestIntTest, _GameEngine::GameEngineApplicationInterface> l_testUpdate = { TestInt_udpate, p_test };
+	_Core::ObserverT_register(&l_app->EndOfUpdate, (_Core::CallbackT<void, _GameEngine::GameEngineApplicationInterface>*)&l_testUpdate);
+	
+}
+
+void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_interface)
 {
 #ifndef comment
 	{
@@ -431,8 +340,8 @@ void SandboxApplication_update(void* p_null, _GameEngine::GameEngineApplicationI
 #endif
 
 	{
-		_Math::Vector3f l_rayBeginPoint = _Math::Transform_getWorldPosition(&l_rayBeginEntityTransform->Transform);
-		_Math::Vector3f l_rayEndPoint = _Math::Transform_getWorldPosition(&l_rayEndEntityTransform->Transform);
+		_Math::Vector3f l_rayBeginPoint = _Math::Transform_getWorldPosition(&(*p_test->PhysicsRayBegin)->Transform);
+		_Math::Vector3f l_rayEndPoint = _Math::Transform_getWorldPosition(&(*p_test->PhysicsRayEnd)->Transform);
 		_Math::Vector3f l_color = { 0.0f, 1.0f, 0.0f };
 
 		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
@@ -467,5 +376,17 @@ void SandboxApplication_update(void* p_null, _GameEngine::GameEngineApplicationI
 		}
 
 	}
-
 }
+
+int main()
+{
+	{
+		TestIntTest l_test{};
+		_GameEngine::GameEngineApplication* l_app = IntegrationTest_begin();
+		TestInt_init(l_app, &l_test);
+		// bool l_exit = false;
+		_GameEngine::app_mainLoop(l_app);
+		IntegrationTest_end(l_app);
+	}
+	return 0;
+};

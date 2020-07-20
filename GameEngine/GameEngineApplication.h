@@ -50,6 +50,5 @@ namespace _GameEngine
 	GameEngineApplication* app_alloc();
 	void app_free(GameEngineApplication* p_app);
 	void app_mainLoop(GameEngineApplication* p_app);
-	void app_cleanup(GameEngineApplication* p_app);
-	void app_run(GameEngineApplication* p_app);
+	int app_run(GameEngineApplication* p_app);
 } // namespace _GameEngine

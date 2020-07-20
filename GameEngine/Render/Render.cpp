@@ -225,6 +225,8 @@ namespace _GameEngine::_Render
 		freeVulkan(p_render);
 
 		RenderHookCallbacks_free(&p_render->RenderHookCallbacks);
+
+		Window_closeWindow(&p_render->Window);
 	};
 
 	void Render_recreateSwapChain(Render* p_render)

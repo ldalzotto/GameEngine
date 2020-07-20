@@ -1,9 +1,5 @@
 -- TODO --
 
--- Testing --
-
-# Moving the Sandbox application to a test package. Were multiple case can be easily tested.
-
 -- Physics --
 
 # Adding Layers to BoxCollider.
@@ -48,8 +44,11 @@
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 -- DONE --
+
+-- Testing --
+
+[X] # Moving the Sandbox application to a test package. Were multiple case can be easily tested.
 
 -- ECS --
 

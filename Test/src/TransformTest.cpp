@@ -1,5 +1,3 @@
-#include "TransformTest.h"
-
 #include <stdexcept>
 
 #include "Math/Math.h"
@@ -65,11 +63,9 @@ namespace _GameEngine::_Test
 	void Transform_parenting_test()
 	{
 		{
-			Component* l_rootComponent;
-			TransformComponent* l_root;
+			TransformComponent** l_root;
 			{
-				l_rootComponent = Component_alloc(TransformComponentType, sizeof(TransformComponent));
-				l_root = (TransformComponent*)l_rootComponent->Child;
+				l_root = ComponentT_alloc<TransformComponent>();
 
 				TransformInitInfo l_rootInitInfo{};
 				l_rootInitInfo.LocalPosition = { 1.0f, 0.0f, -1.0f };
@@ -78,14 +74,12 @@ namespace _GameEngine::_Test
 					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
 				}
 				l_rootInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-				TransformComponent_init(l_rootComponent, &l_rootInitInfo);
+				TransformComponent_init(l_root, &l_rootInitInfo);
 			}
 
-			Component* l_child1Component;
-			TransformComponent* l_child1;
+			TransformComponent** l_child1;
 			{
-				l_child1Component = Component_alloc(TransformComponentType, sizeof(TransformComponent));
-				l_child1 = (TransformComponent*)l_child1Component->Child;
+				l_child1 = ComponentT_alloc<TransformComponent>();
 
 				TransformInitInfo l_rootInitInfo{};
 				l_rootInitInfo.LocalPosition = { 0.0f, 1.0f, 0.0f };
@@ -94,16 +88,14 @@ namespace _GameEngine::_Test
 					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
 				}
 				l_rootInitInfo.LocalScale = { 2.0f, 2.0f, 2.0f };
-				TransformComponent_init(l_child1Component, &l_rootInitInfo);
+				TransformComponent_init(l_child1, &l_rootInitInfo);
 			}
 
-			_Math::Transform_addChild(&l_root->Transform, &l_child1->Transform);
+			_Math::Transform_addChild(&(*l_root)->Transform, &(*l_child1)->Transform);
 
-			Component* l_child2Component;
-			TransformComponent* l_child2;
+			TransformComponent** l_child2;
 			{
-				l_child2Component = Component_alloc(TransformComponentType, sizeof(TransformComponent));
-				l_child2 = (TransformComponent*)l_child2Component->Child;
+				l_child2 = ComponentT_alloc<TransformComponent>();
 
 				TransformInitInfo l_rootInitInfo{};
 				l_rootInitInfo.LocalPosition = { 1.0f, 1.0f, 0.0f };
@@ -112,13 +104,13 @@ namespace _GameEngine::_Test
 					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
 				}
 				l_rootInitInfo.LocalScale = { 2.0f, 2.0f, 2.0f };
-				TransformComponent_init(l_child2Component, &l_rootInitInfo);
+				TransformComponent_init(l_child2, &l_rootInitInfo);
 			}
 
-			_Math::Transform_addChild(&l_child1->Transform, &l_child2->Transform);
+			_Math::Transform_addChild(&(*l_child1)->Transform, &(*l_child2)->Transform);
 
 			_Math::Vector3f l_worldPositionChild1ValueTest = { 1.0f, 1.0f, -1.0f };
-			test_assert(_Math::Transform_getWorldPosition(&l_child1->Transform), l_worldPositionChild1ValueTest);
+			test_assert(_Math::Transform_getWorldPosition(&(*l_child1)->Transform), l_worldPositionChild1ValueTest);
 
 			_Math::Quaternionf l_wordRotationValueTest;
 			{
@@ -131,25 +123,23 @@ namespace _GameEngine::_Test
 
 			}
 
-			test_assert(_Math::Transform_getWorldRotation(&l_child1->Transform), l_wordRotationValueTest);
+			test_assert(_Math::Transform_getWorldRotation(&(*l_child1)->Transform), l_wordRotationValueTest);
 
 			_Math::Vector3f l_worldScaleChild2ValueTest = { 4.0f, 4.0f, 4.0f };
-			test_assert(_Math::Transform_getWorldScale(&l_child2->Transform), l_worldScaleChild2ValueTest);
+			test_assert(_Math::Transform_getWorldScale(&(*l_child2)->Transform), l_worldScaleChild2ValueTest);
 
-			Component_free(&l_rootComponent);
-			Component_free(&l_child1Component);
-			Component_free(&l_child2Component);
+			Component_free((_ECS::Component**)l_root);
+			Component_free((_ECS::Component**)l_child1);
+			Component_free((_ECS::Component**)l_child2);
 		}
 	};
 
 	void Transform_referenceSwitch()
 	{
 		{
-			Component* l_rootComponent;
-			TransformComponent* l_root;
+			TransformComponent** l_root;
 			{
-				l_rootComponent = Component_alloc(TransformComponentType, sizeof(TransformComponent));
-				l_root = (TransformComponent*)l_rootComponent->Child;
+				l_root = ComponentT_alloc<TransformComponent>();
 
 				TransformInitInfo l_rootInitInfo{};
 				l_rootInitInfo.LocalPosition = { 1.0f, 0.0f, -1.0f };
@@ -158,14 +148,12 @@ namespace _GameEngine::_Test
 					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
 				}
 				l_rootInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-				TransformComponent_init(l_rootComponent, &l_rootInitInfo);
+				TransformComponent_init(l_root, &l_rootInitInfo);
 			}
 
-			Component* l_child1Component;
-			TransformComponent* l_child1;
+			TransformComponent** l_child1;
 			{
-				l_child1Component = Component_alloc(TransformComponentType, sizeof(TransformComponent));
-				l_child1 = (TransformComponent*)l_child1Component->Child;
+				l_child1 = ComponentT_alloc<TransformComponent>();
 
 				TransformInitInfo l_rootInitInfo{};
 				l_rootInitInfo.LocalPosition = { 0.0f, 1.0f, 0.0f };
@@ -174,12 +162,12 @@ namespace _GameEngine::_Test
 					_Math::Quaternion_fromEulerAngles(&l_localEuler, &l_rootInitInfo.LocalRotation);
 				}
 				l_rootInitInfo.LocalScale = { 2.0f, 2.0f, 2.0f };
-				TransformComponent_init(l_child1Component, &l_rootInitInfo);
+				TransformComponent_init(l_child1, &l_rootInitInfo);
 			}
 
-			_Math::Transform_addChild(&l_root->Transform, &l_child1->Transform);
+			_Math::Transform_addChild(&(*l_root)->Transform, &(*l_child1)->Transform);
 
-			_Math::Matrix4x4f l_child1ToRootMatrix = _Math::Transform_calculateMatrixToProjectFromTransformToAnother(&l_child1->Transform, &l_root->Transform);
+			_Math::Matrix4x4f l_child1ToRootMatrix = _Math::Transform_calculateMatrixToProjectFromTransformToAnother(&(*l_child1)->Transform, &(*l_root)->Transform);
 			_Math::Vector4f l_child1RelativePosition = { 0.0f, 1.0f, 0.0f, 0.0f };
 			{
 				_Math::Vector4f l_child1TransformedPosition;
@@ -189,22 +177,26 @@ namespace _GameEngine::_Test
 				test_assert(l_child1TransformedPosition, l_compared);
 			}
 
-			Component_free(&l_rootComponent);
-			Component_free(&l_child1Component);
+			Component_free((_ECS::Component**)l_root);
+			Component_free((_ECS::Component**)l_child1);
 		}
 	};
 
-	// TODO -> Tests are in a failure state because the _Math::Quaternion_fromAxis() is not calculated with the proper axis.
-	/*
-		In the _Math::Quaternion_fromAxis() calculation, we have.
-			right -> (0,0,1)
-			up    -> (1,0,0)
-			fwd   -> (0,1,0)
-	*/
-	void TransformTest_test()
-	{
-		Transform_simpleTransformation_test();
-		Transform_parenting_test();
-		Transform_referenceSwitch();
-	};
 }
+
+
+// TODO -> Tests are in a failure state because the _Math::Quaternion_fromAxis() is not calculated with the proper axis.
+/*
+	In the _Math::Quaternion_fromAxis() calculation, we have.
+		right -> (0,0,1)
+		up    -> (1,0,0)
+		fwd   -> (0,1,0)
+*/
+int main()
+{
+	_GameEngine::_Test::Transform_simpleTransformation_test();
+	_GameEngine::_Test::Transform_parenting_test();
+	_GameEngine::_Test::Transform_referenceSwitch();
+
+	return 0;
+};

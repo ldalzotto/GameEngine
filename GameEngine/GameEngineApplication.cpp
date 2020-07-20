@@ -22,13 +22,14 @@ namespace _GameEngine
 
 		_Core::ObserverT_alloc(&l_gameEngineApplication->NewFrame);
 		_Core::ObserverT_alloc(&l_gameEngineApplication->PreRender);
+		_Core::ObserverT_alloc(&l_gameEngineApplication->EndOfUpdate);
 		GameEngineApplicationInterface_build(&l_gameEngineApplication->GameEngineApplicationInterface, l_gameEngineApplication);
 
 		MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
 		UpdateSequencer_alloc(&l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->GameEngineApplicationInterface);
-		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window, &l_gameEngineApplication->Log);
 		_Physics::Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
 		_Render::Render_build(&l_gameEngineApplication->Render, &l_gameEngineApplication->Log);
+		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
 
@@ -70,6 +71,7 @@ namespace _GameEngine
 
 		_Core::ObserverT_free(&p_app->NewFrame);
 		_Core::ObserverT_free(&p_app->PreRender);
+		_Core::ObserverT_free(&p_app->EndOfUpdate);
 
 		MyLog_free(&p_app->Log);
 		delete p_app;
@@ -121,14 +123,27 @@ namespace _GameEngine
 		MyLog_processLogs(&l_app->Log);
 	};
 
-	void app_cleanup(GameEngineApplication* p_app)
+	int app_run(GameEngineApplication* p_app)
 	{
-		Window_closeWindow(&p_app->Render.Window);
-	};
+		try
+		{
+			app_mainLoop(p_app);
+		}
+		catch (const std::exception& e)
+		{
+			MyLog_pushLog(&p_app->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, (char*)e.what());
+			app_free(p_app);
+			return EXIT_FAILURE;
+		}
+		catch (...)
+		{
+			MyLog_pushLog(&p_app->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, "Unexpected Error");
+			app_free(p_app);
+			return EXIT_FAILURE;
+		}
 
-	void app_run(GameEngineApplication* p_app)
-	{
-		app_mainLoop(p_app);
-		app_cleanup(p_app);
+		app_free(p_app);
+		return EXIT_SUCCESS;
+
 	};
 } // namespace _GameEngine
