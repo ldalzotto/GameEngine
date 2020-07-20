@@ -3,7 +3,6 @@
 #include "Log/Log.hpp"
 
 #include "GameEngineApplication.h"
-#include "GameEngineEditor.h"
 #include "EngineSequencers/EngineSequencers.h"
 
 #include "Math/Segment/Segment.h"
@@ -48,7 +47,6 @@ SandboxApplication SanboxApplication_alloc()
 {
 	SandboxApplication l_sandboxApplication{};
 	l_sandboxApplication.App = app_alloc();
-	l_sandboxApplication.App_Editor = _GameEngineEditor::GameEngineEditor_alloc(&l_sandboxApplication.App->GameEngineApplicationInterface);
 	return l_sandboxApplication;
 };
 
@@ -61,19 +59,16 @@ int SandboxApplication_run(SandboxApplication* p_sandboxApplication)
 	catch (const std::exception& e)
 	{
 		MyLog_pushLog(&p_sandboxApplication->App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, (char*)e.what());
-		_GameEngineEditor::GameEngineEditor_free(&p_sandboxApplication->App_Editor, &p_sandboxApplication->App->GameEngineApplicationInterface);
 		app_free(p_sandboxApplication->App);
 		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
 		MyLog_pushLog(&p_sandboxApplication->App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, "Unexpected Error");
-		_GameEngineEditor::GameEngineEditor_free(&p_sandboxApplication->App_Editor, &p_sandboxApplication->App->GameEngineApplicationInterface);
 		app_free(p_sandboxApplication->App);
 		return EXIT_FAILURE;
 	}
 
-	_GameEngineEditor::GameEngineEditor_free(&p_sandboxApplication->App_Editor, &p_sandboxApplication->App->GameEngineApplicationInterface);
 	app_free(p_sandboxApplication->App);
 	return EXIT_SUCCESS;
 };

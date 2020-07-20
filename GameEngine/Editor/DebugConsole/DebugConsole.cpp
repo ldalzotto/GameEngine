@@ -10,8 +10,8 @@
 
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 
-#include "IMGuiRender/DrawableWindow.h"
-#include "EditWindows/TransformWindow.h"
+#include "Editor/IMGuiRender/DrawableWindow.h"
+#include "Editor/EditWindows/TransformWindow.h"
 
 #include "DebugCommandParser.h"
 

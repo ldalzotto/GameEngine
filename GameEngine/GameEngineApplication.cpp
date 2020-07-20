@@ -32,6 +32,10 @@ namespace _GameEngine
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
 
+#if GAMEENGINE_EDITOR
+		_GameEngineEditor::GameEngineEditor_alloc(&l_gameEngineApplication->Editor, &l_gameEngineApplication->GameEngineApplicationInterface);
+#endif
+
 		_GameLoop::set_newFrameCallback(&l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
 		_GameLoop::set_updateCallback(&l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
 		_GameLoop::set_endOfUpdateCallback(&l_gameEngineApplication->GameLoop, app_endOfUpdate, l_gameEngineApplication);
@@ -39,7 +43,6 @@ namespace _GameEngine
 		_GameLoop::set_endOfFrameCallback(&l_gameEngineApplication->GameLoop, app_endOfFrame, l_gameEngineApplication);
 
 		GameEngineApplication_initializeSystems(l_gameEngineApplication);
-
 		return l_gameEngineApplication;
 	}
 
@@ -53,6 +56,11 @@ namespace _GameEngine
 
 	void app_free(GameEngineApplication* p_app)
 	{
+
+#if GAMEENGINE_EDITOR
+		_GameEngineEditor::GameEngineEditor_free(&p_app->Editor, &p_app->GameEngineApplicationInterface);
+#endif
+
 		_ECS::EntityComponent_free(&p_app->ECS);
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
 		_Render::Render_free(&p_app->Render);

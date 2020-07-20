@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IMGuiRender/DrawableWindow.h"
+#include "Editor/IMGuiRender/DrawableWindow.h"
 
 namespace _GameEngine::_ECS
 {

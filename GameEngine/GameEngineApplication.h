@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameEngineApplicationConfiguration.hpp"
 #include <functional>
 
 #include "Functional/Callback/ObserverT.hpp"
@@ -14,6 +15,10 @@
 #include "Render/Render.h"
 #include "ECS/ECS.h"
 #include "Input/Input.h"
+
+#if GAMEENGINE_EDITOR
+#include "Editor/GameEngineEditor.h"
+#endif
 
 #include "GameEngineApplicationInterface.h"
 
@@ -36,6 +41,10 @@ namespace _GameEngine
 		_Render::Render Render;
 		_Input::Input Input;
 		_ECS::ECS ECS;
+
+#if GAMEENGINE_EDITOR
+		_GameEngineEditor::GameEngineEditor Editor;
+#endif
 	};
 
 	GameEngineApplication* app_alloc();

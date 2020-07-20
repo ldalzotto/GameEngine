@@ -11,6 +11,5 @@ add_executable(SandboxApplication ${SANDBOX_APP_PUBLIC} ${SANDBOX_APP_PRIVATE})
 target_include_directories(SandboxApplication PUBLIC "./")
 
 target_link_libraries(SandboxApplication PUBLIC GameEngine)
-target_link_libraries(SandboxApplication PUBLIC GameEngine_Editor)
 
 copy_assimp_dll(${PROJECT_BINARY_DIR}/${BUILD_TYPE}/Debug)
