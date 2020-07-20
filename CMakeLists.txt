@@ -13,4 +13,3 @@ add_subdirectory(GameEngine_Editor)
 
 add_subdirectory(SandboxApplication)
 add_subdirectory(Test)
-add_subdirectory(Core_cpp_test)

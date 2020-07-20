@@ -8,5 +8,11 @@ namespace _GameEngineEditor
 	struct GameEngineEditor;
 }
 
-_GameEngine::GameEngineApplication *App;
-_GameEngineEditor::GameEngineEditor *App_Editor;
+struct SandboxApplication
+{
+	_GameEngine::GameEngineApplication* App;
+	_GameEngineEditor::GameEngineEditor* App_Editor;
+};
+
+SandboxApplication SanboxApplication_alloc();
+int SandboxApplication_run(SandboxApplication* p_sandboxApplication);

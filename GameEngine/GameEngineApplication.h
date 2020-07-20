@@ -19,14 +19,15 @@
 
 namespace _GameEngine
 {
+
 	struct GameEngineApplication
 	{
 		GameEngineApplicationInterface GameEngineApplicationInterface;
 
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> NewFrame;
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> PreRender;
+		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> EndOfUpdate;
 		UpdateSequencer UpdateSequencer;
-		std::function<void(float)> SandboxUpdateHook;
 
 		GameLoop GameLoop;
 		::_Core::Log Log;
@@ -37,7 +38,7 @@ namespace _GameEngine
 		_ECS::ECS ECS;
 	};
 
-	GameEngineApplication* app_alloc(const std::function<void(float)>& p_sandboxUpdateHook);
+	GameEngineApplication* app_alloc();
 	void app_free(GameEngineApplication* p_app);
 	void app_mainLoop(GameEngineApplication* p_app);
 	void app_cleanup(GameEngineApplication* p_app);

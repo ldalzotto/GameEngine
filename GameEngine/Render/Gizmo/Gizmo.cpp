@@ -63,6 +63,7 @@ namespace _GameEngine::_Render
 	void Gizmo_alloc(Gizmo* p_gizmo, RenderInterface* p_renderInterface)
 	{
 		gizmoMesh_alloc(&p_gizmo->GizmoMesh, 2000, p_renderInterface->Device);
+		Gizmo_flushDrawStack(p_gizmo);
 		p_gizmo->GizmoMaterial = MaterialResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.MaterialResourceProvider, &Gizmo_MaterialKey);
 		MaterialInstanceInitInfo l_materialInstanceInitInfo{};
 		l_materialInstanceInitInfo.SourceMaterial = p_gizmo->GizmoMaterial;

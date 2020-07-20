@@ -1,18 +1,24 @@
 #include "GameEngineApplication.h"
 
+#include "ECS_Impl/Systems/Camera/CameraSystem.h"
+#include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
+#include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
+#include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
+
 namespace _GameEngine
 {
 	/// Game loop callback forward declaration
+	void GameEngineApplication_initializeSystems(GameEngineApplication* p_gameEngineApplication);
 	void app_newFrame(void* p_gameEngineApplication);
 	void app_update(void* p_closure, float p_delta);
+	void app_endOfUpdate(void* p_closure);
 	void app_render(void* p_closure);
 	void app_endOfFrame(void* p_closure);
 	///
 
-	GameEngineApplication* app_alloc(const std::function<void(float)>& p_sandboxUpdateHook)
+	GameEngineApplication* app_alloc()
 	{
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
-		l_gameEngineApplication->SandboxUpdateHook = p_sandboxUpdateHook;
 
 		_Core::ObserverT_alloc(&l_gameEngineApplication->NewFrame);
 		_Core::ObserverT_alloc(&l_gameEngineApplication->PreRender);
@@ -28,10 +34,22 @@ namespace _GameEngine
 
 		_GameLoop::set_newFrameCallback(&l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
 		_GameLoop::set_updateCallback(&l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
+		_GameLoop::set_endOfUpdateCallback(&l_gameEngineApplication->GameLoop, app_endOfUpdate, l_gameEngineApplication);
 		_GameLoop::set_renderCallback(&l_gameEngineApplication->GameLoop, app_render, l_gameEngineApplication);
 		_GameLoop::set_endOfFrameCallback(&l_gameEngineApplication->GameLoop, app_endOfFrame, l_gameEngineApplication);
+
+		GameEngineApplication_initializeSystems(l_gameEngineApplication);
+
 		return l_gameEngineApplication;
 	}
+
+	void GameEngineApplication_initializeSystems(GameEngineApplication* p_gameEngineApplication)
+	{
+		_ECS::TransformRotateSystemV2_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
+		_ECS::MeshDrawSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
+		_ECS::CameraSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
+		_ECS::MeshRendererBoundSystem_alloc(&p_gameEngineApplication->ECS, &p_gameEngineApplication->Physics.PhysicsInterface, &p_gameEngineApplication->UpdateSequencer);
+	};
 
 	void app_free(GameEngineApplication* p_app)
 	{
@@ -70,11 +88,16 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		Clock_newUpdate(&l_app->Clock, p_delta);
-		l_app->SandboxUpdateHook(p_delta);
-
+		
 		_ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);
 
 		UpdateSequencer_execute(&l_app->UpdateSequencer, &l_app->GameEngineApplicationInterface);
+	};
+
+	void app_endOfUpdate(void* p_closure)
+	{
+		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
+		_Core::ObserverT_broadcast(&l_app->EndOfUpdate, &l_app->GameEngineApplicationInterface);
 	};
 
 	void app_render(void* p_closure)

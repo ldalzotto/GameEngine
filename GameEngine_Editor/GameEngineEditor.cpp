@@ -3,12 +3,10 @@
 #include "GameEngineApplicationInterface.h"
 
 #include "ECS/ECS.h"
-#include "ECS/Systems/MeshRendererBoundGizmoSystem.h"
 
 namespace _GameEngineEditor
 {
 	void GameEngineEditor_draw(GameEngineEditor* p_gameEngineEditor, void* null);
-	void gameEngineEditor_systemInitialization(GameEngineEditor* p_gameEngineEditor);
 
 
 	GameEngineEditor* GameEngineEditor_alloc(GameEngineApplicationInterface* p_gameEngineApplicationInterface)
@@ -23,8 +21,6 @@ namespace _GameEngineEditor
 
 		l_gameEngineEditor->DebugConsole.GameEngineApplicationInterface = p_gameEngineApplicationInterface;
 		l_gameEngineEditor->DebugConsole.DrawableWindows = &l_gameEngineEditor->DrawableWindows;
-
-		gameEngineEditor_systemInitialization(l_gameEngineEditor);
 
 		return l_gameEngineEditor;
 	};
@@ -41,14 +37,5 @@ namespace _GameEngineEditor
 	{
 		DebugConsole_draw(&p_gameEngineEditor->DebugConsole);
 		DrawableWindows_draw(&p_gameEngineEditor->DrawableWindows);
-	};
-
-	void gameEngineEditor_systemInitialization(GameEngineEditor* p_gameEngineEditor)
-	{
-		/*
-		_ECS::SystemV2AllocInfo	l_systemAllocInfo = {};
-		MeshRendererBoundGizmoSystem_init(&l_systemAllocInfo, p_gameEngineEditor->GameEngineApplicationInterface->ECS, p_gameEngineEditor->GameEngineApplicationInterface->RenderInterface);
-		_ECS_Impl::SystemV2Factory_allocSystemV2(&l_systemAllocInfo, p_gameEngineEditor->GameEngineApplicationInterface->UpdateSequencer);
-		*/
 	};
 }

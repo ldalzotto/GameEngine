@@ -24,6 +24,7 @@ namespace _GameEngine
 	namespace _Render { struct RenderInterface; }
 	namespace _Input { struct Input; }
 	namespace _ECS { struct ECS; }
+	namespace _Physics { struct PhysicsInterface; }
 }
 
 namespace _GameEngine
@@ -38,6 +39,7 @@ namespace _GameEngine
 		GameLoop* GameLoop;
 		::_Core::Log* Log;
 		::_Core::Clock* Clock;
+		_Physics::PhysicsInterface* PhysicsInterface;
 		_Render::RenderInterface* RenderInterface;
 		_Input::Input* Input;
 		_ECS::ECS* ECS;

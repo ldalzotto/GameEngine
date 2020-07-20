@@ -4,6 +4,7 @@
 
 #include "GameEngineApplication.h"
 #include "GameEngineEditor.h"
+#include "EngineSequencers/EngineSequencers.h"
 
 #include "Math/Segment/Segment.h"
 #include "Math/Math.h"
@@ -33,39 +34,49 @@
 
 using namespace _GameEngine;
 
-void SandboxApplication_update(float p_delta);
+void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication);
+void SandboxApplication_update(void* p_null, _GameEngine::GameEngineApplicationInterface* l_interface);
 
 int main()
 {
+	SandboxApplication l_app = SanboxApplication_alloc();
+	SandboxApplication_initialize(&l_app);
+	return SandboxApplication_run(&l_app);
+};
 
-	App = app_alloc(SandboxApplication_update);
-	App_Editor = _GameEngineEditor::GameEngineEditor_alloc(&App->GameEngineApplicationInterface);
+SandboxApplication SanboxApplication_alloc()
+{
+	SandboxApplication l_sandboxApplication{};
+	l_sandboxApplication.App = app_alloc();
+	l_sandboxApplication.App_Editor = _GameEngineEditor::GameEngineEditor_alloc(&l_sandboxApplication.App->GameEngineApplicationInterface);
+	return l_sandboxApplication;
+};
 
+int SandboxApplication_run(SandboxApplication* p_sandboxApplication)
+{
 	try
 	{
-		app_run(App);
+		app_run(p_sandboxApplication->App);
 	}
 	catch (const std::exception& e)
 	{
-		MyLog_pushLog(&App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, (char*)e.what());
-		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
-		app_free(App);
+		MyLog_pushLog(&p_sandboxApplication->App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, (char*)e.what());
+		_GameEngineEditor::GameEngineEditor_free(&p_sandboxApplication->App_Editor, &p_sandboxApplication->App->GameEngineApplicationInterface);
+		app_free(p_sandboxApplication->App);
 		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
-		MyLog_pushLog(&App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, "Unexpected Error");
-		_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
-		app_free(App);
+		MyLog_pushLog(&p_sandboxApplication->App->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, "Unexpected Error");
+		_GameEngineEditor::GameEngineEditor_free(&p_sandboxApplication->App_Editor, &p_sandboxApplication->App->GameEngineApplicationInterface);
+		app_free(p_sandboxApplication->App);
 		return EXIT_FAILURE;
 	}
 
-	_GameEngineEditor::GameEngineEditor_free(&App_Editor, &App->GameEngineApplicationInterface);
-	app_free(App);
+	_GameEngineEditor::GameEngineEditor_free(&p_sandboxApplication->App_Editor, &p_sandboxApplication->App->GameEngineApplicationInterface);
+	app_free(p_sandboxApplication->App);
 	return EXIT_SUCCESS;
 };
-
-bool HasAlreadyUpdated = false;
 
 _ECS::Entity* l_cameraEntity;
 
@@ -88,13 +99,13 @@ struct SandboxApplicationCubeCreationInfo
 	_ECS::MeshRendererInitInfo* MeshRendererInitInfo;
 };
 
-void SandboxApplication_createCubeEntity(SandboxApplicationCubeCreationInfo* p_sandboxCubeCreationInfo, _ECS::Entity** out_entity, _ECS::TransformComponent** out_entitytransform)
+void SandboxApplication_createCubeEntity(SandboxApplication* p_sandboxApplication, SandboxApplicationCubeCreationInfo* p_sandboxCubeCreationInfo, _ECS::Entity** out_entity, _ECS::TransformComponent** out_entitytransform)
 {
 
 	{
 		*out_entity = _ECS::Entity_alloc();
 		auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(out_entity);
-		_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
+		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addEntityMessage);
 	}
 
 	{
@@ -108,23 +119,23 @@ void SandboxApplication_createCubeEntity(SandboxApplicationCubeCreationInfo* p_s
 		*out_entitytransform = *l_transformComponent;
 
 		auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_transformComponent);
-		_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
+		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addComponentMessage);
 	}
 
 	if (p_sandboxCubeCreationInfo->MeshRendererInitInfo)
 	{
 		_ECS::MeshRenderer** l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
-		_ECS::MeshRenderer_init(l_meshRenderer, &App->Render.RenderInterface, p_sandboxCubeCreationInfo->MeshRendererInitInfo);
+		_ECS::MeshRenderer_init(l_meshRenderer, &p_sandboxApplication->App->Render.RenderInterface, p_sandboxCubeCreationInfo->MeshRendererInitInfo);
 
 		auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_meshRenderer);
-		_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
+		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addComponentMessage);
 	}
 
 	if (p_sandboxCubeCreationInfo->WithMeshBound)
 	{
 		auto l_meshRendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
 		auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_meshRendererBound);
-		_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
+		_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->App->ECS.EventQueue, &l_addComponentMessage);
 	}
 
 };
@@ -138,7 +149,7 @@ struct CubeCrossCreationInfo
 	_Math::Vector3f* RotationAxis;
 };
 
-void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreationInfo)
+void SanboxApplication_createCubeCross(SandboxApplication* p_sandboxApplication, CubeCrossCreationInfo* p_cubeCrossCreationInfo)
 {
 	_ECS::Entity* l_parentEntity;
 	_ECS::TransformComponent* l_parentEntityTransform;
@@ -160,7 +171,7 @@ void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreatio
 		l_parentCreationInfo.LocalPosition = p_cubeCrossCreationInfo->LocalPosition;
 		l_parentCreationInfo.LocalRotation = p_cubeCrossCreationInfo->LocalRotation;
 		l_parentCreationInfo.LocalScale = p_cubeCrossCreationInfo->LocalScale;
-		SandboxApplication_createCubeEntity(&l_parentCreationInfo, &l_parentEntity, &l_parentEntityTransform);
+		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_parentEntity, &l_parentEntityTransform);
 	}
 
 
@@ -186,7 +197,7 @@ void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreatio
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
 		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(&l_parentCreationInfo, &l_upLeftEntity, &l_upLeftEntityTransform);
+		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_upLeftEntity, &l_upLeftEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -201,7 +212,7 @@ void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreatio
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
 		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(&l_parentCreationInfo, &l_upRightEntity, &l_upRightEntityTransform);
+		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_upRightEntity, &l_upRightEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -216,7 +227,7 @@ void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreatio
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
 		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(&l_parentCreationInfo, &l_bottomLeftEntity, &l_bottomLeftEntityTransform);
+		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_bottomLeftEntity, &l_bottomLeftEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -231,7 +242,7 @@ void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreatio
 		l_parentCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_parentCreationInfo.WithMeshBound = true;
 		l_parentCreationInfo.MeshRendererInitInfo = &l_meshRendererInitInfo;
-		SandboxApplication_createCubeEntity(&l_parentCreationInfo, &l_bottomRightEntity, &l_bottomRightEntityTransform);
+		SandboxApplication_createCubeEntity(p_sandboxApplication, &l_parentCreationInfo, &l_bottomRightEntity, &l_bottomRightEntityTransform);
 
 		_Math::Transform_addChild(
 			&l_parentEntityTransform->Transform,
@@ -252,221 +263,214 @@ void SanboxApplication_createCubeCross(CubeCrossCreationInfo* p_cubeCrossCreatio
 		auto l_transformRotate = _ECS::ComponentT_alloc<_ECS::TransformRotate>();
 		(*l_transformRotate)->Speed = .5f;
 		(*l_transformRotate)->Axis = *p_cubeCrossCreationInfo->RotationAxis;
-		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, &App->ECS);
+		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, &p_sandboxApplication->App->ECS);
 	}
 };
 
-void SandboxApplication_update(float p_delta)
+void SandboxApplication_initialize(SandboxApplication* p_sandboxApplication)
 {
-	if (!HasAlreadyUpdated)
+	GameEngineApplication* l_app = p_sandboxApplication->App;
+	// Camera
 	{
-		// Camera
 		{
-			{
-				l_cameraEntity = _ECS::Entity_alloc();
-				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
-				_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
-			}
-
-			{
-				auto l_camera = _ECS::ComponentT_alloc<_ECS::Camera>();
-				_ECS::Camera_init(*l_camera, &App->Render.RenderInterface);
-				_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_camera, &App->ECS);
-			}
-
-			{
-				auto l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-				_ECS::TransformInitInfo l_transformInitInfo{};
-				l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
-				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f }, &l_transformInitInfo.LocalRotation);
-				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-				_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
-				_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &App->ECS);
-			}
+			l_cameraEntity = _ECS::Entity_alloc();
+			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
+			_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
 		}
 
-		// Ray
 		{
-			{
-				l_rayEntity = _ECS::Entity_alloc();
-				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayEntity);
-				_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
-			}
-
-			{
-				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-				l_rayEntityTransform = *l_transformComponent;
-
-				_ECS::TransformInitInfo l_transformInitInfo{};
-				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -0.0f };
-				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
-				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
-				_ECS::EntityT_addComponentDeferred(l_rayEntity, l_transformComponent, &App->ECS);
-			}
-
-			//Ray Begin
-			{
-				{
-					l_rayBeginEntity = _ECS::Entity_alloc();
-					auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayBeginEntity);
-					_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
-				}
-
-				{
-					_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-					l_rayBeginEntityTransform = *l_transformComponent;
-
-					_ECS::TransformInitInfo l_transformInitInfo{};
-					l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -100.0f };
-					_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
-					l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-					_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
-
-					auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(&l_rayBeginEntity, l_transformComponent);
-					_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
-
-				}
-			}
-
-			//Ray End
-			{
-				{
-					l_rayEndEntity = _ECS::Entity_alloc();
-					auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayEndEntity);
-					_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
-				}
-
-				{
-					_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-					l_rayEndEntityTransform = *l_transformComponent;
-
-					_ECS::TransformInitInfo l_transformInitInfo{};
-					l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, 100.0f };
-					_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
-					l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-					_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
-
-					auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(&l_rayEndEntity, l_transformComponent);
-					_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
-
-				}
-			}
-
-			_Math::Transform_addChild(&l_rayEntityTransform->Transform, &l_rayBeginEntityTransform->Transform);
-			_Math::Transform_addChild(&l_rayEntityTransform->Transform, &l_rayEndEntityTransform->Transform);
+			auto l_camera = _ECS::ComponentT_alloc<_ECS::Camera>();
+			_ECS::Camera_init(*l_camera, &l_app->Render.RenderInterface);
+			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_camera, &l_app->ECS);
 		}
 
-		// Scene root
 		{
-			{
-				l_sceneModelsRootEntity = _ECS::Entity_alloc();
-				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_sceneModelsRootEntity);
-				_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addEntityMessage);
-			}
-
-			{
-				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-				l_sceneModelsRootTransform = *l_transformComponent;
-
-				_ECS::TransformInitInfo l_transformInitInfo{};
-				l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
-				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
-				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
-
-				auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(&l_sceneModelsRootEntity, l_transformComponent);
-				_ECS::ECSEventQueue_pushMessage(&App->ECS.EventQueue, &l_addComponentMessage);
-
-			}
+			auto l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f }, &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
+			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
+			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
 		}
-		_Math::Transform_addChild(
-			&l_sceneModelsRootTransform->Transform,
-			&l_rayEntityTransform->Transform
-		);
-
-		// Cubes
-		{
-			{
-				_Math::Vector3f l_rotation = { 1.0f, 1.0f, 1.0f };
-				CubeCrossCreationInfo l_cubeCrossCreationInfo{};
-				l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
-				l_cubeCrossCreationInfo.LocalPosition = { 1.0f, 0.0f, 0.0f };
-				l_cubeCrossCreationInfo.LocalRotation = _Math::Quaternionf_identity();
-				l_cubeCrossCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-				l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
-				SanboxApplication_createCubeCross(&l_cubeCrossCreationInfo);
-			}
-
-			{
-				_Math::Vector3f l_rotation = { 1.0f, 1.0f, 0.0f };
-				CubeCrossCreationInfo l_cubeCrossCreationInfo{};
-				l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
-				l_cubeCrossCreationInfo.LocalPosition = { 0.0f, -1.0f, 2.0f };
-				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, &l_cubeCrossCreationInfo.LocalRotation);
-				l_cubeCrossCreationInfo.LocalScale = { 2.0f, 1.0f, 1.0f };
-				l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
-				SanboxApplication_createCubeCross(&l_cubeCrossCreationInfo);
-			}
-		}
-
-
-		// System initialization
-		{
-			_ECS::TransformRotateSystemV2_alloc(&App->UpdateSequencer, &App->ECS);
-			_ECS::MeshDrawSystem_alloc(&App->UpdateSequencer, &App->ECS);
-			_ECS::CameraSystem_alloc(&App->UpdateSequencer, &App->ECS);
-			_ECS::MeshRendererBoundSystem_alloc(&App->ECS, &App->Physics.PhysicsInterface, &App->UpdateSequencer);
-		}
-
-		HasAlreadyUpdated = true;
 	}
-	else
+
+	// Ray
 	{
-#ifndef comment
 		{
-			_Math::Vector3f l_rootCenter = { 0.0f, 0.0f, 0.0f };
-			_Render::Gizmo_drawTransform(&App->Render.Gizmo, &l_rootCenter, &_Math::RIGHT, &_Math::UP, &_Math::FORWARD);
+			l_rayEntity = _ECS::Entity_alloc();
+			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayEntity);
+			_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
 		}
+
+		{
+			_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			l_rayEntityTransform = *l_transformComponent;
+
+			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -0.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
+			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
+			_ECS::EntityT_addComponentDeferred(l_rayEntity, l_transformComponent, &l_app->ECS);
+		}
+
+		//Ray Begin
+		{
+			{
+				l_rayBeginEntity = _ECS::Entity_alloc();
+				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayBeginEntity);
+				_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
+			}
+
+			{
+				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+				l_rayBeginEntityTransform = *l_transformComponent;
+
+				_ECS::TransformInitInfo l_transformInitInfo{};
+				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -100.0f };
+				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
+				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
+
+				auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(&l_rayBeginEntity, l_transformComponent);
+				_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addComponentMessage);
+
+			}
+		}
+
+		//Ray End
+		{
+			{
+				l_rayEndEntity = _ECS::Entity_alloc();
+				auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rayEndEntity);
+				_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
+			}
+
+			{
+				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+				l_rayEndEntityTransform = *l_transformComponent;
+
+				_ECS::TransformInitInfo l_transformInitInfo{};
+				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, 100.0f };
+				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
+				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
+
+				auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(&l_rayEndEntity, l_transformComponent);
+				_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addComponentMessage);
+
+			}
+		}
+
+		_Math::Transform_addChild(&l_rayEntityTransform->Transform, &l_rayBeginEntityTransform->Transform);
+		_Math::Transform_addChild(&l_rayEntityTransform->Transform, &l_rayEndEntityTransform->Transform);
+	}
+
+	// Scene root
+	{
+		{
+			l_sceneModelsRootEntity = _ECS::Entity_alloc();
+			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_sceneModelsRootEntity);
+			_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
+		}
+
+		{
+			_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			l_sceneModelsRootTransform = *l_transformComponent;
+
+			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
+			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
+
+			auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(&l_sceneModelsRootEntity, l_transformComponent);
+			_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addComponentMessage);
+
+		}
+	}
+	_Math::Transform_addChild(
+		&l_sceneModelsRootTransform->Transform,
+		&l_rayEntityTransform->Transform
+	);
+
+	// Cubes
+	{
+		{
+			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 1.0f };
+			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
+			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
+			l_cubeCrossCreationInfo.LocalPosition = { 1.0f, 0.0f, 0.0f };
+			l_cubeCrossCreationInfo.LocalRotation = _Math::Quaternionf_identity();
+			l_cubeCrossCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
+			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
+			SanboxApplication_createCubeCross(p_sandboxApplication, &l_cubeCrossCreationInfo);
+		}
+
+		{
+			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 0.0f };
+			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
+			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
+			l_cubeCrossCreationInfo.LocalPosition = { 0.0f, -1.0f, 2.0f };
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, &l_cubeCrossCreationInfo.LocalRotation);
+			l_cubeCrossCreationInfo.LocalScale = { 2.0f, 1.0f, 1.0f };
+			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
+			SanboxApplication_createCubeCross(p_sandboxApplication, &l_cubeCrossCreationInfo);
+		}
+	}
+
+	_Core::SortedSequencerOperationT<GameEngineApplicationInterface> l_sandboxApplicationUpdate;
+	l_sandboxApplicationUpdate.Priority = _GameEngine::END_OF_UPDATE;
+	l_sandboxApplicationUpdate.OperationCallback = { SandboxApplication_update };
+	_Core::SortedSequencerT_addOperation(&l_app->UpdateSequencer.UpdateSequencer, &l_sandboxApplicationUpdate);
+};
+
+void SandboxApplication_update(void* p_null, _GameEngine::GameEngineApplicationInterface* l_interface)
+{
+#ifndef comment
+	{
+		_Math::Vector3f l_rootCenter = { 0.0f, 0.0f, 0.0f };
+		_Render::Gizmo_drawTransform(l_interface->RenderInterface->Gizmo, &l_rootCenter, &_Math::RIGHT, &_Math::UP, &_Math::FORWARD);
+	}
 #endif
 
+	{
+		_Math::Vector3f l_rayBeginPoint = _Math::Transform_getWorldPosition(&l_rayBeginEntityTransform->Transform);
+		_Math::Vector3f l_rayEndPoint = _Math::Transform_getWorldPosition(&l_rayEndEntityTransform->Transform);
+		_Math::Vector3f l_color = { 0.0f, 1.0f, 0.0f };
+
+		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
+
+		_Core::VectorT<_Physics::RaycastHit> l_hits{};
+		_Core::VectorT_alloc(&l_hits, 0);
 		{
-			_Math::Vector3f l_rayBeginPoint = _Math::Transform_getWorldPosition(&l_rayBeginEntityTransform->Transform);
-			_Math::Vector3f l_rayEndPoint = _Math::Transform_getWorldPosition(&l_rayEndEntityTransform->Transform);
-			_Math::Vector3f l_color = { 0.0f, 1.0f, 0.0f };
-
-			_Render::Gizmo_drawLine(&App->Render.Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
-
-			_Core::VectorT<_Physics::RaycastHit> l_hits{};
-			_Core::VectorT_alloc(&l_hits, 0);
+			_Physics::RayCastAll(l_interface->PhysicsInterface->World, &l_rayBeginPoint, &l_rayEndPoint, &l_hits);
+			_Core::VectorIteratorT<_Physics::RaycastHit> l_hitsIt = _Core::VectorT_buildIterator(&l_hits);
+			while (_Core::VectorIteratorT_moveNext(&l_hitsIt))
 			{
-				_Physics::RayCastAll(&App->Physics.World, &l_rayBeginPoint, &l_rayEndPoint, &l_hits);
-				_Core::VectorIteratorT<_Physics::RaycastHit> l_hitsIt = _Core::VectorT_buildIterator(&l_hits);
-				while (_Core::VectorIteratorT_moveNext(&l_hitsIt))
-				{
-					_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_hitsIt.Current->HitPoint, &l_color);
-					_Render::Gizmo_drawBox(&App->Render.Gizmo, l_hitsIt.Current->Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hitsIt.Current->Collider->Transform), false, &l_color);
-				}
+				_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hitsIt.Current->HitPoint, &l_color);
+				_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hitsIt.Current->Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hitsIt.Current->Collider->Transform), false, &l_color);
 			}
-			_Core::VectorT_free(&l_hits);
+		}
+		_Core::VectorT_free(&l_hits);
+	}
+
+	// Mouse raycast
+	{
+		_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&l_interface->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
+		_Math::Vector2f l_screenPoint = { l_interface->Input->InputMouse.ScreenPosition.x, l_interface->Input->InputMouse.ScreenPosition.y };
+		_Math::Segment l_ray;
+
+		_ECS::CameraSystem_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
+
+		_Physics::RaycastHit l_hit;
+		if (_Physics::RayCast(l_interface->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
+		{
+			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hit.HitPoint);
+			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hit.Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hit.Collider->Transform), false);
 		}
 
-		// Mouse raycast
-		{
-			_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&App->ECS.SystemContainerV2, &_ECS::CameraSystemKey);
-			_Math::Vector2f l_screenPoint = { App->Input.InputMouse.ScreenPosition.x, App->Input.InputMouse.ScreenPosition.y };
-			_Math::Segment l_ray;
-
-			_ECS::CameraSystem_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
-
-			_Physics::RaycastHit l_hit;
-			if (_Physics::RayCast(&App->Physics.World, &l_ray.Begin, &l_ray.End, &l_hit))
-			{
-				_Render::Gizmo_drawPoint(&App->Render.Gizmo, &l_hit.HitPoint);
-				_Render::Gizmo_drawBox(&App->Render.Gizmo, l_hit.Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hit.Collider->Transform), false);
-			}
-
-		}
 	}
 
 }

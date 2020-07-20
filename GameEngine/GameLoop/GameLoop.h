@@ -4,6 +4,7 @@ namespace _GameEngine
 {
 	typedef void (*NewFrameCallback)(void* p_closure);
 	typedef void (*UpdateCallback)(void* p_closure, float p_delta);
+	typedef void (*EndOfUpdateCallback)(void* p_closure);
 	typedef void (*RenderCallback)(void* p_closure);
 	typedef void (*EndOfFrameCallback)(void* p_closure);
 	typedef unsigned long long int TimeClockPrecision;
@@ -32,6 +33,9 @@ namespace _GameEngine
 		UpdateCallback UpdateCallback;
 		void* UpdateCallbackClosure;
 
+		EndOfUpdateCallback EndOfUpdateCallback;
+		void* EndOfUpdateCallbackClosure;
+
 		RenderCallback RenderCallback;
 		void* RenderCallbackClosure;
 
@@ -46,6 +50,7 @@ namespace _GameEngine
 
 		void set_newFrameCallback(GameLoop* p_gameLoop, NewFrameCallback p_newFrameCallback, void* p_closure);
 		void set_updateCallback(GameLoop* p_gameLoop, UpdateCallback p_updateCallback, void* p_closure);
+		void set_endOfUpdateCallback(GameLoop* p_gameLoop, EndOfFrameCallback p_endOfUpdateCallback, void* p_closure);
 		void set_renderCallback(GameLoop* p_gameLoop, RenderCallback p_renderCallback, void* p_closure);
 		void set_endOfFrameCallback(GameLoop* p_gameLoop, EndOfFrameCallback p_endOfFrameCallback, void* p_closure);
 

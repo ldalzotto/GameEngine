@@ -32,6 +32,12 @@ namespace _GameEngine
 			p_gameLoop->UpdateCallbackClosure = p_closure;
 		};
 
+		void set_endOfUpdateCallback(GameLoop* p_gameLoop, EndOfFrameCallback p_endOfUpdateCallback, void* p_closure)
+		{
+			p_gameLoop->EndOfUpdateCallback = p_endOfUpdateCallback;
+			p_gameLoop->EndOfUpdateCallbackClosure = p_closure;
+		};
+
 		void set_renderCallback(GameLoop* p_gameLoop, RenderCallback p_renderCallback, void* p_closure)
 		{
 			p_gameLoop->RenderCallback = p_renderCallback;
@@ -65,6 +71,7 @@ namespace _GameEngine
 				{
 					p_gameLoop->UpdateCallback(p_gameLoop->UpdateCallbackClosure, p_gameLoop->TimeBetweenUpdates_mics * 0.000001f);
 					p_gameLoop->AccumulatedElapsedTime_mics -= p_gameLoop->TimeBetweenUpdates_mics;
+					p_gameLoop->EndOfUpdateCallback(p_gameLoop->EndOfUpdateCallbackClosure);
 				}
 
 				p_gameLoop->RenderCallback(p_gameLoop->RenderCallbackClosure);
