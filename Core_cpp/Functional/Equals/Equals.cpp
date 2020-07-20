@@ -11,6 +11,11 @@ namespace _Core
 		return *p_left == *p_right;
 	};
 
+	bool Equals_double(double* p_left, double* p_right)
+	{
+		return fabs((*p_left) - (*p_right)) <= DOUBLE_TOLERANCE;
+	};
+
 	bool Equals_float(float* p_left, float* p_right)
 	{
 		return fabsf((*p_left) - (*p_right)) <= FLOAT_TOLERANCE;

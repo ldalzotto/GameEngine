@@ -23,6 +23,9 @@ namespace _Core
 	void ToString_intv(char p_string[50], int* p_element)
 	{
 		ArrayT<char> l_arr = ArrayT_fromCStyleArray(p_string, 50);
+		_Core::ArrayT_clear(&l_arr);
+		char l_null = NULL;
+		_Core::ArrayT_pushBack(&l_arr, &l_null);
 		ToString_int((String*)&l_arr, p_element);
 	};
 }

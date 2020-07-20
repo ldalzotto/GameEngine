@@ -178,6 +178,9 @@ namespace _GameEngine::_Input
 	{
 		bool MouseEnabled;
 		_Math::Vector2d ScreenPosition;
+
+		_Math::Vector2d LastFrameMouseAbsoluteScreenPosition;
+		_Math::Vector2d MouseDelta;
 	};
 
 	struct Input

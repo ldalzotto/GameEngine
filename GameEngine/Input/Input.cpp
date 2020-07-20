@@ -4,6 +4,7 @@
 #include "VulkanObjects/Hardware/Window/Window.h"
 
 #include "Math/Math.h"
+#include "Math/Vector/VectorMath.h"
 
 namespace _GameEngine::_Input
 {
@@ -34,6 +35,11 @@ namespace _GameEngine::_Input
 		glfwSetKeyCallback(p_window->Window, OnKeyEvent);
 		glfwSetMouseButtonCallback(p_window->Window, OnMouseEvent);
 		
+		if (p_input->InputMouse.MouseEnabled)
+		{
+			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition.x, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition.y);
+		}
+
 	};
 
 	void Input_free(Input* p_input)
@@ -55,8 +61,7 @@ namespace _GameEngine::_Input
 
 		while (p_input->InputEventsLastFrame.size() > 0)
 		{
-			InputEvent l_inputEvent = p_input->InputEventsLastFrame.front();
-			
+			InputEvent l_inputEvent = p_input->InputEventsLastFrame.front();			
 			InputKey l_inputKey = p_input->GLFWKeyToInputKeyLookup.at(l_inputEvent.KeyCode);
 			KeyStateFlag* l_oldStateFlag = &p_input->InputState.at(l_inputKey);
 			
@@ -80,6 +85,10 @@ namespace _GameEngine::_Input
 		if (p_input->InputMouse.MouseEnabled)
 		{
 			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
+
+			_Math::Vector2d_min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
+			p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition = p_input->InputMouse.ScreenPosition;
+
 			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
 
 			p_input->InputMouse.ScreenPosition.x = _Math::Math_max(_Math::Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);

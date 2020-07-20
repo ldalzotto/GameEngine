@@ -1,3 +1,4 @@
 #pragma once
 
+#define DOUBLE_TOLERANCE 0.000001
 #define FLOAT_TOLERANCE 0.000001f

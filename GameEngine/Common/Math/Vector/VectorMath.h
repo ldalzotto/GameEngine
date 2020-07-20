@@ -3,12 +3,16 @@
 namespace _GameEngine::_Math
 {
 	struct Vector2f;
+	struct Vector2d;
 	struct Vector3f;
 	struct Vector4f;
 }
 
 namespace _GameEngine::_Math
 {
+	void Vector2d_min(Vector2d* p_left, Vector2d* p_right, Vector2d* p_out);
+	bool Vector2d_equals(Vector2d* p_left, Vector2d* p_right);
+
 	void Vector3f_build(Vector4f* p_xyz, Vector3f* out);
 
 	bool Vector3f_equals(Vector3f* left, Vector3f* right);

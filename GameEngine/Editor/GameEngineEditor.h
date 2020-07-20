@@ -6,6 +6,7 @@
 
 #include "DebugConsole/DebugConsole.h"
 #include "IMGuiRender/DrawableWindow.h"
+#include "ObjectSelection/EntitySelection.h"
 
 using namespace _GameEngine;
 
@@ -23,6 +24,7 @@ namespace _GameEngineEditor
 		IMGuiRender IMGuiRender;
 		DebugConsole DebugConsole;
 		DrawableWindows DrawableWindows;
+		EntitySelection EntitySelection;
 	};
 
 	void GameEngineEditor_alloc(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);

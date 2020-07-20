@@ -1,11 +1,25 @@
 #include "VectorMath.h"
 
+#include "Functional/Equals/Equals.hpp"
 #include <math.h>
 #include "Math/Math.h"
 #include "Math/Vector/Vector.h"
 
 namespace _GameEngine::_Math
 {
+	void Vector2d_min(Vector2d* p_left, Vector2d* p_right, Vector2d* p_out)
+	{
+		p_out->x = p_left->x - p_right->x;
+		p_out->y = p_left->y - p_right->y;
+	};
+
+	bool Vector2d_equals(Vector2d* p_left, Vector2d* p_right)
+	{
+		return
+			_Core::Equals_double(&p_left->x, &p_right->x) &&
+			_Core::Equals_double(&p_left->y, &p_right->y);
+	};
+
 	void Vector3f_build(Vector4f* p_xyz, Vector3f* out)
 	{
 		out->x = p_xyz->x;
@@ -43,9 +57,9 @@ namespace _GameEngine::_Math
 	bool Vector3f_equals(Vector3f* left, Vector3f* right)
 	{
 		return
-			fabsf(left->x - right->x) < FLOAT_TOLERANCE &&
-			fabsf(left->y - right->y) < FLOAT_TOLERANCE &&
-			fabsf(left->z - right->z) < FLOAT_TOLERANCE
+			_Core::Equals_float(&left->x, &right->x) &&
+			_Core::Equals_float(&left->y, &right->y) &&
+			_Core::Equals_float(&left->z, &right->z)
 			;
 	};
 
@@ -104,10 +118,10 @@ namespace _GameEngine::_Math
 	bool Vector4f_equals(Vector4f* left, Vector4f* right)
 	{
 		return
-			fabsf(left->x - right->x) < FLOAT_TOLERANCE &&
-			fabsf(left->y - right->y) < FLOAT_TOLERANCE &&
-			fabsf(left->z - right->z) < FLOAT_TOLERANCE &&
-			fabsf(left->w - right->w) < FLOAT_TOLERANCE
+			_Core::Equals_float(&left->x, &right->x) &&
+			_Core::Equals_float(&left->y, &right->y) &&
+			_Core::Equals_float(&left->z, &right->z) &&
+			_Core::Equals_float(&left->w, &right->w);
 			;
 	};
 
