@@ -162,6 +162,53 @@ namespace _GameEngine::_Render
 
 			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
 		}
+		else if (p_key->VertexShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoVertex.spv"
+			&& p_key->FragmentShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoFragment.spv")
+		{
+			MaterialAllocInfo l_materialAllocInfo{};
+			l_materialAllocInfo.RenderingOrder = MaterialRenderingOrder_gizmo;
+			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
+			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
+			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
+			l_materialAllocInfo.UseDepthBuffer = false;
+			VertexInput_buildInput(&l_materialAllocInfo.VertexInput);
+
+			ShaderParameter l_modelMatrixShaderParameter{};
+			ShaderParameter_alloc(&l_modelMatrixShaderParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_MODEL_BUFFER);
+
+			UniformBufferParameter* l_modelMatrixParameter = (UniformBufferParameter*)l_modelMatrixShaderParameter.Parameter;
+			l_modelMatrixParameter->Binding = 0;
+			l_modelMatrixParameter->BufferSize = sizeof(ModelProjection);
+			l_modelMatrixParameter->StageFlag = VK_SHADER_STAGE_VERTEX_BIT;
+			l_modelMatrixShaderParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_modelMatrixParameter);
+
+
+			ShaderParameter l_imageSamplerShaderParameter{};
+			ShaderParameter_alloc(&l_imageSamplerShaderParameter, ShaderParameterType::IMAGE_SAMPLER, MATERIALINSTANCE_TEXTURE_KEY);
+
+			ImageSampleParameter* l_imageSampleParameter = (ImageSampleParameter*)l_imageSamplerShaderParameter.Parameter;
+			l_imageSampleParameter->Binding = 1;
+			l_imageSampleParameter->TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
+			l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
+			l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
+
+
+			ShaderParameter l_colorParameter{};
+			ShaderParameter_alloc(&l_colorParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_COLOR);
+
+			UniformBufferParameter* l_colorParameterBufer = (UniformBufferParameter*)l_colorParameter.Parameter;
+			l_colorParameterBufer->Binding = 2;
+			l_colorParameterBufer->BufferSize = sizeof(_Math::Vector4f);
+			l_colorParameterBufer->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
+			l_colorParameterBufer->DefaultValue = &Material_ColorDefaultValue;
+			l_colorParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_colorParameterBufer);
+
+			l_materialAllocInfo.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
+			l_materialAllocInfo.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
+			l_materialAllocInfo.ShaderParameters.emplace_back(l_colorParameter);
+
+			return Material_alloc(p_renderInterface, &l_materialAllocInfo);
+		}
 		else if (p_key->VertexShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/GizmoVertex.spv"
 			&& p_key->FragmentShaderPath == "E:/GameProjects/GameEngine/Assets/Shader/out/GizmoFragment.spv")
 		{

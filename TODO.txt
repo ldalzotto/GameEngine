@@ -1,5 +1,16 @@
 -- TODO --
 
+-- Editor - Transform Gizmo --
+
+# Creating a Transform Gizmo.
+	# With a special Material that is not dependant of the camera projection ? (to always have the same size on screen).
+		-> NO - We will update the transform gizmo position to alwayw be at a fixed distance from the camera (and the size will always be the same).
+	# Allowing materials to not compare the depth buffer.
+	# Having a default value for MaterialInstance texture input.
+
+# FIX - The sorting order is incorrect for the update sequencer
+
+
 -- Physics --
 
 # Adding Layers to BoxCollider.
@@ -12,9 +23,7 @@
 
 -- Editor - Transform Gizmo --
 
-# Creating a Transform Gizmo.
-	# With a special Material that is not dependant of the camera projection ? (to always have the same size on screen).
-	# Allowing gizmo to move depending on which arrow is clicked.
+# Allowing gizmo to move depending on which arrow is clicked.
 
 -- Materials --
 

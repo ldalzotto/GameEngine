@@ -6,4 +6,6 @@ E:\Programs\Vulkan\1.2.135.0\Bin32\glslc.exe ../EditorFragment.frag -o ../out/Ed
 E:\Programs\Vulkan\1.2.135.0\Bin32\glslc.exe ../EditorVertex.vert -o ../out/EditorVertex.spv
 E:\Programs\Vulkan\1.2.135.0\Bin32\glslc.exe ../GizmoFragment.frag -o ../out/GizmoFragment.spv
 E:\Programs\Vulkan\1.2.135.0\Bin32\glslc.exe ../GizmoVertex.vert -o ../out/GizmoVertex.spv
+E:\Programs\Vulkan\1.2.135.0\Bin32\glslc.exe ../3DGizmoFragment.frag -o ../out/3DGizmoFragment.spv
+E:\Programs\Vulkan\1.2.135.0\Bin32\glslc.exe ../3DGizmoVertex.vert -o ../out/3DGizmoVertex.spv
 pause

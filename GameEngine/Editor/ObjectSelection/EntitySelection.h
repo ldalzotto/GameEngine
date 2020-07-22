@@ -21,6 +21,7 @@ namespace _GameEngineEditor
 		_GameEngine::_Input::Input* Input;
 		_GameEngine::_Render::RenderInterface* RenderInterface;
 		_GameEngine::_Physics::PhysicsInterface* PhysicsInterface;
+		_GameEngine::_ECS::Entity* TransformGizmo;
 		_GameEngine::_ECS::Entity* SelectedEntity;
 	};
 
