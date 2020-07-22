@@ -8,7 +8,7 @@
 	# Allowing materials to not compare the depth buffer.
 	# Having a default value for MaterialInstance texture input.
 
-# FIX - The sorting order is incorrect for the update sequencer
+[X] # FIX - The sorting order is incorrect for the update sequencer
 
 
 -- Physics --
@@ -48,6 +48,7 @@
 -- Graphics improvements --
 
 # Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
+# Using pipeline cache
 # Simplifying the creation of a VulkanBuffer that is not host visible (staged buffer) (push is done with a temporary buffer).
 	## Switching some ShaderParameter to the new smart staging buffer ?
 

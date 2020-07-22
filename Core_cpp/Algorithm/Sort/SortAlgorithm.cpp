@@ -6,6 +6,33 @@
 #include <string.h>
 namespace _Core
 {
+	void Sort_min_findElementIndex(VectorIterator* p_vectorIterator, void* p_comparedElement, size_t p_startIndex, ElementSorter* p_sortComparator)
+	{
+		size_t l_minIndex = p_startIndex;
+
+		if (p_startIndex != 0)
+		{
+			VectorIterator_moveToIndex(p_vectorIterator, p_startIndex - 1);
+		}
+
+		while (VectorIterator_moveNext(p_vectorIterator))
+		{
+			void* l_comparedValue = p_vectorIterator->Current;
+			short int l_compareValue = p_sortComparator->Function(p_comparedElement, l_comparedValue, p_sortComparator->UserObject);
+			if (l_compareValue >= 0)
+			{
+				l_minIndex += 1;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		p_vectorIterator->Current = nullptr;
+		p_vectorIterator->CurrentIndex = l_minIndex;
+	};
+
 	void Sort_min(VectorIterator* p_vectorIterator, size_t p_startIndex, ElementSorter* p_sortComparator)
 	{
 		size_t l_minIndex = p_startIndex;
