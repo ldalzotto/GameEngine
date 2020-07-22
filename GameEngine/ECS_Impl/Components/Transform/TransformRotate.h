@@ -8,6 +8,7 @@ namespace _GameEngine::_ECS
 
 	struct TransformRotate
 	{
+		_ECS::ComponentHeader ComponentHeader;
 		float Speed;
 		_Math::Vector3f Axis;
 	};

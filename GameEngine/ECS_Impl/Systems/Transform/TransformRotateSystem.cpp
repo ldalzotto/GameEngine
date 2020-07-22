@@ -38,8 +38,8 @@ namespace _GameEngine::_ECS
 		TransformRotateSystem* l_transformRotateSystem = (TransformRotateSystem*)p_transformRotateSystem;
 		TransformRotateOperation l_operation{};
 		l_operation.Entity = p_entity;
-		l_operation.TransformComponent = *EntityT_getComponent<TransformComponent>(p_entity);
-		l_operation.TransformRotate = *EntityT_getComponent<TransformRotate>(p_entity);
+		l_operation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
+		l_operation.TransformRotate = EntityT_getComponent<TransformRotate>(p_entity);
 		_Core::VectorT_pushBack(&l_transformRotateSystem->TransformRotateOperations, &l_operation);
 	};
 

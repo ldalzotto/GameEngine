@@ -43,12 +43,12 @@ namespace _GameEngine::_ECS
 		return (ECSEventMessage*)l_message;
 	};
 
-	ECSEventMessage* ECSEventMessage_AddComponent_alloc(Entity** l_entity, Component** l_allocatedComponent)
+	ECSEventMessage* ECSEventMessage_AddComponent_alloc(Entity** l_entity, ComponentHeader* l_allocatedComponent)
 	{
 		ECSEventMessage_AddComponent* l_message = (ECSEventMessage_AddComponent*)malloc(sizeof(ECSEventMessage_AddComponent));
 		l_message->MessageType = ECSEventMessageType::ECS_ADD_COMPONENT;
 		l_message->Entity = *l_entity;
-		l_message->AllocatedComponent = *l_allocatedComponent;
+		l_message->AllocatedComponent = l_allocatedComponent;
 		return (ECSEventMessage*)l_message;
 	};
 

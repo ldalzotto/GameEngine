@@ -14,38 +14,34 @@ namespace _GameEngine::_ECS
 	struct Entity;
 	struct ECS;
 
-	struct Component;
+	struct ComponentHeader;
 
-	typedef void(*OnComponentFunction)(Component*);
+	typedef void(*OnComponentFunction)(ComponentHeader*);
 
-	struct Component
+	struct ComponentHeader
 	{
-		void* Child;
 		Entity* AttachedEntity;
 		ComponentType* ComponentType;
-
 		OnComponentFunction OnComponentFree;
 	};
 
-	bool Component_comparator(Component** left, ComponentType* right, void*);
+	bool Component_comparator(ComponentHeader** left, ComponentType* right, void*);
 
-	Component* Component_alloc(ComponentType* p_type, size_t p_componentChildSize);
+	ComponentHeader* Component_alloc(ComponentType* p_type, size_t p_componentSize);
 
-	void Component_free(Component** p_component);
-
-	bool Component_comparator(Component** left, ComponentType* right, void*);
+	void Component_free(ComponentHeader** p_component);
 
 	struct ComponentEvents
 	{
 		/** Triggered when any Component with  the specified ComponentType is attached to an Entity. */
-		std::unordered_map<ComponentType, _Core::ObserverT<Component>> ComponentAttachedEvents;
+		std::unordered_map<ComponentType, _Core::ObserverT<ComponentHeader>> ComponentAttachedEvents;
 		/** Triggered when any Component with  the specified ComponentType is dettached to an Entity. */
-		std::unordered_map<ComponentType, _Core::ObserverT<Component>> ComponentDetachedEvents;
+		std::unordered_map<ComponentType, _Core::ObserverT<ComponentHeader>> ComponentDetachedEvents;
 	};
 
 	void ComponentEvents_free(ComponentEvents* p_componentEvents, ECS* p_ecs);
 
-	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, Component* p_component);
-	void ComponentEvents_onComponentDetached(ComponentEvents* p_componentEvents, Component* p_component);
+	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, ComponentHeader* p_component);
+	void ComponentEvents_onComponentDetached(ComponentEvents* p_componentEvents, ComponentHeader* p_component);
 
 };

@@ -13,18 +13,18 @@ namespace _GameEngine::_ECS
 
 	struct Entity
 	{
-		_Core::VectorT<Component*> Components;
+		_Core::VectorT<ComponentHeader*> Components;
 	};
 
 	bool Entity_comparator(Entity** p_left, Entity** p_right, void*);
 
 	Entity* Entity_alloc();
 
-	void Entity_addComponentDeferred(Entity* p_entity, Component* p_unlinkedComponent, ECS* p_ecs);
-	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent, ECS* p_ecs);
-	void Entity_freeComponent(Entity* p_entity, Component** p_component, ECS* p_ecs);
+	void Entity_addComponentDeferred(Entity* p_entity, ComponentHeader* p_unlinkedComponent, ECS* p_ecs);
+	void Entity_addComponent(Entity* p_entity, ComponentHeader* p_unlinkedComponent, ECS* p_ecs);
+	void Entity_freeComponent(Entity* p_entity, ComponentHeader** p_component, ECS* p_ecs);
 
-	Component* Entity_getComponent(Entity* p_entity, ComponentType* p_componentType);
+	ComponentHeader* Entity_getComponent(Entity* p_entity, ComponentType* p_componentType);
 
 	struct EntityContainer
 	{

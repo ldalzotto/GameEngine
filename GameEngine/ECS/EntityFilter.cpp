@@ -71,7 +71,7 @@ namespace _GameEngine::_ECS
 		_Core::VectorIteratorT<ComponentType> l_filteredComponentType = _Core::ArrayT_buildIterator(&p_entityFiler->ListenedComponentTypes);
 		while (_Core::VectorIteratorT_moveNext(&l_filteredComponentType))
 		{
-			if (!_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{Component_comparator, l_filteredComponentType.Current}))
+			if (!_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<ComponentHeader*, ComponentType, void>{Component_comparator, l_filteredComponentType.Current}))
 			{
 				l_notify = false;
 				break;
@@ -91,7 +91,7 @@ namespace _GameEngine::_ECS
 		_Core::VectorIteratorT<ComponentType> l_filteredComponentType = _Core::ArrayT_buildIterator(&p_entityFiler->ListenedComponentTypes);
 		while (_Core::VectorIteratorT_moveNext(&l_filteredComponentType))
 		{
-			if (!_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{Component_comparator, l_filteredComponentType.Current}))
+			if (!_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<ComponentHeader*, ComponentType, void>{Component_comparator, l_filteredComponentType.Current}))
 			{
 				l_notify = false;
 				break;
@@ -104,12 +104,12 @@ namespace _GameEngine::_ECS
 		}
 	}
 
-	void entityFilter_onComponentAttachedCallback(EntityFilter* p_entityFilter, Component* p_component)
+	void entityFilter_onComponentAttachedCallback(EntityFilter* p_entityFilter, ComponentHeader* p_component)
 	{
 		entityFilter_notifyIfEntityMatches(p_entityFilter, p_component->AttachedEntity);
 	};
 
-	void entityFilterr_onComponentDetachedCallback(EntityFilter* p_entityFilter, Component* p_component)
+	void entityFilterr_onComponentDetachedCallback(EntityFilter* p_entityFilter, ComponentHeader* p_component)
 	{
 		entityFilter_notifyIfJustUnmatched(p_entityFilter, p_component->AttachedEntity);
 	};
@@ -118,8 +118,8 @@ namespace _GameEngine::_ECS
 	{
 		ComponentEvents* l_componentEvents = &p_ecs->ComponentEvents;
 
-		_Core::CallbackT<EntityFilter, Component> l_onComponentAttachedEventListener = { entityFilter_onComponentAttachedCallback, p_entityFilter };
-		_Core::CallbackT<EntityFilter, Component> l_onComponentDetachedEventListener = { entityFilterr_onComponentDetachedCallback, p_entityFilter };
+		_Core::CallbackT<EntityFilter, ComponentHeader> l_onComponentAttachedEventListener = { entityFilter_onComponentAttachedCallback, p_entityFilter };
+		_Core::CallbackT<EntityFilter, ComponentHeader> l_onComponentDetachedEventListener = { entityFilterr_onComponentDetachedCallback, p_entityFilter };
 
 		for (size_t i = 0; i < p_entityFilter->ListenedComponentTypes.Size; i++)
 		{
@@ -127,21 +127,21 @@ namespace _GameEngine::_ECS
 
 			if (!l_componentEvents->ComponentAttachedEvents.contains(*l_componentType))
 			{
-				_Core::ObserverT<Component> l_createdObserver;
+				_Core::ObserverT<ComponentHeader> l_createdObserver;
 				_Core::ObserverT_alloc(&l_createdObserver);
 				l_componentEvents->ComponentAttachedEvents[*l_componentType] = l_createdObserver;
 			}
 
-			_Core::ObserverT_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) & l_onComponentAttachedEventListener);
+			_Core::ObserverT_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, ComponentHeader>*) & l_onComponentAttachedEventListener);
 
 			if (!l_componentEvents->ComponentDetachedEvents.contains(*l_componentType))
 			{
 
-				_Core::ObserverT<Component> l_createdObserver;
+				_Core::ObserverT<ComponentHeader> l_createdObserver;
 				_Core::ObserverT_alloc(&l_createdObserver);
 				l_componentEvents->ComponentDetachedEvents[*l_componentType] = l_createdObserver;
 			}
-			_Core::ObserverT_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) & l_onComponentDetachedEventListener);
+			_Core::ObserverT_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], (_Core::CallbackT<void, ComponentHeader>*) & l_onComponentDetachedEventListener);
 		}
 	};
 
@@ -149,14 +149,14 @@ namespace _GameEngine::_ECS
 	{
 		ComponentEvents* l_componentEvents = &p_ecs->ComponentEvents;
 
-		_Core::CallbackT<EntityFilter, Component> l_onComponentAttachedEventListener = { entityFilter_onComponentAttachedCallback, p_entityFilter };
-		_Core::CallbackT<EntityFilter, Component> l_onComponentDetachedEventListener = { entityFilterr_onComponentDetachedCallback, p_entityFilter };
+		_Core::CallbackT<EntityFilter, ComponentHeader> l_onComponentAttachedEventListener = { entityFilter_onComponentAttachedCallback, p_entityFilter };
+		_Core::CallbackT<EntityFilter, ComponentHeader> l_onComponentDetachedEventListener = { entityFilterr_onComponentDetachedCallback, p_entityFilter };
 
 		for (size_t i = 0; i < p_entityFilter->ListenedComponentTypes.Size; i++)
 		{
 			ComponentType* l_componentType = _Core::ArrayT_at(&p_entityFilter->ListenedComponentTypes, i);
-			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) & l_onComponentAttachedEventListener);
-			_Core::ObserverT_unRegister(&l_componentEvents->ComponentDetachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) & l_onComponentDetachedEventListener);
+			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, ComponentHeader>*) & l_onComponentAttachedEventListener);
+			_Core::ObserverT_unRegister(&l_componentEvents->ComponentDetachedEvents[*l_componentType], (_Core::CallbackT<void, ComponentHeader>*) & l_onComponentDetachedEventListener);
 		}
 
 	}

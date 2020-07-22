@@ -21,17 +21,17 @@ namespace _GameEngine::_ECS
 		return *p_left == *p_right;
 	};
 
-	void Entity_addComponentDeferred(Entity* p_entity, Component* p_unlinkedComponent, ECS* p_ecs)
+	void Entity_addComponentDeferred(Entity* p_entity, ComponentHeader* p_unlinkedComponent, ECS* p_ecs)
 	{
-		auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&p_entity, &p_unlinkedComponent);
+		auto l_addComponentMessage = _ECS::ECSEventMessage_AddComponent_alloc(&p_entity, p_unlinkedComponent);
 		_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_addComponentMessage);
 	};
 
-	void Entity_addComponent(Entity* p_entity, Component* p_unlinkedComponent, ECS* p_ecs)
+	void Entity_addComponent(Entity* p_entity, ComponentHeader* p_unlinkedComponent, ECS* p_ecs)
 	{
 
 #ifndef NDEBUG
-		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{Component_comparator, p_unlinkedComponent->ComponentType}))
+		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<ComponentHeader*, ComponentType, void>{Component_comparator, p_unlinkedComponent->ComponentType}))
 		{
 			::_Core::String l_errorMessage; ::_Core::String_alloc(&l_errorMessage, 100);
 			::_Core::String_append(&l_errorMessage, "Trying to add a component were it's type ( ");
@@ -45,17 +45,17 @@ namespace _GameEngine::_ECS
 		ComponentEvents_onComponentAttached(&p_ecs->ComponentEvents, p_unlinkedComponent);
 	};
 
-	void Entity_freeComponent(Entity* p_entity, Component** p_component, ECS* p_ecs)
+	void Entity_freeComponent(Entity* p_entity, ComponentHeader** p_component, ECS* p_ecs)
 	{
 		ComponentEvents_onComponentDetached(&p_ecs->ComponentEvents, (*p_component));
-		_Core::VectorT_eraseCompare(&p_entity->Components, _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, (*p_component)->ComponentType });
+		_Core::VectorT_eraseCompare(&p_entity->Components, _Core::ComparatorT<ComponentHeader*, ComponentType, void>{ Component_comparator, (*p_component)->ComponentType });
 		Component_free(p_component);
 	};
 
-	Component* Entity_getComponent(Entity* p_entity, ComponentType* p_componentType)
+	ComponentHeader* Entity_getComponent(Entity* p_entity, ComponentType* p_componentType)
 	{
-		Component** l_foundComponent =
-			_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<Component*, ComponentType, void>{ Component_comparator, p_componentType }).Current;
+		ComponentHeader** l_foundComponent =
+			_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<ComponentHeader*, ComponentType, void>{ Component_comparator, p_componentType }).Current;
 		if (l_foundComponent)
 		{
 			return *l_foundComponent;
@@ -100,7 +100,7 @@ namespace _GameEngine::_ECS
 	{
 		{
 			// We copy components vector because operations inside the loop writes to the initial array
-			_Core::VectorT<Component*> l_copiedComponents = _Core::VectorT_deepCopy(&(*p_entity)->Components);
+			_Core::VectorT<ComponentHeader*> l_copiedComponents = _Core::VectorT_deepCopy(&(*p_entity)->Components);
 			for (size_t i = 0; i < l_copiedComponents.Size; i++)
 			{
 				Entity_freeComponent((*p_entity), _Core::VectorT_at(&l_copiedComponents, i), p_ecs);
@@ -125,11 +125,11 @@ namespace _GameEngine::_ECS
 	///////////////////////////////////  EntityConfigurableContainer
 	///////////////////////////////////
 
-	void entityComponentListener_onComponentAttachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component);
-	void entityComponentListener_onComponentDetachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component);
+	void entityComponentListener_onComponentAttachedCallback(EntityConfigurableContainer* p_entityComponentListener, ComponentHeader* p_component);
+	void entityComponentListener_onComponentDetachedCallback(EntityConfigurableContainer* p_entityComponentListener, ComponentHeader* p_component);
 	void entityComponentListener_registerEvents(EntityConfigurableContainer* p_entityComponentListener, ECS* p_ecs);
 	void entityComponentListener_pushEntity(EntityConfigurableContainer* l_entityComponentListener, Entity* p_entity);
-	void entityComponentListener_pushEntityIfElligible(EntityConfigurableContainer* l_entityComponentListener, Component* l_comparedComponent);
+	void entityComponentListener_pushEntityIfElligible(EntityConfigurableContainer* l_entityComponentListener, ComponentHeader* l_comparedComponent);
 	void entityComponentListener_removeEntity(EntityConfigurableContainer* p_entityComponentListener, Entity* p_entity);
 
 	/**
@@ -154,16 +154,16 @@ namespace _GameEngine::_ECS
 
 	void EntityConfigurableContainer_free(EntityConfigurableContainer* p_entityComponentListener, ECS* p_ecs)
 	{
-		_Core::CallbackT<EntityConfigurableContainer, Component> l_onComponentAttachedEventListener = { entityComponentListener_onComponentAttachedCallback, p_entityComponentListener };
-		_Core::CallbackT<EntityConfigurableContainer, Component> l_onComponentDetachedEventListener = { entityComponentListener_onComponentDetachedCallback, p_entityComponentListener };
+		_Core::CallbackT<EntityConfigurableContainer, ComponentHeader> l_onComponentAttachedEventListener = { entityComponentListener_onComponentAttachedCallback, p_entityComponentListener };
+		_Core::CallbackT<EntityConfigurableContainer, ComponentHeader> l_onComponentDetachedEventListener = { entityComponentListener_onComponentDetachedCallback, p_entityComponentListener };
 
 		ComponentEvents* l_componentEvents = &p_ecs->ComponentEvents;
 
 		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.Size; i++)
 		{
 			ComponentType* l_componentType = _Core::VectorT_at(&p_entityComponentListener->ListenedComponentTypes, i);
-			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, _ECS::Component>*) & l_onComponentAttachedEventListener);
-			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, _ECS::Component>*) & l_onComponentDetachedEventListener);
+			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, _ECS::ComponentHeader>*) & l_onComponentAttachedEventListener);
+			_Core::ObserverT_unRegister(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, _ECS::ComponentHeader>*) & l_onComponentDetachedEventListener);
 		}
 
 		for (size_t i = 0; i < p_entityComponentListener->FilteredEntities.Size; i++)
@@ -177,12 +177,12 @@ namespace _GameEngine::_ECS
 		_Core::VectorT_free(&p_entityComponentListener->FilteredEntities);
 	};
 
-	void entityComponentListener_onComponentAttachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component)
+	void entityComponentListener_onComponentAttachedCallback(EntityConfigurableContainer* p_entityComponentListener, ComponentHeader* p_component)
 	{
 		entityComponentListener_pushEntityIfElligible(p_entityComponentListener, p_component);
 	};
 
-	void entityComponentListener_onComponentDetachedCallback(EntityConfigurableContainer* p_entityComponentListener, Component* p_component)
+	void entityComponentListener_onComponentDetachedCallback(EntityConfigurableContainer* p_entityComponentListener, ComponentHeader* p_component)
 	{
 
 		if (_Core::CompareT_find(_Core::VectorT_buildIterator(&p_entityComponentListener->ListenedComponentTypes),
@@ -196,8 +196,8 @@ namespace _GameEngine::_ECS
 	{
 		ComponentEvents* l_componentEvents = &p_ecs->ComponentEvents;
 
-		_Core::CallbackT<EntityConfigurableContainer, Component> l_onComponentAttachedEventListener = { entityComponentListener_onComponentAttachedCallback, p_entityComponentListener };
-		_Core::CallbackT<EntityConfigurableContainer, Component> l_onComponentDetachedEventListener = { entityComponentListener_onComponentDetachedCallback, p_entityComponentListener };
+		_Core::CallbackT<EntityConfigurableContainer, ComponentHeader> l_onComponentAttachedEventListener = { entityComponentListener_onComponentAttachedCallback, p_entityComponentListener };
+		_Core::CallbackT<EntityConfigurableContainer, ComponentHeader> l_onComponentDetachedEventListener = { entityComponentListener_onComponentDetachedCallback, p_entityComponentListener };
 
 		for (size_t i = 0; i < p_entityComponentListener->ListenedComponentTypes.Size; i++)
 		{
@@ -205,25 +205,25 @@ namespace _GameEngine::_ECS
 
 			if (!l_componentEvents->ComponentAttachedEvents.contains(*l_componentType))
 			{
-				_Core::ObserverT<Component> l_createdObserver;
+				_Core::ObserverT<ComponentHeader> l_createdObserver;
 				_Core::ObserverT_alloc(&l_createdObserver);
 				l_componentEvents->ComponentAttachedEvents[*l_componentType] = l_createdObserver;
 			}
 
-			_Core::ObserverT_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) & l_onComponentAttachedEventListener);
+			_Core::ObserverT_register(&l_componentEvents->ComponentAttachedEvents[*l_componentType], (_Core::CallbackT<void, ComponentHeader>*) & l_onComponentAttachedEventListener);
 
 			if (!l_componentEvents->ComponentDetachedEvents.contains(*l_componentType))
 			{
 
-				_Core::ObserverT<Component> l_createdObserver;
+				_Core::ObserverT<ComponentHeader> l_createdObserver;
 				_Core::ObserverT_alloc(&l_createdObserver);
 				l_componentEvents->ComponentDetachedEvents[*l_componentType] = l_createdObserver;
 			}
-			_Core::ObserverT_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], (_Core::CallbackT<void, Component>*) & l_onComponentDetachedEventListener);
+			_Core::ObserverT_register(&l_componentEvents->ComponentDetachedEvents[*l_componentType], (_Core::CallbackT<void, ComponentHeader>*) & l_onComponentDetachedEventListener);
 		}
 	};
 
-	void entityComponentListener_pushEntityIfElligible(_GameEngine::_ECS::EntityConfigurableContainer* l_entityComponentListener, _GameEngine::_ECS::Component* l_comparedComponent)
+	void entityComponentListener_pushEntityIfElligible(_GameEngine::_ECS::EntityConfigurableContainer* l_entityComponentListener, _GameEngine::_ECS::ComponentHeader* l_comparedComponent)
 	{
 		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&l_entityComponentListener->ListenedComponentTypes),
 			_Core::ComparatorT<ComponentType, ComponentType, void>{ComponentType_comparator, l_comparedComponent->ComponentType }))
@@ -236,7 +236,7 @@ namespace _GameEngine::_ECS
 
 				for (size_t j = 0; j < l_comparedComponent->AttachedEntity->Components.Size; j++)
 				{
-					Component* l_component = *_Core::VectorT_at(&l_comparedComponent->AttachedEntity->Components, j);
+					ComponentHeader* l_component = *_Core::VectorT_at(&l_comparedComponent->AttachedEntity->Components, j);
 					if (*l_component->ComponentType == *l_componentType)
 					{
 						l_filteredComponentTypeIsAnEntityComponent = true;
@@ -271,7 +271,7 @@ namespace _GameEngine::_ECS
 
 				for (size_t j = 0; j < (*p_entity)->Components.Size; j++)
 				{
-					Component** l_component = _Core::VectorT_at(&(*p_entity)->Components, j);
+					ComponentHeader** l_component = _Core::VectorT_at(&(*p_entity)->Components, j);
 					if (*l_askedComponentType == *(*l_component)->ComponentType)
 					{
 						l_componentTypeMatchFound = true;

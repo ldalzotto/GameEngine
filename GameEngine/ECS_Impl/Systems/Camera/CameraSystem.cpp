@@ -42,8 +42,8 @@ namespace _GameEngine::_ECS
 		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
 		CameraSystemOperation l_operation{};
 		l_operation.Entity = p_entity;
-		l_operation.Camera = *EntityT_getComponent<Camera>(p_entity);
-		l_operation.TransformComponent = *EntityT_getComponent<TransformComponent>(p_entity);
+		l_operation.Camera = EntityT_getComponent<Camera>(p_entity);
+		l_operation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
 		_Core::VectorT_pushBack(&l_cameraSystem->Operations, &l_operation);
 	}
 
@@ -111,7 +111,7 @@ namespace _GameEngine::_ECS
 		if (p_system->Operations.Size > 0)
 		{
 			_ECS::Entity* l_entity = (*_Core::VectorT_at(&p_system->Operations, 0)).Entity;
-			return *EntityT_getComponent<Camera>(l_entity);
+			return EntityT_getComponent<Camera>(l_entity);
 		}
 		return nullptr;
 	};

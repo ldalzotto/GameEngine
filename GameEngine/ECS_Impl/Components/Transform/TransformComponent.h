@@ -11,6 +11,7 @@ namespace _GameEngine::_ECS
 
 	struct TransformComponent
 	{
+		_ECS::ComponentHeader ComponentHeader;
 		_Math::Transform Transform;
 	};
 
@@ -27,6 +28,6 @@ namespace _GameEngine::_ECS
 		_Math::Vector3f LocalScale;
 	};
 
-	void TransformComponent_init(TransformComponent** p_component, TransformInitInfo* p_transformInitInfo);
-
+	void TransformComponent_init(TransformComponent* p_component, TransformInitInfo* p_transformInitInfo);
+	TransformComponent* TransformComponent_castFromTransform(_Math::Transform* p_transform);
 }

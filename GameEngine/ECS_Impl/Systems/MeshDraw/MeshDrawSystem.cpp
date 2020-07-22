@@ -71,8 +71,8 @@ namespace _GameEngine::_ECS
 		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
 		MeshDrawSystemOperation l_meshDrawOperation {};
 		l_meshDrawOperation.Entity = p_entity;
-		l_meshDrawOperation.TransformComponent = *EntityT_getComponent<TransformComponent>(p_entity);
-		l_meshDrawOperation.MeshRenderer = *EntityT_getComponent<MeshRenderer>(p_entity);
+		l_meshDrawOperation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
+		l_meshDrawOperation.MeshRenderer = EntityT_getComponent<MeshRenderer>(p_entity);
 		_Core::VectorT_pushBack(&l_meshDrawSystem->MeshDrawSystemOperations, &l_meshDrawOperation);
 
 		_Render::MaterialInstanceContainer_addMaterialInstance(l_meshDrawOperation.MeshRenderer->RenderInterface->MaterialInstanceContainer, 

@@ -21,14 +21,14 @@ namespace _GameEngine::_Test
 		}
 
 		{
-			_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			_ECS::TransformComponent* l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = p_sandboxCubeCreationInfo->LocalPosition;
 			l_transformInitInfo.LocalRotation = p_sandboxCubeCreationInfo->LocalRotation;
 			l_transformInitInfo.LocalScale = p_sandboxCubeCreationInfo->LocalScale;
 			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
-			*out_entitytransform = *l_transformComponent;
+			*out_entitytransform = l_transformComponent;
 
 			auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_transformComponent);
 			_ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->ECS->EventQueue, &l_addComponentMessage);
@@ -36,7 +36,7 @@ namespace _GameEngine::_Test
 
 		if (p_sandboxCubeCreationInfo->MeshRendererInitInfo)
 		{
-			_ECS::MeshRenderer** l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
+			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
 			_ECS::MeshRenderer_init(l_meshRenderer, p_sandboxApplication->RenderInterface, p_sandboxCubeCreationInfo->MeshRendererInitInfo);
 
 			auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_meshRenderer);

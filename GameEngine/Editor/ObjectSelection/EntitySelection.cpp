@@ -49,30 +49,22 @@ namespace _GameEngineEditor
 			_Physics::RaycastHit l_hit;
 			if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
 			{
-				_Core::VectorIteratorT<_ECS::Entity*> l_entity = _Core::VectorT_buildIterator(&p_entitySelection->ECS->EntityContainer.Entities);
-				while (_Core::VectorIteratorT_moveNext(&l_entity))
-				{
-					_ECS::TransformComponent** l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(*l_entity.Current);
-					if (l_transformComponent && &(*l_transformComponent)->Transform == l_hit.Collider->Transform)
-					{
-						p_entitySelection->SelectedEntity = *l_entity.Current;
-						break;
-					}
-				}
+				_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
+				p_entitySelection->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
 			}
 		}
 		else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
 		{
 			if (p_entitySelection->SelectedEntity)
 			{
-				_ECS::TransformComponent** l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
+				_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 				_Math::Vector2d l_zero = { 0.0f, 0.0f };
 				if (!_Math::Vector2d_equals(&p_entitySelection->Input->InputMouse.MouseDelta, &l_zero))
 				{
 					_Math::Vector3f l_deltaPosition = { p_entitySelection->Input->InputMouse.MouseDelta.x, p_entitySelection->Input->InputMouse.MouseDelta.y, 0.0f };
 					_Math::Vector3f_mul(&l_deltaPosition, -p_entitySelection->Input->InputMouse.MouseSentitivityperPixel, &l_deltaPosition);
-					_Math::Vector3f_add(&(*l_transformComponent)->Transform.LocalPosition, &l_deltaPosition, &l_deltaPosition);
-					_Math::Transform_setLocalPosition(&(*l_transformComponent)->Transform, l_deltaPosition);
+					_Math::Vector3f_add(&(l_transformComponent)->Transform.LocalPosition, &l_deltaPosition, &l_deltaPosition);
+					_Math::Transform_setLocalPosition(&(l_transformComponent)->Transform, l_deltaPosition);
 				}
 			}
 		}
@@ -80,11 +72,11 @@ namespace _GameEngineEditor
 
 		if (p_entitySelection->SelectedEntity)
 		{
-			_ECS::TransformComponent** l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
-			_ECS::MeshRendererBound** l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
-			_Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(*l_transformComponent)->Transform);
+			_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
+			_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
+			_Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(l_transformComponent)->Transform);
 			_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
-			_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(*l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(*l_transformComponent)->Transform), true, &l_color);
+			_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_transformComponent)->Transform), true, &l_color);
 		}
 
 	};

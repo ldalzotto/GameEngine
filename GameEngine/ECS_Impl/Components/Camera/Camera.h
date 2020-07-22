@@ -8,7 +8,6 @@
 namespace _GameEngine
 {
 	namespace _Render { struct RenderInterface; }
-	namespace _ECS { struct Component; }
 	namespace _Math { struct Vector2f; }
 }
 
@@ -18,6 +17,7 @@ namespace _GameEngine::_ECS
 
 	struct Camera
 	{ 
+		_ECS::ComponentHeader ComponentHeader;
 		_Render::RenderInterface* RenderInterface;
 		_Math::Matrix4x4f ProjectionMatrix;
 		_Math::Matrix4x4f ViewMatrix;

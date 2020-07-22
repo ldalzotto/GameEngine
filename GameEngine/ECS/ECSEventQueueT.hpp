@@ -12,8 +12,8 @@ namespace _GameEngine::_ECS
 	}
 
 	template <typename COMPONENT_TYPE>
-	ECSEventMessage* ECSEventMessageT_AddComponent_alloc(Entity** l_entity, COMPONENT_TYPE** l_allocatedComponent)
+	ECSEventMessage* ECSEventMessageT_AddComponent_alloc(Entity** l_entity, COMPONENT_TYPE* l_allocatedComponent)
 	{
-		return ECSEventMessage_AddComponent_alloc(l_entity, &((Component*)l_allocatedComponent));
+		return ECSEventMessage_AddComponent_alloc(l_entity, (ComponentHeader*)l_allocatedComponent);
 	};
 }

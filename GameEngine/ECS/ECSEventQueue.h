@@ -6,7 +6,7 @@ namespace _GameEngine::_ECS
 {
 	struct ECS;
 	struct Entity;
-	struct Component;
+	struct ComponentHeader;
 }
 
 namespace _GameEngine::_ECS
@@ -43,10 +43,10 @@ namespace _GameEngine::_ECS
 	{
 		ECSEventMessageType MessageType;
 		Entity* Entity;
-		Component* AllocatedComponent;
+		ComponentHeader* AllocatedComponent;
 	};
 
-	ECSEventMessage* ECSEventMessage_AddComponent_alloc(Entity** l_entity, Component** l_allocatedComponent);
+	ECSEventMessage* ECSEventMessage_AddComponent_alloc(Entity** l_entity, ComponentHeader* l_allocatedComponent);
 
 	struct ECSEventQueue
 	{

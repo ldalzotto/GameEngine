@@ -7,29 +7,25 @@
 
 namespace _GameEngine::_ECS
 {
-	Component* Component_alloc(ComponentType* p_type, size_t p_componentChildSize)
+	ComponentHeader* Component_alloc(ComponentType* p_type, size_t p_componentChildSize)
 	{
-		Component* l_component = (Component*)calloc(1, sizeof(Component));
+		ComponentHeader* l_component = (ComponentHeader*)calloc(1, p_componentChildSize);
 		l_component->ComponentType = p_type;
-		l_component->Child = calloc(1, p_componentChildSize);
-		// _Core::ObserverT_alloc(&l_component->OnComponentFree);
 		return l_component;
 	};
 
-	void Component_free(Component** p_component)
+	void Component_free(ComponentHeader** p_component)
 	{
 		if ((*p_component)->OnComponentFree)
 		{
 			(*p_component)->OnComponentFree(*p_component);
 		}
-		free((*p_component)->Child);
-		(*p_component)->Child = nullptr;
 		(*p_component)->AttachedEntity = nullptr;
 		free (*p_component);
 		*p_component = nullptr;
 	};
 
-	bool Component_comparator(Component** left, ComponentType* right, void*)
+	bool Component_comparator(ComponentHeader** left, ComponentType* right, void*)
 	{
 		return *(*left)->ComponentType == *right;
 	};
@@ -52,7 +48,7 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, Component* p_component)
+	void ComponentEvents_onComponentAttached(ComponentEvents* p_componentEvents, ComponentHeader* p_component)
 	{
 		if (p_componentEvents->ComponentAttachedEvents.contains(*p_component->ComponentType))
 		{
@@ -60,7 +56,7 @@ namespace _GameEngine::_ECS
 		}
 	};
 
-	void ComponentEvents_onComponentDetached(ComponentEvents* p_componentEvents, Component* p_component)
+	void ComponentEvents_onComponentDetached(ComponentEvents* p_componentEvents, ComponentHeader* p_component)
 	{
 		if (p_componentEvents->ComponentDetachedEvents.contains(*p_component->ComponentType))
 		{

@@ -17,6 +17,7 @@ namespace _GameEngine::_ECS
 
 	struct MeshRenderer
 	{
+		_ECS::ComponentHeader ComponentHeader;
 		_Render::RenderInterface* RenderInterface;
 		
 		_Render::MaterialInstance* MaterialInstance;
@@ -35,5 +36,5 @@ namespace _GameEngine::_ECS
 		std::unordered_map<std::string, void*> InputParameters;
 	};
 
-	void MeshRenderer_init(MeshRenderer** p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
+	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
 }

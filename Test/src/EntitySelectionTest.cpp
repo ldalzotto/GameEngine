@@ -32,18 +32,18 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		_ECS::Entity* l_cameraEntity;
 		{
 			l_cameraEntity = _ECS::Entity_alloc();
-			auto l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
+			_ECS::ECSEventMessage* l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
 			_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
 		}
 
 		{
-			auto l_camera = _ECS::ComponentT_alloc<_ECS::Camera>();
-			_ECS::Camera_init(*l_camera, &l_app->Render.RenderInterface);
+			_ECS::Camera* l_camera = _ECS::ComponentT_alloc<_ECS::Camera>();
+			_ECS::Camera_init(l_camera, &l_app->Render.RenderInterface);
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_camera, &l_app->ECS);
 		}
 
 		{
-			auto l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			_ECS::TransformComponent* l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f }, &l_transformInitInfo.LocalRotation);

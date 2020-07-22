@@ -28,8 +28,8 @@ using namespace _GameEngine::_Test;
 
 struct TestIntTest
 {
-	_ECS::TransformComponent** PhysicsRayBegin;
-	_ECS::TransformComponent** PhysicsRayEnd;
+	_ECS::TransformComponent* PhysicsRayBegin;
+	_ECS::TransformComponent* PhysicsRayEnd;
 };
 
 void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_gameEngine);
@@ -139,9 +139,9 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 
 	if (p_cubeCrossCreationInfo->RotationAxis)
 	{
-		auto l_transformRotate = _ECS::ComponentT_alloc<_ECS::TransformRotate>();
-		(*l_transformRotate)->Speed = .5f;
-		(*l_transformRotate)->Axis = *p_cubeCrossCreationInfo->RotationAxis;
+		_ECS::TransformRotate* l_transformRotate = _ECS::ComponentT_alloc<_ECS::TransformRotate>();
+		(l_transformRotate)->Speed = .5f;
+		(l_transformRotate)->Axis = *p_cubeCrossCreationInfo->RotationAxis;
 		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, l_gameEngine->ECS);
 	}
 };
@@ -154,8 +154,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 	EntityConfiguration_init();
 
 	_ECS::Entity* l_cameraEntity;
-	_ECS::TransformComponent** l_rayTransform;
-	_ECS::TransformComponent** l_sceneModelsRootTransform;
+	_ECS::TransformComponent* l_rayTransform;
+	_ECS::TransformComponent* l_sceneModelsRootTransform;
 
 	// Camera
 	{
@@ -167,7 +167,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 
 		{
 			auto l_camera = _ECS::ComponentT_alloc<_ECS::Camera>();
-			_ECS::Camera_init(*l_camera, &l_app->Render.RenderInterface);
+			_ECS::Camera_init(l_camera, &l_app->Render.RenderInterface);
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_camera, &l_app->ECS);
 		}
 
@@ -191,7 +191,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 		}
 
 		{
-			_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			_ECS::TransformComponent* l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			l_rayTransform = l_transformComponent;
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -0.0f };
@@ -213,7 +213,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			}
 
 			{
-				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+				_ECS::TransformComponent* l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 				p_test->PhysicsRayBegin = l_transformComponent;
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
@@ -237,7 +237,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			}
 
 			{
-				_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+				_ECS::TransformComponent* l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 				p_test->PhysicsRayEnd = l_transformComponent;
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
@@ -252,8 +252,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			}
 		}
 
-		_Math::Transform_addChild(&(*l_rayTransform)->Transform, &(*p_test->PhysicsRayBegin)->Transform);
-		_Math::Transform_addChild(&(*l_rayTransform)->Transform, &(*p_test->PhysicsRayEnd)->Transform);
+		_Math::Transform_addChild(&(l_rayTransform)->Transform, &(p_test->PhysicsRayBegin)->Transform);
+		_Math::Transform_addChild(&(l_rayTransform)->Transform, &(p_test->PhysicsRayEnd)->Transform);
 	}
 
 	// Scene root
@@ -266,7 +266,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 		}
 
 		{
-			_ECS::TransformComponent** l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			_ECS::TransformComponent* l_transformComponent = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			l_sceneModelsRootTransform = l_transformComponent;
 			
 			_ECS::TransformInitInfo l_transformInitInfo{};
@@ -281,8 +281,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 		}
 	}
 	_Math::Transform_addChild(
-		&(*l_sceneModelsRootTransform)->Transform,
-		&(*l_rayTransform)->Transform
+		&(l_sceneModelsRootTransform)->Transform,
+		&(l_rayTransform)->Transform
 	);
 
 
@@ -291,7 +291,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 		{
 			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 1.0f };
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
-			l_cubeCrossCreationInfo.Parent = *l_sceneModelsRootTransform;
+			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 1.0f, 0.0f, 0.0f };
 			l_cubeCrossCreationInfo.LocalRotation = _Math::Quaternionf_identity();
 			l_cubeCrossCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
@@ -302,7 +302,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 		{
 			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 0.0f };
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
-			l_cubeCrossCreationInfo.Parent = *l_sceneModelsRootTransform;
+			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 0.0f, -1.0f, 2.0f };
 			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, &l_cubeCrossCreationInfo.LocalRotation);
 			l_cubeCrossCreationInfo.LocalScale = { 2.0f, 1.0f, 1.0f };
@@ -327,8 +327,8 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 #endif
 
 	{
-		_Math::Vector3f l_rayBeginPoint = _Math::Transform_getWorldPosition(&(*p_test->PhysicsRayBegin)->Transform);
-		_Math::Vector3f l_rayEndPoint = _Math::Transform_getWorldPosition(&(*p_test->PhysicsRayEnd)->Transform);
+		_Math::Vector3f l_rayBeginPoint = _Math::Transform_getWorldPosition(&(p_test->PhysicsRayBegin)->Transform);
+		_Math::Vector3f l_rayEndPoint = _Math::Transform_getWorldPosition(&(p_test->PhysicsRayEnd)->Transform);
 		_Math::Vector3f l_color = { 0.0f, 1.0f, 0.0f };
 
 		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
