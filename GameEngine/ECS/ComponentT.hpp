@@ -8,6 +8,14 @@ namespace _GameEngine::_ECS
 	extern ComponentType* ComponentT_getComponentType();
 
 	template <typename COMPONENT_TYPE>
+	struct ComponentHeaderT
+	{
+		Entity* AttachedEntity;
+		ComponentType* ComponentType;
+		void(*OnComponentFree)(COMPONENT_TYPE*);
+	};
+
+	template <typename COMPONENT_TYPE>
 	COMPONENT_TYPE* ComponentT_alloc()
 	{
 		ComponentHeader* l_component = Component_alloc(ComponentT_getComponentType<COMPONENT_TYPE>(), sizeof(COMPONENT_TYPE));

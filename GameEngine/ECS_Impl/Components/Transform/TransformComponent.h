@@ -11,7 +11,7 @@ namespace _GameEngine::_ECS
 
 	struct TransformComponent
 	{
-		_ECS::ComponentHeader ComponentHeader;
+		_ECS::ComponentHeaderT<TransformComponent> ComponentHeader;
 		_Math::Transform Transform;
 	};
 

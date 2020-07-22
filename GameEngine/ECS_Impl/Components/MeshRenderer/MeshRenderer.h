@@ -17,7 +17,7 @@ namespace _GameEngine::_ECS
 
 	struct MeshRenderer
 	{
-		_ECS::ComponentHeader ComponentHeader;
+		_ECS::ComponentHeaderT<MeshRenderer> ComponentHeader;
 		_Render::RenderInterface* RenderInterface;
 		
 		_Render::MaterialInstance* MaterialInstance;

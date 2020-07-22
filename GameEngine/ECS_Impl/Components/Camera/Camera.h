@@ -17,7 +17,7 @@ namespace _GameEngine::_ECS
 
 	struct Camera
 	{ 
-		_ECS::ComponentHeader ComponentHeader;
+		_ECS::ComponentHeaderT<Camera> ComponentHeader;
 		_Render::RenderInterface* RenderInterface;
 		_Math::Matrix4x4f ProjectionMatrix;
 		_Math::Matrix4x4f ViewMatrix;

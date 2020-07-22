@@ -14,7 +14,7 @@ namespace _GameEngine::_ECS
 
 	struct MeshRendererBound
 	{
-		_ECS::ComponentHeader ComponentHeader;
+		_ECS::ComponentHeaderT<MeshRendererBound> ComponentHeader;
 		_Math::Box BoundingBox;
 		_Physics::BoxCollider* Boxcollider;
 	};
