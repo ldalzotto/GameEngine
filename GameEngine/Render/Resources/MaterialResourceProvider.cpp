@@ -8,6 +8,7 @@
 #include "Shader/ShaderParameterKeys.h"
 #include "Materials/MaterialInstanceContainer.h"
 #include "RenderInterface.h"
+#include "Texture/Texture.h"
 #include "Texture/TextureSamplers.h"
 
 using namespace ::_Core;
@@ -15,6 +16,7 @@ using namespace ::_Core;
 namespace _GameEngine::_Render
 {
 	_Math::Vector4f Material_ColorDefaultValue = { 1.0f, 1.0f, 1.0f, 1.0f };
+	TextureUniqueKey Texutre_DefaultValue = { "E:/GameProjects/GameEngine/Assets/Textures/DefaultTexture.png" };
 
 	Material* materialResourceProvider_allocateMaterial(MaterialUniqueKey* p_key, RenderInterface* p_renderInterface);
 
@@ -110,6 +112,7 @@ namespace _GameEngine::_Render
 			l_imageSampleParameter->TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
 			l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 			l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
+			l_imageSampleParameter->TextureDefaultValue = &Texutre_DefaultValue;
 
 			ShaderParameter l_colorParameter{};
 			ShaderParameter_alloc(&l_colorParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_COLOR);
@@ -156,6 +159,7 @@ namespace _GameEngine::_Render
 			l_imageSampleParameter->TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
 			l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 			l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
+			l_imageSampleParameter->TextureDefaultValue = &Texutre_DefaultValue;
 
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_modelMatrixShaderParameter);
 			l_materialAllocInfo.ShaderParameters.emplace_back(l_imageSamplerShaderParameter);
@@ -191,7 +195,7 @@ namespace _GameEngine::_Render
 			l_imageSampleParameter->TextureSampler = p_renderInterface->TextureSamplers->DefaultSampler;
 			l_imageSampleParameter->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 			l_imageSamplerShaderParameter.DescriptorSetLayoutBinding = ImageSampleParameter_buildLayoutBinding(l_imageSampleParameter);
-
+			l_imageSampleParameter->TextureDefaultValue = &Texutre_DefaultValue;
 
 			ShaderParameter l_colorParameter{};
 			ShaderParameter_alloc(&l_colorParameter, ShaderParameterType::UNIFORM_BUFFER, MATERIALINSTANCE_COLOR);

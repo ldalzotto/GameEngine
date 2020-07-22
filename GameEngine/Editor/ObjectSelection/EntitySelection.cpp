@@ -119,10 +119,10 @@ namespace _GameEngineEditor
 			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoFragment.spv";
 			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoVertex.spv";
 			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
-			_Math::Vector3f l_color = { 0.0f, 1.0f, 0.0f };
+			_Math::Vector4f l_color = { 0.0f, 1.0f, 0.0f, 1.0f };
 			l_meshRendererInitInfo.InputParameters = {
 				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj"},
-				{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/red.png"},
+				// {_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/red.png"},
 				{_Render::MATERIALINSTANCE_COLOR, &l_color}
 			};
 

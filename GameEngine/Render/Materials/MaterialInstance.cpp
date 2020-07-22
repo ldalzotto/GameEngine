@@ -13,6 +13,7 @@
 #include "Resources/MeshResourceProvider.h"
 #include "Resources/TextureResourceProvider.h"
 #include "Mesh/Mesh.h"
+#include "Texture/Texture.h"
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
 #include "VulkanObjects/Hardware/Device/Device.h"
 #include "Shader/ShaderParameter.h"
@@ -153,8 +154,8 @@ namespace _GameEngine::_Render
 	Texture* MaterialInstance_getTexture(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = 
-			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, &l_hash}).Current;
+		MaterialInstanceParameter** l_foundParameter =
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_hash}).Current;
 		if (l_foundParameter)
 		{
 			return ((TextureMaterialInstanceParameter*)(*l_foundParameter)->Parameter)->Texture;
@@ -165,8 +166,8 @@ namespace _GameEngine::_Render
 	void MaterialInstance_setTexture(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, TextureUniqueKey* p_textureKey)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = 
-			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, &l_hash}).Current;
+		MaterialInstanceParameter** l_foundParameter =
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_hash}).Current;
 		if (l_foundParameter)
 		{
 			MaterialInstanceParameter_free(l_foundParameter, p_materialInstance->RenderInterface);
@@ -199,7 +200,7 @@ namespace _GameEngine::_Render
 	VulkanBuffer* MaterialInstance_getUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = 
+		MaterialInstanceParameter** l_foundParameter =
 			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_hash}).Current;
 		if (l_foundParameter)
 		{
@@ -211,8 +212,8 @@ namespace _GameEngine::_Render
 	void MaterialInstance_setUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, UniformBufferParameter* p_uniformBufferParameter)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = 
-			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, &l_hash}).Current;
+		MaterialInstanceParameter** l_foundParameter =
+			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_hash}).Current;
 		if (l_foundParameter)
 		{
 			MaterialInstanceParameter_free(l_foundParameter, p_materialInstance->RenderInterface);
@@ -228,7 +229,7 @@ namespace _GameEngine::_Render
 	void MaterialInstance_pushUniformBuffer(MaterialInstance* p_materialInstance, ShaderParameterKey& p_key, void* p_data)
 	{
 		size_t l_hash = ShaderParameterKey_buildHash(&p_key);
-		MaterialInstanceParameter** l_foundParameter = 
+		MaterialInstanceParameter** l_foundParameter =
 			CompareT_find(VectorT_buildIterator(&p_materialInstance->Parameters), ComparatorT<MaterialInstanceParameter*, size_t, void>{MaterialInstanceParameter_vectorFind, & l_hash}).Current;
 		if (l_foundParameter)
 		{
@@ -249,6 +250,8 @@ namespace _GameEngine::_Render
 			}
 		}
 
+		/* We initialize ShaderParameter value of set it to it's default value. */
+
 		for (ShaderParameter& l_shaderParameter : p_materialInstance->SourceMaterial->InputLayout.ShaderParameters)
 		{
 			switch (l_shaderParameter.Type)
@@ -257,13 +260,29 @@ namespace _GameEngine::_Render
 			{
 				UniformBufferParameter* l_uniformBufferParameter = (UniformBufferParameter*)l_shaderParameter.Parameter;
 				MaterialInstance_setUniformBuffer(p_materialInstance, l_shaderParameter.KeyName, l_uniformBufferParameter);
+
+				if (p_materialInstanceInputParamter->contains(l_shaderParameter.KeyName))
+				{
+					MaterialInstance_pushUniformBuffer(p_materialInstance, l_shaderParameter.KeyName, p_materialInstanceInputParamter->at(l_shaderParameter.KeyName));
+				}
+				else if (l_uniformBufferParameter->DefaultValue)
+				{
+					MaterialInstance_pushUniformBuffer(p_materialInstance, l_shaderParameter.KeyName, l_uniformBufferParameter->DefaultValue);
+				}
 			}
 			break;
 			case ShaderParameterType::IMAGE_SAMPLER:
 			{
 				ImageSampleParameter* l_imageSamplerParameter = (ImageSampleParameter*)l_shaderParameter.Parameter;
 				TextureUniqueKey l_textureUniqueKey{};
-				l_textureUniqueKey.TexturePath = std::string((char*)p_materialInstanceInputParamter->at(l_shaderParameter.KeyName));
+				if (p_materialInstanceInputParamter->contains(l_shaderParameter.KeyName))
+				{
+					l_textureUniqueKey.TexturePath = std::string((char*)p_materialInstanceInputParamter->at(l_shaderParameter.KeyName));
+				}
+				else if(l_imageSamplerParameter->TextureDefaultValue)
+				{
+					l_textureUniqueKey = *l_imageSamplerParameter->TextureDefaultValue;
+				}
 				MaterialInstance_setTexture(p_materialInstance, l_shaderParameter.KeyName, &l_textureUniqueKey);
 			}
 			break;

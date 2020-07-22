@@ -10,6 +10,7 @@ namespace _GameEngine::_Render
 {
 	struct Device;
 	struct Texture;
+	struct TextureUniqueKey;
 }
 
 namespace _GameEngine::_Render
@@ -48,6 +49,7 @@ namespace _GameEngine::_Render
 		uint32_t Binding;	
 		VkShaderStageFlags StageFlag;
 		VkSampler TextureSampler;
+		TextureUniqueKey* TextureDefaultValue;
 	};
 
 	VkDescriptorSetLayoutBinding ImageSampleParameter_buildLayoutBinding(ImageSampleParameter* p_imageSampleParameter);
