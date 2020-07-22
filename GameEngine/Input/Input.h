@@ -177,6 +177,7 @@ namespace _GameEngine::_Input
 	struct InputMouse
 	{
 		bool MouseEnabled;
+		float MouseSentitivityperPixel = 0.01f;
 		_Math::Vector2d ScreenPosition;
 
 		_Math::Vector2d LastFrameMouseAbsoluteScreenPosition;

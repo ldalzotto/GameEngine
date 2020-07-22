@@ -1,6 +1,7 @@
 #include "Lib/IntegrationTest.h"
 
 #include "Lib/EntityCreation.h"
+#include "Lib/EntityConfigurations.h"
 
 #include "GameEngineApplication.h"
 
@@ -32,9 +33,6 @@ struct TestIntTest
 };
 
 void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_gameEngine);
-
-_Render::MaterialUniqueKey CubeMeshRendererMaterialKey;
-_ECS::MeshRendererInitInfo CubeMeshRendererInit;
 
 struct CubeCrossCreationInfo
 {
@@ -152,19 +150,8 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 
 void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test)
 {
-	{
-		std::unordered_map<std::string, void*> l_defaultMaterialInput
-		{
-			{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/Cube.obj"},
-			{_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/MinecraftDirtV2.png"}
-		};
-
-		CubeMeshRendererMaterialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialVertex.spv";
-		CubeMeshRendererMaterialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/TutorialFragment.spv";
-
-		CubeMeshRendererInit.InputParameters = l_defaultMaterialInput;
-		CubeMeshRendererInit.MaterialUniqueKey = &CubeMeshRendererMaterialKey;
-	}
+	
+	EntityConfiguration_init();
 
 	_ECS::Entity* l_cameraEntity;
 	_ECS::TransformComponent** l_rayTransform;

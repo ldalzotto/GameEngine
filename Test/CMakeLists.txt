@@ -12,4 +12,7 @@ target_link_libraries(Test PUBLIC GameEngine)
 add_executable(PhysicsRaycastTest "src/PhysicsRaycastTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(PhysicsRaycastTest PUBLIC GameEngine)
 
+add_executable(EntitySelectionTest "src/EntitySelectionTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+target_link_libraries(EntitySelectionTest PUBLIC GameEngine)
+
 copy_assimp_dll(${PROJECT_BINARY_DIR}/${BUILD_TYPE}/Debug)
