@@ -27,15 +27,18 @@ namespace _GameEngineEditor
 		_Core::SortedSequencerOperationT<GameEngineApplicationInterface> l_gameEngineEditorUpdate{};
 		l_gameEngineEditorUpdate.OperationCallback = { GameEngineEditor_update, p_gameEngineEditor };
 
-		_Core::VectorT<_Core::SortedSequencerPriority> l_beforePritority; _Core::VectorT_alloc(&l_beforePritority, 1);
-		_Core::VectorT<_Core::SortedSequencerPriority> l_afterPriotiry; _Core::VectorT_alloc(&l_afterPriotiry, 1);
+		_Core::SortedSequencerPriority l_beforePtr[1];
+		_Core::ArrayT<_Core::SortedSequencerPriority> l_beforePritority = _Core::ArrayT_fromCStyleArray(l_beforePtr, 1);
+		l_beforePritority.Size = 0;
+
+		_Core::SortedSequencerPriority l_afterPtr[1];
+		_Core::ArrayT<_Core::SortedSequencerPriority> l_afterPriotiry = _Core::ArrayT_fromCStyleArray(l_afterPtr, 1);
+		l_afterPriotiry.Size = 0;
 		{
-			_Core::VectorT_pushBack(&l_beforePritority, _GameEngine::UPDATE_PUSH_TO_RENDER_PRIORITY);
-			_Core::VectorT_pushBack(&l_afterPriotiry,  _GameEngine::EDITOR_PRIORITY);
+			_Core::ArrayT_pushBack(&l_beforePritority, _GameEngine::UPDATE_PUSH_TO_RENDER_PRIORITY);
+			_Core::ArrayT_pushBack(&l_afterPriotiry,  _GameEngine::EDITOR_PRIORITY);
 			l_gameEngineEditorUpdate.Priority = _Core::SortedSequencer_calculatePriority(&l_beforePritority, &l_afterPriotiry);
 		}
-		_Core::VectorT_free(&l_beforePritority);
-		_Core::VectorT_free(&l_afterPriotiry);
 
 		_Core::SortedSequencerT_addOperation(&p_gameEngineApplicationInterface->UpdateSequencer->UpdateSequencer, &l_gameEngineEditorUpdate);
 	};

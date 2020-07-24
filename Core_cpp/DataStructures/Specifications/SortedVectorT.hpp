@@ -2,6 +2,7 @@
 
 #include "DataStructures/GenericArray.hpp"
 #include "Functional/Sort/ElementSorterT.hpp"
+#include "Functional/Comparator/ComparatorT.hpp"
 
 namespace _Core
 {

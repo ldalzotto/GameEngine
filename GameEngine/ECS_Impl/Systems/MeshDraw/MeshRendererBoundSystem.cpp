@@ -28,9 +28,12 @@ namespace _GameEngine::_ECS
 
 	::_Core::SortedSequencerPriority MeshRendererBoundSystem_getUpdatePriority()
 	{
-		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
-		::_Core::VectorT_alloc(&l_before, 1);
-		::_Core::VectorT_pushBack(&l_before, MeshDrawSystem_updatePriorityBefore());
+
+		_Core::SortedSequencerPriority l_beforePtr[1];
+		_Core::ArrayT<_Core::SortedSequencerPriority> l_before = _Core::ArrayT_fromCStyleArray(l_beforePtr, 1);
+		l_before.Size = 0;
+
+		::_Core::ArrayT_pushBack(&l_before, MeshDrawSystem_updatePriorityBefore());
 		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 

@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include "Functional/Callback/Callback.hpp"
-#include "DataStructures/Specifications/VectorT.hpp"
+#include "DataStructures/Specifications/ArrayT.hpp"
 #include "DataStructures/Specifications/SortedVectorT.hpp"
 
 namespace _Core
@@ -29,7 +29,7 @@ namespace _Core
 	void SortedSequencer_execute(SortedSequencer* p_sortedSequencer, void* p_input);
 	void SortedSequencer_execute_afterCallback(SortedSequencer* p_sortedSequencer, void* p_input, Callback* p_afterEveryExecutionCallback);
 
-	SortedSequencerPriority SortedSequencer_calculatePriority(VectorT<SortedSequencerPriority>* p_before, VectorT<SortedSequencerPriority>* p_after);
+	SortedSequencerPriority SortedSequencer_calculatePriority(ArrayT<SortedSequencerPriority>* p_before, ArrayT<SortedSequencerPriority>* p_after);
 }
 
 

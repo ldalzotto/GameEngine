@@ -2,6 +2,7 @@
 
 #include "SortedSequencer.hpp"
 #include "Functional/Callback/CallbackT.hpp"
+#include "DataStructures/Specifications/VectorT.hpp"
 
 namespace _Core
 {

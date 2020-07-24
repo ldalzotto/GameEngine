@@ -58,7 +58,7 @@ namespace _Core
 		Callback_call(p_afterEveryExecutionCallback, NULL);
 	};
 
-	SortedSequencerPriority SortedSequencer_calculatePriority(VectorT<SortedSequencerPriority>* p_before, VectorT<SortedSequencerPriority>* p_after)
+	SortedSequencerPriority SortedSequencer_calculatePriority(ArrayT<SortedSequencerPriority>* p_before, ArrayT<SortedSequencerPriority>* p_after)
 	{
 
 
@@ -71,10 +71,8 @@ namespace _Core
 		{
 			SortedSequencerPriority l_zeroPriority = (SortedSequencerPriority)0;
 
-			if (CompareT_contains(VectorT_buildIterator(p_before), ComparatorT<SortedSequencerPriority, SortedSequencerPriority, void>{ SortedSequencerPriority_equals, & l_zeroPriority, nullptr }))
+			if (CompareT_contains(ArrayT_buildIterator(p_before), ComparatorT<SortedSequencerPriority, SortedSequencerPriority, void>{ SortedSequencerPriority_equals, & l_zeroPriority, nullptr }))
 			{
-				VectorT_free(p_before);
-				if (p_after) { VectorT_free(p_after); }
 				throw std::runtime_error("You cannot insert an operation before the priority 0 (which will always be the first).");
 			}
 		}
@@ -88,7 +86,7 @@ namespace _Core
 			SortedSequencerPriority l_minBefore = USHRT_MAX;
 			for (size_t i = 0; i < p_before->Size; i++)
 			{
-				SortedSequencerPriority l_priority = *VectorT_at(p_before, i);
+				SortedSequencerPriority l_priority = *ArrayT_at(p_before, i);
 				if (l_priority <= l_minBefore)
 				{
 					l_minBefore = l_priority;
@@ -102,7 +100,7 @@ namespace _Core
 			SortedSequencerPriority l_maxAfter = 0;
 			for (size_t i = 0; i < p_after->Size; i++)
 			{
-				SortedSequencerPriority l_priority = *VectorT_at(p_after, i);
+				SortedSequencerPriority l_priority = *ArrayT_at(p_after, i);
 				if (l_priority >= l_maxAfter)
 				{
 					l_maxAfter = l_priority;
@@ -116,7 +114,7 @@ namespace _Core
 			SortedSequencerPriority l_minBefore = USHRT_MAX;
 			for (size_t i = 0; i < p_before->Size; i++)
 			{
-				SortedSequencerPriority l_priority = *VectorT_at(p_before, i);
+				SortedSequencerPriority l_priority = *ArrayT_at(p_before, i);
 				if (l_priority <= l_minBefore)
 				{
 					l_minBefore = l_priority;
@@ -126,7 +124,7 @@ namespace _Core
 			SortedSequencerPriority l_maxAfter = 0;
 			for (size_t i = 0; i < p_after->Size; i++)
 			{
-				SortedSequencerPriority l_priority = *VectorT_at(p_after, i);
+				SortedSequencerPriority l_priority = *ArrayT_at(p_after, i);
 				if (l_priority >= l_maxAfter)
 				{
 					l_maxAfter = l_priority;
@@ -153,9 +151,6 @@ namespace _Core
 	end:
 
 		{
-			if (p_before) { VectorT_free(p_before); }
-			if (p_after) { VectorT_free(p_after); }
-
 			if (!l_returnValueFound)
 			{
 				throw std::runtime_error("Cannot find a suitable priority value that executes before and after the associated inputs.");

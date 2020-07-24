@@ -20,10 +20,12 @@ namespace _GameEngine::_ECS
 {
 	::_Core::SortedSequencerPriority TransformRotateSystem_getUpdatePritoriy()
 	{
-		::_Core::VectorT<::_Core::SortedSequencerPriority> l_before;
-		::_Core::VectorT_alloc(&l_before, 2);
-		::_Core::VectorT_pushBack(&l_before, MeshDrawSystem_updatePriorityBefore());
-		::_Core::VectorT_pushBack(&l_before, CameraSystem_getUpdatePriority());
+		_Core::SortedSequencerPriority l_beforePtr[2];
+		_Core::ArrayT<_Core::SortedSequencerPriority> l_before = _Core::ArrayT_fromCStyleArray(l_beforePtr, 2);
+		l_before.Size = 0;
+
+		_Core::ArrayT_pushBack(&l_before, MeshDrawSystem_updatePriorityBefore());
+		_Core::ArrayT_pushBack(&l_before, CameraSystem_getUpdatePriority());
 		return ::_Core::SortedSequencer_calculatePriority(&l_before, nullptr);
 	};
 
