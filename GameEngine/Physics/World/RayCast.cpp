@@ -2,6 +2,7 @@
 
 #include "Functional/Sort/ElementSorter.hpp"
 #include "Algorithm/Sort/SortAlgorithmT.hpp"
+#include "DataStructures/Specifications/ArrayT.hpp"
 
 #include "Math/Intersection/Intersection.h"
 #include "Math/Transform/Transform.h"
@@ -50,13 +51,23 @@ namespace _GameEngine::_Physics
 
 	void RayCastAll(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
+		RayCastAll_against((_Core::ArrayT<BoxCollider*>*)&p_world->BoxColliders, p_begin, p_end, out_intersectionPoints);
+	};
+
+	bool RayCast(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, RaycastHit* out_hit)
+	{
+		return RayCast_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, p_begin, p_end, out_hit);
+	};
+
+	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
+	{
 		_Math::Segment l_segment;
 		{
 			l_segment.Begin = *p_begin;
 			l_segment.End = *p_end;
 		}
 
-		auto l_boxCollidersIt = _Core::VectorT_buildIterator(&p_world->BoxColliders);
+		auto l_boxCollidersIt = _Core::ArrayT_buildIterator(p_comparedColliders);
 		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
 			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
@@ -79,14 +90,14 @@ namespace _GameEngine::_Physics
 			}
 		}
 	};
-
-	bool RayCast(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, RaycastHit* out_hit)
+	
+	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, RaycastHit* out_hit)
 	{
 		bool l_return = false;
 		_Core::VectorT<RaycastHit> l_hits;
 		_Core::VectorT_alloc(&l_hits, 0);
 		{
-			RayCastAll(p_world, p_begin, p_end, &l_hits);
+			RayCastAll_against(p_comparedColliders, p_begin, p_end, &l_hits);
 
 			if (l_hits.Size > 0)
 			{
@@ -95,7 +106,7 @@ namespace _GameEngine::_Physics
 				RaycastHitDistanceComparatorObject l_raycastMinComparatorObject{};
 				l_raycastMinComparatorObject.RayBegin = p_begin;
 				*out_hit = *_Core::SortT_min(_Core::VectorT_buildIterator(&l_hits), 0,
-							_Core::ElementSorterT<RaycastHit, RaycastHit, RaycastHitDistanceComparatorObject> { RaycastHit_distanceMinComparator, & l_raycastMinComparatorObject });
+					_Core::ElementSorterT<RaycastHit, RaycastHit, RaycastHitDistanceComparatorObject> { RaycastHit_distanceMinComparator, & l_raycastMinComparatorObject });
 			}
 
 		}
