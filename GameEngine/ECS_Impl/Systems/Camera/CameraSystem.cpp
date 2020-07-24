@@ -2,7 +2,6 @@
 
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/VectorMath.h"
-#include "Math/Segment/Segment.h"
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
@@ -114,37 +113,5 @@ namespace _GameEngine::_ECS
 			return EntityT_getComponent<Camera>(l_entity);
 		}
 		return nullptr;
-	};
-
-	void CameraSystem_buildWorldSpaceRay(Camera* p_camera, _Math::Vector2f* p_screenPoint, _Math::Segment* out_ray)
-	{
-		_Math::Vector2f l_graphicsAPIPixelCoord;
-
-		{
-			_Math::Vector3f l_screenPoint3f = { p_screenPoint->x, p_screenPoint->y, 1.0f };
-			_Math::Vector3f l_graphicsAPIPixelCoord3f;
-			_Math::Matrix3x3f_mul(&p_camera->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates, &l_screenPoint3f, &l_graphicsAPIPixelCoord3f);
-			l_graphicsAPIPixelCoord = { l_graphicsAPIPixelCoord3f.x, l_graphicsAPIPixelCoord3f.y };
-		}
-
-		_Math::Matrix4x4f l_screenToWorldMatrix;
-		{
-			_Math::Matrix4x4f l_tmp;
-			_Math::Matrixf4x4_mul(&p_camera->ProjectionMatrix, &p_camera->ViewMatrix, &l_tmp);
-			_Math::Matrixf4x4_inv(&l_tmp, &l_screenToWorldMatrix);
-		}
-
-		_Math::Vector4f l_beginScreenSpace = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f };
-		_Math::Vector4f l_beginWorldSpace;
-		_Math::Matrixf4x4_mul(&l_screenToWorldMatrix, &l_beginScreenSpace, &l_beginWorldSpace);
-		_Math::Vector4f_mul(&l_beginWorldSpace, 1.0f / l_beginWorldSpace.w, &l_beginWorldSpace);
-
-		_Math::Vector4f l_endScreenSpace = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f };
-		_Math::Vector4f l_endWorldSpace;
-		_Math::Matrixf4x4_mul(&l_screenToWorldMatrix, &l_endScreenSpace, &l_endWorldSpace);
-		_Math::Vector4f_mul(&l_endWorldSpace, 1.0f / l_endWorldSpace.w, &l_endWorldSpace);
-
-		_Math::Vector3f_build(&l_beginWorldSpace, &out_ray->Begin);
-		_Math::Vector3f_build(&l_endWorldSpace, &out_ray->End);
 	};
 }

@@ -32,6 +32,8 @@ namespace _GameEngine::_Math
 	void Matrixf4x4_extractTranslation(Matrix4x4f* p_mat, Vector4f* out_translation);
 	void Matrixf4x4_extractScale(Matrix4x4f* p_mat, Vector4f* out_scale);
 
+	void Matrix4x4f_clipToWorld(Matrix4x4f* p_clipToWorldMatrix, Vector3f* p_clipPosition, Vector3f* out_worldPosition);
+
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, float p_value, Matrix4x4f* out);
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector4f* p_vector, Vector4f* out);
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector3f* p_vector, Vector3f* out);

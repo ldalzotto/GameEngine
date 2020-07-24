@@ -353,7 +353,7 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 		_Math::Vector2f l_screenPoint = { l_interface->Input->InputMouse.ScreenPosition.x, l_interface->Input->InputMouse.ScreenPosition.y };
 		_Math::Segment l_ray;
 
-		_ECS::CameraSystem_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
+		_ECS::Camera_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
 
 		_Physics::RaycastHit l_hit;
 		if (_Physics::RayCast(l_interface->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))

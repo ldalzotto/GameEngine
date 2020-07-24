@@ -273,6 +273,17 @@ namespace _GameEngine::_Math
 		out_scale->w = 0.0f;
 	};
 
+	void Matrix4x4f_clipToWorld(Matrix4x4f* p_clipToWorldMatrix, Vector3f* p_clipPosition, Vector3f* out_worldPosition)
+	{
+		Vector4f l_clipPosition4f, l_worldPosition4f;
+		{
+			Vector4f_build(p_clipPosition, 1.0f, &l_clipPosition4f);
+			Matrixf4x4_mul(p_clipToWorldMatrix, &l_clipPosition4f, &l_worldPosition4f);
+			Vector4f_mul(&l_worldPosition4f, 1.0f / l_worldPosition4f.w, &l_worldPosition4f);
+		}
+		Vector3f_build(&l_worldPosition4f, out_worldPosition);
+	};
+
 	void Matrixf4x4_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out)
 	{
 		Vector3f l_forward;
