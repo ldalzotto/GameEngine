@@ -165,32 +165,32 @@ namespace _GameEngine::_Math
 		case 0:
 		{
 			out_quaternion->x = l_biggestDiagonalValue;
-			out_quaternion->y = (p_up->x + p_right->y) * mult;
-			out_quaternion->z = (p_right->z + p_forward->x) * mult;
-			out_quaternion->w = (p_forward->y - p_up->z) * mult;
+			out_quaternion->y = (p_right->y + p_up->x) * mult;
+			out_quaternion->z = (p_forward->x + p_right->z) * mult;
+			out_quaternion->w = (p_up->z - p_forward->y) * mult;
 		}
 		break;
 		case 1:
 		{
-			out_quaternion->x = (p_up->x + p_right->y) * mult;
+			out_quaternion->x = (p_right->y + p_up->x) * mult;
 			out_quaternion->y = l_biggestDiagonalValue;
-			out_quaternion->z = (p_forward->y + p_up->z) * mult;
-			out_quaternion->w = (p_right->z - p_forward->x) * mult;
+			out_quaternion->z = (p_up->z + p_forward->y) * mult;
+			out_quaternion->w = (p_forward->x - p_right->z) * mult;
 		}
 		break;
 		case 2:
 		{
-			out_quaternion->x = (p_right->z + p_forward->x) * mult;
-			out_quaternion->y = (p_forward->y + p_up->z) * mult;
+			out_quaternion->x = (p_forward->x + p_right->z) * mult;
+			out_quaternion->y = (p_up->z + p_forward->y) * mult;
 			out_quaternion->z = l_biggestDiagonalValue;
-			out_quaternion->w = (p_up->x - p_right->y) * mult;
+			out_quaternion->w = (p_right->y - p_up->x) * mult;
 		}
 		break;
 		case 3:
 		{
-			out_quaternion->x = (p_forward->y - p_up->z) * mult;
-			out_quaternion->y = (p_right->z - p_forward->x) * mult;
-			out_quaternion->z = (p_up->x - p_right->y) * mult;
+			out_quaternion->x = (p_up->z - p_forward->y) * mult;
+			out_quaternion->y = (p_forward->x - p_right->z) * mult;
+			out_quaternion->z = (p_right->y - p_up->x) * mult;
 			out_quaternion->w = l_biggestDiagonalValue;
 		}
 		break;

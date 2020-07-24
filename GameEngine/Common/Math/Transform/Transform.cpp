@@ -122,8 +122,11 @@ namespace _GameEngine::_Math
 		{
 			_Math::Vector3f l_right, l_up, l_forward;
 			_Math::Matrix4x4f_right(&l_localToWorldMatrix, &l_right);
+			_Math::Vector3f_normalize(&l_right);
 			_Math::Matrix4x4f_up(&l_localToWorldMatrix, &l_up);
+			_Math::Vector3f_normalize(&l_up);
 			_Math::Matrix4x4f_forward(&l_localToWorldMatrix, &l_forward);
+			_Math::Vector3f_normalize(&l_forward);
 			Quaternion_fromAxis(&l_right, &l_up, &l_forward, &l_return);
 		}
 

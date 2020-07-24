@@ -5,9 +5,11 @@
 
 #include "Algorithm/Compare/CompareAlgorithmT.hpp"
 
+#include "Math/Math.h"
 #include "Math/Segment/Segment.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
+#include "Math/Quaternion/QuaternionMath.h"
 
 #include "Input/Input.h"
 
@@ -30,7 +32,7 @@ using namespace _GameEngine;
 
 namespace _GameEngineEditor
 {
-	void entitySelection_allocTransformGizmo(EntitySelection* p_entitySelection);
+	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
 
 	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor)
 	{
@@ -78,23 +80,23 @@ namespace _GameEngineEditor
 
 		if (p_entitySelection->SelectedEntity)
 		{
-			if (p_entitySelection->TransformGizmo == nullptr)
+			if (p_entitySelection->TransformGizmoV2.TransformGizoEntity == nullptr)
 			{
-				entitySelection_allocTransformGizmo(p_entitySelection);
+				TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS, p_entitySelection->RenderInterface);
 			}
-
+			
 
 			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 			{
 				_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
-				_Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(l_selectedEntityTransform)->Transform);
+				// _Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(l_selectedEntityTransform)->Transform);
 				_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
 				_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
 			}
 
 			// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
 			{
-				_ECS::TransformComponent* l_transformGizmotransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->TransformGizmo);
+				_ECS::TransformComponent* l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
 				if (l_transformGizmotransform)
 				{
 					_Math::Vector3f l_transformGizmoLocalPosition;
@@ -107,34 +109,36 @@ namespace _GameEngineEditor
 						_Math::Vector3f l_selectedEntityTransformClip;
 						_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedEntityTransformPosition, &l_selectedEntityTransformClip);
 						//TODO -> Why do we have to set such a high z value to get the transform at a decent size ?
-						 l_selectedEntityTransformClip.z = 0.99f;
+						l_selectedEntityTransformClip.z = 0.99f;
 						_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &l_transformGizmoLocalPosition);
 					}
 					_Math::Transform_setLocalPosition(&l_transformGizmotransform->Transform, l_transformGizmoLocalPosition);
+
+					_Math::Transform_setLocalRotation(&l_transformGizmotransform->Transform, _Math::Transform_getWorldRotation(&l_selectedEntityTransform->Transform));
 				}
 			}
 		}
 
 	};
 
-	void entitySelection_allocTransformGizmo(EntitySelection* p_entitySelection)
+	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, _Math::Vector4f* p_color)
 	{
-		_ECS::ECS* l_ecs = p_entitySelection->ECS;
-
+		_ECS::Entity* l_arrowEntity;
+		_ECS::TransformComponent* l_transform;
 		{
-			p_entitySelection->TransformGizmo = _ECS::Entity_alloc();
-			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&p_entitySelection->TransformGizmo);
-			_ECS::ECSEventQueue_pushMessage(&l_ecs->EventQueue, &l_entityCreationMessage);
+			l_arrowEntity = _ECS::Entity_alloc();
+			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_arrowEntity);
+			_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_entityCreationMessage);
 		}
 		{
-			_ECS::TransformComponent* l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.0f, 1.0f, -10.0f };
+			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			l_transformInitInfo.LocalRotation = _Math::Quaternionf_identity();
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
 			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
-			_ECS::EntityT_addComponentDeferred(p_entitySelection->TransformGizmo, l_transform, l_ecs);
+			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_transform, p_ecs);
 		}
 		{
 			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
@@ -143,15 +147,68 @@ namespace _GameEngineEditor
 			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoFragment.spv";
 			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoVertex.spv";
 			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
-			_Math::Vector4f l_color = { 0.0f, 1.0f, 0.0f, 1.0f };
 			l_meshRendererInitInfo.InputParameters = {
 				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj"},
-				// {_Render::MATERIALINSTANCE_TEXTURE_KEY, "E:/GameProjects/GameEngine/Assets/Textures/red.png"},
-				{_Render::MATERIALINSTANCE_COLOR, &l_color}
+				{_Render::MATERIALINSTANCE_COLOR, p_color}
 			};
 
-			_ECS::MeshRenderer_init(l_meshRenderer, p_entitySelection->RenderInterface, &l_meshRendererInitInfo);
-			_ECS::EntityT_addComponentDeferred(p_entitySelection->TransformGizmo, l_meshRenderer, l_ecs);
+			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
+			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshRenderer, p_ecs);
 		}
-	};
+
+		return l_transform;
+	}
+
+	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface)
+	{
+		_ECS::Entity* l_transformGizmo = _ECS::Entity_alloc();
+		{
+			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_transformGizmo);
+			_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_entityCreationMessage);
+		}
+		{
+			p_transformGizmo->TransformGizoEntity = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transformInitInfo.LocalPosition = { 0.0f, 1.0f, -10.0f };
+			l_transformInitInfo.LocalRotation = _Math::Quaternionf_identity();
+			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
+
+			_ECS::TransformComponent_init(p_transformGizmo->TransformGizoEntity, &l_transformInitInfo);
+			_ECS::EntityT_addComponentDeferred(l_transformGizmo, p_transformGizmo->TransformGizoEntity, p_ecs);
+		}
+
+		{
+			_Math::Vector4f l_rightColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+			p_transformGizmo->RightArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &l_rightColor);
+		}
+		{
+			_Math::Vector4f l_upColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+			p_transformGizmo->UpArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &l_upColor);
+		}
+		{
+			_Math::Vector4f l_forwardColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+			p_transformGizmo->ForwardArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &l_forwardColor);
+		}
+
+		_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->ForwardArrow->Transform);
+		_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->RightArrow->Transform);
+		_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->UpArrow->Transform);
+
+		{
+			_Math::Quaternionf l_rightQuaternion;
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{0.0f, M_PI * 0.5f, 0.0f}, &l_rightQuaternion);
+			_Math::Transform_setLocalRotation(&p_transformGizmo->RightArrow->Transform, l_rightQuaternion);
+		}
+		{
+			_Math::Quaternionf l_upQuaternion;
+			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ -M_PI * 0.5f, 0.0f, 0.0f}, &l_upQuaternion);
+			_Math::Transform_setLocalRotation(&p_transformGizmo->UpArrow->Transform, l_upQuaternion);
+		}
+		{
+			_Math::Quaternionf l_forwardQuaternion = _Math::Quaternionf_identity();
+			_Math::Transform_setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, l_forwardQuaternion);
+		}
+	}
+
+
 }
