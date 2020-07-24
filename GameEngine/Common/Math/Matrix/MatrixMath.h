@@ -33,6 +33,7 @@ namespace _GameEngine::_Math
 	void Matrixf4x4_extractScale(Matrix4x4f* p_mat, Vector4f* out_scale);
 
 	void Matrix4x4f_clipToWorld(Matrix4x4f* p_clipToWorldMatrix, Vector3f* p_clipPosition, Vector3f* out_worldPosition);
+	void Matrix4x4f_worldToClip(Matrix4x4f* p_worldToClipmatrix, Vector3f* p_worldPosition, Vector3f* out_clipPosition);
 
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, float p_value, Matrix4x4f* out);
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector4f* p_vector, Vector4f* out);

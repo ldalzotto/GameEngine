@@ -7,12 +7,14 @@
 
 #include "Math/Segment/Segment.h"
 #include "Math/Vector/VectorMath.h"
+#include "Math/Matrix/MatrixMath.h"
 
 #include "Input/Input.h"
 
 #include "ECS/ECS.h"
 #include "ECS/EntityT.hpp"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
+#include "ECS_Impl/Components/Camera/Camera.h"
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
@@ -37,19 +39,18 @@ namespace _GameEngineEditor
 		p_entitySelection->RenderInterface = p_gameEngineEditor->GameEngineApplicationInterface->RenderInterface;
 		p_entitySelection->PhysicsInterface = p_gameEngineEditor->GameEngineApplicationInterface->PhysicsInterface;
 		p_entitySelection->SelectedEntity = nullptr;
-
-		entitySelection_allocTransformGizmo(p_entitySelection);
 	};
 
 	void EntitySelection_update(EntitySelection* p_entitySelection)
 	{
+		_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&p_entitySelection->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
+
 		if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
 		{
-			_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&p_entitySelection->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
 			_Math::Vector2f l_screenPoint = { p_entitySelection->Input->InputMouse.ScreenPosition.x, p_entitySelection->Input->InputMouse.ScreenPosition.y };
 			_Math::Segment l_ray;
 
-			_ECS::CameraSystem_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
+			_ECS::Camera_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
 
 			_Physics::RaycastHit l_hit;
 			if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
@@ -73,10 +74,16 @@ namespace _GameEngineEditor
 				}
 			}
 		}
-		
+
 
 		if (p_entitySelection->SelectedEntity)
 		{
+			if (p_entitySelection->TransformGizmo == nullptr)
+			{
+				entitySelection_allocTransformGizmo(p_entitySelection);
+			}
+
+
 			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 			{
 				_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
@@ -85,9 +92,26 @@ namespace _GameEngineEditor
 				_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
 			}
 
+			// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
 			{
 				_ECS::TransformComponent* l_transformGizmotransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->TransformGizmo);
-				_Math::Transform_setLocalPosition(&l_transformGizmotransform->Transform, l_selectedEntityTransform->Transform.LocalPosition);
+				if (l_transformGizmotransform)
+				{
+					_Math::Vector3f l_transformGizmoLocalPosition;
+					{
+						_Math::Vector3f l_selectedEntityTransformPosition = _Math::Transform_getWorldPosition(&l_selectedEntityTransform->Transform);
+						_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
+						_ECS::Camera_worldToClipMatrix(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_worldToClipMatrix);
+						_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
+
+						_Math::Vector3f l_selectedEntityTransformClip;
+						_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedEntityTransformPosition, &l_selectedEntityTransformClip);
+						//TODO -> Why do we have to set such a high z value to get the transform at a decent size ?
+						 l_selectedEntityTransformClip.z = 0.99f;
+						_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &l_transformGizmoLocalPosition);
+					}
+					_Math::Transform_setLocalPosition(&l_transformGizmotransform->Transform, l_transformGizmoLocalPosition);
+				}
 			}
 		}
 

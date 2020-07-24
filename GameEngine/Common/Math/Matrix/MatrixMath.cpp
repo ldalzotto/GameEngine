@@ -284,6 +284,17 @@ namespace _GameEngine::_Math
 		Vector3f_build(&l_worldPosition4f, out_worldPosition);
 	};
 
+	void Matrix4x4f_worldToClip(Matrix4x4f* p_worldToClipmatrix, Vector3f* p_worldPosition, Vector3f* out_clipPosition)
+	{
+		Vector4f l_clipPosition4f, l_worldPosition4f;
+		{
+			Vector4f_build(p_worldPosition, 1.0f, &l_worldPosition4f);
+			Matrixf4x4_mul(p_worldToClipmatrix, &l_worldPosition4f, &l_clipPosition4f);
+			Vector4f_mul(&l_clipPosition4f, 1.0f / l_clipPosition4f.w, &l_clipPosition4f);
+		}
+		Vector3f_build(&l_clipPosition4f, out_clipPosition);
+	};
+
 	void Matrixf4x4_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out)
 	{
 		Vector3f l_forward;
