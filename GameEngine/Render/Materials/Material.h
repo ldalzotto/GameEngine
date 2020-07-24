@@ -50,6 +50,7 @@ namespace _GameEngine::_Render
 	struct Material_RenderingSpecifications
 	{
 		_Core::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
+		GraphicsPipelie_DepthTest_Specification Depth;
 	};
 
 	struct MaterialUniqueKey
@@ -90,11 +91,11 @@ namespace _GameEngine::_Render
 		size_t RenderingOrder;
 		std::string VertexShader;
 		std::string FragmentShader;
-		bool UseDepthBuffer;
 		VertexInput VertexInput;
 
 		/** OPTIONAL - Default value is VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST */
 		_Core::OptionalT<VkPrimitiveTopology> PrimitiveTopologyOverride;
+		GraphicsPipelie_DepthTest_Specification DepthSpecification;
 
 		MaterialDrawFn MaterialDrawFn;
 		std::vector<ShaderParameter> ShaderParameters;

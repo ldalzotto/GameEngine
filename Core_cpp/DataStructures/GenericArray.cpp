@@ -151,7 +151,7 @@ namespace _Core
 
 		VectorIterator l_it;
 		GenericArray_buildIterator(p_genericArray, &l_it);
-		Sort_min(&l_it, 0, p_elementSorter);
+		Sort_min_findElementIndex(&l_it, p_value, 0, p_elementSorter);
 		GenericArray_isertAt_realloc(p_genericArray, p_value, 1, l_it.CurrentIndex);
 		return GenericArray_at_unchecked(p_genericArray, l_it.CurrentIndex);
 	};

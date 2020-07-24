@@ -38,9 +38,10 @@ namespace _GameEngine::_Render
 
 		l_material->InputLayout.ShaderParameters = p_materialAllocInfo->ShaderParameters;
 
-		if (p_materialAllocInfo->UseDepthBuffer)
+		if (p_materialAllocInfo->DepthSpecification.ReadDepth || p_materialAllocInfo->DepthSpecification.Writedepth)
 		{
 			l_material->GlobalResources.DepthBufferTexture = *p_renderInterface->DepthTexture;
+			l_material->RenderingSpecifications.Depth = p_materialAllocInfo->DepthSpecification;
 		}
 
 		{
@@ -169,6 +170,7 @@ namespace _GameEngine::_Render
 		if (p_defaultMaterial->GlobalResources.DepthBufferTexture != nullptr)
 		{
 			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.DepthTexture = p_defaultMaterial->GlobalResources.DepthBufferTexture;
+			l_graphicsPipelineAllocInfo.GraphicsPipeline_DepthTest.Specification = p_defaultMaterial->RenderingSpecifications.Depth;
 		}
 
 		l_graphicsPipelineAllocInfo.PrimitiveTopology = p_defaultMaterial->RenderingSpecifications.PrimitiveTopologyOverride;

@@ -62,8 +62,10 @@ namespace _GameEngine::_Render
 
 	void InstancedMaterialsDataStructure_addMaterial(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material)
 	{
+		Material_with_MaterialInstances l_emptyMaterialWithMaterialInstance{};
+		l_emptyMaterialWithMaterialInstance.Material = p_material;
 		Material_with_MaterialInstances* l_createdElement = _Core::SortedLinearMapT_pushBack(&p_dataStructure->MaterialWithMaterialInstances,
-				Material_with_MaterialInstances{},
+				l_emptyMaterialWithMaterialInstance,
 				_Core::AsserterT<Material_with_MaterialInstances, Material, void>{Material_with_MaterialInstances_equals, p_material},
 				_Core::ElementSorterT<Material_with_MaterialInstances, Material_with_MaterialInstances, void>{Material_with_MaterialInstances_sortCompare, nullptr});
 

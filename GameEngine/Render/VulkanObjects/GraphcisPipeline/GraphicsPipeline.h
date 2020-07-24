@@ -43,9 +43,17 @@ namespace _GameEngine::_Render
 		PipelineInternalsType PipelineInternals;
 	};
 
+	struct GraphicsPipelie_DepthTest_Specification
+	{
+		bool Writedepth;
+		bool ReadDepth;
+		VkCompareOp ReadDepthOperation = VK_COMPARE_OP_LESS;
+	};
+
 	struct GraphicsPipeline_DepthTest
 	{
 		Texture* DepthTexture;
+		GraphicsPipelie_DepthTest_Specification Specification;
 	};
 
 	struct GraphicsPipelineAllocInfo

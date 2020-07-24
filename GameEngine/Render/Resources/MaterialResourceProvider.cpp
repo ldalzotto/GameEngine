@@ -91,7 +91,8 @@ namespace _GameEngine::_Render
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
 			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
-			l_materialAllocInfo.UseDepthBuffer = true;
+			l_materialAllocInfo.DepthSpecification.ReadDepth = true;
+			l_materialAllocInfo.DepthSpecification.Writedepth = true;
 			VertexInput_buildInput(&l_materialAllocInfo.VertexInput);
 
 			ShaderParameter l_modelMatrixShaderParameter{};
@@ -138,7 +139,8 @@ namespace _GameEngine::_Render
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath; 
 			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
-			l_materialAllocInfo.UseDepthBuffer = true;
+			l_materialAllocInfo.DepthSpecification.ReadDepth = true;
+			l_materialAllocInfo.DepthSpecification.Writedepth = true;
 			VertexInput_buildInput(&l_materialAllocInfo.VertexInput);
 
 			ShaderParameter l_modelMatrixShaderParameter{};
@@ -174,7 +176,9 @@ namespace _GameEngine::_Render
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
 			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_meshDraw;
-			l_materialAllocInfo.UseDepthBuffer = false;
+			l_materialAllocInfo.DepthSpecification.ReadDepth = true;
+			l_materialAllocInfo.DepthSpecification.ReadDepthOperation = VK_COMPARE_OP_ALWAYS;
+			l_materialAllocInfo.DepthSpecification.Writedepth = false;
 			VertexInput_buildInput(&l_materialAllocInfo.VertexInput);
 
 			ShaderParameter l_modelMatrixShaderParameter{};
@@ -221,7 +225,8 @@ namespace _GameEngine::_Render
 			l_materialAllocInfo.VertexShader = p_key->VertexShaderPath;
 			l_materialAllocInfo.FragmentShader = p_key->FragmentShaderPath;
 			l_materialAllocInfo.MaterialDrawFn = MaterialDrawFn_gizmoDraw;
-			l_materialAllocInfo.UseDepthBuffer = false;
+			l_materialAllocInfo.DepthSpecification.ReadDepth = false;
+			l_materialAllocInfo.DepthSpecification.Writedepth = false;
 			VertexInput_buildGizmoInfo(&l_materialAllocInfo.VertexInput);
 			l_materialAllocInfo.PrimitiveTopologyOverride.HasValue = true;
 			l_materialAllocInfo.PrimitiveTopologyOverride.Value = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;

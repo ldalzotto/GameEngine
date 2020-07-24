@@ -25,7 +25,7 @@ namespace _GameEngine::_Render
 	VkPipelineMultisampleStateCreateInfo createMultisampleState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineColorBlendAttachmentState createColorBlendAttachmentState(GraphicsPipeline* p_graphicsPipeline);
 	VkPipelineColorBlendStateCreateInfo createColorBlendState(GraphicsPipeline* p_graphicsPipeline, VkPipelineColorBlendAttachmentState* p_colorBlendAttachmentState);
-	void createDepthStencilState(VkPipelineDepthStencilStateCreateInfo* p_depthStencilState, GraphicsPipeline* p_graphicsPipeline);
+	void createDepthStencilState(VkPipelineDepthStencilStateCreateInfo* p_depthStencilState, GraphicsPipeline* p_graphicsPipeline, GraphicsPipeline_DepthTest* p_dethTest);
 
 	void allocatePipelineInternalObjects(GraphicsPipeline* p_graphicsPipeline, GraphicsPipelineAllocInfo* p_graphicsPipelineGetOrAllocInfo)
 	{
@@ -62,7 +62,7 @@ namespace _GameEngine::_Render
 		if (p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest.DepthTexture)
 		{
 			VkPipelineDepthStencilStateCreateInfo l_depthStencilState{};
-			createDepthStencilState(&l_depthStencilState, p_graphicsPipeline);
+			createDepthStencilState(&l_depthStencilState, p_graphicsPipeline, &p_graphicsPipelineGetOrAllocInfo->GraphicsPipeline_DepthTest);
 			l_pipelineCreateInfo.pDepthStencilState = &l_depthStencilState;
 		}
 
@@ -266,12 +266,12 @@ namespace _GameEngine::_Render
 		return l_colorBlendStateCreate;
 	};
 
-	void createDepthStencilState(VkPipelineDepthStencilStateCreateInfo* p_depthStencilState, GraphicsPipeline* p_graphicsPipeline)
+	void createDepthStencilState(VkPipelineDepthStencilStateCreateInfo* p_depthStencilState, GraphicsPipeline* p_graphicsPipeline, GraphicsPipeline_DepthTest* p_dethTest)
 	{
 		p_depthStencilState->sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		p_depthStencilState->depthTestEnable = VK_TRUE;
-		p_depthStencilState->depthWriteEnable = VK_TRUE;
-		p_depthStencilState->depthCompareOp = VK_COMPARE_OP_LESS;
+		p_depthStencilState->depthTestEnable = p_dethTest->Specification.ReadDepth;
+		p_depthStencilState->depthWriteEnable = p_dethTest->Specification.Writedepth;
+		p_depthStencilState->depthCompareOp = p_dethTest->Specification.ReadDepthOperation;
 		p_depthStencilState->depthBoundsTestEnable = VK_FALSE;
 		p_depthStencilState->minDepthBounds = 0.0f;
 		p_depthStencilState->maxDepthBounds = 0.0f;
