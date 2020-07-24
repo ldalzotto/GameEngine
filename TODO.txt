@@ -10,11 +10,18 @@
 
 [X] # FIX - The sorting order is incorrect for the update sequencer
 
+-- Transform --
+
+# Setting World position, rotation and scale. (and apply it to Entity selection)
 
 -- Physics --
 
 # Adding Layers to BoxCollider.
 # Allow Raycasting by filtering by Layers.
+
+-- Camera --
+
+# Storing WorldToClip and ClipToWorld matrices ?
 
 -- Editor - Click world Listener --
 

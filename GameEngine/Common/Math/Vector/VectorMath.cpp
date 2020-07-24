@@ -7,10 +7,52 @@
 
 namespace _GameEngine::_Math
 {
+	float Vector2f_length(Vector2f* p_vector)
+	{
+		return
+			sqrtf((p_vector->x * p_vector->x) +
+				(p_vector->y * p_vector->y));
+	};
+	
+	void Vector2f_normalize(Vector2f* p_vector)
+	{
+		float l_length = Vector2f_length(p_vector);
+		if (l_length != 0)
+		{
+			p_vector->x = p_vector->x / l_length;
+			p_vector->y = p_vector->y / l_length;
+		}
+	};
+
+	float Vector2f_dot(Vector2f* p_left, Vector2d* p_right)
+	{
+		return (
+				(p_left->x * p_right->x) +
+				(p_left->y * p_right->y)
+			);
+	};
+
 	void Vector2d_min(Vector2d* p_left, Vector2d* p_right, Vector2d* p_out)
 	{
 		p_out->x = p_left->x - p_right->x;
 		p_out->y = p_left->y - p_right->y;
+	};
+
+	double Vector2d_length(Vector2d* p_vector)
+	{
+		return
+			sqrtf((p_vector->x * p_vector->x) +
+				(p_vector->y * p_vector->y));
+	};
+
+	void Vector2d_normalize(Vector2d* p_vector)
+	{
+		double l_length = Vector2d_length(p_vector);
+		if (l_length != 0)
+		{
+			p_vector->x = p_vector->x / l_length;
+			p_vector->y = p_vector->y / l_length;
+		}
 	};
 
 	bool Vector2d_equals(Vector2d* p_left, Vector2d* p_right)

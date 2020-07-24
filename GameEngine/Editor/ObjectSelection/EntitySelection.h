@@ -32,6 +32,7 @@ namespace _GameEngineEditor
 		TransformGizmo TransformGizmoV2;
 		// _GameEngine::_ECS::Entity* TransformGizmo;
 		_GameEngine::_ECS::Entity* SelectedEntity;
+		_GameEngine::_ECS::TransformComponent* SelectedTransformArrow;
 	};
 
 	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor);

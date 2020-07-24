@@ -38,4 +38,9 @@ namespace _GameEngine::_Math
 		p_out->End = { l_projectedEnd.x, l_projectedEnd.y, l_projectedEnd.z };
 	};
 
+	void Segment_mul(Segment* p_segment, _Math::Matrix3x3f* p_matrix, Segment* p_out)
+	{
+		_Math::Matrix3x3f_mul(p_matrix, &p_segment->Begin, &p_out->Begin);
+		_Math::Matrix3x3f_mul(p_matrix, &p_segment->End, &p_out->End);
+	};
 }

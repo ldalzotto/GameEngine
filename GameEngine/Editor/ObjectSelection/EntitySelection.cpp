@@ -27,6 +27,7 @@
 
 #include "Render/Gizmo/Gizmo.h"
 #include "Render/RenderInterface.h"
+#include "Render/VulkanObjects/Hardware/Window/Window.h"
 
 using namespace _GameEngine;
 
@@ -46,7 +47,7 @@ namespace _GameEngineEditor
 	void EntitySelection_update(EntitySelection* p_entitySelection)
 	{
 		_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&p_entitySelection->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
-
+		_ECS::Camera* l_activeCamera = _ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem);
 		if (!p_entitySelection->SelectedEntity)
 		{
 			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
@@ -54,7 +55,7 @@ namespace _GameEngineEditor
 				_Math::Vector2f l_screenPoint = { p_entitySelection->Input->InputMouse.ScreenPosition.x, p_entitySelection->Input->InputMouse.ScreenPosition.y };
 				_Math::Segment l_ray;
 
-				_ECS::Camera_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
+				_ECS::Camera_buildWorldSpaceRay(l_activeCamera, &l_screenPoint, &l_ray);
 
 				_Physics::RaycastHit l_hit;
 				if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
@@ -76,16 +77,94 @@ namespace _GameEngineEditor
 			}
 			else
 			{
-				if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
+
+				if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
 				{
-					_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
-					_Math::Vector2d l_zero = { 0.0f, 0.0f };
-					if (!_Math::Vector2d_equals(&p_entitySelection->Input->InputMouse.MouseDelta, &l_zero))
+					_Physics::BoxCollider* l_transformArrowCollidersPtr[3];
+					_Core::ArrayT<_Physics::BoxCollider*> l_transformArrowColliders = _Core::ArrayT_fromCStyleArray(l_transformArrowCollidersPtr, 3);
+					l_transformArrowColliders.Size = 0;
 					{
-						_Math::Vector3f l_deltaPosition = { p_entitySelection->Input->InputMouse.MouseDelta.x, p_entitySelection->Input->InputMouse.MouseDelta.y, 0.0f };
-						_Math::Vector3f_mul(&l_deltaPosition, -p_entitySelection->Input->InputMouse.MouseSentitivityperPixel, &l_deltaPosition);
-						_Math::Vector3f_add(&(l_transformComponent)->Transform.LocalPosition, &l_deltaPosition, &l_deltaPosition);
-						_Math::Transform_setLocalPosition(&(l_transformComponent)->Transform, l_deltaPosition);
+						_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->TransformGizmoV2.RightArrow->ComponentHeader.AttachedEntity)->Boxcollider);
+						_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->TransformGizmoV2.UpArrow->ComponentHeader.AttachedEntity)->Boxcollider);
+						_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->TransformGizmoV2.ForwardArrow->ComponentHeader.AttachedEntity)->Boxcollider);
+					}
+					_Math::Vector2f l_screenPoint = { p_entitySelection->Input->InputMouse.ScreenPosition.x, p_entitySelection->Input->InputMouse.ScreenPosition.y };
+					_Math::Segment l_ray;
+					_ECS::Camera_buildWorldSpaceRay(l_activeCamera, &l_screenPoint, &l_ray);
+					_Physics::RaycastHit l_hit;
+					if (_Physics::RayCast_against(&l_transformArrowColliders, &l_ray.Begin, &l_ray.End, &l_hit))
+					{
+						// The user has clicked an arrow of the transform gizmo
+						p_entitySelection->SelectedTransformArrow = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
+					}
+					else
+					{
+						p_entitySelection->SelectedTransformArrow = nullptr;
+					}
+				}
+
+				if (p_entitySelection->SelectedTransformArrow)
+				{
+					// MOVE
+					if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
+					{
+						_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
+						_Math::Vector2d l_zero = { 0.0f, 0.0f };
+						if (!_Math::Vector2d_equals(&p_entitySelection->Input->InputMouse.MouseDelta, &l_zero))
+						{
+							_Math::Vector3f l_deltaPosition;
+							{
+								_Math::Vector3f l_deltaPositionDirection = _Math::Transform_getForward(&p_entitySelection->SelectedTransformArrow->Transform);
+
+								//calculating magnitude
+								float l_deltaPositionMagnitude = 0.0f;
+								{
+									/*
+									_Math::Matrix4x4f l_worldToClipMatrix;
+										_Math::Vector3f l_deltaPositionDirection3f_clipSpace;
+										_Math::Vector2f l_deltaPositionDirection2f_clipSpace;
+										_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
+										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_deltaPositionDirection, &l_deltaPositionDirection3f_clipSpace);
+										l_deltaPositionDirection2f_clipSpace = { l_deltaPositionDirection3f_clipSpace.x, l_deltaPositionDirection3f_clipSpace.y };
+										_Math::Vector2f_normalize(&l_deltaPositionDirection2f_clipSpace);
+
+										_Math::Vector2d l_normalizedMouseDelta = p_entitySelection->Input->InputMouse.MouseDelta;
+										_Math::Vector2d_normalize(&l_normalizedMouseDelta);
+										l_deltaPositionMagnitude = _Math::Vector2f_dot(&l_deltaPositionDirection2f_clipSpace, &l_normalizedMouseDelta);
+									*/
+
+									_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
+									_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
+									_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
+
+									_Math::Vector3f l_selectedArrowTransform_clipSpace;
+									_Math::Vector3f l_selectedArrayTransform_worldSpace = _Math::Transform_getWorldPosition(&p_entitySelection->SelectedTransformArrow->Transform);
+									_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedArrayTransform_worldSpace, &l_selectedArrowTransform_clipSpace);
+									
+									
+									_Math::Segment l_mouseDelta;
+									l_mouseDelta.Begin = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x - ((float)p_entitySelection->Input->InputMouse.MouseDelta.x * 10.0f), (float)p_entitySelection->Input->InputMouse.ScreenPosition.y - ((float)p_entitySelection->Input->InputMouse.MouseDelta.y * 10.0f), 1.0f } ;
+									l_mouseDelta.End = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y, 1.0f };
+
+									_Math::Segment l_mouseDelta_clipSpace;
+									_Math::Segment_mul(&l_mouseDelta, &p_entitySelection->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates, &l_mouseDelta_clipSpace);
+									l_mouseDelta_clipSpace.Begin.z = l_selectedArrowTransform_clipSpace.z;
+									l_mouseDelta_clipSpace.End.z = l_selectedArrowTransform_clipSpace.z;
+
+									_Math::Segment l_mouseDelta_worldSpace;
+									_Math::Segment_mul(&l_mouseDelta_clipSpace, &l_clipToWorldMatrix, &l_mouseDelta_worldSpace);
+
+									_Math::Vector3f l_mouseDeltaVector_worldSpace  = _Math::Segment_toVector(&l_mouseDelta_worldSpace);
+									l_deltaPositionMagnitude = _Math::Vector3f_dot(&l_mouseDeltaVector_worldSpace, &l_deltaPositionDirection); //  _Math::Vector3f_length();
+								}
+
+								// float l_deltaPositionMagnitude = p_entitySelection->Input->InputMouse.MouseDelta.y * p_entitySelection->Input->InputMouse.MouseSentitivityperPixel;
+								_Math::Vector3f_mul(&l_deltaPositionDirection, l_deltaPositionMagnitude, &l_deltaPosition);
+							}
+
+							_Math::Vector3f_add(&(l_transformComponent)->Transform.LocalPosition, &l_deltaPosition, &l_deltaPosition);
+							_Math::Transform_setLocalPosition(&(l_transformComponent)->Transform, l_deltaPosition);
+						}
 					}
 				}
 			}
@@ -108,7 +187,7 @@ namespace _GameEngineEditor
 					{
 						_Math::Vector3f l_selectedEntityTransformPosition = _Math::Transform_getWorldPosition(&l_selectedEntityTransform->Transform);
 						_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
-						_ECS::Camera_worldToClipMatrix(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_worldToClipMatrix);
+						_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
 						_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
 						_Math::Vector3f l_selectedEntityTransformClip;
@@ -162,6 +241,10 @@ namespace _GameEngineEditor
 
 			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshRenderer, p_ecs);
+		}
+		{
+			_ECS::MeshRendererBound* l_meshrendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
+			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshrendererBound, p_ecs);
 		}
 
 		return l_transform;

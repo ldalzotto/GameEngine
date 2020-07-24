@@ -10,6 +10,10 @@ namespace _GameEngine::_Math
 
 namespace _GameEngine::_Math
 {
+	void Vector2f_normalize(Vector2f* p_vector);
+	float Vector2f_dot(Vector2f* p_left, Vector2d* p_right);
+
+	void Vector2d_normalize(Vector2d* p_vector);
 	void Vector2d_min(Vector2d* p_left, Vector2d* p_right, Vector2d* p_out);
 	bool Vector2d_equals(Vector2d* p_left, Vector2d* p_right);
 
