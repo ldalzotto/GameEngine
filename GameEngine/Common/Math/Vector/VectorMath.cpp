@@ -192,6 +192,14 @@ namespace _GameEngine::_Math
 		p_out->w = p_vect->w * p_value;
 	};
 
+	void Vector4f_homogenize_w(Vector4f* p_vect, Vector4f* p_out)
+	{
+		p_out->x = (p_vect->x / p_vect->w);
+		p_out->y = (p_vect->y / p_vect->w);
+		p_out->z = (p_vect->z / p_vect->w);
+		p_out->w = (p_vect->w / p_vect->w);
+	};
+
 	float Vector4f_length(Vector4f* p_vec)
 	{
 		return

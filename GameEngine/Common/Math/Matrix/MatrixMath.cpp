@@ -279,7 +279,7 @@ namespace _GameEngine::_Math
 		{
 			Vector4f_build(p_clipPosition, 1.0f, &l_clipPosition4f);
 			Matrixf4x4_mul(p_clipToWorldMatrix, &l_clipPosition4f, &l_worldPosition4f);
-			Vector4f_mul(&l_worldPosition4f, 1.0f / l_worldPosition4f.w, &l_worldPosition4f);
+			Vector4f_homogenize_w(&l_worldPosition4f, &l_worldPosition4f);
 		}
 		Vector3f_build(&l_worldPosition4f, out_worldPosition);
 	};

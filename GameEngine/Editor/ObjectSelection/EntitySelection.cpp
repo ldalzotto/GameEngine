@@ -1,16 +1,15 @@
 #include "EntitySelection.h"
 
+#include <float.h>
+
 #include "Editor/GameEngineEditor.h"
 #include "GameEngineApplicationInterface.h"
-
-#include "Algorithm/Compare/CompareAlgorithmT.hpp"
 
 #include "Math/Math.h"
 #include "Math/Segment/Segment.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Quaternion/QuaternionMath.h"
-#include "Math/Line/Line.h"
 
 #include "Input/Input.h"
 
@@ -29,8 +28,6 @@
 #include "Render/Gizmo/Gizmo.h"
 #include "Render/RenderInterface.h"
 #include "Render/VulkanObjects/Hardware/Window/Window.h"
-
-#include <iostream>
 
 using namespace _GameEngine;
 
@@ -68,9 +65,6 @@ namespace _GameEngineEditor
 				}
 			}
 		}
-
-
-
 
 		if (p_entitySelection->SelectedEntity)
 		{
@@ -112,87 +106,61 @@ namespace _GameEngineEditor
 					if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
 					{
 						_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
+						_ECS::TransformComponent* l_selectedArrow = p_entitySelection->SelectedTransformArrow;
+						TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoSelectedArrayPlane;
+
+						// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, _Math::Transform_getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
+
 						_Math::Vector2d l_zero = { 0.0f, 0.0f };
 						if (!_Math::Vector2d_equals(&p_entitySelection->Input->InputMouse.MouseDelta, &l_zero))
 						{
+
+							// We position the world space place
+							{
+								// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
+								_Math::Vector3f l_worldPosition = _Math::Transform_getWorldPosition(&l_transformComponent->Transform);
+								_Math::Quaternionf l_worldRotation = _Math::Transform_getWorldRotation(&l_selectedArrow->Transform);
+								_Math::Transform_setLocalPosition(&l_transformGizmoPlane->Transform, l_worldPosition);
+								_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, l_worldRotation);
+
+								// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, _Math::Transform_getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
+							}
+							_Math::Vector3f l_deltaPositionDirection_worldSpace = _Math::Transform_getForward(&p_entitySelection->SelectedTransformArrow->Transform);
+
 							_Math::Vector3f l_deltaPosition{};
 							{
 
+								_Math::Vector2f l_mouseDelta_begin = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x - ((float)p_entitySelection->Input->InputMouse.MouseDelta.x), (float)p_entitySelection->Input->InputMouse.ScreenPosition.y - ((float)p_entitySelection->Input->InputMouse.MouseDelta.y) };
+								_Math::Vector2f l_mouseDelta_end = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y };
 
-								//TODO -> there seems to be a bug on the calculation of the deltaPositionDirection in clip space. because when we project back to world space -> direction is not always a line
+								_Math::Vector3f l_mouseDelta_begin_worldSpace;
+								_Math::Vector3f l_mouseDelta_end_worldSpace;
+
+								_Math::Segment l_mouseDelta_begin_ray;
+								_ECS::Camera_buildWorldSpaceRay(l_activeCamera, &l_mouseDelta_begin, &l_mouseDelta_begin_ray);
+								_Math::Segment l_mouseDelta_end_ray;
+								_ECS::Camera_buildWorldSpaceRay(l_activeCamera, &l_mouseDelta_end, &l_mouseDelta_end_ray);
+
+								_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { &l_transformGizmoPlane->Collider };
+								_Core::ArrayT<_Physics::BoxCollider*> l_raycastedPlane = _Core::ArrayT_fromCStyleArray(l_raycastedPlane_ptr, 1);
+								_Physics::RaycastHit l_endHit;
+								if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_end_ray.Begin, &l_mouseDelta_end_ray.End, &l_endHit))
 								{
-#ifndef comment
-									_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
-									_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
-									_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
-
-									_Math::Vector3f l_deltaPositionDirection_worldSpace = _Math::Transform_getForward(&p_entitySelection->SelectedTransformArrow->Transform);
-									_Math::Vector3f l_deltaPositionDirection_clipSpace;
-									{
-										_Math::Vector3f l_zero = {};
-										_Math::Vector3f l_deltaPositionDirection_clipSpace_begin, l_deltaPositionDirection_clipSpace_end;
-										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_zero, &l_deltaPositionDirection_clipSpace_begin);
-										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_deltaPositionDirection_worldSpace, &l_deltaPositionDirection_clipSpace_end);
-										_Math::Vector3f_min(&l_deltaPositionDirection_clipSpace_end, &l_deltaPositionDirection_clipSpace_begin, &l_deltaPositionDirection_clipSpace);
-									}
-
-									//calculating magnitude
-									float l_deltaPositionMagnitude = 0.0f;
-
-
-									_Math::Vector3f l_selectedArrowTransform_clipSpace;
-									{
-										_Math::Vector3f l_selectedArrayTransform_worldSpace = _Math::Transform_getWorldPosition(&p_entitySelection->SelectedTransformArrow->Transform);
-										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedArrayTransform_worldSpace, &l_selectedArrowTransform_clipSpace);
-									}
-
-
-									_Math::Segment l_mouseDelta;
-									l_mouseDelta.Begin = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x - ((float)p_entitySelection->Input->InputMouse.MouseDelta.x), (float)p_entitySelection->Input->InputMouse.ScreenPosition.y - ((float)p_entitySelection->Input->InputMouse.MouseDelta.y), 1.0f };
-									l_mouseDelta.End = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y, 1.0f };
-
-									_Math::Segment l_mouseDelta_clipSpace;
-									_Math::Segment_mul(&l_mouseDelta, &p_entitySelection->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates, &l_mouseDelta_clipSpace);
-
-
-									float l_mouseDelta_clipSpace_initialLength_signed = 0.0f;
-									{
-										_Math::Vector3f l_mouseDeltaDirection_clipSpace = _Math::Segment_toVector(&l_mouseDelta_clipSpace);
-										_Math::Vector2f l_mouseDeltaDirection_clipSpace_xy = { l_mouseDeltaDirection_clipSpace.x, l_mouseDeltaDirection_clipSpace.y };
-										_Math::Vector2f_normalize(&l_mouseDeltaDirection_clipSpace_xy);
-										_Math::Vector2f l_deltaPositionDirection_clipSpace_xy = { l_deltaPositionDirection_clipSpace.x, l_deltaPositionDirection_clipSpace.y };
-										_Math::Vector2f_normalize(&l_deltaPositionDirection_clipSpace_xy);
-										float l_sign = _Math::Vector2f_dot(&l_mouseDeltaDirection_clipSpace_xy, &l_deltaPositionDirection_clipSpace_xy);
-										l_mouseDelta_clipSpace_initialLength_signed = _Math::Vector3f_length(&l_mouseDeltaDirection_clipSpace) * l_sign /*(l_sign >= 0 ? 1.0f : -1.0f)*/;
-									}
-
-									l_mouseDelta_clipSpace.Begin.z = l_selectedArrowTransform_clipSpace.z;
-
-									{
-										_Math::Vector3f_normalize(&l_deltaPositionDirection_clipSpace);
-										_Math::Vector3f_mul(&l_deltaPositionDirection_clipSpace, l_mouseDelta_clipSpace_initialLength_signed, &l_deltaPositionDirection_clipSpace);
-										_Math::Vector3f_add(&l_mouseDelta_clipSpace.Begin, &l_deltaPositionDirection_clipSpace, &l_mouseDelta_clipSpace.End);
-									}
-
-									_Math::Segment l_mouseDelta_worldSpace;
-									_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_mouseDelta_clipSpace.Begin, &l_mouseDelta_worldSpace.Begin);
-									_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_mouseDelta_clipSpace.End, &l_mouseDelta_worldSpace.End);
-
-									{
-										// _Render::Gizmo_drawLine(p_entitySelection->RenderInterface->Gizmo, &l_gizmoLineBegin, &l_gizmoLineEnd);
-									}
-
-									_Math::Vector3f l_mouseDeltaVector_worldSpace = _Math::Segment_toVector(&l_mouseDelta_worldSpace);
-									// l_deltaPositionMagnitude = _Math::Vector3f_dot(&l_mouseDeltaVector_worldSpace, &l_deltaPositionDirection_worldSpace); //  _Math::Vector3f_length();
-									// float l_dot = _Math::Vector3f_dot(&l_mouseDeltaVector_worldSpace, &l_deltaPositionDirection_worldSpace);
-									// l_deltaPositionMagnitude = _Math::Vector3f_length(&l_mouseDeltaVector_worldSpace) * (l_dot >= 0 ? 1.0f : -1.0f);
-
-									// float l_deltaPositionMagnitude = p_entitySelection->Input->InputMouse.MouseDelta.y * p_entitySelection->Input->InputMouse.MouseSentitivityperPixel;
-									// _Math::Vector3f_mul(&l_deltaPositionDirection_worldSpace, _Math::Segment_length(&), &l_deltaPosition);
-									l_deltaPosition = l_mouseDeltaVector_worldSpace;
-
-#endif
+									// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_endHit.HitPoint);
+									l_mouseDelta_end_worldSpace = l_endHit.HitPoint;
 								}
+								_Physics::RaycastHit l_beginHit;
+								if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_begin_ray.Begin, &l_mouseDelta_begin_ray.End, &l_beginHit))
+								{
+									// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_beginHit.HitPoint);
+									l_mouseDelta_begin_worldSpace = l_beginHit.HitPoint;
+								}
+
+								_Math::Vector3f_min(&l_mouseDelta_end_worldSpace, &l_mouseDelta_begin_worldSpace, &l_deltaPosition);
+
+								// We project deltaposition on the translation direction
+
+								_Math::Vector3f_mul(&l_deltaPositionDirection_worldSpace, _Math::Vector3f_dot(&l_deltaPosition, &l_deltaPositionDirection_worldSpace) / _Math::Vector3f_length(&l_deltaPositionDirection_worldSpace), &l_deltaPosition);
 
 							}
 
@@ -209,7 +177,7 @@ namespace _GameEngineEditor
 				_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
 				// _Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(l_selectedEntityTransform)->Transform);
 				_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
-				_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
+				// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
 			}
 
 			// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
@@ -226,7 +194,6 @@ namespace _GameEngineEditor
 
 						_Math::Vector3f l_selectedEntityTransformClip;
 						_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedEntityTransformPosition, &l_selectedEntityTransformClip);
-						//TODO -> Why do we have to set such a high z value to get the transform at a decent size ?
 						l_selectedEntityTransformClip.z = 0.99f;
 						_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &l_transformGizmoLocalPosition);
 					}
@@ -332,6 +299,19 @@ namespace _GameEngineEditor
 		{
 			_Math::Quaternionf l_forwardQuaternion = _Math::Quaternionf_identity();
 			_Math::Transform_setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, l_forwardQuaternion);
+		}
+
+		//Plane instance
+		{
+			_Math::Box l_planeBox;
+			l_planeBox.Center = { 0.0f, 0.0f, 0.0f };
+			l_planeBox.Extend = { FLT_MAX, 0.0f, FLT_MAX };
+
+			p_transformGizmo->TransformGizmoSelectedArrayPlane.Box = l_planeBox;
+
+			p_transformGizmo->TransformGizmoSelectedArrayPlane.Collider.Box = &p_transformGizmo->TransformGizmoSelectedArrayPlane.Box;
+			p_transformGizmo->TransformGizmoSelectedArrayPlane.Collider.Transform = &p_transformGizmo->TransformGizmoSelectedArrayPlane.Transform;
+			_Math::Transform_setLocalScale(&p_transformGizmo->TransformGizmoSelectedArrayPlane.Transform, _Math::Vector3f{ 1.0f, 1.0f, 1.0f });
 		}
 	}
 

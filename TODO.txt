@@ -9,6 +9,9 @@
 	[X] # Having a default value for MaterialInstance texture input.
 
 [X] # FIX - The sorting order is incorrect for the update sequencer
+[X] # Having arrow Transform that allow movement of the selected entity.
+# Having rotation gizmo that allox rotatin the selected entity.
+# Having scale gizmo that allox rotatin the selected entity.
 
 -- Transform --
 
@@ -40,8 +43,11 @@
 
 # Refactoring the fact that MaterialInstances allocate external resource immediately.
 
-
 ~~ LONG TERM OBJECTIVES ~~
+
+-- Math --
+
+# Refactoring the math library so that different type vector uses the same code.
 
 -- Resources --
 
