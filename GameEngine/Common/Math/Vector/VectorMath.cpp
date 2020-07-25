@@ -24,7 +24,8 @@ namespace _GameEngine::_Math
 		}
 	};
 
-	float Vector2f_dot(Vector2f* p_left, Vector2d* p_right)
+	
+	float Vector2f_dot(Vector2f* p_left, Vector2f* p_right)
 	{
 		return (
 				(p_left->x * p_right->x) +

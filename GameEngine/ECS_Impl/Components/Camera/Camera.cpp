@@ -45,7 +45,7 @@ namespace _GameEngine::_ECS
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
 		_Math::Matrixf4x4_perspective(45.0f * _Math::DEG_TO_RAD,
-			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 200.0f, &p_camera->ProjectionMatrix);
+			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 50.0f, &p_camera->ProjectionMatrix);
 	};
 
 	void Camera_buildWorldSpaceRay(Camera* p_camera, _Math::Vector2f* p_screenPoint, _Math::Segment* out_ray)

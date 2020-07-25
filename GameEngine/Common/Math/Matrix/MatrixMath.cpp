@@ -322,7 +322,7 @@ namespace _GameEngine::_Math
 
 	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out)
 	{
-		float l_halfTan = atanf(p_fov / 2.0f);
+		float l_halfTan = tanf(p_fov / 2.0f);
 
 		p_out->_00 = 1.0f / (p_aspect * l_halfTan);
 		p_out->_01 = 0.0f;
@@ -343,6 +343,7 @@ namespace _GameEngine::_Math
 		p_out->_31 = 0.0f;
 		p_out->_32 = (-2.0f * p_far * p_near) / (p_far - p_near);
 		p_out->_33 = 0.0f;
+
 	};
 
 	float Matrixf4x4_far(Matrix4x4f* p_matrix)

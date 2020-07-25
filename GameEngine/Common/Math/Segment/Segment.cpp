@@ -22,6 +22,12 @@ namespace _GameEngine::_Math
 		return l_vector;
 	};
 
+	float Segment_length(Segment* p_segment)
+	{
+		_Math::Vector3f l_vector = Segment_toVector(p_segment);
+		return _Math::Vector3f_length(&l_vector);
+	};
+
 	void Segment_mul(Segment* p_segment, _Math::Matrix4x4f* p_matrix, Segment* p_out)
 	{
 		_Math::Vector4f l_begin4f, l_end4f;

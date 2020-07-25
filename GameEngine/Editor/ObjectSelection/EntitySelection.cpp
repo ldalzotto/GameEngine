@@ -10,6 +10,7 @@
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Quaternion/QuaternionMath.h"
+#include "Math/Line/Line.h"
 
 #include "Input/Input.h"
 
@@ -28,6 +29,8 @@
 #include "Render/Gizmo/Gizmo.h"
 #include "Render/RenderInterface.h"
 #include "Render/VulkanObjects/Hardware/Window/Window.h"
+
+#include <iostream>
 
 using namespace _GameEngine;
 
@@ -112,54 +115,85 @@ namespace _GameEngineEditor
 						_Math::Vector2d l_zero = { 0.0f, 0.0f };
 						if (!_Math::Vector2d_equals(&p_entitySelection->Input->InputMouse.MouseDelta, &l_zero))
 						{
-							_Math::Vector3f l_deltaPosition;
+							_Math::Vector3f l_deltaPosition{};
 							{
-								_Math::Vector3f l_deltaPositionDirection = _Math::Transform_getForward(&p_entitySelection->SelectedTransformArrow->Transform);
 
-								//calculating magnitude
-								float l_deltaPositionMagnitude = 0.0f;
+
+								//TODO -> there seems to be a bug on the calculation of the deltaPositionDirection in clip space. because when we project back to world space -> direction is not always a line
 								{
-									/*
-									_Math::Matrix4x4f l_worldToClipMatrix;
-										_Math::Vector3f l_deltaPositionDirection3f_clipSpace;
-										_Math::Vector2f l_deltaPositionDirection2f_clipSpace;
-										_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
-										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_deltaPositionDirection, &l_deltaPositionDirection3f_clipSpace);
-										l_deltaPositionDirection2f_clipSpace = { l_deltaPositionDirection3f_clipSpace.x, l_deltaPositionDirection3f_clipSpace.y };
-										_Math::Vector2f_normalize(&l_deltaPositionDirection2f_clipSpace);
-
-										_Math::Vector2d l_normalizedMouseDelta = p_entitySelection->Input->InputMouse.MouseDelta;
-										_Math::Vector2d_normalize(&l_normalizedMouseDelta);
-										l_deltaPositionMagnitude = _Math::Vector2f_dot(&l_deltaPositionDirection2f_clipSpace, &l_normalizedMouseDelta);
-									*/
-
+#ifndef comment
 									_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
 									_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
 									_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
+									_Math::Vector3f l_deltaPositionDirection_worldSpace = _Math::Transform_getForward(&p_entitySelection->SelectedTransformArrow->Transform);
+									_Math::Vector3f l_deltaPositionDirection_clipSpace;
+									{
+										_Math::Vector3f l_zero = {};
+										_Math::Vector3f l_deltaPositionDirection_clipSpace_begin, l_deltaPositionDirection_clipSpace_end;
+										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_zero, &l_deltaPositionDirection_clipSpace_begin);
+										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_deltaPositionDirection_worldSpace, &l_deltaPositionDirection_clipSpace_end);
+										_Math::Vector3f_min(&l_deltaPositionDirection_clipSpace_end, &l_deltaPositionDirection_clipSpace_begin, &l_deltaPositionDirection_clipSpace);
+									}
+
+									//calculating magnitude
+									float l_deltaPositionMagnitude = 0.0f;
+
+
 									_Math::Vector3f l_selectedArrowTransform_clipSpace;
-									_Math::Vector3f l_selectedArrayTransform_worldSpace = _Math::Transform_getWorldPosition(&p_entitySelection->SelectedTransformArrow->Transform);
-									_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedArrayTransform_worldSpace, &l_selectedArrowTransform_clipSpace);
-									
-									
+									{
+										_Math::Vector3f l_selectedArrayTransform_worldSpace = _Math::Transform_getWorldPosition(&p_entitySelection->SelectedTransformArrow->Transform);
+										_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedArrayTransform_worldSpace, &l_selectedArrowTransform_clipSpace);
+									}
+
+
 									_Math::Segment l_mouseDelta;
-									l_mouseDelta.Begin = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x - ((float)p_entitySelection->Input->InputMouse.MouseDelta.x * 10.0f), (float)p_entitySelection->Input->InputMouse.ScreenPosition.y - ((float)p_entitySelection->Input->InputMouse.MouseDelta.y * 10.0f), 1.0f } ;
+									l_mouseDelta.Begin = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x - ((float)p_entitySelection->Input->InputMouse.MouseDelta.x), (float)p_entitySelection->Input->InputMouse.ScreenPosition.y - ((float)p_entitySelection->Input->InputMouse.MouseDelta.y), 1.0f };
 									l_mouseDelta.End = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y, 1.0f };
 
 									_Math::Segment l_mouseDelta_clipSpace;
 									_Math::Segment_mul(&l_mouseDelta, &p_entitySelection->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates, &l_mouseDelta_clipSpace);
+
+
+									float l_mouseDelta_clipSpace_initialLength_signed = 0.0f;
+									{
+										_Math::Vector3f l_mouseDeltaDirection_clipSpace = _Math::Segment_toVector(&l_mouseDelta_clipSpace);
+										_Math::Vector2f l_mouseDeltaDirection_clipSpace_xy = { l_mouseDeltaDirection_clipSpace.x, l_mouseDeltaDirection_clipSpace.y };
+										_Math::Vector2f_normalize(&l_mouseDeltaDirection_clipSpace_xy);
+										_Math::Vector2f l_deltaPositionDirection_clipSpace_xy = { l_deltaPositionDirection_clipSpace.x, l_deltaPositionDirection_clipSpace.y };
+										_Math::Vector2f_normalize(&l_deltaPositionDirection_clipSpace_xy);
+										float l_sign = _Math::Vector2f_dot(&l_mouseDeltaDirection_clipSpace_xy, &l_deltaPositionDirection_clipSpace_xy);
+										l_mouseDelta_clipSpace_initialLength_signed = _Math::Vector3f_length(&l_mouseDeltaDirection_clipSpace) * l_sign /*(l_sign >= 0 ? 1.0f : -1.0f)*/;
+									}
+
 									l_mouseDelta_clipSpace.Begin.z = l_selectedArrowTransform_clipSpace.z;
-									l_mouseDelta_clipSpace.End.z = l_selectedArrowTransform_clipSpace.z;
+
+									{
+										_Math::Vector3f_normalize(&l_deltaPositionDirection_clipSpace);
+										_Math::Vector3f_mul(&l_deltaPositionDirection_clipSpace, l_mouseDelta_clipSpace_initialLength_signed, &l_deltaPositionDirection_clipSpace);
+										_Math::Vector3f_add(&l_mouseDelta_clipSpace.Begin, &l_deltaPositionDirection_clipSpace, &l_mouseDelta_clipSpace.End);
+									}
 
 									_Math::Segment l_mouseDelta_worldSpace;
-									_Math::Segment_mul(&l_mouseDelta_clipSpace, &l_clipToWorldMatrix, &l_mouseDelta_worldSpace);
+									_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_mouseDelta_clipSpace.Begin, &l_mouseDelta_worldSpace.Begin);
+									_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_mouseDelta_clipSpace.End, &l_mouseDelta_worldSpace.End);
 
-									_Math::Vector3f l_mouseDeltaVector_worldSpace  = _Math::Segment_toVector(&l_mouseDelta_worldSpace);
-									l_deltaPositionMagnitude = _Math::Vector3f_dot(&l_mouseDeltaVector_worldSpace, &l_deltaPositionDirection); //  _Math::Vector3f_length();
+									{
+										// _Render::Gizmo_drawLine(p_entitySelection->RenderInterface->Gizmo, &l_gizmoLineBegin, &l_gizmoLineEnd);
+									}
+
+									_Math::Vector3f l_mouseDeltaVector_worldSpace = _Math::Segment_toVector(&l_mouseDelta_worldSpace);
+									// l_deltaPositionMagnitude = _Math::Vector3f_dot(&l_mouseDeltaVector_worldSpace, &l_deltaPositionDirection_worldSpace); //  _Math::Vector3f_length();
+									// float l_dot = _Math::Vector3f_dot(&l_mouseDeltaVector_worldSpace, &l_deltaPositionDirection_worldSpace);
+									// l_deltaPositionMagnitude = _Math::Vector3f_length(&l_mouseDeltaVector_worldSpace) * (l_dot >= 0 ? 1.0f : -1.0f);
+
+									// float l_deltaPositionMagnitude = p_entitySelection->Input->InputMouse.MouseDelta.y * p_entitySelection->Input->InputMouse.MouseSentitivityperPixel;
+									// _Math::Vector3f_mul(&l_deltaPositionDirection_worldSpace, _Math::Segment_length(&), &l_deltaPosition);
+									l_deltaPosition = l_mouseDeltaVector_worldSpace;
+
+#endif
 								}
 
-								// float l_deltaPositionMagnitude = p_entitySelection->Input->InputMouse.MouseDelta.y * p_entitySelection->Input->InputMouse.MouseSentitivityperPixel;
-								_Math::Vector3f_mul(&l_deltaPositionDirection, l_deltaPositionMagnitude, &l_deltaPosition);
 							}
 
 							_Math::Vector3f_add(&(l_transformComponent)->Transform.LocalPosition, &l_deltaPosition, &l_deltaPosition);
