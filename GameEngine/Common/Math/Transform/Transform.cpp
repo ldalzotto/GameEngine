@@ -83,9 +83,9 @@ namespace _GameEngine::_Math
 		}
 		else
 		{
-			_Math::Matrix4x4f l_worldToLocal = _Math::Transform_getWorldToLocalMatrix(p_transform);
+			_Math::Matrix4x4f l_parentWorldToLocal = _Math::Transform_getWorldToLocalMatrix(p_transform->Parent);
 			_Math::Vector3f l_localPosition;
-			_Math::Matrixf4x4_mul(&l_worldToLocal, &p_worldPosition, &l_localPosition);
+			_Math::Matrixf4x4_mul(&l_parentWorldToLocal, &p_worldPosition, &l_localPosition);
 			_Math::Transform_setLocalPosition(p_transform, l_localPosition);
 		}
 	};

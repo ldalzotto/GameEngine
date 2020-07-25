@@ -57,9 +57,24 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		CubeCreationInfo l_cubeCreationInfo{};
 		l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
+		// _Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 1518.0f, 184.0f, -471.0f }, &l_cubeCreationInfo.LocalRotation);
 		l_cubeCreationInfo.WithMeshBound = true;
 		_ECS::Entity* l_instancaitedEntity; _ECS::TransformComponent* l_instranciatedTransform;
 		EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_instancaitedEntity, &l_instranciatedTransform);
+
+		//Child
+		{
+			CubeCreationInfo l_cubeCreationInfo{};
+			l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
+			l_cubeCreationInfo.LocalPosition = { 0.0f, -3.0f, 2.0f };
+			l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
+			// _Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 1518.0f, 184.0f, -471.0f }, &l_cubeCreationInfo.LocalRotation);
+			l_cubeCreationInfo.WithMeshBound = true;
+			_ECS::Entity* l_childInstanciatedEntity; _ECS::TransformComponent* l_childInstranciatedTransform;
+			EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);
+
+			_Math::Transform_addChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
+		}
 	}
 }
 
