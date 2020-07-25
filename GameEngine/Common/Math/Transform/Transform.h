@@ -32,6 +32,10 @@ namespace _GameEngine::_Math
 	void Transform_setLocalPosition(Transform* p_transform, _Math::Vector3f& p_localPosition);
 	void Transform_setLocalRotation(Transform* p_transform, _Math::Quaternionf& p_localRotation);
 	void Transform_setLocalScale(Transform* p_transform, _Math::Vector3f& p_localScale);
+
+	void Transform_setWorldPosition(Transform* p_transform, _Math::Vector3f& p_worldPosition);
+	void Transform_addToWorldPosition(Transform* p_transform, _Math::Vector3f& p_worldPosition_delta);
+
 	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform);
 	_Math::Matrix4x4f* Transform_getLocalToWorldMatrix_ref(Transform* p_transform);
 

@@ -21,7 +21,7 @@ namespace _GameEngine::_ECS
 		Camera_buildProjectionMatrix(p_camera);
 	};
 
-	void camera_onDetached(Camera* p_camera)
+	void camera_onDetached(Camera* p_camera, ECS*)
 	{
 		_Core::ObserverT_unRegister(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) & p_camera->OnSwapChainBuilded);
 	};

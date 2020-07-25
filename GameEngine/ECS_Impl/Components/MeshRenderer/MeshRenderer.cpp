@@ -8,7 +8,7 @@ namespace _GameEngine::_ECS
 {
 	ComponentType MeshRendererType = "MeshRenderer";
 
-	void MeshRenderer_free(MeshRenderer* p_meshRenderer);
+	void MeshRenderer_free(MeshRenderer* p_meshRenderer, ECS*);
 
 	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo)
 	{
@@ -27,7 +27,7 @@ namespace _GameEngine::_ECS
 		p_meshRenderer->MaterialInstance = _Render::MaterialInstance_alloc(p_renderInterface, &l_materialInstanceInitInfo);
 	};
 
-	void MeshRenderer_free(MeshRenderer* p_meshRenderer)
+	void MeshRenderer_free(MeshRenderer* p_meshRenderer, ECS*)
 	{
 		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
 		_Render::MaterialInstance_free(&l_meshRenderer->MaterialInstance);

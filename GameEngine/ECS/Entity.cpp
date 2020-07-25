@@ -49,7 +49,7 @@ namespace _GameEngine::_ECS
 	{
 		ComponentEvents_onComponentDetached(&p_ecs->ComponentEvents, (*p_component));
 		_Core::VectorT_eraseCompare(&p_entity->Components, _Core::ComparatorT<ComponentHeader*, ComponentType, void>{ Component_comparator, (*p_component)->ComponentType });
-		Component_free(p_component);
+		Component_free(p_component, p_ecs);
 	};
 
 	ComponentHeader* Entity_getComponent(Entity* p_entity, ComponentType* p_componentType)

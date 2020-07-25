@@ -14,11 +14,11 @@ namespace _GameEngine::_ECS
 		return l_component;
 	};
 
-	void Component_free(ComponentHeader** p_component)
+	void Component_free(ComponentHeader** p_component, ECS* p_ecs)
 	{
 		if ((*p_component)->OnComponentFree)
 		{
-			(*p_component)->OnComponentFree(*p_component);
+			(*p_component)->OnComponentFree(*p_component, p_ecs);
 		}
 		(*p_component)->AttachedEntity = nullptr;
 		free (*p_component);

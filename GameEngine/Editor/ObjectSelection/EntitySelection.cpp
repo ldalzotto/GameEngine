@@ -34,6 +34,7 @@ using namespace _GameEngine;
 namespace _GameEngineEditor
 {
 	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
+	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs);
 
 	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor)
 	{
@@ -91,13 +92,34 @@ namespace _GameEngineEditor
 					_Physics::RaycastHit l_hit;
 					if (_Physics::RayCast_against(&l_transformArrowColliders, &l_ray.Begin, &l_ray.End, &l_hit))
 					{
+
+						if (p_entitySelection->SelectedTransformArrow)
+						{
+							_Math::Transform_setLocalScale(&p_entitySelection->SelectedTransformArrow->Transform, _Math::Vector3f{ 1.0f,1.0f,1.0f });
+						}
 						// The user has clicked an arrow of the transform gizmo
 						p_entitySelection->SelectedTransformArrow = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
+						_Math::Transform_setLocalScale(&p_entitySelection->SelectedTransformArrow->Transform, _Math::Vector3f{ 1.2f, 1.2f, 1.2f });
 					}
 					else
 					{
+						if (p_entitySelection->SelectedTransformArrow)
+						{
+							_Math::Transform_setLocalScale(&p_entitySelection->SelectedTransformArrow->Transform, _Math::Vector3f{ 1.0f,1.0f,1.0f });
+						}
 						p_entitySelection->SelectedTransformArrow = nullptr;
+						TransformGizmoV2_free(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS);
+						p_entitySelection->SelectedEntity = nullptr;
 					}
+				}
+				else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::RELEASED_THIS_FRAME))
+				{
+					if (p_entitySelection->SelectedTransformArrow)
+					{
+						_Math::Transform_setLocalScale(&p_entitySelection->SelectedTransformArrow->Transform, _Math::Vector3f{ 1.0f,1.0f,1.0f });
+					}
+					p_entitySelection->SelectedTransformArrow = nullptr;
+					// TransformGizmoV2_free(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS);
 				}
 
 				if (p_entitySelection->SelectedTransformArrow)
@@ -120,7 +142,7 @@ namespace _GameEngineEditor
 								// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
 								_Math::Vector3f l_worldPosition = _Math::Transform_getWorldPosition(&l_transformComponent->Transform);
 								_Math::Quaternionf l_worldRotation = _Math::Transform_getWorldRotation(&l_selectedArrow->Transform);
-								_Math::Transform_setLocalPosition(&l_transformGizmoPlane->Transform, l_worldPosition);
+								_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, l_worldPosition);
 								_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, l_worldRotation);
 
 								// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, _Math::Transform_getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
@@ -164,44 +186,50 @@ namespace _GameEngineEditor
 
 							}
 
-							_Math::Vector3f_add(&(l_transformComponent)->Transform.LocalPosition, &l_deltaPosition, &l_deltaPosition);
-							_Math::Transform_setLocalPosition(&(l_transformComponent)->Transform, l_deltaPosition);
+							_Math::Transform_addToWorldPosition(&(l_transformComponent)->Transform, l_deltaPosition);
 						}
 					}
 				}
+
+
+
 			}
 
 
-			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
+			if (p_entitySelection->SelectedEntity)
 			{
-				_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
-				// _Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(l_selectedEntityTransform)->Transform);
-				_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
-				// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
-			}
-
-			// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
-			{
-				_ECS::TransformComponent* l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
-				if (l_transformGizmotransform)
+				_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 				{
-					_Math::Vector3f l_transformGizmoLocalPosition;
+					_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
+					// _Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(l_selectedEntityTransform)->Transform);
+					_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
+					_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
+				}
+
+				// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
+				{
+					_ECS::TransformComponent* l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
+					if (l_transformGizmotransform)
 					{
-						_Math::Vector3f l_selectedEntityTransformPosition = _Math::Transform_getWorldPosition(&l_selectedEntityTransform->Transform);
-						_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
-						_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
-						_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
+						_Math::Vector3f l_transformGizmoWorldPosition;
+						{
+							_Math::Vector3f l_selectedEntityTransformPosition = _Math::Transform_getWorldPosition(&l_selectedEntityTransform->Transform);
+							_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
+							_ECS::Camera_worldToClipMatrix(l_activeCamera, &l_worldToClipMatrix);
+							_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
-						_Math::Vector3f l_selectedEntityTransformClip;
-						_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedEntityTransformPosition, &l_selectedEntityTransformClip);
-						l_selectedEntityTransformClip.z = 0.99f;
-						_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &l_transformGizmoLocalPosition);
+							_Math::Vector3f l_selectedEntityTransformClip;
+							_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, &l_selectedEntityTransformPosition, &l_selectedEntityTransformClip);
+							l_selectedEntityTransformClip.z = 0.99f;
+							_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &l_transformGizmoWorldPosition);
+						}
+						_Math::Transform_setWorldPosition(&l_transformGizmotransform->Transform, l_transformGizmoWorldPosition);
+
+						_Math::Transform_setLocalRotation(&l_transformGizmotransform->Transform, _Math::Transform_getWorldRotation(&l_selectedEntityTransform->Transform));
 					}
-					_Math::Transform_setLocalPosition(&l_transformGizmotransform->Transform, l_transformGizmoLocalPosition);
-
-					_Math::Transform_setLocalRotation(&l_transformGizmotransform->Transform, _Math::Transform_getWorldRotation(&l_selectedEntityTransform->Transform));
 				}
 			}
+			
 		}
 
 	};
@@ -314,6 +342,14 @@ namespace _GameEngineEditor
 			_Math::Transform_setLocalScale(&p_transformGizmo->TransformGizmoSelectedArrayPlane.Transform, _Math::Vector3f{ 1.0f, 1.0f, 1.0f });
 		}
 	}
+
+	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs)
+	{
+		_ECS::ECSEventMessage* l_eraseEntitymessage = _ECS::ECSEventMessage_removeEntity_alloc(&p_transformGizmo->TransformGizoEntity->ComponentHeader.AttachedEntity);
+		_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_eraseEntitymessage);
+
+		*p_transformGizmo = {};
+	};
 
 
 }

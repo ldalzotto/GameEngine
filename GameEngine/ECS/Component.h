@@ -16,7 +16,7 @@ namespace _GameEngine::_ECS
 
 	struct ComponentHeader;
 
-	typedef void(*OnComponentFunction)(ComponentHeader*);
+	typedef void(*OnComponentFunction)(ComponentHeader*, ECS*);
 
 	struct ComponentHeader
 	{
@@ -29,7 +29,7 @@ namespace _GameEngine::_ECS
 
 	ComponentHeader* Component_alloc(ComponentType* p_type, size_t p_componentSize);
 
-	void Component_free(ComponentHeader** p_component);
+	void Component_free(ComponentHeader** p_component, ECS* p_ecs);
 
 	struct ComponentEvents
 	{

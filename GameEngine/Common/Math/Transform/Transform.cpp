@@ -75,6 +75,28 @@ namespace _GameEngine::_Math
 		}
 	};
 
+	void Transform_setWorldPosition(Transform* p_transform, _Math::Vector3f& p_worldPosition)
+	{
+		if (p_transform->Parent == nullptr)
+		{
+			_Math::Transform_setLocalPosition(p_transform, p_worldPosition);
+		}
+		else
+		{
+			_Math::Matrix4x4f l_worldToLocal = _Math::Transform_getWorldToLocalMatrix(p_transform);
+			_Math::Vector3f l_localPosition;
+			_Math::Matrixf4x4_mul(&l_worldToLocal, &p_worldPosition, &l_localPosition);
+			_Math::Transform_setLocalPosition(p_transform, l_localPosition);
+		}
+	};
+
+	void Transform_addToWorldPosition(Transform* p_transform, _Math::Vector3f& p_worldPosition_delta)
+	{
+		_Math::Vector3f l_finalWorldPosition = _Math::Transform_getWorldPosition(p_transform);
+		_Math::Vector3f_add(&l_finalWorldPosition, &p_worldPosition_delta, &l_finalWorldPosition);
+		_Math::Transform_setWorldPosition(p_transform, l_finalWorldPosition);
+	};
+
 	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform)
 	{
 		transform_updateMatricesIfNecessary(p_transform);
@@ -144,7 +166,7 @@ namespace _GameEngine::_Math
 		}
 		return l_return;
 	};
-	
+
 	_Math::Vector3f Transform_getRight(Transform* p_transform)
 	{
 		_Math::Matrix4x4f l_localToWorld = Transform_getLocalToWorldMatrix(p_transform);

@@ -4,6 +4,8 @@
 
 namespace _GameEngine::_ECS
 {
+	struct ECS;
+
 	template <typename COMPONENT_TYPE>
 	extern ComponentType* ComponentT_getComponentType();
 
@@ -12,7 +14,7 @@ namespace _GameEngine::_ECS
 	{
 		Entity* AttachedEntity;
 		ComponentType* ComponentType;
-		void(*OnComponentFree)(COMPONENT_TYPE*);
+		void(*OnComponentFree)(COMPONENT_TYPE*, ECS*);
 	};
 
 	template <typename COMPONENT_TYPE>
