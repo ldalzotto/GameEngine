@@ -2,12 +2,16 @@
 
 #include <cstdlib>
 
+#include "Algorithm/Compare/CompareAlgorithmT.hpp"
+
 #include "Log/Log.hpp"
 
 #include "ECS/ECS.h"
 
 namespace _GameEngine::_ECS
 {
+
+	bool ECSEventMessage_RemoveEntity_equals(ECSEventMessage** l_left, ECSEventMessage_RemoveEntity* l_comparedMessage,  void*);
 
 	void ECSEventQueue_alloc(ECSEventQueue* p_ecsEventQueue, ECS* p_ecs)
 	{
@@ -54,7 +58,27 @@ namespace _GameEngine::_ECS
 
 	void ECSEventQueue_pushMessage(ECSEventQueue* p_ecsEventQueue, ECSEventMessage** p_ecsEventQueueMessage)
 	{
-		_Core::VectorT_pushBack(&p_ecsEventQueue->Messages, p_ecsEventQueueMessage);
+		bool l_eventPushAllowed = true;
+		switch ((*p_ecsEventQueueMessage)->MessageType)
+		{
+			// Having multiple ECS message of destroying the same Entity can result to undefined behavior. So we present it's insertion.
+			case ECSEventMessageType::ECS_REMOVE_ENTITY:
+				ECSEventMessage_RemoveEntity* l_message = (ECSEventMessage_RemoveEntity*)(*p_ecsEventQueueMessage);
+				if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_ecsEventQueue->Messages), _Core::ComparatorT<ECSEventMessage*, ECSEventMessage_RemoveEntity, void>{ECSEventMessage_RemoveEntity_equals, l_message}))
+				{
+					l_eventPushAllowed = false;
+				};
+				break;
+		}
+
+		if(l_eventPushAllowed)
+		{
+			_Core::VectorT_pushBack(&p_ecsEventQueue->Messages, p_ecsEventQueueMessage);
+		}
+		else
+		{
+			free(*p_ecsEventQueueMessage);
+		}
 	};
 	
 	void ECSEventQueue_processMessages(ECSEventQueue* p_ecsEventQueue)
@@ -93,4 +117,19 @@ namespace _GameEngine::_ECS
 	};
 
 
+}
+
+namespace _GameEngine::_ECS
+{
+
+	bool ECSEventMessage_RemoveEntity_equals(ECSEventMessage** l_left, ECSEventMessage_RemoveEntity* l_comparedMessage, void*)
+	{
+		if ((*l_left)->MessageType == ECSEventMessageType::ECS_REMOVE_ENTITY)
+		{
+			ECSEventMessage_RemoveEntity* l_leftRemoveEntity = (ECSEventMessage_RemoveEntity*)(*l_left);
+			return l_leftRemoveEntity->Entity == l_comparedMessage->Entity;
+		}
+
+		return false;
+	};
 }
