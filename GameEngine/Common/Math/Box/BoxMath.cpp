@@ -30,24 +30,44 @@ namespace _GameEngine::_Math
 
 	void Box_build(Box* p_box, _Core::VectorT<_Math::Vector3f>* p_points)
 	{
-		//calculate center
+		//Calculate approximate center
+		_Math::Vector3f l_approximateCenter {};
 		{
-			p_box->Center = { 0.0f, 0.0f, 0.0f };
 			auto l_pointsIt = _Core::VectorT_buildIterator(p_points);
 			while (_Core::VectorIteratorT_moveNext(&l_pointsIt))
 			{
-				_Math::Vector3f_add(&p_box->Center, l_pointsIt.Current, &p_box->Center);
+				_Math::Vector3f_add(&l_approximateCenter, l_pointsIt.Current, &l_approximateCenter);
 			}
-			_Math::Vector3f_mul(&p_box->Center, 1.0f / p_points->Size, &p_box->Center);
+			_Math::Vector3f_mul(&l_approximateCenter, 1.0f / p_points->Size, &l_approximateCenter);
 		}
 
+		//Calculate min-max
+		_Math::Vector3f l_min = l_approximateCenter, l_max = l_approximateCenter;
 		{
-			auto l_pointsIt = _Core::VectorT_buildIterator(p_points);
+			_Core::VectorIteratorT<_Math::Vector3f> l_pointsIt = _Core::VectorT_buildIterator(p_points);
 			while (_Core::VectorIteratorT_moveNext(&l_pointsIt))
 			{
-				box_grow(p_box, l_pointsIt.Current);
+				if (l_pointsIt.Current->x <= l_min.x) { l_min.x = l_pointsIt.Current->x; }
+				if (l_pointsIt.Current->y <= l_min.y) { l_min.y = l_pointsIt.Current->y; }
+				if (l_pointsIt.Current->z <= l_min.z) { l_min.z = l_pointsIt.Current->z; }
+
+
+				if (l_pointsIt.Current->x >= l_max.x) { l_max.x = l_pointsIt.Current->x; }
+				if (l_pointsIt.Current->y >= l_max.y) { l_max.y = l_pointsIt.Current->y; }
+				if (l_pointsIt.Current->z >= l_max.z) { l_max.z = l_pointsIt.Current->z; }
 			}
 		}
+
+		//calculate accurate center
+		{
+			p_box->Center = { 0.0f, 0.0f, 0.0f };
+			_Math::Vector3f_add(&p_box->Center, &l_min, &p_box->Center);
+			_Math::Vector3f_add(&p_box->Center, &l_max, &p_box->Center);
+			_Math::Vector3f_mul(&p_box->Center, 0.5f, &p_box->Center);
+		}
+
+		box_grow(p_box, &l_min);
+		box_grow(p_box, &l_max);
 	};
 
 	void Box_extractPoints(Box* p_box, BoxPoints* out_points)
@@ -141,7 +161,7 @@ namespace _GameEngine::_Math
 			_Math::Vector4f_build(&p_boxPoints->L_U_B, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
 			p_boxPoints->L_U_B = { l_transformedPoint.x, l_transformedPoint.y, l_transformedPoint.z };
-		} 
+		}
 		{
 			_Math::Vector4f_build(&p_boxPoints->L_U_F, 1.0f, &l_pointAsVec4);
 			_Math::Matrixf4x4_mul(p_matrix, &l_pointAsVec4, &l_transformedPoint);
