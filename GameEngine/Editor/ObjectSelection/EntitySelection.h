@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #include "Math/Box/Box.h"
 #include "Math/Transform/Transform.h"
 
@@ -10,7 +12,9 @@ namespace _GameEngine
 	namespace _Render { struct RenderInterface; }
 	namespace _Input { struct Input; }
 	namespace _Physics { struct PhysicsInterface; }
-	namespace _ECS { struct ECS; struct Entity; struct TransformComponent; }
+	namespace _ECS {
+		struct ECS; struct Entity; struct TransformComponent; struct CameraSystem; struct Camera;
+	}
 }
 
 namespace _GameEngineEditor
@@ -27,13 +31,34 @@ namespace _GameEngineEditor
 		_GameEngine::_Physics::BoxCollider Collider;
 	};
 
+	/*
+	enum TransformGizmoState : uint8_t
+	{
+		HIDDEN,
+		VISIBLE,
+		ARROW_SELECTED
+	};
+	*/
+
+	struct TransformGizmoSelectionState
+	{
+		_GameEngine::_ECS::TransformComponent* SelectedArrow;
+	};
+
 	struct TransformGizmo
 	{
 		_GameEngine::_ECS::TransformComponent* TransformGizoEntity;
 		_GameEngine::_ECS::TransformComponent* RightArrow;
 		_GameEngine::_ECS::TransformComponent* UpArrow;
 		_GameEngine::_ECS::TransformComponent* ForwardArrow;
-		TransformGizmoPlane TransformGizmoSelectedArrayPlane;
+		TransformGizmoPlane TransformGizmoMovementGuidePlane;
+	};
+
+	
+	struct EntitySelection_CachedStructures
+	{
+		_GameEngine::_ECS::CameraSystem* CameraSystem;
+		_GameEngine::_ECS::Camera* ActiveCamera;
 	};
 
 	struct EntitySelection
@@ -42,10 +67,12 @@ namespace _GameEngineEditor
 		_GameEngine::_Input::Input* Input;
 		_GameEngine::_Render::RenderInterface* RenderInterface;
 		_GameEngine::_Physics::PhysicsInterface* PhysicsInterface;
+
+		EntitySelection_CachedStructures CachedStructures;
 		TransformGizmo TransformGizmoV2;
-		// _GameEngine::_ECS::Entity* TransformGizmo;
+		TransformGizmoSelectionState TransformGizmoSelectionState;
+
 		_GameEngine::_ECS::Entity* SelectedEntity;
-		_GameEngine::_ECS::TransformComponent* SelectedTransformArrow;
 	};
 
 	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor);
