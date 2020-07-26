@@ -11,6 +11,8 @@
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Quaternion/QuaternionMath.h"
 
+#include "Colors/Colors.h"
+
 #include "Input/Input.h"
 
 #include "ECS/ECS.h"
@@ -40,9 +42,11 @@ namespace _GameEngineEditor
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, _Math::Transform* p_followedTransform);
 	TransformGizmoSelectionState TransformGizmo_determinedSelectedGizmoComponent(TransformGizmo* p_transformGizmo, _Math::Segment* p_collisionRay);
 	void TransformGizmo_setSelectedArrow(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedArrow);
+	void TransformGizmo_setSelectedRotation(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedRotation);
 
 	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity);
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection);
+	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection);
 
 	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor)
 	{
@@ -113,9 +117,10 @@ namespace _GameEngineEditor
 				TransformGizmoSelectionState* l_transformGizmoSelectionState = &p_entitySelection->TransformGizmoSelectionState;
 				{
 					TransformGizmo_setSelectedArrow(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedArrow);
+					TransformGizmo_setSelectedRotation(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedRotation);
 				}
 
-				if (!l_currentFrame_transformGizmoSelectionState.SelectedArrow)
+				if (!l_currentFrame_transformGizmoSelectionState.SelectedArrow && !l_currentFrame_transformGizmoSelectionState.SelectedRotation)
 				{
 					TransformGizmoV2_free(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS);
 					p_entitySelection->SelectedEntity = nullptr;
@@ -126,11 +131,16 @@ namespace _GameEngineEditor
 			else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::RELEASED_THIS_FRAME))
 			{
 				TransformGizmo_setSelectedArrow(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
+				TransformGizmo_setSelectedRotation(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
 			}
 
 			if (p_entitySelection->TransformGizmoSelectionState.SelectedArrow)
 			{
 				EntitySelection_moveSelectedEntity_arrowTranslation(p_entitySelection);
+			}
+			else if (p_entitySelection->TransformGizmoSelectionState.SelectedRotation)
+			{
+				EntitySelection_rotateSelectedEntity(p_entitySelection);
 			}
 		}
 
@@ -213,6 +223,26 @@ namespace _GameEngineEditor
 		}
 	}
 
+	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)
+	{
+		if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
+		{
+			_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
+			_ECS::TransformComponent* l_selectedRotation = p_entitySelection->TransformGizmoSelectionState.SelectedRotation;
+			TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
+
+			_Math::Vector2d l_zero = { 0.0f, 0.0f };
+			if (!_Math::Vector2d_equals(&p_entitySelection->Input->InputMouse.MouseDelta, &l_zero))
+			{
+				//We position the guide plane
+				_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldPosition(&l_transformComponent->Transform));
+				_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&l_selectedRotation->Transform));
+
+
+			}
+		}
+	};
+
 	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity)
 	{
 		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
@@ -263,6 +293,48 @@ namespace _GameEngineEditor
 		return l_transform;
 	}
 
+	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, _Math::Vector4f* p_color)
+	{
+		_ECS::Entity* l_rotationEntity;
+		_ECS::TransformComponent* l_transform;
+		{
+			l_rotationEntity = _ECS::Entity_alloc();
+			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rotationEntity);
+			_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_entityCreationMessage);
+		}
+		{
+			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
+			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transformInitInfo.LocalPosition = { 0.2f, 0.2f, 0.0f };
+			l_transformInitInfo.LocalRotation = _Math::Quaternionf_identity();
+			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
+
+			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
+			_ECS::EntityT_addComponentDeferred(l_rotationEntity, l_transform, p_ecs);
+		}
+		{
+			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
+			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
+			_Render::MaterialUniqueKey l_materialKey{};
+			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoFragment.spv";
+			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoVertex.spv";
+			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
+			l_meshRendererInitInfo.InputParameters = {
+				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/RotationGizmo.obj"},
+				{_Render::MATERIALINSTANCE_COLOR, p_color}
+			};
+
+			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
+			_ECS::EntityT_addComponentDeferred(l_rotationEntity, l_meshRenderer, p_ecs);
+		}
+		{
+			_ECS::MeshRendererBound* l_meshrendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
+			_ECS::EntityT_addComponentDeferred(l_rotationEntity, l_meshrendererBound, p_ecs);
+		}
+
+		return l_transform;
+	}
+
 	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _Math::Vector3f* p_initialWorldPosition, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface)
 	{
 		_ECS::Entity* l_transformGizmo = _ECS::Entity_alloc();
@@ -281,36 +353,64 @@ namespace _GameEngineEditor
 			_ECS::EntityT_addComponentDeferred(l_transformGizmo, p_transformGizmo->TransformGizoEntity, p_ecs);
 		}
 
+		//Arrow transform gizmo
 		{
-			_Math::Vector4f l_rightColor = { 1.0f, 0.0f, 0.0f, 1.0f };
-			p_transformGizmo->RightArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &l_rightColor);
-		}
-		{
-			_Math::Vector4f l_upColor = { 0.0f, 1.0f, 0.0f, 1.0f };
-			p_transformGizmo->UpArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &l_upColor);
-		}
-		{
-			_Math::Vector4f l_forwardColor = { 0.0f, 0.0f, 1.0f, 1.0f };
-			p_transformGizmo->ForwardArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &l_forwardColor);
+			{
+				p_transformGizmo->RightArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &_Color::RED);
+			}
+			{
+				p_transformGizmo->UpArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &_Color::GREEN);
+			}
+			{
+				_Math::Vector4f l_forwardColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+				p_transformGizmo->ForwardArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &_Color::BLUE);
+			}
+
+			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->ForwardArrow->Transform);
+			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->RightArrow->Transform);
+			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->UpArrow->Transform);
+
+			{
+				_Math::Quaternionf l_rightQuaternion;
+				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, &l_rightQuaternion);
+				_Math::Transform_setLocalRotation(&p_transformGizmo->RightArrow->Transform, l_rightQuaternion);
+			}
+			{
+				_Math::Quaternionf l_upQuaternion;
+				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ -M_PI * 0.5f, 0.0f, 0.0f }, &l_upQuaternion);
+				_Math::Transform_setLocalRotation(&p_transformGizmo->UpArrow->Transform, l_upQuaternion);
+			}
+			{
+				_Math::Quaternionf l_forwardQuaternion = _Math::Quaternionf_identity();
+				_Math::Transform_setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, l_forwardQuaternion);
+			}
 		}
 
-		_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->ForwardArrow->Transform);
-		_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->RightArrow->Transform);
-		_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->UpArrow->Transform);
+		// Rotation gizmo
+		{
+			p_transformGizmo->XRotation = transformGizmoV2_allocRotation(p_ecs, p_renderInterface, &_Color::RED);
+			p_transformGizmo->YRotation = transformGizmoV2_allocRotation(p_ecs, p_renderInterface, &_Color::GREEN);
+			p_transformGizmo->ZRotation = transformGizmoV2_allocRotation(p_ecs, p_renderInterface, &_Color::BLUE);
+		
+			{
+				_Math::Quaternionf l_rightQuaternion;
+				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, &l_rightQuaternion);
+				_Math::Transform_setLocalRotation(&p_transformGizmo->ZRotation->Transform, l_rightQuaternion);
+			}
+			{
+				_Math::Quaternionf l_upQuaternion;
+				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ M_PI * 0.5f, 0.0f, M_PI * 0.5f }, &l_upQuaternion);
+				_Math::Transform_setLocalRotation(&p_transformGizmo->YRotation->Transform, l_upQuaternion);
+			}
+			{
+				_Math::Quaternionf l_forwardQuaternion = _Math::Quaternionf_identity();
+				_Math::Transform_setLocalRotation(&p_transformGizmo->XRotation->Transform, l_forwardQuaternion);
+			}
 
-		{
-			_Math::Quaternionf l_rightQuaternion;
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, &l_rightQuaternion);
-			_Math::Transform_setLocalRotation(&p_transformGizmo->RightArrow->Transform, l_rightQuaternion);
-		}
-		{
-			_Math::Quaternionf l_upQuaternion;
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ -M_PI * 0.5f, 0.0f, 0.0f }, &l_upQuaternion);
-			_Math::Transform_setLocalRotation(&p_transformGizmo->UpArrow->Transform, l_upQuaternion);
-		}
-		{
-			_Math::Quaternionf l_forwardQuaternion = _Math::Quaternionf_identity();
-			_Math::Transform_setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, l_forwardQuaternion);
+			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->XRotation->Transform);
+			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->YRotation->Transform);
+			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->ZRotation->Transform);
+
 		}
 
 		//Plane instance
@@ -380,6 +480,19 @@ namespace _GameEngineEditor
 		{
 			l_gizmoSelectionState.SelectedArrow = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
 		}
+		else
+		{
+			// We try rotation
+			_Core::ArrayT_clear(&l_transformArrowColliders);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->XRotation->ComponentHeader.AttachedEntity)->Boxcollider);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->YRotation->ComponentHeader.AttachedEntity)->Boxcollider);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->ZRotation->ComponentHeader.AttachedEntity)->Boxcollider);
+			if (_Physics::RayCast_against(&l_transformArrowColliders, &p_collisionRay->Begin, &p_collisionRay->End, &l_hit))
+			{
+				l_gizmoSelectionState.SelectedRotation = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
+			}
+
+		}
 
 		return l_gizmoSelectionState;
 	}
@@ -395,5 +508,18 @@ namespace _GameEngineEditor
 			_Math::Transform_setLocalScale(&p_selectedArrow->Transform, _Math::Vector3f{ 1.2f,1.2f,1.2f });
 		}
 		p_selectionState->SelectedArrow = p_selectedArrow;
+	}
+
+	void TransformGizmo_setSelectedRotation(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedRotation)
+	{
+		if (p_selectionState->SelectedRotation)
+		{
+			_Math::Transform_setLocalScale(&p_selectionState->SelectedRotation->Transform, _Math::Vector3f{ 1.0f,1.0f,1.0f });
+		}
+		if (p_selectedRotation)
+		{
+			_Math::Transform_setLocalScale(&p_selectedRotation->Transform, _Math::Vector3f{ 1.2f,1.2f,1.2f });
+		}
+		p_selectionState->SelectedRotation = p_selectedRotation;
 	}
 }

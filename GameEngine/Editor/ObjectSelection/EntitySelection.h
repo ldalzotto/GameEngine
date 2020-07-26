@@ -34,14 +34,21 @@ namespace _GameEngineEditor
 	struct TransformGizmoSelectionState
 	{
 		_GameEngine::_ECS::TransformComponent* SelectedArrow;
+		_GameEngine::_ECS::TransformComponent* SelectedRotation;
 	};
 
 	struct TransformGizmo
 	{
 		_GameEngine::_ECS::TransformComponent* TransformGizoEntity;
+
 		_GameEngine::_ECS::TransformComponent* RightArrow;
 		_GameEngine::_ECS::TransformComponent* UpArrow;
 		_GameEngine::_ECS::TransformComponent* ForwardArrow;
+		
+		_GameEngine::_ECS::TransformComponent* XRotation;
+		_GameEngine::_ECS::TransformComponent* YRotation;
+		_GameEngine::_ECS::TransformComponent* ZRotation;
+		
 		TransformGizmoPlane TransformGizmoMovementGuidePlane;
 	};
 

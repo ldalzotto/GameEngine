@@ -3,6 +3,7 @@ project(GameEngine_Common VERSION 0.0.1)
 
 file(GLOB_RECURSE GAME_ENGINE_COMMON_PRIVATE 
 	"./Math/*.cpp"
+	"./Colors/*.cpp"
 	"./DataStructures/*.cpp"
 	"./MyLog/*.cpp"
 	"./Clock/*.cpp"
@@ -10,6 +11,7 @@ file(GLOB_RECURSE GAME_ENGINE_COMMON_PRIVATE
 )
 file(GLOB_RECURSE GAME_ENGINE_COMMON_PUBLIC 
 	"./Math/*.h"
+	"./Colors/*.h"
 	"./DataStructures/*.h"
 	"./MyLog/*.h"
 	"./Clock/*.h"
