@@ -31,15 +31,6 @@ namespace _GameEngineEditor
 		_GameEngine::_Physics::BoxCollider Collider;
 	};
 
-	/*
-	enum TransformGizmoState : uint8_t
-	{
-		HIDDEN,
-		VISIBLE,
-		ARROW_SELECTED
-	};
-	*/
-
 	struct TransformGizmoSelectionState
 	{
 		_GameEngine::_ECS::TransformComponent* SelectedArrow;

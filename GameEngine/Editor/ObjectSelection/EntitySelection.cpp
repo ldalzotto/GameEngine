@@ -34,12 +34,13 @@ using namespace _GameEngine;
 namespace _GameEngineEditor
 {
 
-	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
+	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _Math::Vector3f* p_initialWorldPosition, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
 	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs);
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, _Math::Transform* p_followedTransform);
 	TransformGizmoSelectionState TransformGizmo_determinedSelectedGizmoComponent(TransformGizmo* p_transformGizmo, _Math::Segment* p_collisionRay);
 	void TransformGizmo_setSelectedArrow(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedArrow);
 
+	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity);
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection);
 
 	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor)
@@ -86,9 +87,10 @@ namespace _GameEngineEditor
 				{
 					_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
 					p_entitySelection->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
-					TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS, p_entitySelection->RenderInterface);
+					_Math::Vector3f l_selectedEntityWorldPosition = _Math::Transform_getWorldPosition(&l_transformComponent->Transform);
+					TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, &l_selectedEntityWorldPosition, p_entitySelection->ECS, p_entitySelection->RenderInterface);
 					_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
-					return;
+					return; //We return to wait for the next frame where transform colliders and box will be calculated
 				}
 			}
 		}
@@ -134,6 +136,7 @@ namespace _GameEngineEditor
 		{
 			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 			TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(p_entitySelection, &l_selectedEntityTransform->Transform);
+			EntitySelection_drawSelectedEntityBoundingBox(p_entitySelection, p_entitySelection->SelectedEntity);
 		}
 	}
 
@@ -206,6 +209,14 @@ namespace _GameEngineEditor
 		}
 	}
 
+	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity)
+	{
+		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
+		_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_selectedEntity);
+		_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
+	}
+
 	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, _Math::Vector4f* p_color)
 	{
 		_ECS::Entity* l_arrowEntity;
@@ -248,7 +259,7 @@ namespace _GameEngineEditor
 		return l_transform;
 	}
 
-	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface)
+	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _Math::Vector3f* p_initialWorldPosition, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface)
 	{
 		_ECS::Entity* l_transformGizmo = _ECS::Entity_alloc();
 		{
@@ -258,7 +269,7 @@ namespace _GameEngineEditor
 		{
 			p_transformGizmo->TransformGizoEntity = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.0f, 1.0f, -10.0f };
+			l_transformInitInfo.LocalPosition = *p_initialWorldPosition;
 			l_transformInitInfo.LocalRotation = _Math::Quaternionf_identity();
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
@@ -322,16 +333,6 @@ namespace _GameEngineEditor
 
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, _Math::Transform* p_followedTransform)
 	{
-		/*
-		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
-		{
-			_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_entitySelection->SelectedEntity);
-			// _Render::Gizmo_drawTransform(p_entitySelection->RenderInterface->Gizmo, &(l_selectedEntityTransform)->Transform);
-			_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
-			_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
-		}
-		*/
-
 		// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
 		{
 			_ECS::TransformComponent* l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
@@ -362,32 +363,20 @@ namespace _GameEngineEditor
 	{
 		TransformGizmoSelectionState l_gizmoSelectionState{};
 
-		if (p_transformGizmo->RightArrow->ComponentHeader.AttachedEntity)
+		_Physics::BoxCollider* l_transformArrowCollidersPtr[3];
+		_Core::ArrayT<_Physics::BoxCollider*> l_transformArrowColliders = _Core::ArrayT_fromCStyleArray(l_transformArrowCollidersPtr, 3);
+		l_transformArrowColliders.Size = 0;
 		{
-			_Physics::BoxCollider* l_transformArrowCollidersPtr[3];
-			_Core::ArrayT<_Physics::BoxCollider*> l_transformArrowColliders = _Core::ArrayT_fromCStyleArray(l_transformArrowCollidersPtr, 3);
-			l_transformArrowColliders.Size = 0;
-			{
-				_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->RightArrow->ComponentHeader.AttachedEntity)->Boxcollider);
-				_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->UpArrow->ComponentHeader.AttachedEntity)->Boxcollider);
-				_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->ForwardArrow->ComponentHeader.AttachedEntity)->Boxcollider);
-			}
-			_Physics::RaycastHit l_hit;
-			if (_Physics::RayCast_against(&l_transformArrowColliders, &p_collisionRay->Begin, &p_collisionRay->End, &l_hit))
-			{
-				l_gizmoSelectionState.SelectedArrow = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
-
-				/*
-				if (p_entitySelection->SelectedTransformArrow)
-				{
-					_Math::Transform_setLocalScale(&p_entitySelection->SelectedTransformArrow->Transform, _Math::Vector3f{ 1.0f,1.0f,1.0f });
-				}
-				// The user has clicked an arrow of the transform gizmo
-				p_entitySelection->SelectedTransformArrow = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
-				_Math::Transform_setLocalScale(&p_entitySelection->SelectedTransformArrow->Transform, _Math::Vector3f{ 1.2f, 1.2f, 1.2f });
-				*/
-			}
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->RightArrow->ComponentHeader.AttachedEntity)->Boxcollider);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->UpArrow->ComponentHeader.AttachedEntity)->Boxcollider);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->ForwardArrow->ComponentHeader.AttachedEntity)->Boxcollider);
 		}
+		_Physics::RaycastHit l_hit;
+		if (_Physics::RayCast_against(&l_transformArrowColliders, &p_collisionRay->Begin, &p_collisionRay->End, &l_hit))
+		{
+			l_gizmoSelectionState.SelectedArrow = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
+		}
+
 		return l_gizmoSelectionState;
 	}
 
