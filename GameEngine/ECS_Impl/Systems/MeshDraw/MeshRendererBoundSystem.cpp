@@ -67,6 +67,7 @@ namespace _GameEngine::_ECS
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 		MeshRendererBound* l_rendererBound = EntityT_getComponent<MeshRendererBound>(p_entity);
+		_Core::VectorT_eraseCompare(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, _Core::ComparatorT<_ECS::MeshRendererBoundCalculationOperation, Entity*, void>{ MeshRendererBoundOperation_EqualsEntity, &p_entity });
 		_Physics::World_removeBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_rendererBound->Boxcollider);
 	};
 

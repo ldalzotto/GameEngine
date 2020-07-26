@@ -87,9 +87,12 @@ namespace _GameEngineEditor
 					_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
 					p_entitySelection->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
 					TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS, p_entitySelection->RenderInterface);
+					_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
+					return;
 				}
 			}
 		}
+
 
 		if (EntitSelection_isEntitySelected(p_entitySelection))
 		{
@@ -106,11 +109,11 @@ namespace _GameEngineEditor
 					TransformGizmo_setSelectedArrow(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedArrow);
 				}
 
-				//TODO -> ECS sync
 				if (!l_currentFrame_transformGizmoSelectionState.SelectedArrow)
 				{
 					TransformGizmoV2_free(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS);
 					p_entitySelection->SelectedEntity = nullptr;
+					_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
 				}
 
 			}
@@ -125,12 +128,13 @@ namespace _GameEngineEditor
 			}
 		}
 
+
+
 		if (EntitSelection_isEntitySelected(p_entitySelection))
 		{
 			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 			TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(p_entitySelection, &l_selectedEntityTransform->Transform);
 		}
-
 	}
 
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection)
@@ -358,8 +362,6 @@ namespace _GameEngineEditor
 	{
 		TransformGizmoSelectionState l_gizmoSelectionState{};
 
-		//TODO -> Can't we make the ECS instanciate Entity and component on demand ? Only events will be treferred later.
-		// This will allow us to avoid this check, because components are attached at the consumption of events.
 		if (p_transformGizmo->RightArrow->ComponentHeader.AttachedEntity)
 		{
 			_Physics::BoxCollider* l_transformArrowCollidersPtr[3];
