@@ -33,6 +33,7 @@ using namespace _GameEngine;
 
 namespace _GameEngineEditor
 {
+	void EntitySelection_onCameraSystem_enabled(EntitySelection* p_entitySelection, _ECS::CameraSystem** p_cameraSystem);
 
 	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _Math::Vector3f* p_initialWorldPosition, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
 	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs);
@@ -50,6 +51,9 @@ namespace _GameEngineEditor
 		p_entitySelection->RenderInterface = p_gameEngineEditor->GameEngineApplicationInterface->RenderInterface;
 		p_entitySelection->PhysicsInterface = p_gameEngineEditor->GameEngineApplicationInterface->PhysicsInterface;
 		p_entitySelection->SelectedEntity = nullptr;
+
+		_Core::CallbackT < EntitySelection, _ECS::CameraSystem* > l_onCameraSystemEnabled = { EntitySelection_onCameraSystem_enabled , p_entitySelection };
+		_ECS::SystemEvents_registerOnSystemAdded(&p_gameEngineEditor->GameEngineApplicationInterface->ECS->SystemEvents, _ECS::CameraSystemKey, (_Core::CallbackT<void, _ECS::SystemHeader*>*) & l_onCameraSystemEnabled);
 	};
 
 	inline bool EntitySelection_isCachedStructureInitialized(EntitySelection* p_entitySelection)
@@ -62,15 +66,15 @@ namespace _GameEngineEditor
 		return p_entitySelection->SelectedEntity;
 	}
 
+	void EntitySelection_onCameraSystem_enabled(EntitySelection* p_entitySelection, _ECS::CameraSystem** p_cameraSystem)
+	{
+		p_entitySelection->CachedStructures.CameraSystem = *p_cameraSystem;
+	};
+
 	void EntitySelection_update(EntitySelection* p_entitySelection)
 	{
-		// Cache initialization
-		// TODO -> Move this to a system initialize method.
-		if (!EntitySelection_isCachedStructureInitialized(p_entitySelection))
-		{
-			p_entitySelection->CachedStructures.CameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&p_entitySelection->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
-			p_entitySelection->CachedStructures.ActiveCamera = _ECS::CameraSystem_getCurrentActiveCamera(p_entitySelection->CachedStructures.CameraSystem);
-		}
+		// Set the active camera
+		p_entitySelection->CachedStructures.ActiveCamera = _ECS::CameraSystem_getCurrentActiveCamera(p_entitySelection->CachedStructures.CameraSystem);
 
 		// Trying to detect the selected Entity
 		if (!EntitSelection_isEntitySelected(p_entitySelection))

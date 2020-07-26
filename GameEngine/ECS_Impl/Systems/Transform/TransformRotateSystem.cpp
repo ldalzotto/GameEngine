@@ -74,8 +74,7 @@ namespace _GameEngine::_ECS
 			&TransformComponentType, &TransformRotateType,
 			l_transformRotateSystem, TransformRotationSystemV2_onComponentMatchAdded, TransformRotationSystemV2_onComponentmathRemoved);
 
-		_Core::SortedSequencerT_addOperation(&p_updateSequencer->UpdateSequencer, (_Core::SortedSequencerOperationT<GameEngineApplicationInterface>*) & l_transformRotateSystem->SystemHeader.Update);
-		SystemContainerV2_addSystemV2(&p_ecs->SystemContainerV2, &l_transformRotateSystem->SystemHeader);
+		_ECS::SystemHeader_init(&l_transformRotateSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*)&p_updateSequencer->UpdateSequencer);
 	};
 
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_gameEngineInterface)

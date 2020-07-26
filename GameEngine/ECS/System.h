@@ -1,9 +1,12 @@
 #pragma once
 
-#include "DataStructures/Specifications/VectorT.hpp"
+#include <unordered_map>
+
 #include "Entity.h"
 
+#include "DataStructures/Specifications/VectorT.hpp"
 #include "Functional/Sequencer/SortedSequencer.hpp"
+#include "Functional/Callback/ObserverT.hpp"
 
 namespace _Core
 {
@@ -37,8 +40,17 @@ namespace _GameEngine::_ECS
 	};
 
 	void SystemContainerV2_alloc(SystemContainerV2* p_systemContainer);
-	void SystemContainerV2_addSystemV2(SystemContainerV2* p_systemContainer, SystemHeader* p_systemV2);
+	void SystemContainerV2_addSystemV2(ECS* p_ecs, SystemHeader* p_systemV2);
 	void SystemContainerV2_removeSystemV2(SystemContainerV2* p_systemContainer, SystemHeader* p_systemV2);
 	SystemHeader* SystemContainerV2_getSystem(SystemContainerV2* p_systemContainer, SystemV2Key* p_key);
 	void SystemContainerV2_free(SystemContainerV2* p_systemContainer);
+
+	struct SystemEvents
+	{
+		std::unordered_map<SystemV2Key, _Core::ObserverT<SystemHeader*>> OnSystemAddedEvents;
+	};
+
+	void SystemEvents_free(SystemEvents* p_systemEvents);
+
+	void SystemEvents_registerOnSystemAdded(SystemEvents* p_systemEvents, SystemV2Key l_key, _Core::CallbackT<void, SystemHeader*>* p_callback);
 }
