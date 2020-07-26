@@ -149,6 +149,11 @@ namespace _GameEngine::_Math
 		p_out->z = (p_vector->x * p_other->y) - (p_vector->y * p_other->x);
 	};
 
+	void Vector3f_project(Vector3f* p_vector, Vector3f* p_projectedOn, Vector3f* p_out)
+	{
+		_Math::Vector3f_mul(p_projectedOn, _Math::Vector3f_dot(p_vector, p_projectedOn) / _Math::Vector3f_length(p_projectedOn), p_out);
+	};
+
 	float Vector3f_angle(Vector3f* p_vector, Vector3f* p_other)
 	{
 		float p_vectorLength = Vector3f_length(p_vector);

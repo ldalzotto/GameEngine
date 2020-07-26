@@ -35,5 +35,6 @@ namespace _GameEngine::_ECS
 
 	void Camera_worldToClipMatrix(Camera* p_camera, _Math::Matrix4x4f* out_worldToClip);
 
+	void Camera_buildWorldSpaceRay(Camera* p_camera, _Math::Vector3f* p_screenPoint, _Math::Segment* out_ray);
 	void Camera_buildWorldSpaceRay(Camera* p_camera, _Math::Vector2f* p_screenPoint, _Math::Segment* out_ray);
 }

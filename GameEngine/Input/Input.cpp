@@ -16,6 +16,14 @@ namespace _GameEngine::_Input
 
 	void initializeGLFWLookup(Input* p_input);
 
+	_Math::Segment InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse)
+	{
+		_Math::Segment l_segment;
+		l_segment.Begin = { (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.x, (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.y };
+		l_segment.End = { (float)p_inputMouse->ScreenPosition.x, (float)p_inputMouse->ScreenPosition.y };
+		return l_segment;
+	};
+
 	void Input_build(Input* p_input, _Render::Window* p_window, ::_Core::Log* Log)
 	{
 		InputInstance = p_input;
@@ -101,10 +109,9 @@ namespace _GameEngine::_Input
 
 		if (p_input->InputMouse.MouseEnabled)
 		{
-			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
-
-			_Math::Vector2d_min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 			p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition = p_input->InputMouse.ScreenPosition;
+			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
+			_Math::Vector2d_min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 
 			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
 

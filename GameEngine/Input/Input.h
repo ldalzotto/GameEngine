@@ -3,6 +3,7 @@
 #include "Includes/GLFWIncludes.h"
 
 #include "Math/Vector/Vector.h"
+#include "Math/Segment/Segment.h"
 
 #include <unordered_map>
 #include <queue>
@@ -183,6 +184,8 @@ namespace _GameEngine::_Input
 		_Math::Vector2d LastFrameMouseAbsoluteScreenPosition;
 		_Math::Vector2d MouseDelta;
 	};
+
+	_Math::Segment InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
 
 	struct Input
 	{

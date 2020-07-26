@@ -48,6 +48,12 @@ namespace _GameEngine::_ECS
 			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 50.0f, &p_camera->ProjectionMatrix);
 	};
 
+	void Camera_buildWorldSpaceRay(Camera* p_camera, _Math::Vector3f* p_screenPoint, _Math::Segment* out_ray)
+	{
+		_Math::Vector2f l_screenPoint = { p_screenPoint->x, p_screenPoint->y };
+		Camera_buildWorldSpaceRay(p_camera, &l_screenPoint, out_ray);
+	};
+
 	void Camera_buildWorldSpaceRay(Camera* p_camera, _Math::Vector2f* p_screenPoint, _Math::Segment* out_ray)
 	{
 		_Math::Vector2f l_graphicsAPIPixelCoord;

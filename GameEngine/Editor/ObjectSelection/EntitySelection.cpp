@@ -154,6 +154,35 @@ namespace _GameEngineEditor
 		}
 	}
 
+	_Math::Segment entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, _Physics::BoxCollider* p_testedCollider)
+	{
+		_Math::Segment l_mouseDelta_worldPosition{};
+		_Math::Segment l_mouseDelta_screenPosition = _Input::InputMouse_getMouseDeltaScreenPosition(&p_entitySelection->Input->InputMouse);
+
+
+		_Math::Segment l_mouseDelta_begin_ray;
+		_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_mouseDelta_screenPosition.Begin, &l_mouseDelta_begin_ray);
+		_Math::Segment l_mouseDelta_end_ray;
+		_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_mouseDelta_screenPosition.End, &l_mouseDelta_end_ray);
+
+		_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { p_testedCollider };
+		_Core::ArrayT<_Physics::BoxCollider*> l_raycastedPlane = _Core::ArrayT_fromCStyleArray(l_raycastedPlane_ptr, 1);
+		_Physics::RaycastHit l_endHit;
+		if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_end_ray.Begin, &l_mouseDelta_end_ray.End, &l_endHit))
+		{
+			// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_endHit.HitPoint);
+			l_mouseDelta_worldPosition.End = l_endHit.HitPoint;
+		}
+		_Physics::RaycastHit l_beginHit;
+		if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_begin_ray.Begin, &l_mouseDelta_begin_ray.End, &l_beginHit))
+		{
+			// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_beginHit.HitPoint);
+			l_mouseDelta_worldPosition.Begin = l_beginHit.HitPoint;
+		}
+
+		return l_mouseDelta_worldPosition;
+	}
+
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
 		// MOVE
@@ -184,38 +213,11 @@ namespace _GameEngineEditor
 				_Math::Vector3f l_deltaPosition{};
 				{
 
-					_Math::Vector2f l_mouseDelta_begin = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x - ((float)p_entitySelection->Input->InputMouse.MouseDelta.x), (float)p_entitySelection->Input->InputMouse.ScreenPosition.y - ((float)p_entitySelection->Input->InputMouse.MouseDelta.y) };
-					_Math::Vector2f l_mouseDelta_end = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y };
-
-					_Math::Vector3f l_mouseDelta_begin_worldSpace;
-					_Math::Vector3f l_mouseDelta_end_worldSpace;
-
-					_Math::Segment l_mouseDelta_begin_ray;
-					_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_mouseDelta_begin, &l_mouseDelta_begin_ray);
-					_Math::Segment l_mouseDelta_end_ray;
-					_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_mouseDelta_end, &l_mouseDelta_end_ray);
-
-					_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { &l_transformGizmoPlane->Collider };
-					_Core::ArrayT<_Physics::BoxCollider*> l_raycastedPlane = _Core::ArrayT_fromCStyleArray(l_raycastedPlane_ptr, 1);
-					_Physics::RaycastHit l_endHit;
-					if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_end_ray.Begin, &l_mouseDelta_end_ray.End, &l_endHit))
-					{
-						// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_endHit.HitPoint);
-						l_mouseDelta_end_worldSpace = l_endHit.HitPoint;
-					}
-					_Physics::RaycastHit l_beginHit;
-					if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_begin_ray.Begin, &l_mouseDelta_begin_ray.End, &l_beginHit))
-					{
-						// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_beginHit.HitPoint);
-						l_mouseDelta_begin_worldSpace = l_beginHit.HitPoint;
-					}
-
-					_Math::Vector3f_min(&l_mouseDelta_end_worldSpace, &l_mouseDelta_begin_worldSpace, &l_deltaPosition);
+					_Math::Segment l_mouseDelta_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
+					l_deltaPosition = _Math::Segment_toVector(&l_mouseDelta_worldSpace);
 
 					// We project deltaposition on the translation direction
-
-					_Math::Vector3f_mul(&l_deltaPositionDirection_worldSpace, _Math::Vector3f_dot(&l_deltaPosition, &l_deltaPositionDirection_worldSpace) / _Math::Vector3f_length(&l_deltaPositionDirection_worldSpace), &l_deltaPosition);
-
+					_Math::Vector3f_project(&l_deltaPosition, &l_deltaPositionDirection_worldSpace, &l_deltaPosition);
 				}
 
 				_Math::Transform_addToWorldPosition(&(l_transformComponent)->Transform, l_deltaPosition);
