@@ -10,7 +10,6 @@
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Quaternion/QuaternionMath.h"
-#include "Math/Plane/Plane.h"
 #include "Math/Intersection/Intersection.h"
 
 #include "Colors/Colors.h"
@@ -165,7 +164,7 @@ namespace _GameEngineEditor
 		}
 	}
 
-	_Math::Segment entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, _Math::Transform* p_testedCollider)
+	_Math::Segment entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, _Physics::BoxCollider* p_testedCollider)
 	{
 		_Math::Segment l_mouseDelta_worldPosition{};
 		_Math::Segment l_mouseDelta_screenPosition = _Input::InputMouse_getMouseDeltaScreenPosition(&p_entitySelection->Input->InputMouse);
@@ -176,36 +175,22 @@ namespace _GameEngineEditor
 		_Math::Segment l_mouseDelta_end_ray;
 		_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_mouseDelta_screenPosition.End, &l_mouseDelta_end_ray);
 
-
-		_Math::Matrix4x4f l_testedCollider_worldToLocal = _Math::Transform_getWorldToLocalMatrix(p_testedCollider);
-		_Math::Matrix4x4f l_testedCollider_localToWorld = _Math::Transform_getLocalToWorldMatrix(p_testedCollider);
-		_Math::Plane l_plane;
-		l_plane.Point = p_testedCollider->LocalPosition;
-		l_plane.Normal = _Math::Vector3f{ 0.0f, 1.0f, 0.0f };
-
+		_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { p_testedCollider };
+		_Core::ArrayT<_Physics::BoxCollider*> l_raycastedPlane = _Core::ArrayT_fromCStyleArray(l_raycastedPlane_ptr, 1);
+		_Physics::RaycastHit l_endHit;
+		if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_end_ray.Begin, &l_mouseDelta_end_ray.End, &l_endHit))
 		{
-			_Math::Vector3f l_begin_local;
-			_Math::Segment l_mouseDelta_begin_ray_planeSpace;
-			_Math::Segment_mul(&l_mouseDelta_begin_ray, &l_testedCollider_worldToLocal, &l_mouseDelta_begin_ray_planeSpace);
-			_Math::Intersection_AAP_Ray(&l_plane, &l_mouseDelta_begin_ray_planeSpace, &l_begin_local);
-			_Math::Matrixf4x4_mul(&l_testedCollider_localToWorld, &l_begin_local, &l_mouseDelta_worldPosition.Begin);
+			// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_endHit.HitPoint);
+			l_mouseDelta_worldPosition.End = l_endHit.HitPoint;
+		}
+		_Physics::RaycastHit l_beginHit;
+		if (_Physics::RayCast_against(&l_raycastedPlane, &l_mouseDelta_begin_ray.Begin, &l_mouseDelta_begin_ray.End, &l_beginHit))
+		{
+			// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_beginHit.HitPoint);
+			l_mouseDelta_worldPosition.Begin = l_beginHit.HitPoint;
 		}
 
-		{
-			_Math::Vector3f l_end_local;
-			_Math::Segment l_mouseDelta_end_ray_planeSpace;
-			_Math::Segment_mul(&l_mouseDelta_end_ray, &l_testedCollider_worldToLocal, &l_mouseDelta_end_ray_planeSpace);
-			_Math::Intersection_AAP_Ray(&l_plane, &l_mouseDelta_end_ray_planeSpace, &l_end_local);
-			_Math::Matrixf4x4_mul(&l_testedCollider_localToWorld, &l_end_local, &l_mouseDelta_worldPosition.End);
-		}
-
-		//Draw debug plane normal
-		{
-			_Math::Vector3f l_planeNormal = _Math::Transform_getUp_worldSpace(p_testedCollider);
-			_Math::Vector3f l_end;
-			_Math::Vector3f_add(&l_mouseDelta_worldPosition.Begin, &l_planeNormal, &l_end);
-			_Render::Gizmo_drawLine(p_entitySelection->RenderInterface->Gizmo, &l_mouseDelta_worldPosition.Begin, &l_end);
-		}
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box, _Math::Transform_getLocalToWorldMatrix_ref(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform), true);
 
 		return l_mouseDelta_worldPosition;
 	}
@@ -231,7 +216,7 @@ namespace _GameEngineEditor
 		_Math::Vector3f l_deltaPosition{};
 		{
 
-			_Math::Segment l_mouseDelta_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Transform);
+			_Math::Segment l_mouseDelta_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
 			l_deltaPosition = _Math::Segment_toVector(&l_mouseDelta_worldSpace);
 
 			// We project deltaposition on the translation direction
@@ -252,14 +237,19 @@ namespace _GameEngineEditor
 		_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, l_guidePlane_worldPosition);
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
-			_Math::Vector3f l_lookAtTarget = l_guidePlane_worldPosition;
-			_Math::Vector3f l_forward = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.RightArrow->Transform);
-			_Math::Vector3f l_up = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.UpArrow->Transform);
-			_Math::Vector3f_add(&l_lookAtTarget, &l_up, &l_lookAtTarget);
+			
+			 _Math::Vector3f l_forward = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.ForwardArrow->Transform);
+			 _Math::Vector3f l_up = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.UpArrow->Transform);
+			 _Math::Vector3f l_right = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.RightArrow->Transform);
 
 			_Math::Quaternionf l_xRotationGuidePlaneRotation;
-			_Math::Quaternion_lookAt(&l_guidePlane_worldPosition, &l_lookAtTarget, &l_forward, &l_xRotationGuidePlaneRotation);
-			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, l_xRotationGuidePlaneRotation);
+			_Math::Quaternion_fromAxis(&l_forward, &l_right, &l_up, &l_xRotationGuidePlaneRotation);
+			{
+				_Math::Vector3f l_testRight, l_testUp, l_testForward;
+				_Math::Quaternion_extractAxis(&l_xRotationGuidePlaneRotation, &l_testRight, &l_testUp, &l_testForward);
+				int zd = 0;
+			}
+			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&l_transformComponent->Transform));
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
 		{
@@ -270,7 +260,7 @@ namespace _GameEngineEditor
 			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.UpArrow->Transform));
 		}
 
-		_Math::Segment l_deltaPositionDirection_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Transform);
+		_Math::Segment l_deltaPositionDirection_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
 		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.Begin);
 		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.End);
 
@@ -293,8 +283,8 @@ namespace _GameEngineEditor
 			l_axis = _Math::Transform_getForward(&l_transformComponent->Transform);
 		}
 
-		l_nextRotation = _Math::Quaternionf_identity();
-		// _Math::Quaternion_rotateAround(&l_currentRotation, &l_axis, l_deltaRotation, &l_nextRotation);
+		// l_nextRotation = _Math::Quaternionf_identity();
+		_Math::Quaternion_rotateAround(&l_currentRotation, &l_axis, l_deltaRotation, &l_nextRotation);
 		_Math::Transform_setLocalRotation(&l_transformComponent->Transform, l_nextRotation);
 	};
 
@@ -469,6 +459,16 @@ namespace _GameEngineEditor
 
 		//Plane instance
 		{
+			_Math::Box l_planeBox;
+			l_planeBox.Center = { 0.0f, 0.0f, 0.0f };
+			// l_planeBox.Extend = { FLT_MAX, 0.0f, FLT_MAX };
+			l_planeBox.Extend = { 2.0f, 0.0f, 2.0f };
+
+			p_transformGizmo->TransformGizmoMovementGuidePlane.Box = l_planeBox;
+
+			p_transformGizmo->TransformGizmoMovementGuidePlane.Collider.Box = &p_transformGizmo->TransformGizmoMovementGuidePlane.Box;
+			p_transformGizmo->TransformGizmoMovementGuidePlane.Collider.Transform = &p_transformGizmo->TransformGizmoMovementGuidePlane.Transform;
+
 			_Math::Transform_setLocalScale(&p_transformGizmo->TransformGizmoMovementGuidePlane.Transform, _Math::Vector3f{ 1.0f, 1.0f, 1.0f });
 		}
 	}

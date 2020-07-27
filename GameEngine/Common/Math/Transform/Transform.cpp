@@ -197,6 +197,16 @@ namespace _GameEngine::_Math
 		return l_forward3f;
 	};
 
+	_Math::Vector3f Transform_getRight_worldSpace(Transform* p_transform)
+	{
+		_Math::Matrix4x4f l_localToWorld = Transform_getWorldToLocalMatrix(p_transform);
+		_Math::Vector4f l_rightLocal4f;
+		_Math::Matrix4x4f_right(&l_localToWorld, &l_rightLocal4f);
+		_Math::Vector3f l_right3f = *(_Math::Vector3f*)(&l_rightLocal4f);
+		_Math::Vector3f_normalize(&l_right3f);
+		return l_right3f;
+		};
+
 	_Math::Vector3f Transform_getUp_worldSpace(Transform* p_transform)
 	{
 		_Math::Matrix4x4f l_localToWorld = Transform_getWorldToLocalMatrix(p_transform);

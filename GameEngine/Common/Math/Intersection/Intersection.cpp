@@ -4,9 +4,6 @@
 #include "Math/Box/Box.h"
 #include "Math/Box/BoxMath.h"
 #include "Math/Segment/Segment.h"
-#include "Math/Plane/Plane.h"
-
-#include "Functional/Sort/ElementSorter.hpp"
 
 namespace _GameEngine::_Math
 {
@@ -107,51 +104,6 @@ namespace _GameEngine::_Math
 		_Math::Vector3f_mul(p_outIntersectionPoint, l_rayDistanceFraction_min, p_outIntersectionPoint);
 		_Math::Vector3f_add(p_outIntersectionPoint, &p_ray->Begin, p_outIntersectionPoint);
 		return true;
-	};
-
-	bool Intersection_AAP_Ray(Plane* p_AAP, Segment* p_ray, Vector3f* p_outIntersectionPoint)
-	{
-		// We project ray points to plane normals
-			
-		Segment l_ray_projectedY;
-
-		short l_rayY_compare = _Core::SortCompare_float_float(&p_ray->Begin.y, &p_ray->End.y);
-		if (l_rayY_compare > 0)
-		{
-			l_ray_projectedY.End = p_ray->Begin;
-			l_ray_projectedY.Begin = p_ray->End;
-		}
-		else if (l_rayY_compare < 0)
-		{
-			l_ray_projectedY.End = p_ray->End;
-			l_ray_projectedY.Begin = p_ray->Begin;
-		}
-		else
-		{
-			l_ray_projectedY.End = p_ray->Begin;
-			l_ray_projectedY.Begin = p_ray->Begin;
-		}
-
-		// Intersection is a 1D problem (one for ).
-
-		/*
-			Ray distance fractions are normalized % of length of the p_ray length.
-		*/
-
-		if (p_AAP->Point.y >= l_ray_projectedY.Begin.y && p_AAP->Point.y <= l_ray_projectedY.End.y)
-		{
-			// Calculating the first intersection points
-			float l_rayDistanceFraction = (p_AAP->Point.y - l_ray_projectedY.Begin.y) / (l_ray_projectedY.End.y - l_ray_projectedY.Begin.y);
-			*p_outIntersectionPoint = Segment_toVector(&l_ray_projectedY);
-			_Math::Vector3f_mul(p_outIntersectionPoint, l_rayDistanceFraction, p_outIntersectionPoint);
-			_Math::Vector3f_add(p_outIntersectionPoint, &l_ray_projectedY.Begin, p_outIntersectionPoint);
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
 	};
 
 }

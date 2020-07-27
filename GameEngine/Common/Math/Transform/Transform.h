@@ -51,6 +51,7 @@ namespace _GameEngine::_Math
 	_Math::Vector3f Transform_getUp(Transform* p_transform);
 	_Math::Vector3f Transform_getForward(Transform* p_transform);
 
+	_Math::Vector3f Transform_getRight_worldSpace(Transform* p_transform);
 	_Math::Vector3f Transform_getUp_worldSpace(Transform* p_transform);
 	_Math::Vector3f Transform_getForward_worldSpace(Transform* p_transform);
 

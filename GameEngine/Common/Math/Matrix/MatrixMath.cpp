@@ -358,10 +358,22 @@ namespace _GameEngine::_Math
 		return ((p_matrix->_32 * (l_alpha - 1.0f) / (-2.0f * l_alpha)));
 	};
 
+
+	void Matrix3x3f_set_c0(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_00 = p_col->x; p_matrix->_01 = p_col->y; p_matrix->_02 = p_col->z; };
+	void Matrix3x3f_set_c1(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_10 = p_col->x; p_matrix->_11 = p_col->y; p_matrix->_12 = p_col->z; };
+	void Matrix3x3f_set_c2(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_20 = p_col->x; p_matrix->_21 = p_col->y; p_matrix->_22 = p_col->z; };
+
 	void Matrix3x3f_mul(Matrix3x3f* p_matrix, Vector3f* p_vector, Vector3f* p_out)
 	{
 		p_out->x = (p_matrix->_00 * p_vector->x) + (p_matrix->_10 * p_vector->y) + (p_matrix->_20 * p_vector->z);
 		p_out->y = (p_matrix->_01 * p_vector->x) + (p_matrix->_11 * p_vector->y) + (p_matrix->_21 * p_vector->z);
 		p_out->z = (p_matrix->_02 * p_vector->x) + (p_matrix->_12 * p_vector->y) + (p_matrix->_22 * p_vector->z);
+	};
+
+	void Matrixf3x3_buildRotationMatrixV2(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Matrix3x3f* p_out)
+	{
+		Matrix3x3f_set_c0(p_out, p_right);
+		Matrix3x3f_set_c1(p_out, p_up);
+		Matrix3x3f_set_c2(p_out, p_forward);
 	};
 }

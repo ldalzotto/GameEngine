@@ -47,5 +47,11 @@ namespace _GameEngine::_Math
 	float Matrixf4x4_far(Matrix4x4f* p_matrix);
 	float Matrixf4x4_near(Matrix4x4f* p_matrix);
 
+
+	void Matrix3x3f_set_c0(Matrix3x3f* p_matrix, Vector3f* p_col);
+	void Matrix3x3f_set_c1(Matrix3x3f* p_matrix, Vector3f* p_col);
+	void Matrix3x3f_set_c2(Matrix3x3f* p_matrix, Vector3f* p_col);
+
 	void Matrix3x3f_mul(Matrix3x3f* p_matrix, Vector3f* p_vector, Vector3f* p_out);
+	void Matrixf3x3_buildRotationMatrixV2(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Matrix3x3f* p_out);
 }
