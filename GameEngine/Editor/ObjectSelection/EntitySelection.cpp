@@ -231,7 +231,24 @@ namespace _GameEngineEditor
 
 		//We position the guide plane
 		_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldPosition(&l_transformComponent->Transform));
-		_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&l_selectedRotation->Transform));
+		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation) 
+		{
+			_Math::Quaternionf l_xRotationGuidePlaneRotation;
+			{
+				_Math::Quaternionf l_forwardArrowRotation = _Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.ForwardArrow->Transform);
+				_Math::Vector3f l_forwardArrowDirection = _Math::Transform_getForward(&p_entitySelection->TransformGizmoV2.ForwardArrow->Transform);
+				_Math::Quaternion_rotateAround(&l_forwardArrowRotation, &l_forwardArrowDirection, M_PI * 0.5f, &l_xRotationGuidePlaneRotation);
+			}
+			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, l_xRotationGuidePlaneRotation);
+		}
+		else if(l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
+		{
+			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.ZRotation->Transform));
+		}
+		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ZRotation)
+		{
+			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.YRotation->Transform));
+		}
 
 		_Math::Segment l_deltaPositionDirection_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
 		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.Begin);
@@ -302,7 +319,7 @@ namespace _GameEngineEditor
 		{
 			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
-			l_transformInitInfo.LocalPosition = { 0.2f, 0.2f, 0.0f };
+			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			l_transformInitInfo.LocalRotation = _Math::Quaternionf_identity();
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
