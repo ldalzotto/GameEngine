@@ -2,10 +2,7 @@
 
 #include <stdint.h>
 
-#include "Math/Box/Box.h"
 #include "Math/Transform/Transform.h"
-
-#include "Physics/World/Collider/BoxCollider.h"
 
 namespace _GameEngine
 {
@@ -27,8 +24,6 @@ namespace _GameEngineEditor
 	struct TransformGizmoPlane
 	{
 		_GameEngine::_Math::Transform Transform;
-		_GameEngine::_Math::Box Box;
-		_GameEngine::_Physics::BoxCollider Collider;
 	};
 
 	struct TransformGizmoSelectionState
