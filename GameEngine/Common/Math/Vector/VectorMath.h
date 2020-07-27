@@ -33,6 +33,7 @@ namespace _GameEngine::_Math
 	float Vector3f_dot(Vector3f* p_vector, Vector3f* p_other);
 	void Vector3f_cross(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out);
 	void Vector3f_project(Vector3f* p_vector, Vector3f* p_projectedOn, Vector3f* p_out);
+	float Vector3f_angle_signed(Vector3f* p_p1, Vector3f* p_p2);
 	
 	float Vector3f_angle(Vector3f* p_vector, Vector3f* p_other);
 

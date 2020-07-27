@@ -45,6 +45,30 @@ namespace _GameEngine::_Math
 		_Math::Quaternion_mul(p_quaternion, &l_deltaRotation, out);
 	};
 
+	void Quaternion_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Quaternionf* out_quaternion)
+	{
+		Vector3f l_forward;
+		{
+			Vector3f_min(p_target, p_origin, &l_forward);
+			Vector3f_normalize(&l_forward);
+			Vector3f_mul(&l_forward, -1.0f, &l_forward);
+		}
+
+		Vector3f l_right;
+		{
+			Vector3f_cross(&l_forward, p_up, &l_right);
+			Vector3f_normalize(&l_right);
+		}
+
+		Vector3f l_up;
+		{
+			Vector3f_cross(&l_right, &l_forward, &l_up);
+			Vector3f_normalize(&l_up);
+		}
+
+		Quaternion_fromAxis(&l_right, &l_up, &l_forward, out_quaternion);
+	};
+
 	void Quaternion_fromEulerAngles(Vector3f* p_eulerAngles, Quaternionf* p_out)
 	{
 		_Math::Vector3f l_cos;

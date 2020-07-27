@@ -248,15 +248,17 @@ namespace _GameEngineEditor
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		//We position the guide plane
-		_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldPosition(&l_transformComponent->Transform));
+		_Math::Vector3f l_guidePlane_worldPosition = _Math::Transform_getWorldPosition(&l_transformComponent->Transform);
+		_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, l_guidePlane_worldPosition);
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
+			_Math::Vector3f l_lookAtTarget = l_guidePlane_worldPosition;
+			_Math::Vector3f l_forward = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.RightArrow->Transform);
+			_Math::Vector3f l_up = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.UpArrow->Transform);
+			_Math::Vector3f_add(&l_lookAtTarget, &l_up, &l_lookAtTarget);
+
 			_Math::Quaternionf l_xRotationGuidePlaneRotation;
-			{
-				_Math::Quaternionf l_forwardArrowRotation = _Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.ForwardArrow->Transform);
-				_Math::Vector3f l_forwardArrowDirection = _Math::Transform_getForward(&p_entitySelection->TransformGizmoV2.ForwardArrow->Transform);
-				_Math::Quaternion_rotateAround(&l_forwardArrowRotation, &l_forwardArrowDirection, M_PI * 0.5f, &l_xRotationGuidePlaneRotation);
-			}
+			_Math::Quaternion_lookAt(&l_guidePlane_worldPosition, &l_lookAtTarget, &l_forward, &l_xRotationGuidePlaneRotation);
 			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, l_xRotationGuidePlaneRotation);
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
@@ -273,6 +275,27 @@ namespace _GameEngineEditor
 		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.End);
 
 		// Perform rotation.
+		float l_deltaRotation = _Math::Vector3f_angle_signed(&l_deltaPositionDirection_worldSpace.Begin, &l_deltaPositionDirection_worldSpace.End);
+		//TODO -> do it with world rotations.
+		_Math::Quaternionf l_currentRotation = l_transformComponent->Transform.LocalRotation;
+		_Math::Quaternionf l_nextRotation;
+		_Math::Vector3f l_axis;
+		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
+		{
+			l_axis = _Math::Transform_getRight(&l_transformComponent->Transform);
+		}
+		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
+		{
+			l_axis = _Math::Transform_getUp(&l_transformComponent->Transform);
+		}
+		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ZRotation)
+		{
+			l_axis = _Math::Transform_getForward(&l_transformComponent->Transform);
+		}
+
+		l_nextRotation = _Math::Quaternionf_identity();
+		// _Math::Quaternion_rotateAround(&l_currentRotation, &l_axis, l_deltaRotation, &l_nextRotation);
+		_Math::Transform_setLocalRotation(&l_transformComponent->Transform, l_nextRotation);
 	};
 
 	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity)

@@ -154,6 +154,13 @@ namespace _GameEngine::_Math
 		_Math::Vector3f_mul(p_projectedOn, _Math::Vector3f_dot(p_vector, p_projectedOn) / _Math::Vector3f_length(p_projectedOn), p_out);
 	};
 
+	float Vector3f_angle_signed(Vector3f* p_p1, Vector3f* p_p2)
+	{
+		return acosf(
+			Vector3f_dot(p_p1, p_p2) / (Vector3f_length(p_p1) * Vector3f_length(p_p2))
+		);
+	};
+
 	float Vector3f_angle(Vector3f* p_vector, Vector3f* p_other)
 	{
 		float p_vectorLength = Vector3f_length(p_vector);
