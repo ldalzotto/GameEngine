@@ -41,7 +41,7 @@ namespace _Math
 	Quaternion<T> Quaternion_conjugate(Quaternion<T>& p_quat)
 	{
 		return Quaternion_build(
-			Vector3_mul(Quaternion_getVector(p_quat), -1.0f),
+			Quaternion_getVector(p_quat).mul(-1.0f),
 			p_quat.w
 		);
 	};
@@ -63,7 +63,7 @@ namespace _Math
 	Quaternion<T> Quaternion_rotateAround(Vector3<T>& p_axis, T p_angle)
 	{
 		return Quaternion_build(
-			Vector3_mul(p_axis, sinf(p_angle * 0.5f)),
+			p_axis.mul(sinf(p_angle * 0.5f)),
 			cosf(p_angle * 0.5f)
 		);
 	}
@@ -75,11 +75,10 @@ namespace _Math
 		Vector3<T> p_right_vector = Quaternion_getVector(p_right);
 
 		Vector3<T> l_vec =
-			Vector3_add(
-				Vector3_mul(p_left_vector, p_right.w),
-				Vector3_mul(p_right_vector, p_left.w),
-				Vector3_cross(p_left_vector, p_right_vector)
-			);
+				p_left_vector.mul(p_right.w)
+				.add(p_right_vector.mul(p_left.w))
+				.add(Vector3_cross(p_left_vector, p_right_vector));
+
 		T l_scal = (p_left.w * p_right.w) - (Vector3_dot(p_left_vector, p_right_vector));
 		return Quaternion_build(l_vec, l_scal);
 	};
