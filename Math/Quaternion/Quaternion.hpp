@@ -29,6 +29,13 @@ namespace _Math
 			};
 		};
 
+		inline static Quaternion<T> fromDirection(Vector<3, T>& p_vect)
+		{
+			Quaternion<T> l_out;
+			RQuaternion_fromDirection((T*)(&p_vect), (T*)(&l_out));
+			return l_out;
+		};
+
 		inline Vector<3, T> vector()
 		{
 			return *(Vector<3, T>*)this;
@@ -55,12 +62,19 @@ namespace _Math
 			return l_out;
 		};
 
+		inline Quaternion<T> cross(Quaternion<T>& p_right)
+		{
+			Quaternion<T> l_out;
+			RQuaternion_cross((T*)(this), (T*)(&p_right), (T*)(&l_out));
+			return l_out;
+		};
+
 		static Quaternion<T> rotateAround(Vector3<T>& p_axis, T p_angle)
 		{
 			Quaternion<T> l_out;
-			RQuaternion_rotateAround((T*)(&p_axis), p_angle,(T*)(&l_out));
+			RQuaternion_rotateAround((T*)(&p_axis), p_angle, (T*)(&l_out));
 			return l_out;
-		}
+		};
 	};
 
 }

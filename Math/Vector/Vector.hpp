@@ -2,10 +2,6 @@
 
 #include "Vector/Vector.h"
 
-#include <math.h>
-#include "Math.hpp"
-
-
 namespace _Math
 {
 	template<class>
@@ -110,8 +106,8 @@ namespace _Math
 	template <typename T>
 	using Vector4 = Vector<4, T>;
 
-	const Vector3<float> LEFT = { 1.0f, 0.0f, 0.0f };
-	const Vector3<float> UP = { 0.0f, 1.0f, 0.0f };
-	const Vector3<float> FORWARD = { 0.0f, 0.0f, 1.0f };
+	Vector3<float> LEFT = { LEFT_arr[0], LEFT_arr[1], LEFT_arr[2] };
+	Vector3<float> UP = { RIGHT_arr[0], RIGHT_arr[1], LEFT_arr[2] };
+	Vector3<float> FORWARD = { FORWARD_arr[0], FORWARD_arr[1], FORWARD_arr[2] };
 
 }

@@ -2,6 +2,9 @@
 
 namespace _Math
 {
+	extern float LEFT_arr[3];
+	extern float RIGHT_arr[3];
+	extern float FORWARD_arr[3];
 
 	void RVector_3_add(float p_left[3], float p_right[3], float p_out[3]);
 

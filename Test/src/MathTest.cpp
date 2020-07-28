@@ -1,6 +1,5 @@
 #include "Quaternion/Quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
-// #include "glm/gtx/rotate_vector.hpp"
 #include "Matrix/Matrix.hpp"
 
 int main()
@@ -25,6 +24,14 @@ int main()
 
 		_Math::Matrix3x3<float> l_afaefef;
 		float l_zdad = l_afaefef.Points[0][2];
+
+		_Math::Quaternion<float> l_rightQuat = _Math::Quaternion<float>::fromDirection(_Math::Vector3<float>{1.0f, 0.0f, 0.0f});
+		_Math::Quaternion<float> l_upQuat = _Math::Quaternion<float>::fromDirection(_Math::Vector3<float>{0.0f, 1.0f, 0.0f});
+		_Math::Quaternion<float> l_forwardQuat = _Math::Quaternion<float>::fromDirection(_Math::Vector3<float>{0.0f, 0.0f, 1.0f});
+
+		_Math::Vector3<float> l_newForward = _Math::FORWARD.rotate(l_rightQuat).cross(_Math::FORWARD.rotate(l_upQuat));
+		int zdad = 0;
+
 	}
 	return 0;
 }

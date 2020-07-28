@@ -13,6 +13,13 @@ namespace _Math
 		p_out[3] = p_scal;
 	};
 
+	void RQuaternion_fromDirection(float p_vec[3], float p_out[4])
+	{
+		float l_angle = RVector_3_angle(FORWARD_arr, p_vec);
+		RVector_3_mul(p_vec, sinf(l_angle * 0.5f), p_out);
+		p_out[3] = cosf(l_angle * 0.5f);
+	};
+
 	void RQuaternion_conjugate(float p_quat[4], float p_out[4])
 	{
 		RVector_3_mul(p_quat, -1.0f, p_out);
@@ -37,6 +44,20 @@ namespace _Math
 		}
 
 		p_out[3] = (p_left[3] * p_right[3]) - RVector_3_dot(p_left, p_right);
+		RQuaternion_normalize(p_out, p_out);
+	};
+
+	void RQuaternion_cross(float p_left[4], float p_right[4], float p_out[4])
+	{
+		float l_rotatedLeft[3];
+		RVector_3_rotate(FORWARD_arr, p_left, l_rotatedLeft);
+
+		float l_rotatedRight[3];
+		RVector_3_rotate(FORWARD_arr, p_right, l_rotatedRight);
+
+		float l_crossResult[3];
+		RVector_3_cross(l_rotatedLeft, l_rotatedRight, l_crossResult);
+		RQuaternion_rotateAround(l_crossResult, 0.0f, p_out);
 	};
 
 	void RQuaternion_rotateAround(float p_axis[3], float p_angle, float out_quat[4])
