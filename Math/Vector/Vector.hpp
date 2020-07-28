@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Vector/Vector.h"
+
 #include <math.h>
 #include "Math.hpp"
+
 
 namespace _Math
 {
@@ -24,38 +27,53 @@ namespace _Math
 	{
 		T x, y, z;
 
-		static Vector<3, T> build(T p_x, T p_y, T p_z)
+		static inline Vector<3, T> build(T p_x, T p_y, T p_z)
 		{
 			return Vector<3, T>{p_x, p_y, p_z};
 		};
 
-		static float length(Vector<3, T>& p_vec)
+		inline float length()
 		{
-			return
-				sqrt<T, float>((p_vec.x * p_vec.x) +
-					(p_vec.y * p_vec.y) +
-					(p_vec.z * p_vec.z));
-		};
-		
-		Vector<3, T> add(Vector<3, T>& p_other)
-		{
-			return Vector3<T>
-			{
-				this->x + p_other.x,
-					this->y + p_other.y,
-					this->z + p_other.z
-			};
+			return RVector_3_length((T*)(this));
 		};
 
-		Vector<3, T> mul(T p_scal)
+		inline Vector<3, T> normalize()
 		{
-			return Vector3<T>
-			{
-				this->x* p_scal,
-				this->y* p_scal,
-				this->z* p_scal
-			};
+			Vector3<T> l_out;
+			RVector_3_normalize((T*)(this), (T*)(&l_out));
+			return l_out;
 		};
+		
+		inline Vector<3, T> add(Vector<3, T>& p_other)
+		{
+			Vector3<T> l_out;
+			RVector_3_add((T*)this, (T*)(&p_other), (T*)&l_out);
+			return l_out;
+		};
+
+		inline Vector<3, T> mul(T p_scal)
+		{
+			Vector<3, T> l_out;
+			RVector_3_mul((T*)(this), p_scal, (T*)(&l_out));
+			return l_out;
+		};
+
+		inline float dot(Vector<3, T>& p_right)
+		{
+			return RVector_3_dot((T*)(this), (T*)(&p_right));
+		};
+
+		inline Vector<3, T> cross(Vector<3, T>& p_right)
+		{
+			Vector<3, T> l_out;
+			RVector_3_cross((T*)(this), (T*)(&p_right), (T*)(&l_out));
+			return l_out;
+		};
+
+		inline float angle(Vector<3, T>& p_end)
+		{
+			return RVector_3_angle((T*)this, (T*)(&p_end));
+		}
 	};
 
 	template <typename T>
@@ -66,82 +84,24 @@ namespace _Math
 	{
 		T x, y, z, w;
 
-		static float length(Vector<4, T>& p_vec)
+		inline float length()
 		{
-			return
-				sqrt<T, float>((p_vec.x * p_vec.x) +
-					(p_vec.y * p_vec.y) +
-					(p_vec.z * p_vec.z) +
-					(p_vec.w * p_vec.w));
+			return RVector_4_length((T*)(this));
+		};
+
+		inline Vector<4, T> mul(T p_right)
+		{
+			Vector<4, T> l_out;
+			RVector_4_mul((T*)this, p_right, (T*)(&l_out));
+			return l_out;
 		};
 	};
 
 	template <typename T>
 	using Vector4 = Vector<4, T>;
 
+	const Vector3<float> LEFT = { 1.0f, 0.0f, 0.0f };
+	const Vector3<float> UP = { 0.0f, 1.0f, 0.0f };
 	const Vector3<float> FORWARD = { 0.0f, 0.0f, 1.0f };
 
-	template <typename T>
-	Vector3<T> Vector3_build(T& p_x, T& p_y, T& p_z)
-	{
-		return Vector3<T>{p_x, p_y, p_z};
-	};
-
-	template <typename T>
-	Vector3<T> Vector3_normalize(Vector3<T>& p_vec)
-	{
-		float l_length = Vector3<T>::length(p_vec);
-		return Vector3<T>
-		{
-			p_vec.x / l_length,
-				p_vec.y / l_length,
-				p_vec.z / l_length
-		};
-	};
-
-	template <typename T>
-	Vector3<T> Vector3_normalize(Vector3<T>&& p_vec)
-	{
-		return Vector3_normalize(p_vec);
-	};
-
-	template <typename T>
-	float Vector3_dot(Vector3<T>& p_left, Vector3<T>& p_right)
-	{
-		return
-			(p_left.x * p_right.x) +
-			(p_left.y * p_right.y) +
-			(p_left.z * p_right.z);
-	};
-
-	template <typename T>
-	Vector3<T> Vector3_cross(Vector3<T>& p_left, Vector3<T>& p_right)
-	{
-		return Vector3<T>
-		{
-			(p_left.y * p_right.z) - (p_left.z * p_right.y),
-				(p_left.z* p_right.x) - (p_left.x * p_right.z),
-				(p_left.x* p_right.y) - (p_left.y * p_right.x)
-		};
-	};
-
-	template <typename T>
-	float Vector3_angle(Vector3<T>& p_begin, Vector3<T>& p_end)
-	{
-		acosf(
-			Vector3_dot(p_begin, p_end) / (Vector3_length(p_begin) * Vector3_length(p_end))
-		);
-	}
-
-	template <typename T>
-	Vector4<T> Vector4_mul(Vector4<T>& p_left, T p_right)
-	{
-		return Vector4<T>
-		{
-			p_left.x* p_right,
-				p_left.y* p_right,
-				p_left.z* p_right,
-				p_left.w* p_right
-		};
-	};
 }

@@ -16,7 +16,7 @@ namespace _Math
 	template <typename T>
 	Vector3<T> Quaternion_getVector(Quaternion<T>& p_quat)
 	{
-		return Vector3_build(p_quat.x, p_quat.y, p_quat.z);
+		return Vector3<T>::build(p_quat.x, p_quat.y, p_quat.z);
 	};
 
 	template <typename T>
@@ -77,9 +77,9 @@ namespace _Math
 		Vector3<T> l_vec =
 				p_left_vector.mul(p_right.w)
 				.add(p_right_vector.mul(p_left.w))
-				.add(Vector3_cross(p_left_vector, p_right_vector));
+				.add(p_left_vector.cross(p_right_vector));
 
-		T l_scal = (p_left.w * p_right.w) - (Vector3_dot(p_left_vector, p_right_vector));
+		T l_scal = (p_left.w * p_right.w) - p_left_vector.dot(p_right_vector);
 		return Quaternion_build(l_vec, l_scal);
 	};
 
@@ -89,7 +89,7 @@ namespace _Math
 		Quaternion<T> l_vectorAsQuat = Quaternion_build(p_vector, 0.0f);
 		Quaternion<T> l_rotatedVector = Quaternion_mul(p_rotation, l_vectorAsQuat);
 		l_rotatedVector = Quaternion_mul(l_rotatedVector, Quaternion_conjugate(p_rotation));
-		return Vector3_normalize(Quaternion_getVector(l_rotatedVector));
+		return Quaternion_getVector(l_rotatedVector).normalize();
 	};
 
 	template <typename T>
