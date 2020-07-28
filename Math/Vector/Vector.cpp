@@ -1,6 +1,10 @@
 #include "Vector.h"
 
 #include <math.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "Quaternion/Quaternion.h"
 
 namespace _Math
 {
@@ -73,5 +77,24 @@ namespace _Math
 		return acosf(
 			RVector_3_dot(p_begin, p_end) / (RVector_3_length(p_begin) * RVector_3_length(p_end))
 		);
+	};
+
+	void RVector_3_rotate(float p_vector[3], float p_rotation[4], float p_out[3])
+	{
+		float l_vectorAsQuat[4];
+		RQuaternion_build(p_vector, 0.0f, l_vectorAsQuat);
+		
+		float l_rotatedVector[4];
+		RQuaternion_mul(p_rotation, l_vectorAsQuat, l_rotatedVector);
+		{
+			float l_tmp[4];
+			RQuaternion_conjugate(p_rotation, l_tmp);
+
+			float l_rotatedVector_cpy[4]; 
+			memcpy(l_rotatedVector_cpy, l_rotatedVector, sizeof(float) * 4);
+			RQuaternion_mul(l_rotatedVector_cpy, l_tmp, l_rotatedVector);
+		}
+
+		RVector_3_normalize(l_rotatedVector, p_out);
 	};
 }

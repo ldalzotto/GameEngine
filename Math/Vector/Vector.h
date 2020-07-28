@@ -19,4 +19,5 @@ namespace _Math
 
 	float RVector_3_angle(float p_begin[3], float p_end[3]);
 
+	void RVector_3_rotate(float p_vector[3], float p_rotation[4], float p_out[3]);
 }

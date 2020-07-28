@@ -8,6 +8,9 @@
 
 namespace _Math
 {
+	template<class>
+	struct Quaternion;
+
 	template <int N, typename T>
 	struct Vector {
 
@@ -74,6 +77,13 @@ namespace _Math
 		{
 			return RVector_3_angle((T*)this, (T*)(&p_end));
 		}
+
+		inline Vector<3, T> rotate(Quaternion<T>& p_rotation)
+		{
+			Vector<3, T> l_out;
+			RVector_3_rotate((T*)(this), (T*)(&p_rotation), (T*)(&l_out));
+			return l_out;
+		};
 	};
 
 	template <typename T>
