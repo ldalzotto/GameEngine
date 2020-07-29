@@ -1,6 +1,6 @@
 #pragma once
 
-namespace _Math
+namespace _MathV2
 {
 	/* Matrices are column driven */
 

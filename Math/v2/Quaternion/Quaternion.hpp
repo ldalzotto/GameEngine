@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Vector/Vector.hpp"
+#include "v2/Vector/Vector.hpp"
+#include "v2/Matrix/Matrix.hpp"
 #include "Quaternion.h"
 
-namespace _Math
+namespace _MathV2
 {
 	template <typename T>
 	struct Quaternion
@@ -33,6 +34,13 @@ namespace _Math
 		{
 			Quaternion<T> l_out;
 			RQuaternion_fromDirection((T*)(&p_vect), (T*)(&l_out));
+			return l_out;
+		};
+		
+		inline static Quaternion<T> fromTo(Vector<3, T>& p_from, Vector<3, T>& p_to)
+		{
+			Quaternion<T> l_out;
+			RQuaternion_fromTo((T*)(&p_from), (T*)(&p_to), (T*)(&l_out));
 			return l_out;
 		};
 
@@ -73,6 +81,13 @@ namespace _Math
 		{
 			Quaternion<T> l_out;
 			RQuaternion_rotateAround((T*)(&p_axis), p_angle, (T*)(&l_out));
+			return l_out;
+		};
+
+		inline Matrix3x3<float> extractAxis()
+		{
+			Matrix3x3<float> l_out;
+			RQuaternion_extractAxis((T*)(this), l_out.Points);
 			return l_out;
 		};
 	};

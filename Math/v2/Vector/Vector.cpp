@@ -4,12 +4,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "Quaternion/Quaternion.h"
+#include "v2/Quaternion/Quaternion.h"
 
-namespace _Math
+namespace _MathV2
 {
-	float LEFT_arr[3] = { 1.0f, 0.0f, 0.0f };
-	float RIGHT_arr[3] = { 0.0f, 1.0f, 0.0f };
+	float RIGHT_arr[3] = { 1.0f, 0.0f, 0.0f };
+	float UP_arr[3] = { 0.0f, 1.0f, 0.0f };
 	float FORWARD_arr[3] = { 0.0f, 0.0f, 1.0f };
 
 	inline void RVector_mul(float* p_left, int p_left_nb, float p_value, float* p_out)

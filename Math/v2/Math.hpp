@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-namespace _Math
+namespace _MathV2
 {
 
 }

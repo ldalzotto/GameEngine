@@ -8,6 +8,7 @@ set(BUILD_TYPE "")
 
 add_subdirectory(ExternalDependencies)
 add_subdirectory(Core_cpp)
+add_subdirectory(Math)
 add_subdirectory(GameEngine)
 
 add_subdirectory(Test)

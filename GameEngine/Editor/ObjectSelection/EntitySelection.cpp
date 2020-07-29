@@ -12,6 +12,8 @@
 #include "Math/Quaternion/QuaternionMath.h"
 #include "Math/Intersection/Intersection.h"
 
+#include <iostream>
+
 #include "Colors/Colors.h"
 
 #include "Input/Input.h"
@@ -237,19 +239,8 @@ namespace _GameEngineEditor
 		_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, l_guidePlane_worldPosition);
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
-			
-			 _Math::Vector3f l_forward = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.ForwardArrow->Transform);
-			 _Math::Vector3f l_up = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.UpArrow->Transform);
-			 _Math::Vector3f l_right = _Math::Transform_getForward_worldSpace(&p_entitySelection->TransformGizmoV2.RightArrow->Transform);
-
-			_Math::Quaternionf l_xRotationGuidePlaneRotation;
-			_Math::Quaternion_fromAxis(&l_forward, &l_right, &l_up, &l_xRotationGuidePlaneRotation);
-			{
-				_Math::Vector3f l_testRight, l_testUp, l_testForward;
-				_Math::Quaternion_extractAxis(&l_xRotationGuidePlaneRotation, &l_testRight, &l_testUp, &l_testForward);
-				int zd = 0;
-			}
-			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&l_transformComponent->Transform));
+			// TODO -> This rotation is not correct.
+			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.RightArrow->Transform));
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
 		{
@@ -272,18 +263,25 @@ namespace _GameEngineEditor
 		_Math::Vector3f l_axis;
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
-			l_axis = _Math::Transform_getRight(&l_transformComponent->Transform);
+			// l_axis = _Math::Transform_getRight(&l_transformComponent->Transform);
+			l_axis = _Math::RIGHT;
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
 		{
-			l_axis = _Math::Transform_getUp(&l_transformComponent->Transform);
+			// l_axis = _Math::Transform_getUp(&l_transformComponent->Transform);
+			l_axis = _Math::UP;
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ZRotation)
 		{
-			l_axis = _Math::Transform_getForward(&l_transformComponent->Transform);
+			// l_axis = _Math::Transform_getForward(&l_transformComponent->Transform);
+			l_axis = _Math::FORWARD;
 		}
 
+		std::cout << l_axis.x << " " << l_axis.y << " " << l_axis.z << std::endl;
+		// std::cou
+
 		// l_nextRotation = _Math::Quaternionf_identity();
+		// _Math::Quaternion_extractAxis()
 		_Math::Quaternion_rotateAround(&l_currentRotation, &l_axis, l_deltaRotation, &l_nextRotation);
 		_Math::Transform_setLocalRotation(&l_transformComponent->Transform, l_nextRotation);
 	};
