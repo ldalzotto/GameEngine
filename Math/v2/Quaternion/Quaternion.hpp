@@ -36,6 +36,13 @@ namespace _MathV2
 			RQuaternion_fromDirection((T*)(&p_vect), (T*)(&l_out));
 			return l_out;
 		};
+
+		inline static Quaternion<T> fromAxis(Matrix<3, 3, T>& p_axis)
+		{
+			Quaternion<T> l_out;
+			RQuaternion_fromAxis(p_axis.Points, (T*)(&l_out));
+			return l_out;
+		};
 		
 		inline static Quaternion<T> fromTo(Vector<3, T>& p_from, Vector<3, T>& p_to)
 		{

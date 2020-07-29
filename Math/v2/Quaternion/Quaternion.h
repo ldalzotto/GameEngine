@@ -4,6 +4,7 @@ namespace _MathV2
 {	
 	void RQuaternion_build(float p_vec[3], float p_scal, float p_out[4]);
 	void RQuaternion_fromDirection(float p_vec[3], float p_out[4]);
+	void RQuaternion_fromAxis(float p_axis[3][3], float p_out[4]);
 	void RQuaternion_fromTo(float p_from[3], float p_to[3], float p_out[4]);
 	void RQuaternion_conjugate(float p_quat[4], float p_out[4]);
 	void RQuaternion_normalize(float p_quat[4], float p_out[4]);
