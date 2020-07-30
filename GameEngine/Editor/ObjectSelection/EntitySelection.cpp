@@ -413,7 +413,7 @@ namespace _GameEngineEditor
 
 			_Math::Transform_setLocalRotation(&p_transformGizmo->RightArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, M_PI * 0.5f, 0.0f}));
 			_Math::Transform_setLocalRotation(&p_transformGizmo->UpArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{-M_PI * 0.5f, 0.0f, 0.0f}));
-			_Math::Transform_setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, *(_MathV2::Quaternion<float>*) & _MathV2::Quaternionf_Identity);
+			_Math::Transform_setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, _MathV2::Quaternionf_Identity);
 		}
 
 		// Rotation gizmo
@@ -423,8 +423,8 @@ namespace _GameEngineEditor
 			p_transformGizmo->ZRotation = transformGizmoV2_allocRotation(p_ecs, p_renderInterface, &_Color::BLUE);
 
 			_Math::Transform_setLocalRotation(&p_transformGizmo->ZRotation->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, M_PI * 0.5f, 0.0f}));
-			_Math::Transform_setLocalRotation(&p_transformGizmo->YRotation->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{M_PI * 0.5f, 0.0f, M_PI * 0.5f }));
-			_Math::Transform_setLocalRotation(&p_transformGizmo->XRotation->Transform, *(_MathV2::Quaternion<float>*) & _MathV2::Quaternionf_Identity);
+			_Math::Transform_setLocalRotation(&p_transformGizmo->YRotation->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, -M_PI * 0.5f }));
+			_Math::Transform_setLocalRotation(&p_transformGizmo->XRotation->Transform, _MathV2::Quaternionf_Identity);
 
 			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->XRotation->Transform);
 			_Math::Transform_addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->YRotation->Transform);

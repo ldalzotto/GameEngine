@@ -4,8 +4,7 @@
 #include "Render/VulkanObjects/SwapChain/SwapChain.h"
 #include "Render/RenderInterface.h"
 
-#include "Math/Quaternion/Quaternion.h"
-#include "Math/Quaternion/QuaternionMath.h"
+#include "v2/Quaternion/QuaternionMath.hpp"
 #include "ECS_Impl/Components/Camera/Camera.h"
 
 #include "Math/Math.h"
@@ -100,10 +99,9 @@ int main()
 
 		{
 			_Math::Vector3f l_position = { -2.0f, -2.0f, -2.0f };
-			_Math::Quaternionf l_rotation;
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 15.0f, 9954.0f, 14.0f }, &l_rotation);
+			_MathV2::Quaternion<float> l_rotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{15.0f, 9954.0f, 14.0f});
 			_Math::Vector3f l_scale = { 1.0f, 1.0f, 1.0f };
-			_Math::Matrif4x4_buildTRS(&l_position, &l_rotation, &l_scale, &l_camera.ViewMatrix);
+			_Math::Matrif4x4_buildTRS(&l_position, l_rotation, &l_scale, &l_camera.ViewMatrix);
 			// _Math::Matrif4x4_buildTRSV2(&l_position, &_Math::RIGHT, &_Math::UP, &_Math::FORWARD, &l_scale, &l_camera.ViewMatrix);
 		}
 

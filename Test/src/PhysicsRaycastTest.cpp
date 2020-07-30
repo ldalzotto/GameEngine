@@ -7,7 +7,7 @@
 
 #include "Math/Math.h"
 #include "Math/Transform/Transform.h"
-#include "Math/Quaternion/QuaternionMath.h"
+#include "v2/Quaternion/QuaternionMath.hpp"
 #include "Math/Segment/Segment.h"
 
 #include "ECS/ComponentT.hpp"
@@ -175,7 +175,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			auto l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f }, (_Math::Quaternionf*)&l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{(M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f});
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
@@ -195,7 +195,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			l_rayTransform = l_transformComponent;
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -0.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, (_Math::Quaternionf*) &l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_rayEntity, l_transformComponent, &l_app->ECS);
@@ -218,7 +218,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
 				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -100.0f };
-				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, (_Math::Quaternionf*) &l_transformInitInfo.LocalRotation);
+				l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
 				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
@@ -242,7 +242,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
 				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, 100.0f };
-				_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, (_Math::Quaternionf*) &l_transformInitInfo.LocalRotation);
+				l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
 				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
@@ -271,7 +271,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, 0.0f, 0.0f }, (_Math::Quaternionf*)&l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
@@ -304,7 +304,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
 			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 0.0f, -1.0f, 2.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 0.0f, M_PI * 0.5f, 0.0f }, (_Math::Quaternionf*) &l_cubeCrossCreationInfo.LocalRotation);
+			l_cubeCrossCreationInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, M_PI * 0.5f, 0.0f});
 			l_cubeCrossCreationInfo.LocalScale = { 2.0f, 1.0f, 1.0f };
 			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
 			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);

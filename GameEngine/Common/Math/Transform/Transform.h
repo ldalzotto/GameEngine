@@ -30,7 +30,7 @@ namespace _GameEngine::_Math
 	void Transform_markMatricsForRecalculation(Transform* p_transform);
 
 	void Transform_setLocalPosition(Transform* p_transform, _MathV2::Vector3<float>& p_localPosition);
-	void Transform_setLocalRotation(Transform* p_transform, _MathV2::Quaternion<float>& p_localRotation);
+	void Transform_setLocalRotation(Transform* p_transform, const _MathV2::Quaternion<float>& p_localRotation);
 	void Transform_setLocalScale(Transform* p_transform, _MathV2::Vector3<float>& p_localScale);
 
 	void Transform_setWorldPosition(Transform* p_transform, _MathV2::Vector3<float>& p_worldPosition);

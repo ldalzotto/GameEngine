@@ -7,7 +7,7 @@
 
 #include "Math/Math.h"
 #include "Math/Transform/Transform.h"
-#include "Math/Quaternion/QuaternionMath.h"
+#include "v2/Quaternion/QuaternionMath.hpp"
 #include "Math/Segment/Segment.h"
 
 #include "ECS/ComponentT.hpp"
@@ -46,7 +46,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			_ECS::TransformComponent* l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
-			_Math::Quaternion_fromEulerAngles(_Math::Vector3f{ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f }, (_Math::Quaternionf*)&l_transformInitInfo.LocalRotation);
+			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{(M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f});
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
@@ -58,7 +58,6 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_cubeCreationInfo.LocalRotation = _MathV2::Quaternionf_Identity;
-		// _Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 1518.0f, 184.0f, -471.0f }, &l_cubeCreationInfo.LocalRotation);
 		l_cubeCreationInfo.WithMeshBound = true;
 		_ECS::Entity* l_instancaitedEntity; _ECS::TransformComponent* l_instranciatedTransform;
 		EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_instancaitedEntity, &l_instranciatedTransform);

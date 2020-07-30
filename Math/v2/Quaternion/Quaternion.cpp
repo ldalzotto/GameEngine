@@ -2,7 +2,7 @@
 
 namespace _MathV2
 {
-	bool Quaternion_Equals(Quaternion<float>& p_left, Quaternion<float>& p_right)
+	bool Quaternion_Equals(const Quaternion<float>& p_left, const Quaternion<float>& p_right)
 	{
 		return _Core::Equals_float(&p_left.x, &p_right.x)
 			&& _Core::Equals_float(&p_left.y, &p_right.y)

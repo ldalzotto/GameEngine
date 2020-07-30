@@ -16,7 +16,7 @@ namespace _Core
 		return fabs((*p_left) - (*p_right)) <= DOUBLE_TOLERANCE;
 	};
 
-	bool Equals_float(float* p_left, float* p_right)
+	bool Equals_float(const float* p_left, const float* p_right)
 	{
 		return fabsf((*p_left) - (*p_right)) <= FLOAT_TOLERANCE;
 	};

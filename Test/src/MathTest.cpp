@@ -3,8 +3,6 @@
 #include "v2/Matrix/Matrix.hpp"
 #include "Math/Vector/Vector.h"
 #include "v2/Vector/VectorMath.hpp"
-#include "Math/Quaternion/Quaternion.h"
-#include "Math/Quaternion/QuaternionMath.h"
 
 #include "glm/gtx/vector_angle.hpp"
 
@@ -42,13 +40,6 @@ int main()
 		glm::mat3x3 l_axisGLM = glm::mat3_cast(*(glm::quat*) & l_rot);
 		glm::quat l_castedQuat = glm::quat_cast(l_axisGLM);
 
-		{
-			_Math::Quaternionf l_rotAsQuat = *(_Math::Quaternionf*)(&l_rot);
-			_Math::Vector3f l_right, l_up, l_forward;
-			_Math::Quaternion_extractAxis(&l_rotAsQuat, &l_right, &l_up, &l_forward);
-			int zd = 0;
-
-		}
 		_MathV2::Quaternion<float> l_returnedRot = QuaternionM::fromAxis(l_axis);
 		// float l_angle = glm::orientedAngle(glm::normalize(glm::vec3{ 0.0f, 0.681971550f, 0.523248672f }) , glm::normalize(glm::vec3{ 0.0f, 0.706513405f, 0.522750854f }));
 		int azdadada = 0;

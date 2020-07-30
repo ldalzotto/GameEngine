@@ -61,7 +61,7 @@ namespace _GameEngine::_Math
 		}
 	};
 
-	void Transform_setLocalRotation(Transform* p_transform, Quaternion<float>& p_localRotation)
+	void Transform_setLocalRotation(Transform* p_transform, const Quaternion<float>& p_localRotation)
 	{
 		if (!Quaternion_Equals(p_transform->LocalRotation, p_localRotation))
 		{

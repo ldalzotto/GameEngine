@@ -4,7 +4,6 @@ namespace _GameEngine::_Math
 {
 	struct Matrix4x4f;
 	struct Matrix3x3f;
-	struct Quaternionf;
 	struct Vector2f;
 	struct Vector3f;
 	struct Vector4f;
