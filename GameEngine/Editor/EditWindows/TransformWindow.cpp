@@ -26,7 +26,7 @@ namespace _GameEngineEditor
 		{
 			_Math::Transform_setLocalPosition(&l_transformWindow->Transform->Transform, l_localPosition);
 		}
-		_Math::Quaternionf l_localRotation = l_transformWindow->Transform->Transform.LocalRotation;
+		_MathV2::Quaternion<float> l_localRotation = l_transformWindow->Transform->Transform.LocalRotation;
 		if (ImGui::DragFloat4("rot", &l_localRotation.x, 0.1f, -3.14f, 3.14f))
 		{
 			_Math::Transform_setLocalRotation(&l_transformWindow->Transform->Transform, l_localRotation);
