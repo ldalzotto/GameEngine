@@ -121,12 +121,8 @@ namespace _GameEngine::_Math
 	};
 
 	_MathV2::Matrix4x4<float> Transform_calculateMatrixToProjectFromTransformToAnother(Transform* p_source, Transform* p_target)
-	{
-		_MathV2::Matrix4x4<float>* l_sourceLocalToWorld = Transform_getLocalToWorldMatrix_ref(p_source);
-		_MathV2::Matrix4x4<float> l_targetWorldToLocal = Transform_getWorldToLocalMatrix(p_target);
-		_MathV2::Matrix4x4<float> l_transformationMatrix;
-		_Math::Matrixf4x4_mul((Matrix4x4f*)l_sourceLocalToWorld, (Matrix4x4f*)&l_targetWorldToLocal, (Matrix4x4f*)&l_transformationMatrix);
-		return l_transformationMatrix;
+	{		
+		return _MathV2::MatrixM::mul(Transform_getLocalToWorldMatrix(p_source), Transform_getWorldToLocalMatrix(p_target));
 	};
 
 	Vector3<float> Transform_getWorldPosition(Transform* p_transform)
@@ -229,13 +225,7 @@ namespace _GameEngine::_Math
 
 				if (p_transform->Parent)
 				{
-					_MathV2::Matrix4x4<float> l_localToWorldCopy;
-					{
-						_Math::Matrix4x4f_copy((Matrix4x4f*)&p_transform->LocalToWorldMatrix, (Matrix4x4f*)&l_localToWorldCopy);
-					}
-
-					_MathV2::Matrix4x4<float> l_parentLocalToWorld = Transform_getLocalToWorldMatrix(p_transform->Parent);
-					_Math::Matrixf4x4_mul((Matrix4x4f*)&l_parentLocalToWorld, (Matrix4x4f*)&l_localToWorldCopy, (Matrix4x4f*)&p_transform->LocalToWorldMatrix);
+					 p_transform->LocalToWorldMatrix = _MathV2::MatrixM::mul(Transform_getLocalToWorldMatrix(p_transform->Parent), p_transform->LocalToWorldMatrix);
 				}
 
 			}

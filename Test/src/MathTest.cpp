@@ -3,6 +3,9 @@
 #include "v2/Matrix/Matrix.hpp"
 #include "Math/Vector/Vector.h"
 #include "v2/Vector/VectorMath.hpp"
+#include "v2/Matrix/MatrixMath.hpp"
+#include "Math/Matrix/Matrix.h"
+#include "Math/Matrix/MatrixMath.h"
 
 #include "glm/gtx/vector_angle.hpp"
 
@@ -42,7 +45,17 @@ int main()
 
 		_MathV2::Quaternion<float> l_returnedRot = QuaternionM::fromAxis(l_axis);
 		// float l_angle = glm::orientedAngle(glm::normalize(glm::vec3{ 0.0f, 0.681971550f, 0.523248672f }) , glm::normalize(glm::vec3{ 0.0f, 0.706513405f, 0.522750854f }));
-		int azdadada = 0;
+	
+
+		{
+			_MathV2::Matrix4x4<float> l_mat1 = { {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f} };
+			_MathV2::Matrix4x4<float> l_mat2 = { {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f} };
+
+			_Math::Matrix4x4f l_return_old;
+			_Math::Matrixf4x4_mul((_Math::Matrix4x4f*) & l_mat1, (_Math::Matrix4x4f*) & l_mat2, &l_return_old);
+			_MathV2::Matrix4x4<float> l_result_new = _MathV2::MatrixM::mul(l_mat1, l_mat2);
+			int azdadada = 0;
+		}
 	}
 	return 0;
 }

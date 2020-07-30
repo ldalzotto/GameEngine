@@ -2,6 +2,7 @@
 
 #include "Math/Math.h"
 #include "Math/Matrix/MatrixMath.h"
+#include "v2/Matrix/MatrixMath.hpp"
 #include "Math/Vector/Vector.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Segment/Segment.h"
@@ -39,7 +40,7 @@ namespace _GameEngine::_ECS
 
 	void Camera_worldToClipMatrix(Camera* p_camera, _Math::Matrix4x4f* out_worldToClip)
 	{
-		_Math::Matrixf4x4_mul(&p_camera->ProjectionMatrix, &p_camera->ViewMatrix, out_worldToClip);
+		*out_worldToClip = *(_Math::Matrix4x4f*)&_MathV2::MatrixM::mul(*(_MathV2::Matrix4x4<float>*)&p_camera->ProjectionMatrix, *(_MathV2::Matrix4x4<float>*) & p_camera->ViewMatrix);
 	};
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)

@@ -3,6 +3,7 @@
 #include "Math/Matrix/Matrix.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Matrix/MatrixMath.h"
+#include "v2/Matrix/MatrixMath.hpp"
 
 namespace _GameEngine::_Math
 {
@@ -36,9 +37,8 @@ namespace _GameEngine::_Math
 			_Math::Vector4f_build(&p_segment->End, 1.0f, &l_end4f);
 		}
 
-		_Math::Vector4f l_projectedBegin, l_projectedEnd;
-		_Math::Matrixf4x4_mul(p_matrix, &l_begin4f, &l_projectedBegin);
-		_Math::Matrixf4x4_mul(p_matrix, &l_end4f, &l_projectedEnd);
+		_Math::Vector4f l_projectedBegin = *(_Math::Vector4f*) & _MathV2::MatrixM::mul(*(_MathV2::Matrix4x4<float>*)p_matrix, *(_MathV2::Vector4<float>*) & l_begin4f);
+		_Math::Vector4f l_projectedEnd = *(_Math::Vector4f*) & _MathV2::MatrixM::mul(*(_MathV2::Matrix4x4<float>*)p_matrix, *(_MathV2::Vector4<float>*) & l_end4f);
 
 		p_out->Begin = { l_projectedBegin.x, l_projectedBegin.y, l_projectedBegin.z };
 		p_out->End = { l_projectedEnd.x, l_projectedEnd.y, l_projectedEnd.z };

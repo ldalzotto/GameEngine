@@ -8,6 +8,18 @@ namespace _MathV2
 	struct VectorM
 	{
 		template <typename T>
+		inline static Vector<3, T>* cast(Vector<4, T>* p_vec)
+		{
+			return (Vector<3, T>*)p_vec;
+		};
+
+		template <typename T>
+		inline static Vector<3, T> cast(Vector<4, T>& p_vec)
+		{
+			return *(Vector<3, T>*)(&p_vec);
+		};
+
+		template <typename T>
 		inline static Vector<3, T> build(const T p_x, const T p_y, const T p_z)
 		{
 			return Vector<3, T>{p_x, p_y, p_z};

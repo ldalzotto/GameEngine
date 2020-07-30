@@ -76,7 +76,7 @@ namespace _GameEngine::_Math
 		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
 
 		_MathV2::Matrix3x3<float> l_axis = _MathV2::QuaternionM::extractAxis(p_quaternion);
-		Matrixf4x4_buildRotationMatrixV2((Vector3f*)(&_MathV2::MatrixM::right(l_axis)), (Vector3f*)(&_MathV2::MatrixM::up(l_axis)), (Vector3f*)(&_MathV2::MatrixM::forward(l_axis)), out_TRS);
+		Matrixf4x4_buildRotationMatrixV2((Vector3f*)(_MathV2::MatrixM::right_ref(l_axis)), (Vector3f*)(_MathV2::MatrixM::up_ref(l_axis)), (Vector3f*)(_MathV2::MatrixM::forward_ref(l_axis)), out_TRS);
 		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
 	};
 
@@ -144,29 +144,6 @@ namespace _GameEngine::_Math
 		Matrixf4x4_mul(p_matrix, &l_vector4f, &l_out4f);
 
 		*out = { l_out4f.x, l_out4f.y, l_out4f.z };
-	};
-
-	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Matrix4x4f* p_other, Matrix4x4f* out)
-	{
-		out->_00 = (p_matrix->_00 * p_other->_00) + (p_matrix->_10 * p_other->_01) + (p_matrix->_20 * p_other->_02) + (p_matrix->_30 * p_other->_03);
-		out->_01 = (p_matrix->_01 * p_other->_00) + (p_matrix->_11 * p_other->_01) + (p_matrix->_21 * p_other->_02) + (p_matrix->_31 * p_other->_03);
-		out->_02 = (p_matrix->_02 * p_other->_00) + (p_matrix->_12 * p_other->_01) + (p_matrix->_22 * p_other->_02) + (p_matrix->_32 * p_other->_03);
-		out->_03 = (p_matrix->_03 * p_other->_00) + (p_matrix->_13 * p_other->_01) + (p_matrix->_23 * p_other->_02) + (p_matrix->_33 * p_other->_03);
-
-		out->_10 = (p_matrix->_00 * p_other->_10) + (p_matrix->_10 * p_other->_11) + (p_matrix->_20 * p_other->_12) + (p_matrix->_30 * p_other->_13);
-		out->_11 = (p_matrix->_01 * p_other->_10) + (p_matrix->_11 * p_other->_11) + (p_matrix->_21 * p_other->_12) + (p_matrix->_31 * p_other->_13);
-		out->_12 = (p_matrix->_02 * p_other->_10) + (p_matrix->_12 * p_other->_11) + (p_matrix->_22 * p_other->_12) + (p_matrix->_32 * p_other->_13);
-		out->_13 = (p_matrix->_03 * p_other->_10) + (p_matrix->_13 * p_other->_11) + (p_matrix->_23 * p_other->_12) + (p_matrix->_33 * p_other->_13);
-
-		out->_20 = (p_matrix->_00 * p_other->_20) + (p_matrix->_10 * p_other->_21) + (p_matrix->_20 * p_other->_22) + (p_matrix->_30 * p_other->_23);
-		out->_21 = (p_matrix->_01 * p_other->_20) + (p_matrix->_11 * p_other->_21) + (p_matrix->_21 * p_other->_22) + (p_matrix->_31 * p_other->_23);
-		out->_22 = (p_matrix->_02 * p_other->_20) + (p_matrix->_12 * p_other->_21) + (p_matrix->_22 * p_other->_22) + (p_matrix->_32 * p_other->_23);
-		out->_23 = (p_matrix->_03 * p_other->_20) + (p_matrix->_13 * p_other->_21) + (p_matrix->_23 * p_other->_22) + (p_matrix->_33 * p_other->_23);
-
-		out->_30 = (p_matrix->_00 * p_other->_30) + (p_matrix->_10 * p_other->_31) + (p_matrix->_20 * p_other->_32) + (p_matrix->_30 * p_other->_33);
-		out->_31 = (p_matrix->_01 * p_other->_30) + (p_matrix->_11 * p_other->_31) + (p_matrix->_21 * p_other->_32) + (p_matrix->_31 * p_other->_33);
-		out->_32 = (p_matrix->_02 * p_other->_30) + (p_matrix->_12 * p_other->_31) + (p_matrix->_22 * p_other->_32) + (p_matrix->_32 * p_other->_33);
-		out->_33 = (p_matrix->_03 * p_other->_30) + (p_matrix->_13 * p_other->_31) + (p_matrix->_23 * p_other->_32) + (p_matrix->_33 * p_other->_33);
 	};
 
 	float matrixf4x4_3x3det(Matrix4x4f* m, int p_col, int p_line)
