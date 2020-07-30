@@ -6,6 +6,8 @@
 #include "Math/Quaternion/Quaternion.h"
 #include "Math/Quaternion/QuaternionMath.h"
 
+#include "glm/gtx/vector_angle.hpp"
+
 using namespace _GameEngine;
 using namespace _MathV2;
 
@@ -48,7 +50,8 @@ int main()
 
 		}
 		_MathV2::Quaternion<float> l_returnedRot = QuaternionM::fromAxis(l_axis);
-
+		// float l_angle = glm::orientedAngle(glm::normalize(glm::vec3{ 0.0f, 0.681971550f, 0.523248672f }) , glm::normalize(glm::vec3{ 0.0f, 0.706513405f, 0.522750854f }));
+		int azdadada = 0;
 	}
 	return 0;
 }

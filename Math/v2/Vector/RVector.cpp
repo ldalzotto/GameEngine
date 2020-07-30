@@ -27,6 +27,13 @@ namespace _MathV2
 		p_out[2] = p_left[2] + p_right[2];
 	};
 
+	void RVector_3_min(float p_left[3], float p_right[3], float p_out[3])
+	{
+		p_out[0] = p_left[0] - p_right[0];
+		p_out[1] = p_left[1] - p_right[1];
+		p_out[2] = p_left[2] - p_right[2];
+	};
+
 	void RVector_3_mul(float p_left[3], float p_right, float p_out[3])
 	{
 		RVector_mul(p_left, 3, p_right, p_out);
@@ -80,6 +87,21 @@ namespace _MathV2
 		return acosf(
 			RVector_3_dot(p_begin, p_end) / (RVector_3_length(p_begin) * RVector_3_length(p_end))
 		);
+	};
+
+	float RVector_3_angle_normalized(float p_begin[3], float p_end[3])
+	{
+		return acosf(
+			RVector_3_dot(p_begin, p_end)
+		);
+	};
+
+	short int RVector_3_angleSign(float p_begin[3], float p_end[3], float p_referenceAxis[3])
+	{
+		float l_cross[3];
+		RVector_3_cross(p_begin, p_end, l_cross);
+		float l_dot = RVector_3_dot(l_cross, p_referenceAxis);
+		return l_dot >= 0.0000f ? 1 : -1;
 	};
 
 	void RVector_3_rotate(float p_vector[3], float p_rotation[4], float p_out[3])

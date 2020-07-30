@@ -31,6 +31,13 @@ namespace _MathV2
 			return l_out;
 		};
 		template <typename T>
+		inline static Vector<3, T> min(Vector<3, T>& p_left, Vector<3, T>& p_right)
+		{
+			Vector3<T> l_out;
+			RVector_3_min((T*)(&p_left), (T*)(&p_right), (T*)&l_out);
+			return l_out;
+		};
+		template <typename T>
 		inline static Vector<3, T> mul(Vector<3, T>& p_left, T p_right)
 		{
 			Vector<3, T> l_out;
@@ -53,7 +60,17 @@ namespace _MathV2
 		inline static float angle(Vector<3, T>& p_begin, Vector<3, T>& p_end)
 		{
 			return RVector_3_angle((T*)(&p_begin), (T*)(&p_end));
-		}
+		};
+		template <typename T>
+		inline static float angle_normalized(Vector<3, T>& p_begin, Vector<3, T>& p_end)
+		{
+			return RVector_3_angle_normalized((T*)(&p_begin), (T*)(&p_end));
+		};
+		template <typename T>
+		inline static short int angleSign(Vector<3, T>& p_begin, Vector<3, T>& p_end, Vector<3, T>& p_referenceAxis)
+		{
+			return RVector_3_angleSign((T*)(&p_begin), (T*)(&p_end), (T*)(&p_referenceAxis));
+		};
 		template <typename T>
 		inline static Vector<3, T> rotate(Vector<3, T>& p_vec, Quaternion<T>& p_rotation)
 		{

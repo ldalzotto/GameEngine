@@ -11,6 +11,7 @@
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Intersection/Intersection.h"
 #include "v2/Quaternion/QuaternionMath.hpp"
+#include "v2/Vector/VectorMath.hpp"
 
 #include <iostream>
 
@@ -239,8 +240,12 @@ namespace _GameEngineEditor
 		_Math::Transform_setWorldPosition(&l_transformGizmoPlane->Transform, l_guidePlane_worldPosition);
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
-			// TODO -> This rotation is not correct.
-			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform, _Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.RightArrow->Transform));
+			_Math::Transform_setLocalRotation(&l_transformGizmoPlane->Transform,
+				_MathV2::QuaternionM::mul(
+					_Math::Transform_getWorldRotation(&p_entitySelection->TransformGizmoV2.RightArrow->Transform),
+					_MathV2::QuaternionM::rotateAround(_MathV2::RIGHT, M_PI * 0.5f)
+				)
+			);
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
 		{
@@ -256,29 +261,31 @@ namespace _GameEngineEditor
 		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.End);
 
 		// Perform rotation.
-		float l_deltaRotation = _Math::Vector3f_angle_signed(&l_deltaPositionDirection_worldSpace.Begin, &l_deltaPositionDirection_worldSpace.End);
-		//TODO -> do it with world rotations.
-		_MathV2::Quaternion<float> l_currentRotation = l_transformComponent->Transform.LocalRotation;
+
 		_Math::Vector3f l_axis;
+		
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
-			// l_axis = _Math::Transform_getRight(&l_transformComponent->Transform);
 			l_axis = _Math::RIGHT;
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
 		{
-			// l_axis = _Math::Transform_getUp(&l_transformComponent->Transform);
 			l_axis = _Math::UP;
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ZRotation)
 		{
-			// l_axis = _Math::Transform_getForward(&l_transformComponent->Transform);
 			l_axis = _Math::FORWARD;
 		}
 
+		float l_deltaRotation =
+			_MathV2::VectorM::angle_normalized(
+				_MathV2::VectorM::normalize(*(_MathV2::Vector3<float>*) & _MathV2::VectorM::min(*(_MathV2::Vector3<float>*) & l_deltaPositionDirection_worldSpace.Begin, *(_MathV2::Vector3<float>*) & l_guidePlane_worldPosition)),
+				_MathV2::VectorM::normalize(*(_MathV2::Vector3<float>*) & _MathV2::VectorM::min(*(_MathV2::Vector3<float>*) & l_deltaPositionDirection_worldSpace.End, *(_MathV2::Vector3<float>*) & l_guidePlane_worldPosition))
+			);
+
 		std::cout << l_axis.x << " " << l_axis.y << " " << l_axis.z << std::endl;
-		
-		_MathV2::Quaternion<float> l_nextRotation = _MathV2::QuaternionM::mul(l_currentRotation, _MathV2::QuaternionM::rotateAround(*(_MathV2::Vector3<float>*) & l_axis, l_deltaRotation));
+
+		_MathV2::Quaternion<float> l_nextRotation = _MathV2::QuaternionM::mul(l_transformComponent->Transform.LocalRotation, _MathV2::QuaternionM::rotateAround(*(_MathV2::Vector3<float>*) & l_axis, l_deltaRotation));
 		_Math::Transform_setLocalRotation(&l_transformComponent->Transform, l_nextRotation);
 	};
 
