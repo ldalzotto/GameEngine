@@ -97,9 +97,9 @@ namespace _MathV2
 		float l_yaw[4];
 		RQuaternion_rotateAround(UP_arr, p_eulerAngle[1], l_yaw);
 		float l_pitch[4];
-		RQuaternion_rotateAround(UP_arr, p_eulerAngle[0], l_pitch);
+		RQuaternion_rotateAround(RIGHT_arr, p_eulerAngle[0], l_pitch);
 		float l_roll[4];
-		RQuaternion_rotateAround(UP_arr, p_eulerAngle[2], l_roll);
+		RQuaternion_rotateAround(FORWARD_arr, p_eulerAngle[2], l_roll);
 
 		float l_tmp[4];
 		p_out[0] = 0.0f; p_out[1] = 0.0f; p_out[2] = 0.0f; p_out[3] = 1.0f;
