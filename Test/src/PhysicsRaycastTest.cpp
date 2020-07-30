@@ -36,11 +36,11 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_gameE
 
 struct CubeCrossCreationInfo
 {
-	_Math::Vector3f LocalPosition;
+	_MathV2::Vector3<float> LocalPosition;
 	_MathV2::Quaternion<float> LocalRotation;
-	_Math::Vector3f LocalScale;
+	_MathV2::Vector3<float> LocalScale;
 	_ECS::TransformComponent* Parent;
-	_Math::Vector3f* RotationAxis;
+	_MathV2::Vector3<float>* RotationAxis;
 };
 
 void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeCrossCreationInfo* p_cubeCrossCreationInfo)
@@ -141,7 +141,7 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 	{
 		_ECS::TransformRotate* l_transformRotate = _ECS::ComponentT_alloc<_ECS::TransformRotate>();
 		(l_transformRotate)->Speed = .5f;
-		(l_transformRotate)->Axis = *p_cubeCrossCreationInfo->RotationAxis;
+		(l_transformRotate)->Axis = *(_Math::Vector3f*)p_cubeCrossCreationInfo->RotationAxis;
 		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, l_gameEngine->ECS);
 	}
 };
@@ -289,7 +289,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 	// Cubes
 	{
 		{
-			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 1.0f };
+			_MathV2::Vector3<float> l_rotation = { 1.0f, 1.0f, 1.0f };
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
 			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 1.0f, 0.0f, 0.0f };
@@ -300,7 +300,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 		}
 
 		{
-			_Math::Vector3f l_rotation = { 1.0f, 1.0f, 0.0f };
+			_MathV2::Vector3<float> l_rotation = { 1.0f, 1.0f, 0.0f };
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
 			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 0.0f, -1.0f, 2.0f };
@@ -327,16 +327,16 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 #endif
 
 	{
-		_Math::Vector3f l_rayBeginPoint = _Math::Transform_getWorldPosition(&(p_test->PhysicsRayBegin)->Transform);
-		_Math::Vector3f l_rayEndPoint = _Math::Transform_getWorldPosition(&(p_test->PhysicsRayEnd)->Transform);
+		_MathV2::Vector3<float> l_rayBeginPoint = _Math::Transform_getWorldPosition(&(p_test->PhysicsRayBegin)->Transform);
+		_MathV2::Vector3<float> l_rayEndPoint = _Math::Transform_getWorldPosition(&(p_test->PhysicsRayEnd)->Transform);
 		_Math::Vector3f l_color = { 0.0f, 1.0f, 0.0f };
 
-		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
+		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, (_Math::Vector3f*)&l_rayBeginPoint, (_Math::Vector3f*) &l_rayEndPoint, &l_color);
 
 		_Core::VectorT<_Physics::RaycastHit> l_hits{};
 		_Core::VectorT_alloc(&l_hits, 0);
 		{
-			_Physics::RayCastAll(l_interface->PhysicsInterface->World, &l_rayBeginPoint, &l_rayEndPoint, &l_hits);
+			_Physics::RayCastAll(l_interface->PhysicsInterface->World, (_Math::Vector3f*) &l_rayBeginPoint, (_Math::Vector3f*) &l_rayEndPoint, &l_hits);
 			_Core::VectorIteratorT<_Physics::RaycastHit> l_hitsIt = _Core::VectorT_buildIterator(&l_hits);
 			while (_Core::VectorIteratorT_moveNext(&l_hitsIt))
 			{

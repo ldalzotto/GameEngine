@@ -222,11 +222,11 @@ namespace _GameEngine::_Render
 
 	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Transform* p_transform)
 	{
-		_Math::Vector3f l_center = _Math::Transform_getWorldPosition(p_transform);
-		_Math::Vector3f l_right = _Math::Transform_getRight(p_transform);
-		_Math::Vector3f l_up = _Math::Transform_getUp(p_transform);
-		_Math::Vector3f l_forward = _Math::Transform_getForward(p_transform);
-		Gizmo_drawTransform(p_gizmo, &l_center, &l_right, &l_up, &l_forward);
+		_MathV2::Vector3<float> l_center = _Math::Transform_getWorldPosition(p_transform);
+		_MathV2::Vector3<float> l_right = _Math::Transform_getRight(p_transform);
+		_MathV2::Vector3<float> l_up = _Math::Transform_getUp(p_transform);
+		_MathV2::Vector3<float> l_forward = _Math::Transform_getForward(p_transform);
+		Gizmo_drawTransform(p_gizmo, (_Math::Vector3f*)&l_center, (_Math::Vector3f*) &l_right, (_Math::Vector3f*) &l_up, (_Math::Vector3f*) &l_forward);
 	};
 
 	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Vector3f* p_center, _Math::Vector3f* p_right, _Math::Vector3f* p_up, _Math::Vector3f* p_forward)

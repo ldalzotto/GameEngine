@@ -21,7 +21,7 @@ namespace _GameEngineEditor
 	{
 		TransformWindow* l_transformWindow = (TransformWindow*)p_transformWindow->Window;
 		ImGui::Begin("Transform", &p_transformWindow->IsOpen);
-		_Math::Vector3f l_localPosition = l_transformWindow->Transform->Transform.LocalPosition;
+		_MathV2::Vector3<float> l_localPosition = l_transformWindow->Transform->Transform.LocalPosition;
 		if (ImGui::InputFloat3("pos", &l_localPosition.x, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			_Math::Transform_setLocalPosition(&l_transformWindow->Transform->Transform, l_localPosition);

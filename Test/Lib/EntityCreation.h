@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Vector/Vector.h"
+#include "v2/Vector/Vector.hpp"
 #include "v2/Quaternion/Quaternion.hpp"
 
 namespace _GameEngine
@@ -19,9 +19,9 @@ namespace _GameEngine::_Test
 
 	struct CubeCreationInfo
 	{
-		_Math::Vector3f LocalPosition;
+		_MathV2::Vector3<float> LocalPosition;
 		_MathV2::Quaternion<float> LocalRotation;
-		_Math::Vector3f LocalScale;
+		_MathV2::Vector3<float> LocalScale;
 		bool WithMeshBound;
 		_ECS::MeshRendererInitInfo* MeshRendererInitInfo;
 	};

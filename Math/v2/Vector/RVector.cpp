@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "Functional/Equals/Equals.hpp"
 #include "v2/Quaternion/RQuaternion.h"
 
 namespace _MathV2
@@ -18,6 +19,13 @@ namespace _MathV2
 		{
 			p_out[i] = p_left[i] * p_value;
 		}
+	};
+
+	bool RVector_3_equals(float p_left[3], float p_right[3])
+	{
+		return _Core::Equals_float(&p_left[0], &p_right[0])
+			&& _Core::Equals_float(&p_left[1], &p_right[1])
+			&& _Core::Equals_float(&p_left[2], &p_right[2]);
 	};
 
 	void RVector_3_add(float p_left[3], float p_right[3], float p_out[3])

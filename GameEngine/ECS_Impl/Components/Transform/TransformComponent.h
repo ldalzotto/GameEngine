@@ -23,9 +23,9 @@ namespace _GameEngine::_ECS
 
 	struct TransformInitInfo
 	{
-		_Math::Vector3f LocalPosition;
+		_MathV2::Vector3<float> LocalPosition;
 		_MathV2::Quaternion<float> LocalRotation = _MathV2::Quaternionf_Identity;
-		_Math::Vector3f LocalScale = {1.0f, 1.0f, 1.0f};
+		_MathV2::Vector3<float> LocalScale = {1.0f, 1.0f, 1.0f};
 	};
 
 	void TransformComponent_init(TransformComponent* p_component, TransformInitInfo* p_transformInitInfo);

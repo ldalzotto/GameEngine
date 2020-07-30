@@ -79,7 +79,11 @@ namespace _MathV2
 			return l_out;
 		};
 
-
+		template <typename T>
+		inline static bool equals(Vector<3, T>& p_left, Vector<3, T>& p_right)
+		{
+			return RVector_3_equals((T*)(&p_left), (T*)(&p_right));
+		};
 
 		template <typename T>
 		inline static float length(Vector<4, T>& p_vec)

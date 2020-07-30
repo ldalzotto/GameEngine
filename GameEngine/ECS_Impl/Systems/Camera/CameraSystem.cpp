@@ -2,6 +2,7 @@
 
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/VectorMath.h"
+#include "v2/Vector/VectorMath.hpp"
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
@@ -26,7 +27,7 @@ namespace _GameEngine::_ECS
 	::_Core::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{
 		_Core::SortedSequencerPriority l_beforePtr[1];
-		_Core::ArrayT<_Core::SortedSequencerPriority> l_before =_Core::ArrayT_fromCStyleArray(l_beforePtr, 1);
+		_Core::ArrayT<_Core::SortedSequencerPriority> l_before = _Core::ArrayT_fromCStyleArray(l_beforePtr, 1);
 		l_before.Size = 0;
 
 		::_Core::SortedSequencerPriority l_meshDrawBeforePriority = MeshDrawSystem_updatePriorityBefore();
@@ -51,7 +52,7 @@ namespace _GameEngine::_ECS
 	void cameraSystem_onEntityNoMoreElligible(void* p_cameraSystem, Entity* p_entity)
 	{
 		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
-		_Core::VectorT_eraseCompare(&l_cameraSystem->Operations, _Core::ComparatorT<CameraSystemOperation, Entity*, void>{ CameraSystemOperation_EqualsEntity , &p_entity});
+		_Core::VectorT_eraseCompare(&l_cameraSystem->Operations, _Core::ComparatorT<CameraSystemOperation, Entity*, void>{ CameraSystemOperation_EqualsEntity , &p_entity });
 	}
 
 	void CmaeraSystem_free(void* p_cameraSystem, void* p_null)
@@ -87,17 +88,12 @@ namespace _GameEngine::_ECS
 			Camera* l_camera = l_operations.Current->Camera;
 
 			{
-				_Math::Vector3f l_worldPosition = Transform_getWorldPosition(&l_transform->Transform);
-
-				_Math::Vector3f l_target;
-				_Math::Vector3f l_foward = Transform_getForward(&l_transform->Transform);
-				_Math::Vector3f_add(&l_worldPosition, &l_foward, &l_target);
-
-				_Math::Vector3f l_up = Transform_getUp(&l_transform->Transform);
-				_Math::Vector3f_mul(&l_up, -1.0f, &l_up);
+				_MathV2::Vector3<float> l_worldPosition = Transform_getWorldPosition(&l_transform->Transform);
+				_MathV2::Vector3<float> l_target = _MathV2::VectorM::add(l_worldPosition, Transform_getForward(&l_transform->Transform));
+				_MathV2::Vector3<float> l_up = _MathV2::VectorM::mul(Transform_getUp(&l_transform->Transform), -1.0f);
 
 				_Math::Matrix4x4f l_lookAt;
-				_Math::Matrixf4x4_lookAt(&l_worldPosition, &l_target, &l_up, &l_lookAt);
+				_Math::Matrixf4x4_lookAt((_Math::Vector3f*) & l_worldPosition, (_Math::Vector3f*) & l_target, (_Math::Vector3f*) & l_up, &l_lookAt);
 				_Math::Matrixf4x4_inv(&l_lookAt, &l_camera->ViewMatrix);
 			}
 
