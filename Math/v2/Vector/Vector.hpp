@@ -1,6 +1,6 @@
 #pragma once
 
-#include "v2/Vector/Vector.h"
+#include "v2/Vector/RVector.h"
 
 namespace _MathV2
 {
@@ -106,8 +106,8 @@ namespace _MathV2
 	template <typename T>
 	using Vector4 = Vector<4, T>;
 
-	Vector3<float> RIGHT = { RIGHT_arr[0], RIGHT_arr[1], RIGHT_arr[2] };
-	Vector3<float> UP = { UP_arr[0], UP_arr[1], UP_arr[2] };
-	Vector3<float> FORWARD = { FORWARD_arr[0], FORWARD_arr[1], FORWARD_arr[2] };
+	extern Vector3<float> RIGHT;
+	extern Vector3<float> UP;
+	extern Vector3<float> FORWARD;
 
 }

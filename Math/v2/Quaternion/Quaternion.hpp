@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Functional/Equals/Equals.hpp"
+
 #include "v2/Vector/Vector.hpp"
 #include "v2/Matrix/Matrix.hpp"
-#include "Quaternion.h"
+#include "RQuaternion.h"
 
 namespace _MathV2
 {
@@ -43,7 +45,14 @@ namespace _MathV2
 			RQuaternion_fromAxis(p_axis.Points, (T*)(&l_out));
 			return l_out;
 		};
-		
+
+		inline static Quaternion<T> fromEulerAngle(Vector<3, T>& p_eulerAngle)
+		{
+			Quaternion<T> l_out;
+			RQuaternion_fromEulerAngle((T*)(&p_eulerAngle), (T*)(&l_out));
+			return l_out;
+		};
+
 		inline static Quaternion<T> fromTo(Vector<3, T>& p_from, Vector<3, T>& p_to)
 		{
 			Quaternion<T> l_out;
@@ -97,6 +106,10 @@ namespace _MathV2
 			RQuaternion_extractAxis((T*)(this), l_out.Points);
 			return l_out;
 		};
+
 	};
 
+	inline static const Quaternion<float> Quaternionf_Identity = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	bool Quaternion_Equals(Quaternion<float>& p_left, Quaternion<float>& p_right);
 }
