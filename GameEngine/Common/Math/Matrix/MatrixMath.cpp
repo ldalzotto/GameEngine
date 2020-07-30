@@ -74,7 +74,7 @@ namespace _GameEngine::_Math
 		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
 
 		_MathV2::Matrix3x3<float> l_axis = _MathV2::QuaternionM::extractAxis(p_quaternion);
-		Matrixf4x4_buildRotationMatrixV2((Vector3f*)l_axis.right(), (Vector3f*)l_axis.up(), (Vector3f*)l_axis.forward(), out_TRS);
+		Matrixf4x4_buildRotationMatrixV2((Vector3f*)&l_axis.right(), (Vector3f*)&l_axis.up(), (Vector3f*)&l_axis.forward(), out_TRS);
 		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
 	};
 

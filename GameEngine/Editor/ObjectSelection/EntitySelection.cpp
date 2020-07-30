@@ -114,8 +114,7 @@ namespace _GameEngineEditor
 				_Math::Vector2f l_screenPoint = { p_entitySelection->Input->InputMouse.ScreenPosition.x, p_entitySelection->Input->InputMouse.ScreenPosition.y };
 				_Math::Segment l_ray;
 				_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_screenPoint, &l_ray);
-				_Physics::RaycastHit l_hit;
-
+				
 				TransformGizmoSelectionState l_currentFrame_transformGizmoSelectionState = TransformGizmo_determinedSelectedGizmoComponent(&p_entitySelection->TransformGizmoV2, &l_ray);
 				TransformGizmoSelectionState* l_transformGizmoSelectionState = &p_entitySelection->TransformGizmoSelectionState;
 				{

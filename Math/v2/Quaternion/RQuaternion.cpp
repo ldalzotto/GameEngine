@@ -6,7 +6,7 @@
 
 namespace _MathV2
 {
-	void RQuaternion_build(float p_vec[3], float p_scal, float p_out[4])
+	void RQuaternion_build(const float p_vec[3], float p_scal, float p_out[4])
 	{
 		p_out[0] = p_vec[0];
 		p_out[1] = p_vec[1];
@@ -14,18 +14,18 @@ namespace _MathV2
 		p_out[3] = p_scal;
 	};
 
-	void RQuaternion_fromDirection(float p_vec[3], float p_out[4])
+	void RQuaternion_fromDirection(const float p_vec[3], float p_out[4])
 	{
 		float l_angle = RVector_3_angle(FORWARD_arr, p_vec);
 		RVector_3_mul(p_vec, sinf(l_angle * 0.5f), p_out);
 		p_out[3] = cosf(l_angle * 0.5f);
 	};
 
-	void RQuaternion_fromAxis(float p_axis[3][3], float p_out[4])
+	void RQuaternion_fromAxis(const float p_axis[3][3], float p_out[4])
 	{
-		float* l_right = p_axis[0];
-		float* l_up = p_axis[1];
-		float* l_forward = p_axis[2];
+		const float* l_right = p_axis[0];
+		const float* l_up = p_axis[1];
+		const float* l_forward = p_axis[2];
 
 		// We calculate the four square roots and get the higher one.
 		float qxDiag = fmaxf(1 + l_right[0] - l_up[1] - l_forward[2], 0.0f);
@@ -92,7 +92,7 @@ namespace _MathV2
 
 	};
 
-	void RQuaternion_fromEulerAngle(float p_eulerAngle[3], float p_out[4])
+	void RQuaternion_fromEulerAngle(const float p_eulerAngle[3], float p_out[4])
 	{
 		{
 			float l_yaw[4];
@@ -119,7 +119,7 @@ namespace _MathV2
 
 	};
 
-	void RQuaternion_fromTo(float p_from[3], float p_to[3], float p_out[4])
+	void RQuaternion_fromTo(const float p_from[3], const  float p_to[3], float p_out[4])
 	{
 		float l_angle = RVector_3_angle(p_from, p_to);
 		float l_rotationAxis[3];
@@ -127,18 +127,18 @@ namespace _MathV2
 		RQuaternion_rotateAround(l_rotationAxis, l_angle, p_out);
 	};
 
-	void RQuaternion_conjugate(float p_quat[4], float p_out[4])
+	void RQuaternion_conjugate(const float p_quat[4], float p_out[4])
 	{
 		RVector_3_mul(p_quat, -1.0f, p_out);
 		p_out[3] = p_quat[3];
 	};
 
-	void RQuaternion_normalize(float p_quat[4], float p_out[4])
+	void RQuaternion_normalize(const float p_quat[4], float p_out[4])
 	{
 		RVector_4_mul(p_quat, 1 / RVector_4_length(p_quat), p_out);
 	};
 
-	void RQuaternion_mul(float p_left[4], float p_right[4], float p_out[4])
+	void RQuaternion_mul(const float p_left[4], const  float p_right[4], float p_out[4])
 	{
 		RVector_3_mul(p_left, p_right[3], p_out);
 		{
@@ -154,7 +154,7 @@ namespace _MathV2
 		RQuaternion_normalize(p_out, p_out);
 	};
 
-	void RQuaternion_cross(float p_left[4], float p_right[4], float p_out[4])
+	void RQuaternion_cross(const float p_left[4], const  float p_right[4], float p_out[4])
 	{
 		float l_rotatedLeft[3];
 		RVector_3_rotate(FORWARD_arr, p_left, l_rotatedLeft);
@@ -167,26 +167,13 @@ namespace _MathV2
 		RQuaternion_rotateAround(l_crossResult, 0.0f, p_out);
 	};
 
-	void RQuaternion_rotateAround(float p_axis[3], float p_angle, float out_quat[4])
+	void RQuaternion_rotateAround(const float p_axis[3], const  float p_angle, float out_quat[4])
 	{
 		RVector_3_mul(p_axis, sinf(p_angle * 0.5f), out_quat);
 		out_quat[3] = cosf(p_angle * 0.5f);
 	};
 
-	/*
-	void RQuaternion_extractAxis(float quat[4], float out_axis[3][3])
-	{
-		RVector_3_rotate(RIGHT_arr, quat, out_axis[0]);
-		RVector_3_rotate(UP_arr, quat, out_axis[1]);
-		RVector_3_rotate(FORWARD_arr, quat, out_axis[2]);
-
-		RVector_3_normalize(out_axis[0], out_axis[0]);
-		RVector_3_normalize(out_axis[1], out_axis[1]);
-		RVector_3_normalize(out_axis[2], out_axis[2]);
-	};
-	*/
-
-	void RQuaternion_extractAxis(float quat[4], float out_axis[3][3])
+	void RQuaternion_extractAxis(const float quat[4], float out_axis[3][3])
 	{
 		float l_qxx = quat[0] * quat[0];
 		float l_qxy = quat[0] * quat[1];
@@ -219,39 +206,4 @@ namespace _MathV2
 		RVector_3_normalize(out_axis[1], out_axis[1]);
 		RVector_3_normalize(out_axis[2], out_axis[2]);
 	};
-
-	/*
-		void Quaternion_extractAxis(Quaternionf* p_quaternion, Vector3f* out_right, Vector3f* out_up, Vector3f* out_forward)
-	{
-		float l_qxx = p_quaternion->x * p_quaternion->x;
-		float l_qxy = p_quaternion->x * p_quaternion->y;
-		float l_qxz = p_quaternion->x * p_quaternion->z;
-		float l_qxw = p_quaternion->x * p_quaternion->w;
-
-		float l_qyy = p_quaternion->y * p_quaternion->y;
-		float l_qyz = p_quaternion->y * p_quaternion->z;
-		float l_qyw = p_quaternion->y * p_quaternion->w;
-
-		float l_qzz = p_quaternion->z * p_quaternion->z;
-		float l_qzw = p_quaternion->z * p_quaternion->w;
-
-		//RIGHT
-		out_right->x = 1 - (2 * l_qyy) - (2 * l_qzz);
-		out_right->y = (2 * l_qxy) + (2 * l_qzw);
-		out_right->z = (2 * l_qxz) - (2 * l_qyw);
-		Vector3f_normalize(out_right);
-
-		//UP
-		out_up->x = (2 * l_qxy) - (2 * l_qzw);
-		out_up->y = 1 - (2 * l_qxx) - (2 * l_qzz);
-		out_up->z = (2 * l_qyz) + (2 * l_qxw);
-		Vector3f_normalize(out_up);
-
-		//Forward
-		out_forward->x = (2 * l_qxz) + (2 * l_qyw);
-		out_forward->y = (2 * l_qyz) - (2 * l_qxw);
-		out_forward->z = 1 - (2 * l_qxx) - (2 * l_qyy);
-		Vector3f_normalize(out_forward);
-	};
-	*/
 }
