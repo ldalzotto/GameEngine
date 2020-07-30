@@ -10,6 +10,12 @@ namespace _GameEngine::_Math
 	struct Vector4f;
 }
 
+namespace _MathV2
+{
+	template <typename T>
+	struct Quaternion;
+}
+
 namespace _GameEngine::_Math
 {
 	void Matrix4x4f_right(Matrix4x4f* p_matrix, Vector4f* p_out);
@@ -22,7 +28,7 @@ namespace _GameEngine::_Math
 
 	void Matrixf4x4_build(Matrix3x3f* p_matrix, Matrix4x4f* p_out);
 
-	void Matrif4x4_buildTRS(Vector3f* p_position, Quaternionf* p_quaternion, Vector3f* p_scale, Matrix4x4f* out_TRS);
+	void Matrif4x4_buildTRS(Vector3f* p_position, _MathV2::Quaternion<float>& p_quaternion, Vector3f* p_scale, Matrix4x4f* out_TRS);
 	void Matrif4x4_buildTRSV2(Vector3f* p_position, Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Vector3f* p_scale, Matrix4x4f* out_TRS);
 
 	void Matrixf4x4_buildTranslationMatrix(Vector3f* p_translation, Matrix4x4f* p_out);

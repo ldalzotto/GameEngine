@@ -5,7 +5,7 @@
 #include "Math/Matrix/Matrix.h"
 #include "Math/Vector/Vector.h"
 #include "Math/Vector/VectorMath.h"
-#include "Math/Quaternion/QuaternionMath.h"
+#include "v2/Quaternion/QuaternionMath.hpp"
 
 namespace _GameEngine::_Math
 {
@@ -64,7 +64,7 @@ namespace _GameEngine::_Math
 		p_out->_33 = 1.0f;
 	};
 
-	void Matrif4x4_buildTRS(Vector3f* p_position, Quaternionf* p_quaternion, Vector3f* p_scale, Matrix4x4f* out_TRS)
+	void Matrif4x4_buildTRS(Vector3f* p_position, _MathV2::Quaternion<float>& p_quaternion, Vector3f* p_scale, Matrix4x4f* out_TRS)
 	{
 		out_TRS->_03 = 0.0f;
 		out_TRS->_13 = 0.0f;
@@ -73,10 +73,8 @@ namespace _GameEngine::_Math
 
 		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
 
-		Vector3f l_right, l_up, l_forward;
-		Quaternion_extractAxis(p_quaternion, &l_right, &l_up, &l_forward);
-
-		Matrixf4x4_buildRotationMatrixV2(&l_right, &l_up, &l_forward, out_TRS);
+		_MathV2::Matrix3x3<float> l_axis = _MathV2::QuaternionM::extractAxis(p_quaternion);
+		Matrixf4x4_buildRotationMatrixV2((Vector3f*)l_axis.right(), (Vector3f*)l_axis.up(), (Vector3f*)l_axis.forward(), out_TRS);
 		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
 	};
 

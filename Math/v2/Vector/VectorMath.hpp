@@ -7,7 +7,7 @@ namespace _MathV2
 	struct VectorM
 	{
 		template <typename T>
-		inline static inline Vector<3, T> build(T p_x, T p_y, T p_z)
+		inline static Vector<3, T> build(T p_x, T p_y, T p_z)
 		{
 			return Vector<3, T>{p_x, p_y, p_z};
 		};

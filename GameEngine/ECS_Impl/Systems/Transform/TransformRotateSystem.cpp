@@ -14,8 +14,8 @@
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 
-#include "Math/Quaternion/Quaternion.h"
-#include "Math/Quaternion/QuaternionMath.h"
+#include "v2/Quaternion/QuaternionMath.hpp"
+
 
 namespace _GameEngine::_ECS
 {
@@ -86,12 +86,16 @@ namespace _GameEngine::_ECS
 		_Core::VectorIteratorT<TransformRotateOperation> l_operations = _Core::VectorT_buildIterator(&l_transformRotateSystem->TransformRotateOperations);
 		while (_Core::VectorIteratorT_moveNext(&l_operations))
 		{
-			_Math::Quaternionf l_newLocalRotation;
-			_Math::Quaternion_rotateAround((_Math::Quaternionf*)&l_operations.Current->TransformComponent->Transform.LocalRotation, 
-					&l_operations.Current->TransformRotate->Axis, 
-					l_operations.Current->TransformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime, &l_newLocalRotation);
+			_MathV2::Quaternion<float> l_newLocalRotation =
+			_MathV2::QuaternionM::mul(
+				l_operations.Current->TransformComponent->Transform.LocalRotation,
+				_MathV2::QuaternionM::rotateAround(
+					*(_MathV2::Vector3<float>*) & l_operations.Current->TransformRotate->Axis,
+					l_operations.Current->TransformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime
+				)
+			);
 
-			_Math::Transform_setLocalRotation(&l_operations.Current->TransformComponent->Transform, *(_MathV2::Quaternion<float>*)&l_newLocalRotation);
+			_Math::Transform_setLocalRotation(&l_operations.Current->TransformComponent->Transform, l_newLocalRotation);
 		}
 	};
 

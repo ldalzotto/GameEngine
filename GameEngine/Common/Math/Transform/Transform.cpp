@@ -223,7 +223,7 @@ namespace _GameEngine::_Math
 		if (p_transform->MatricesMustBeRecalculated)
 		{
 			{
-				_Math::Matrif4x4_buildTRS((_Math::Vector3f*)&p_transform->LocalPosition, (_Math::Quaternionf*) & p_transform->LocalRotation, (_Math::Vector3f*)&p_transform->LocalScale, &p_transform->LocalToWorldMatrix);
+				_Math::Matrif4x4_buildTRS((_Math::Vector3f*)&p_transform->LocalPosition, p_transform->LocalRotation, (_Math::Vector3f*)&p_transform->LocalScale, &p_transform->LocalToWorldMatrix);
 
 				if (p_transform->Parent)
 				{
