@@ -1,5 +1,7 @@
 #include "Quaternion.hpp"
 
+#include "Functional/Equals/Equals.hpp"
+
 namespace _MathV2
 {
 	bool Quaternion_Equals(const Quaternion<float>& p_left, const Quaternion<float>& p_right)

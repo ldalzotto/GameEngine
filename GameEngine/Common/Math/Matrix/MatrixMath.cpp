@@ -5,7 +5,9 @@
 #include "Math/Matrix/Matrix.h"
 #include "Math/Vector/Vector.h"
 #include "Math/Vector/VectorMath.h"
+#include "v2/Vector/VectorMath.hpp"
 #include "v2/Quaternion/QuaternionMath.hpp"
+#include "v2/Matrix/MatrixMath.hpp"
 
 namespace _GameEngine::_Math
 {
@@ -74,7 +76,7 @@ namespace _GameEngine::_Math
 		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
 
 		_MathV2::Matrix3x3<float> l_axis = _MathV2::QuaternionM::extractAxis(p_quaternion);
-		Matrixf4x4_buildRotationMatrixV2((Vector3f*)&l_axis.right(), (Vector3f*)&l_axis.up(), (Vector3f*)&l_axis.forward(), out_TRS);
+		Matrixf4x4_buildRotationMatrixV2((Vector3f*)(&_MathV2::MatrixM::right(l_axis)), (Vector3f*)(&_MathV2::MatrixM::up(l_axis)), (Vector3f*)(&_MathV2::MatrixM::forward(l_axis)), out_TRS);
 		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
 	};
 

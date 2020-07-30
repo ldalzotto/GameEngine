@@ -1,9 +1,13 @@
 #pragma once
 
 #include "Quaternion.hpp"
+#include "RQuaternion.h"
+#include "v2/Vector/Vector.hpp"
+#include "v2/Matrix/Matrix.hpp"
 
 namespace _MathV2
 {
+	 
 	struct QuaternionM
 	{
 		template <typename T>
@@ -91,9 +95,9 @@ namespace _MathV2
 			return l_out;
 		};
 		template <typename T>
-		inline static Matrix3x3<float> extractAxis(const Quaternion<T>& p_quat)
+		inline static Matrix3x3<T> extractAxis(const Quaternion<T>& p_quat)
 		{
-			Matrix3x3<float> l_out;
+			Matrix3x3<T> l_out;
 			RQuaternion_extractAxis((T*)(&p_quat), l_out.Points);
 			return l_out;
 		};

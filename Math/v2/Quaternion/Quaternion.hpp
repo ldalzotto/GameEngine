@@ -1,11 +1,5 @@
 #pragma once
 
-#include "Functional/Equals/Equals.hpp"
-
-#include "v2/Vector/Vector.hpp"
-#include "v2/Matrix/Matrix.hpp"
-#include "RQuaternion.h"
-
 namespace _MathV2
 {
 	template <typename T>

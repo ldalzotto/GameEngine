@@ -1,5 +1,7 @@
 #include "Vector.hpp"
 
+#include "RVector.h"
+
 namespace _MathV2
 {
 	const Vector3<float> RIGHT = { RIGHT_arr[0], RIGHT_arr[1], RIGHT_arr[2] };

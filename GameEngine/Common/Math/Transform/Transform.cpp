@@ -2,8 +2,9 @@
 
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/Vector.h"
-#include "v2/Matrix/Matrix.hpp"
+#include "v2/Vector/RVector.h"
 #include "v2/Vector/VectorMath.hpp"
+#include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Quaternion/QuaternionMath.hpp"
 
 namespace _GameEngine::_Math
@@ -145,7 +146,7 @@ namespace _GameEngine::_Math
 		_Math::Matrix4x4f_up(&l_localToWorldMatrix, (_Math::Vector3f*) &l_up);
 		_Math::Matrix4x4f_forward(&l_localToWorldMatrix, (_Math::Vector3f*) &l_forward);
 		
-		return QuaternionM::fromAxis(Matrix3x3<float>::build(VectorM::normalize(l_right), VectorM::normalize(l_up), VectorM::normalize(l_forward)));
+		return QuaternionM::fromAxis(_MathV2::MatrixM::build(VectorM::normalize(l_right), VectorM::normalize(l_up), VectorM::normalize(l_forward)));
 	};
 
 	Vector3<float> Transform_getWorldScale(Transform* p_transform)

@@ -1,12 +1,7 @@
 #pragma once
 
-#include "v2/Vector/RVector.h"
-
 namespace _MathV2
 {
-	template<class>
-	struct Quaternion;
-
 	template <int N, typename T>
 	struct Vector {
 
