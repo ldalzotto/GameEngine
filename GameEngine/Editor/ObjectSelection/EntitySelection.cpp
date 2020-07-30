@@ -191,7 +191,8 @@ namespace _GameEngineEditor
 			l_mouseDelta_worldPosition.Begin = l_beginHit.HitPoint;
 		}
 
-		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box, _Math::Transform_getLocalToWorldMatrix_ref(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform), true);
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box, 
+			(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform), true);
 
 		return l_mouseDelta_worldPosition;
 	}
@@ -288,7 +289,8 @@ namespace _GameEngineEditor
 		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
 		_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_selectedEntity);
 		_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
-		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, _Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, 
+			(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
 	}
 
 	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, _Math::Vector4f* p_color)

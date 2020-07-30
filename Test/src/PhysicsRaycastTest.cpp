@@ -341,7 +341,8 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 			while (_Core::VectorIteratorT_moveNext(&l_hitsIt))
 			{
 				_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hitsIt.Current->HitPoint, &l_color);
-				_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hitsIt.Current->Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hitsIt.Current->Collider->Transform), false, &l_color);
+				_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hitsIt.Current->Collider->Box, 
+					(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(l_hitsIt.Current->Collider->Transform), false, &l_color);
 			}
 		}
 		_Core::VectorT_free(&l_hits);
@@ -359,7 +360,8 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 		if (_Physics::RayCast(l_interface->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
 		{
 			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hit.HitPoint);
-			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hit.Collider->Box, _Math::Transform_getLocalToWorldMatrix_ref(l_hit.Collider->Transform), false);
+			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hit.Collider->Box, 
+				(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(l_hit.Collider->Transform), false);
 		}
 
 	}

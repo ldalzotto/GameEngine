@@ -1,4 +1,4 @@
-#include "Matrix.h"
+#include "RMatrix.h"
 
 #include <string.h>
 

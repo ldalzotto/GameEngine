@@ -71,11 +71,11 @@ namespace _GameEngine::_Physics
 		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
 			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
-			_Math::Matrix4x4f l_worldToLocal = _Math::Transform_getWorldToLocalMatrix(l_boxCollider->Transform);
+			_MathV2::Matrix4x4<float> l_worldToLocal = _Math::Transform_getWorldToLocalMatrix(l_boxCollider->Transform);
 
 			// We project the ray to the box local space, to perform an AABB test.
 			_Math::Segment l_localProjectedSegment;
-			Segment_mul(&l_segment, &l_worldToLocal, &l_localProjectedSegment);
+			Segment_mul(&l_segment, (_Math::Matrix4x4f*)&l_worldToLocal, &l_localProjectedSegment);
 
 			_Math::Vector3f l_intersectionPointLocal;
 			if (_Math::Intersection_AABB_Ray(l_boxCollider->Box, &l_localProjectedSegment, &l_intersectionPointLocal))
@@ -83,8 +83,8 @@ namespace _GameEngine::_Physics
 				RaycastHit hit{};
 
 				// The intersection point is then projected back to world space.
-				_Math::Matrix4x4f* l_localToWorld = _Math::Transform_getLocalToWorldMatrix_ref(l_boxCollider->Transform);
-				_Math::Matrixf4x4_mul(l_localToWorld, &l_intersectionPointLocal, &hit.HitPoint);
+				_MathV2::Matrix4x4<float>* l_localToWorld = _Math::Transform_getLocalToWorldMatrix_ref(l_boxCollider->Transform);
+				_Math::Matrixf4x4_mul((_Math::Matrix4x4f*)l_localToWorld, &l_intersectionPointLocal, &hit.HitPoint);
 				hit.Collider = l_boxCollider;
 				_Core::VectorT_pushBack(out_intersectionPoints, &hit);
 			}

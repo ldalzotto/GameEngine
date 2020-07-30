@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Matrix/Matrix.h"
+#include "v2/Matrix/Matrix.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "v2/Quaternion/Quaternion.hpp"
 
@@ -21,7 +21,7 @@ namespace _GameEngine::_Math
 		_MathV2::Vector3<float> LocalScale;
 
 		/** This matrix will always be relative to the top level Transform (a Transform without parent). */
-		_Math::Matrix4x4f LocalToWorldMatrix;
+		_MathV2::Matrix4x4<float> LocalToWorldMatrix;
 	};
 
 	void Transform_addChild(Transform* p_transform, Transform* p_newChild);
@@ -36,12 +36,12 @@ namespace _GameEngine::_Math
 	void Transform_setWorldPosition(Transform* p_transform, _MathV2::Vector3<float>& p_worldPosition);
 	void Transform_addToWorldPosition(Transform* p_transform, _MathV2::Vector3<float>& p_worldPosition_delta);
 
-	_Math::Matrix4x4f Transform_getLocalToWorldMatrix(Transform* p_transform);
-	_Math::Matrix4x4f* Transform_getLocalToWorldMatrix_ref(Transform* p_transform);
+	_MathV2::Matrix4x4<float> Transform_getLocalToWorldMatrix(Transform* p_transform);
+	_MathV2::Matrix4x4<float>* Transform_getLocalToWorldMatrix_ref(Transform* p_transform);
 
-	_Math::Matrix4x4f Transform_getWorldToLocalMatrix(Transform* p_transform);
+	_MathV2::Matrix4x4<float> Transform_getWorldToLocalMatrix(Transform* p_transform);
 
-	_Math::Matrix4x4f Transform_calculateMatrixToProjectFromTransformToAnother(Transform* p_source, Transform* p_target);
+	_MathV2::Matrix4x4<float> Transform_calculateMatrixToProjectFromTransformToAnother(Transform* p_source, Transform* p_target);
 
 	_MathV2::Vector3<float> Transform_getWorldPosition(Transform* p_transform);
 	_MathV2::Quaternion<float> Transform_getWorldRotation(Transform* p_transform);

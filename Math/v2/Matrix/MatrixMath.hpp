@@ -1,7 +1,7 @@
 #pragma once
 
 #include "v2/Matrix/Matrix.hpp"
-#include "v2/Matrix/Matrix.h"
+#include "v2/Matrix/RMatrix.h"
 
 namespace _MathV2
 {
@@ -29,6 +29,23 @@ namespace _MathV2
 		static Vector3<T> forward(const Matrix<3, 3, T>& p_mat)
 		{
 			return *(Vector3<T>*)(p_mat.Points[2]);
+		};
+
+
+		template <typename T>
+		static Vector4<T> right(const Matrix<4, 4, T>& p_mat)
+		{
+			return *(Vector4<T>*)(p_mat.Points[0]);
+		};
+		template <typename T>
+		static Vector4<T> up(const Matrix<4, 4, T>& p_mat)
+		{
+			return *(Vector4<T>*)(p_mat.Points[1]);
+		};
+		template <typename T>
+		static Vector4<T> forward(const Matrix<4, 4, T>& p_mat)
+		{
+			return *(Vector4<T>*)(p_mat.Points[2]);
 		};
 	};
 }
