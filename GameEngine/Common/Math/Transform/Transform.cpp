@@ -65,7 +65,7 @@ namespace _GameEngine::_Math
 
 	void Transform_setLocalRotation(Transform* p_transform, const Quaternion<float>& p_localRotation)
 	{
-		if (!Quaternion_Equals(p_transform->LocalRotation, p_localRotation))
+		if (!QuaternionM::equals(p_transform->LocalRotation, p_localRotation))
 		{
 			Transform_markMatricsForRecalculation(p_transform);
 			p_transform->LocalRotation = p_localRotation;
@@ -119,7 +119,7 @@ namespace _GameEngine::_Math
 	};
 
 	_MathV2::Matrix4x4<float> Transform_calculateMatrixToProjectFromTransformToAnother(Transform* p_source, Transform* p_target)
-	{		
+	{
 		return _MathV2::MatrixM::mul(Transform_getLocalToWorldMatrix(p_source), Transform_getWorldToLocalMatrix(p_target));
 	};
 
@@ -129,19 +129,20 @@ namespace _GameEngine::_Math
 		_Math::Vector4f l_worldPosition4f;
 		_Math::Matrixf4x4_extractTranslation((Matrix4x4f*)&l_localToWorldMatrix, &l_worldPosition4f);
 
-		return *(Vector3<float>*)&l_worldPosition4f;
+		return *(Vector3<float>*) & l_worldPosition4f;
 	};
 
 	Quaternion<float> Transform_getWorldRotation(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);
-		Vector3<float> l_right, l_up, l_forward;
+		Matrix4x4<float> l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);
 		
-		_Math::Matrix4x4f_right((Matrix4x4f*)&l_localToWorldMatrix, (_Math::Vector3f*)&l_right);
-		_Math::Matrix4x4f_up((Matrix4x4f*)&l_localToWorldMatrix, (_Math::Vector3f*) &l_up);
-		_Math::Matrix4x4f_forward((Matrix4x4f*)&l_localToWorldMatrix, (_Math::Vector3f*) &l_forward);
-		
-		return QuaternionM::fromAxis(_MathV2::MatrixM::build(VectorM::normalize(l_right), VectorM::normalize(l_up), VectorM::normalize(l_forward)));
+		return QuaternionM::fromAxis(
+			MatrixM::build(
+				VectorM::normalize(VectorM::cast(MatrixM::right(l_localToWorldMatrix))),
+				VectorM::normalize(VectorM::cast(MatrixM::up(l_localToWorldMatrix))),
+				VectorM::normalize(VectorM::cast(MatrixM::forward(l_localToWorldMatrix)))
+			)
+		);
 	};
 
 	Vector3<float> Transform_getWorldScale(Transform* p_transform)
@@ -158,50 +159,32 @@ namespace _GameEngine::_Math
 
 	Vector3<float> Transform_getRight(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorld = Transform_getLocalToWorldMatrix(p_transform);
-		_Math::Vector4f l_rightLocal4f;
-		_Math::Matrix4x4f_right((Matrix4x4f*)&l_localToWorld, &l_rightLocal4f);
-		return VectorM::normalize(*(Vector3<float>*)(&l_rightLocal4f));
+		return VectorM::normalize(VectorM::cast(MatrixM::right(Transform_getLocalToWorldMatrix(p_transform))));
 	};
 
 	Vector3<float> Transform_getUp(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorld = Transform_getLocalToWorldMatrix(p_transform);
-		_Math::Vector4f l_upLocal4f;
-		_Math::Matrix4x4f_up((Matrix4x4f*)&l_localToWorld, &l_upLocal4f);
-		return VectorM::normalize(*(Vector3<float>*)(&l_upLocal4f));
+		return VectorM::normalize(VectorM::cast(MatrixM::up(Transform_getLocalToWorldMatrix(p_transform))));
 	};
 
 	Vector3<float> Transform_getForward(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorld = Transform_getLocalToWorldMatrix(p_transform);
-		_Math::Vector4f l_forwardLocal4f;
-		_Math::Matrix4x4f_forward((Matrix4x4f*)&l_localToWorld, &l_forwardLocal4f);
-		return VectorM::normalize(*(Vector3<float>*)(&l_forwardLocal4f));
+		return VectorM::normalize(VectorM::cast(MatrixM::forward(Transform_getLocalToWorldMatrix(p_transform))));
 	};
 
 	Vector3<float> Transform_getRight_worldSpace(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorld = Transform_getWorldToLocalMatrix(p_transform);
-		_Math::Vector4f l_rightLocal4f;
-		_Math::Matrix4x4f_right((Matrix4x4f*)&l_localToWorld, &l_rightLocal4f);
-		return VectorM::normalize(*(Vector3<float>*)(&l_rightLocal4f));
+		return VectorM::normalize(VectorM::cast(MatrixM::right(Transform_getWorldToLocalMatrix(p_transform))));
 	};
 
 	Vector3<float> Transform_getUp_worldSpace(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorld = Transform_getWorldToLocalMatrix(p_transform);
-		_Math::Vector4f l_upLocal4f;
-		_Math::Matrix4x4f_up((Matrix4x4f*)&l_localToWorld, &l_upLocal4f);
-		return VectorM::normalize(*(Vector3<float>*)(&l_upLocal4f));
+		return VectorM::normalize(VectorM::cast(MatrixM::up(Transform_getWorldToLocalMatrix(p_transform))));
 	};
 
 	Vector3<float> Transform_getForward_worldSpace(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorld = Transform_getWorldToLocalMatrix(p_transform);
-		_Math::Vector4f l_forwardLocal4f;
-		_Math::Matrix4x4f_forward((Matrix4x4f*)&l_localToWorld, &l_forwardLocal4f);
-		return VectorM::normalize(*(Vector3<float>*)(&l_forwardLocal4f));
+		return VectorM::normalize(VectorM::cast(MatrixM::forward(Transform_getWorldToLocalMatrix(p_transform))));
 	};
 
 	void Transform_markMatricsForRecalculation(Transform* p_transform)
@@ -219,13 +202,17 @@ namespace _GameEngine::_Math
 		if (p_transform->MatricesMustBeRecalculated)
 		{
 			{
-				_Math::Matrif4x4_buildTRS((_Math::Vector3f*)&p_transform->LocalPosition, p_transform->LocalRotation, (_Math::Vector3f*)&p_transform->LocalScale, (Matrix4x4f*)&p_transform->LocalToWorldMatrix);
+				p_transform->LocalToWorldMatrix =
+					MatrixM::buildTRS(
+						p_transform->LocalPosition,
+						p_transform->LocalRotation,
+						p_transform->LocalScale
+					);
 
 				if (p_transform->Parent)
 				{
-					 p_transform->LocalToWorldMatrix = _MathV2::MatrixM::mul(Transform_getLocalToWorldMatrix(p_transform->Parent), p_transform->LocalToWorldMatrix);
+					p_transform->LocalToWorldMatrix = MatrixM::mul(Transform_getLocalToWorldMatrix(p_transform->Parent), p_transform->LocalToWorldMatrix);
 				}
-
 			}
 
 			p_transform->MatricesMustBeRecalculated = false;

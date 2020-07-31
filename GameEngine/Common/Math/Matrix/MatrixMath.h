@@ -27,13 +27,6 @@ namespace _GameEngine::_Math
 
 	void Matrixf4x4_build(Matrix3x3f* p_matrix, Matrix4x4f* p_out);
 
-	void Matrif4x4_buildTRS(Vector3f* p_position, _MathV2::Quaternion<float>& p_quaternion, Vector3f* p_scale, Matrix4x4f* out_TRS);
-	void Matrif4x4_buildTRSV2(Vector3f* p_position, Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Vector3f* p_scale, Matrix4x4f* out_TRS);
-
-	void Matrixf4x4_buildTranslationMatrix(Vector3f* p_translation, Matrix4x4f* p_out);
-	void Matrixf4x4_buildRotationMatrixV2(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Matrix4x4f* p_out);
-	void Matrixf4x4_buildScaleMatrix(Vector3f* p_scale, Matrix4x4f* p_out);
-
 	void Matrixf4x4_extractTranslation(Matrix4x4f* p_mat, Vector4f* out_translation);
 	void Matrixf4x4_extractScale(Matrix4x4f* p_mat, Vector4f* out_scale);
 

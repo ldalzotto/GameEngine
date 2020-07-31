@@ -17,37 +17,37 @@ namespace _MathV2
 		};
 
 		template <typename T>
-		inline static Vector3<T>* right_ref(const Matrix<3, 3, T>& p_mat)
+		inline static Vector3<T> right(const Matrix<3, 3, T>& p_mat)
 		{
-			return (Vector3<T>*)(p_mat.Points[0]);
+			return *(Vector3<T>*)(p_mat.Points[0]);
 		};
 		template <typename T>
-		inline static Vector3<T>* up_ref(const Matrix<3, 3, T>& p_mat)
+		inline static Vector3<T> up(const Matrix<3, 3, T>& p_mat)
 		{
-			return (Vector3<T>*)(p_mat.Points[1]);
-		};
-
-		template <typename T>
-		inline static Vector3<T>* forward_ref(const Matrix<3, 3, T>& p_mat)
-		{
-			return (Vector3<T>*)(p_mat.Points[2]);
+			return *(Vector3<T>*)(p_mat.Points[1]);
 		};
 
+		template <typename T>
+		inline static Vector3<T> forward(const Matrix<3, 3, T>& p_mat)
+		{
+			return *(Vector3<T>*)(p_mat.Points[2]);
+		};
+
 
 		template <typename T>
-		inline static Vector4<T>* right_ref(const Matrix<4, 4, T>& p_mat)
+		inline static Vector4<T> right(const Matrix<4, 4, T>& p_mat)
 		{
-			return (Vector4<T>*)(p_mat.Points[0]);
+			return *(Vector4<T>*)(p_mat.Points[0]);
 		};
 		template <typename T>
-		inline static Vector4<T>* up_ref(const Matrix<4, 4, T>& p_mat)
+		inline static Vector4<T> up(const Matrix<4, 4, T>& p_mat)
 		{
-			return (Vector4<T>*)(p_mat.Points[1]);
+			return *(Vector4<T>*)(p_mat.Points[1]);
 		};
 		template <typename T>
-		inline static Vector4<T>* forward_ref(const Matrix<4, 4, T>& p_mat)
+		inline static Vector4<T> forward(const Matrix<4, 4, T>& p_mat)
 		{
-			return (Vector4<T>*)(p_mat.Points[2]);
+			return *(Vector4<T>*)(p_mat.Points[2]);
 		};
 		template <typename T>
 		inline static void setColumn(const Matrix<4, 4, T>& p_mat, int p_colIndex, const Vector<4, T>& p_col)
@@ -124,6 +124,14 @@ namespace _MathV2
 		{
 			Matrix4x4<T> l_return;
 			RMatrix_4x4_buildTRS((T*)(&p_position), (T*)(&p_quaternion), (T*)(&p_scale), l_return.Points);
+			return l_return;
+		};
+
+		template <typename T>
+		inline static Matrix4x4<T> buildTRS(Vector3<T>& p_position, Vector3<T>& p_right, Vector3<T>& p_up, Vector3<T>& p_forward, Vector3<T>& p_scale)
+		{
+			Matrix4x4<T> l_return;
+			RMatrix_4x4_buildTRS((T*)(&p_position), (T*)(&p_right), (T*)(&p_up), (T*)(&p_forward), (T*)(&p_scale), l_return.Points);
 			return l_return;
 		};
 	};

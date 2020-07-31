@@ -19,4 +19,5 @@ namespace _MathV2
 	void RMatrix_4x4_buildScaleMatrix(float p_matrix[4][4], const float p_scale[3]);
 
 	void RMatrix_4x4_buildTRS(const float p_position[3], const  float p_quaternion[4], const  float p_scale[3], float out_TRS[4][4]);
+	void RMatrix_4x4_buildTRS(const float p_position[3], const float p_right[3], const float p_up[3], const float p_forward[3], const  float p_scale[3], float out_TRS[4][4]);
 }

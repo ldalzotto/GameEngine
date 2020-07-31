@@ -66,32 +66,6 @@ namespace _GameEngine::_Math
 		p_out->_33 = 1.0f;
 	};
 
-	void Matrif4x4_buildTRS(Vector3f* p_position, _MathV2::Quaternion<float>& p_quaternion, Vector3f* p_scale, Matrix4x4f* out_TRS)
-	{
-		out_TRS->_03 = 0.0f;
-		out_TRS->_13 = 0.0f;
-		out_TRS->_23 = 0.0f;
-		out_TRS->_33 = 1.0f;
-
-		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
-
-		_MathV2::Matrix3x3<float> l_axis = _MathV2::QuaternionM::extractAxis(p_quaternion);
-		Matrixf4x4_buildRotationMatrixV2((Vector3f*)(_MathV2::MatrixM::right_ref(l_axis)), (Vector3f*)(_MathV2::MatrixM::up_ref(l_axis)), (Vector3f*)(_MathV2::MatrixM::forward_ref(l_axis)), out_TRS);
-		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
-	};
-
-
-	void Matrif4x4_buildTRSV2(Vector3f* p_position, Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Vector3f* p_scale, Matrix4x4f* out_TRS)
-	{
-		out_TRS->_03 = 0.0f;
-		out_TRS->_13 = 0.0f;
-		out_TRS->_23 = 0.0f;
-		out_TRS->_33 = 1.0f;
-
-		Matrixf4x4_buildTranslationMatrix(p_position, out_TRS);
-		Matrixf4x4_buildRotationMatrixV2(p_right, p_up, p_forward, out_TRS);
-		Matrixf4x4_buildScaleMatrix(p_scale, out_TRS);
-	};
 
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, float p_value, Matrix4x4f* out)
 	{
@@ -144,33 +118,6 @@ namespace _GameEngine::_Math
 		Matrixf4x4_mul(p_matrix, &l_vector4f, &l_out4f);
 
 		*out = { l_out4f.x, l_out4f.y, l_out4f.z };
-	};
-
-	void Matrixf4x4_buildTranslationMatrix(Vector3f* p_translation, Matrix4x4f* p_out)
-	{
-		Matrix4x4f_set_c3(p_out, p_translation);
-	}
-
-	void Matrixf4x4_buildRotationMatrixV2(Vector3f* p_right, Vector3f* p_up, Vector3f* p_forward, Matrix4x4f* p_out)
-	{
-		Matrix4x4f_set_c0(p_out, p_right);
-		Matrix4x4f_set_c1(p_out, p_up);
-		Matrix4x4f_set_c2(p_out, p_forward);
-	};
-
-	void Matrixf4x4_buildScaleMatrix(Vector3f* p_scale, Matrix4x4f* p_out)
-	{
-		p_out->_00 *= p_scale->x;
-		p_out->_01 *= p_scale->x;
-		p_out->_02 *= p_scale->x;
-
-		p_out->_10 *= p_scale->y;
-		p_out->_11 *= p_scale->y;
-		p_out->_12 *= p_scale->y;
-
-		p_out->_20 *= p_scale->z;
-		p_out->_21 *= p_scale->z;
-		p_out->_22 *= p_scale->z;
 	};
 
 	void Matrixf4x4_extractTranslation(Matrix4x4f* p_mat, Vector4f* out_translation)
@@ -234,8 +181,11 @@ namespace _GameEngine::_Math
 			Vector3f_normalize(&l_up);
 		}
 
-		Vector3f l_scale{ 1.0f, 1.0f, 1.0f };
-		Matrif4x4_buildTRSV2(p_origin, &l_right, &l_up, &l_forward, &l_scale, p_out);
+		*p_out = *(_Math::Matrix4x4f*) & _MathV2::MatrixM::buildTRS(
+			*(_MathV2::Vector3<float>*)(p_origin),
+			*(_MathV2::Vector3<float>*) & l_right, *(_MathV2::Vector3<float>*) & l_up, *(_MathV2::Vector3<float>*) & l_forward,
+			_MathV2::Vector3<float>{1.0f, 1.0f, 1.0f}
+		);
 	};
 
 	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out)

@@ -214,4 +214,18 @@ namespace _MathV2
 		RMatrix_4x4_buildRotationMatrix(out_TRS, l_axis);
 		RMatrix_4x4_buildScaleMatrix(out_TRS, p_scale);
 	};
+
+	void RMatrix_4x4_buildTRS(const float p_position[3], const float p_right[3], const float p_up[3], const float p_forward[3], const  float p_scale[3], float out_TRS[4][4])
+	{
+		out_TRS[0][3] = 0.0f;
+		out_TRS[1][3] = 0.0f;
+		out_TRS[2][3] = 0.0f;
+		out_TRS[3][3] = 1.0f;
+
+		RMatrix_4x4_buildTranslationMatrix(out_TRS, p_position);
+		float l_axis[3][3];
+		RMatrix_3x3_buildFromColumn(p_right, p_up, p_forward, l_axis);
+		RMatrix_4x4_buildRotationMatrix(out_TRS, l_axis);
+		RMatrix_4x4_buildScaleMatrix(out_TRS, p_scale);
+	};
 }
