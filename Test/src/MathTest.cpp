@@ -46,9 +46,13 @@ int main()
 		// float l_angle = glm::orientedAngle(glm::normalize(glm::vec3{ 0.0f, 0.681971550f, 0.523248672f }) , glm::normalize(glm::vec3{ 0.0f, 0.706513405f, 0.522750854f }));
 	
 
-		_MathV2::Matrix4x4<float> l_start = _MathV2::Matrix4x4f_Identity;
-		_MathV2::Vector3<float> l_localPosition = { 1.0f, 2.0f, 3.0f };
-		_MathV2::MatrixM::buildTranslationMatrix(l_start, l_localPosition);
+		_Math::Matrix4x4f l_testTrs;
+		_Math::Vector3f l_position = { 1.0f, 2.0f, 3.0f };
+		_Math::Vector3f l_scale = { 2.0f, 1.0f, 3.0f };
+		_MathV2::Quaternion<float> l_quat = { 1.0f, 0.23f, 0.17f, 0.84f };
+		_Math::Matrif4x4_buildTRS(&l_position, l_quat, &l_scale, &l_testTrs);
+		_MathV2::Matrix4x4<float> l_trs = _MathV2::MatrixM::buildTRS(_MathV2::Vector3<float>{1.0f, 2.0f, 3.0f}, _MathV2::Quaternion<float>{1.0f, 0.23f, 0.17f, 0.84f}, _MathV2::Vector3<float>{2.0f, 1.0f, 3.0f});
+
 		int zd = 0;
 	}
 	return 0;

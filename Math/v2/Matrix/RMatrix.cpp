@@ -1,49 +1,85 @@
 #include "RMatrix.h"
 
+#include "v2/Vector/RVector.h"
+#include "v2/Quaternion/RQuaternion.h"
 #include <string.h>
 
 namespace _MathV2
 {
+	struct RMatrix
+	{
+		char* Memory;
+		short int ColumnCount;
+		short int LineCount;
+	};
+
+	inline RMatrix RMatrix_build(const void* p_rawPointer, const short int p_columnCount, const short int p_lineCount)
+	{
+		return
+			RMatrix{
+			(char*)p_rawPointer,
+			p_columnCount,
+			p_lineCount
+		};
+	};
+
 	/// GENERIC MULTIPLICATIONS
 	inline float* RMatrix_float_getAddresFromRaw(const float* p_mat, int p_columnSize, int p_column, int p_line)
 	{
 		return	(float*)(((char*)p_mat) + (sizeof(float) * p_columnSize * p_column) + (sizeof(float) * p_line));
 	};
 
-	inline float RMatrix_float_multiplication_line_column(const float* p_left, const float* p_right, const int leftColumnCount, const int leftLineCount,
-		const int rightColumnCount, const int rightLineCount, int p_leftLineIndex, int p_rightColumnIndex)
+	template <typename T>
+	inline float* RMatrix_float_getAddresFromRaw_v2(const RMatrix& p_matrix, int p_column, int p_line)
+	{
+		return	(float*)((p_matrix.Memory) + (sizeof(T) * p_matrix.LineCount * p_column) + (sizeof(T) * p_line));
+	};
+
+	template <typename LEFT_TYPE, typename RIGHT_TYPE>
+	inline float RMatrix_float_multiplication_line_column_v2(const RMatrix& p_left, const RMatrix& p_right, int p_leftLineIndex, int p_rightColumnIndex)
 	{
 		float l_return = 0.0f;
-		for (int i = 0; i < leftColumnCount; i++)
+		for (short int i = 0; i < p_left.ColumnCount; i++)
 		{
-			l_return += (*RMatrix_float_getAddresFromRaw(p_left, leftLineCount, i, p_leftLineIndex) * *RMatrix_float_getAddresFromRaw(p_right, rightLineCount, p_rightColumnIndex, i));
+			l_return += (*RMatrix_float_getAddresFromRaw_v2<LEFT_TYPE>(p_left, i, p_leftLineIndex) * *RMatrix_float_getAddresFromRaw_v2<RIGHT_TYPE>(p_right, p_rightColumnIndex, i));
 		}
 		return l_return;
 	};
 
-	inline void RMatrix_multiplication_matrix_matrix(const float* p_left, const float* p_right, const int leftColumnCount, const int leftLineCount,
-		const int rightColumnCount, const int rightLineCount, float* p_out)
+	template <typename LEFT_TYPE, typename RIGHT_TYPE, typename OUT_TYPE>
+	inline void RMatrix_float_multiplication_matrix_matrix_v2(const RMatrix& p_left, const RMatrix& p_right, RMatrix& p_out)
 	{
-		for (int i = 0; i < leftLineCount; i++)
+		for (int i = 0; i < p_left.LineCount; i++)
 		{
-			for (int j = 0; j < rightColumnCount; j++)
+			for (int j = 0; j < p_right.ColumnCount; j++)
 			{
-				*RMatrix_float_getAddresFromRaw(p_out, leftLineCount, j, i) = RMatrix_float_multiplication_line_column((const float*)p_left, (const float*)p_right,
-					leftColumnCount, leftLineCount, rightColumnCount, rightLineCount, i, j);
+				*RMatrix_float_getAddresFromRaw_v2<OUT_TYPE>(p_out, j, i) = RMatrix_float_multiplication_line_column_v2<LEFT_TYPE, RIGHT_TYPE>(p_left, p_right, i, j);
 			}
 		}
 	}
 
-	void RMatrix_multiplication_matrix_float(const float* p_left, const float p_right, const int leftColumnCount, const int leftLineCount, float* p_out)
+	template <typename LEFT_TYPE, typename RIGHT_TYPE, typename OUT_TYPE>
+	inline void RMatrix_multiplication_matrix_float_v2(const RMatrix& p_left, const RIGHT_TYPE p_right, const RMatrix& p_out)
 	{
-		for (int i = 0; i < leftLineCount; i++)
+		for (int i = 0; i < p_left.LineCount; i++)
 		{
-			for (int j = 0; j < leftColumnCount; j++)
+			for (int j = 0; j < p_left.ColumnCount; j++)
 			{
-				*RMatrix_float_getAddresFromRaw(p_out, leftLineCount, j, i) = *RMatrix_float_getAddresFromRaw(p_left, leftLineCount, j, i) * p_right;
+				*RMatrix_float_getAddresFromRaw_v2<OUT_TYPE>(p_out, j, i) = *RMatrix_float_getAddresFromRaw_v2<LEFT_TYPE>(p_left, j, i) * p_right;
 			}
 		}
 	};
+
+	template <typename DESTINATION_TYPE>
+	inline void RMatrix_copy(const RMatrix& p_destination, const RMatrix& p_source, const short int p_destination_col_index, const short int p_destination_line_index)
+	{
+		for (short int j = 0; j < p_source.ColumnCount; j++)
+		{
+			memcpy(RMatrix_float_getAddresFromRaw_v2<DESTINATION_TYPE>(p_destination, j + p_destination_col_index, p_destination_line_index),
+				   RMatrix_float_getAddresFromRaw_v2<DESTINATION_TYPE>(p_source, j, 0), sizeof(DESTINATION_TYPE) * p_source.LineCount);
+		}
+	};
+
 
 	float RMatrix_3x3det(const float m[4][4], const int p_col, const int p_line)
 	{
@@ -78,9 +114,14 @@ namespace _MathV2
 	}
 	///
 
+	void RMatrix_4x4_copyMatrix3x3(float p_destination[4][4], const float p_source[3][3], const short int p_destination_col_index, const short int p_destination_line_index)
+	{
+		RMatrix_copy<float>(RMatrix_build(p_destination, 4, 4), RMatrix_build(p_source, 3, 3), p_destination_col_index, p_destination_line_index);
+	};
+
 	void RMatrix_4x4_setColumn(const float p_mat[4][4], const int p_columnIndex, const float* p_col, const int p_col_lineCount)
 	{
-		memcpy(RMatrix_float_getAddresFromRaw((const float*)p_mat, 4, p_columnIndex, 0), p_col, sizeof(float) * p_col_lineCount);
+		RMatrix_copy<float>(RMatrix_build((const float*)p_mat, 4, 4), RMatrix_build((const float*)p_col, 1, p_col_lineCount), p_columnIndex, 0);
 	};
 
 	void RMatrix_3x3_buildFromColumn(const float p_col1[3], const float p_col2[3], const float p_col3[3], float p_out[3][3])
@@ -92,17 +133,22 @@ namespace _MathV2
 
 	void RMatrix_4x4_mul_4x4(const float p_left[4][4], const float p_right[4][4], float p_out[4][4])
 	{
-		RMatrix_multiplication_matrix_matrix((const float*)p_left, (const float*)p_right, 4, 4, 4, 4, (float*)p_out);
+		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 4, 4), RMatrix_build((const float*)p_out, 4, 4));
 	};
 
 	void RMatrix_4x4_mul_4(const float p_left[4][4], const float p_right[4], float p_out[4])
 	{
-		RMatrix_multiplication_matrix_matrix((const float*)p_left, (const float*)p_right, 4, 4, 1, 4, (float*)p_out);
+		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 1, 4), RMatrix_build((const float*)p_out, 1, 4));
 	};
 
 	void RMatrix_4x4_mul_1(const float p_left[4][4], const float p_right, float p_out[4])
 	{
-		RMatrix_multiplication_matrix_float((const float*)p_left, p_right, 4, 4, (float*)p_out);
+		RMatrix_multiplication_matrix_float_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), p_right, RMatrix_build((const float*)p_out, 4, 4));
+	};
+
+	void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3])
+	{
+		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_left, 3, 3));
 	};
 
 	void RMatrix_4x4_inv(const float p_matrix[4][4], float p_out[4][4])
@@ -128,11 +174,44 @@ namespace _MathV2
 			p_out[3][3] = RMatrix_3x3det(p_matrix, 3, 3);
 		}
 
-		RMatrix_multiplication_matrix_float((const float*)p_out, 1 / l_det, 4, 4, (float*)p_out);
+		RMatrix_multiplication_matrix_float_v2<float, float, float>(RMatrix_build((const float*)p_out, 4, 4), 1 / l_det, RMatrix_build((const float*)p_out, 4, 4));
 	};
 
-	void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3])
+	void RMatrix_4x4_buildTranslationMatrix(float p_matrix[4][4], const float p_translation[3])
 	{
-		RMatrix_multiplication_matrix_matrix((const float*)p_left, (const float*)p_right, 3, 3, 3, 3, (float*)p_out);
+		RMatrix_4x4_setColumn(p_matrix, 3, p_translation, 3);
+	};
+
+	void RMatrix_4x4_buildRotationMatrix(float p_matrix[4][4], const float p_axis[3][3])
+	{
+		RMatrix_4x4_copyMatrix3x3(p_matrix, p_axis, 0, 0);
+	};
+
+	void RMatrix_4x4_buildRotationMatrix(float p_matrix[4][4], const float p_right[3], const float p_up[3], const float p_forward[3])
+	{
+		RMatrix_4x4_setColumn(p_matrix, 0, p_up, 3);
+		RMatrix_4x4_setColumn(p_matrix, 1, p_forward, 3);
+		RMatrix_4x4_setColumn(p_matrix, 2, p_forward, 3);
+	};
+
+	void RMatrix_4x4_buildScaleMatrix(float p_matrix[4][4], const float p_scale[3])
+	{
+		RVector_3_mul(p_matrix[0], p_scale[0], p_matrix[0]);
+		RVector_3_mul(p_matrix[1], p_scale[1], p_matrix[1]);
+		RVector_3_mul(p_matrix[2], p_scale[2], p_matrix[2]);
+	};
+
+	void RMatrix_4x4_buildTRS(const float p_position[3], const float p_quaternion[4], const  float p_scale[3], float out_TRS[4][4])
+	{
+		out_TRS[0][3] = 0.0f;
+		out_TRS[1][3] = 0.0f;
+		out_TRS[2][3] = 0.0f;
+		out_TRS[3][3] = 1.0f;
+
+		RMatrix_4x4_buildTranslationMatrix(out_TRS, p_position);
+		float l_axis[3][3];
+		RQuaternion_extractAxis(p_quaternion, l_axis);
+		RMatrix_4x4_buildRotationMatrix(out_TRS, l_axis);
+		RMatrix_4x4_buildScaleMatrix(out_TRS, p_scale);
 	};
 }

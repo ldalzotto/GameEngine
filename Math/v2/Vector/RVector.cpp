@@ -9,6 +9,7 @@
 
 namespace _MathV2
 {
+
 	const float RIGHT_arr[3] = { 1.0f, 0.0f, 0.0f };
 	const float UP_arr[3] = { 0.0f, 1.0f, 0.0f };
 	const float FORWARD_arr[3] = { 0.0f, 0.0f, 1.0f };

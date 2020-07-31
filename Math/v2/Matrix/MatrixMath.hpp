@@ -98,21 +98,33 @@ namespace _MathV2
 		template <typename T>
 		inline static void buildTranslationMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_translation)
 		{
-			RMatrix_4x4_setColumn(p_mat.Points, 3, (T*)(&p_translation), 3);
+			RMatrix_4x4_buildTranslationMatrix(p_mat.Points, (T*)(&p_translation));
 		}
 
 		template <typename T>
 		inline static void buildRotationMatrix(Matrix4x4<T>& p_mat, Matrix3x3<T>& p_axis)
 		{
-
+			RMatrix_4x4_buildRotationMatrix(p_mat.Points, p_axis.Points);
 		};
 
 		template <typename T>
-		inline static void buildRotationMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_up, Vector3<T>& p_forward, Vector3<T>& p_out)
+		inline static void buildRotationMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_right, Vector3<T>& p_up, Vector3<T>& p_forward)
 		{
-			RMatrix_4x4_setColumn(p_mat.Points, 0, (T*)(&p_up), 3);
-			RMatrix_4x4_setColumn(p_mat.Points, 1, (T*)(&p_forward), 3);
-			RMatrix_4x4_setColumn(p_mat.Points, 2, (T*)(&p_out), 3);
+			RMatrix_4x4_buildRotationMatrix(p_mat.Points, (T*)(&p_right), (T*)(&p_up), (T*)(&p_forward));
+		};
+
+		template <typename T>
+		inline static void buildScaleMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_scale)
+		{
+			RMatrix_4x4_buildScaleMatrix(p_mat.Points, (T*)(&p_scale));
+		};
+
+		template <typename T>
+		inline static Matrix4x4<T> buildTRS(Vector3<T>& p_position, Quaternion<T> p_quaternion, Vector3<T>& p_scale)
+		{
+			Matrix4x4<T> l_return;
+			RMatrix_4x4_buildTRS((T*)(&p_position), (T*)(&p_quaternion), (T*)(&p_scale), l_return.Points);
+			return l_return;
 		};
 	};
 }
