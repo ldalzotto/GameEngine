@@ -95,11 +95,11 @@ namespace _GameEngine::_ECS
 
 				_Math::Matrix4x4f l_lookAt;
 				_Math::Matrixf4x4_lookAt((_Math::Vector3f*) & l_worldPosition, (_Math::Vector3f*) & l_target, (_Math::Vector3f*) & l_up, &l_lookAt);
-				l_camera->ViewMatrix = *(_Math::Matrix4x4f*)&_MathV2::MatrixM::inv(*(_MathV2::Matrix4x4<float>*)&l_lookAt);
+				l_camera->ViewMatrix = _MathV2::MatrixM::inv(*(_MathV2::Matrix4x4<float>*) & l_lookAt);
 			}
 
-			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = l_camera->ProjectionMatrix;
-			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = l_camera->ViewMatrix;
+			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = *(_Math::Matrix4x4f*) & l_camera->ProjectionMatrix;
+			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = *(_Math::Matrix4x4f*) & l_camera->ViewMatrix;
 			_Render::PushCameraBuffer_pushToGPU(l_camera->RenderInterface->PushCameraBuffer, l_camera->RenderInterface->Device);
 		}
 	};

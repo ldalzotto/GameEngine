@@ -90,10 +90,12 @@ namespace _GameEngineEditor
 		{
 			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
 			{
-				_Math::Vector2f l_screenPoint = { p_entitySelection->Input->InputMouse.ScreenPosition.x, p_entitySelection->Input->InputMouse.ScreenPosition.y };
-				_Math::Segment l_ray;
-
-				_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_screenPoint, &l_ray);
+				_Math::Segment l_ray =
+					_ECS::Camera_buildWorldSpaceRay(
+						p_entitySelection->CachedStructures.ActiveCamera,
+						_MathV2::Vector2<float> { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y },
+						{}
+				);
 
 				_Physics::RaycastHit l_hit;
 				if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
@@ -112,10 +114,13 @@ namespace _GameEngineEditor
 		{
 			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
 			{
-				_Math::Vector2f l_screenPoint = { p_entitySelection->Input->InputMouse.ScreenPosition.x, p_entitySelection->Input->InputMouse.ScreenPosition.y };
-				_Math::Segment l_ray;
-				_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_screenPoint, &l_ray);
-				
+				_Math::Segment l_ray =
+					_ECS::Camera_buildWorldSpaceRay(
+						p_entitySelection->CachedStructures.ActiveCamera,
+						_MathV2::Vector2<float>	{ (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y },
+						{}
+				);
+
 				TransformGizmoSelectionState l_currentFrame_transformGizmoSelectionState = TransformGizmo_determinedSelectedGizmoComponent(&p_entitySelection->TransformGizmoV2, &l_ray);
 				TransformGizmoSelectionState* l_transformGizmoSelectionState = &p_entitySelection->TransformGizmoSelectionState;
 				{
@@ -172,10 +177,18 @@ namespace _GameEngineEditor
 		_Math::Segment l_mouseDelta_screenPosition = _Input::InputMouse_getMouseDeltaScreenPosition(&p_entitySelection->Input->InputMouse);
 
 
-		_Math::Segment l_mouseDelta_begin_ray;
-		_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_mouseDelta_screenPosition.Begin, &l_mouseDelta_begin_ray);
-		_Math::Segment l_mouseDelta_end_ray;
-		_ECS::Camera_buildWorldSpaceRay(p_entitySelection->CachedStructures.ActiveCamera, &l_mouseDelta_screenPosition.End, &l_mouseDelta_end_ray);
+		_Math::Segment l_mouseDelta_begin_ray =
+			_ECS::Camera_buildWorldSpaceRay(
+				p_entitySelection->CachedStructures.ActiveCamera,
+				_MathV2::VectorM::cast(*(_MathV2::Vector3<float>*) & l_mouseDelta_screenPosition.Begin),
+				_Math::Segment{}
+		);
+		_Math::Segment l_mouseDelta_end_ray =
+			_ECS::Camera_buildWorldSpaceRay(
+				p_entitySelection->CachedStructures.ActiveCamera,
+				_MathV2::VectorM::cast(*(_MathV2::Vector3<float>*) & l_mouseDelta_screenPosition.End),
+				_Math::Segment{}
+		);
 
 		_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { p_testedCollider };
 		_Core::ArrayT<_Physics::BoxCollider*> l_raycastedPlane = _Core::ArrayT_fromCStyleArray(l_raycastedPlane_ptr, 1);
@@ -192,7 +205,7 @@ namespace _GameEngineEditor
 			l_mouseDelta_worldPosition.Begin = l_beginHit.HitPoint;
 		}
 
-		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box, 
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
 			(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform), true);
 
 		return l_mouseDelta_worldPosition;
@@ -212,7 +225,7 @@ namespace _GameEngineEditor
 
 			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, _Math::Transform_getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
 		}
-		_Math::Vector3f l_deltaPositionDirection_worldSpace = *(_Math::Vector3f*)&_Math::Transform_getForward(&l_selectedArrow->Transform);
+		_Math::Vector3f l_deltaPositionDirection_worldSpace = *(_Math::Vector3f*) & _Math::Transform_getForward(&l_selectedArrow->Transform);
 
 		_Math::Vector3f l_deltaPosition{};
 		{
@@ -224,7 +237,7 @@ namespace _GameEngineEditor
 			_Math::Vector3f_project(&l_deltaPosition, &l_deltaPositionDirection_worldSpace, &l_deltaPosition);
 		}
 
-		_Math::Transform_addToWorldPosition(&(l_transformComponent)->Transform, *(_MathV2::Vector3<float>*)&l_deltaPosition);
+		_Math::Transform_addToWorldPosition(&(l_transformComponent)->Transform, *(_MathV2::Vector3<float>*) & l_deltaPosition);
 	}
 
 	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)
@@ -261,7 +274,7 @@ namespace _GameEngineEditor
 		// Perform rotation.
 
 		_MathV2::Vector3<float> l_axis;
-		
+
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
 			l_axis = _MathV2::RIGHT;
@@ -290,7 +303,7 @@ namespace _GameEngineEditor
 		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
 		_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_selectedEntity);
 		_Math::Vector3f l_color = { 1.0f, 1.0f, 1.0f };
-		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox, 
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &(l_meshRendererBound)->BoundingBox,
 			(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(&(l_selectedEntityTransform)->Transform), true, &l_color);
 	}
 
@@ -469,17 +482,16 @@ namespace _GameEngineEditor
 
 				_Math::Vector3f l_transformGizmoWorldPosition;
 				{
-					_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
-					_ECS::Camera_worldToClipMatrix(p_entitySelection->CachedStructures.ActiveCamera, &l_worldToClipMatrix);
-					l_clipToWorldMatrix = *(_Math::Matrix4x4f*)&_MathV2::MatrixM::inv(*(_MathV2::Matrix4x4<float>*) & l_worldToClipMatrix);
+					_MathV2::Matrix4x4<float> l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->CachedStructures.ActiveCamera);
+					_MathV2::Matrix4x4<float> l_clipToWorldMatrix = _MathV2::MatrixM::inv(l_worldToClipMatrix);
 
 					_Math::Vector3f l_selectedEntityTransformClip;
-					_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, (_Math::Vector3f*)&l_followedWorldPosition, &l_selectedEntityTransformClip);
+					_Math::Matrix4x4f_worldToClip((_Math::Matrix4x4f*) & l_worldToClipMatrix, (_Math::Vector3f*) & l_followedWorldPosition, &l_selectedEntityTransformClip);
 					l_selectedEntityTransformClip.z = 0.99f; //Fixed distance in clip space from near plane.
-					_Math::Matrix4x4f_clipToWorld(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &l_transformGizmoWorldPosition);
+					_Math::Matrix4x4f_clipToWorld((_Math::Matrix4x4f*) & l_clipToWorldMatrix, &l_selectedEntityTransformClip, &l_transformGizmoWorldPosition);
 				}
 
-				_Math::Transform_setWorldPosition(&l_transformGizmotransform->Transform, *(_MathV2::Vector3<float>*)&l_transformGizmoWorldPosition);
+				_Math::Transform_setWorldPosition(&l_transformGizmotransform->Transform, *(_MathV2::Vector3<float>*) & l_transformGizmoWorldPosition);
 				_Math::Transform_setLocalRotation(&l_transformGizmotransform->Transform, l_followedRotation);
 			}
 		}

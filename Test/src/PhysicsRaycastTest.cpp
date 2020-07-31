@@ -351,10 +351,13 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 	// Mouse raycast
 	{
 		_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&l_interface->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
-		_Math::Vector2f l_screenPoint = { l_interface->Input->InputMouse.ScreenPosition.x, l_interface->Input->InputMouse.ScreenPosition.y };
-		_Math::Segment l_ray;
+		_Math::Segment l_ray =
 
-		_ECS::Camera_buildWorldSpaceRay(_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem), &l_screenPoint, &l_ray);
+		_ECS::Camera_buildWorldSpaceRay(
+			_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem),
+			_MathV2::Vector2<float> { (float)l_interface->Input->InputMouse.ScreenPosition.x, (float)l_interface->Input->InputMouse.ScreenPosition.y },
+			_Math::Segment{}
+		);
 
 		_Physics::RaycastHit l_hit;
 		if (_Physics::RayCast(l_interface->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
