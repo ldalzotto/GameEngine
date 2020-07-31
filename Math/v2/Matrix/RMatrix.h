@@ -23,4 +23,7 @@ namespace _MathV2
 	void RMatrix_4x4_buildTRS(const float p_position[3], const float p_right[3], const float p_up[3], const float p_forward[3], const  float p_scale[3], float out_TRS[4][4]);
 	void RMatrix_4x4_getTranslation(const float p_trs[4][4], float out_translation[4]);
 	void RMatrix_4x4_getScale(const float p_trs[4][4], float out_scale[4]);
+
+	void RMatrix_4x4_perspective(const float p_fov, const float p_aspect, const float p_near, const float p_far, float p_out[4][4]);
+	void RMatrix_4x4_clipSpaceMul(const float p_projectionmatrix[4][4], const float p_pos[4], float out_pos[4]);
 }

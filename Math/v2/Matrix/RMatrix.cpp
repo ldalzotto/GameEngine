@@ -3,6 +3,7 @@
 #include "v2/Vector/RVector.h"
 #include "v2/Quaternion/RQuaternion.h"
 #include <string.h>
+#include <math.h>
 
 namespace _MathV2
 {
@@ -252,4 +253,35 @@ namespace _MathV2
 		out_scale[3] = 0.0f;
 	};
 
+
+	void RMatrix_4x4_perspective(const float p_fov, const float p_aspect, const float p_near, const float p_far, float p_out[4][4])
+	{
+		float l_halfTan = tanf(p_fov / 2.0f);
+
+		p_out[0][0] = 1.0f / (p_aspect * l_halfTan);
+		p_out[0][1] = 0.0f;
+		p_out[0][2] = 0.0f;
+		p_out[0][3] = 0.0f;
+			
+		p_out[1][0] = 0.0f;
+		p_out[1][1] = 1.0f / l_halfTan;
+		p_out[1][2] = 0.0f;
+		p_out[1][3] = 0.0f;
+			 
+		p_out[2][0] = 0.0f;
+		p_out[2][1] = 0.0f;
+		p_out[2][2] = -(p_far + p_near) / (p_far - p_near);
+		p_out[2][3] = -1.0f;
+			 
+		p_out[3][0] = 0.0f;
+		p_out[3][1] = 0.0f;
+		p_out[3][2] = (-2.0f * p_far * p_near) / (p_far - p_near);
+		p_out[3][3] = 0.0f;
+	};
+
+	void RMatrix_4x4_clipSpaceMul(const float p_projectionmatrix[4][4], const float p_pos[4], float out_pos[4])
+	{
+		RMatrix_4x4_mul_4(p_projectionmatrix, p_pos, out_pos);
+		RVector_4_mul(out_pos, 1 / out_pos[3], out_pos);
+	};
 }

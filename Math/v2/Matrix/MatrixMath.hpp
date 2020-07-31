@@ -2,6 +2,7 @@
 
 #include "v2/Vector/Vector.hpp"
 #include "v2/Matrix/Matrix.hpp"
+#include "v2/Quaternion/Quaternion.hpp"
 #include "v2/Matrix/RMatrix.h"
 
 namespace _MathV2
@@ -156,6 +157,22 @@ namespace _MathV2
 		{
 			Vector4<T> l_return;
 			RMatrix_4x4_getScale(p_trs.Points, (T*)(&l_return));
+			return l_return;
+		};
+
+		template <typename T>
+		inline static Matrix4x4<T> perspective(const float p_fov, const float p_aspect, const float p_near, const float p_far)
+		{
+			Matrix4x4<T> l_return;
+			RMatrix_4x4_perspective(p_fov, p_aspect, p_near, p_far, l_return.Points);
+			return l_return;
+		};
+
+		template <typename T>
+		inline static Vector4<T> clipSpaceMul(const Matrix4x4<T>& p_projectionmatrix, const Vector4<T>& p_pos)
+		{
+			Vector4<T> l_return;
+			RMatrix_4x4_clipSpaceMul(p_projectionmatrix.Points, (T*)(&p_pos), (T*)(&l_return));
 			return l_return;
 		};
 	};

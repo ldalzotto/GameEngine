@@ -1,11 +1,9 @@
 #include "Camera.h"
 
 #include "Math/Math.h"
-#include "Math/Matrix/MatrixMath.h"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/Vector.hpp"
-#include "Math/Vector/Vector.h"
-#include "Math/Vector/VectorMath.h"
+#include "v2/Vector/VectorMath.hpp"
 #include "Math/Segment/Segment.h"
 
 #include "Render/RenderInterface.h"
@@ -46,31 +44,24 @@ namespace _GameEngine::_ECS
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
-		_Math::Matrixf4x4_perspective(45.0f * _Math::DEG_TO_RAD,
-			p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height, 0.1f, 50.0f, (_Math::Matrix4x4f*)&p_camera->ProjectionMatrix);
+		p_camera->ProjectionMatrix = _MathV2::MatrixM::perspective<float>(45.0f * _Math::DEG_TO_RAD,
+			((float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height), 0.1f, 50.0f);
 	};
 
-	_Math::Segment& Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint, _Math::Segment&& out_ray)
+	_Math::Segment& Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint)
 	{
-		_Math::Vector2f l_graphicsAPIPixelCoord;
-
-		{
-			_Math::Vector3f l_screenPoint3f = { p_screenPoint.x, p_screenPoint.y, 1.0f };
-			_Math::Vector3f l_graphicsAPIPixelCoord3f;
-			_Math::Matrix3x3f_mul(&p_camera->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates, &l_screenPoint3f, &l_graphicsAPIPixelCoord3f);
-			l_graphicsAPIPixelCoord = { l_graphicsAPIPixelCoord3f.x, l_graphicsAPIPixelCoord3f.y };
-		}
+		_MathV2::Vector2<float> l_graphicsAPIPixelCoord = _MathV2::VectorM::cast(
+			_MathV2::MatrixM::mul(
+				*(_MathV2::Matrix3x3<float>*) & p_camera->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates,
+				_MathV2::Vector3<float> {p_screenPoint.x, p_screenPoint.y, 1.0f})
+		);
 
 		_MathV2::Matrix4x4<float> l_clipToWorldMatrix = _MathV2::MatrixM::inv(Camera_worldToClipMatrix(p_camera));
 
-		// Near plane
-		_Math::Vector3f l_beginClipSpace = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f };
-		_Math::Matrix4x4f_clipToWorld((_Math::Matrix4x4f*) & l_clipToWorldMatrix, &l_beginClipSpace, &out_ray.Begin);
-
-		// Far plane
-		_Math::Vector3f l_endClipSpace = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f };
-		_Math::Matrix4x4f_clipToWorld((_Math::Matrix4x4f*) & l_clipToWorldMatrix, &l_endClipSpace, &out_ray.End);
-
-		return std::move(out_ray);
+		return
+			_Math::Segment{
+			/*Near plane*/ *(_Math::Vector3f*) & _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f})),
+			/*Far plane*/* (_Math::Vector3f*)& _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f}))
+		};
 	};
 }

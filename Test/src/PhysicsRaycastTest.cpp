@@ -355,8 +355,7 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 
 		_ECS::Camera_buildWorldSpaceRay(
 			_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem),
-			_MathV2::Vector2<float> { (float)l_interface->Input->InputMouse.ScreenPosition.x, (float)l_interface->Input->InputMouse.ScreenPosition.y },
-			_Math::Segment{}
+			_MathV2::Vector2<float> { (float)l_interface->Input->InputMouse.ScreenPosition.x, (float)l_interface->Input->InputMouse.ScreenPosition.y }
 		);
 
 		_Physics::RaycastHit l_hit;

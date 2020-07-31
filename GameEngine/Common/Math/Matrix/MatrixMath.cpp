@@ -138,28 +138,6 @@ namespace _GameEngine::_Math
 		out_scale->w = 0.0f;
 	};
 
-	void Matrix4x4f_clipToWorld(Matrix4x4f* p_clipToWorldMatrix, Vector3f* p_clipPosition, Vector3f* out_worldPosition)
-	{
-		Vector4f l_clipPosition4f, l_worldPosition4f;
-		{
-			Vector4f_build(p_clipPosition, 1.0f, &l_clipPosition4f);
-			Matrixf4x4_mul(p_clipToWorldMatrix, &l_clipPosition4f, &l_worldPosition4f);
-			Vector4f_homogenize_w(&l_worldPosition4f, &l_worldPosition4f);
-		}
-		Vector3f_build(&l_worldPosition4f, out_worldPosition);
-	};
-
-	void Matrix4x4f_worldToClip(Matrix4x4f* p_worldToClipmatrix, Vector3f* p_worldPosition, Vector3f* out_clipPosition)
-	{
-		Vector4f l_clipPosition4f, l_worldPosition4f;
-		{
-			Vector4f_build(p_worldPosition, 1.0f, &l_worldPosition4f);
-			Matrixf4x4_mul(p_worldToClipmatrix, &l_worldPosition4f, &l_clipPosition4f);
-			Vector4f_mul(&l_clipPosition4f, 1.0f / l_clipPosition4f.w, &l_clipPosition4f);
-		}
-		Vector3f_build(&l_clipPosition4f, out_clipPosition);
-	};
-
 	void Matrixf4x4_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out)
 	{
 		Vector3f l_forward;
@@ -187,45 +165,6 @@ namespace _GameEngine::_Math
 			_MathV2::Vector3<float>{1.0f, 1.0f, 1.0f}
 		);
 	};
-
-	void Matrixf4x4_perspective(float p_fov, float p_aspect, float p_near, float p_far, Matrix4x4f* p_out)
-	{
-		float l_halfTan = tanf(p_fov / 2.0f);
-
-		p_out->_00 = 1.0f / (p_aspect * l_halfTan);
-		p_out->_01 = 0.0f;
-		p_out->_02 = 0.0f;
-		p_out->_03 = 0.0f;
-
-		p_out->_10 = 0.0f;
-		p_out->_11 = 1.0f / l_halfTan;
-		p_out->_12 = 0.0f;
-		p_out->_13 = 0.0f;
-
-		p_out->_20 = 0.0f;
-		p_out->_21 = 0.0f;
-		p_out->_22 = -(p_far + p_near) / (p_far - p_near);
-		p_out->_23 = -1.0f;
-
-		p_out->_30 = 0.0f;
-		p_out->_31 = 0.0f;
-		p_out->_32 = (-2.0f * p_far * p_near) / (p_far - p_near);
-		p_out->_33 = 0.0f;
-
-	};
-
-	float Matrixf4x4_far(Matrix4x4f* p_matrix)
-	{
-		float l_alpha = (-1 + p_matrix->_22) / (p_matrix->_22 + 1);
-		return l_alpha * ((p_matrix->_32 * (l_alpha - 1.0f) / (-2.0f * l_alpha)));
-	};
-
-	float Matrixf4x4_near(Matrix4x4f* p_matrix)
-	{
-		float l_alpha = (-1 + p_matrix->_22) / (p_matrix->_22 + 1);
-		return ((p_matrix->_32 * (l_alpha - 1.0f) / (-2.0f * l_alpha)));
-	};
-
 
 	void Matrix3x3f_set_c0(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_00 = p_col->x; p_matrix->_01 = p_col->y; p_matrix->_02 = p_col->z; };
 	void Matrix3x3f_set_c1(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_10 = p_col->x; p_matrix->_11 = p_col->y; p_matrix->_12 = p_col->z; };
