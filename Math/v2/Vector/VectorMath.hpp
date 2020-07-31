@@ -20,6 +20,12 @@ namespace _MathV2
 		};
 
 		template <typename T>
+		inline static Vector<4, T> cast(Vector<3, T>& p_vec, T p_scal)
+		{
+			return Vector<4, T>{p_vec.x, p_vec.y, p_vec.z, p_scal};
+		};
+
+		template <typename T>
 		inline static Vector<3, T> build(const T p_x, const T p_y, const T p_z)
 		{
 			return Vector<3, T>{p_x, p_y, p_z};

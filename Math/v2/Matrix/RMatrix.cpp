@@ -148,7 +148,12 @@ namespace _MathV2
 
 	void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3])
 	{
-		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_left, 3, 3));
+		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 3, 3), RMatrix_build((const float*)p_left, 3, 3));
+	};
+
+	void RMatrix_3x3_mul_3(const float p_left[3][3], const float p_right[3], float p_out[3])
+	{
+		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 1, 3), RMatrix_build((const float*)p_out, 1, 3));
 	};
 
 	void RMatrix_4x4_inv(const float p_matrix[4][4], float p_out[4][4])
@@ -228,4 +233,23 @@ namespace _MathV2
 		RMatrix_4x4_buildRotationMatrix(out_TRS, l_axis);
 		RMatrix_4x4_buildScaleMatrix(out_TRS, p_scale);
 	};
+
+	void RMatrix_4x4_getTranslation(const float p_trs[4][4], float out_translation[4])
+	{
+		memcpy(out_translation, p_trs[3], sizeof(float) * 4);
+	};
+
+	void RMatrix_4x4_getScale(const float p_trs[4][4], float out_scale[4])
+	{
+		float l_c0[4], l_c1[4], l_c2[4];
+		memcpy(l_c0, p_trs[0], sizeof(float) * 4);
+		memcpy(l_c0, p_trs[1], sizeof(float) * 4);
+		memcpy(l_c0, p_trs[2], sizeof(float) * 4);
+
+		out_scale[0] = RVector_4_length(l_c0);
+		out_scale[1] = RVector_4_length(l_c0);
+		out_scale[2] = RVector_4_length(l_c0);
+		out_scale[3] = 0.0f;
+	};
+
 }

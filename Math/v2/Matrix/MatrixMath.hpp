@@ -88,6 +88,14 @@ namespace _MathV2
 		};
 
 		template <typename T>
+		inline static Vector3<T> mul(const Matrix3x3<T>& p_left, const Vector3<T>& p_right)
+		{
+			Vector3<T> l_return;
+			RMatrix_3x3_mul_3(p_left.Points, (T*)(&p_right), (T*)(&l_return));
+			return l_return;
+		};
+
+		template <typename T>
 		inline static Matrix4x4<T> inv(const Matrix4x4<T>& p_mat)
 		{
 			Matrix4x4<T> l_return;
@@ -132,6 +140,22 @@ namespace _MathV2
 		{
 			Matrix4x4<T> l_return;
 			RMatrix_4x4_buildTRS((T*)(&p_position), (T*)(&p_right), (T*)(&p_up), (T*)(&p_forward), (T*)(&p_scale), l_return.Points);
+			return l_return;
+		};
+
+		template <typename T>
+		inline static Vector4<T> getTranslation(Matrix4x4<T>& p_trs)
+		{
+			Vector4<T> l_return;
+			RMatrix_4x4_getTranslation(p_trs.Points, (T*)(&l_return));
+			return l_return;
+		};
+
+		template <typename T>
+		inline static Vector4<T> getScale(Matrix4x4<T>& p_trs)
+		{
+			Vector4<T> l_return;
+			RMatrix_4x4_getScale(p_trs.Points, (T*)(&l_return));
 			return l_return;
 		};
 	};

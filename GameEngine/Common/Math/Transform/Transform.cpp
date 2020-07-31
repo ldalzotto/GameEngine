@@ -1,8 +1,5 @@
 #include "Transform.h"
 
-#include "Math/Matrix/Matrix.h"
-#include "Math/Matrix/MatrixMath.h"
-#include "Math/Vector/Vector.h"
 #include "v2/Vector/RVector.h"
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
@@ -89,10 +86,11 @@ namespace _GameEngine::_Math
 		}
 		else
 		{
-			_MathV2::Matrix4x4<float> l_parentWorldToLocal = _Math::Transform_getWorldToLocalMatrix(p_transform->Parent);
-			Vector3<float> l_localPosition;
-			_Math::Matrixf4x4_mul((Matrix4x4f*)&l_parentWorldToLocal, (_Math::Vector3f*) & p_worldPosition, (_Math::Vector3f*) & l_localPosition);
-			_Math::Transform_setLocalPosition(p_transform, l_localPosition);
+			Vector4<float> l_localPosition = MatrixM::mul(
+				_Math::Transform_getWorldToLocalMatrix(p_transform->Parent),
+				VectorM::cast(p_worldPosition, 1.0f)
+			);
+			_Math::Transform_setLocalPosition(p_transform, VectorM::cast(l_localPosition));
 		}
 	};
 
@@ -125,11 +123,7 @@ namespace _GameEngine::_Math
 
 	Vector3<float> Transform_getWorldPosition(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);
-		_Math::Vector4f l_worldPosition4f;
-		_Math::Matrixf4x4_extractTranslation((Matrix4x4f*)&l_localToWorldMatrix, &l_worldPosition4f);
-
-		return *(Vector3<float>*) & l_worldPosition4f;
+		return VectorM::cast(MatrixM::getTranslation(Transform_getLocalToWorldMatrix(p_transform)));
 	};
 
 	Quaternion<float> Transform_getWorldRotation(Transform* p_transform)
@@ -147,14 +141,7 @@ namespace _GameEngine::_Math
 
 	Vector3<float> Transform_getWorldScale(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_localToWorldMatrix = Transform_getLocalToWorldMatrix(p_transform);
-		Vector3<float> l_return;
-		{
-			_Math::Vector4f l_scale4f;
-			Matrixf4x4_extractScale((Matrix4x4f*)&l_localToWorldMatrix, &l_scale4f);
-			l_return = { l_scale4f.x, l_scale4f.y, l_scale4f.z };
-		}
-		return l_return;
+		return VectorM::cast(MatrixM::getScale(Transform_getLocalToWorldMatrix(p_transform)));
 	};
 
 	Vector3<float> Transform_getRight(Transform* p_transform)

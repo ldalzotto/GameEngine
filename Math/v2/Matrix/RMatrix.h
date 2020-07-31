@@ -10,6 +10,7 @@ namespace _MathV2
 	void RMatrix_4x4_mul_4x4(const float p_left[4][4], const float p_right[4][4], float p_out[4][4]);
 	void RMatrix_4x4_mul_4(const float p_left[4][4], const float p_right[4], float p_out[4]);
 	void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3]);
+	void RMatrix_3x3_mul_3(const float p_left[3][3], const float p_right[3], float p_out[3]);
 
 	void RMatrix_4x4_inv(const float p_matrix[4][4], float p_out[4][4]);
 
@@ -20,4 +21,6 @@ namespace _MathV2
 
 	void RMatrix_4x4_buildTRS(const float p_position[3], const  float p_quaternion[4], const  float p_scale[3], float out_TRS[4][4]);
 	void RMatrix_4x4_buildTRS(const float p_position[3], const float p_right[3], const float p_up[3], const float p_forward[3], const  float p_scale[3], float out_TRS[4][4]);
+	void RMatrix_4x4_getTranslation(const float p_trs[4][4], float out_translation[4]);
+	void RMatrix_4x4_getScale(const float p_trs[4][4], float out_scale[4]);
 }
