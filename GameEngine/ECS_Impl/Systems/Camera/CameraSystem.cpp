@@ -2,6 +2,7 @@
 
 #include "Math/Matrix/MatrixMath.h"
 #include "Math/Vector/VectorMath.h"
+#include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
 
 #include "DataStructures/Specifications/VectorT.hpp"
@@ -94,7 +95,7 @@ namespace _GameEngine::_ECS
 
 				_Math::Matrix4x4f l_lookAt;
 				_Math::Matrixf4x4_lookAt((_Math::Vector3f*) & l_worldPosition, (_Math::Vector3f*) & l_target, (_Math::Vector3f*) & l_up, &l_lookAt);
-				_Math::Matrixf4x4_inv(&l_lookAt, &l_camera->ViewMatrix);
+				l_camera->ViewMatrix = *(_Math::Matrix4x4f*)&_MathV2::MatrixM::inv(*(_MathV2::Matrix4x4<float>*)&l_lookAt);
 			}
 
 			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = l_camera->ProjectionMatrix;

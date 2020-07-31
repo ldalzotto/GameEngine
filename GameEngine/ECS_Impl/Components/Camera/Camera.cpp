@@ -70,7 +70,7 @@ namespace _GameEngine::_ECS
 		{
 			_Math::Matrix4x4f l_wordlToClipMatrix;
 			Camera_worldToClipMatrix(p_camera, &l_wordlToClipMatrix);
-			_Math::Matrixf4x4_inv(&l_wordlToClipMatrix, &l_clipToWorldMatrix);
+			l_clipToWorldMatrix = *(_Math::Matrix4x4f*)&_MathV2::MatrixM::inv(*(_MathV2::Matrix4x4<float>*) & l_wordlToClipMatrix);
 		}
 
 		// Near plane

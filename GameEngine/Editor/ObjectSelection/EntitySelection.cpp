@@ -12,6 +12,7 @@
 #include "Math/Intersection/Intersection.h"
 #include "v2/Quaternion/QuaternionMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
+#include "v2/Matrix/MatrixMath.hpp"
 
 #include <iostream>
 
@@ -470,7 +471,7 @@ namespace _GameEngineEditor
 				{
 					_Math::Matrix4x4f l_worldToClipMatrix, l_clipToWorldMatrix;
 					_ECS::Camera_worldToClipMatrix(p_entitySelection->CachedStructures.ActiveCamera, &l_worldToClipMatrix);
-					_Math::Matrixf4x4_inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
+					l_clipToWorldMatrix = *(_Math::Matrix4x4f*)&_MathV2::MatrixM::inv(*(_MathV2::Matrix4x4<float>*) & l_worldToClipMatrix);
 
 					_Math::Vector3f l_selectedEntityTransformClip;
 					_Math::Matrix4x4f_worldToClip(&l_worldToClipMatrix, (_Math::Vector3f*)&l_followedWorldPosition, &l_selectedEntityTransformClip);

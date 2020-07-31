@@ -115,9 +115,7 @@ namespace _GameEngine::_Math
 
 	_MathV2::Matrix4x4<float> Transform_getWorldToLocalMatrix(Transform* p_transform)
 	{
-		_MathV2::Matrix4x4<float> l_worldToLocal;
-		_Math::Matrixf4x4_inv((Matrix4x4f*)Transform_getLocalToWorldMatrix_ref(p_transform), (Matrix4x4f*)&l_worldToLocal);
-		return l_worldToLocal;
+		return _MathV2::MatrixM::inv(Transform_getLocalToWorldMatrix(p_transform));
 	};
 
 	_MathV2::Matrix4x4<float> Transform_calculateMatrixToProjectFromTransformToAnother(Transform* p_source, Transform* p_target)

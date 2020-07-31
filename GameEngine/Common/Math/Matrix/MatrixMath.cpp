@@ -146,65 +146,6 @@ namespace _GameEngine::_Math
 		*out = { l_out4f.x, l_out4f.y, l_out4f.z };
 	};
 
-	float matrixf4x4_3x3det(Matrix4x4f* m, int p_col, int p_line)
-	{
-		float l_mat3x3[3][3]{};
-		{
-			int l_columnCounter = 0;
-			int l_rowCounter = 0;
-
-			for (int c = 0; c < 4; c++)
-			{
-				if (c != p_col)
-				{
-					for (int l = 0; l < 4; l++)
-					{
-						if (l != p_line)
-						{
-							l_mat3x3[l_columnCounter][l_rowCounter] = Matrixf4x4_get_unsafe(m, c, l);
-							l_rowCounter += 1;
-						}
-					}
-					l_rowCounter = 0;
-					l_columnCounter += 1;
-				}
-			}
-		}
-
-		return
-			(l_mat3x3[0][0] * ((l_mat3x3[1][1] * l_mat3x3[2][2]) - (l_mat3x3[1][2] * l_mat3x3[2][1]))) +
-			(l_mat3x3[1][0] * ((l_mat3x3[2][1] * l_mat3x3[0][2]) - (l_mat3x3[2][2] * l_mat3x3[0][1]))) +
-			(l_mat3x3[2][0] * ((l_mat3x3[0][1] * l_mat3x3[1][2]) - (l_mat3x3[0][2] * l_mat3x3[1][1])))
-			;
-	}
-
-	// For an example, see https://semath.info/src/inverse-cofactor-ex4.html
-	void Matrixf4x4_inv(Matrix4x4f* m, Matrix4x4f* p_out)
-	{
-		float l_det = (m->_00 * matrixf4x4_3x3det(m, 0, 0)) - (m->_01 * matrixf4x4_3x3det(m, 0, 1)) + (m->_02 * matrixf4x4_3x3det(m, 0, 2)) - (m->_03 * matrixf4x4_3x3det(m, 0, 3));
-
-		{
-			p_out->_00 = matrixf4x4_3x3det(m, 0, 0);
-			p_out->_01 = -matrixf4x4_3x3det(m, 1, 0);
-			p_out->_02 = matrixf4x4_3x3det(m, 2, 0);
-			p_out->_03 = -matrixf4x4_3x3det(m, 3, 0);
-			p_out->_10 = -matrixf4x4_3x3det(m, 0, 1);
-			p_out->_11 = matrixf4x4_3x3det(m, 1, 1);
-			p_out->_12 = -matrixf4x4_3x3det(m, 2, 1);
-			p_out->_13 = matrixf4x4_3x3det(m, 3, 1);
-			p_out->_20 = matrixf4x4_3x3det(m, 0, 2);
-			p_out->_21 = -matrixf4x4_3x3det(m, 1, 2);
-			p_out->_22 = matrixf4x4_3x3det(m, 2, 2);
-			p_out->_23 = -matrixf4x4_3x3det(m, 3, 2);
-			p_out->_30 = -matrixf4x4_3x3det(m, 0, 3);
-			p_out->_31 = matrixf4x4_3x3det(m, 1, 3);
-			p_out->_32 = -matrixf4x4_3x3det(m, 2, 3);
-			p_out->_33 = matrixf4x4_3x3det(m, 3, 3);
-		}
-
-		Matrixf4x4_mul(p_out, 1 / l_det, p_out);
-	};
-
 	void Matrixf4x4_buildTranslationMatrix(Vector3f* p_translation, Matrix4x4f* p_out)
 	{
 		Matrix4x4f_set_c3(p_out, p_translation);
