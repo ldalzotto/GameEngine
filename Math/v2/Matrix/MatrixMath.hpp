@@ -49,6 +49,11 @@ namespace _MathV2
 		{
 			return (Vector4<T>*)(p_mat.Points[2]);
 		};
+		template <typename T>
+		inline static void setColumn(const Matrix<4, 4, T>& p_mat, int p_colIndex, const Vector<4, T>& p_col)
+		{
+			RMatrix_4x4_setColumn(p_mat.Points, p_colIndex, (T*)(&p_col));
+		};
 
 		template <typename T>
 		inline static Matrix4x4<T> mul(const Matrix4x4<T>& p_left, const Matrix4x4<T>& p_right)
@@ -88,6 +93,26 @@ namespace _MathV2
 			Matrix4x4<T> l_return;
 			RMatrix_4x4_inv(p_mat.Points, l_return.Points);
 			return l_return;
+		};
+
+		template <typename T>
+		inline static void buildTranslationMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_translation)
+		{
+			RMatrix_4x4_setColumn(p_mat.Points, 3, (T*)(&p_translation), 3);
+		}
+
+		template <typename T>
+		inline static void buildRotationMatrix(Matrix4x4<T>& p_mat, Matrix3x3<T>& p_axis)
+		{
+
+		};
+
+		template <typename T>
+		inline static void buildRotationMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_up, Vector3<T>& p_forward, Vector3<T>& p_out)
+		{
+			RMatrix_4x4_setColumn(p_mat.Points, 0, (T*)(&p_up), 3);
+			RMatrix_4x4_setColumn(p_mat.Points, 1, (T*)(&p_forward), 3);
+			RMatrix_4x4_setColumn(p_mat.Points, 2, (T*)(&p_out), 3);
 		};
 	};
 }

@@ -30,7 +30,6 @@ int main()
 		_MathV2::Quaternion<float> l_meRes = QuaternionM::mul(Quaternion<float>{0.58f, 0.0f, 0.14f, 0.32f}, Quaternion<float>{0.58f, 0.32f, 0.0f, 0.14f });
 
 		_MathV2::Matrix3x3<float> l_afaefef;
-		float l_zdad = l_afaefef.Points[0][2];
 
 		_MathV2::Quaternion<float> l_rightQuat = QuaternionM::fromDirection(_MathV2::Vector3<float>{1.0f, 0.0f, 0.0f});
 		_MathV2::Quaternion<float> l_upQuat = QuaternionM::fromDirection(_MathV2::Vector3<float>{0.0f, 1.0f, 0.0f});
@@ -47,15 +46,10 @@ int main()
 		// float l_angle = glm::orientedAngle(glm::normalize(glm::vec3{ 0.0f, 0.681971550f, 0.523248672f }) , glm::normalize(glm::vec3{ 0.0f, 0.706513405f, 0.522750854f }));
 	
 
-		{
-			_MathV2::Matrix4x4<float> l_mat1 = { {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f} };
-			_MathV2::Matrix4x4<float> l_mat2 = { {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f} };
-
-			_Math::Matrix4x4f l_return_old;
-			_Math::Matrixf4x4_mul((_Math::Matrix4x4f*) & l_mat1, (_Math::Matrix4x4f*) & l_mat2, &l_return_old);
-			_MathV2::Matrix4x4<float> l_result_new = _MathV2::MatrixM::mul(l_mat1, l_mat2);
-			int azdadada = 0;
-		}
+		_MathV2::Matrix4x4<float> l_start = _MathV2::Matrix4x4f_Identity;
+		_MathV2::Vector3<float> l_localPosition = { 1.0f, 2.0f, 3.0f };
+		_MathV2::MatrixM::buildTranslationMatrix(l_start, l_localPosition);
+		int zd = 0;
 	}
 	return 0;
 }

@@ -78,6 +78,11 @@ namespace _MathV2
 	}
 	///
 
+	void RMatrix_4x4_setColumn(const float p_mat[4][4], const int p_columnIndex, const float* p_col, const int p_col_lineCount)
+	{
+		memcpy(RMatrix_float_getAddresFromRaw((const float*)p_mat, 4, p_columnIndex, 0), p_col, sizeof(float) * p_col_lineCount);
+	};
+
 	void RMatrix_3x3_buildFromColumn(const float p_col1[3], const float p_col2[3], const float p_col3[3], float p_out[3][3])
 	{
 		memcpy(p_out, p_col1, sizeof(float) * 3);
