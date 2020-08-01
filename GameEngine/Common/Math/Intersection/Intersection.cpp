@@ -9,8 +9,8 @@ namespace _GameEngine::_Math
 {
 	bool Intersection_AABB_Ray(Box* p_AABB, Segment* p_ray, Vector3f* p_outIntersectionPoint)
 	{
-		_Math::Vector3f l_boxMin, l_boxMax;
-		_Math::Box_extractMinMax(p_AABB, &l_boxMin, &l_boxMax);
+		_MathV2::Vector3<float> l_boxMin, l_boxMax;
+		_Math::Box_extractMinMax(p_AABB, l_boxMin, l_boxMax);
 
 		_Math::Vector3f l_fragmentInsideBoxVector;
 

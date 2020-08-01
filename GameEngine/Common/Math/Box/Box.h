@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Math/Vector/Vector.h"
+#include "v2/Vector/Vector.hpp"
 
 namespace _GameEngine::_Math
 {
 	struct Box
 	{
-		Vector3f Center;
-		Vector3f Extend;
+		_MathV2::Vector3<float> Center;
+		_MathV2::Vector3<float> Extend;
 	};
 
 }

@@ -82,12 +82,12 @@ namespace _GameEngine::_ECS
 			_Render::Mesh* l_mesh = _Render::MaterialInstance_getMesh(l_operation->MeshRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MESH_KEY);
 
 			//TODO - This is not the most optimal as we copy vertices to a temporary vector.
-			_Core::VectorT<_Math::Vector3f> l_vertices;
+			_Core::VectorT<_MathV2::Vector3<float>> l_vertices;
 			_Core::VectorT_alloc(&l_vertices, l_mesh->Vertices.size());
 			{
 				for (size_t i = 0; i < l_vertices.Capacity; i++)
 				{
-					_Core::VectorT_pushBack(&l_vertices, &l_mesh->Vertices.at(i).pos);
+					_Core::VectorT_pushBack(&l_vertices, (_MathV2::Vector3<float>*)&l_mesh->Vertices.at(i).pos);
 				}
 				_Math::Box_build(&l_operation->Bound->BoundingBox, &l_vertices);
 

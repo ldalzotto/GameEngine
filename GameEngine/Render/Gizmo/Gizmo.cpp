@@ -183,7 +183,7 @@ namespace _GameEngine::_Render
 	{
 		_Math::BoxPoints l_boxPoints;
 		_Math::Box_extractPoints(p_box, &l_boxPoints);
-		_Math::BoxPoints_mul(&l_boxPoints, p_localToWorldMatrix);
+		_Math::BoxPoints_mul(&l_boxPoints, *(_MathV2::Matrix4x4<float>*)p_localToWorldMatrix);
 
 		_Math::Vector3f l_color;
 		if (p_color) { l_color = *p_color; }
@@ -191,14 +191,14 @@ namespace _GameEngine::_Render
 
 		GizmoIndiceType LDF_index, LDB_index, LUF_index, RDF_index, LUB_index, RUF_index, RDB_index, RUB_index;
 		{
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.L_D_F, l_color, &LDF_index);
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.L_D_B, l_color, &LDB_index);
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.L_U_F, l_color, &LUF_index);
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.R_D_F, l_color, &RDF_index);
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.L_U_B, l_color, &LUB_index);
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.R_U_F, l_color, &RUF_index);
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.R_D_B, l_color, &RDB_index);
-			Gizmo_pushVertex(p_gizmo, l_boxPoints.R_U_B, l_color, &RUB_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.L_D_F, l_color, &LDF_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.L_D_B, l_color, &LDB_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.L_U_F, l_color, &LUF_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.R_D_F, l_color, &RDF_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.L_U_B, l_color, &LUB_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.R_U_F, l_color, &RUF_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.R_D_B, l_color, &RDB_index);
+			Gizmo_pushVertex(p_gizmo, *(_Math::Vector3f*)&l_boxPoints.R_U_B, l_color, &RUB_index);
 		}
 
 		Gizmo_drawLine_indices(p_gizmo, LDF_index, LDB_index);
@@ -216,7 +216,7 @@ namespace _GameEngine::_Render
 
 		if (p_withCenter)
 		{
-			Gizmo_drawPointV2(p_gizmo, l_boxPoints.Center, l_color);
+			Gizmo_drawPointV2(p_gizmo, *(_Math::Vector3f*) & l_boxPoints.Center, l_color);
 		}
 	};
 
