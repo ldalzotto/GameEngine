@@ -221,7 +221,7 @@ namespace _MathV2
 		RMatrix_4x4_buildScaleMatrix(out_TRS, p_scale);
 	};
 
-	void RMatrix_4x4_buildTRS(const float p_position[3], const float p_right[3], const float p_up[3], const float p_forward[3], const  float p_scale[3], float out_TRS[4][4])
+	void RMatrix_4x4_buildTRS(const float p_position[3], const float p_axis[3][3], const  float p_scale[3], float out_TRS[4][4])
 	{
 		out_TRS[0][3] = 0.0f;
 		out_TRS[1][3] = 0.0f;
@@ -229,9 +229,7 @@ namespace _MathV2
 		out_TRS[3][3] = 1.0f;
 
 		RMatrix_4x4_buildTranslationMatrix(out_TRS, p_position);
-		float l_axis[3][3];
-		RMatrix_3x3_buildFromColumn(p_right, p_up, p_forward, l_axis);
-		RMatrix_4x4_buildRotationMatrix(out_TRS, l_axis);
+		RMatrix_4x4_buildRotationMatrix(out_TRS, p_axis);
 		RMatrix_4x4_buildScaleMatrix(out_TRS, p_scale);
 	};
 
@@ -277,6 +275,29 @@ namespace _MathV2
 		p_out[3][1] = 0.0f;
 		p_out[3][2] = (-2.0f * p_far * p_near) / (p_far - p_near);
 		p_out[3][3] = 0.0f;
+	};
+
+	void RMatrix_3x3_lookAt_rotation(const float p_origin[3], const float p_target[3], const float p_up[3], float out_rotationMatrix[3][3])
+	{
+		//out_rotationMatrix = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+		float l_forward[3];
+		{
+			RVector_3_min(p_target, p_origin, l_forward);
+			RVector_3_normalize(l_forward, l_forward);
+			RVector_3_mul(l_forward, -1.0f, l_forward);
+		}
+		float l_right[3];
+		{
+			RVector_3_cross(l_forward, p_up, l_right);
+			RVector_3_normalize(l_right, l_right);
+		}
+		float l_up[3];
+		{
+			RVector_3_cross(l_right, l_forward, l_up);
+			RVector_3_normalize(l_up, l_up);
+		}
+
+		RMatrix_3x3_buildFromColumn(l_right, l_up, l_forward, out_rotationMatrix);
 	};
 
 	void RMatrix_4x4_clipSpaceMul(const float p_projectionmatrix[4][4], const float p_pos[4], float out_pos[4])

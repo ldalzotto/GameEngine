@@ -35,8 +35,6 @@ namespace _GameEngine::_Math
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector3f* p_vector, Vector3f* out);
 	void Matrixf4x4_mul(Matrix4x4f* p_matrix, Vector2f* p_vector, Vector3f* out);
 
-	void Matrixf4x4_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out);
-	
 	void Matrix3x3f_set_c0(Matrix3x3f* p_matrix, Vector3f* p_col);
 	void Matrix3x3f_set_c1(Matrix3x3f* p_matrix, Vector3f* p_col);
 	void Matrix3x3f_set_c2(Matrix3x3f* p_matrix, Vector3f* p_col);

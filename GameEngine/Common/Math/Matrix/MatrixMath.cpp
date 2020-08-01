@@ -138,34 +138,6 @@ namespace _GameEngine::_Math
 		out_scale->w = 0.0f;
 	};
 
-	void Matrixf4x4_lookAt(Vector3f* p_origin, Vector3f* p_target, Vector3f* p_up, Matrix4x4f* p_out)
-	{
-		Vector3f l_forward;
-		{
-			Vector3f_min(p_target, p_origin, &l_forward);
-			Vector3f_normalize(&l_forward);
-			Vector3f_mul(&l_forward, -1.0f, &l_forward);
-		}
-
-		Vector3f l_right;
-		{
-			Vector3f_cross(&l_forward, p_up, &l_right);
-			Vector3f_normalize(&l_right);
-		}
-
-		Vector3f l_up;
-		{
-			Vector3f_cross(&l_right, &l_forward, &l_up);
-			Vector3f_normalize(&l_up);
-		}
-
-		*p_out = *(_Math::Matrix4x4f*) & _MathV2::MatrixM::buildTRS(
-			*(_MathV2::Vector3<float>*)(p_origin),
-			*(_MathV2::Vector3<float>*) & l_right, *(_MathV2::Vector3<float>*) & l_up, *(_MathV2::Vector3<float>*) & l_forward,
-			_MathV2::Vector3<float>{1.0f, 1.0f, 1.0f}
-		);
-	};
-
 	void Matrix3x3f_set_c0(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_00 = p_col->x; p_matrix->_01 = p_col->y; p_matrix->_02 = p_col->z; };
 	void Matrix3x3f_set_c1(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_10 = p_col->x; p_matrix->_11 = p_col->y; p_matrix->_12 = p_col->z; };
 	void Matrix3x3f_set_c2(Matrix3x3f* p_matrix, Vector3f* p_col) { p_matrix->_20 = p_col->x; p_matrix->_21 = p_col->y; p_matrix->_22 = p_col->z; };

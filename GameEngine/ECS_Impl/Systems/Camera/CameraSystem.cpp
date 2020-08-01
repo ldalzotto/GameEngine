@@ -1,7 +1,5 @@
 #include "CameraSystem.h"
 
-#include "Math/Matrix/MatrixMath.h"
-#include "Math/Vector/VectorMath.h"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
 
@@ -93,9 +91,12 @@ namespace _GameEngine::_ECS
 				_MathV2::Vector3<float> l_target = _MathV2::VectorM::add(l_worldPosition, Transform_getForward(&l_transform->Transform));
 				_MathV2::Vector3<float> l_up = _MathV2::VectorM::mul(Transform_getUp(&l_transform->Transform), -1.0f);
 
-				_Math::Matrix4x4f l_lookAt;
-				_Math::Matrixf4x4_lookAt((_Math::Vector3f*) & l_worldPosition, (_Math::Vector3f*) & l_target, (_Math::Vector3f*) & l_up, &l_lookAt);
-				l_camera->ViewMatrix = _MathV2::MatrixM::inv(*(_MathV2::Matrix4x4<float>*) & l_lookAt);
+				l_camera->ViewMatrix = _MathV2::MatrixM::inv(
+					_MathV2::MatrixM::buildTRS(
+						l_worldPosition,
+						_MathV2::MatrixM::lookAt_rotation(l_worldPosition, l_target, l_up),
+						_MathV2::Vector3<float>{1.0f, 1.0f, 1.0f})
+				);
 			}
 
 			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = *(_Math::Matrix4x4f*) & l_camera->ProjectionMatrix;

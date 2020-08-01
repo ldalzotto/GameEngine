@@ -105,21 +105,19 @@ namespace _MathV2
 		};
 
 		template <typename T>
-		inline static void buildTranslationMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_translation)
+		inline static Matrix4x4<T> buildTranslationMatrix(Vector3<T>& p_translation)
 		{
+			Matrix4x4<T> p_mat = Matrix4x4f_Identity;
 			RMatrix_4x4_buildTranslationMatrix(p_mat.Points, (T*)(&p_translation));
+			return p_mat;
 		}
 
 		template <typename T>
-		inline static void buildRotationMatrix(Matrix4x4<T>& p_mat, Matrix3x3<T>& p_axis)
+		inline static Matrix3x3<T> buildAxisMatrix(Vector3<T>& p_right, Vector3<T>& p_up, Vector3<T>& p_forward)
 		{
-			RMatrix_4x4_buildRotationMatrix(p_mat.Points, p_axis.Points);
-		};
-
-		template <typename T>
-		inline static void buildRotationMatrix(Matrix4x4<T>& p_mat, Vector3<T>& p_right, Vector3<T>& p_up, Vector3<T>& p_forward)
-		{
-			RMatrix_4x4_buildRotationMatrix(p_mat.Points, (T*)(&p_right), (T*)(&p_up), (T*)(&p_forward));
+			Matrix3x3<T> p_mat;
+			RMatrix_3x3_buildFromColumn((T*)(&p_right), (T*)(&p_up), (T*)(&p_forward), p_mat.Points);
+			return p_mat;
 		};
 
 		template <typename T>
@@ -137,10 +135,10 @@ namespace _MathV2
 		};
 
 		template <typename T>
-		inline static Matrix4x4<T> buildTRS(Vector3<T>& p_position, Vector3<T>& p_right, Vector3<T>& p_up, Vector3<T>& p_forward, Vector3<T>& p_scale)
+		inline static Matrix4x4<T> buildTRS(Vector3<T>& p_position, Matrix3x3<T>& p_axis, Vector3<T>& p_scale)
 		{
 			Matrix4x4<T> l_return;
-			RMatrix_4x4_buildTRS((T*)(&p_position), (T*)(&p_right), (T*)(&p_up), (T*)(&p_forward), (T*)(&p_scale), l_return.Points);
+			RMatrix_4x4_buildTRS((T*)(&p_position), p_axis.Points, (T*)(&p_scale), l_return.Points);
 			return l_return;
 		};
 
@@ -165,6 +163,14 @@ namespace _MathV2
 		{
 			Matrix4x4<T> l_return;
 			RMatrix_4x4_perspective(p_fov, p_aspect, p_near, p_far, l_return.Points);
+			return l_return;
+		};
+
+		template <typename T>
+		inline static Matrix3x3<T> lookAt_rotation(const Vector3<T>& p_origin, const Vector3<T>& p_target, const Vector3<T>& p_up)
+		{
+			Matrix3x3<T> l_return;
+			RMatrix_3x3_lookAt_rotation((T*)(&p_origin), (T*)(&p_target), (T*)(&p_up), l_return.Points);
 			return l_return;
 		};
 
