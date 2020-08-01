@@ -359,7 +359,7 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 		);
 
 		_Physics::RaycastHit l_hit;
-		if (_Physics::RayCast(l_interface->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
+		if (_Physics::RayCast(l_interface->PhysicsInterface->World, (_Math::Vector3f*) &l_ray.Begin, (_Math::Vector3f*) &l_ray.End, &l_hit))
 		{
 			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hit.HitPoint);
 			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hit.Collider->Box, 

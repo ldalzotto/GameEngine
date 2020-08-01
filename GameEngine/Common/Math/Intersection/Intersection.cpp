@@ -1,5 +1,6 @@
 #include "Intersection.h"
 
+#include "Math/Vector/Vector.h"
 #include "Math/Vector/VectorMath.h"
 #include "Math/Box/Box.h"
 #include "Math/Box/BoxMath.h"
@@ -100,9 +101,9 @@ namespace _GameEngine::_Math
 		}
 
 		// Calculating the first intersection points
-		*p_outIntersectionPoint = Segment_toVector(p_ray);
+		*p_outIntersectionPoint = *(_Math::Vector3f*)&Segment_toVector(p_ray);
 		_Math::Vector3f_mul(p_outIntersectionPoint, l_rayDistanceFraction_min, p_outIntersectionPoint);
-		_Math::Vector3f_add(p_outIntersectionPoint, &p_ray->Begin, p_outIntersectionPoint);
+		_Math::Vector3f_add(p_outIntersectionPoint, (_Math::Vector3f*)&p_ray->Begin, p_outIntersectionPoint);
 		return true;
 	};
 

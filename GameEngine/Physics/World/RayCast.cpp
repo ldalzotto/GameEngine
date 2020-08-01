@@ -63,8 +63,8 @@ namespace _GameEngine::_Physics
 	{
 		_Math::Segment l_segment;
 		{
-			l_segment.Begin = *p_begin;
-			l_segment.End = *p_end;
+			l_segment.Begin = *(_MathV2::Vector3<float>*)p_begin;
+			l_segment.End = *(_MathV2::Vector3<float>*)p_end;
 		}
 
 		auto l_boxCollidersIt = _Core::ArrayT_buildIterator(p_comparedColliders);
@@ -75,7 +75,7 @@ namespace _GameEngine::_Physics
 
 			// We project the ray to the box local space, to perform an AABB test.
 			_Math::Segment l_localProjectedSegment;
-			Segment_mul(&l_segment, (_Math::Matrix4x4f*)&l_worldToLocal, &l_localProjectedSegment);
+			Segment_mul(&l_segment, l_worldToLocal, &l_localProjectedSegment);
 
 			_Math::Vector3f l_intersectionPointLocal;
 			if (_Math::Intersection_AABB_Ray(l_boxCollider->Box, &l_localProjectedSegment, &l_intersectionPointLocal))

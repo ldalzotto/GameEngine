@@ -60,8 +60,8 @@ namespace _GameEngine::_ECS
 
 		return
 			_Math::Segment{
-			/*Near plane*/ *(_Math::Vector3f*) & _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f})),
-			/*Far plane*/* (_Math::Vector3f*)& _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f}))
+			/*Near plane*/ _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f})),
+			/*Far plane*/ _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f}))
 		};
 	};
 }
