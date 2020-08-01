@@ -5,10 +5,10 @@
 
 #include "GameEngineApplication.h"
 
-#include "Math/Math.h"
-#include "Math/Transform/TransformM.hpp"
+#include "v2/Math.h"
+#include "v2/Transform/TransformM.hpp"
 #include "v2/Quaternion/QuaternionMath.hpp"
-#include "Math/Segment/Segment.hpp"
+#include "v2/Segment/Segment.hpp"
 
 #include "ECS/ComponentT.hpp"
 #include "ECS/ECSEventQueueT.hpp"
@@ -78,7 +78,7 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_upLeftEntity, &l_upLeftEntityTransform);
 
-		_Math::TransformM::addChild(
+		_MathV2::TransformM::addChild(
 			&l_parentEntityTransform->Transform,
 			&l_upLeftEntityTransform->Transform
 		);
@@ -93,7 +93,7 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_upRightEntity, &l_upRightEntityTransform);
 
-		_Math::TransformM::addChild(
+		_MathV2::TransformM::addChild(
 			&l_parentEntityTransform->Transform,
 			&l_upRightEntityTransform->Transform
 		);
@@ -108,7 +108,7 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_bottomLeftEntity, &l_bottomLeftEntityTransform);
 
-		_Math::TransformM::addChild(
+		_MathV2::TransformM::addChild(
 			&l_parentEntityTransform->Transform,
 			&l_bottomLeftEntityTransform->Transform
 		);
@@ -123,7 +123,7 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 		l_parentCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		EntityCreation_createEntity(l_gameEngine, &l_parentCreationInfo, &l_bottomRightEntity, &l_bottomRightEntityTransform);
 
-		_Math::TransformM::addChild(
+		_MathV2::TransformM::addChild(
 			&l_parentEntityTransform->Transform,
 			&l_bottomRightEntityTransform->Transform
 		);
@@ -131,7 +131,7 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 
 	if (p_cubeCrossCreationInfo->Parent)
 	{
-		_Math::TransformM::addChild(
+		_MathV2::TransformM::addChild(
 			&p_cubeCrossCreationInfo->Parent->Transform,
 			&l_parentEntityTransform->Transform
 		);
@@ -252,8 +252,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			}
 		}
 
-		_Math::TransformM::addChild(&(l_rayTransform)->Transform, &(p_test->PhysicsRayBegin)->Transform);
-		_Math::TransformM::addChild(&(l_rayTransform)->Transform, &(p_test->PhysicsRayEnd)->Transform);
+		_MathV2::TransformM::addChild(&(l_rayTransform)->Transform, &(p_test->PhysicsRayBegin)->Transform);
+		_MathV2::TransformM::addChild(&(l_rayTransform)->Transform, &(p_test->PhysicsRayEnd)->Transform);
 	}
 
 	// Scene root
@@ -280,7 +280,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 
 		}
 	}
-	_Math::TransformM::addChild(
+	_MathV2::TransformM::addChild(
 		&(l_sceneModelsRootTransform)->Transform,
 		&(l_rayTransform)->Transform
 	);
@@ -327,8 +327,8 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 #endif
 
 	{
-		_MathV2::Vector3<float> l_rayBeginPoint = _Math::TransformM::getWorldPosition((p_test->PhysicsRayBegin)->Transform);
-		_MathV2::Vector3<float> l_rayEndPoint = _Math::TransformM::getWorldPosition((p_test->PhysicsRayEnd)->Transform);
+		_MathV2::Vector3<float> l_rayBeginPoint = _MathV2::TransformM::getWorldPosition((p_test->PhysicsRayBegin)->Transform);
+		_MathV2::Vector3<float> l_rayEndPoint = _MathV2::TransformM::getWorldPosition((p_test->PhysicsRayEnd)->Transform);
 		_MathV2::Vector3<float> l_color = { 0.0f, 1.0f, 0.0f };
 
 		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, l_rayBeginPoint, l_rayEndPoint, l_color);
@@ -342,7 +342,7 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 			{
 				_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, l_hitsIt.Current->HitPoint, l_color);
 				_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, *l_hitsIt.Current->Collider->Box, 
-					_Math::TransformM::getLocalToWorldMatrix(*l_hitsIt.Current->Collider->Transform), false, l_color);
+					_MathV2::TransformM::getLocalToWorldMatrix(*l_hitsIt.Current->Collider->Transform), false, l_color);
 			}
 		}
 		_Core::VectorT_free(&l_hits);
@@ -351,7 +351,7 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 	// Mouse raycast
 	{
 		_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&l_interface->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
-		_Math::Segment l_ray =
+		_MathV2::Segment l_ray =
 
 		_ECS::Camera_buildWorldSpaceRay(
 			_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem),
@@ -363,7 +363,7 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 		{
 			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, l_hit.HitPoint);
 			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, *l_hit.Collider->Box, 
-				_Math::TransformM::getLocalToWorldMatrix(*l_hit.Collider->Transform), false);
+				_MathV2::TransformM::getLocalToWorldMatrix(*l_hit.Collider->Transform), false);
 		}
 
 	}

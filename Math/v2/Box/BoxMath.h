@@ -3,18 +3,15 @@
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/Vector.hpp"
 
-namespace _GameEngine::_Math
-{
-	struct Box;
-}
-
 namespace _MathV2
 {
+	struct Box;
+
 	template<int C, int L, typename T>
 	struct Matrix;
 }
 
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	struct BoxPoints
 	{

@@ -2,7 +2,7 @@
 
 #include "ECS/ECS.h"
 #include "ECS/ECSEventQueueT.hpp"
-#include "Math/Transform/TransformM.hpp"
+#include "v2/Transform/TransformM.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -12,7 +12,7 @@ namespace _GameEngine::_ECS
 	{
 		if (p_transformComponent->Transform.Childs.Size > 0)
 		{
-			_Core::VectorIteratorT<_Math::Transform*> l_childs = _Core::VectorT_buildIterator(&p_transformComponent->Transform.Childs);
+			_Core::VectorIteratorT<_MathV2::Transform*> l_childs = _Core::VectorT_buildIterator(&p_transformComponent->Transform.Childs);
 			while (_Core::VectorIteratorT_moveNext(&l_childs))
 			{
 				_ECS::TransformComponent* l_childComponent = TransformComponent_castFromTransform((*l_childs.Current));
@@ -21,7 +21,7 @@ namespace _GameEngine::_ECS
 			}
 		}
 
-		_Math::TransformM::free(&p_transformComponent->Transform);
+		_MathV2::TransformM::free(&p_transformComponent->Transform);
 	};
 
 	void TransformComponent_init(TransformComponent* p_transformComponent, TransformInitInfo* p_transformInitInfo)
@@ -29,12 +29,12 @@ namespace _GameEngine::_ECS
 		p_transformComponent->Transform.LocalPosition = p_transformInitInfo->LocalPosition;
 		p_transformComponent->Transform.LocalRotation = p_transformInitInfo->LocalRotation;
 		p_transformComponent->Transform.LocalScale = p_transformInitInfo->LocalScale;
-		_Math::TransformM::alloc(&p_transformComponent->Transform);
+		_MathV2::TransformM::alloc(&p_transformComponent->Transform);
 
 		p_transformComponent->ComponentHeader.OnComponentFree = TransformComponent_free;
 	};
 
-	TransformComponent* TransformComponent_castFromTransform(_Math::Transform* p_transform)
+	TransformComponent* TransformComponent_castFromTransform(_MathV2::Transform* p_transform)
 	{
 		return (TransformComponent*)(((char*)p_transform) - offsetof(TransformComponent, Transform));
 	};

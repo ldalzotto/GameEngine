@@ -1,6 +1,6 @@
 #include "MeshRendererBoundSystem.h"
 
-#include "Math/Box/BoxMath.h"
+#include "v2/Box/BoxMath.h"
 
 #include "Algorithm/Compare/CompareAlgorithmT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
@@ -89,7 +89,7 @@ namespace _GameEngine::_ECS
 				{
 					_Core::VectorT_pushBack(&l_vertices, &l_mesh->Vertices.at(i).pos);
 				}
-				_Math::Box_build(l_operation->Bound->BoundingBox, l_vertices);
+				_MathV2::Box_build(l_operation->Bound->BoundingBox, l_vertices);
 
 
 			}

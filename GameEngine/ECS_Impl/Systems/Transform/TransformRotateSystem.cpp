@@ -5,7 +5,7 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
-#include "Math/Transform/TransformM.hpp"
+#include "v2/Transform/TransformM.hpp"
 
 #include "EngineSequencers.h"
 
@@ -97,7 +97,7 @@ namespace _GameEngine::_ECS
 				)
 			);
 
-			_Math::TransformM::setLocalRotation(l_operations.Current->TransformComponent->Transform, l_newLocalRotation);
+			_MathV2::TransformM::setLocalRotation(l_operations.Current->TransformComponent->Transform, l_newLocalRotation);
 		}
 	};
 

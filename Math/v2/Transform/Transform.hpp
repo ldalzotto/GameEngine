@@ -6,7 +6,7 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	struct Transform;
 	using TransformHandle = Transform*;

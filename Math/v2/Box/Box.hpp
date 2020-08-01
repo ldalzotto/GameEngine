@@ -2,7 +2,7 @@
 
 #include "v2/Vector/Vector.hpp"
 
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	struct Box
 	{

@@ -3,9 +3,7 @@
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 
-using namespace _MathV2;
-
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 
 	_MathV2::Vector3<float> SegmentM::direction(const Segment* p_segment)

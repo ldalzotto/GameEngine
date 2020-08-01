@@ -8,7 +8,7 @@ namespace _MathV2
 	struct Matrix;
 }
 
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	struct SegmentM
 	{

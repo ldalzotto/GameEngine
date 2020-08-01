@@ -2,7 +2,7 @@
 
 #include "Transform.hpp"
 
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	struct TransformM
 	{

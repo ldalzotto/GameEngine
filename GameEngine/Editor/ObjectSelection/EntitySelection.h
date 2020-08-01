@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "Math/Box/Box.hpp"
-#include "Math/Transform/Transform.hpp"
+#include "v2/Box/Box.hpp"
+#include "v2/Transform/Transform.hpp"
 
 #include "Physics/World/Collider/BoxCollider.h"
 
@@ -26,8 +26,8 @@ namespace _GameEngineEditor
 {
 	struct TransformGizmoPlane
 	{
-		_GameEngine::_Math::Transform Transform;
-		_GameEngine::_Math::Box Box;
+		_MathV2::Transform Transform;
+		_MathV2::Box Box;
 		_GameEngine::_Physics::BoxCollider Collider;
 	};
 

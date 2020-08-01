@@ -3,7 +3,7 @@
 #include <math.h>
 #include "VulkanObjects/Hardware/Window/Window.h"
 
-#include "Math/Math.h"
+#include "v2/Math.h"
 #include "v2/Vector/VectorMath.hpp"
 
 namespace _GameEngine::_Input
@@ -16,9 +16,9 @@ namespace _GameEngine::_Input
 
 	void initializeGLFWLookup(Input* p_input);
 
-	_Math::Segment InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse)
+	_MathV2::Segment InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse)
 	{
-		_Math::Segment l_segment;
+		_MathV2::Segment l_segment;
 		l_segment.Begin = { (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.x, (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.y };
 		l_segment.End = { (float)p_inputMouse->ScreenPosition.x, (float)p_inputMouse->ScreenPosition.y };
 		return l_segment;
@@ -115,8 +115,8 @@ namespace _GameEngine::_Input
 
 			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
 
-			p_input->InputMouse.ScreenPosition.x = _Math::Math_max(_Math::Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);
-			p_input->InputMouse.ScreenPosition.y = _Math::Math_max(_Math::Math_min(p_input->InputMouse.ScreenPosition.y, static_cast<double>(l_windowDimensions.Height)), 0.0f);
+			p_input->InputMouse.ScreenPosition.x = _MathV2::Math_max(_MathV2::Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);
+			p_input->InputMouse.ScreenPosition.y = _MathV2::Math_max(_MathV2::Math_min(p_input->InputMouse.ScreenPosition.y, static_cast<double>(l_windowDimensions.Height)), 0.0f);
 		}
 	};
 

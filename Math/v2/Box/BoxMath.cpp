@@ -1,14 +1,12 @@
 #include "BoxMath.h"
 
-#include "Math/Box/Box.hpp"
+#include "v2/Box/Box.hpp"
 
 #include <math.h>
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 
-using namespace _MathV2;
-
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	void box_grow(Box& p_box, Vector3<float>& p_growingPoint)
 	{

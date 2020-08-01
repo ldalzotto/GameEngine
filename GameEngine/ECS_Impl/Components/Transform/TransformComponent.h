@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Transform/Transform.hpp"
+#include "v2/Transform/Transform.hpp"
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "ECS/ComponentT.hpp"
@@ -12,7 +12,7 @@ namespace _GameEngine::_ECS
 	struct TransformComponent
 	{
 		_ECS::ComponentHeaderT<TransformComponent> ComponentHeader;
-		_Math::Transform Transform;
+		_MathV2::Transform Transform;
 	};
 
 	template <>
@@ -29,5 +29,5 @@ namespace _GameEngine::_ECS
 	};
 
 	void TransformComponent_init(TransformComponent* p_component, TransformInitInfo* p_transformInitInfo);
-	TransformComponent* TransformComponent_castFromTransform(_Math::Transform* p_transform);
+	TransformComponent* TransformComponent_castFromTransform(_MathV2::Transform* p_transform);
 }

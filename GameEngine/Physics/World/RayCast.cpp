@@ -6,10 +6,10 @@
 
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
-#include "Math/Intersection/Intersection.h"
-#include "Math/Transform/TransformM.hpp"
-#include "Math/Box/BoxMath.h"
-#include "Math/Segment/SegmentMath.hpp"
+#include "v2/Intersection/Intersection.h"
+#include "v2/Transform/TransformM.hpp"
+#include "v2/Box/BoxMath.h"
+#include "v2/Segment/SegmentMath.hpp"
 #include <math.h>
 #include "World/World.h"
 #include "Collider/BoxCollider.h"
@@ -60,7 +60,7 @@ namespace _GameEngine::_Physics
 
 	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
-		_Math::Segment l_segment;
+		Segment l_segment;
 		{
 			l_segment.Begin = p_begin;
 			l_segment.End = p_end;
@@ -70,16 +70,16 @@ namespace _GameEngine::_Physics
 		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
 			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
-			_MathV2::Matrix4x4<float> l_worldToLocal = _Math::TransformM::getWorldToLocalMatrix(*l_boxCollider->Transform);
+			_MathV2::Matrix4x4<float> l_worldToLocal = TransformM::getWorldToLocalMatrix(*l_boxCollider->Transform);
 
 			// We project the ray to the box local space, to perform an AABB test.
 			_MathV2::Vector3<float> l_intersectionPointLocal;
-			if (_Math::Intersection_AABB_Ray(*l_boxCollider->Box, _Math::SegmentM::mul(l_segment, l_worldToLocal), &l_intersectionPointLocal))
+			if (Intersection_AABB_Ray(*l_boxCollider->Box, SegmentM::mul(l_segment, l_worldToLocal), &l_intersectionPointLocal))
 			{
 				RaycastHit hit{};
 
 				// The intersection point is then projected back to world space.
-				hit.HitPoint = VectorM::cast(MatrixM::mul(_Math::TransformM::getLocalToWorldMatrix(*l_boxCollider->Transform), VectorM::cast(l_intersectionPointLocal, 1.0f)));
+				hit.HitPoint = VectorM::cast(MatrixM::mul(TransformM::getLocalToWorldMatrix(*l_boxCollider->Transform), VectorM::cast(l_intersectionPointLocal, 1.0f)));
 				hit.Collider = l_boxCollider;
 				_Core::VectorT_pushBack(out_intersectionPoints, &hit);
 			}

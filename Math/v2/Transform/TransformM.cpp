@@ -5,7 +5,7 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Quaternion/QuaternionMath.hpp"
 
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	bool Vector_transformComparator(Transform** left, Transform** right, void*)
 	{
@@ -13,10 +13,7 @@ namespace _GameEngine::_Math
 	}
 }
 
-using namespace _MathV2;
-
-
-namespace _GameEngine::_Math
+namespace _MathV2
 {
 	void transform_updateMatricesIfNecessary(Transform& p_transform);
 
@@ -82,37 +79,37 @@ namespace _GameEngine::_Math
 	{
 		if (p_transform.Parent == nullptr)
 		{
-			_Math::TransformM::setLocalPosition(p_transform, p_worldPosition);
+			TransformM::setLocalPosition(p_transform, p_worldPosition);
 		}
 		else
 		{
 			Vector4<float> l_localPosition = MatrixM::mul(
-				_Math::TransformM::getWorldToLocalMatrix(*p_transform.Parent),
+				TransformM::getWorldToLocalMatrix(*p_transform.Parent),
 				VectorM::cast(p_worldPosition, 1.0f)
 			);
-			_Math::TransformM::setLocalPosition(p_transform, VectorM::cast(l_localPosition));
+			TransformM::setLocalPosition(p_transform, VectorM::cast(l_localPosition));
 		}
 	};
 
 	void TransformM::addToWorldPosition(Transform& p_transform, Vector3<float>& p_worldPosition_delta)
 	{
-		_Math::TransformM::setWorldPosition(p_transform, VectorM::add(_Math::TransformM::getWorldPosition(p_transform), p_worldPosition_delta));
+		TransformM::setWorldPosition(p_transform, VectorM::add(TransformM::getWorldPosition(p_transform), p_worldPosition_delta));
 	};
 
-	_MathV2::Matrix4x4<float> TransformM::getLocalToWorldMatrix(Transform& p_transform)
+	Matrix4x4<float> TransformM::getLocalToWorldMatrix(Transform& p_transform)
 	{
 		transform_updateMatricesIfNecessary(p_transform);
 		return p_transform.LocalToWorldMatrix;
 	};
 
-	_MathV2::Matrix4x4<float> TransformM::getWorldToLocalMatrix(Transform& p_transform)
+	Matrix4x4<float> TransformM::getWorldToLocalMatrix(Transform& p_transform)
 	{
-		return _MathV2::MatrixM::inv(TransformM::getLocalToWorldMatrix(p_transform));
+		return MatrixM::inv(TransformM::getLocalToWorldMatrix(p_transform));
 	};
 
-	_MathV2::Matrix4x4<float> TransformM::calculateMatrixToProjectFromTransformToAnother(Transform& p_source, Transform& p_target)
+	Matrix4x4<float> TransformM::calculateMatrixToProjectFromTransformToAnother(Transform& p_source, Transform& p_target)
 	{
-		return _MathV2::MatrixM::mul(TransformM::getLocalToWorldMatrix(p_source), TransformM::getWorldToLocalMatrix(p_target));
+		return MatrixM::mul(TransformM::getLocalToWorldMatrix(p_source), TransformM::getWorldToLocalMatrix(p_target));
 	};
 
 	Vector3<float> TransformM::getWorldPosition(Transform& p_transform)

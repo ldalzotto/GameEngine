@@ -1,10 +1,10 @@
 #include "Camera.h"
 
-#include "Math/Math.h"
+#include "v2/Math.h"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "Math/Segment/Segment.hpp"
+#include "v2/Segment/Segment.hpp"
 
 #include "Render/RenderInterface.h"
 #include "Render/VulkanObjects/SwapChain/SwapChain.h"
@@ -44,11 +44,11 @@ namespace _GameEngine::_ECS
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
-		p_camera->ProjectionMatrix = _MathV2::MatrixM::perspective<float>(45.0f * _Math::DEG_TO_RAD,
+		p_camera->ProjectionMatrix = _MathV2::MatrixM::perspective<float>(45.0f * _MathV2::DEG_TO_RAD,
 			((float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height), 0.1f, 50.0f);
 	};
 
-	_Math::Segment& Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint)
+	_MathV2::Segment Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint)
 	{
 		_MathV2::Vector2<float> l_graphicsAPIPixelCoord = _MathV2::VectorM::cast(
 			_MathV2::MatrixM::mul(
@@ -59,7 +59,7 @@ namespace _GameEngine::_ECS
 		_MathV2::Matrix4x4<float> l_clipToWorldMatrix = _MathV2::MatrixM::inv(Camera_worldToClipMatrix(p_camera));
 
 		return
-			_Math::Segment{
+			_MathV2::Segment{
 			/*Near plane*/ _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f})),
 			/*Far plane*/ _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, _MathV2::Vector4<float>{l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f}))
 		};
