@@ -91,7 +91,7 @@ namespace _GameEngine::_Math
 		out_max = VectorM::add(p_box->Center, { p_box->Extend.x, p_box->Extend.y, p_box->Extend.z });
 	};
 
-	void BoxPoints_mul(BoxPoints* p_boxPoints, _MathV2::Matrix<4, 4, float>& p_matrix)
+	void BoxPoints_mul(BoxPoints* p_boxPoints, const _MathV2::Matrix<4, 4, float>& p_matrix)
 	{
 		p_boxPoints->Center = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints->Center, 1.0f)));
 		p_boxPoints->L_D_B = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints->L_D_B, 1.0f)));

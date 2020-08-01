@@ -2,7 +2,7 @@
 
 #include "Includes/GLFWIncludes.h"
 
-#include "Math/Vector/Vector.h"
+#include "v2/Vector/Vector.hpp"
 #include "Math/Segment/Segment.h"
 
 #include <unordered_map>
@@ -179,10 +179,10 @@ namespace _GameEngine::_Input
 	{
 		bool MouseEnabled;
 		float MouseSentitivityperPixel = 0.01f;
-		_Math::Vector2d ScreenPosition;
+		_MathV2::Vector2<double> ScreenPosition;
 
-		_Math::Vector2d LastFrameMouseAbsoluteScreenPosition;
-		_Math::Vector2d MouseDelta;
+		_MathV2::Vector2<double> LastFrameMouseAbsoluteScreenPosition;
+		_MathV2::Vector2<double> MouseDelta;
 	};
 
 	_Math::Segment InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);

@@ -11,7 +11,7 @@ namespace _Core
 		return *p_left == *p_right;
 	};
 
-	bool Equals_double(double* p_left, double* p_right)
+	bool Equals_double(const double* p_left, const double* p_right)
 	{
 		return fabs((*p_left) - (*p_right)) <= DOUBLE_TOLERANCE;
 	};

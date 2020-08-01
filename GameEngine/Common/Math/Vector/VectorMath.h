@@ -10,25 +10,10 @@ namespace _GameEngine::_Math
 
 namespace _GameEngine::_Math
 {
-	void Vector2f_normalize(Vector2f* p_vector);
-	float Vector2f_dot(Vector2f* p_left, Vector2f* p_right);
-	float Vector2f_length(Vector2f* p_vec);
-
-	void Vector2d_normalize(Vector2d* p_vector);
-	void Vector2d_min(Vector2d* p_left, Vector2d* p_right, Vector2d* p_out);
-	bool Vector2d_equals(Vector2d* p_left, Vector2d* p_right);
-
-	void Vector3f_build(Vector4f* p_xyz, Vector3f* out);
-
-	bool Vector3f_equals(Vector3f* left, Vector3f* right);
-	void Vector3f_normalize(Vector3f* p_vec);
 	float Vector3f_length(Vector3f* p_vec);
-	float Vector3f_distance(Vector3f* p_vec, Vector3f* p_target);
 	
-	void Vector3f_mul(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out);
 	void Vector3f_mul(Vector3f* p_vector, float p_value, Vector3f* p_out);
 	void Vector3f_add(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out);
-	void Vector3f_min(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out);
 	
 	float Vector3f_dot(Vector3f* p_vector, Vector3f* p_other);
 	void Vector3f_cross(Vector3f* p_vector, Vector3f* p_other, Vector3f* p_out);

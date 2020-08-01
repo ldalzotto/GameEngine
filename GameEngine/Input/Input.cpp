@@ -4,7 +4,7 @@
 #include "VulkanObjects/Hardware/Window/Window.h"
 
 #include "Math/Math.h"
-#include "Math/Vector/VectorMath.h"
+#include "v2/Vector/VectorMath.hpp"
 
 namespace _GameEngine::_Input
 {
@@ -111,7 +111,7 @@ namespace _GameEngine::_Input
 		{
 			p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition = p_input->InputMouse.ScreenPosition;
 			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
-			_Math::Vector2d_min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
+			p_input->InputMouse.MouseDelta = _MathV2::VectorM::min(p_input->InputMouse.ScreenPosition, p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition);
 
 			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
 

@@ -62,6 +62,13 @@ namespace _MathV2
 			return l_out;
 		};
 		template <typename T>
+		inline static Vector<2, T> min(const Vector<2, T>& p_left, const Vector<2, T>& p_right)
+		{
+			Vector2<T> l_out;
+			RVector_2_min((T*)(&p_left), (T*)(&p_right), (T*)&l_out);
+			return l_out;
+		};
+		template <typename T>
 		inline static Vector<3, T> min(const Vector<3, T>& p_left, const Vector<3, T>& p_right)
 		{
 			Vector3<T> l_out;
@@ -110,6 +117,11 @@ namespace _MathV2
 			return l_out;
 		};
 
+		template <typename T>
+		inline static bool equals(const Vector<2, T>& p_left, const Vector<2, T>& p_right)
+		{
+			return RVector_2_equals((T*)(&p_left), (T*)(&p_right));
+		};
 		template <typename T>
 		inline static bool equals(const Vector<3, T>& p_left, const Vector<3, T>& p_right)
 		{

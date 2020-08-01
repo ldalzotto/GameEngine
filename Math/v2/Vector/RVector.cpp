@@ -9,6 +9,16 @@
 
 namespace _MathV2
 {
+	/* Genrric methos */
+	template <typename T>
+	inline void RVector_min(const T* p_left, const T* p_right, T* p_out, short int p_size)
+	{
+		for (short int i = 0; i < p_size; i++)
+		{
+			p_out[i] = p_left[i] - p_right[i];
+		}
+	}
+	/**/
 
 	const float RIGHT_arr[3] = { 1.0f, 0.0f, 0.0f };
 	const float UP_arr[3] = { 0.0f, 1.0f, 0.0f };
@@ -20,6 +30,18 @@ namespace _MathV2
 		{
 			p_out[i] = p_left[i] * p_value;
 		}
+	};
+
+	bool RVector_2_equals(const double p_left[2], const double p_right[2])
+	{
+		return _Core::Equals_double(&p_left[0], &p_right[0])
+			&& _Core::Equals_double(&p_left[1], &p_right[1]);
+	};
+
+	bool RVector_2_equals(const float p_left[2], const float p_right[2])
+	{
+		return _Core::Equals_float(&p_left[0], &p_right[0])
+			&& _Core::Equals_float(&p_left[1], &p_right[1]);
 	};
 
 	bool RVector_3_equals(const float p_left[3], const float p_right[3])
@@ -36,12 +58,9 @@ namespace _MathV2
 		p_out[2] = p_left[2] + p_right[2];
 	};
 
-	void RVector_3_min(const float p_left[3], const float p_right[3], float p_out[3])
-	{
-		p_out[0] = p_left[0] - p_right[0];
-		p_out[1] = p_left[1] - p_right[1];
-		p_out[2] = p_left[2] - p_right[2];
-	};
+	void RVector_2_min(const float p_left[2], const  float p_right[2], float p_out[2]) { RVector_min(p_left, p_right, p_out, 2); };
+	void RVector_2_min(const double p_left[2], const  double p_right[2], double p_out[2]) { RVector_min(p_left, p_right, p_out, 2); };
+	void RVector_3_min(const float p_left[3], const float p_right[3], float p_out[3]) { RVector_min(p_left, p_right, p_out, 3); };
 
 	void RVector_3_mul(const float p_left[3], const float p_right, float p_out[3])
 	{
@@ -124,14 +143,14 @@ namespace _MathV2
 	{
 		float l_vectorAsQuat[4];
 		RQuaternion_build(p_vector, 0.0f, l_vectorAsQuat);
-		
+
 		float l_rotatedVector[4];
 		RQuaternion_mul(p_rotation, l_vectorAsQuat, l_rotatedVector);
 		{
 			float l_tmp[4];
 			RQuaternion_conjugate(p_rotation, l_tmp);
 
-			float l_rotatedVector_cpy[4]; 
+			float l_rotatedVector_cpy[4];
 			memcpy(l_rotatedVector_cpy, l_rotatedVector, sizeof(float) * 4);
 			RQuaternion_mul(l_rotatedVector_cpy, l_tmp, l_rotatedVector);
 		}

@@ -6,9 +6,13 @@ namespace _MathV2
 	extern const float UP_arr[3];
 	extern const float FORWARD_arr[3];
 
+	bool RVector_2_equals(const float p_left[2], const float p_right[2]);
+	bool RVector_2_equals(const double p_left[2], const double p_right[2]);
 	bool RVector_3_equals(const float p_left[3], const float p_right[3]);
 
 	void RVector_3_add(const float p_left[3], const float p_right[3], float p_out[3]);
+	void RVector_2_min(const float p_left[2], const  float p_right[2], float p_out[2]);
+	void RVector_2_min(const double p_left[2], const  double p_right[2], double p_out[2]);
 	void RVector_3_min(const float p_left[3], const  float p_right[3], float p_out[3]);
 
 	void RVector_3_mul(const float p_left[3], const float p_right, float p_out[3]);

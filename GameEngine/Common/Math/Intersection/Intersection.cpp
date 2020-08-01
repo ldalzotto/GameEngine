@@ -1,19 +1,18 @@
 #include "Intersection.h"
 
-#include "Math/Vector/Vector.h"
-#include "Math/Vector/VectorMath.h"
+#include "v2/Vector/VectorMath.hpp"
 #include "Math/Box/Box.h"
 #include "Math/Box/BoxMath.h"
 #include "Math/Segment/Segment.h"
 
+using namespace _MathV2;
+
 namespace _GameEngine::_Math
 {
-	bool Intersection_AABB_Ray(Box* p_AABB, Segment* p_ray, Vector3f* p_outIntersectionPoint)
+	bool Intersection_AABB_Ray(Box* p_AABB, Segment* p_ray, _MathV2::Vector<3, float>* p_outIntersectionPoint)
 	{
-		_MathV2::Vector3<float> l_boxMin, l_boxMax;
+		Vector3<float> l_boxMin, l_boxMax;
 		_Math::Box_extractMinMax(p_AABB, l_boxMin, l_boxMax);
-
-		_Math::Vector3f l_fragmentInsideBoxVector;
 
 		/*
 			Ray distance fractions are normalized % of length of the p_ray length.
@@ -101,9 +100,7 @@ namespace _GameEngine::_Math
 		}
 
 		// Calculating the first intersection points
-		*p_outIntersectionPoint = *(_Math::Vector3f*)&Segment_toVector(p_ray);
-		_Math::Vector3f_mul(p_outIntersectionPoint, l_rayDistanceFraction_min, p_outIntersectionPoint);
-		_Math::Vector3f_add(p_outIntersectionPoint, (_Math::Vector3f*)&p_ray->Begin, p_outIntersectionPoint);
+		*p_outIntersectionPoint = VectorM::add(VectorM::mul(Segment_toVector(p_ray), l_rayDistanceFraction_min), p_ray->Begin);
 		return true;
 	};
 
