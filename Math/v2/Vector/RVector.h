@@ -29,6 +29,8 @@ namespace _MathV2
 	
 	void RVector_3_cross(const float p_left[3], const float p_right[3], float p_out[3]);
 
+	void RVector_3_project(const float p_vec[3], const float p_projectedOn[3], float p_out[3]);
+
 	float RVector_3_angle(const float p_begin[3], const  float p_end[3]);
 	float RVector_3_angle_normalized(const float p_begin[3], const float p_end[3]);
 

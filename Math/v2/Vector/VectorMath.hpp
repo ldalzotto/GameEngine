@@ -88,6 +88,13 @@ namespace _MathV2
 			return RVector_3_dot((T*)(&p_left), (T*)(&p_right));
 		};
 		template <typename T>
+		inline static Vector<3, T> project(const Vector<3, T> p_vec, const Vector<3, T> p_projectedOn)
+		{
+			Vector<3, T> l_out;
+			RVector_3_project((T*)(&p_vec), (T*)(&p_projectedOn), (T*)(&l_out));
+			return l_out;
+		};
+		template <typename T>
 		inline static Vector<3, T> cross(const Vector<3, T>& p_left, const Vector<3, T>& p_right)
 		{
 			Vector<3, T> l_out;

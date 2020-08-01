@@ -18,6 +18,11 @@ namespace _GameEngine::_Math
 		return VectorM::min(p_segment->End, p_segment->Begin);
 	};
 
+	_MathV2::Vector3<float> Segment_toVector(Segment& p_segment)
+	{
+		return Segment_toVector(&p_segment);
+	};
+
 	float Segment_length(Segment* p_segment)
 	{
 		return VectorM::length(Segment_toVector(p_segment));

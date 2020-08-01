@@ -219,19 +219,13 @@ namespace _GameEngineEditor
 
 			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, _Math::Transform_getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
 		}
-		_Math::Vector3f l_deltaPositionDirection_worldSpace = *(_Math::Vector3f*) & _Math::Transform_getForward(&l_selectedArrow->Transform);
 
-		_Math::Vector3f l_deltaPosition{};
-		{
-
-			_Math::Segment l_mouseDelta_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
-			l_deltaPosition = *(_Math::Vector3f*) & _Math::Segment_toVector(&l_mouseDelta_worldSpace);
-
-			// We project deltaposition on the translation direction
-			_Math::Vector3f_project(&l_deltaPosition, &l_deltaPositionDirection_worldSpace, &l_deltaPosition);
-		}
-
-		_Math::Transform_addToWorldPosition(&(l_transformComponent)->Transform, *(_MathV2::Vector3<float>*) & l_deltaPosition);
+		_MathV2::Vector3<float> l_deltaPosition =
+			_MathV2::VectorM::project(
+				_Math::Segment_toVector(entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider)),
+				_Math::Transform_getForward(&l_selectedArrow->Transform)
+			);
+		_Math::Transform_addToWorldPosition(&(l_transformComponent)->Transform, l_deltaPosition);
 	}
 
 	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)

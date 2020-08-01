@@ -117,6 +117,11 @@ namespace _MathV2
 		p_out[2] = (p_left[0] * p_right[1]) - (p_left[1] * p_right[0]);
 	};
 
+	void RVector_3_project(const float p_vec[3], const float p_projectedOn[3], float p_out[3])
+	{
+		RVector_3_mul(p_projectedOn, RVector_3_dot(p_vec, p_projectedOn) / RVector_3_length(p_projectedOn), p_out);
+	};
+
 	float RVector_3_angle(const float p_begin[3], const float p_end[3])
 	{
 		return acosf(
