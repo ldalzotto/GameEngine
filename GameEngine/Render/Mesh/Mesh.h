@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "Math/Vector/Vector.h"
+#include "v2/Vector/Vector.hpp"
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "VulkanObjects/CommandBuffer/DeferredOperations/DeferredCommandBufferOperation.h"
@@ -18,8 +18,8 @@ namespace _GameEngine::_Render
 {
 	struct Vertex
 	{
-		_Math::Vector3f pos;
-		_Math::Vector2f TexCoord;
+		_MathV2::Vector3<float> pos;
+		_MathV2::Vector2<float> TexCoord;
 	};
 
 	struct MeshUniqueKey

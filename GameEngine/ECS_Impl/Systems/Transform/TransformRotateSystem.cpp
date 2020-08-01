@@ -90,7 +90,7 @@ namespace _GameEngine::_ECS
 			_MathV2::QuaternionM::mul(
 				l_operations.Current->TransformComponent->Transform.LocalRotation,
 				_MathV2::QuaternionM::rotateAround(
-					*(_MathV2::Vector3<float>*) & l_operations.Current->TransformRotate->Axis,
+					l_operations.Current->TransformRotate->Axis,
 					l_operations.Current->TransformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime
 				)
 			);

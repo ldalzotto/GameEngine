@@ -7,7 +7,6 @@
 
 #include "Math/Math.h"
 #include "Math/Segment/Segment.h"
-#include "Math/Vector/VectorMath.h"
 #include "Math/Intersection/Intersection.h"
 #include "v2/Quaternion/QuaternionMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
@@ -294,7 +293,7 @@ namespace _GameEngineEditor
 			_Math::Transform_getLocalToWorldMatrix(&(l_selectedEntityTransform)->Transform), true, _MathV2::Vector3<float> { 1.0f, 1.0f, 1.0f });
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, _Math::Vector4f* p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, const _MathV2::Vector4<float>* p_color)
 	{
 		_ECS::Entity* l_arrowEntity;
 		_ECS::TransformComponent* l_transform;
@@ -322,7 +321,7 @@ namespace _GameEngineEditor
 			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
 			l_meshRendererInitInfo.InputParameters = {
 				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj"},
-				{_Render::MATERIALINSTANCE_COLOR, p_color}
+				{_Render::MATERIALINSTANCE_COLOR, (_MathV2::Vector4<float>*)p_color}
 			};
 
 			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
@@ -336,7 +335,7 @@ namespace _GameEngineEditor
 		return l_transform;
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, _Math::Vector4f* p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, const _MathV2::Vector4<float>* p_color)
 	{
 		_ECS::Entity* l_rotationEntity;
 		_ECS::TransformComponent* l_transform;
@@ -364,7 +363,7 @@ namespace _GameEngineEditor
 			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
 			l_meshRendererInitInfo.InputParameters = {
 				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/RotationGizmo.obj"},
-				{_Render::MATERIALINSTANCE_COLOR, p_color}
+				{_Render::MATERIALINSTANCE_COLOR, (_MathV2::Vector4<float>*)p_color}
 			};
 
 			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
@@ -405,7 +404,7 @@ namespace _GameEngineEditor
 				p_transformGizmo->UpArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &_Color::GREEN);
 			}
 			{
-				_Math::Vector4f l_forwardColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+				_MathV2::Vector4<float> l_forwardColor = { 0.0f, 0.0f, 1.0f, 1.0f };
 				p_transformGizmo->ForwardArrow = transformGizmoV2_allocArrow(p_ecs, p_renderInterface, &_Color::BLUE);
 			}
 

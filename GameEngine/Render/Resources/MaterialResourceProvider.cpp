@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-#include "Math/Vector/Vector.h"
+#include "v2/Vector/Vector.hpp"
 #include "Log/Log.hpp"
 #include "Shader/ShaderParameterKeys.h"
 #include "Materials/MaterialInstanceContainer.h"
@@ -15,7 +15,7 @@ using namespace ::_Core;
 
 namespace _GameEngine::_Render
 {
-	_Math::Vector4f Material_ColorDefaultValue = { 1.0f, 1.0f, 1.0f, 1.0f };
+	_MathV2::Vector4<float> Material_ColorDefaultValue = { 1.0f, 1.0f, 1.0f, 1.0f };
 	TextureUniqueKey Texutre_DefaultValue = { "E:/GameProjects/GameEngine/Assets/Textures/DefaultTexture.png" };
 
 	Material* materialResourceProvider_allocateMaterial(MaterialUniqueKey* p_key, RenderInterface* p_renderInterface);
@@ -120,7 +120,7 @@ namespace _GameEngine::_Render
 
 			UniformBufferParameter* l_colorParameterBufer = (UniformBufferParameter*)l_colorParameter.Parameter;
 			l_colorParameterBufer->Binding = 2;
-			l_colorParameterBufer->BufferSize = sizeof(_Math::Vector4f);
+			l_colorParameterBufer->BufferSize = sizeof(_MathV2::Vector4<float>);
 			l_colorParameterBufer->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 			l_colorParameterBufer->DefaultValue = &Material_ColorDefaultValue;
 			l_colorParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_colorParameterBufer);
@@ -206,7 +206,7 @@ namespace _GameEngine::_Render
 
 			UniformBufferParameter* l_colorParameterBufer = (UniformBufferParameter*)l_colorParameter.Parameter;
 			l_colorParameterBufer->Binding = 2;
-			l_colorParameterBufer->BufferSize = sizeof(_Math::Vector4f);
+			l_colorParameterBufer->BufferSize = sizeof(_MathV2::Vector4<float>);
 			l_colorParameterBufer->StageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
 			l_colorParameterBufer->DefaultValue = &Material_ColorDefaultValue;
 			l_colorParameter.DescriptorSetLayoutBinding = UniformBufferParameter_buildLayoutBinding(l_colorParameterBufer);

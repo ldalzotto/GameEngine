@@ -141,7 +141,7 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 	{
 		_ECS::TransformRotate* l_transformRotate = _ECS::ComponentT_alloc<_ECS::TransformRotate>();
 		(l_transformRotate)->Speed = .5f;
-		(l_transformRotate)->Axis = *(_Math::Vector3f*)p_cubeCrossCreationInfo->RotationAxis;
+		(l_transformRotate)->Axis = *p_cubeCrossCreationInfo->RotationAxis;
 		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, l_gameEngine->ECS);
 	}
 };

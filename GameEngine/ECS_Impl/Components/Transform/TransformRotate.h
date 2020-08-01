@@ -1,6 +1,6 @@
 
 #include "ECS/ComponentT.hpp"
-#include "Math/Vector/Vector.h"
+#include "v2/Vector/Vector.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -10,7 +10,7 @@ namespace _GameEngine::_ECS
 	{
 		_ECS::ComponentHeaderT<TransformRotate> ComponentHeader;
 		float Speed;
-		_Math::Vector3f Axis;
+		_MathV2::Vector3<float> Axis;
 	};
 
 	template <>

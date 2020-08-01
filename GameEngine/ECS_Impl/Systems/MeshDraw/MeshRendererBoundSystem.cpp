@@ -87,7 +87,7 @@ namespace _GameEngine::_ECS
 			{
 				for (size_t i = 0; i < l_vertices.Capacity; i++)
 				{
-					_Core::VectorT_pushBack(&l_vertices, (_MathV2::Vector3<float>*)&l_mesh->Vertices.at(i).pos);
+					_Core::VectorT_pushBack(&l_vertices, &l_mesh->Vertices.at(i).pos);
 				}
 				_Math::Box_build(&l_operation->Bound->BoundingBox, &l_vertices);
 
