@@ -2,6 +2,7 @@
 
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
+#include "Math/Transform/TransformM.hpp"
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
@@ -87,9 +88,9 @@ namespace _GameEngine::_ECS
 			Camera* l_camera = l_operations.Current->Camera;
 
 			{
-				_MathV2::Vector3<float> l_worldPosition = Transform_getWorldPosition(&l_transform->Transform);
-				_MathV2::Vector3<float> l_target = _MathV2::VectorM::add(l_worldPosition, Transform_getForward(&l_transform->Transform));
-				_MathV2::Vector3<float> l_up = _MathV2::VectorM::mul(Transform_getUp(&l_transform->Transform), -1.0f);
+				_MathV2::Vector3<float> l_worldPosition = _Math::TransformM::getWorldPosition(l_transform->Transform);
+				_MathV2::Vector3<float> l_target = _MathV2::VectorM::add(l_worldPosition, _Math::TransformM::getForward(l_transform->Transform));
+				_MathV2::Vector3<float> l_up = _MathV2::VectorM::mul(_Math::TransformM::getUp(l_transform->Transform), -1.0f);
 
 				l_camera->ViewMatrix = _MathV2::MatrixM::inv(
 					_MathV2::MatrixM::buildTRS(

@@ -2,6 +2,7 @@
 
 #include "ECS/ECS.h"
 #include "ECS/ECSEventQueueT.hpp"
+#include "Math/Transform/TransformM.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -20,7 +21,7 @@ namespace _GameEngine::_ECS
 			}
 		}
 
-		_Math::Transform_free(&p_transformComponent->Transform);
+		_Math::TransformM::free(&p_transformComponent->Transform);
 	};
 
 	void TransformComponent_init(TransformComponent* p_transformComponent, TransformInitInfo* p_transformInitInfo)
@@ -28,7 +29,7 @@ namespace _GameEngine::_ECS
 		p_transformComponent->Transform.LocalPosition = p_transformInitInfo->LocalPosition;
 		p_transformComponent->Transform.LocalRotation = p_transformInitInfo->LocalRotation;
 		p_transformComponent->Transform.LocalScale = p_transformInitInfo->LocalScale;
-		_Math::Transform_alloc(&p_transformComponent->Transform);
+		_Math::TransformM::alloc(&p_transformComponent->Transform);
 
 		p_transformComponent->ComponentHeader.OnComponentFree = TransformComponent_free;
 	};

@@ -33,8 +33,8 @@ namespace _GameEngine::_Math
 		_MathV2::Vector3<float> Center;
 	};
 
-	void Box_build(Box* p_box, _Core::VectorT<_MathV2::Vector3<float>>* p_points);
-	void Box_extractPoints(Box* p_box, BoxPoints* out_points);
-	void Box_extractMinMax(Box* p_box, _MathV2::Vector3<float>& out_min, _MathV2::Vector3<float>& out_max);
-	void BoxPoints_mul(BoxPoints* p_boxPoints, const _MathV2::Matrix<4, 4, float>& p_matrix);
+	void Box_build(Box& p_box, _Core::VectorT<_MathV2::Vector3<float>>& p_points);
+	BoxPoints Box_extractPoints(const Box& p_box);
+	void Box_extractMinMax(const Box& p_box, _MathV2::Vector3<float>* out_min, _MathV2::Vector3<float>* out_max);
+	BoxPoints BoxPoints_mul(const BoxPoints& p_boxPoints, const _MathV2::Matrix<4, 4, float>& p_matrix);
 }

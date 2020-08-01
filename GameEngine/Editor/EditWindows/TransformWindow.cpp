@@ -1,6 +1,7 @@
 #include "TransformWindow.h"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "imgui.h"
+#include "Math/Transform/TransformM.hpp"
 
 namespace _GameEngineEditor
 {
@@ -24,12 +25,12 @@ namespace _GameEngineEditor
 		_MathV2::Vector3<float> l_localPosition = l_transformWindow->Transform->Transform.LocalPosition;
 		if (ImGui::InputFloat3("pos", &l_localPosition.x, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			_Math::Transform_setLocalPosition(&l_transformWindow->Transform->Transform, l_localPosition);
+			_Math::TransformM::setLocalPosition(l_transformWindow->Transform->Transform, l_localPosition);
 		}
 		_MathV2::Quaternion<float> l_localRotation = l_transformWindow->Transform->Transform.LocalRotation;
 		if (ImGui::DragFloat4("rot", &l_localRotation.x, 0.1f, -3.14f, 3.14f))
 		{
-			_Math::Transform_setLocalRotation(&l_transformWindow->Transform->Transform, l_localRotation);
+			_Math::TransformM::setLocalRotation(l_transformWindow->Transform->Transform, l_localRotation);
 		}
 		ImGui::End();
 	};

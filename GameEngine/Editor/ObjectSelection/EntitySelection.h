@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "Math/Box/Box.h"
-#include "Math/Transform/Transform.h"
+#include "Math/Box/Box.hpp"
+#include "Math/Transform/Transform.hpp"
 
 #include "Physics/World/Collider/BoxCollider.h"
 

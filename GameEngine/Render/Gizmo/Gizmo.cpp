@@ -3,7 +3,7 @@
 
 #include "Math/Box/BoxMath.h"
 #include "v2/Vector/VectorMath.hpp"
-#include "Math/Transform/Transform.h"
+#include "Math/Transform/TransformM.hpp"
 
 #include "Materials/MaterialInstance.h"
 #include "Resources/MaterialResourceProvider.h"
@@ -174,11 +174,9 @@ namespace _GameEngine::_Render
 		Gizmo_drawLine_indices(p_gizmo, l_beginIndex, l_endIndex);
 	};
 
-	void Gizmo_drawBox(Gizmo* p_gizmo, _Math::Box* p_box, const Matrix<4, 4, float>& p_localToWorldMatrix, bool p_withCenter, const Vector3<float>& p_color)
+	void Gizmo_drawBox(Gizmo* p_gizmo, const _Math::Box& p_box, const Matrix<4, 4, float>& p_localToWorldMatrix, bool p_withCenter, const Vector3<float>& p_color)
 	{
-		_Math::BoxPoints l_boxPoints;
-		_Math::Box_extractPoints(p_box, &l_boxPoints);
-		_Math::BoxPoints_mul(&l_boxPoints, p_localToWorldMatrix);
+		_Math::BoxPoints l_boxPoints = _Math::BoxPoints_mul(_Math::Box_extractPoints(p_box), p_localToWorldMatrix);
 
 		GizmoIndiceType LDF_index, LDB_index, LUF_index, RDF_index, LUB_index, RUF_index, RDB_index, RUB_index;
 		{
@@ -211,10 +209,10 @@ namespace _GameEngine::_Render
 		}
 	};
 
-	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Transform* p_transform)
+	void Gizmo_drawTransform(Gizmo* p_gizmo, _Math::Transform& p_transform)
 	{
-		Gizmo_drawTransform(p_gizmo, _Math::Transform_getWorldPosition(p_transform), 
-			_Math::Transform_getRight(p_transform), _Math::Transform_getUp(p_transform), _Math::Transform_getForward(p_transform));
+		Gizmo_drawTransform(p_gizmo, _Math::TransformM::getWorldPosition(p_transform),
+			_Math::TransformM::getRight(p_transform), _Math::TransformM::getUp(p_transform), _Math::TransformM::getForward(p_transform));
 	};
 
 	void Gizmo_drawTransform(Gizmo* p_gizmo, const Vector3<float>& p_center, const Vector3<float>& p_right, const Vector3<float>& p_up, const Vector3<float>& p_forward)

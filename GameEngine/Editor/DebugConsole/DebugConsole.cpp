@@ -8,6 +8,8 @@
 
 #include "imgui.h"
 
+#include "Math/Transform/TransformM.hpp"
+
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 
 #include "Editor/IMGuiRender/DrawableWindow.h"
@@ -68,7 +70,7 @@ namespace _GameEngineEditor
 			{
 				_ECS::TransformComponent* l_parent = reinterpret_cast<_GameEngine::_ECS::TransformComponent*>(std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0));
 				_ECS::TransformComponent* l_child = reinterpret_cast<_GameEngine::_ECS::TransformComponent*>(std::stoull(p_debugCommand->Arguments[1].Value, nullptr, 0));
-				_Math::Transform_addChild(&l_parent->Transform, &l_child->Transform);
+				_Math::TransformM::addChild(&l_parent->Transform, &l_child->Transform);
 			}
 
 		}
@@ -78,7 +80,7 @@ namespace _GameEngineEditor
 						&& p_debugCommand->Arguments[0].Name == "addr")
 			{
 				_ECS::TransformComponent* l_transform = reinterpret_cast<_GameEngine::_ECS::TransformComponent*>(std::stoull(p_debugCommand->Arguments[0].Value, nullptr, 0));
-				_Math::Transform_detachParent(&l_transform->Transform);
+				_Math::TransformM::detachParent(&l_transform->Transform);
 			}
 
 		}

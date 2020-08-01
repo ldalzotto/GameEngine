@@ -15,19 +15,19 @@ namespace _MathV2
 		};
 
 		template <typename T>
-		inline static Vector<3, T> cast(Vector<4, T>& p_vec)
+		inline static Vector<3, T> cast(const Vector<4, T>& p_vec)
 		{
 			return *(Vector<3, T>*)(&p_vec);
 		};
 
 		template <typename T>
-		inline static Vector<4, T> cast(Vector<3, T>& p_vec, T p_scal)
+		inline static Vector<4, T> cast(const Vector<3, T>& p_vec, const  T p_scal)
 		{
 			return Vector<4, T>{p_vec.x, p_vec.y, p_vec.z, p_scal};
 		};
 
 		template <typename T>
-		inline static Vector<2, T> cast(Vector<3, T>& p_vec)
+		inline static Vector<2, T> cast(const Vector<3, T>& p_vec)
 		{
 			return *(Vector<2, T>*)(&p_vec);
 		};

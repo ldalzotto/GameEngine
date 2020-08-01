@@ -4,7 +4,7 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "Math/Segment/Segment.h"
+#include "Math/Segment/Segment.hpp"
 
 #include "Render/RenderInterface.h"
 #include "Render/VulkanObjects/SwapChain/SwapChain.h"

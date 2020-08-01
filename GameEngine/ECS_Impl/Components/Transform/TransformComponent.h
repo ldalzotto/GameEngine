@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Transform/Transform.h"
+#include "Math/Transform/Transform.hpp"
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "ECS/ComponentT.hpp"

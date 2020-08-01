@@ -3,7 +3,7 @@
 #include "Includes/GLFWIncludes.h"
 
 #include "v2/Vector/Vector.hpp"
-#include "Math/Segment/Segment.h"
+#include "Math/Segment/Segment.hpp"
 
 #include <unordered_map>
 #include <queue>
