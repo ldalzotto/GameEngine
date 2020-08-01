@@ -336,11 +336,11 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 		_Core::VectorT<_Physics::RaycastHit> l_hits{};
 		_Core::VectorT_alloc(&l_hits, 0);
 		{
-			_Physics::RayCastAll(l_interface->PhysicsInterface->World, (_Math::Vector3f*) &l_rayBeginPoint, (_Math::Vector3f*) &l_rayEndPoint, &l_hits);
+			_Physics::RayCastAll(l_interface->PhysicsInterface->World, l_rayBeginPoint, l_rayEndPoint, &l_hits);
 			_Core::VectorIteratorT<_Physics::RaycastHit> l_hitsIt = _Core::VectorT_buildIterator(&l_hits);
 			while (_Core::VectorIteratorT_moveNext(&l_hitsIt))
 			{
-				_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hitsIt.Current->HitPoint, &l_color);
+				_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, (_Math::Vector3f*)&l_hitsIt.Current->HitPoint, &l_color);
 				_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hitsIt.Current->Collider->Box, 
 					(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(l_hitsIt.Current->Collider->Transform), false, &l_color);
 			}
@@ -359,9 +359,9 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 		);
 
 		_Physics::RaycastHit l_hit;
-		if (_Physics::RayCast(l_interface->PhysicsInterface->World, (_Math::Vector3f*) &l_ray.Begin, (_Math::Vector3f*) &l_ray.End, &l_hit))
+		if (_Physics::RayCast(l_interface->PhysicsInterface->World, l_ray.Begin, l_ray.End, &l_hit))
 		{
-			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hit.HitPoint);
+			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, (_Math::Vector3f*) &l_hit.HitPoint);
 			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hit.Collider->Box, 
 				(_Math::Matrix4x4f*)_Math::Transform_getLocalToWorldMatrix_ref(l_hit.Collider->Transform), false);
 		}

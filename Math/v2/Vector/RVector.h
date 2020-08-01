@@ -16,6 +16,8 @@ namespace _MathV2
 
 	float RVector_3_length(const float p_vec[3]);
 	float RVector_4_length(const float p_vec[4]);
+	
+	float RVector_3_distance(const float p_start[3], const float p_end[3]);
 
 	void RVector_3_normalize(const float p_vec[3], float p_out[3]);
 

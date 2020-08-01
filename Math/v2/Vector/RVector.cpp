@@ -68,6 +68,13 @@ namespace _MathV2
 				(p_vec[3] * p_vec[3]));
 	};
 
+	float RVector_3_distance(const float p_start[3], const float p_end[3])
+	{
+		float l_vector[3];
+		RVector_3_min(p_end, p_start, l_vector);
+		return RVector_3_length(l_vector);
+	};
+
 	void RVector_3_normalize(const float p_vec[3], float p_out[3])
 	{
 		float l_length = RVector_3_length(p_vec);

@@ -4,7 +4,7 @@
 #include <string.h>
 #include "vulkan/vulkan.h"
 
-#include "Math/Matrix/Matrix.h"
+#include "v2/Matrix/Matrix.hpp"
 
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
 #include "VulkanObjects/GraphcisPipeline/GraphicsPipeline.h"
@@ -34,7 +34,7 @@ namespace _GameEngine::_Render
 
 	struct ModelProjection
 	{
-		_Math::Matrix4x4f Model;
+		_MathV2::Matrix4x4<float> Model;
 	};
 
 	struct Material_InputLayout

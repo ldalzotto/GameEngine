@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "Log/LogFormatting.hpp"
+#include "v2/Matrix/MatrixMath.hpp"
 
 namespace _GameEngine::_Render
 {
@@ -15,17 +16,12 @@ namespace _GameEngine::_Render
 	void window_size_callback(GLFWwindow* window, int width, int height);
 	void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
 	{
-			p_window->WindowToGraphicsAPIPixelCoordinates._00 = 2.0f / (float)p_window->WindowSize.Width;
-			p_window->WindowToGraphicsAPIPixelCoordinates._01 = 0.0f;
-			p_window->WindowToGraphicsAPIPixelCoordinates._02 = 0.0f;
-
-			p_window->WindowToGraphicsAPIPixelCoordinates._10 = 0.0f;
-			p_window->WindowToGraphicsAPIPixelCoordinates._11 = 2.0f / (float)p_window->WindowSize.Height;
-			p_window->WindowToGraphicsAPIPixelCoordinates._12 = 0.0f;
-
-			p_window->WindowToGraphicsAPIPixelCoordinates._20 = -1.0f;
-			p_window->WindowToGraphicsAPIPixelCoordinates._21 = -1.0f;
-			p_window->WindowToGraphicsAPIPixelCoordinates._22 = 0.0f;
+		p_window->WindowToGraphicsAPIPixelCoordinates =
+			_MathV2::MatrixM::build(
+				_MathV2::Vector3<float>{ 2.0f / (float)p_window->WindowSize.Width , 0.0f, 0.0f },
+				_MathV2::Vector3<float>{ 0.0f, 2.0f / (float)p_window->WindowSize.Height, 0.0f },
+				_MathV2::Vector3<float>{ -1.0f, -1.0f, 0.0f }
+			);
 	};
 
 	std::unordered_map<GLFWwindow*, Window*> WindowIndexedForGLFW{};

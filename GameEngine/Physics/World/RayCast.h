@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Math/Vector/Vector.h"
+
+#include "v2/Vector/Vector.hpp"
 
 namespace _Core
 {
@@ -21,12 +22,12 @@ namespace _GameEngine::_Physics
 	struct RaycastHit
 	{
 		BoxCollider* Collider;
-		_Math::Vector3f HitPoint;
+		_MathV2::Vector3<float> HitPoint;
 	};
 
 	/** Returned RayCastHits are not sorted. */
-	void RayCastAll(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
-	bool RayCast(World* p_world, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, RaycastHit* out_hit);
-	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
-	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _Math::Vector3f* p_begin, _Math::Vector3f* p_end, RaycastHit* out_hit);
+	void RayCastAll(World* p_world, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
+	bool RayCast(World* p_world, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, RaycastHit* out_hit);
+	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
+	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, RaycastHit* out_hit);
 }

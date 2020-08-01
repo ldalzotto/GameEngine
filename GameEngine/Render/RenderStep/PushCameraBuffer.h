@@ -2,7 +2,7 @@
 
 #include "vulkan/vulkan.h"
 
-#include "Math/Matrix/Matrix.h"
+#include "v2/Matrix/Matrix.hpp"
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "VulkanObjects/Descriptor/DescriptorPool.h"
@@ -17,8 +17,8 @@ namespace _GameEngine::_Render
 {
 	struct CameraProjection
 	{
-		_Math::Matrix4x4f View;
-		_Math::Matrix4x4f Projection;
+		_MathV2::Matrix4x4<float> View;
+		_MathV2::Matrix4x4<float> Projection;
 	};
 
 	struct PushCameraBuffer

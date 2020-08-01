@@ -99,8 +99,8 @@ namespace _GameEngine::_ECS
 				);
 			}
 
-			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = *(_Math::Matrix4x4f*) & l_camera->ProjectionMatrix;
-			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = *(_Math::Matrix4x4f*) & l_camera->ViewMatrix;
+			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = l_camera->ProjectionMatrix;
+			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = l_camera->ViewMatrix;
 			_Render::PushCameraBuffer_pushToGPU(l_camera->RenderInterface->PushCameraBuffer, l_camera->RenderInterface->Device);
 		}
 	};

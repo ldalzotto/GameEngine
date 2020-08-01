@@ -8,7 +8,6 @@
 #include "Math/Math.h"
 #include "Math/Segment/Segment.h"
 #include "Math/Vector/VectorMath.h"
-#include "Math/Matrix/MatrixMath.h"
 #include "Math/Intersection/Intersection.h"
 #include "v2/Quaternion/QuaternionMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
@@ -97,7 +96,7 @@ namespace _GameEngineEditor
 				);
 
 				_Physics::RaycastHit l_hit;
-				if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, (_Math::Vector3f*) &l_ray.Begin, (_Math::Vector3f*) &l_ray.End, &l_hit))
+				if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, l_ray.Begin, l_ray.End, &l_hit))
 				{
 					_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
 					p_entitySelection->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
@@ -179,23 +178,23 @@ namespace _GameEngineEditor
 			_ECS::Camera_buildWorldSpaceRay(
 				p_entitySelection->CachedStructures.ActiveCamera,
 				_MathV2::VectorM::cast(*(_MathV2::Vector3<float>*) & l_mouseDelta_screenPosition.Begin)
-		);
+			);
 		_Math::Segment l_mouseDelta_end_ray =
 			_ECS::Camera_buildWorldSpaceRay(
 				p_entitySelection->CachedStructures.ActiveCamera,
 				_MathV2::VectorM::cast(*(_MathV2::Vector3<float>*) & l_mouseDelta_screenPosition.End)
-		);
+			);
 
 		_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { p_testedCollider };
 		_Core::ArrayT<_Physics::BoxCollider*> l_raycastedPlane = _Core::ArrayT_fromCStyleArray(l_raycastedPlane_ptr, 1);
 		_Physics::RaycastHit l_endHit;
-		if (_Physics::RayCast_against(&l_raycastedPlane, (_Math::Vector3f*) &l_mouseDelta_end_ray.Begin, (_Math::Vector3f*) &l_mouseDelta_end_ray.End, &l_endHit))
+		if (_Physics::RayCast_against(&l_raycastedPlane, l_mouseDelta_end_ray.Begin, l_mouseDelta_end_ray.End, &l_endHit))
 		{
 			// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_endHit.HitPoint);
-			l_mouseDelta_worldPosition.End = *(_MathV2::Vector3<float>*)&l_endHit.HitPoint;
+			l_mouseDelta_worldPosition.End = *(_MathV2::Vector3<float>*) & l_endHit.HitPoint;
 		}
 		_Physics::RaycastHit l_beginHit;
-		if (_Physics::RayCast_against(&l_raycastedPlane, (_Math::Vector3f*) &l_mouseDelta_begin_ray.Begin, (_Math::Vector3f*) &l_mouseDelta_begin_ray.End, &l_beginHit))
+		if (_Physics::RayCast_against(&l_raycastedPlane, l_mouseDelta_begin_ray.Begin, l_mouseDelta_begin_ray.End, &l_beginHit))
 		{
 			// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_beginHit.HitPoint);
 			l_mouseDelta_worldPosition.Begin = *(_MathV2::Vector3<float>*) & l_beginHit.HitPoint;
@@ -264,8 +263,8 @@ namespace _GameEngineEditor
 		}
 
 		_Math::Segment l_deltaPositionDirection_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
-		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, (_Math::Vector3f*)&l_deltaPositionDirection_worldSpace.Begin);
-		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, (_Math::Vector3f*)&l_deltaPositionDirection_worldSpace.End);
+		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, (_Math::Vector3f*) & l_deltaPositionDirection_worldSpace.Begin);
+		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, (_Math::Vector3f*) & l_deltaPositionDirection_worldSpace.End);
 
 		// Perform rotation.
 
@@ -505,7 +504,7 @@ namespace _GameEngineEditor
 			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->ForwardArrow->ComponentHeader.AttachedEntity)->Boxcollider);
 		}
 		_Physics::RaycastHit l_hit;
-		if (_Physics::RayCast_against(&l_transformArrowColliders, (_Math::Vector3f*) &p_collisionRay->Begin, (_Math::Vector3f*) &p_collisionRay->End, &l_hit))
+		if (_Physics::RayCast_against(&l_transformArrowColliders, p_collisionRay->Begin, p_collisionRay->End, &l_hit))
 		{
 			l_gizmoSelectionState.SelectedArrow = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
 		}
@@ -516,7 +515,7 @@ namespace _GameEngineEditor
 			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->XRotation->ComponentHeader.AttachedEntity)->Boxcollider);
 			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->YRotation->ComponentHeader.AttachedEntity)->Boxcollider);
 			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->ZRotation->ComponentHeader.AttachedEntity)->Boxcollider);
-			if (_Physics::RayCast_against(&l_transformArrowColliders, (_Math::Vector3f*) &p_collisionRay->Begin, (_Math::Vector3f*) &p_collisionRay->End, &l_hit))
+			if (_Physics::RayCast_against(&l_transformArrowColliders, p_collisionRay->Begin, p_collisionRay->End, &l_hit))
 			{
 				l_gizmoSelectionState.SelectedRotation = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
 			}

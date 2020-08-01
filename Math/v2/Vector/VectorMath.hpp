@@ -43,6 +43,11 @@ namespace _MathV2
 			return RVector_3_length((T*)(&p_vec));
 		};
 		template <typename T>
+		inline static float distance(const Vector<3, T>& p_start, const Vector<3, T>& p_end)
+		{
+			return RVector_3_distance((T*)(&p_start), (T*)(&p_end));
+		};
+		template <typename T>
 		inline static Vector<3, T> normalize(const Vector<3, T>& p_vec)
 		{
 			Vector3<T> l_out;
