@@ -35,6 +35,7 @@ namespace _GameEngineEditor
 	{
 		_GameEngine::_ECS::TransformComponent* SelectedArrow;
 		_GameEngine::_ECS::TransformComponent* SelectedRotation;
+		_GameEngine::_ECS::TransformComponent* SelectedScale;
 	};
 
 	struct TransformGizmo
@@ -48,6 +49,10 @@ namespace _GameEngineEditor
 		_GameEngine::_ECS::TransformComponent* XRotation;
 		_GameEngine::_ECS::TransformComponent* YRotation;
 		_GameEngine::_ECS::TransformComponent* ZRotation;
+
+		_GameEngine::_ECS::TransformComponent* RightScale;
+		_GameEngine::_ECS::TransformComponent* UpScale;
+		_GameEngine::_ECS::TransformComponent* ForwardScale;
 
 		TransformGizmoPlane TransformGizmoMovementGuidePlane;
 	};
