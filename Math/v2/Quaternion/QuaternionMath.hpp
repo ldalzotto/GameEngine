@@ -66,9 +66,9 @@ namespace _MathV2
 			return p_out;
 		};
 		template <typename T>
-		inline static Quaternion<T> conjugate(const Quaternion<T>* p_quat, Quaternion<T>* p_out)
+		inline static Quaternion<T>* conjugate(const Quaternion<T>* p_quat, Quaternion<T>* p_out)
 		{
-			RQuaternion_conjugate((T*)(p_quat), (T*)(l_out));
+			RQuaternion_conjugate((T*)(p_quat), (T*)(p_out));
 			return p_out;
 		};
 		template <typename T>

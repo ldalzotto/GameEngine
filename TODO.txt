@@ -10,12 +10,14 @@
 
 [X] # FIX - The sorting order is incorrect for the update sequencer
 [X] # Having arrow Transform that allow movement of the selected entity.
-[X] # Having rotation gizmo that allox rotatin the selected entity.
-# Having scale gizmo that allox rotatin the selected entity.
+[X] # Having rotation gizmo that allow rotatin the selected entity.
+# Having scale gizmo that allow scaling the selected entity.
 
 -- Transform --
 
-# Setting World position, rotation and scale. (and apply it to Entity selection)
+[X] # Setting World position. 
+[X] # Setting World rotation.
+# Setting World scale.
 
 -- Physics --
 
@@ -33,11 +35,7 @@
 
 -- Editor - Transform Gizmo --
 
-# Allowing gizmo to move depending on which arrow is clicked.
-
--- Materials --
-
-# Adding configuration properties for blending (editor 3D gizmo may be transparent ?)
+[X] # Allowing gizmo to move depending on which arrow is clicked.
 
 -- Rendering --
 

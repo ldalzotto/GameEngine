@@ -100,6 +100,25 @@ namespace _MathV2
 		TransformM::setWorldPosition(p_transform, VectorM::add(TransformM::getWorldPosition(p_transform, &tmp_vec3), p_worldPosition_delta, &tmp_vec3));
 	};
 
+	void TransformM::setWorldRotation(Transform* p_transform, const _MathV2::Quaternion<float>* p_worldRotation)
+	{
+		if (p_transform->Parent == nullptr) 
+		{
+			TransformM::setLocalRotation(p_transform, p_worldRotation);
+		}
+		else
+		{
+			Quaternion<float> tmp_quat_0, tmp_quat_1;
+			Quaternion<float> l_settedLocalQuaternion;
+			QuaternionM::mul(
+				QuaternionM::conjugate(TransformM::getWorldRotation(p_transform->Parent, &tmp_quat_1), &tmp_quat_1),
+				p_worldRotation,
+				&l_settedLocalQuaternion
+			);
+			TransformM::setLocalRotation(p_transform, &l_settedLocalQuaternion);
+		}
+	};
+
 	_MathV2::Matrix4x4<float>* TransformM::getLocalToWorldMatrix(Transform* p_transform, _MathV2::Matrix4x4<float>* p_out)
 	{
 		transform_updateMatricesIfNecessary(p_transform);

@@ -17,6 +17,7 @@ namespace _MathV2
 
 		static void setWorldPosition(Transform* p_transform, const _MathV2::Vector3<float>* p_worldPosition);
 		static void addToWorldPosition(Transform* p_transform, const _MathV2::Vector3<float>* p_worldPosition_delta);
+		static void setWorldRotation(Transform* p_transform, const _MathV2::Quaternion<float>* p_worldRotation);
 
 		static _MathV2::Matrix4x4<float>* getLocalToWorldMatrix(Transform* p_transform, _MathV2::Matrix4x4<float>* p_out);
 		static _MathV2::Matrix4x4<float>* getWorldToLocalMatrix(Transform* p_transform, _MathV2::Matrix4x4<float>* p_out);
