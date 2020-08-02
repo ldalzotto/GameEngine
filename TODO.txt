@@ -10,7 +10,7 @@
 
 [X] # FIX - The sorting order is incorrect for the update sequencer
 [X] # Having arrow Transform that allow movement of the selected entity.
-# Having rotation gizmo that allox rotatin the selected entity.
+[X] # Having rotation gizmo that allox rotatin the selected entity.
 # Having scale gizmo that allox rotatin the selected entity.
 
 -- Transform --

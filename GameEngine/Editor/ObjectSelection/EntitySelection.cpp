@@ -82,7 +82,12 @@ namespace _GameEngineEditor
 	void EntitySelection_update(EntitySelection* p_entitySelection)
 	{
 		// Set the active camera
-		p_entitySelection->CachedStructures.ActiveCamera = _ECS::CameraSystem_getCurrentActiveCamera(p_entitySelection->CachedStructures.CameraSystem);
+		_ECS::Camera* l_currentCamera = _ECS::CameraSystem_getCurrentActiveCamera(p_entitySelection->CachedStructures.CameraSystem);
+		if (l_currentCamera != p_entitySelection->CachedStructures.ActiveCamera)
+		{
+			p_entitySelection->CachedStructures.ActiveCamera = _ECS::CameraSystem_getCurrentActiveCamera(p_entitySelection->CachedStructures.CameraSystem);
+			p_entitySelection->CachedStructures.ActiveCameraTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->CachedStructures.ActiveCamera->ComponentHeader.AttachedEntity);
+		}
 
 		// Trying to detect the selected Entity
 		if (!EntitSelection_isEntitySelected(p_entitySelection))
@@ -226,11 +231,11 @@ namespace _GameEngineEditor
 		}
 
 		_MathV2::Vector3<float> l_deltaPosition;
-			_MathV2::VectorM::project(
-				_MathV2::SegmentM::toVector(&entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider), &tmp_vec3_1),
-				_MathV2::TransformM::getForward(&l_selectedArrow->Transform, &tmp_vec3_0),
-				&l_deltaPosition
-			);
+		_MathV2::VectorM::project(
+			_MathV2::SegmentM::toVector(&entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider), &tmp_vec3_1),
+			_MathV2::TransformM::getForward(&l_selectedArrow->Transform, &tmp_vec3_0),
+			&l_deltaPosition
+		);
 		_MathV2::TransformM::addToWorldPosition(&l_transformComponent->Transform, &l_deltaPosition);
 	}
 
@@ -271,30 +276,55 @@ namespace _GameEngineEditor
 
 		// Perform rotation.
 
-		_MathV2::Vector3<float> l_axis;
+		_MathV2::Vector3<float> l_axis_localSpace;
 
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
-			l_axis = _MathV2::RIGHT;
+			l_axis_localSpace = _MathV2::RIGHT;
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
 		{
-			l_axis = _MathV2::UP;
+			l_axis_localSpace = _MathV2::UP;
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ZRotation)
 		{
-			l_axis = _MathV2::FORWARD;
+			l_axis_localSpace = _MathV2::FORWARD;
 		}
 
-		_MathV2::Vector3<float> tmp_vec3_0, tmp_vec3_1;
+		_MathV2::Vector3<float> tmp_vec3_0;
+		_MathV2::Vector3<float> l_rotationBegin, l_rotationEnd;
 		float l_deltaRotation =
 			_MathV2::VectorM::angle_normalized(
-				_MathV2::VectorM::normalize(_MathV2::VectorM::min(& l_deltaPositionDirection_worldSpace.Begin, & l_guidePlane_worldPosition, &tmp_vec3_0), &tmp_vec3_0),
-				_MathV2::VectorM::normalize(_MathV2::VectorM::min(& l_deltaPositionDirection_worldSpace.End, & l_guidePlane_worldPosition, &tmp_vec3_1), &tmp_vec3_1)
+				_MathV2::VectorM::normalize(_MathV2::VectorM::min(&l_deltaPositionDirection_worldSpace.Begin, &l_guidePlane_worldPosition, &l_rotationBegin), &l_rotationBegin),
+				_MathV2::VectorM::normalize(_MathV2::VectorM::min(&l_deltaPositionDirection_worldSpace.End, &l_guidePlane_worldPosition, &l_rotationEnd), &l_rotationEnd)
 			);
 
+		// Delta rotation sign
+		{
+			// The sign of the calculated delta angle is calculated by taking the ray between the camera and the object as reference axis.
+			_MathV2::Vector3<float> l_angleReferenceAxis;
+			_MathV2::VectorM::normalize(_MathV2::VectorM::min(_MathV2::TransformM::getWorldPosition(&p_entitySelection->CachedStructures.ActiveCameraTransform->Transform, &tmp_vec3_0), &l_guidePlane_worldPosition, &l_angleReferenceAxis), &l_angleReferenceAxis);
+			l_deltaRotation *= _MathV2::VectorM::angleSign(&l_rotationBegin, &l_rotationEnd, &l_angleReferenceAxis);
+
+			// If the rotation axis is not facing the camera, we invert the sign.
+			_MathV2::Vector3<float> l_axis_worldSpace;
+			_MathV2::Matrix4x4<float> tmp_mat4_0; _MathV2::Vector4<float> tmp_vec4_0;
+			_MathV2::VectorM::normalize(
+				_MathV2::VectorM::min(
+					_MathV2::VectorM::cast(_MathV2::MatrixM::mul(_MathV2::TransformM::getLocalToWorldMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &_MathV2::VectorM::cast(&l_axis_localSpace, 1.0f), &tmp_vec4_0)),
+					&l_guidePlane_worldPosition,
+					&l_axis_worldSpace
+				),
+				&l_axis_worldSpace
+			);
+			if (_MathV2::VectorM::dot(&l_angleReferenceAxis, &l_axis_worldSpace) <= 0.000f)
+			{
+				l_deltaRotation *= -1.0f;
+			}
+		}
+
 		_MathV2::Quaternion<float> tmp_quat_0;
-		_MathV2::Quaternion<float> l_nextRotation; _MathV2::QuaternionM::mul(&l_transformComponent->Transform.LocalRotation, _MathV2::QuaternionM::rotateAround(&l_axis, l_deltaRotation, &tmp_quat_0), &l_nextRotation);
+		_MathV2::Quaternion<float> l_nextRotation; _MathV2::QuaternionM::mul(&l_transformComponent->Transform.LocalRotation, _MathV2::QuaternionM::rotateAround(&l_axis_localSpace, l_deltaRotation, &tmp_quat_0), &l_nextRotation);
 		_MathV2::TransformM::setLocalRotation(&l_transformComponent->Transform, &l_nextRotation);
 	};
 
@@ -430,9 +460,9 @@ namespace _GameEngineEditor
 			_MathV2::TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->UpArrow->Transform);
 
 			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
-			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->RightArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, & tmp_quat_0));
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->RightArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
 			tmp_vec3_0 = { -M_PI * 0.5f, 0.0f, 0.0f };
-			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->UpArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, & tmp_quat_0));
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->UpArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
 			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, &_MathV2::Quaternionf_Identity);
 		}
 

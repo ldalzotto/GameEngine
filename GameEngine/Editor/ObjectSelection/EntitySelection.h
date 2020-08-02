@@ -57,6 +57,7 @@ namespace _GameEngineEditor
 	{
 		_GameEngine::_ECS::CameraSystem* CameraSystem;
 		_GameEngine::_ECS::Camera* ActiveCamera;
+		_GameEngine::_ECS::TransformComponent* ActiveCameraTransform;
 	};
 
 	struct EntitySelection
