@@ -51,11 +51,11 @@ namespace _GameEngine::_Render
 	void Gizmo_free(Gizmo* p_gizmo, RenderInterface* p_renderInterface);
 	void Gizmo_flushDrawStack(Gizmo* p_gizmo);
 
-	void Gizmo_drawLine(Gizmo* p_gizmo, const _MathV2::Vector3<float>& p_begin, const _MathV2::Vector3<float>& p_end);
-	void Gizmo_drawLine(Gizmo* p_gizmo, const _MathV2::Vector3<float>& p_begin, const _MathV2::Vector3<float>& p_end, const _MathV2::Vector3<float>& p_color);
-	void Gizmo_drawPoint(Gizmo* p_gizmo, const _MathV2::Vector3<float>& p_point);
-	void Gizmo_drawPoint(Gizmo* p_gizmo, const _MathV2::Vector3<float>& p_point, const _MathV2::Vector3<float>& p_color);
-	void Gizmo_drawBox(Gizmo* p_gizmo, const _MathV2::Box& p_box, const _MathV2::Matrix<4, 4, float>& p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<float>& p_color = _MathV2::Vector3<float>{1.0f, 1.0f, 1.0f});
-	void Gizmo_drawTransform(Gizmo* p_gizmo, _MathV2::Transform& p_transform);
-	void Gizmo_drawTransform(Gizmo* p_gizmo, const _MathV2::Vector3<float>& p_center, const _MathV2::Vector3<float>& p_right, const _MathV2::Vector3<float>& p_up, const _MathV2::Vector3<float>& p_forward);
+	void Gizmo_drawLine(Gizmo* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end);
+	void Gizmo_drawLine(Gizmo* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end, const _MathV2::Vector3<float>* p_color);
+	void Gizmo_drawPoint(Gizmo* p_gizmo, const _MathV2::Vector3<float>* p_point);
+	void Gizmo_drawPoint(Gizmo* p_gizmo, const _MathV2::Vector3<float>* p_point, const _MathV2::Vector3<float>* p_color);
+	void Gizmo_drawBox(Gizmo* p_gizmo, const _MathV2::Box* p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<float>* p_color = nullptr);
+	void Gizmo_drawTransform(Gizmo* p_gizmo, _MathV2::Transform* p_transform);
+	void Gizmo_drawTransform(Gizmo* p_gizmo, const _MathV2::Vector3<float>* p_center, const _MathV2::Vector3<float>* p_right, const _MathV2::Vector3<float>* p_up, const _MathV2::Vector3<float>* p_forward);
 }

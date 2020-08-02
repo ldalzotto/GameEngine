@@ -150,7 +150,8 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 
 void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test)
 {
-	
+	_MathV2::Vector3<float> tmp_vec3_0;
+
 	EntityConfiguration_init();
 
 	_ECS::Entity* l_cameraEntity;
@@ -175,7 +176,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			auto l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
-			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{(M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f});
+			tmp_vec3_0 = { (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f };
+			_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
@@ -195,7 +197,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			l_rayTransform = l_transformComponent;
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -0.0f };
-			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
+			tmp_vec3_0 = { 0.0f, 0.0f, 0.0f };
+			_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_rayEntity, l_transformComponent, &l_app->ECS);
@@ -218,7 +221,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
 				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, -100.0f };
-				l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
+				tmp_vec3_0 = { 0.0f, 0.0f, 0.0f };
+				_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
@@ -242,7 +246,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 
 				_ECS::TransformInitInfo l_transformInitInfo{};
 				l_transformInitInfo.LocalPosition = { 0.0f, -0.0f, 100.0f };
-				l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
+				tmp_vec3_0 = { 0.0f, 0.0f, 0.0f };
+				_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 				l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 				_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
@@ -271,7 +276,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
-			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, 0.0f});
+			tmp_vec3_0 = { 0.0f, 0.0f, 0.0f };
+			_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
@@ -304,7 +310,8 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			CubeCrossCreationInfo l_cubeCrossCreationInfo{};
 			l_cubeCrossCreationInfo.Parent = l_sceneModelsRootTransform;
 			l_cubeCrossCreationInfo.LocalPosition = { 0.0f, -1.0f, 2.0f };
-			l_cubeCrossCreationInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, M_PI * 0.5f, 0.0f});
+			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
+			_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_cubeCrossCreationInfo.LocalRotation);
 			l_cubeCrossCreationInfo.LocalScale = { 2.0f, 1.0f, 1.0f };
 			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
 			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
@@ -322,16 +329,18 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 #ifndef comment
 	{
 		_MathV2::Vector3<float> l_rootCenter = { 0.0f, 0.0f, 0.0f };
-		_Render::Gizmo_drawTransform(l_interface->RenderInterface->Gizmo, l_rootCenter, _MathV2::RIGHT, _MathV2::UP, _MathV2::FORWARD);
+		_Render::Gizmo_drawTransform(l_interface->RenderInterface->Gizmo, &l_rootCenter, &_MathV2::RIGHT, &_MathV2::UP, &_MathV2::FORWARD);
 	}
 #endif
 
+
+	_MathV2::Matrix4x4<float> tmp_mat_0;
 	{
-		_MathV2::Vector3<float> l_rayBeginPoint = _MathV2::TransformM::getWorldPosition((p_test->PhysicsRayBegin)->Transform);
-		_MathV2::Vector3<float> l_rayEndPoint = _MathV2::TransformM::getWorldPosition((p_test->PhysicsRayEnd)->Transform);
+		_MathV2::Vector3<float> l_rayBeginPoint; _MathV2::TransformM::getWorldPosition(&(p_test->PhysicsRayBegin)->Transform, &l_rayBeginPoint);
+		_MathV2::Vector3<float> l_rayEndPoint; _MathV2::TransformM::getWorldPosition(&(p_test->PhysicsRayEnd)->Transform, &l_rayEndPoint);
 		_MathV2::Vector3<float> l_color = { 0.0f, 1.0f, 0.0f };
 
-		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, l_rayBeginPoint, l_rayEndPoint, l_color);
+		_Render::Gizmo_drawLine(l_interface->RenderInterface->Gizmo, &l_rayBeginPoint, &l_rayEndPoint, &l_color);
 
 		_Core::VectorT<_Physics::RaycastHit> l_hits{};
 		_Core::VectorT_alloc(&l_hits, 0);
@@ -340,9 +349,9 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 			_Core::VectorIteratorT<_Physics::RaycastHit> l_hitsIt = _Core::VectorT_buildIterator(&l_hits);
 			while (_Core::VectorIteratorT_moveNext(&l_hitsIt))
 			{
-				_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, l_hitsIt.Current->HitPoint, l_color);
-				_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, *l_hitsIt.Current->Collider->Box, 
-					_MathV2::TransformM::getLocalToWorldMatrix(*l_hitsIt.Current->Collider->Transform), false, l_color);
+				_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hitsIt.Current->HitPoint, &l_color);
+				_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hitsIt.Current->Collider->Box, 
+					_MathV2::TransformM::getLocalToWorldMatrix(l_hitsIt.Current->Collider->Transform, &tmp_mat_0), false, &l_color);
 			}
 		}
 		_Core::VectorT_free(&l_hits);
@@ -361,9 +370,9 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 		_Physics::RaycastHit l_hit;
 		if (_Physics::RayCast(l_interface->PhysicsInterface->World, l_ray.Begin, l_ray.End, &l_hit))
 		{
-			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, l_hit.HitPoint);
-			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, *l_hit.Collider->Box, 
-				_MathV2::TransformM::getLocalToWorldMatrix(*l_hit.Collider->Transform), false);
+			_Render::Gizmo_drawPoint(l_interface->RenderInterface->Gizmo, &l_hit.HitPoint);
+			_Render::Gizmo_drawBox(l_interface->RenderInterface->Gizmo, l_hit.Collider->Box, 
+				_MathV2::TransformM::getLocalToWorldMatrix(l_hit.Collider->Transform, &tmp_mat_0), false);
 		}
 
 	}

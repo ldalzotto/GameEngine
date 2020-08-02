@@ -12,10 +12,9 @@ namespace _MathV2
 {
 	struct SegmentM
 	{
-		static _MathV2::Vector3<float> direction(const Segment* p_segment);
-		static _MathV2::Vector3<float> toVector(const Segment& p_segment);
-		static float length(const Segment& p_segment);
-		static Segment mul(const Segment& p_segment, const _MathV2::Matrix<4, 4, float>& p_matrix);
-		static Segment mul(const Segment& p_segment, const _MathV2::Matrix<3, 3, float>& p_matrix);
+		static _MathV2::Vector3<float>* direction(const Segment* p_segment, _MathV2::Vector3<float>* p_out);
+		static _MathV2::Vector3<float>* toVector(const Segment* p_segment, _MathV2::Vector3<float>* p_out);
+		static float length(const Segment* p_segment);
+		static Segment* SegmentM::mul(const Segment* p_segment, const _MathV2::Matrix<4, 4, float>* p_matrix, Segment* p_out);
 	};
 }

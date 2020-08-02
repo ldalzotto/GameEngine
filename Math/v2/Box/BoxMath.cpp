@@ -8,41 +8,41 @@
 
 namespace _MathV2
 {
-	void box_grow(Box& p_box, Vector3<float>& p_growingPoint)
+	void box_grow(Box* p_box, const Vector3<float>* p_growingPoint)
 	{
-		Vector3<float> l_delta = VectorM::min(p_growingPoint, p_box.Center);
+		Vector3<float> l_delta; VectorM::min(p_growingPoint, &p_box->Center, &l_delta);
 
-		if (fabs(l_delta.x) > p_box.Extend.x)
+		if (fabs(l_delta.x) > p_box->Extend.x)
 		{
-			p_box.Extend.x = fabsf(l_delta.x);
+			p_box->Extend.x = fabsf(l_delta.x);
 		}
-		if (fabs(l_delta.y) > p_box.Extend.y)
+		if (fabs(l_delta.y) > p_box->Extend.y)
 		{
-			p_box.Extend.y = fabsf(l_delta.y);
+			p_box->Extend.y = fabsf(l_delta.y);
 		}
-		if (fabs(l_delta.z) > p_box.Extend.z)
+		if (fabs(l_delta.z) > p_box->Extend.z)
 		{
-			p_box.Extend.z = fabsf(l_delta.z);
+			p_box->Extend.z = fabsf(l_delta.z);
 		}
 	};
 
-	void Box_build(Box& p_box, _Core::VectorT<_MathV2::Vector3<float>>& p_points)
+	void Box_build(Box* p_box, _Core::VectorT<_MathV2::Vector3<float>>* p_points)
 	{
 		//Calculate approximate center
-		Vector3<float> l_approximateCenter {};
+		Vector3<float> l_approximateCenter{};
 		{
-			auto l_pointsIt = _Core::VectorT_buildIterator(&p_points);
+			auto l_pointsIt = _Core::VectorT_buildIterator(p_points);
 			while (_Core::VectorIteratorT_moveNext(&l_pointsIt))
 			{
-				l_approximateCenter = VectorM::add(l_approximateCenter, *l_pointsIt.Current);
+				VectorM::add(&l_approximateCenter, l_pointsIt.Current, &l_approximateCenter);
 			}
-			l_approximateCenter = VectorM::mul(l_approximateCenter, 1.0f / p_points.Size);
+			VectorM::mul(&l_approximateCenter, 1.0f / p_points->Size, &l_approximateCenter);
 		}
 
 		//Calculate min-max
 		_MathV2::Vector3<float> l_min = l_approximateCenter, l_max = l_approximateCenter;
 		{
-			_Core::VectorIteratorT<_MathV2::Vector3<float>> l_pointsIt = _Core::VectorT_buildIterator(&p_points);
+			_Core::VectorIteratorT<_MathV2::Vector3<float>> l_pointsIt = _Core::VectorT_buildIterator(p_points);
 			while (_Core::VectorIteratorT_moveNext(&l_pointsIt))
 			{
 				if (l_pointsIt.Current->x <= l_min.x) { l_min.x = l_pointsIt.Current->x; }
@@ -58,54 +58,56 @@ namespace _MathV2
 
 		//calculate accurate center
 		{
-			p_box.Center =
-				VectorM::mul(
-					VectorM::add(VectorM::add({ 0.0f, 0.0f, 0.0f }, l_min), l_max),
-					0.5f
-				);
+			p_box->Center = { 0.0f, 0.0f, 0.0f };
+
+			VectorM::mul(
+				VectorM::add(VectorM::add(&p_box->Center, &l_min, &p_box->Center), &l_max, &p_box->Center),
+				0.5f,
+				&p_box->Center
+			);
 		}
 
-		box_grow(p_box, l_min);
-		box_grow(p_box, l_max);
+		box_grow(p_box, &l_min);
+		box_grow(p_box, &l_max);
 	};
 
-	BoxPoints Box_extractPoints(const Box& p_box)
+	BoxPoints* Box_extractPoints(const Box* p_box, BoxPoints* p_out)
 	{
-		BoxPoints l_points;
-		l_points.Center = p_box.Center;
+		Vector3<float> tmp_vec3;
+		p_out->Center = p_box->Center;
 		// Set gizmo positions
-		l_points.R_U_F = VectorM::add(p_box.Center, { p_box.Extend.x, p_box.Extend.y, p_box.Extend.z });
-		l_points.R_D_F = VectorM::add(p_box.Center, { p_box.Extend.x, -p_box.Extend.y, p_box.Extend.z });
-		l_points.R_U_B = VectorM::add(p_box.Center, { p_box.Extend.x, p_box.Extend.y, -p_box.Extend.z });
-		l_points.R_D_B = VectorM::add(p_box.Center, { p_box.Extend.x, -p_box.Extend.y, -p_box.Extend.z });
-		l_points.L_U_F = VectorM::add(p_box.Center, { -p_box.Extend.x, p_box.Extend.y, p_box.Extend.z });
-		l_points.L_D_F = VectorM::add(p_box.Center, { -p_box.Extend.x, -p_box.Extend.y, p_box.Extend.z });
-		l_points.L_U_B = VectorM::add(p_box.Center, { -p_box.Extend.x, p_box.Extend.y, -p_box.Extend.z });
-		l_points.L_D_B = VectorM::add(p_box.Center, { -p_box.Extend.x, -p_box.Extend.y, -p_box.Extend.z });
+		tmp_vec3 = { p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->R_U_F);
+		tmp_vec3 = { p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->R_D_F);
+		tmp_vec3 = { p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->R_U_B);
+		tmp_vec3 = { p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->R_D_B);
+		tmp_vec3 = { -p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->L_U_F);
+		tmp_vec3 = { -p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->L_D_F);
+		tmp_vec3 = { -p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->L_U_B);
+		tmp_vec3 = { -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, &p_out->L_D_B);
 
-		return l_points;
+		return p_out;
 	};
 
-	void Box_extractMinMax(const Box& p_box, _MathV2::Vector3<float>* out_min, _MathV2::Vector3<float>* out_max)
+	void Box_extractMinMax(const Box* p_box, _MathV2::Vector3<float>* out_min, _MathV2::Vector3<float>* out_max)
 	{
-		// min
-		*out_min = VectorM::add(p_box.Center, { -p_box.Extend.x, -p_box.Extend.y, -p_box.Extend.z });
-		*out_max = VectorM::add(p_box.Center, { p_box.Extend.x, p_box.Extend.y, p_box.Extend.z });
+		Vector3<float> tmp_vec3;
+		tmp_vec3 = { -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, out_min);
+		tmp_vec3 = { p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; VectorM::add(&p_box->Center, &tmp_vec3, out_max);
 	};
 
-	BoxPoints BoxPoints_mul(const BoxPoints& p_boxPoints, const _MathV2::Matrix<4, 4, float>& p_matrix)
+	BoxPoints* BoxPoints_mul(const BoxPoints* p_boxPoints, const _MathV2::Matrix<4, 4, float>* p_matrix, BoxPoints* p_out)
 	{
-		BoxPoints l_boxPoints;
-		l_boxPoints.Center = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.Center, 1.0f)));
-		l_boxPoints.L_D_B = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.L_D_B, 1.0f)));
-		l_boxPoints.L_D_F = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.L_D_F, 1.0f)));
-		l_boxPoints.L_U_B = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.L_U_B, 1.0f)));
-		l_boxPoints.L_U_F = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.L_U_F, 1.0f)));
-		l_boxPoints.R_D_B = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.R_D_B, 1.0f)));
-		l_boxPoints.R_D_F = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.R_D_F, 1.0f)));
-		l_boxPoints.R_U_B = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.R_U_B, 1.0f)));
-		l_boxPoints.R_U_F = VectorM::cast(MatrixM::mul(p_matrix, VectorM::cast(p_boxPoints.R_U_F, 1.0f)));
-		return l_boxPoints;
+		_MathV2::Vector4<float> tmp_vec4;
+		p_out->Center = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->Center, 1.0f), &tmp_vec4));
+		p_out->L_D_B = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->L_D_B, 1.0f), &tmp_vec4));
+		p_out->L_D_F = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->L_D_F, 1.0f), &tmp_vec4));
+		p_out->L_U_B = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->L_U_B, 1.0f), &tmp_vec4));
+		p_out->L_U_F = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->L_U_F, 1.0f), &tmp_vec4));
+		p_out->R_D_B = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->R_D_B, 1.0f), &tmp_vec4));
+		p_out->R_D_F = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->R_D_F, 1.0f), &tmp_vec4));
+		p_out->R_U_B = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->R_U_B, 1.0f), &tmp_vec4));
+		p_out->R_U_F = *VectorM::cast(MatrixM::mul(p_matrix, &VectorM::cast(&p_boxPoints->R_U_F, 1.0f), &tmp_vec4));
+		return p_out;
 	};
 
 }

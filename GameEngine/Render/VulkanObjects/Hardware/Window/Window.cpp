@@ -16,12 +16,11 @@ namespace _GameEngine::_Render
 	void window_size_callback(GLFWwindow* window, int width, int height);
 	void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
 	{
-		p_window->WindowToGraphicsAPIPixelCoordinates =
-			_MathV2::MatrixM::build(
-				_MathV2::Vector3<float>{ 2.0f / (float)p_window->WindowSize.Width , 0.0f, 0.0f },
-				_MathV2::Vector3<float>{ 0.0f, 2.0f / (float)p_window->WindowSize.Height, 0.0f },
-				_MathV2::Vector3<float>{ -1.0f, -1.0f, 0.0f }
-			);
+		_MathV2::Vector3<float> l_right, l_up, l_forward;
+		l_right = { 2.0f / (float)p_window->WindowSize.Width , 0.0f, 0.0f };
+		l_up = { 0.0f, 2.0f / (float)p_window->WindowSize.Height, 0.0f };
+		l_forward = { -1.0f, -1.0f, 0.0f };
+		p_window->WindowToGraphicsAPIPixelCoordinates = _MathV2::MatrixM::build(&l_right, &l_up, &l_forward);
 	};
 
 	std::unordered_map<GLFWwindow*, Window*> WindowIndexedForGLFW{};

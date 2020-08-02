@@ -111,7 +111,7 @@ namespace _GameEngine::_Input
 		{
 			p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition = p_input->InputMouse.ScreenPosition;
 			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
-			p_input->InputMouse.MouseDelta = _MathV2::VectorM::min(p_input->InputMouse.ScreenPosition, p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition);
+			_MathV2::VectorM::min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 
 			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
 

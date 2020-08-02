@@ -5,10 +5,9 @@
 
 #include "GameEngineApplication.h"
 
-#include "Math/Math.h"
-#include "Math/Transform/Transform.h"
+#include "v2/Math.h"
 #include "v2/Quaternion/QuaternionMath.hpp"
-#include "Math/Segment/Segment.h"
+#include "v2/Transform/TransformM.hpp"
 
 #include "ECS/ComponentT.hpp"
 #include "ECS/ECSEventQueueT.hpp"
@@ -27,6 +26,8 @@ using namespace _GameEngine::_Test;
 
 void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 {
+	_MathV2::Vector3<float> tmp_vec3_0;
+
 	// Camera
 	{
 		_ECS::Entity* l_cameraEntity;
@@ -46,7 +47,8 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			_ECS::TransformComponent* l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
-			l_transformInitInfo.LocalRotation = _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{(M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f});
+			tmp_vec3_0 = { (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f };
+			_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
@@ -74,7 +76,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			_ECS::Entity* l_childInstanciatedEntity; _ECS::TransformComponent* l_childInstranciatedTransform;
 			EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);
 
-			_Math::Transform_addChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
+			_MathV2::TransformM::addChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
 		}
 	}
 }

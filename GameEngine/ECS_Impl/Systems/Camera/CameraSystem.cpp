@@ -88,15 +88,20 @@ namespace _GameEngine::_ECS
 			Camera* l_camera = l_operations.Current->Camera;
 
 			{
-				_MathV2::Vector3<float> l_worldPosition = _MathV2::TransformM::getWorldPosition(l_transform->Transform);
-				_MathV2::Vector3<float> l_target = _MathV2::VectorM::add(l_worldPosition, _MathV2::TransformM::getForward(l_transform->Transform));
-				_MathV2::Vector3<float> l_up = _MathV2::VectorM::mul(_MathV2::TransformM::getUp(l_transform->Transform), -1.0f);
+				_MathV2::Vector3<float> tmp_vec3_0; _MathV2::Matrix4x4<float> tmp_mat4_0; _MathV2::Matrix3x3<float> tmp_mat3_0;
 
-				l_camera->ViewMatrix = _MathV2::MatrixM::inv(
+				_MathV2::Vector3<float> l_worldPosition; _MathV2::TransformM::getWorldPosition(&l_transform->Transform, &l_worldPosition);
+				_MathV2::Vector3<float> l_target; _MathV2::VectorM::add(&l_worldPosition, _MathV2::TransformM::getForward(&l_transform->Transform, &l_target), &l_target);
+				_MathV2::Vector3<float> l_up; _MathV2::VectorM::mul(_MathV2::TransformM::getUp(&l_transform->Transform, &tmp_vec3_0), -1.0f, &l_up);
+
+				tmp_vec3_0 = { 1.0f, 1.0f, 1.0f };
+				_MathV2::MatrixM::inv(
 					_MathV2::MatrixM::buildTRS(
-						l_worldPosition,
-						_MathV2::MatrixM::lookAt_rotation(l_worldPosition, l_target, l_up),
-						_MathV2::Vector3<float>{1.0f, 1.0f, 1.0f})
+						&l_worldPosition,
+						_MathV2::MatrixM::lookAt_rotation(&l_worldPosition, &l_target, &l_up, &tmp_mat3_0),
+						&tmp_vec3_0,
+						&tmp_mat4_0),
+					&l_camera->ViewMatrix
 				);
 			}
 

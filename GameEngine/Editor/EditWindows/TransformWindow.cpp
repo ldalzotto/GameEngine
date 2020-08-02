@@ -25,12 +25,12 @@ namespace _GameEngineEditor
 		_MathV2::Vector3<float> l_localPosition = l_transformWindow->Transform->Transform.LocalPosition;
 		if (ImGui::InputFloat3("pos", &l_localPosition.x, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			_MathV2::TransformM::setLocalPosition(l_transformWindow->Transform->Transform, l_localPosition);
+			_MathV2::TransformM::setLocalPosition(&l_transformWindow->Transform->Transform, &l_localPosition);
 		}
 		_MathV2::Quaternion<float> l_localRotation = l_transformWindow->Transform->Transform.LocalRotation;
 		if (ImGui::DragFloat4("rot", &l_localRotation.x, 0.1f, -3.14f, 3.14f))
 		{
-			_MathV2::TransformM::setLocalRotation(l_transformWindow->Transform->Transform, l_localRotation);
+			_MathV2::TransformM::setLocalRotation(&l_transformWindow->Transform->Transform, &l_localRotation);
 		}
 		ImGui::End();
 	};

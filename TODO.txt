@@ -47,7 +47,7 @@
 
 -- Math --
 
-# Refactoring the math library so that different type vector uses the same code.
+[X] # Refactoring the math library so that different type vector uses the same code.
 
 -- Resources --
 

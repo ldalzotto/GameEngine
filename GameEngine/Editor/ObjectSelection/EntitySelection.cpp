@@ -98,9 +98,10 @@ namespace _GameEngineEditor
 				_Physics::RaycastHit l_hit;
 				if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, l_ray.Begin, l_ray.End, &l_hit))
 				{
+					_MathV2::Vector3<float> tmp_vec3;
 					_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
 					p_entitySelection->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
-					TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, _MathV2::TransformM::getWorldPosition(l_transformComponent->Transform), p_entitySelection->ECS, p_entitySelection->RenderInterface);
+					TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, *_MathV2::TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3), p_entitySelection->ECS, p_entitySelection->RenderInterface);
 					_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
 					return; //We return to wait for the next frame where transform colliders and box will be calculated
 				}
@@ -142,7 +143,8 @@ namespace _GameEngineEditor
 			// MOVE
 			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
 			{
-				if (!_MathV2::VectorM::equals(p_entitySelection->Input->InputMouse.MouseDelta, { 0.0, 0.0 }))
+				_MathV2::Vector2<double> tmp_vec2 = { 0.0, 0.0 };
+				if (!_MathV2::VectorM::equals(&p_entitySelection->Input->InputMouse.MouseDelta, &tmp_vec2))
 				{
 					if (p_entitySelection->TransformGizmoSelectionState.SelectedArrow)
 					{
@@ -176,12 +178,12 @@ namespace _GameEngineEditor
 		_MathV2::Segment l_mouseDelta_begin_ray =
 			_ECS::Camera_buildWorldSpaceRay(
 				p_entitySelection->CachedStructures.ActiveCamera,
-				_MathV2::VectorM::cast(*(_MathV2::Vector3<float>*) & l_mouseDelta_screenPosition.Begin)
+				*_MathV2::VectorM::cast(&l_mouseDelta_screenPosition.Begin)
 			);
 		_MathV2::Segment l_mouseDelta_end_ray =
 			_ECS::Camera_buildWorldSpaceRay(
 				p_entitySelection->CachedStructures.ActiveCamera,
-				_MathV2::VectorM::cast(*(_MathV2::Vector3<float>*) & l_mouseDelta_screenPosition.End)
+				*_MathV2::VectorM::cast(&l_mouseDelta_screenPosition.End)
 			);
 
 		_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { p_testedCollider };
@@ -199,14 +201,17 @@ namespace _GameEngineEditor
 			l_mouseDelta_worldPosition.Begin = *(_MathV2::Vector3<float>*) & l_beginHit.HitPoint;
 		}
 
-		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
-			_MathV2::TransformM::getLocalToWorldMatrix(p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform), true);
+		_MathV2::Matrix4x4<float> tmp_mat4_0;
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
+			_MathV2::TransformM::getLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0), true);
 
 		return l_mouseDelta_worldPosition;
 	}
 
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
+		_MathV2::Vector3<float> tmp_vec3_1, tmp_vec3_0; _MathV2::Quaternion<float> tmp_quat_1;
+
 		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 		_ECS::TransformComponent* l_selectedArrow = p_entitySelection->TransformGizmoSelectionState.SelectedArrow;
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
@@ -214,18 +219,19 @@ namespace _GameEngineEditor
 		// We position the world space place
 		{
 			// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
-			_MathV2::TransformM::setWorldPosition(l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldPosition(l_transformComponent->Transform));
-			_MathV2::TransformM::setLocalRotation(l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldRotation(l_selectedArrow->Transform));
+			_MathV2::TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3_1));
+			_MathV2::TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldRotation(&l_selectedArrow->Transform, &tmp_quat_1));
 
 			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, _MathV2::TransformM::getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
 		}
 
-		_MathV2::Vector3<float> l_deltaPosition =
+		_MathV2::Vector3<float> l_deltaPosition;
 			_MathV2::VectorM::project(
-				_MathV2::SegmentM::toVector(entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider)),
-				_MathV2::TransformM::getForward(l_selectedArrow->Transform)
+				_MathV2::SegmentM::toVector(&entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider), &tmp_vec3_1),
+				_MathV2::TransformM::getForward(&l_selectedArrow->Transform, &tmp_vec3_0),
+				&l_deltaPosition
 			);
-		_MathV2::TransformM::addToWorldPosition(l_transformComponent->Transform, l_deltaPosition);
+		_MathV2::TransformM::addToWorldPosition(&l_transformComponent->Transform, &l_deltaPosition);
 	}
 
 	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)
@@ -235,29 +241,33 @@ namespace _GameEngineEditor
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		//We position the guide plane
-		_MathV2::Vector3<float> l_guidePlane_worldPosition = _MathV2::TransformM::getWorldPosition(l_transformComponent->Transform);
-		_MathV2::TransformM::setWorldPosition(l_transformGizmoPlane->Transform, l_guidePlane_worldPosition);
+		_MathV2::Vector3<float> l_guidePlane_worldPosition; _MathV2::TransformM::getWorldPosition(&l_transformComponent->Transform, &l_guidePlane_worldPosition);
+		_MathV2::TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, &l_guidePlane_worldPosition);
 		if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 		{
-			_MathV2::TransformM::setLocalRotation(l_transformGizmoPlane->Transform,
+			_MathV2::Quaternion<float> tmp_quat_0, tmp_quat_1, tmp_quat_2;
+			_MathV2::TransformM::setLocalRotation(&l_transformGizmoPlane->Transform,
 				_MathV2::QuaternionM::mul(
-					_MathV2::TransformM::getWorldRotation(p_entitySelection->TransformGizmoV2.RightArrow->Transform),
-					_MathV2::QuaternionM::rotateAround(_MathV2::RIGHT, M_PI * 0.5f)
+					_MathV2::TransformM::getWorldRotation(&p_entitySelection->TransformGizmoV2.RightArrow->Transform, &tmp_quat_0),
+					_MathV2::QuaternionM::rotateAround(&_MathV2::RIGHT, M_PI * 0.5f, &tmp_quat_1),
+					&tmp_quat_2
 				)
 			);
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
 		{
-			_MathV2::TransformM::setLocalRotation(l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldRotation(p_entitySelection->TransformGizmoV2.ZRotation->Transform));
+			_MathV2::Quaternion<float> tmp_quat;
+			_MathV2::TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldRotation(&p_entitySelection->TransformGizmoV2.ZRotation->Transform, &tmp_quat));
 		}
 		else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ZRotation)
 		{
-			_MathV2::TransformM::setLocalRotation(l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldRotation(p_entitySelection->TransformGizmoV2.UpArrow->Transform));
+			_MathV2::Quaternion<float> tmp_quat;
+			_MathV2::TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, _MathV2::TransformM::getWorldRotation(&p_entitySelection->TransformGizmoV2.UpArrow->Transform, &tmp_quat));
 		}
 
 		_MathV2::Segment l_deltaPositionDirection_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
-		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, l_deltaPositionDirection_worldSpace.Begin);
-		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, l_deltaPositionDirection_worldSpace.End);
+		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.Begin);
+		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.End);
 
 		// Perform rotation.
 
@@ -276,22 +286,27 @@ namespace _GameEngineEditor
 			l_axis = _MathV2::FORWARD;
 		}
 
+		_MathV2::Vector3<float> tmp_vec3_0, tmp_vec3_1;
 		float l_deltaRotation =
 			_MathV2::VectorM::angle_normalized(
-				_MathV2::VectorM::normalize(*(_MathV2::Vector3<float>*) & _MathV2::VectorM::min(*(_MathV2::Vector3<float>*) & l_deltaPositionDirection_worldSpace.Begin, *(_MathV2::Vector3<float>*) & l_guidePlane_worldPosition)),
-				_MathV2::VectorM::normalize(*(_MathV2::Vector3<float>*) & _MathV2::VectorM::min(*(_MathV2::Vector3<float>*) & l_deltaPositionDirection_worldSpace.End, *(_MathV2::Vector3<float>*) & l_guidePlane_worldPosition))
+				_MathV2::VectorM::normalize(_MathV2::VectorM::min(& l_deltaPositionDirection_worldSpace.Begin, & l_guidePlane_worldPosition, &tmp_vec3_0), &tmp_vec3_0),
+				_MathV2::VectorM::normalize(_MathV2::VectorM::min(& l_deltaPositionDirection_worldSpace.End, & l_guidePlane_worldPosition, &tmp_vec3_1), &tmp_vec3_1)
 			);
 
-		_MathV2::Quaternion<float> l_nextRotation = _MathV2::QuaternionM::mul(l_transformComponent->Transform.LocalRotation, _MathV2::QuaternionM::rotateAround(l_axis, l_deltaRotation));
-		_MathV2::TransformM::setLocalRotation(l_transformComponent->Transform, l_nextRotation);
+		_MathV2::Quaternion<float> tmp_quat_0;
+		_MathV2::Quaternion<float> l_nextRotation; _MathV2::QuaternionM::mul(&l_transformComponent->Transform.LocalRotation, _MathV2::QuaternionM::rotateAround(&l_axis, l_deltaRotation, &tmp_quat_0), &l_nextRotation);
+		_MathV2::TransformM::setLocalRotation(&l_transformComponent->Transform, &l_nextRotation);
 	};
 
 	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity)
 	{
+		_MathV2::Matrix4x4<float> tmp_mat_0; _MathV2::Vector3<float> tmp_vec3_0;
+
 		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
 		_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_selectedEntity);
-		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, l_meshRendererBound->BoundingBox,
-			_MathV2::TransformM::getLocalToWorldMatrix(l_selectedEntityTransform->Transform), true, _MathV2::Vector3<float> { 1.0f, 1.0f, 1.0f });
+		tmp_vec3_0 = { 1.0f, 1.0f, 1.0f };
+		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_meshRendererBound->BoundingBox,
+			_MathV2::TransformM::getLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0), true, &tmp_vec3_0);
 	}
 
 	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, const _MathV2::Vector4<float>* p_color)
@@ -380,6 +395,7 @@ namespace _GameEngineEditor
 
 	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, _MathV2::Vector3<float>& p_initialWorldPosition, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface)
 	{
+		_MathV2::Vector3<float> tmp_vec3_0; _MathV2::Quaternion<float> tmp_quat_0;
 		_ECS::Entity* l_transformGizmo = _ECS::Entity_alloc();
 		{
 			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_transformGizmo);
@@ -413,9 +429,11 @@ namespace _GameEngineEditor
 			_MathV2::TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->RightArrow->Transform);
 			_MathV2::TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->UpArrow->Transform);
 
-			_MathV2::TransformM::setLocalRotation(p_transformGizmo->RightArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, M_PI * 0.5f, 0.0f}));
-			_MathV2::TransformM::setLocalRotation(p_transformGizmo->UpArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{-M_PI * 0.5f, 0.0f, 0.0f}));
-			_MathV2::TransformM::setLocalRotation(p_transformGizmo->ForwardArrow->Transform, _MathV2::Quaternionf_Identity);
+			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->RightArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, & tmp_quat_0));
+			tmp_vec3_0 = { -M_PI * 0.5f, 0.0f, 0.0f };
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->UpArrow->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, & tmp_quat_0));
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->ForwardArrow->Transform, &_MathV2::Quaternionf_Identity);
 		}
 
 		// Rotation gizmo
@@ -424,9 +442,11 @@ namespace _GameEngineEditor
 			p_transformGizmo->YRotation = transformGizmoV2_allocRotation(p_ecs, p_renderInterface, &_Color::GREEN);
 			p_transformGizmo->ZRotation = transformGizmoV2_allocRotation(p_ecs, p_renderInterface, &_Color::BLUE);
 
-			_MathV2::TransformM::setLocalRotation(p_transformGizmo->ZRotation->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, M_PI * 0.5f, 0.0f}));
-			_MathV2::TransformM::setLocalRotation(p_transformGizmo->YRotation->Transform, _MathV2::QuaternionM::fromEulerAngle(_MathV2::Vector3<float>{0.0f, 0.0f, -M_PI * 0.5f }));
-			_MathV2::TransformM::setLocalRotation(p_transformGizmo->XRotation->Transform, _MathV2::Quaternionf_Identity);
+			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->ZRotation->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
+			tmp_vec3_0 = { 0.0f, 0.0f, -M_PI * 0.5f };
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->YRotation->Transform, _MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
+			_MathV2::TransformM::setLocalRotation(&p_transformGizmo->XRotation->Transform, &_MathV2::Quaternionf_Identity);
 
 			_MathV2::TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->XRotation->Transform);
 			_MathV2::TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->YRotation->Transform);
@@ -445,7 +465,8 @@ namespace _GameEngineEditor
 			p_transformGizmo->TransformGizmoMovementGuidePlane.Collider.Box = &p_transformGizmo->TransformGizmoMovementGuidePlane.Box;
 			p_transformGizmo->TransformGizmoMovementGuidePlane.Collider.Transform = &p_transformGizmo->TransformGizmoMovementGuidePlane.Transform;
 
-			_MathV2::TransformM::setLocalScale(p_transformGizmo->TransformGizmoMovementGuidePlane.Transform, _MathV2::Vector3<float>{ 1.0f, 1.0f, 1.0f });
+			_MathV2::Vector3<float> tmp_vec3 = { 1.0f, 1.0f, 1.0f };
+			_MathV2::TransformM::setLocalScale(&p_transformGizmo->TransformGizmoMovementGuidePlane.Transform, &tmp_vec3);
 		}
 	}
 
@@ -459,26 +480,27 @@ namespace _GameEngineEditor
 
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, _MathV2::Transform& p_followedTransform)
 	{
+		_MathV2::Vector4<float> tmp_vec4_0;
 		// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
 		{
 			_ECS::TransformComponent* l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
 			if (l_transformGizmotransform)
 			{
-				_MathV2::Vector3<float> l_followedWorldPosition = _MathV2::TransformM::getWorldPosition(p_followedTransform);
-				_MathV2::Quaternion<float> l_followedRotation = _MathV2::TransformM::getWorldRotation(p_followedTransform);
+				_MathV2::Vector3<float> l_followedWorldPosition; _MathV2::TransformM::getWorldPosition(&p_followedTransform, &l_followedWorldPosition);
+				_MathV2::Quaternion<float> l_followedRotation; _MathV2::TransformM::getWorldRotation(&p_followedTransform, &l_followedRotation);
 
 				_MathV2::Vector3<float> l_transformGizmoWorldPosition;
 				{
 					_MathV2::Matrix4x4<float> l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->CachedStructures.ActiveCamera);
-					_MathV2::Matrix4x4<float> l_clipToWorldMatrix = _MathV2::MatrixM::inv(l_worldToClipMatrix);
+					_MathV2::Matrix4x4<float> l_clipToWorldMatrix; _MathV2::MatrixM::inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
-					_MathV2::Vector4<float> l_selectedEntityTransformClip = _MathV2::MatrixM::clipSpaceMul(l_worldToClipMatrix, _MathV2::VectorM::cast(l_followedWorldPosition, 1.0f));
+					_MathV2::Vector4<float> l_selectedEntityTransformClip; _MathV2::MatrixM::clipSpaceMul(&l_worldToClipMatrix, &_MathV2::VectorM::cast(&l_followedWorldPosition, 1.0f), &l_selectedEntityTransformClip);
 					l_selectedEntityTransformClip.z = 0.99f; //Fixed distance in clip space from near plane.
-					l_transformGizmoWorldPosition = _MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(l_clipToWorldMatrix, l_selectedEntityTransformClip));
+					l_transformGizmoWorldPosition = *_MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &tmp_vec4_0));
 				}
 
-				_MathV2::TransformM::setWorldPosition(l_transformGizmotransform->Transform, *(_MathV2::Vector3<float>*) & l_transformGizmoWorldPosition);
-				_MathV2::TransformM::setLocalRotation(l_transformGizmotransform->Transform, l_followedRotation);
+				_MathV2::TransformM::setWorldPosition(&l_transformGizmotransform->Transform, &l_transformGizmoWorldPosition);
+				_MathV2::TransformM::setLocalRotation(&l_transformGizmotransform->Transform, &l_followedRotation);
 			}
 		}
 	};
@@ -519,26 +541,32 @@ namespace _GameEngineEditor
 
 	void TransformGizmo_setSelectedArrow(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedArrow)
 	{
+		_MathV2::Vector3<float> tmp_vec;
 		if (p_selectionState->SelectedArrow)
 		{
-			_MathV2::TransformM::setLocalScale(p_selectionState->SelectedArrow->Transform, _MathV2::Vector3<float>{ 1.0f,1.0f,1.0f });
+			tmp_vec = { 1.0f, 1.0f, 1.0f };
+			_MathV2::TransformM::setLocalScale(&p_selectionState->SelectedArrow->Transform, &tmp_vec);
 		}
 		if (p_selectedArrow)
 		{
-			_MathV2::TransformM::setLocalScale(p_selectedArrow->Transform, _MathV2::Vector3<float>{ 1.2f,1.2f,1.2f });
+			tmp_vec = { 1.2f, 1.2f, 1.2f };
+			_MathV2::TransformM::setLocalScale(&p_selectedArrow->Transform, &tmp_vec);
 		}
 		p_selectionState->SelectedArrow = p_selectedArrow;
 	}
 
 	void TransformGizmo_setSelectedRotation(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedRotation)
 	{
+		_MathV2::Vector3<float> tmp_vec;
 		if (p_selectionState->SelectedRotation)
 		{
-			_MathV2::TransformM::setLocalScale(p_selectionState->SelectedRotation->Transform, _MathV2::Vector3<float>{ 1.0f,1.0f,1.0f });
+			tmp_vec = { 1.0f, 1.0f, 1.0f };
+			_MathV2::TransformM::setLocalScale(&p_selectionState->SelectedRotation->Transform, &tmp_vec);
 		}
 		if (p_selectedRotation)
 		{
-			_MathV2::TransformM::setLocalScale(p_selectedRotation->Transform, _MathV2::Vector3<float>{ 1.2f,1.2f,1.2f });
+			tmp_vec = { 1.2f, 1.2f, 1.2f };
+			_MathV2::TransformM::setLocalScale(&p_selectedRotation->Transform, &tmp_vec);
 		}
 		p_selectionState->SelectedRotation = p_selectedRotation;
 	}
