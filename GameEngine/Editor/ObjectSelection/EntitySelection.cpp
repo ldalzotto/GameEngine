@@ -363,9 +363,9 @@ namespace _GameEngineEditor
 			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, TransformM::getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
 		}
 
-		Matrix4x4<float> tmp_mat4_0; Vector4<float> tmp_vec4_0, tmp_vec4_1;
 
-		// TODO -> multiply direction
+		// TODO -> multiply direction helper method for this case
+		Matrix4x4<float> tmp_mat4_0; Vector4<float> tmp_vec4_0, tmp_vec4_1;
 		Vector3<float> l_selectedScaleForaward_localSpace;
 		Vector3<float> l_selectedScaleForaward_localSpace_begin;
 		Vector3<float> l_selectedScaleForaward_localSpace_end;
@@ -382,8 +382,19 @@ namespace _GameEngineEditor
 			&l_deltaScale3D
 		);
 
+		float l_scaleSign;
+		float l_dot = VectorM::dot(
+			TransformM::getForward(&l_selectedScale->Transform, &tmp_vec3_0),
+			&l_deltaScale3D
+		);
+		if (l_dot >= 0.000f) { l_scaleSign = 1.0f; }
+		else { l_scaleSign = -1.0f; }
+
 		float l_scaleLength = VectorM::length(&l_deltaScale3D);
 		VectorM::mul(&l_selectedScaleForaward_localSpace, l_scaleLength, &l_deltaScale3D);
+		VectorM::mul(&l_deltaScale3D, l_scaleSign, &l_deltaScale3D);
+
+	
 
 		// Is the scale expanding ?
 		/*
