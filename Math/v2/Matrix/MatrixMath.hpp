@@ -53,7 +53,7 @@ namespace _MathV2
 		template <typename T>
 		inline static void setColumn(const Matrix<4, 4, T>* p_mat, int p_colIndex, const Vector<4, T>* p_col)
 		{
-			RMatrix_4x4_setColumn(p_mat->Points, p_colIndex, (T*)(p_col));
+			RMatrix_4x4_setColumn(p_mat->Points, p_colIndex, (T*)(p_col), 4);
 		};
 
 		template <typename T>
@@ -107,6 +107,13 @@ namespace _MathV2
 		}
 
 		template <typename T>
+		inline static Matrix4x4<T>* buildRotationMatrix(const Matrix3x3<T>* p_axis, Matrix4x4<T>* p_out)
+		{
+			RMatrix_4x4_buildRotationMatrix(p_out->Points, p_axis->Points);
+			return p_out;
+		}
+
+		template <typename T>
 		inline static Matrix3x3<T>* buildAxisMatrix(Vector3<T>* p_right, Vector3<T>* p_up, Vector3<T>* p_forward, Matrix3x3<T>* p_out)
 		{
 			RMatrix_3x3_buildFromColumn((T*)(p_right), (T*)(p_up), (T*)(p_forward), p_out->Points);
@@ -114,9 +121,11 @@ namespace _MathV2
 		};
 
 		template <typename T>
-		inline static void buildScaleMatrix(Matrix4x4<T>* p_mat, Vector3<T> p_scale)
+		inline static Matrix4x4<T>* buildScaleMatrix(const Vector3<T>* p_scale, Matrix4x4<T>* p_out)
 		{
-			RMatrix_4x4_buildScaleMatrix(p_mat->Points, (T*)(p_scale));
+			*p_out = Matrix4x4f_Identity;
+			RMatrix_4x4_buildScaleMatrix(p_out->Points, (T*)(&p_scale));
+			return p_out;
 		};
 
 		template <typename T>

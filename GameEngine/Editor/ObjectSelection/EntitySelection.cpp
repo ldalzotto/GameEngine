@@ -348,7 +348,7 @@ namespace _GameEngineEditor
 
 	void EntitySelection_scaleSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
-		Vector3<float> tmp_vec3_1, tmp_vec3_0; Quaternion<float> tmp_quat_1;
+		Vector3<float> tmp_vec3_0, tmp_vec3_1; Quaternion<float> tmp_quat_1;
 
 		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
 		_ECS::TransformComponent* l_selectedScale = p_entitySelection->TransformGizmoSelectionState.SelectedScale;
@@ -363,6 +363,18 @@ namespace _GameEngineEditor
 			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, TransformM::getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
 		}
 
+		Matrix4x4<float> tmp_mat4_0; Vector4<float> tmp_vec4_0, tmp_vec4_1;
+
+		// TODO -> multiply direction
+		Vector3<float> l_selectedScaleForaward_localSpace;
+		Vector3<float> l_selectedScaleForaward_localSpace_begin;
+		Vector3<float> l_selectedScaleForaward_localSpace_end;
+		tmp_vec4_1 = { 0.0f, 0.0f, 0.0f, 1.0f };
+		l_selectedScaleForaward_localSpace_begin = *VectorM::cast(MatrixM::mul(TransformM::getWorldToLocalMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &tmp_vec4_1, &tmp_vec4_0));
+		l_selectedScaleForaward_localSpace_end = *VectorM::cast(MatrixM::mul(TransformM::getWorldToLocalMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &VectorM::cast(TransformM::getForward(&l_selectedScale->Transform, &tmp_vec3_0), 1.0f), &tmp_vec4_0));
+		VectorM::normalize(VectorM::min(&l_selectedScaleForaward_localSpace_end, &l_selectedScaleForaward_localSpace_begin, &l_selectedScaleForaward_localSpace), &l_selectedScaleForaward_localSpace);
+
+
 		Vector3<float> l_deltaScale3D;
 		VectorM::project(
 			SegmentM::toVector(&entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider), &tmp_vec3_1),
@@ -370,23 +382,53 @@ namespace _GameEngineEditor
 			&l_deltaScale3D
 		);
 
+		float l_scaleLength = VectorM::length(&l_deltaScale3D);
+		VectorM::mul(&l_selectedScaleForaward_localSpace, l_scaleLength, &l_deltaScale3D);
+
+		// Is the scale expanding ?
+		/*
+		bool l_expanding = VectorM::dot(&l_deltaScale3D, TransformM::getForward(&l_selectedScale->Transform, &tmp_vec3_0)) >= 0.000f;
+		float l_deltaScaleLength = VectorM::length(&l_deltaScale3D);
+		if (l_expanding)
+		{
+			VectorM::normalize(&l_deltaScale3D, &l_deltaScale3D)
+		}
+		else
+		{
+
+		}
+		*/
+		/*
 		if (l_selectedScale == p_entitySelection->TransformGizmoV2.RightScale)
 		{
-			VectorM::mul(&l_deltaScale3D, &RIGHT, &l_deltaScale3D);
+			float l_scaleLength = VectorM::length(&l_deltaScale3D);
+			 VectorM::mul(VectorM::normalize(VectorM::mul(&l_deltaScale3D, &RIGHT, &l_deltaScale3D), &l_deltaScale3D), l_scaleLength, &l_deltaScale3D) ;
 		}
 		else if (l_selectedScale == p_entitySelection->TransformGizmoV2.UpScale)
 		{
-			VectorM::mul(&l_deltaScale3D, &UP, &l_deltaScale3D);
+			float l_scaleLength = VectorM::length(&l_deltaScale3D);
+			VectorM::mul(VectorM::normalize(VectorM::mul(&l_deltaScale3D, &UP, &l_deltaScale3D), &l_deltaScale3D), l_scaleLength, &l_deltaScale3D);
 		}
 		else if (l_selectedScale == p_entitySelection->TransformGizmoV2.ForwardScale)
 		{
-			VectorM::mul(&l_deltaScale3D, &FORWARD, &l_deltaScale3D);
+			float l_scaleLength = VectorM::length(&l_deltaScale3D);
+			VectorM::mul(VectorM::normalize(VectorM::mul(&l_deltaScale3D, &FORWARD, &l_deltaScale3D), &l_deltaScale3D), l_scaleLength, &l_deltaScale3D);
 		}
+		*/
+		// Matrix4x4<float> l_deltaScaleSkewed;
+		// Matrix4x4<float> l_skewed;
+		// 
+		// TransformM::calculatedWorldSkewedScale(&l_transformComponent->Transform, &l_deltaScale3D, &l_deltaScaleSkewed);
+		// 
+		// 
+		// TransformM::getWorldSkewedScale(&l_transformComponent->Transform, &l_skewed);
+		// int zd = 10;
 
 		TransformM::setLocalScale(
-			&l_transformComponent->Transform, 
+			&l_transformComponent->Transform,
 			VectorM::add(&l_transformComponent->Transform.LocalScale, &l_deltaScale3D, &tmp_vec3_1)
 		);
+
 	}
 
 	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity)

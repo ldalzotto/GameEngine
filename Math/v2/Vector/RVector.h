@@ -19,6 +19,8 @@ namespace _MathV2
 	void RVector_3_mul(const float p_left[3], const float p_right[3], float p_out[3]);
 	void RVector_4_mul(const float p_left[4], const float p_right, float p_out[4]);
 
+	void RVector_3_inv(const float p_vec[3], float p_out[3]);
+
 	float RVector_3_length(const float p_vec[3]);
 	float RVector_4_length(const float p_vec[4]);
 	

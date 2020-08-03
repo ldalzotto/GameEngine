@@ -85,6 +85,14 @@ namespace _MathV2
 		RVector_mul(p_left, 4, p_right, p_out);
 	};
 
+	void RVector_3_inv(const float p_vec[3], float p_out[3])
+	{
+		p_out[0] = 1 / p_vec[0];
+		p_out[1] = 1 / p_vec[1];
+		p_out[2] = 1 / p_vec[2];
+		// RVector_mul(p_vec, 3, RVector_3_dot(p_vec, p_vec), p_out);
+	};
+
 	float RVector_3_length(const float p_vec[3])
 	{
 		return

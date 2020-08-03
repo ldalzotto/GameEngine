@@ -41,7 +41,7 @@ namespace _MathV2
 			// Because the child referential has changed, we must update the local positions to fit the new referential.
 			TransformM::setLocalPosition(p_transform, TransformM::getWorldPosition(p_transform, &tmp_vec3));
 			TransformM::setLocalRotation(p_transform, TransformM::getWorldRotation(p_transform, &tmp_quat));
-			TransformM::setLocalScale(p_transform, TransformM::getWorldScale(p_transform, &tmp_vec3));
+			TransformM::setLocalScale(p_transform, TransformM::getWorldScaleFactor(p_transform, &tmp_vec3));
 
 			_Core::VectorT_eraseCompare(&p_transform->Parent->Childs, _Core::ComparatorT<Transform*, Transform*, void>{ Vector_transformComparator, &p_transform });
 		}
@@ -119,6 +119,22 @@ namespace _MathV2
 		}
 	};
 
+	void TransformM::setWorldScale(Transform* p_transform, const _MathV2::Vector3<float>* p_worldScale)
+	{
+		if (p_transform->Parent == nullptr)
+		{
+			TransformM::setLocalScale(p_transform, p_worldScale);
+		}
+		else
+		{
+			_MathV2::Vector3<float> tmp_vec3_0, tmp_vec3_1;
+			_MathV2::Vector3<float> l_parentWorldScale;
+			TransformM::getWorldScaleFactor(p_transform->Parent, &l_parentWorldScale);
+
+			TransformM::setLocalScale(p_transform, VectorM::mul(p_worldScale, VectorM::inv(&l_parentWorldScale, &tmp_vec3_0), &tmp_vec3_1));
+		}
+	};
+
 	_MathV2::Matrix4x4<float>* TransformM::getLocalToWorldMatrix(Transform* p_transform, _MathV2::Matrix4x4<float>* p_out)
 	{
 		transform_updateMatricesIfNecessary(p_transform);
@@ -161,10 +177,17 @@ namespace _MathV2
 		return p_out;
 	};
 
-	_MathV2::Vector3<float>* TransformM::getWorldScale(Transform* p_transform, _MathV2::Vector3<float>* p_out)
+	_MathV2::Vector3<float>* TransformM::getWorldScaleFactor(Transform* p_transform, _MathV2::Vector3<float>* p_out)
 	{
-		_MathV2::Matrix4x4<float> tmp_mat4_1;
-		*p_out = *VectorM::cast(&MatrixM::getScale(TransformM::getLocalToWorldMatrix(p_transform, &tmp_mat4_1)));
+		if (p_transform->Parent)
+		{
+			Vector3<float> tmp_vec3_0;
+			VectorM::mul(TransformM::getWorldScaleFactor(p_transform->Parent, &tmp_vec3_0), &p_transform->LocalScale, p_out);
+		}
+		else
+		{
+			*p_out = p_transform->LocalScale;
+		}
 		return p_out;
 	};
 
