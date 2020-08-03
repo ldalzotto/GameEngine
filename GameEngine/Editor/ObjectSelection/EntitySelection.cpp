@@ -359,8 +359,6 @@ namespace _GameEngineEditor
 			// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
 			TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3_1));
 			TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedScale->Transform, &tmp_quat_1));
-
-			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, TransformM::getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
 		}
 
 
@@ -393,47 +391,6 @@ namespace _GameEngineEditor
 		float l_scaleLength = VectorM::length(&l_deltaScale3D);
 		VectorM::mul(&l_selectedScaleForaward_localSpace, l_scaleLength, &l_deltaScale3D);
 		VectorM::mul(&l_deltaScale3D, l_scaleSign, &l_deltaScale3D);
-
-	
-
-		// Is the scale expanding ?
-		/*
-		bool l_expanding = VectorM::dot(&l_deltaScale3D, TransformM::getForward(&l_selectedScale->Transform, &tmp_vec3_0)) >= 0.000f;
-		float l_deltaScaleLength = VectorM::length(&l_deltaScale3D);
-		if (l_expanding)
-		{
-			VectorM::normalize(&l_deltaScale3D, &l_deltaScale3D)
-		}
-		else
-		{
-
-		}
-		*/
-		/*
-		if (l_selectedScale == p_entitySelection->TransformGizmoV2.RightScale)
-		{
-			float l_scaleLength = VectorM::length(&l_deltaScale3D);
-			 VectorM::mul(VectorM::normalize(VectorM::mul(&l_deltaScale3D, &RIGHT, &l_deltaScale3D), &l_deltaScale3D), l_scaleLength, &l_deltaScale3D) ;
-		}
-		else if (l_selectedScale == p_entitySelection->TransformGizmoV2.UpScale)
-		{
-			float l_scaleLength = VectorM::length(&l_deltaScale3D);
-			VectorM::mul(VectorM::normalize(VectorM::mul(&l_deltaScale3D, &UP, &l_deltaScale3D), &l_deltaScale3D), l_scaleLength, &l_deltaScale3D);
-		}
-		else if (l_selectedScale == p_entitySelection->TransformGizmoV2.ForwardScale)
-		{
-			float l_scaleLength = VectorM::length(&l_deltaScale3D);
-			VectorM::mul(VectorM::normalize(VectorM::mul(&l_deltaScale3D, &FORWARD, &l_deltaScale3D), &l_deltaScale3D), l_scaleLength, &l_deltaScale3D);
-		}
-		*/
-		// Matrix4x4<float> l_deltaScaleSkewed;
-		// Matrix4x4<float> l_skewed;
-		// 
-		// TransformM::calculatedWorldSkewedScale(&l_transformComponent->Transform, &l_deltaScale3D, &l_deltaScaleSkewed);
-		// 
-		// 
-		// TransformM::getWorldSkewedScale(&l_transformComponent->Transform, &l_skewed);
-		// int zd = 10;
 
 		TransformM::setLocalScale(
 			&l_transformComponent->Transform,

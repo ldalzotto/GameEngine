@@ -11,13 +11,24 @@
 [X] # FIX - The sorting order is incorrect for the update sequencer
 [X] # Having arrow Transform that allow movement of the selected entity.
 [X] # Having rotation gizmo that allow rotatin the selected entity.
-# Having scale gizmo that allow scaling the selected entity.
+[X] # Having scale gizmo that allow scaling the selected entity.
+
+-- Math - Refactoring --
+
+# Upgrading the Segment math object so that it can take any vector.
+# Creating a helper method to multiply a matrix with a direction.
+
+-- Editor Gizmo - further improvements --
+
+# Dont display arrow, rotation and scale at the same time. Instead, binding a key to active a transformation.
+# Gizmo directions is based on an orthonormal basis. When the Entity is skewed (scaled and rotated), the coordinate system is no
+  more orthonormal. Thus, arrows direction must be rearranged from calculated local directions of the Entity transform, instead of begin fixed.
 
 -- Transform --
 
 [X] # Setting World position. 
 [X] # Setting World rotation.
-# Setting World scale.
+[X] # Setting World scale.
 
 -- Physics --
 
