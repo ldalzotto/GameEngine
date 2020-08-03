@@ -5,6 +5,7 @@
 #include "v2/Box/Box.hpp"
 #include "v2/Transform/Transform.hpp"
 
+#include "Functional/Optional/OptionalT.hpp"
 #include "Physics/World/Collider/BoxCollider.h"
 
 namespace _GameEngine
@@ -36,6 +37,10 @@ namespace _GameEngineEditor
 		_GameEngine::_ECS::TransformComponent* SelectedArrow;
 		_GameEngine::_ECS::TransformComponent* SelectedRotation;
 		_GameEngine::_ECS::TransformComponent* SelectedScale;
+
+		//TODO -> This is a dirty way to handle the fact that on rotation, the TransformGizmoMovementGuidePlane position and rotation is setted only once (at the start).
+		bool IsRotating;
+		_Core::OptionalT<_MathV2::Vector3<float>> RotationAxis;
 	};
 
 	struct TransformGizmo
