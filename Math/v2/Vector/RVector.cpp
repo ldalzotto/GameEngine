@@ -32,6 +32,14 @@ namespace _MathV2
 		}
 	};
 
+	inline void RVector_mul(const float* p_left, const int p_left_nb, const float* p_right, float* p_out)
+	{
+		for (int i = 0; i < p_left_nb; i++)
+		{
+			p_out[i] = p_left[i] * p_right[i];
+		}
+	};
+
 	bool RVector_2_equals(const double p_left[2], const double p_right[2])
 	{
 		return _Core::Equals_double(&p_left[0], &p_right[0])
@@ -63,6 +71,11 @@ namespace _MathV2
 	void RVector_3_min(const float p_left[3], const float p_right[3], float p_out[3]) { RVector_min(p_left, p_right, p_out, 3); };
 
 	void RVector_3_mul(const float p_left[3], const float p_right, float p_out[3])
+	{
+		RVector_mul(p_left, 3, p_right, p_out);
+	};
+
+	void RVector_3_mul(const float p_left[3], const float p_right[3], float p_out[3])
 	{
 		RVector_mul(p_left, 3, p_right, p_out);
 	};

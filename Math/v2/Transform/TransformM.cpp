@@ -102,7 +102,7 @@ namespace _MathV2
 
 	void TransformM::setWorldRotation(Transform* p_transform, const _MathV2::Quaternion<float>* p_worldRotation)
 	{
-		if (p_transform->Parent == nullptr) 
+		if (p_transform->Parent == nullptr)
 		{
 			TransformM::setLocalRotation(p_transform, p_worldRotation);
 		}
@@ -149,17 +149,15 @@ namespace _MathV2
 
 	Quaternion<float>* TransformM::getWorldRotation(Transform* p_transform, Quaternion<float>* p_out)
 	{
-		Vector3<float> tmp_vec3_0, tmp_vec3_1, tmp_vec3_2;
-		Matrix4x4<float> l_localToWorldMatrix; TransformM::getLocalToWorldMatrix(p_transform, &l_localToWorldMatrix);
-
-		QuaternionM::fromAxis(
-			&MatrixM::build(
-				VectorM::normalize(VectorM::cast(&MatrixM::right(&l_localToWorldMatrix)), &tmp_vec3_0),
-				VectorM::normalize(VectorM::cast(&MatrixM::up(&l_localToWorldMatrix)), &tmp_vec3_1),
-				VectorM::normalize(VectorM::cast(&MatrixM::forward(&l_localToWorldMatrix)), &tmp_vec3_2)
-			),
-			p_out
-		);
+		if (p_transform->Parent)
+		{
+			Quaternion<float> tmp_quat_0;
+			QuaternionM::mul(TransformM::getWorldRotation(p_transform->Parent, &tmp_quat_0), &p_transform->LocalRotation, p_out);
+		}
+		else
+		{
+			*p_out = p_transform->LocalRotation;
+		}
 		return p_out;
 	};
 
@@ -191,27 +189,6 @@ namespace _MathV2
 		return p_out;
 	};
 
-	Vector3<float>* TransformM::getRight_worldSpace(Transform* p_transform, Vector3<float>* p_out)
-	{
-		Matrix4x4<float> tmp_mat4_1;
-		VectorM::normalize(VectorM::cast(&MatrixM::right(TransformM::getWorldToLocalMatrix(p_transform, &tmp_mat4_1))), p_out);
-		return p_out;
-	};
-
-	Vector3<float>* TransformM::getUp_worldSpace(Transform* p_transform, Vector3<float>* p_out)
-	{
-		Matrix4x4<float> tmp_mat4_1;
-		VectorM::normalize(VectorM::cast(&MatrixM::up(TransformM::getWorldToLocalMatrix(p_transform, &tmp_mat4_1))), p_out);
-		return p_out;
-	};
-
-	Vector3<float>* TransformM::getForward_worldSpace(Transform* p_transform, Vector3<float>* p_out)
-	{
-		Matrix4x4<float> tmp_mat4_1;
-		VectorM::normalize(VectorM::cast(&MatrixM::forward(TransformM::getWorldToLocalMatrix(p_transform, &tmp_mat4_1))), p_out);
-		return p_out;
-	};
-
 	void TransformM::markMatricsForRecalculation(Transform* p_transform)
 	{
 		p_transform->MatricesMustBeRecalculated = true;
@@ -227,12 +204,12 @@ namespace _MathV2
 		if (p_transform->MatricesMustBeRecalculated)
 		{
 			{
-					MatrixM::buildTRS(
-						&p_transform->LocalPosition,
-						&p_transform->LocalRotation,
-						&p_transform->LocalScale,
-						&p_transform->LocalToWorldMatrix
-					);
+				MatrixM::buildTRS(
+					&p_transform->LocalPosition,
+					&p_transform->LocalRotation,
+					&p_transform->LocalScale,
+					&p_transform->LocalToWorldMatrix
+				);
 
 				if (p_transform->Parent)
 				{

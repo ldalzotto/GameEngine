@@ -72,6 +72,12 @@ namespace _MathV2
 			return p_out;
 		};
 		template <typename T>
+		inline static Vector<3, T>* mul(const Vector<3, T>* p_left, const Vector<3, T>* p_right, Vector<3, T>* p_out)
+		{
+			RVector_3_mul((T*)(p_left), (T*)p_right, (T*)(p_out));
+			return p_out;
+		};
+		template <typename T>
 		inline static float dot(const Vector<3, T>* p_left, const  Vector<3, T>* p_right)
 		{
 			return RVector_3_dot((T*)(p_left), (T*)(p_right));

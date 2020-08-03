@@ -32,10 +32,6 @@ namespace _MathV2
 		static _MathV2::Vector3<float>* getUp(Transform* p_transform, _MathV2::Vector3<float>* p_out);
 		static _MathV2::Vector3<float>* getForward(Transform* p_transform, _MathV2::Vector3<float>* p_out);
 
-		static _MathV2::Vector3<float>* getRight_worldSpace(Transform* p_transform, _MathV2::Vector3<float>* p_out);
-		static _MathV2::Vector3<float>* getUp_worldSpace(Transform* p_transform, _MathV2::Vector3<float>* p_out);
-		static _MathV2::Vector3<float>* getForward_worldSpace(Transform* p_transform, _MathV2::Vector3<float>* p_out);
-
 		static void alloc(TransformHandle p_transform);
 		static void free(TransformHandle p_transform);
 	};
