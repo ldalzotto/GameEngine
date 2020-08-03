@@ -2,15 +2,25 @@
 
 namespace _MathV2
 {
+	struct RMatrix
+	{
+		char* Memory;
+		short int ColumnCount;
+		short int LineCount;
+	};
 
 	void RMatrix_4x4_setColumn(const float p_mat[4][4], const int p_columnIndex, const float* p_col, const int p_col_lineCount);
 	void RMatrix_4x4_copyMatrix3x3(float p_destination[4][4], const float p_source[3][3], const short int p_destination_col_index, const short int p_destination_line_index);
 	void RMatrix_3x3_buildFromColumn(const float p_col1[3], const float p_col2[3], const float p_col3[3], float p_out[3][3]);
 
-	void RMatrix_4x4_mul_4x4(const float p_left[4][4], const float p_right[4][4], float p_out[4][4]);
-	void RMatrix_4x4_mul_4(const float p_left[4][4], const float p_right[4], float p_out[4]);
-	void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3]);
-	void RMatrix_3x3_mul_3(const float p_left[3][3], const float p_right[3], float p_out[3]);
+	void RMatrix_mul_specification(
+		const float* p_left, const  short int p_left_columnNumber, const  short int p_left_lineNumber,
+		const  float* p_right, const  short int p_right_columnNumber, const  short int p_right_lineNumber,
+		float* p_out);
+	// void RMatrix_4x4_mul_4x4(const float p_left[4][4], const float p_right[4][4], float p_out[4][4]);
+	// void RMatrix_4x4_mul_4(const float p_left[4][4], const float p_right[4], float p_out[4]);
+	// void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3]);
+	// void RMatrix_3x3_mul_3(const float p_left[3][3], const float p_right[3], float p_out[3]);
 
 	void RMatrix_4x4_inv(const float p_matrix[4][4], float p_out[4][4]);
 

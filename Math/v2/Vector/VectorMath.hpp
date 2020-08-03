@@ -41,10 +41,10 @@ namespace _MathV2
 		{
 			return RVector_3_distance((T*)(p_start), (T*)(p_end));
 		};
-		template <typename T>
-		inline static Vector<3, T>* normalize(const Vector<3, T>* p_vec, Vector<3, T>* p_out)
+		template <typename T, int N>
+		inline static Vector<N, T>* normalize(const Vector<N, T>* p_vec, Vector<N, T>* p_out)
 		{
-			RVector_3_normalize((T*)(p_vec), (T*)(p_out));
+			RVector_normalize_specialization((T*)(p_vec), N,(T*)(p_out));
 			return p_out;
 		};
 		template <typename T>
@@ -53,16 +53,10 @@ namespace _MathV2
 			RVector_3_add((T*)(p_left), (T*)(p_right), (T*)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<2, T>* min(const Vector<2, T>* p_left, const Vector<2, T>* p_right, Vector<2, T>* p_out)
+		template <typename T, int N>
+		inline static Vector<N, T>* min(const Vector<N, T>* p_left, const Vector<N, T>* p_right, Vector<N, T>* p_out)
 		{
-			RVector_min_specification((const T*)(p_left), (const T*)(p_right), (T*)p_out, 2);
-			return p_out;
-		};
-		template <typename T>
-		inline static Vector<3, T>* min(const Vector<3, T>* p_left, const Vector<3, T>* p_right, Vector<3, T>* p_out)
-		{
-			RVector_min_specification((const T*)(p_left), (const T*)(p_right), (T*)p_out, 3);
+			RVector_min_specification((const T*)(p_left), (const T*)(p_right), (T*)p_out, N);
 			return p_out;
 		};
 		template <typename T>

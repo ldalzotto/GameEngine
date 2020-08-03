@@ -26,7 +26,7 @@ namespace _MathV2
 	
 	float RVector_3_distance(const float p_start[3], const float p_end[3]);
 
-	void RVector_3_normalize(const float p_vec[3], float p_out[3]);
+	void RVector_normalize_specialization(const float* p_vec, short int p_size, float* p_out);
 
 	float RVector_3_dot(const float p_left[3], const float p_right[3]);
 	

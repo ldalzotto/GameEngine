@@ -30,6 +30,16 @@ namespace _MathV2
 		return Math_sqrt<T>(l_value);
 	};
 
+	template <typename T>
+	inline void Rvector_normalize(const T* p_vec, int p_size, T* p_out)
+	{
+		T l_length = RVector_length(p_vec, p_size);
+		for (short int i = 0; i < p_size; i++)
+		{
+			p_out[i] = (p_vec[i] / l_length);
+		}
+	};
+
 	/**/
 
 	const float RIGHT_arr[3] = { 1.0f, 0.0f, 0.0f };
@@ -114,13 +124,7 @@ namespace _MathV2
 		return RVector_length(l_vector, 3);
 	};
 
-	void RVector_3_normalize(const float p_vec[3], float p_out[3])
-	{
-		float l_length = RVector_length(p_vec, 3);
-		p_out[0] = p_vec[0] / l_length;
-		p_out[1] = p_vec[1] / l_length;
-		p_out[2] = p_vec[2] / l_length;
-	};
+	void RVector_normalize_specialization(const float* p_vec, short int p_size, float* p_out) { Rvector_normalize(p_vec, p_size, p_out); };
 
 	float RVector_3_dot(const float p_left[3], const float p_right[3])
 	{
@@ -180,6 +184,6 @@ namespace _MathV2
 			RQuaternion_mul(l_rotatedVector_cpy, l_tmp, l_rotatedVector);
 		}
 
-		RVector_3_normalize(l_rotatedVector, p_out);
+		Rvector_normalize(l_rotatedVector, 3, p_out);
 	};
 }

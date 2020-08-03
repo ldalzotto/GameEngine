@@ -56,38 +56,17 @@ namespace _MathV2
 			RMatrix_4x4_setColumn(p_mat->Points, p_colIndex, (T*)(p_col), 4);
 		};
 
-		template <typename T>
-		inline static Matrix4x4<T>* mul(const Matrix4x4<T>* p_left, const Matrix4x4<T>* p_right, Matrix4x4<T>* p_out)
+		template <typename T, int C1, int L1, int C2, int L2>
+		inline static Matrix<C2, L1, T >* mul(const Matrix<C1, L1, T>* p_left, const Matrix<C2, L2, T >* p_right, Matrix<C2, L1, T >* p_out)
 		{
-			RMatrix_4x4_mul_4x4(p_left->Points, p_right->Points, p_out->Points);
+			RMatrix_mul_specification((const T*)p_left->Points, C1, L1, (const T*)p_right, C2, L2, (T*)p_out);
 			return p_out;
 		};
 
-		template <typename T>
-		inline static Vector4<T>* mul(const Matrix4x4<T>* p_left, const Vector4<T>* p_right, Vector4<T>* p_out)
+		template <typename T, int C1, int L1>
+		inline static Vector<L1, T>* mul(const Matrix<C1, L1, T>* p_left, const Vector<L1, T>* p_right, Vector<L1, T>* p_out)
 		{
-			RMatrix_4x4_mul_4(p_left->Points, (T*)p_right, (T*)p_out);
-			return p_out;
-		};
-
-		template <typename T>
-		inline static Matrix4x4<T>* mul(const Matrix4x4<T>* p_left, T p_right, Matrix4x4<T>* p_out)
-		{
-			RMatrix_4x4_mul_1(p_left->Points, p_right, (T*)p_out);
-			return p_out;
-		};
-
-		template <typename T>
-		inline static Matrix3x3<T>* mul(const Matrix3x3<T>* p_left, const Matrix3x3<T>* p_right, Matrix3x3<T>* p_out)
-		{
-			RMatrix_3x3_mul_3x3(p_left->Points, p_right->Points, p_out->Points);
-			return p_out;
-		};
-
-		template <typename T>
-		inline static Vector3<T>* mul(const Matrix3x3<T>* p_left, const Vector3<T>* p_right, Vector3<T>* p_out)
-		{
-			RMatrix_3x3_mul_3(p_left->Points, (T*)(p_right), (T*)(p_out));
+			RMatrix_mul_specification((const T*)p_left->Points, C1, L1, (const T*)p_right, 1, L1, (T*)p_out);
 			return p_out;
 		};
 

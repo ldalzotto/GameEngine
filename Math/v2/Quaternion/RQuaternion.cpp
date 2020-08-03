@@ -202,8 +202,8 @@ namespace _MathV2
 		out_axis[2][1] = (2 * l_qyz) - (2 * l_qxw);
 		out_axis[2][2] = 1 - (2 * l_qxx) - (2 * l_qyy);
 		
-		RVector_3_normalize(out_axis[0], out_axis[0]);
-		RVector_3_normalize(out_axis[1], out_axis[1]);
-		RVector_3_normalize(out_axis[2], out_axis[2]);
+		RVector_normalize_specialization(out_axis[0], 3, out_axis[0]);
+		RVector_normalize_specialization(out_axis[1], 3, out_axis[1]);
+		RVector_normalize_specialization(out_axis[2], 3, out_axis[2]);
 	};
 }

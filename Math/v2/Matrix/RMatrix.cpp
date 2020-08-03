@@ -7,13 +7,6 @@
 
 namespace _MathV2
 {
-	struct RMatrix
-	{
-		char* Memory;
-		short int ColumnCount;
-		short int LineCount;
-	};
-
 	inline RMatrix RMatrix_build(const void* p_rawPointer, const short int p_columnCount, const short int p_lineCount)
 	{
 		return
@@ -25,39 +18,11 @@ namespace _MathV2
 	};
 
 	/// GENERIC MULTIPLICATIONS
-	inline float* RMatrix_float_getAddresFromRaw(const float* p_mat, int p_columnSize, int p_column, int p_line)
-	{
-		return	(float*)(((char*)p_mat) + (sizeof(float) * p_columnSize * p_column) + (sizeof(float) * p_line));
-	};
-
 	template <typename T>
 	inline float* RMatrix_float_getAddresFromRaw_v2(const RMatrix& p_matrix, int p_column, int p_line)
 	{
 		return	(float*)((p_matrix.Memory) + (sizeof(T) * p_matrix.LineCount * p_column) + (sizeof(T) * p_line));
 	};
-
-	template <typename LEFT_TYPE, typename RIGHT_TYPE>
-	inline float RMatrix_multiplication_line_column_v2(const RMatrix& p_left, const RMatrix& p_right, int p_leftLineIndex, int p_rightColumnIndex)
-	{
-		float l_return = 0.0f;
-		for (short int i = 0; i < p_left.ColumnCount; i++)
-		{
-			l_return += (*RMatrix_float_getAddresFromRaw_v2<LEFT_TYPE>(p_left, i, p_leftLineIndex) * *RMatrix_float_getAddresFromRaw_v2<RIGHT_TYPE>(p_right, p_rightColumnIndex, i));
-		}
-		return l_return;
-	};
-
-	template <typename LEFT_TYPE, typename RIGHT_TYPE, typename OUT_TYPE>
-	inline void RMatrix_multiplication_matrix_matrix_v2(const RMatrix& p_left, const RMatrix& p_right, RMatrix& p_out)
-	{
-		for (int i = 0; i < p_left.LineCount; i++)
-		{
-			for (int j = 0; j < p_right.ColumnCount; j++)
-			{
-				*RMatrix_float_getAddresFromRaw_v2<OUT_TYPE>(p_out, j, i) = RMatrix_multiplication_line_column_v2<LEFT_TYPE, RIGHT_TYPE>(p_left, p_right, i, j);
-			}
-		}
-	}
 
 	template <typename LEFT_TYPE, typename RIGHT_TYPE, typename OUT_TYPE>
 	inline void RMatrix_multiplication_matrix_scalar_v2(const RMatrix& p_left, const RIGHT_TYPE p_right, const RMatrix& p_out)
@@ -71,13 +36,40 @@ namespace _MathV2
 		}
 	};
 
+	inline void* RMatrix_float_getAddresFromRaw_v3(const RMatrix& p_matrix, int p_column, int p_line, const size_t p_elementSize)
+	{
+		return	(void*)((p_matrix.Memory) + (p_elementSize * p_matrix.LineCount * p_column) + (p_elementSize * p_line));
+	};
+
+	inline float RMatrix_multiplication_line_column_v3(const RMatrix& p_left, const size_t p_left_elementSize, const RMatrix& p_right, const size_t p_right_elementSize, int p_leftLineIndex, int p_rightColumnIndex)
+	{
+		float l_return = 0.0f;
+		for (short int i = 0; i < p_left.ColumnCount; i++)
+		{
+			l_return += (*(float*)RMatrix_float_getAddresFromRaw_v3(p_left, i, p_leftLineIndex, p_left_elementSize) * *(float*)RMatrix_float_getAddresFromRaw_v3(p_right, p_rightColumnIndex, i, p_right_elementSize));
+		}
+		return l_return;
+	};
+
+	inline void RMatrix_multiplication_matrix_matrix_v3(const RMatrix& p_left, const size_t p_left_elementSize, const RMatrix& p_right, const size_t p_right_elementSize, RMatrix& p_out)
+	{
+		for (int i = 0; i < p_left.LineCount; i++)
+		{
+			for (int j = 0; j < p_right.ColumnCount; j++)
+			{
+				*(float*)RMatrix_float_getAddresFromRaw_v3(p_out, j, i, p_left_elementSize) = RMatrix_multiplication_line_column_v3(p_left, p_left_elementSize, p_right, p_right_elementSize, i, j);
+			}
+		}
+	}
+
+
 	template <typename DESTINATION_TYPE>
 	inline void RMatrix_copy(const RMatrix& p_destination, const RMatrix& p_source, const short int p_destination_col_index, const short int p_destination_line_index)
 	{
 		for (short int j = 0; j < p_source.ColumnCount; j++)
 		{
 			memcpy(RMatrix_float_getAddresFromRaw_v2<DESTINATION_TYPE>(p_destination, j + p_destination_col_index, p_destination_line_index),
-				   RMatrix_float_getAddresFromRaw_v2<DESTINATION_TYPE>(p_source, j, 0), sizeof(DESTINATION_TYPE) * p_source.LineCount);
+				RMatrix_float_getAddresFromRaw_v2<DESTINATION_TYPE>(p_source, j, 0), sizeof(DESTINATION_TYPE) * p_source.LineCount);
 		}
 	};
 
@@ -97,7 +89,7 @@ namespace _MathV2
 					{
 						if (l != p_line)
 						{
-							l_mat3x3[l_columnCounter][l_rowCounter] = *RMatrix_float_getAddresFromRaw((const float*)m, 4, c, l);
+							l_mat3x3[l_columnCounter][l_rowCounter] = *RMatrix_float_getAddresFromRaw_v2<float>(RMatrix{ (char*)m , 4, 4 }, c, l);
 							l_rowCounter += 1;
 						}
 					}
@@ -132,29 +124,19 @@ namespace _MathV2
 		memcpy((float*)((char*)p_out + (sizeof(float) * 6)), p_col3, sizeof(float) * 3);
 	};
 
-	void RMatrix_4x4_mul_4x4(const float p_left[4][4], const float p_right[4][4], float p_out[4][4])
+	void RMatrix_mul_specification(
+		const float* p_left, const  short int p_left_columnNumber, const  short int p_left_lineNumber,
+		const float* p_right, const  short int p_right_columnNumber, const  short int p_right_lineNumber, float* p_out)
 	{
-		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 4, 4), RMatrix_build((const float*)p_out, 4, 4));
-	};
-
-	void RMatrix_4x4_mul_4(const float p_left[4][4], const float p_right[4], float p_out[4])
-	{
-		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 1, 4), RMatrix_build((const float*)p_out, 1, 4));
+		RMatrix_multiplication_matrix_matrix_v3(
+			RMatrix_build((const float*)p_left, p_left_columnNumber, p_left_lineNumber), sizeof(float),
+			RMatrix_build((const float*)p_right, p_right_columnNumber, p_right_lineNumber), sizeof(float),
+			RMatrix_build((const float*)p_out, p_right_columnNumber, p_left_lineNumber));
 	};
 
 	void RMatrix_4x4_mul_1(const float p_left[4][4], const float p_right, float p_out[4])
 	{
 		RMatrix_multiplication_matrix_scalar_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), p_right, RMatrix_build((const float*)p_out, 4, 4));
-	};
-
-	void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3])
-	{
-		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 3, 3), RMatrix_build((const float*)p_left, 3, 3));
-	};
-
-	void RMatrix_3x3_mul_3(const float p_left[3][3], const float p_right[3], float p_out[3])
-	{
-		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 1, 3), RMatrix_build((const float*)p_out, 1, 3));
 	};
 
 	void RMatrix_4x4_inv(const float p_matrix[4][4], float p_out[4][4])
@@ -260,17 +242,17 @@ namespace _MathV2
 		p_out[0][1] = 0.0f;
 		p_out[0][2] = 0.0f;
 		p_out[0][3] = 0.0f;
-			
+
 		p_out[1][0] = 0.0f;
 		p_out[1][1] = 1.0f / l_halfTan;
 		p_out[1][2] = 0.0f;
 		p_out[1][3] = 0.0f;
-			 
+
 		p_out[2][0] = 0.0f;
 		p_out[2][1] = 0.0f;
 		p_out[2][2] = -(p_far + p_near) / (p_far - p_near);
 		p_out[2][3] = -1.0f;
-			 
+
 		p_out[3][0] = 0.0f;
 		p_out[3][1] = 0.0f;
 		p_out[3][2] = (-2.0f * p_far * p_near) / (p_far - p_near);
@@ -283,18 +265,18 @@ namespace _MathV2
 		float l_forward[3];
 		{
 			RVector_min_specification(p_target, p_origin, l_forward, 3);
-			RVector_3_normalize(l_forward, l_forward);
+			RVector_normalize_specialization(l_forward, 3, l_forward);
 			RVector_3_mul(l_forward, -1.0f, l_forward);
 		}
 		float l_right[3];
 		{
 			RVector_3_cross(l_forward, p_up, l_right);
-			RVector_3_normalize(l_right, l_right);
+			RVector_normalize_specialization(l_right, 3, l_right);
 		}
 		float l_up[3];
 		{
 			RVector_3_cross(l_right, l_forward, l_up);
-			RVector_3_normalize(l_up, l_up);
+			RVector_normalize_specialization(l_up, 3, l_up);
 		}
 
 		RMatrix_3x3_buildFromColumn(l_right, l_up, l_forward, out_rotationMatrix);
@@ -302,7 +284,8 @@ namespace _MathV2
 
 	void RMatrix_4x4_clipSpaceMul(const float p_projectionmatrix[4][4], const float p_pos[4], float out_pos[4])
 	{
-		RMatrix_4x4_mul_4(p_projectionmatrix, p_pos, out_pos);
+		RMatrix_mul_specification((const float*)p_projectionmatrix, 4, 4, p_pos, 1, 4, out_pos);
+		// RMatrix_4x4_mul_4(p_projectionmatrix, p_pos, out_pos);
 		RVector_4_mul(out_pos, 1 / out_pos[3], out_pos);
 	};
 }
