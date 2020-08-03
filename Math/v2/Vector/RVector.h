@@ -11,9 +11,9 @@ namespace _MathV2
 	bool RVector_3_equals(const float p_left[3], const float p_right[3]);
 
 	void RVector_3_add(const float p_left[3], const float p_right[3], float p_out[3]);
-	void RVector_2_min(const float p_left[2], const  float p_right[2], float p_out[2]);
-	void RVector_2_min(const double p_left[2], const  double p_right[2], double p_out[2]);
-	void RVector_3_min(const float p_left[3], const  float p_right[3], float p_out[3]);
+
+	void RVector_min_specification(const float* p_left, const float* p_right, float* p_out, short p_size);
+	void RVector_min_specification(const double* p_left, const double* p_right, double* p_out, short p_size);
 
 	void RVector_3_mul(const float p_left[3], const float p_right, float p_out[3]);
 	void RVector_3_mul(const float p_left[3], const float p_right[3], float p_out[3]);
@@ -21,8 +21,8 @@ namespace _MathV2
 
 	void RVector_3_inv(const float p_vec[3], float p_out[3]);
 
-	float RVector_3_length(const float p_vec[3]);
-	float RVector_4_length(const float p_vec[4]);
+	float RVector_length_specialization(const float* p_vec, short int p_size);
+	float RVector_length_specialization(const double* p_vec, short int p_size);
 	
 	float RVector_3_distance(const float p_start[3], const float p_end[3]);
 

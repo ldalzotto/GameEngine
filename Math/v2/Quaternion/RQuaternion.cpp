@@ -135,7 +135,7 @@ namespace _MathV2
 
 	void RQuaternion_normalize(const float p_quat[4], float p_out[4])
 	{
-		RVector_4_mul(p_quat, 1 / RVector_4_length(p_quat), p_out);
+		RVector_4_mul(p_quat, 1 / RVector_length_specialization(p_quat, 4), p_out);
 	};
 
 	void RQuaternion_mul(const float p_left[4], const  float p_right[4], float p_out[4])

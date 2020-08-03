@@ -28,4 +28,10 @@ namespace _MathV2
 			return left;
 		}
 	};
+
+	template<>
+	float Math_sqrt<float>(float p_value) { return sqrtf(p_value); };
+
+	template<>
+	double Math_sqrt<double>(double p_value) { return sqrt(p_value); };
 }

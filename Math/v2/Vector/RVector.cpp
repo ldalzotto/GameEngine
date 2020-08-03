@@ -1,9 +1,9 @@
 #include "RVector.h"
 
-#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
+#include "v2/Math.h"
 #include "Functional/Equals/Equals.hpp"
 #include "v2/Quaternion/RQuaternion.h"
 
@@ -18,6 +18,18 @@ namespace _MathV2
 			p_out[i] = p_left[i] - p_right[i];
 		}
 	}
+
+	template <typename T>
+	inline T RVector_length(const T* p_vec, short int p_size)
+	{
+		T l_value = 0;
+		for (short int i = 0; i < p_size; i++)
+		{
+			l_value += (p_vec[i] * p_vec[i]);
+		}
+		return Math_sqrt<T>(l_value);
+	};
+
 	/**/
 
 	const float RIGHT_arr[3] = { 1.0f, 0.0f, 0.0f };
@@ -66,9 +78,8 @@ namespace _MathV2
 		p_out[2] = p_left[2] + p_right[2];
 	};
 
-	void RVector_2_min(const float p_left[2], const  float p_right[2], float p_out[2]) { RVector_min(p_left, p_right, p_out, 2); };
-	void RVector_2_min(const double p_left[2], const  double p_right[2], double p_out[2]) { RVector_min(p_left, p_right, p_out, 2); };
-	void RVector_3_min(const float p_left[3], const float p_right[3], float p_out[3]) { RVector_min(p_left, p_right, p_out, 3); };
+	void RVector_min_specification(const float* p_left, const float* p_right, float* p_out, short p_size) { RVector_min<float>(p_left, p_right, p_out, p_size); };
+	void RVector_min_specification(const double* p_left, const double* p_right, double* p_out, short p_size) { RVector_min<double>(p_left, p_right, p_out, p_size); };
 
 	void RVector_3_mul(const float p_left[3], const float p_right, float p_out[3])
 	{
@@ -93,31 +104,19 @@ namespace _MathV2
 		// RVector_mul(p_vec, 3, RVector_3_dot(p_vec, p_vec), p_out);
 	};
 
-	float RVector_3_length(const float p_vec[3])
-	{
-		return
-			sqrtf(RVector_3_dot(p_vec, p_vec));
-	};
-
-	float RVector_4_length(const float p_vec[4])
-	{
-		return
-			sqrtf((p_vec[0] * p_vec[0]) +
-				(p_vec[1] * p_vec[1]) +
-				(p_vec[2] * p_vec[2]) +
-				(p_vec[3] * p_vec[3]));
-	};
+	float RVector_length_specialization(const float* p_vec, short int p_size) { return RVector_length<float>(p_vec, p_size); }
+	float RVector_length_specialization(const double* p_vec, short int p_size) { return RVector_length<double>(p_vec, p_size); }
 
 	float RVector_3_distance(const float p_start[3], const float p_end[3])
 	{
 		float l_vector[3];
-		RVector_3_min(p_end, p_start, l_vector);
-		return RVector_3_length(l_vector);
+		RVector_min(p_end, p_start, l_vector, 3);
+		return RVector_length(l_vector, 3);
 	};
 
 	void RVector_3_normalize(const float p_vec[3], float p_out[3])
 	{
-		float l_length = RVector_3_length(p_vec);
+		float l_length = RVector_length(p_vec, 3);
 		p_out[0] = p_vec[0] / l_length;
 		p_out[1] = p_vec[1] / l_length;
 		p_out[2] = p_vec[2] / l_length;
@@ -140,13 +139,13 @@ namespace _MathV2
 
 	void RVector_3_project(const float p_vec[3], const float p_projectedOn[3], float p_out[3])
 	{
-		RVector_3_mul(p_projectedOn, RVector_3_dot(p_vec, p_projectedOn) / RVector_3_length(p_projectedOn), p_out);
+		RVector_3_mul(p_projectedOn, RVector_3_dot(p_vec, p_projectedOn) / RVector_length(p_projectedOn, 3), p_out);
 	};
 
 	float RVector_3_angle(const float p_begin[3], const float p_end[3])
 	{
 		return acosf(
-			RVector_3_dot(p_begin, p_end) / (RVector_3_length(p_begin) * RVector_3_length(p_end))
+			RVector_3_dot(p_begin, p_end) / (RVector_length(p_begin, 3) * RVector_length(p_end, 3))
 		);
 	};
 

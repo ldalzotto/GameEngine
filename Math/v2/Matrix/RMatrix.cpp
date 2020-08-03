@@ -37,7 +37,7 @@ namespace _MathV2
 	};
 
 	template <typename LEFT_TYPE, typename RIGHT_TYPE>
-	inline float RMatrix_float_multiplication_line_column_v2(const RMatrix& p_left, const RMatrix& p_right, int p_leftLineIndex, int p_rightColumnIndex)
+	inline float RMatrix_multiplication_line_column_v2(const RMatrix& p_left, const RMatrix& p_right, int p_leftLineIndex, int p_rightColumnIndex)
 	{
 		float l_return = 0.0f;
 		for (short int i = 0; i < p_left.ColumnCount; i++)
@@ -48,19 +48,19 @@ namespace _MathV2
 	};
 
 	template <typename LEFT_TYPE, typename RIGHT_TYPE, typename OUT_TYPE>
-	inline void RMatrix_float_multiplication_matrix_matrix_v2(const RMatrix& p_left, const RMatrix& p_right, RMatrix& p_out)
+	inline void RMatrix_multiplication_matrix_matrix_v2(const RMatrix& p_left, const RMatrix& p_right, RMatrix& p_out)
 	{
 		for (int i = 0; i < p_left.LineCount; i++)
 		{
 			for (int j = 0; j < p_right.ColumnCount; j++)
 			{
-				*RMatrix_float_getAddresFromRaw_v2<OUT_TYPE>(p_out, j, i) = RMatrix_float_multiplication_line_column_v2<LEFT_TYPE, RIGHT_TYPE>(p_left, p_right, i, j);
+				*RMatrix_float_getAddresFromRaw_v2<OUT_TYPE>(p_out, j, i) = RMatrix_multiplication_line_column_v2<LEFT_TYPE, RIGHT_TYPE>(p_left, p_right, i, j);
 			}
 		}
 	}
 
 	template <typename LEFT_TYPE, typename RIGHT_TYPE, typename OUT_TYPE>
-	inline void RMatrix_multiplication_matrix_float_v2(const RMatrix& p_left, const RIGHT_TYPE p_right, const RMatrix& p_out)
+	inline void RMatrix_multiplication_matrix_scalar_v2(const RMatrix& p_left, const RIGHT_TYPE p_right, const RMatrix& p_out)
 	{
 		for (int i = 0; i < p_left.LineCount; i++)
 		{
@@ -134,27 +134,27 @@ namespace _MathV2
 
 	void RMatrix_4x4_mul_4x4(const float p_left[4][4], const float p_right[4][4], float p_out[4][4])
 	{
-		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 4, 4), RMatrix_build((const float*)p_out, 4, 4));
+		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 4, 4), RMatrix_build((const float*)p_out, 4, 4));
 	};
 
 	void RMatrix_4x4_mul_4(const float p_left[4][4], const float p_right[4], float p_out[4])
 	{
-		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 1, 4), RMatrix_build((const float*)p_out, 1, 4));
+		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), RMatrix_build((const float*)p_right, 1, 4), RMatrix_build((const float*)p_out, 1, 4));
 	};
 
 	void RMatrix_4x4_mul_1(const float p_left[4][4], const float p_right, float p_out[4])
 	{
-		RMatrix_multiplication_matrix_float_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), p_right, RMatrix_build((const float*)p_out, 4, 4));
+		RMatrix_multiplication_matrix_scalar_v2<float, float, float>(RMatrix_build((const float*)p_left, 4, 4), p_right, RMatrix_build((const float*)p_out, 4, 4));
 	};
 
 	void RMatrix_3x3_mul_3x3(const float p_left[3][3], const float p_right[3][3], float p_out[3][3])
 	{
-		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 3, 3), RMatrix_build((const float*)p_left, 3, 3));
+		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 3, 3), RMatrix_build((const float*)p_left, 3, 3));
 	};
 
 	void RMatrix_3x3_mul_3(const float p_left[3][3], const float p_right[3], float p_out[3])
 	{
-		RMatrix_float_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 1, 3), RMatrix_build((const float*)p_out, 1, 3));
+		RMatrix_multiplication_matrix_matrix_v2<float, float, float>(RMatrix_build((const float*)p_left, 3, 3), RMatrix_build((const float*)p_right, 1, 3), RMatrix_build((const float*)p_out, 1, 3));
 	};
 
 	void RMatrix_4x4_inv(const float p_matrix[4][4], float p_out[4][4])
@@ -180,7 +180,7 @@ namespace _MathV2
 			p_out[3][3] = RMatrix_3x3det(p_matrix, 3, 3);
 		}
 
-		RMatrix_multiplication_matrix_float_v2<float, float, float>(RMatrix_build((const float*)p_out, 4, 4), 1 / l_det, RMatrix_build((const float*)p_out, 4, 4));
+		RMatrix_multiplication_matrix_scalar_v2<float, float, float>(RMatrix_build((const float*)p_out, 4, 4), 1 / l_det, RMatrix_build((const float*)p_out, 4, 4));
 	};
 
 	void RMatrix_4x4_buildTranslationMatrix(float p_matrix[4][4], const float p_translation[3])
@@ -245,9 +245,9 @@ namespace _MathV2
 		memcpy(l_c0, p_trs[1], sizeof(float) * 4);
 		memcpy(l_c0, p_trs[2], sizeof(float) * 4);
 
-		out_scale[0] = RVector_4_length(l_c0);
-		out_scale[1] = RVector_4_length(l_c0);
-		out_scale[2] = RVector_4_length(l_c0);
+		out_scale[0] = RVector_length_specialization(l_c0, 4);
+		out_scale[1] = RVector_length_specialization(l_c1, 4);
+		out_scale[2] = RVector_length_specialization(l_c2, 4);
 		out_scale[3] = 0.0f;
 	};
 
@@ -282,7 +282,7 @@ namespace _MathV2
 		//out_rotationMatrix = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 		float l_forward[3];
 		{
-			RVector_3_min(p_target, p_origin, l_forward);
+			RVector_min_specification(p_target, p_origin, l_forward, 3);
 			RVector_3_normalize(l_forward, l_forward);
 			RVector_3_mul(l_forward, -1.0f, l_forward);
 		}

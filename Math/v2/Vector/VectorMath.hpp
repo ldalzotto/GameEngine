@@ -34,7 +34,7 @@ namespace _MathV2
 		template <typename T>
 		inline static float length(const Vector<3, T>* p_vec)
 		{
-			return RVector_3_length((T*)(p_vec));
+			return RVector_length_specialization((T*)(p_vec), 3);
 		};
 		template <typename T>
 		inline static float distance(const Vector<3, T>* p_start, const Vector<3, T>* p_end)
@@ -56,13 +56,13 @@ namespace _MathV2
 		template <typename T>
 		inline static Vector<2, T>* min(const Vector<2, T>* p_left, const Vector<2, T>* p_right, Vector<2, T>* p_out)
 		{
-			RVector_2_min((T*)(p_left), (T*)(p_right), (T*)p_out);
+			RVector_min_specification((const T*)(p_left), (const T*)(p_right), (T*)p_out, 2);
 			return p_out;
 		};
 		template <typename T>
 		inline static Vector<3, T>* min(const Vector<3, T>* p_left, const Vector<3, T>* p_right, Vector<3, T>* p_out)
 		{
-			RVector_3_min((T*)(p_left), (T*)(p_right), (T*)p_out);
+			RVector_min_specification((const T*)(p_left), (const T*)(p_right), (T*)p_out, 3);
 			return p_out;
 		};
 		template <typename T>
