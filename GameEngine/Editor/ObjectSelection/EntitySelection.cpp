@@ -137,7 +137,7 @@ namespace _GameEngineEditor
 
 				if (!l_currentFrame_transformGizmoSelectionState.SelectedArrow && !l_currentFrame_transformGizmoSelectionState.SelectedRotation && !l_currentFrame_transformGizmoSelectionState.SelectedScale)
 				{
-					p_entitySelection->TransformGizmoSelectionState.IsRotating = false;
+					p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = false;
 					TransformGizmoV2_free(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS);
 					p_entitySelection->SelectedEntity = nullptr;
 					_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
@@ -146,7 +146,7 @@ namespace _GameEngineEditor
 			}
 			else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::RELEASED_THIS_FRAME))
 			{
-				p_entitySelection->TransformGizmoSelectionState.IsRotating = false;
+				p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = false;
 				TransformGizmo_setSelectedArrow(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
 				TransformGizmo_setSelectedRotation(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
 				TransformGizmo_setSelectedScale(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
@@ -237,8 +237,12 @@ namespace _GameEngineEditor
 		{
 			// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
 			TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3_1));
-			TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedArrow->Transform, &tmp_quat_1));
-
+			if (!p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet)
+			{
+				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedArrow->Transform, &tmp_quat_1));
+				p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
+			}
+			
 			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, TransformM::getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
 		}
 
@@ -258,11 +262,12 @@ namespace _GameEngineEditor
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		Vector3<float> l_guidePlane_worldPosition; TransformM::getWorldPosition(&l_transformComponent->Transform, &l_guidePlane_worldPosition);
-		Vector3<float> l_axis_worldSpace;
-		if (!p_entitySelection->TransformGizmoSelectionState.IsRotating)
+		TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, &l_guidePlane_worldPosition);
+
+		Vector3<float> l_rotationAxis_worldSpace;
+		if (!p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet)
 		{
 			//We position the guide plane
-			TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, &l_guidePlane_worldPosition);
 			if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
 			{
 				Quaternion<float> tmp_quat_0, tmp_quat_1, tmp_quat_2;
@@ -285,41 +290,13 @@ namespace _GameEngineEditor
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&p_entitySelection->TransformGizmoV2.UpArrow->Transform, &tmp_quat));
 			}
 
-			p_entitySelection->TransformGizmoSelectionState.IsRotating = true;
-
-
-			//calcualte rotation axis
-			{
-				Vector3<float> l_axis_localSpace;
-				if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
-				{
-					l_axis_localSpace = RIGHT;
-				}
-				else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.YRotation)
-				{
-					l_axis_localSpace = UP;
-				}
-				else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ZRotation)
-				{
-					l_axis_localSpace = FORWARD;
-				}
-
-				Matrix4x4<float> tmp_mat4_0; Vector4<float> tmp_vec4_0;
-				VectorM::normalize(
-					VectorM::min(
-						VectorM::cast(MatrixM::mul(TransformM::getLocalToWorldMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &VectorM::cast(&l_axis_localSpace, 1.0f), &tmp_vec4_0)),
-						&l_guidePlane_worldPosition,
-						&l_axis_worldSpace
-					),
-					&l_axis_worldSpace
-				);
-
-				p_entitySelection->TransformGizmoSelectionState.RotationAxis.Value = l_axis_worldSpace;
-			}
+			p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 		}
-		else
+
+		//calcualte rotation axis, the normal to the plane
 		{
-			l_axis_worldSpace = p_entitySelection->TransformGizmoSelectionState.RotationAxis.Value;
+			Vector3<float> tmp_vec3_0, tmp_vec3_1;
+			l_rotationAxis_worldSpace; VectorM::cross(TransformM::getForward(&l_transformGizmoPlane->Transform, &tmp_vec3_0), TransformM::getRight(&l_transformGizmoPlane->Transform, &tmp_vec3_1), &l_rotationAxis_worldSpace);
 		}
 
 
@@ -347,7 +324,7 @@ namespace _GameEngineEditor
 			l_deltaRotation *= VectorM::angleSign(&l_rotationBegin, &l_rotationEnd, &l_angleReferenceAxis);
 
 			// If the rotation axis is not facing the camera, we invert the sign.
-			if (VectorM::dot(&l_angleReferenceAxis, &l_axis_worldSpace) <= 0.000f)
+			if (VectorM::dot(&l_angleReferenceAxis, &l_rotationAxis_worldSpace) <= 0.000f)
 			{
 				l_deltaRotation *= -1.0f;
 			}
@@ -356,7 +333,7 @@ namespace _GameEngineEditor
 		Quaternion<float> tmp_quat_0, tmp_quat_1;
 		Quaternion<float> l_nextRotation;
 		QuaternionM::mul(
-			QuaternionM::rotateAround(&l_axis_worldSpace, l_deltaRotation, &tmp_quat_0),
+			QuaternionM::rotateAround(&l_rotationAxis_worldSpace, l_deltaRotation, &tmp_quat_0),
 			TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_1),
 			&l_nextRotation
 		);
@@ -376,7 +353,11 @@ namespace _GameEngineEditor
 		{
 			// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
 			TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3_1));
-			TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedScale->Transform, &tmp_quat_1));
+			if (!p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet)
+			{
+				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedScale->Transform, &tmp_quat_1));
+				p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
+			}
 		}
 
 		Vector3<float> l_selectedScaleForward_localSpace;

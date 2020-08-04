@@ -40,7 +40,7 @@ struct CubeCrossCreationInfo
 	_MathV2::Quaternion<float> LocalRotation;
 	_MathV2::Vector3<float> LocalScale;
 	_ECS::TransformComponent* Parent;
-	_MathV2::Vector3<float>* RotationAxis;
+	_MathV2::Vector3<float>* GuidePlaneNormalAxis;
 };
 
 void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeCrossCreationInfo* p_cubeCrossCreationInfo)
@@ -137,11 +137,11 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 		);
 	}
 
-	if (p_cubeCrossCreationInfo->RotationAxis)
+	if (p_cubeCrossCreationInfo->GuidePlaneNormalAxis)
 	{
 		_ECS::TransformRotate* l_transformRotate = _ECS::ComponentT_alloc<_ECS::TransformRotate>();
 		(l_transformRotate)->Speed = .5f;
-		(l_transformRotate)->Axis = *p_cubeCrossCreationInfo->RotationAxis;
+		(l_transformRotate)->Axis = *p_cubeCrossCreationInfo->GuidePlaneNormalAxis;
 		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, l_gameEngine->ECS);
 	}
 };
@@ -301,7 +301,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			l_cubeCrossCreationInfo.LocalPosition = { 1.0f, 0.0f, 0.0f };
 			l_cubeCrossCreationInfo.LocalRotation = _MathV2::Quaternionf_Identity;
 			l_cubeCrossCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
+			l_cubeCrossCreationInfo.GuidePlaneNormalAxis = &l_rotation;
 			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
 		}
 
@@ -313,7 +313,7 @@ void TestInt_init(_GameEngine::GameEngineApplication* l_app, TestIntTest* p_test
 			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
 			_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_cubeCrossCreationInfo.LocalRotation);
 			l_cubeCrossCreationInfo.LocalScale = { 2.0f, 1.0f, 1.0f };
-			l_cubeCrossCreationInfo.RotationAxis = &l_rotation;
+			l_cubeCrossCreationInfo.GuidePlaneNormalAxis = &l_rotation;
 			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
 		}
 	}
