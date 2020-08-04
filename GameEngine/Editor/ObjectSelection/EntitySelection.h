@@ -24,6 +24,7 @@ namespace _GameEngineEditor
 
 namespace _GameEngineEditor
 {
+	/* The TransformGizmoPlane is used to project mouse delta position to world space. According to SelectedGizmoType, he is oriented and positioned to fit specific requirements. */
 	struct TransformGizmoPlane
 	{
 		_MathV2::Transform Transform;
@@ -41,10 +42,12 @@ namespace _GameEngineEditor
 	struct TransformGizmoSelectionState
 	{
 		SelectedGizmoType SelectedGizmoType;
+
+		/* The selected gizmo refer to the single gizmo entity currently selected. This value can only be one of the trhee Gizmo transform in the TransformGizmo object. */
 		_GameEngine::_ECS::TransformComponent* SelectedGizmo;
 
-		//This is to handle the fact that on any transformations, the TransformGizmoMovementGuidePlane position and rotation is setted only once (at the start).
-		//This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed.
+		/* This is to handle the fact that on any transformations, the TransformGizmoMovementGuidePlane position and rotation is setted only once (at the start).
+		This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed. */
 		bool GuidePlaneRotationSet;
 	};
 

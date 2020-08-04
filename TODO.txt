@@ -1,5 +1,49 @@
 -- TODO --
 
+-- Removing GLFW dependency --
+
+# Creating a window from Windows api (see https://github.com/ldalzotto/Window_RenderTexture_Test).
+# Updating the Window class to make it platform specific.
+# Updating the Render engine to make vulkan use the created window (see https://harrylovescode.gitbooks.io/vulkan-api/content/chap05/chap05-windows.html).
+# Updating the ImGUI lib to not use glfw (see https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_win32.h).
+# Updating the InputSystem so that input event are triggered from the Windows window.
+
+-- Camera --
+
+# Storing WorldToClip and ClipToWorld matrices ?
+
+-- Rendering --
+
+# Refactoring the fact that MaterialInstances allocate external resource immediately.
+
+~~ LONG TERM OBJECTIVES ~~
+
+-- Editor Gizmo - further improvements --
+
+# Gizmo directions is based on an orthonormal basis. When the Entity is skewed (scaled and rotated), the coordinate system is no
+  more orthonormal. Thus, arrows direction must be rearranged from calculated local directions of the Entity transform, instead of begin fixed.
+
+-- Resources --
+
+# Implementing my own 3D model exporter in blender and imported in the GameEngine to have total control about Mesh loading and directly mapping to known data.
+
+-- Editor GUI --
+
+# Removing dependencies to the IMGui library. This will involve :
+	## Creating my own GUI Layout system. (maybe we can have somthing similar to unity ?)
+
+-- Graphics improvements --
+
+# Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
+# Using pipeline cache
+# Simplifying the creation of a VulkanBuffer that is not host visible (staged buffer) (push is done with a temporary buffer).
+	## Switching some ShaderParameter to the new smart staging buffer ?
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-- DONE --
+
+
 -- Editor - Transform Gizmo --
 
 # Creating a Transform Gizmo.
@@ -22,8 +66,6 @@
 
 [X] # Set the guide plane orientation only once when the transformation has started. This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed.
 [X] # Dont display arrow, rotation and scale at the same time. Instead, binding a key to active a transformation.
-# Gizmo directions is based on an orthonormal basis. When the Entity is skewed (scaled and rotated), the coordinate system is no
-  more orthonormal. Thus, arrows direction must be rearranged from calculated local directions of the Entity transform, instead of begin fixed.
 
 -- Transform --
 
@@ -31,53 +73,9 @@
 [X] # Setting World rotation.
 [X] # Setting World scale.
 
--- Physics --
-
-# Adding Layers to BoxCollider.
-# Allow Raycasting by filtering by Layers.
-
--- Camera --
-
-# Storing WorldToClip and ClipToWorld matrices ?
-
--- Editor - Click world Listener --
-
-# Implementing a system in the Editor module that listens to mouse click and populate flags according to listeners.
-	## MouseClickListers is just a tag component.
-
--- Editor - Transform Gizmo --
-
-[X] # Allowing gizmo to move depending on which arrow is clicked.
-
--- Rendering --
-
-# Refactoring the fact that MaterialInstances allocate external resource immediately.
-
-~~ LONG TERM OBJECTIVES ~~
-
 -- Math --
 
 [X] # Refactoring the math library so that different type vector uses the same code.
-
--- Resources --
-
-# Implementing my own 3D model exporter in blender and imported in the GameEngine to have total control about Mesh loading and directly mapping to known data.
-
--- Editor GUI --
-
-# Removing dependencies to the IMGui library. This will involve :
-	## Creating my own GUI Layout system. (maybe we can have somthing similar to unity ?)
-
--- Graphics improvements --
-
-# Instead of having multiple small vulkan buffer, we can have a single one that manually fragment and allocate memory on need.
-# Using pipeline cache
-# Simplifying the creation of a VulkanBuffer that is not host visible (staged buffer) (push is done with a temporary buffer).
-	## Switching some ShaderParameter to the new smart staging buffer ?
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
--- DONE --
 
 -- Testing --
 

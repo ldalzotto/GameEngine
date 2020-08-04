@@ -38,6 +38,13 @@
 using namespace _GameEngine;
 using namespace _MathV2;
 
+/*
+	The EntitySelection is currently missing features.
+	//TODO :
+		- Gizmo directions is based on an orthonormal basis. When the Entity is skewed (rotated and it's parent has a nonuniform scale), the coordinate system is no
+			 more orthonormal. Thus, arrows directions must be rearranged from calculated local directions of the Entity transform, instead of being fixed.
+*/
+
 namespace _GameEngineEditor
 {
 	inline bool EntitySelectionState_isCachedStructureInitialized(EntitySelectionState* p_entitySelectionState) { return p_entitySelectionState->CachedStructures.ActiveCamera; };
