@@ -40,6 +40,10 @@ using namespace _MathV2;
 
 namespace _GameEngineEditor
 {
+	inline bool EntitySelectionState_isCachedStructureInitialized(EntitySelectionState* p_entitySelectionState) { return p_entitySelectionState->CachedStructures.ActiveCamera; };
+	inline bool EntitySelectionState_isEntitySelected(EntitySelectionState* p_entitySelectionState) { return p_entitySelectionState->SelectedEntity; };
+
+
 	void EntitySelection_onCameraSystem_enabled(EntitySelection* p_entitySelection, _ECS::CameraSystem** p_cameraSystem);
 
 	void TransformGizmoV2_alloc(TransformGizmo* p_transformGizmo, Vector3<float>& p_initialWorldPosition, _ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface);
@@ -49,8 +53,14 @@ namespace _GameEngineEditor
 	void TransformGizmo_setSelectedArrow(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedArrow);
 	void TransformGizmo_setSelectedRotation(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedRotation);
 	void TransformGizmo_setSelectedScale(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedScale);
+	void TransformGizmo_resetState(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState);
+	bool TransformGizmoSelectionState_anyGizmoSelected(TransformGizmoSelectionState* p_transformGizmoSelectionState);
+	
+	void entitySelection_detectTheSelectedEntity(EntitySelection* p_entitySelection);
+	void entitySelection_detectTheSelectedGizmo(EntitySelection* p_entitySelection);
 
 	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity);
+	void EntitySelection_executeGizmoTransformation(_GameEngineEditor::EntitySelection* p_entitySelection);
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection);
 	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection);
 	void EntitySelection_scaleSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection);
@@ -61,129 +71,114 @@ namespace _GameEngineEditor
 		p_entitySelection->Input = p_gameEngineEditor->GameEngineApplicationInterface->Input;
 		p_entitySelection->RenderInterface = p_gameEngineEditor->GameEngineApplicationInterface->RenderInterface;
 		p_entitySelection->PhysicsInterface = p_gameEngineEditor->GameEngineApplicationInterface->PhysicsInterface;
-		p_entitySelection->SelectedEntity = nullptr;
+		// EntitySelectionState_reset(&p_entitySelection->EntitySelectionState);
 
 		_Core::CallbackT < EntitySelection, _ECS::CameraSystem* > l_onCameraSystemEnabled = { EntitySelection_onCameraSystem_enabled , p_entitySelection };
 		_ECS::SystemEvents_registerOnSystemAdded(&p_gameEngineEditor->GameEngineApplicationInterface->ECS->SystemEvents, _ECS::CameraSystemKey, (_Core::CallbackT<void, _ECS::SystemHeader*>*) & l_onCameraSystemEnabled);
 	};
 
-	inline bool EntitySelection_isCachedStructureInitialized(EntitySelection* p_entitySelection)
-	{
-		return p_entitySelection->CachedStructures.ActiveCamera;
-	}
-
-	inline bool EntitSelection_isEntitySelected(EntitySelection* p_entitySelection)
-	{
-		return p_entitySelection->SelectedEntity;
-	}
-
 	void EntitySelection_onCameraSystem_enabled(EntitySelection* p_entitySelection, _ECS::CameraSystem** p_cameraSystem)
 	{
-		p_entitySelection->CachedStructures.CameraSystem = *p_cameraSystem;
+		p_entitySelection->EntitySelectionState.CachedStructures.CameraSystem = *p_cameraSystem;
 	};
 
 	void EntitySelection_update(EntitySelection* p_entitySelection)
 	{
+		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
+
 		// Set the active camera
-		_ECS::Camera* l_currentCamera = _ECS::CameraSystem_getCurrentActiveCamera(p_entitySelection->CachedStructures.CameraSystem);
-		if (l_currentCamera != p_entitySelection->CachedStructures.ActiveCamera)
+		_ECS::Camera* l_currentCamera = _ECS::CameraSystem_getCurrentActiveCamera(l_entitySelectionState->CachedStructures.CameraSystem);
+		if (l_currentCamera != l_entitySelectionState->CachedStructures.ActiveCamera)
 		{
-			p_entitySelection->CachedStructures.ActiveCamera = _ECS::CameraSystem_getCurrentActiveCamera(p_entitySelection->CachedStructures.CameraSystem);
-			p_entitySelection->CachedStructures.ActiveCameraTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->CachedStructures.ActiveCamera->ComponentHeader.AttachedEntity);
+			l_entitySelectionState->CachedStructures.ActiveCamera = _ECS::CameraSystem_getCurrentActiveCamera(l_entitySelectionState->CachedStructures.CameraSystem);
+			l_entitySelectionState->CachedStructures.ActiveCameraTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->CachedStructures.ActiveCamera->ComponentHeader.AttachedEntity);
 		}
 
 		// Trying to detect the selected Entity
-		if (!EntitSelection_isEntitySelected(p_entitySelection))
+		if (!EntitySelectionState_isEntitySelected(l_entitySelectionState))
 		{
 			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
 			{
-				SegmentV2<3, float> l_ray =
-					_ECS::Camera_buildWorldSpaceRay(
-						p_entitySelection->CachedStructures.ActiveCamera,
-						Vector2<float> { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y }
-				);
-
-				_Physics::RaycastHit l_hit;
-				if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, l_ray.Begin, l_ray.End, &l_hit))
-				{
-					Vector3<float> tmp_vec3;
-					_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
-					p_entitySelection->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
-					TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, *TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3), p_entitySelection->ECS, p_entitySelection->RenderInterface);
-					_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
-					return; //We return to wait for the next frame where transform colliders and box will be calculated
-				}
+				entitySelection_detectTheSelectedEntity(p_entitySelection);
 			}
 		}
-
-
-		if (EntitSelection_isEntitySelected(p_entitySelection))
+		else
 		{
 			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
 			{
-				SegmentV2<3, float> l_ray =
-					_ECS::Camera_buildWorldSpaceRay(
-						p_entitySelection->CachedStructures.ActiveCamera,
-						Vector2<float>	{ (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y }
-				);
+				entitySelection_detectTheSelectedGizmo(p_entitySelection);
 
-				TransformGizmoSelectionState l_currentFrame_transformGizmoSelectionState = TransformGizmo_determinedSelectedGizmoComponent(&p_entitySelection->TransformGizmoV2, &l_ray);
-				TransformGizmoSelectionState* l_transformGizmoSelectionState = &p_entitySelection->TransformGizmoSelectionState;
+				if (!TransformGizmoSelectionState_anyGizmoSelected(&p_entitySelection->EntitySelectionState.TransformGizmoSelectionState))
 				{
-					TransformGizmo_setSelectedArrow(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedArrow);
-					TransformGizmo_setSelectedRotation(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedRotation);
-					TransformGizmo_setSelectedScale(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedScale);
-				}
-
-				if (!l_currentFrame_transformGizmoSelectionState.SelectedArrow && !l_currentFrame_transformGizmoSelectionState.SelectedRotation && !l_currentFrame_transformGizmoSelectionState.SelectedScale)
-				{
-					p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = false;
+					TransformGizmo_resetState(&p_entitySelection->TransformGizmoV2, &l_entitySelectionState->TransformGizmoSelectionState);
 					TransformGizmoV2_free(&p_entitySelection->TransformGizmoV2, p_entitySelection->ECS);
-					p_entitySelection->SelectedEntity = nullptr;
-					_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
+					l_entitySelectionState->SelectedEntity = nullptr;
 				}
 
 			}
 			else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::RELEASED_THIS_FRAME))
 			{
-				p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = false;
-				TransformGizmo_setSelectedArrow(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
-				TransformGizmo_setSelectedRotation(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
-				TransformGizmo_setSelectedScale(&p_entitySelection->TransformGizmoV2, &p_entitySelection->TransformGizmoSelectionState, nullptr);
+				TransformGizmo_resetState(&p_entitySelection->TransformGizmoV2, &l_entitySelectionState->TransformGizmoSelectionState);
 			}
 
-			// MOVE
+			// Execute gizmo transformation
 			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
 			{
 				Vector2<double> tmp_vec2 = { 0.0, 0.0 };
 				if (!VectorM::equals(&p_entitySelection->Input->InputMouse.MouseDelta, &tmp_vec2))
 				{
-					if (p_entitySelection->TransformGizmoSelectionState.SelectedArrow)
-					{
-						EntitySelection_moveSelectedEntity_arrowTranslation(p_entitySelection);
-					}
-					else if (p_entitySelection->TransformGizmoSelectionState.SelectedRotation)
-					{
-						EntitySelection_rotateSelectedEntity(p_entitySelection);
-					}
-					else if (p_entitySelection->TransformGizmoSelectionState.SelectedScale)
-					{
-						EntitySelection_scaleSelectedEntity(p_entitySelection);
-					}
+					EntitySelection_executeGizmoTransformation(p_entitySelection);
 				}
 			}
-
 		}
 
 
-
-		if (EntitSelection_isEntitySelected(p_entitySelection))
+		// Move the gizmo to follow the selected entity.
+		if (EntitySelectionState_isEntitySelected(l_entitySelectionState))
 		{
-			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
+			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
 			TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(p_entitySelection, l_selectedEntityTransform->Transform);
-			EntitySelection_drawSelectedEntityBoundingBox(p_entitySelection, p_entitySelection->SelectedEntity);
+			EntitySelection_drawSelectedEntityBoundingBox(p_entitySelection, l_entitySelectionState->SelectedEntity);
 		}
 	}
+
+	void entitySelection_detectTheSelectedEntity(EntitySelection* p_entitySelection)
+	{
+		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
+		SegmentV2<3, float> l_ray =
+			_ECS::Camera_buildWorldSpaceRay(
+				l_entitySelectionState->CachedStructures.ActiveCamera,
+				Vector2<float> { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y }
+		);
+
+		_Physics::RaycastHit l_hit;
+		if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, l_ray.Begin, l_ray.End, &l_hit))
+		{
+			Vector3<float> tmp_vec3;
+			_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
+			l_entitySelectionState->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
+			TransformGizmoV2_alloc(&p_entitySelection->TransformGizmoV2, *TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3), p_entitySelection->ECS, p_entitySelection->RenderInterface);
+			_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
+		}
+	};
+
+	void entitySelection_detectTheSelectedGizmo(EntitySelection* p_entitySelection)
+	{
+		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
+		SegmentV2<3, float> l_ray =
+			_ECS::Camera_buildWorldSpaceRay(
+				l_entitySelectionState->CachedStructures.ActiveCamera,
+				Vector2<float>	{ (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y }
+		);
+
+		TransformGizmoSelectionState l_currentFrame_transformGizmoSelectionState = TransformGizmo_determinedSelectedGizmoComponent(&p_entitySelection->TransformGizmoV2, &l_ray);
+		TransformGizmoSelectionState* l_transformGizmoSelectionState = &l_entitySelectionState->TransformGizmoSelectionState;
+		{
+			TransformGizmo_setSelectedArrow(&p_entitySelection->TransformGizmoV2, &l_entitySelectionState->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedArrow);
+			TransformGizmo_setSelectedRotation(&p_entitySelection->TransformGizmoV2, &l_entitySelectionState->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedRotation);
+			TransformGizmo_setSelectedScale(&p_entitySelection->TransformGizmoV2, &l_entitySelectionState->TransformGizmoSelectionState, l_currentFrame_transformGizmoSelectionState.SelectedScale);
+		}
+	};
 
 	SegmentV2<3, float> entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, _Physics::BoxCollider* p_testedCollider)
 	{
@@ -193,12 +188,12 @@ namespace _GameEngineEditor
 
 		SegmentV2<3, float> l_mouseDelta_begin_ray =
 			_ECS::Camera_buildWorldSpaceRay(
-				p_entitySelection->CachedStructures.ActiveCamera,
+				p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera,
 				l_mouseDelta_screenPosition.Begin
 			);
 		SegmentV2<3, float> l_mouseDelta_end_ray =
 			_ECS::Camera_buildWorldSpaceRay(
-				p_entitySelection->CachedStructures.ActiveCamera,
+				p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera,
 				l_mouseDelta_screenPosition.End
 			);
 
@@ -225,22 +220,40 @@ namespace _GameEngineEditor
 		return l_mouseDelta_worldPosition;
 	}
 
+	void EntitySelection_executeGizmoTransformation(_GameEngineEditor::EntitySelection* p_entitySelection)
+	{
+		TransformGizmoSelectionState* l_transformGizmoSelectionState = &p_entitySelection->EntitySelectionState.TransformGizmoSelectionState;
+		if (l_transformGizmoSelectionState->SelectedArrow)
+		{
+			EntitySelection_moveSelectedEntity_arrowTranslation(p_entitySelection);
+		}
+		else if (l_transformGizmoSelectionState->SelectedRotation)
+		{
+			EntitySelection_rotateSelectedEntity(p_entitySelection);
+		}
+		else if (l_transformGizmoSelectionState->SelectedScale)
+		{
+			EntitySelection_scaleSelectedEntity(p_entitySelection);
+		}
+	};
+
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
 		Vector3<float> tmp_vec3_1, tmp_vec3_0; Quaternion<float> tmp_quat_1;
 
-		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
-		_ECS::TransformComponent* l_selectedArrow = p_entitySelection->TransformGizmoSelectionState.SelectedArrow;
+		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
+		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
+		_ECS::TransformComponent* l_selectedArrow = l_entitySelectionState->TransformGizmoSelectionState.SelectedArrow;
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		// We position the world space place
 		{
 			// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
 			TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3_1));
-			if (!p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet)
+			if (!l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet)
 			{
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedArrow->Transform, &tmp_quat_1));
-				p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
+				l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 			}
 			
 			// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_transformGizmoPlane->Box, TransformM::getLocalToWorldMatrix_ref(&l_transformGizmoPlane->Transform), true);
@@ -257,15 +270,16 @@ namespace _GameEngineEditor
 
 	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
-		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
-		_ECS::TransformComponent* l_selectedRotation = p_entitySelection->TransformGizmoSelectionState.SelectedRotation;
+		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
+		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
+		_ECS::TransformComponent* l_selectedRotation = l_entitySelectionState->TransformGizmoSelectionState.SelectedRotation;
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		Vector3<float> l_guidePlane_worldPosition; TransformM::getWorldPosition(&l_transformComponent->Transform, &l_guidePlane_worldPosition);
 		TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, &l_guidePlane_worldPosition);
 
 		Vector3<float> l_rotationAxis_worldSpace;
-		if (!p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet)
+		if (!l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet)
 		{
 			//We position the guide plane
 			if (l_selectedRotation == p_entitySelection->TransformGizmoV2.XRotation)
@@ -290,7 +304,7 @@ namespace _GameEngineEditor
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&p_entitySelection->TransformGizmoV2.UpArrow->Transform, &tmp_quat));
 			}
 
-			p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
+			l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 		}
 
 		//calcualte rotation axis, the normal to the plane
@@ -320,7 +334,7 @@ namespace _GameEngineEditor
 		{
 			// The sign of the calculated delta angle is calculated by taking the ray between the camera and the object as reference axis.
 			Vector3<float> l_angleReferenceAxis;
-			VectorM::normalize(VectorM::min(TransformM::getWorldPosition(&p_entitySelection->CachedStructures.ActiveCameraTransform->Transform, &tmp_vec3_0), &l_guidePlane_worldPosition, &l_angleReferenceAxis), &l_angleReferenceAxis);
+			VectorM::normalize(VectorM::min(TransformM::getWorldPosition(&l_entitySelectionState->CachedStructures.ActiveCameraTransform->Transform, &tmp_vec3_0), &l_guidePlane_worldPosition, &l_angleReferenceAxis), &l_angleReferenceAxis);
 			l_deltaRotation *= VectorM::angleSign(&l_rotationBegin, &l_rotationEnd, &l_angleReferenceAxis);
 
 			// If the rotation axis is not facing the camera, we invert the sign.
@@ -345,18 +359,19 @@ namespace _GameEngineEditor
 	{
 		Vector3<float> tmp_vec3_0, tmp_vec3_1; Quaternion<float> tmp_quat_1;
 
-		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_entitySelection->SelectedEntity);
-		_ECS::TransformComponent* l_selectedScale = p_entitySelection->TransformGizmoSelectionState.SelectedScale;
+		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
+		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
+		_ECS::TransformComponent* l_selectedScale = l_entitySelectionState->TransformGizmoSelectionState.SelectedScale;
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		// We position the world space place
 		{
 			// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
 			TransformM::setWorldPosition(&l_transformGizmoPlane->Transform, TransformM::getWorldPosition(&l_transformComponent->Transform, &tmp_vec3_1));
-			if (!p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet)
+			if (!l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet)
 			{
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedScale->Transform, &tmp_quat_1));
-				p_entitySelection->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
+				l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 			}
 		}
 
@@ -633,8 +648,8 @@ namespace _GameEngineEditor
 	{
 		_ECS::ECSEventMessage* l_eraseEntitymessage = _ECS::ECSEventMessage_removeEntity_alloc(&p_transformGizmo->TransformGizoEntity->ComponentHeader.AttachedEntity);
 		_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_eraseEntitymessage);
-
 		*p_transformGizmo = {};
+		_ECS::ECSEventQueue_processMessages(&p_ecs->EventQueue);
 	};
 
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, Transform& p_followedTransform)
@@ -650,7 +665,7 @@ namespace _GameEngineEditor
 
 				Vector3<float> l_transformGizmoWorldPosition;
 				{
-					Matrix4x4<float> l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->CachedStructures.ActiveCamera);
+					Matrix4x4<float> l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera);
 					Matrix4x4<float> l_clipToWorldMatrix; MatrixM::inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
 					Vector4<float> l_selectedEntityTransformClip; MatrixM::clipSpaceMul(&l_worldToClipMatrix, &VectorM::cast(&l_followedWorldPosition, 1.0f), &l_selectedEntityTransformClip);
@@ -756,4 +771,17 @@ namespace _GameEngineEditor
 		}
 		p_selectionState->SelectedScale = p_selectedScale;
 	}
+
+	void TransformGizmo_resetState(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState)
+	{
+		p_selectionState->GuidePlaneRotationSet = false;
+		TransformGizmo_setSelectedArrow(p_transformGizmo, p_selectionState, nullptr);
+		TransformGizmo_setSelectedRotation(p_transformGizmo, p_selectionState, nullptr);
+		TransformGizmo_setSelectedScale(p_transformGizmo, p_selectionState, nullptr);
+	};
+
+	bool TransformGizmoSelectionState_anyGizmoSelected(TransformGizmoSelectionState* p_transformGizmoSelectionState)
+	{
+		return p_transformGizmoSelectionState->SelectedArrow || p_transformGizmoSelectionState->SelectedRotation || p_transformGizmoSelectionState->SelectedScale;
+	};
 }

@@ -69,6 +69,14 @@ namespace _GameEngineEditor
 		_GameEngine::_ECS::TransformComponent* ActiveCameraTransform;
 	};
 
+	struct EntitySelectionState
+	{
+		_GameEngine::_ECS::Entity* SelectedEntity;
+		EntitySelection_CachedStructures CachedStructures;
+
+		TransformGizmoSelectionState TransformGizmoSelectionState;
+	};
+
 	struct EntitySelection
 	{
 		_GameEngine::_ECS::ECS* ECS;
@@ -76,11 +84,8 @@ namespace _GameEngineEditor
 		_GameEngine::_Render::RenderInterface* RenderInterface;
 		_GameEngine::_Physics::PhysicsInterface* PhysicsInterface;
 
-		EntitySelection_CachedStructures CachedStructures;
 		TransformGizmo TransformGizmoV2;
-		TransformGizmoSelectionState TransformGizmoSelectionState;
-
-		_GameEngine::_ECS::Entity* SelectedEntity;
+		EntitySelectionState EntitySelectionState;
 	};
 
 	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor);
