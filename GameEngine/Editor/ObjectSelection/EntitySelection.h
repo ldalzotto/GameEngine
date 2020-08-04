@@ -31,11 +31,18 @@ namespace _GameEngineEditor
 		_GameEngine::_Physics::BoxCollider Collider;
 	};
 
+	enum SelectedGizmoType : short int
+	{
+		NONE,
+		ARROW,
+		ROTATION,
+		SCALE
+	};
+
 	struct TransformGizmoSelectionState
 	{
-		_GameEngine::_ECS::TransformComponent* SelectedArrow;
-		_GameEngine::_ECS::TransformComponent* SelectedRotation;
-		_GameEngine::_ECS::TransformComponent* SelectedScale;
+		SelectedGizmoType SelectedGizmoType;
+		_GameEngine::_ECS::TransformComponent* SelectedGizmo;
 
 		//This is to handle the fact that on any transformations, the TransformGizmoMovementGuidePlane position and rotation is setted only once (at the start).
 		//This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed.
