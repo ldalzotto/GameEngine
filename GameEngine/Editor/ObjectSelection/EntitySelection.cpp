@@ -321,7 +321,7 @@ namespace _GameEngineEditor
 		{
 			l_axis_worldSpace = p_entitySelection->TransformGizmoSelectionState.RotationAxis.Value;
 		}
-	
+
 
 		SegmentV2<3, float> l_deltaPositionDirection_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
 		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.Begin);
@@ -329,7 +329,7 @@ namespace _GameEngineEditor
 
 		// Perform rotation.
 
-		
+
 
 		Vector3<float> tmp_vec3_0;
 		Vector3<float> l_rotationBegin, l_rotationEnd;
@@ -379,17 +379,12 @@ namespace _GameEngineEditor
 			TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&l_selectedScale->Transform, &tmp_quat_1));
 		}
 
-
-		// TODO -> multiply direction helper method for this case
-		Matrix4x4<float> tmp_mat4_0; Vector4<float> tmp_vec4_0, tmp_vec4_1;
-		Vector3<float> l_selectedScaleForaward_localSpace;
-		Vector3<float> l_selectedScaleForaward_localSpace_begin;
-		Vector3<float> l_selectedScaleForaward_localSpace_end;
-		tmp_vec4_1 = { 0.0f, 0.0f, 0.0f, 1.0f };
-		l_selectedScaleForaward_localSpace_begin = *VectorM::cast(MatrixM::mul(TransformM::getWorldToLocalMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &tmp_vec4_1, &tmp_vec4_0));
-		l_selectedScaleForaward_localSpace_end = *VectorM::cast(MatrixM::mul(TransformM::getWorldToLocalMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &VectorM::cast(TransformM::getForward(&l_selectedScale->Transform, &tmp_vec3_0), 1.0f), &tmp_vec4_0));
-		VectorM::normalize(VectorM::min(&l_selectedScaleForaward_localSpace_end, &l_selectedScaleForaward_localSpace_begin, &l_selectedScaleForaward_localSpace), &l_selectedScaleForaward_localSpace);
-
+		Vector3<float> l_selectedScaleForward_localSpace;
+		{
+			SegmentV2<4, float> tmp_seg4_0; Matrix4x4<float> tmp_mat4_0;
+			SegmentV2<4, float> l_forwardSegment = { {0.0f, 0.0f, 0.0f, 1.0f}, VectorM::cast(TransformM::getForward(&l_selectedScale->Transform, &tmp_vec3_0), 1.0f) };
+			SegmentM::toVector(&SegmentM::cast(SegmentM::mul(&l_forwardSegment, TransformM::getWorldToLocalMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &tmp_seg4_0)), &l_selectedScaleForward_localSpace);
+		}
 
 		Vector3<float> l_deltaScale3D;
 		VectorM::project(
@@ -407,7 +402,7 @@ namespace _GameEngineEditor
 		else { l_scaleSign = -1.0f; }
 
 		float l_scaleLength = VectorM::length(&l_deltaScale3D);
-		VectorM::mul(&l_selectedScaleForaward_localSpace, l_scaleLength, &l_deltaScale3D);
+		VectorM::mul(&l_selectedScaleForward_localSpace, l_scaleLength, &l_deltaScale3D);
 		VectorM::mul(&l_deltaScale3D, l_scaleSign, &l_deltaScale3D);
 
 		TransformM::setLocalScale(

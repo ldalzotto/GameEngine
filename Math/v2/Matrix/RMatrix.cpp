@@ -129,9 +129,9 @@ namespace _MathV2
 		const float* p_right, const  short int p_right_columnNumber, const  short int p_right_lineNumber, float* p_out)
 	{
 		RMatrix_multiplication_matrix_matrix_v3(
-			RMatrix_build((const float*)p_left, p_left_columnNumber, p_left_lineNumber), sizeof(float),
-			RMatrix_build((const float*)p_right, p_right_columnNumber, p_right_lineNumber), sizeof(float),
-			RMatrix_build((const float*)p_out, p_right_columnNumber, p_left_lineNumber));
+			RMatrix_build(p_left, p_left_columnNumber, p_left_lineNumber), sizeof(float),
+			RMatrix_build(p_right, p_right_columnNumber, p_right_lineNumber), sizeof(float),
+			RMatrix_build(p_out, p_right_columnNumber, p_left_lineNumber));
 	};
 
 	void RMatrix_4x4_mul_1(const float p_left[4][4], const float p_right, float p_out[4])
