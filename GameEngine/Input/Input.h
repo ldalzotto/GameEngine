@@ -3,7 +3,7 @@
 #include "Includes/GLFWIncludes.h"
 
 #include "v2/Vector/Vector.hpp"
-#include "v2/Segment/Segment.hpp"
+#include "v2/Segment/SegmentV2.hpp"
 
 #include <unordered_map>
 #include <queue>
@@ -185,7 +185,7 @@ namespace _GameEngine::_Input
 		_MathV2::Vector2<double> MouseDelta;
 	};
 
-	_MathV2::Segment InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
+	_MathV2::SegmentV2<2, float> InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
 
 	struct Input
 	{

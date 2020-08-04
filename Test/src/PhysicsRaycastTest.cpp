@@ -8,7 +8,7 @@
 #include "v2/Math.h"
 #include "v2/Transform/TransformM.hpp"
 #include "v2/Quaternion/QuaternionMath.hpp"
-#include "v2/Segment/Segment.hpp"
+#include "v2/Segment/SegmentV2.hpp"
 
 #include "ECS/ComponentT.hpp"
 #include "ECS/ECSEventQueueT.hpp"
@@ -360,7 +360,7 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 	// Mouse raycast
 	{
 		_ECS::CameraSystem* l_cameraSystem = (_ECS::CameraSystem*)_ECS::SystemContainerV2_getSystem(&l_interface->ECS->SystemContainerV2, &_ECS::CameraSystemKey);
-		_MathV2::Segment l_ray =
+		_MathV2::SegmentV2<3, float> l_ray =
 
 		_ECS::Camera_buildWorldSpaceRay(
 			_ECS::CameraSystem_getCurrentActiveCamera(l_cameraSystem),

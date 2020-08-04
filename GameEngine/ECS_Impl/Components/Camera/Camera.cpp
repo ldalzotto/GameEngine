@@ -4,7 +4,6 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Segment/Segment.hpp"
 
 #include "Render/RenderInterface.h"
 #include "Render/VulkanObjects/SwapChain/SwapChain.h"
@@ -50,7 +49,7 @@ namespace _GameEngine::_ECS
 			((float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height), 0.1f, 50.0f, &p_camera->ProjectionMatrix);
 	};
 
-	_MathV2::Segment Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint)
+	_MathV2::SegmentV2<3, float> Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint)
 	{
 		_MathV2::Vector3<float> tmp_vec3_0, tmp_vec3_1; _MathV2::Vector4<float> tmp_vec4_0, tmp_vec4_1, tmp_vec4_2, tmp_vec4_3;
 
@@ -67,7 +66,7 @@ namespace _GameEngine::_ECS
 		tmp_vec4_0 = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f };
 		tmp_vec4_1 = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f };
 		return
-			_MathV2::Segment{
+			_MathV2::SegmentV2<3, float>{
 			/*Near plane*/ *_MathV2::VectorM::cast(_MathV2::MatrixM::clipSpaceMul(&l_clipToWorldMatrix, &tmp_vec4_0, &tmp_vec4_2)),
 			/*Far plane*/* _MathV2::VectorM::cast( _MathV2::MatrixM::clipSpaceMul(&l_clipToWorldMatrix, &tmp_vec4_1, &tmp_vec4_3))
 		};

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "v2/Matrix/Matrix.hpp"
-#include "v2/Segment/Segment.hpp"
+#include "v2/Segment/SegmentV2.hpp"
 #include "Functional/Callback/CallbackT.hpp"
 #include "ECS/ComponentT.hpp"
 
@@ -40,5 +40,5 @@ namespace _GameEngine::_ECS
 
 	_MathV2::Matrix4x4<float> Camera_worldToClipMatrix(Camera* p_camera);
 
-	_MathV2::Segment Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint);
+	_MathV2::SegmentV2<3, float> Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint);
 }

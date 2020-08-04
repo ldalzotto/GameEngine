@@ -16,9 +16,9 @@ namespace _GameEngine::_Input
 
 	void initializeGLFWLookup(Input* p_input);
 
-	_MathV2::Segment InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse)
+	_MathV2::SegmentV2<2, float> InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse)
 	{
-		_MathV2::Segment l_segment;
+		_MathV2::SegmentV2<2, float> l_segment;
 		l_segment.Begin = { (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.x, (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.y };
 		l_segment.End = { (float)p_inputMouse->ScreenPosition.x, (float)p_inputMouse->ScreenPosition.y };
 		return l_segment;

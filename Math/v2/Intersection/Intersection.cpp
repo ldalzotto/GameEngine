@@ -3,11 +3,11 @@
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Box/Box.hpp"
 #include "v2/Box/BoxMath.h"
-#include "v2/Segment/SegmentMath.hpp"
+#include "v2/Segment/SegmentV2Math.hpp"
 
 namespace _MathV2
 {
-	bool Intersection_AABB_Ray(const Box* p_AABB, const Segment* p_ray, _MathV2::Vector<3, float>* p_outIntersectionPoint)
+	bool Intersection_AABB_Ray(const Box* p_AABB, const SegmentV2<3, float>* p_ray, _MathV2::Vector<3, float>* p_outIntersectionPoint)
 	{
 		Vector3<float> l_boxMin, l_boxMax;
 		Box_extractMinMax(p_AABB, &l_boxMin, &l_boxMax);

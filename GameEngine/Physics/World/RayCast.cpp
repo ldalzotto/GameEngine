@@ -9,7 +9,7 @@
 #include "v2/Intersection/Intersection.h"
 #include "v2/Transform/TransformM.hpp"
 #include "v2/Box/BoxMath.h"
-#include "v2/Segment/SegmentMath.hpp"
+#include "v2/Segment/SegmentV2Math.hpp"
 #include <math.h>
 #include "World/World.h"
 #include "Collider/BoxCollider.h"
@@ -60,22 +60,22 @@ namespace _GameEngine::_Physics
 
 	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
-		Segment l_segment;
+		SegmentV2<4, float> l_segment;
 		{
-			l_segment.Begin = p_begin;
-			l_segment.End = p_end;
+			l_segment.Begin = VectorM::cast(&p_begin, 1.0f);
+			l_segment.End = VectorM::cast(&p_end, 1.0f);
 		}
 		
 		auto l_boxCollidersIt = _Core::ArrayT_buildIterator(p_comparedColliders);
 		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
-			Segment tmp_segment; _MathV2::Matrix4x4<float> tmp_mat4_0;
+			SegmentV2<4, float> tmp_segment; _MathV2::Matrix4x4<float> tmp_mat4_0;
 
 			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
 			
 			// We project the ray to the box local space, to perform an AABB test.
 			_MathV2::Vector3<float> l_intersectionPointLocal;
-			if (Intersection_AABB_Ray(l_boxCollider->Box, SegmentM::mul(&l_segment, TransformM::getWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0), &tmp_segment), &l_intersectionPointLocal))
+			if (Intersection_AABB_Ray(l_boxCollider->Box, &SegmentM::cast(SegmentM::mul(&l_segment, TransformM::getWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0), &tmp_segment)), &l_intersectionPointLocal))
 			{
 				RaycastHit hit{};
 

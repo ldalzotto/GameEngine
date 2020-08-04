@@ -15,7 +15,7 @@
 
 -- Math - Refactoring --
 
-# Upgrading the Segment math object so that it can take any vector.
+[X] # Upgrading the Segment math object so that it can take any vector.
 # Creating a helper method to multiply a matrix with a direction.
 
 -- Editor Gizmo - further improvements --
