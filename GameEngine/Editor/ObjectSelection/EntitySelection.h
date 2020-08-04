@@ -33,7 +33,6 @@ namespace _GameEngineEditor
 
 	enum SelectedGizmoType : short int
 	{
-		NONE,
 		ARROW,
 		ROTATION,
 		SCALE
@@ -53,17 +52,9 @@ namespace _GameEngineEditor
 	{
 		_GameEngine::_ECS::TransformComponent* TransformGizoEntity;
 
-		_GameEngine::_ECS::TransformComponent* RightArrow;
-		_GameEngine::_ECS::TransformComponent* UpArrow;
-		_GameEngine::_ECS::TransformComponent* ForwardArrow;
-
-		_GameEngine::_ECS::TransformComponent* XRotation;
-		_GameEngine::_ECS::TransformComponent* YRotation;
-		_GameEngine::_ECS::TransformComponent* ZRotation;
-
-		_GameEngine::_ECS::TransformComponent* RightScale;
-		_GameEngine::_ECS::TransformComponent* UpScale;
-		_GameEngine::_ECS::TransformComponent* ForwardScale;
+		_GameEngine::_ECS::TransformComponent* RightGizmo;
+		_GameEngine::_ECS::TransformComponent* UpGizmo;
+		_GameEngine::_ECS::TransformComponent* ForwardGizmo;
 
 		TransformGizmoPlane TransformGizmoMovementGuidePlane;
 	};

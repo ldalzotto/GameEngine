@@ -21,7 +21,7 @@
 -- Editor Gizmo - further improvements --
 
 [X] # Set the guide plane orientation only once when the transformation has started. This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed.
-# Dont display arrow, rotation and scale at the same time. Instead, binding a key to active a transformation.
+[X] # Dont display arrow, rotation and scale at the same time. Instead, binding a key to active a transformation.
 # Gizmo directions is based on an orthonormal basis. When the Entity is skewed (scaled and rotated), the coordinate system is no
   more orthonormal. Thus, arrows direction must be rearranged from calculated local directions of the Entity transform, instead of begin fixed.
 
