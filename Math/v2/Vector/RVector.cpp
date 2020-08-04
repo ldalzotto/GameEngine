@@ -115,7 +115,7 @@ namespace _MathV2
 	};
 
 	float RVector_length_specialization(const float* p_vec, short int p_size) { return RVector_length<float>(p_vec, p_size); }
-	float RVector_length_specialization(const double* p_vec, short int p_size) { return RVector_length<double>(p_vec, p_size); }
+	double RVector_length_specialization(const double* p_vec, short int p_size) { return RVector_length<double>(p_vec, p_size); }
 
 	float RVector_3_distance(const float p_start[3], const float p_end[3])
 	{

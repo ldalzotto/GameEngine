@@ -22,7 +22,7 @@ namespace _MathV2
 	void RVector_3_inv(const float p_vec[3], float p_out[3]);
 
 	float RVector_length_specialization(const float* p_vec, short int p_size);
-	float RVector_length_specialization(const double* p_vec, short int p_size);
+	double RVector_length_specialization(const double* p_vec, short int p_size);
 	
 	float RVector_3_distance(const float p_start[3], const float p_end[3]);
 
