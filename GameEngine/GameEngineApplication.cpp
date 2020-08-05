@@ -19,11 +19,11 @@ namespace _GameEngine
 	void app_endOfFrame(void* p_closure);
 	///
 
-	GameEngineApplication* app_alloc(_Core::AppEventParams* p_params)
+	GameEngineApplication* app_alloc()
 	{
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
 
-		_Core::AppEvent_initialize(p_params);
+		_Core::AppEvent_initialize();
 		_Input::InputGlobalEvent_initialize();
 
 		_Core::ObserverT_alloc(&l_gameEngineApplication->NewFrame);

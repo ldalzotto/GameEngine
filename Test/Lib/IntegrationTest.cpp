@@ -4,9 +4,9 @@
 
 namespace _GameEngine::_Test
 {
-	_GameEngine::GameEngineApplication* IntegrationTest_begin(_Core::AppEventParams* p_params)
+	_GameEngine::GameEngineApplication* IntegrationTest_begin()
 	{
-		return app_alloc(p_params);
+		return app_alloc();
 	};
 	
 	void IntegrationTest_end(_GameEngine::GameEngineApplication* p_gameEngineApplication)

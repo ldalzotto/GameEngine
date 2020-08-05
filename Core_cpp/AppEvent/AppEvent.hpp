@@ -54,7 +54,7 @@ namespace _Core
 	extern AppEventParams GlobalAppParams;
 	extern ObserverT<AppEvent_Header> EventDispatcher;
 
-	void AppEvent_initialize(AppEventParams* p_params);
+	void AppEvent_initialize();
 	void AppEvent_pool();
 	void AppEvent_free();
 }
@@ -67,9 +67,6 @@ namespace _Core
 	struct AppEventParams
 	{
 		HINSTANCE hInstance; 
-		HINSTANCE hPrevInstance;
-		PWSTR pCmdLine;
-		int nCmdShow;
 	};
 }
 #endif

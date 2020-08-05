@@ -119,7 +119,7 @@ namespace _GameEngine::_Render
 		p_window->Handle.Window = CreateWindowEx(0, "GameEngine", "Learn to Program Windows", WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT, CW_USEDEFAULT, p_window->WindowSize.Width, p_window->WindowSize.Height,
 			NULL, NULL, _Core::GlobalAppParams.hInstance, NULL);
-		ShowWindow(p_window->Handle.Window, _Core::GlobalAppParams.nCmdShow);
+		ShowWindow(p_window->Handle.Window, SW_SHOW);
 
 		// SetCursor(LoadCursor(_Core::GlobalAppParams.hInstance, IDC_ARROW));
 	};

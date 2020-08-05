@@ -380,19 +380,11 @@ void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_inter
 	}
 }
 
-#ifdef _WIN32
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
-#else
 int main()
-#endif
 {
 	{
-		_Core::AppEventParams l_params;
-#ifdef _WIN32
-		l_params.hInstance = hInstance; l_params.hPrevInstance = hPrevInstance; l_params.pCmdLine = pCmdLine; l_params.nCmdShow = nCmdShow;
-#endif
 		TestIntTest l_test{};
-		_GameEngine::GameEngineApplication* l_app = IntegrationTest_begin(&l_params);
+		_GameEngine::GameEngineApplication* l_app = IntegrationTest_begin();
 		TestInt_init(l_app, &l_test);
 		// bool l_exit = false;
 		_GameEngine::app_mainLoop(l_app);

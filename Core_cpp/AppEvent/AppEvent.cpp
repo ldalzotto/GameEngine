@@ -2,17 +2,16 @@
 
 namespace _Core
 {
-	void initPlatformSpecificEventCallback(AppEventParams* p_params);
+	void initPlatformSpecificEventCallback();
 	void poolEventPlatformSepcific();
 
 	AppEventParams GlobalAppParams{};
 	ObserverT<AppEvent_Header> EventDispatcher{};
 
-	void AppEvent_initialize(AppEventParams* p_params)
+	void AppEvent_initialize()
 	{
-		GlobalAppParams = *p_params;
 		ObserverT_alloc(&EventDispatcher);
-		initPlatformSpecificEventCallback(p_params);
+		initPlatformSpecificEventCallback();
 	};
 
 	void AppEvent_pool()
@@ -48,12 +47,14 @@ namespace _Core
 		*/
 	};
 
-	void initPlatformSpecificEventCallback(AppEventParams* p_params)
+	void initPlatformSpecificEventCallback()
 	{
+		GlobalAppParams.hInstance = GetModuleHandle(0);
+
 		LPCSTR CLASS_NAME = "GameEngine";
 		WNDCLASS wc = { };
 		wc.lpfnWndProc = WindowProc;
-		wc.hInstance = p_params->hInstance;
+		wc.hInstance = GlobalAppParams.hInstance;
 		wc.lpszClassName = CLASS_NAME;
 
 		RegisterClass(&wc);
