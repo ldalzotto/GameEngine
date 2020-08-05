@@ -13,7 +13,7 @@ namespace _GameEngine::_Render
 
 	const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
-	void window_size_callback(GLFWwindow* window, int width, int height);
+	// void window_size_callback(GLFWwindow* window, int width, int height);
 	void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
 	{
 		_MathV2::Vector3<float> l_right, l_up, l_forward;
@@ -23,12 +23,13 @@ namespace _GameEngine::_Render
 		p_window->WindowToGraphicsAPIPixelCoordinates = _MathV2::MatrixM::build(&l_right, &l_up, &l_forward);
 	};
 
-	std::unordered_map<GLFWwindow*, Window*> WindowIndexedForGLFW{};
+	// std::unordered_map<GLFWwindow*, Window*> WindowIndexedForGLFW{};
 
 	void Window_init(Window* p_window)
 	{
 		_Core::ObserverT_alloc(&p_window->OnWindowSizeChanged);
 
+		/*
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
@@ -38,21 +39,25 @@ namespace _GameEngine::_Render
 		Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
 		WindowIndexedForGLFW.emplace(p_window->Window, p_window);
 		glfwSetWindowSizeCallback(p_window->Window, window_size_callback);
+		*/
 	}
 
 	void Window_closeWindow(Window* p_window)
 	{
 		_Core::ObserverT_free(&p_window->OnWindowSizeChanged);
 
+		/*
 		glfwDestroyWindow(p_window->Window);
 		glfwTerminate();
 		WindowIndexedForGLFW.erase(p_window->Window);
 		p_window->Window = nullptr;
+		*/
 	};
 
 	bool Window_askedForClose(Window* p_window)
 	{
-		return glfwWindowShouldClose(p_window->Window);
+		return false;
+		// return glfwWindowShouldClose(p_window->Window);
 	};
 
 	WindowSize Window_getSize(Window* p_window)
@@ -63,6 +68,7 @@ namespace _GameEngine::_Render
 	std::vector<char*> Window_getRequiredExtensionsV2(Window* p_window)
 	{
 
+		/*
 #ifndef NDEBUG
 		if (!p_window->Window)
 		{
@@ -79,10 +85,11 @@ namespace _GameEngine::_Render
 		{
 			l_requiredExtensions.at(i) = l_extensions[i];
 		}
-
-		return l_requiredExtensions;
+		*/
+		return std::vector<char*>();
 	};
 
+	/*
 	void window_size_callback(GLFWwindow* window, int width, int height)
 	{
 		Window* l_window = WindowIndexedForGLFW.at(window);
@@ -92,5 +99,6 @@ namespace _GameEngine::_Render
 		Window_updateScreeToGraphicsAPIPixelCoordinates(l_window);
 		_Core::ObserverT_broadcast(&l_window->OnWindowSizeChanged, (void*)nullptr);
 	};
+	*/
 
 } // namespace _GameEngine

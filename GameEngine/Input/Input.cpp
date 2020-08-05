@@ -10,8 +10,8 @@ namespace _GameEngine::_Input
 {
 	Input* InputInstance;
 
-	void OnKeyEvent(GLFWwindow* p_window, int key, int scancode, int action, int mods);
-	void OnMouseEvent(GLFWwindow* window, int button, int action, int mods);
+	// void OnKeyEvent(GLFWwindow* p_window, int key, int scancode, int action, int mods);
+	// void OnMouseEvent(GLFWwindow* window, int button, int action, int mods);
 	bool InputKey_isMouse(InputKey p_inputKey);
 
 	void initializeGLFWLookup(Input* p_input);
@@ -41,6 +41,8 @@ namespace _GameEngine::_Input
 
 		initializeGLFWLookup(p_input);
 
+		/*
+
 		glfwSetKeyCallback(p_window->Window, OnKeyEvent);
 		glfwSetMouseButtonCallback(p_window->Window, OnMouseEvent);
 
@@ -48,7 +50,7 @@ namespace _GameEngine::_Input
 		{
 			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition.x, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition.y);
 		}
-
+		*/
 	};
 
 	void Input_free(Input* p_input)
@@ -71,7 +73,7 @@ namespace _GameEngine::_Input
 		while (p_input->MouseInputKeyCodeJustPressedThisFrame.size() > 0)
 		{
 			int l_inputKeyCode = p_input->MouseInputKeyCodeJustPressedThisFrame.at(p_input->MouseInputKeyCodeJustPressedThisFrame.size() - 1);
-			p_input->InputEventsLastFrame.push(InputEvent{ l_inputKeyCode, GLFW_REPEAT });
+			// p_input->InputEventsLastFrame.push(InputEvent{ l_inputKeyCode, GLFW_REPEAT });
 			p_input->MouseInputKeyCodeJustPressedThisFrame.pop_back();
 		}
 
@@ -81,6 +83,7 @@ namespace _GameEngine::_Input
 			InputKey l_inputKey = p_input->GLFWKeyToInputKeyLookup.at(l_inputEvent.KeyCode);
 			KeyStateFlag* l_oldStateFlag = &p_input->InputState.at(l_inputKey);
 
+			/*
 			if ((*l_oldStateFlag & (KeyStateFlag::PRESSED | KeyStateFlag::PRESSED_THIS_FRAME)) && l_inputEvent.Action == GLFW_RELEASE)
 			{
 				*l_oldStateFlag = KeyStateFlag::RELEASED_THIS_FRAME;
@@ -103,6 +106,7 @@ namespace _GameEngine::_Input
 					}
 				}
 			}
+			*/
 
 			p_input->InputEventsLastFrame.pop();
 		}
@@ -110,7 +114,7 @@ namespace _GameEngine::_Input
 		if (p_input->InputMouse.MouseEnabled)
 		{
 			p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition = p_input->InputMouse.ScreenPosition;
-			glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
+			// glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
 			_MathV2::VectorM::min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 
 			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
@@ -120,6 +124,7 @@ namespace _GameEngine::_Input
 		}
 	};
 
+	/*
 	void OnKeyEvent(GLFWwindow* p_window, int key, int scancode, int action, int mods)
 	{
 		InputEvent l_inputEvent{};
@@ -135,6 +140,7 @@ namespace _GameEngine::_Input
 		l_inputEvent.Action = action;
 		InputInstance->InputEventsLastFrame.push(l_inputEvent);
 	};
+	*/
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag)
 	{
@@ -143,6 +149,7 @@ namespace _GameEngine::_Input
 
 	void initializeGLFWLookup(Input* p_input)
 	{
+		/*
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_KEY_SPACE, InputKey::SPACE);
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_KEY_APOSTROPHE, InputKey::APOSTROPHE);
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_KEY_COMMA, InputKey::COMMA);
@@ -276,6 +283,7 @@ namespace _GameEngine::_Input
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_MOUSE_BUTTON_LEFT, InputKey::MOUSE_BUTTON_LEFT);
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_MOUSE_BUTTON_RIGHT, InputKey::MOUSE_BUTTON_RIGHT);
 		p_input->GLFWKeyToInputKeyLookup.emplace(GLFW_MOUSE_BUTTON_MIDDLE, InputKey::MOUSE_BUTTON_MIDDLE);
+		*/
 	};
 
 	bool InputKey_isMouse(InputKey p_inputKey)

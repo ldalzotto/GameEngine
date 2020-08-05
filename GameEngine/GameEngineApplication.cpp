@@ -81,7 +81,7 @@ namespace _GameEngine
 	{
 		while (!Window_askedForClose(&p_app->Render.Window))
 		{
-			glfwPollEvents();
+			// glfwPollEvents();
 			_GameLoop::update(&p_app->GameLoop);
 		}
 	};

@@ -3,7 +3,6 @@
 #include "Render/Render.h"
 
 #include "imgui_impl_vulkan.h"
-#include "imgui_impl_glfw.h"
 
 #include "GameEngineApplicationInterface.h"
 #include "RenderInterface.h"
@@ -25,6 +24,7 @@ namespace _GameEngineEditor
 
 	void IMGuiRender_init(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
+		/*
 		_Render::RenderInterface* p_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
 
 		p_IMGuiRender->NewFrame = { newFrame, p_IMGuiRender };
@@ -63,11 +63,12 @@ namespace _GameEngineEditor
 		DescriptorPool_alloc(&p_IMGuiRender->DescriptorPool, p_renderInterface->Device, &l_descritproPoolAllocInfo);
 
 		createFinalDrawObjects(p_renderInterface, p_IMGuiRender);
-
+		*/
 	};
 
 	void IMGuiRender_free(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
 	{
+		/*
 		_Core::ObserverT_unRegister(p_gameEngineApplicationInterface->NewFrame, (_Core::CallbackT<void, GameEngineApplicationInterface>*) &p_IMGuiRender->NewFrame);
 
 		_Render::RenderInterface* l_renderInterface = p_gameEngineApplicationInterface->RenderInterface;
@@ -89,10 +90,12 @@ namespace _GameEngineEditor
 
 		DescriptorPool_free(&p_IMGuiRender->DescriptorPool, l_renderInterface->Device);
 		p_IMGuiRender->FontInitialized = false;
+		*/
 	};
 
 	void onSwapChainRebuilded(IMGuiRender* p_IMGuiRender, _Render::RenderInterface* p_renderInterface)
 	{
+		/*
 		ImGui::EndFrame();
 
 		ImGui_ImplVulkan_Shutdown();
@@ -108,10 +111,12 @@ namespace _GameEngineEditor
 		createFinalDrawObjects(p_renderInterface, p_IMGuiRender);
 
 		p_IMGuiRender->FontInitialized = false;
+		*/
 	};
 
 	void newFrame(IMGuiRender* p_IMGuiRender, GameEngineApplicationInterface* p_gameEngineApplication)
 	{
+		/*
 		_Render::RenderInterface* l_renderInterface = p_gameEngineApplication->RenderInterface;
 
 		if (!p_IMGuiRender->FontInitialized)
@@ -132,11 +137,12 @@ namespace _GameEngineEditor
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
+		*/
 	};
 
 	void drawFrame(IMGuiRender* p_IMGuiRender, _Render::BeforeEndRecordingMainCommandBuffer_Input* p_beforeEndRecordingMainCommandBuffer_Input)
 	{
+		/*
 		if (p_IMGuiRender->FontInitialized)
 		{
 			VkRenderPassBeginInfo l_renderPassBeginInfo{};
@@ -156,11 +162,12 @@ namespace _GameEngineEditor
 			vkCmdEndRenderPass(p_beforeEndRecordingMainCommandBuffer_Input->CommandBuffer);
 		}
 
-
+		*/
 	};
 
 	void createFinalDrawObjects(_Render::RenderInterface* p_renderInterface, IMGuiRender* p_IMGuiRender)
 	{
+		/*
 		{
 			_Render::RenderPassDependencies l_renderPassDependencies{};
 			l_renderPassDependencies.SwapChain = p_renderInterface->SwapChain;
@@ -214,5 +221,6 @@ namespace _GameEngineEditor
 		ImGuiIO& l_io = ImGui::GetIO();
 		l_io.DisplaySize.x = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.width;
 		l_io.DisplaySize.y = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.height;
+		*/
 	};
 }

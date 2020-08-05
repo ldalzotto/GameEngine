@@ -24,6 +24,7 @@ namespace _GameEngineEditor
 
 	void DebugConsole_draw(DebugConsole* p_debugConsole)
 	{
+		/*
 		ImGui::Begin("console");
 		ImGui::PushItemWidth(-1);
 		if (ImGui::InputText("", p_debugConsole->CurrentWritingInput, 256, ImGuiInputTextFlags_EnterReturnsTrue))
@@ -44,6 +45,7 @@ namespace _GameEngineEditor
 		}
 		ImGui::PopItemWidth();
 		ImGui::End();
+		*/
 	};
 	
 	void executeDebugCommand(DebugConsole* p_debugConsole, DebugCommand* p_debugCommand)

@@ -1,41 +1,27 @@
 #pragma once
-
-#include "v2/Vector/Vector.hpp"
-#include "v2/Segment/SegmentV2.hpp"
-
-#include <unordered_map>
-#include <queue>
-#include <vector>
-
-namespace _GameEngine::_Render
-{
-	struct Window;
-}
-
-namespace _Core
-{
-	struct Log;
-}
+#include <stdint.h>
+#include "Functional/Callback/ObserverT.hpp"
+#include "Render/VulkanObjects/Hardware/Window/Window.h"
 
 namespace _GameEngine::_Input
 {
-	struct InputEvent
+	enum class InputKey : uint8_t;
+	enum class InputKeyEventAction : uint8_t;
+
+	struct InputGlobalEvent
 	{
-		int KeyCode;
-		int Action;
+		InputKey Key;
+		InputKeyEventAction Action;
 	};
 
-	enum KeyStateFlag
+
+	enum class InputKeyEventAction : uint8_t
 	{
-		NONE = 0x01,
-		PRESSED_THIS_FRAME = 0x02,
-		PRESSED = 0x04,
-		RELEASED_THIS_FRAME = 0x08,
-		KEY_DOWN = PRESSED_THIS_FRAME | PRESSED,
-		KEY_UP = RELEASED_THIS_FRAME | NONE
+		PRESSED = 0,
+		RELEASED = 1
 	};
 
-	enum InputKey : uint8_t
+	enum class InputKey : uint8_t
 	{
 		SPACE = 0,
 		APOSTROPHE = 1,
@@ -173,35 +159,8 @@ namespace _GameEngine::_Input
 		LAST
 	};
 
-	struct InputMouse
-	{
-		bool MouseEnabled;
-		float MouseSentitivityperPixel = 0.01f;
-		_MathV2::Vector2<double> ScreenPosition;
+	extern _Core::ObserverT<InputGlobalEvent> InputGlobalEvents;
 
-		_MathV2::Vector2<double> LastFrameMouseAbsoluteScreenPosition;
-		_MathV2::Vector2<double> MouseDelta;
-	};
-
-	_MathV2::SegmentV2<2, float> InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
-
-	struct Input
-	{
-		_Render::Window* Window;
-		::_Core::Log* Log;
-
-		std::vector<KeyStateFlag> InputState;
-		std::queue<InputEvent> InputEventsLastFrame;
-		std::vector<InputKey> InputKeysReleasedThisFrame;
-		// We store juste pressed events for mouse because glfw doesn't trigger hold events. Thus, we manually trigger them.
-		std::vector<int> MouseInputKeyCodeJustPressedThisFrame;
-		std::unordered_map<int, InputKey> GLFWKeyToInputKeyLookup;
-		InputMouse InputMouse;
-	};
-
-	void Input_build(Input* p_input, _Render::Window* p_window, ::_Core::Log* Log);
-	void Input_free(Input* p_input);
-
-	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);
-	void Input_update(Input* p_input);
+	void InputGlobalEvents_initialize(_Render::Window* p_window);
+	void InputGlobalEvents_free();
 }

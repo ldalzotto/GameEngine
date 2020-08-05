@@ -5,16 +5,18 @@
 
 #include <stdexcept>
 #include "Log/LogFormatting.hpp"
-#include "Includes/GLFWIncludes.h"
 
 namespace _GameEngine::_Render
 {
 	void Surface_build(Surface* p_surface, RenderInterface* p_renderInterface)
 	{
+		throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create window surface!"));
+		/*
 		if (glfwCreateWindowSurface(*p_renderInterface->Instance, p_renderInterface->Window->Window, nullptr, &p_surface->WindowSurface) != VK_SUCCESS)
 		{
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("Failed to create window surface!"));
 		}
+		*/
 	};
 
 	void Surface_release(Surface* p_surface, RenderInterface* p_renderInterface)

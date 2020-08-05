@@ -5,8 +5,6 @@
 
 #include "v2/Matrix/Matrix.hpp"
 
-#include "Includes/GLFWIncludes.h"
-
 #include <vector>
 #include <string>
 
@@ -20,7 +18,7 @@ namespace _GameEngine::_Render
 
 	struct Window
 	{
-		GLFWwindow* Window;
+		// GLFWwindow* Window;
 		WindowSize WindowSize;
 
 		_MathV2::Matrix3x3<float> WindowToGraphicsAPIPixelCoordinates;
