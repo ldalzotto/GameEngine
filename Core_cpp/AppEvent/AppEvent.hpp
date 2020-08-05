@@ -57,6 +57,9 @@ namespace _Core
 	void AppEvent_initialize();
 	void AppEvent_pool();
 	void AppEvent_free();
+
+	struct PlatformSpecificGenericEvent;
+	extern ObserverT<PlatformSpecificGenericEvent> EventPoolHook;
 }
 
 #ifdef _WIN32
@@ -67,6 +70,11 @@ namespace _Core
 	struct AppEventParams
 	{
 		HINSTANCE hInstance; 
+	};
+
+	struct PlatformSpecificGenericEvent
+	{
+		HWND hwnd; UINT uMsg; WPARAM wParam; LPARAM lParam;
 	};
 }
 #endif

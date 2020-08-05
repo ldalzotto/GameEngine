@@ -24,7 +24,6 @@ namespace _GameEngineEditor
 
 	void DebugConsole_draw(DebugConsole* p_debugConsole)
 	{
-		/*
 		ImGui::Begin("console");
 		ImGui::PushItemWidth(-1);
 		if (ImGui::InputText("", p_debugConsole->CurrentWritingInput, 256, ImGuiInputTextFlags_EnterReturnsTrue))
@@ -36,7 +35,7 @@ namespace _GameEngineEditor
 			DebugCommand_handleError(DebugCommand_parse(&l_debugCommand, &l_consoleInput), &l_return);
 			if (!l_return.empty())
 			{
-				MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, ::_Core::LogLevel::WARN, (char*)l_return.c_str());
+				MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, ::_Core::LogLevel::LOG_WARN, (char*)l_return.c_str());
 			}
 			else
 			{
@@ -45,7 +44,6 @@ namespace _GameEngineEditor
 		}
 		ImGui::PopItemWidth();
 		ImGui::End();
-		*/
 	};
 	
 	void executeDebugCommand(DebugConsole* p_debugConsole, DebugCommand* p_debugCommand)

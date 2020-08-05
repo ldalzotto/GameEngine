@@ -1,5 +1,6 @@
 #include "AppEvent.hpp"
 
+
 namespace _Core
 {
 	void initPlatformSpecificEventCallback();
@@ -7,10 +8,11 @@ namespace _Core
 
 	AppEventParams GlobalAppParams{};
 	ObserverT<AppEvent_Header> EventDispatcher{};
+	ObserverT<PlatformSpecificGenericEvent> EventPoolHook;
 
 	void AppEvent_initialize()
 	{
-		ObserverT_alloc(&EventDispatcher);
+		ObserverT_alloc(&EventDispatcher); ObserverT_alloc(&EventPoolHook);
 		initPlatformSpecificEventCallback();
 	};
 
@@ -21,7 +23,7 @@ namespace _Core
 
 	void AppEvent_free()
 	{
-		ObserverT_free(&EventDispatcher);
+		ObserverT_free(&EventDispatcher); ObserverT_free(&EventPoolHook);
 	};
 }
 
@@ -39,12 +41,6 @@ namespace _Core
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		};
-
-		/*
-		while (PeekMessage(&msg, (HWND)Window, 0, 0, PM_REMOVE));
-		{
-		}
-		*/
 	};
 
 	void initPlatformSpecificEventCallback()
@@ -60,8 +56,15 @@ namespace _Core
 		RegisterClass(&wc);
 	};
 
+	void Window_handleGenericEventHook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		if (EventPoolHook.Subjects.Size > 0)
+		{
+			Window_handleGenericEventHook(hwnd, uMsg, wParam, lParam);
+		}
+
 		switch (uMsg)
 		{
 		case WM_CLOSE:
@@ -69,7 +72,6 @@ namespace _Core
 			WindowEvent l_windowEvent{ {AppEventType::WINDOW_CLOSE}, hwnd };
 			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowEvent);
 			return 0;
-			// DestroyWindow(hwnd);
 		}
 		case WM_SIZE:
 		{
@@ -120,6 +122,13 @@ namespace _Core
 
 		return 0;
 	//	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	};
+
+	void Window_handleGenericEventHook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		PlatformSpecificGenericEvent l_genericEvent;
+		l_genericEvent.hwnd = hwnd; l_genericEvent.uMsg = uMsg; l_genericEvent.wParam = wParam; l_genericEvent.lParam = lParam;
+		_Core::ObserverT_broadcast(&EventPoolHook, &l_genericEvent);
 	};
 }
 
