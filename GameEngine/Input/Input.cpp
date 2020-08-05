@@ -64,7 +64,7 @@ namespace _GameEngine::_Input
 		{
 			for (InputKey& l_inputKeyReleasedLastFrame : p_input->InputKeysReleasedThisFrame)
 			{
-				p_input->InputState.at(l_inputKeyReleasedLastFrame) = KeyStateFlag::NONE;
+				p_input->InputState.at(static_cast<int>(l_inputKeyReleasedLastFrame)) = KeyStateFlag::NONE;
 			}
 
 			p_input->InputKeysReleasedThisFrame.clear();
@@ -81,7 +81,7 @@ namespace _GameEngine::_Input
 		{
 			InputEvent l_inputEvent = p_input->InputEventsLastFrame.front();
 			InputKey l_inputKey = p_input->GLFWKeyToInputKeyLookup.at(l_inputEvent.KeyCode);
-			KeyStateFlag* l_oldStateFlag = &p_input->InputState.at(l_inputKey);
+			KeyStateFlag* l_oldStateFlag = &p_input->InputState.at(static_cast<int>(l_inputKey));
 
 			/*
 			if ((*l_oldStateFlag & (KeyStateFlag::PRESSED | KeyStateFlag::PRESSED_THIS_FRAME)) && l_inputEvent.Action == GLFW_RELEASE)
@@ -144,7 +144,7 @@ namespace _GameEngine::_Input
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag)
 	{
-		return p_input->InputState.at(p_key) & p_keyStateFlag;
+		return p_input->InputState.at(static_cast<int>(p_key)) & p_keyStateFlag;
 	};
 
 	void initializeGLFWLookup(Input* p_input)

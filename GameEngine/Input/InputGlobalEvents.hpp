@@ -78,7 +78,7 @@ namespace _GameEngine::_Input
 		TAB = 52,
 		BACKSPACE = 53,
 		INSERT = 54,
-		DELETE = 55,
+		DELETE_2 = 55,
 		RIGHT = 56,
 		LEFT = 57,
 		DOWN = 58,

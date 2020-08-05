@@ -8,7 +8,8 @@ namespace _Core
 
 #ifdef _WINDOWS
 
-#include <Windows.h>
+#include "Include/PlatformInclude.hpp"
+
 #include <stdio.h>
 
 	void File_readFile_byte(char* p_absoluteFilePath, String* out_file_byte)

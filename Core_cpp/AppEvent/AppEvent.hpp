@@ -6,7 +6,8 @@ namespace _Core
 {
 	enum AppEventType 
 	{
-		WINDOW_CLOSE
+		WINDOW_CLOSE,
+		WINDOW_RESIZE
 	};
 
 	struct AppEvent_Header
@@ -20,9 +21,18 @@ namespace _Core
 		void* Window; //TOOD -> change pointer
 	};
 
-	extern ObserverT<AppEvent_Header> EventDispatcher;
+	struct WindowResizeEvent
+	{
+		AppEvent_Header Header;
+		void* Window; //TOOD -> change pointer
+		int Width;
+		int Height;
+	};
 
 	struct AppEventParams;
+
+	extern AppEventParams GlobalAppParams;
+	extern ObserverT<AppEvent_Header> EventDispatcher;
 
 	void AppEvent_initialize(AppEventParams* p_params);
 	bool AppEvent_pool();
@@ -30,14 +40,15 @@ namespace _Core
 }
 
 #ifdef _WIN32
-#include <Windows.h>
+
+#include "Include/PlatformInclude.hpp"
 namespace _Core
 {
 	struct AppEventParams
 	{
 		HINSTANCE hInstance; 
-		HINSTANCE hPrevInstance; 
-		PWSTR pCmdLine; 
+		HINSTANCE hPrevInstance;
+		PWSTR pCmdLine;
 		int nCmdShow;
 	};
 }

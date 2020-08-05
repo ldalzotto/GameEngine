@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "vulkan/vulkan.h"
+#include "Includes/VulkanIncludes.h"
 
 #include "VulkanObjects/Memory/VulkanBuffer.h"
 #include "ShaderParameterKeys.h"

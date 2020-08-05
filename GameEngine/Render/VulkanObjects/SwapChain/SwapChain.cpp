@@ -214,8 +214,8 @@ namespace _GameEngine::_Render
 			WindowSize l_currentWindowSize = Window_getSize(p_window);
 			VkExtent2D l_actualExtent{ l_currentWindowSize.Width, l_currentWindowSize.Height };
 
-			l_actualExtent.width = std::max(p_capabilities.minImageExtent.width, std::min(p_capabilities.maxImageExtent.width, l_actualExtent.width));
-			l_actualExtent.height = std::max(p_capabilities.minImageExtent.height, std::min(p_capabilities.maxImageExtent.height, l_actualExtent.height));
+			l_actualExtent.width = std::max<uint32_t>(p_capabilities.minImageExtent.width, std::min<uint32_t>(p_capabilities.maxImageExtent.width, l_actualExtent.width));
+			l_actualExtent.height = std::max<uint32_t>(p_capabilities.minImageExtent.height, std::min<uint32_t>(p_capabilities.maxImageExtent.height, l_actualExtent.height));
 
 			return l_actualExtent;
 		}

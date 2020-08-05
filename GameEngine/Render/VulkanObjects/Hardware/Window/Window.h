@@ -1,12 +1,22 @@
 #pragma once
 
-
 #include "Functional/Callback/ObserverT.hpp"
 
 #include "v2/Matrix/Matrix.hpp"
 
 #include <vector>
 #include <string>
+
+#ifdef _WIN32
+#include "Include/PlatformInclude.hpp"
+namespace _GameEngine::_Render
+{
+	struct WindowHandle
+	{
+		HWND Window;
+	};
+}
+#endif
 
 namespace _GameEngine::_Render
 {
@@ -16,12 +26,20 @@ namespace _GameEngine::_Render
 		uint32_t Height;
 	};
 
+	struct WindowState
+	{
+		bool AskedForClosed;
+	};
+
 	struct Window
 	{
-		// GLFWwindow* Window;
+		WindowHandle Handle;
 		WindowSize WindowSize;
+		
+		WindowState WindowState;
 
 		_MathV2::Matrix3x3<float> WindowToGraphicsAPIPixelCoordinates;
+		
 		_Core::ObserverT<void> OnWindowSizeChanged;
 	};
 
@@ -33,3 +51,4 @@ namespace _GameEngine::_Render
 
 	std::vector<char*> Window_getRequiredExtensionsV2(Window* p_window);
 } // namespace _GameEngine
+

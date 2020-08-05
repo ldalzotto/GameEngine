@@ -5,10 +5,12 @@ namespace _Core
 	void initPlatformSpecificEventCallback(AppEventParams* p_params);
 	bool poolEventPlatformSepcific();
 
+	AppEventParams GlobalAppParams{};
 	ObserverT<AppEvent_Header> EventDispatcher{};
 
 	void AppEvent_initialize(AppEventParams* p_params)
 	{
+		GlobalAppParams = *p_params;
 		ObserverT_alloc(&EventDispatcher);
 		initPlatformSpecificEventCallback(p_params);
 	};
@@ -25,8 +27,6 @@ namespace _Core
 }
 
 #ifdef _WIN32
-
-#include <Windows.h>
 
 namespace _Core
 {
@@ -64,7 +64,15 @@ namespace _Core
 		{
 			WindowEvent l_windowEvent{ {AppEventType::WINDOW_CLOSE}, hwnd };
 			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowEvent);
-			DestroyWindow(hwnd);
+			// DestroyWindow(hwnd);
+		}
+		return 0;
+		case WM_SIZE:
+		{
+			INT l_width = LOWORD(lParam);
+			INT l_height = HIWORD(lParam);
+			WindowResizeEvent l_windowResizeEvent{ {AppEventType::WINDOW_RESIZE}, hwnd, l_width, l_height };
+			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowResizeEvent);
 		}
 		return 0;
 		case WM_DESTROY:
