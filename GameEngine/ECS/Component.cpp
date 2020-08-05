@@ -35,7 +35,7 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if(p_componentEvents->ComponentAttachedEvents.size() > 0 || p_componentEvents->ComponentDetachedEvents.size() > 0)
 		{ 
-			MYLOG_PUSH(p_ecs->MyLog, ::_Core::LogLevel::WARN, "Potential memory leak. When disposing ComponentEvents, there was still observers listening to component events. Please, consider unregister before destroying.");
+			MYLOG_PUSH(p_ecs->MyLog, ::_Core::LogLevel::LOG_WARN, "Potential memory leak. When disposing ComponentEvents, there was still observers listening to component events. Please, consider unregister before destroying.");
 		}
 #endif
 		for (auto&& p_componentAttachedEventsEntry : p_componentEvents->ComponentAttachedEvents)

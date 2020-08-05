@@ -22,6 +22,11 @@
 
 #include "GameEngineApplicationInterface.h"
 
+namespace _Core
+{
+	struct AppEventParams;
+}
+
 namespace _GameEngine
 {
 
@@ -47,7 +52,7 @@ namespace _GameEngine
 #endif
 	};
 
-	GameEngineApplication* app_alloc();
+	GameEngineApplication* app_alloc(_Core::AppEventParams* p_params);
 	void app_free(GameEngineApplication* p_app);
 	void app_mainLoop(GameEngineApplication* p_app);
 	int app_run(GameEngineApplication* p_app);

@@ -69,7 +69,7 @@ namespace _GameEngine::_Render
 				l_textureResourcesNotDisposed += ",";
 			}
 			l_textureResourcesNotDisposed += "]";
-			MYLOG_PUSH(p_meshResourceProvider->RenderInterface->MyLog, ::_Core::LogLevel::WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
+			MYLOG_PUSH(p_meshResourceProvider->RenderInterface->MyLog, ::_Core::LogLevel::LOG_WARN, (char*)("TextureResourceProvider : Potential memory Leak. Texture resource " + l_textureResourcesNotDisposed + " wasn't disposed.").c_str());
 #endif
 
 			for (auto&& l_textureResourceEntry : p_meshResourceProvider->MeshResources)

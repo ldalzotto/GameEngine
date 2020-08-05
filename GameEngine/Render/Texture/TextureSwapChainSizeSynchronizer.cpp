@@ -44,7 +44,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 		if (p_textureSwapChainSynchronizer->Syncronizers.size() > 0)
 		{
-			MYLOG_PUSH(p_renderInterface->MyLog, _Core::LogLevel::WARN, "Potential Memory Leak. The TextureSwapChainSizeSynchronizer wasn't empty when freed.");
+			MYLOG_PUSH(p_renderInterface->MyLog, _Core::LogLevel::LOG_WARN, "Potential Memory Leak. The TextureSwapChainSizeSynchronizer wasn't empty when freed.");
 		}
 #endif
 	};

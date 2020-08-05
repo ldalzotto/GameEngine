@@ -113,7 +113,7 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_ecs->EntityContainer.Entities), _Core::ComparatorT<Entity*, Entity*, void>{ Entity_comparator, p_entity }))
 		{
-			MYLOG_PUSH(p_ecs->MyLog, ::_Core::LogLevel::WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
+			MYLOG_PUSH(p_ecs->MyLog, ::_Core::LogLevel::LOG_WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
 		}
 #endif
 

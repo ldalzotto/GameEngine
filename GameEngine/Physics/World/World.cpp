@@ -18,7 +18,7 @@ namespace _GameEngine::_Physics
 #ifndef NDEBUG
 		if (p_world->BoxColliders.Size > 0)
 		{
-			MYLOG_PUSH(p_world->Log, ::_Core::LogLevel::WARN, "Potential memory leak. When freeing the physics world, there was still BoxColliders. Consider cleaning them before freeing the World.");
+			MYLOG_PUSH(p_world->Log, ::_Core::LogLevel::LOG_WARN, "Potential memory leak. When freeing the physics world, there was still BoxColliders. Consider cleaning them before freeing the World.");
 		}
 #endif
 		_Core::VectorT_free(&p_world->BoxColliders);

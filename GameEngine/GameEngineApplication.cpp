@@ -1,5 +1,7 @@
 #include "GameEngineApplication.h"
 
+#include "AppEvent/AppEvent.hpp"
+
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
@@ -16,9 +18,11 @@ namespace _GameEngine
 	void app_endOfFrame(void* p_closure);
 	///
 
-	GameEngineApplication* app_alloc()
+	GameEngineApplication* app_alloc(_Core::AppEventParams* p_params)
 	{
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
+
+		_Core::AppEvent_initialize(p_params);
 
 		_Core::ObserverT_alloc(&l_gameEngineApplication->NewFrame);
 		_Core::ObserverT_alloc(&l_gameEngineApplication->PreRender);
@@ -74,6 +78,9 @@ namespace _GameEngine
 		_Core::ObserverT_free(&p_app->EndOfUpdate);
 
 		MyLog_free(&p_app->Log);
+
+		_Core::AppEvent_free();
+
 		delete p_app;
 	}
 
@@ -81,7 +88,7 @@ namespace _GameEngine
 	{
 		while (!Window_askedForClose(&p_app->Render.Window))
 		{
-			// glfwPollEvents();
+			_Core::AppEvent_pool();
 			_GameLoop::update(&p_app->GameLoop);
 		}
 	};
@@ -89,7 +96,7 @@ namespace _GameEngine
 	void app_newFrame(void* p_gameEngineApplication)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
-		 Clock_newFrame(&l_app->Clock);
+		Clock_newFrame(&l_app->Clock);
 		_Input::Input_update(&l_app->Input);
 		_Core::ObserverT_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
 	};
@@ -98,7 +105,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		Clock_newUpdate(&l_app->Clock, p_delta);
-		
+
 		_ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);
 
 		UpdateSequencer_execute(&l_app->UpdateSequencer, &l_app->GameEngineApplicationInterface);
@@ -131,13 +138,13 @@ namespace _GameEngine
 		}
 		catch (const std::exception& e)
 		{
-			MyLog_pushLog(&p_app->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, (char*)e.what());
+			MyLog_pushLog(&p_app->Log, _Core::LogLevel::LOG_ERROR, __FILE__, __LINE__, (char*)e.what());
 			app_free(p_app);
 			return EXIT_FAILURE;
 		}
 		catch (...)
 		{
-			MyLog_pushLog(&p_app->Log, ::_Core::LogLevel::ERROR, __FILE__, __LINE__, "Unexpected Error");
+			MyLog_pushLog(&p_app->Log, _Core::LogLevel::LOG_ERROR, __FILE__, __LINE__, "Unexpected Error");
 			app_free(p_app);
 			return EXIT_FAILURE;
 		}

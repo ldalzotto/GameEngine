@@ -4,6 +4,7 @@
 #include "Lib/EntityConfigurations.h"
 
 #include "GameEngineApplication.h"
+#include "AppEvent/AppEvent.hpp"
 
 #include "v2/Math.h"
 #include "v2/Quaternion/QuaternionMath.hpp"
@@ -82,10 +83,18 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 }
 
 
+#ifdef _WIN32
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
+#else
 int main()
+#endif
 {
 	{
-		_GameEngine::GameEngineApplication* l_app = IntegrationTest_begin();
+		_Core::AppEventParams l_params;
+#ifdef _WIN32
+		l_params.hInstance = hInstance; l_params.hPrevInstance = hPrevInstance; l_params.pCmdLine = pCmdLine; l_params.nCmdShow = nCmdShow;
+#endif
+		_GameEngine::GameEngineApplication* l_app = IntegrationTest_begin(&l_params);
 		EntityConfiguration_init();
 		EntitySelectionTest_Init(l_app);
 		// bool l_exit = false;

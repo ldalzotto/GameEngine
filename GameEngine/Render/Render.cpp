@@ -344,16 +344,16 @@ namespace _GameEngine::_Render
 		switch (p_messageSeverity)
 		{
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::INFO, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::LOG_INFO, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::INFO, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::LOG_INFO, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::WARN, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::LOG_WARN, (char*)p_callbackData->pMessage);
 			break;
 		case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::ERROR, (char*)p_callbackData->pMessage);
+			MYLOG_PUSH(l_renderInterface->MyLog, ::_Core::LogLevel::LOG_ERROR, (char*)p_callbackData->pMessage);
 			break;
 		}
 

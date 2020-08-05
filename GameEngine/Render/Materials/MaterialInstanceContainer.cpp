@@ -89,7 +89,7 @@ namespace _GameEngine::_Render
 
 		if (l_foundMateials->MaterialInstanceV2.Size > 0)
 		{
-			MYLOG_PUSH(p_renderInterface->MyLog, ::_Core::LogLevel::WARN, "Potential Memory leak. When Material is disposed, there was still MaterialInstances derived from this Material. Consider disposing MaterialInstance first.");
+			MYLOG_PUSH(p_renderInterface->MyLog, ::_Core::LogLevel::LOG_WARN, "Potential Memory leak. When Material is disposed, there was still MaterialInstances derived from this Material. Consider disposing MaterialInstance first.");
 		}
 #endif
 
@@ -157,7 +157,7 @@ namespace _GameEngine::_Render
 #ifndef NDEBUG
 		if (p_materialInstanceContainer->DataStructure.MaterialWithMaterialInstances.Size > 0)
 		{
-			MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, ::_Core::LogLevel::WARN, "Potential Memory leak. When the MaterialInstanceContainer is being freed, there was still materials or material instance with it."
+			MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, ::_Core::LogLevel::LOG_WARN, "Potential Memory leak. When the MaterialInstanceContainer is being freed, there was still materials or material instance with it."
 				" It is recommended to free material instances manually before freeing the container.");
 		}
 #endif
@@ -183,7 +183,7 @@ namespace _GameEngine::_Render
 						_Core::SortedLinearMapT_buildIterator(&p_materialInstanceContainer->DataStructure.MaterialWithMaterialInstances),
 						_Core::ComparatorT<Material_with_MaterialInstances, Material, void> {Material_with_MaterialInstances_equals, l_materialInstances->Material}) )
 					{
-						MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, ::_Core::LogLevel::WARN, "Memory leak detected. When the MaterialInstanceContainer is being freed, releasing a Material resource didn't induce it's destruction.");
+						MYLOG_PUSH(p_materialInstanceContainer->RenderInterface->MyLog, ::_Core::LogLevel::LOG_WARN, "Memory leak detected. When the MaterialInstanceContainer is being freed, releasing a Material resource didn't induce it's destruction.");
 					}
 #endif
 				}

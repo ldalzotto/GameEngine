@@ -235,7 +235,7 @@ namespace _GameEngine::_Render
 
 			if (!l_tokenFoundInDeferrendOperations)
 			{
-				MYLOG_PUSH(p_renderInterface->MyLog, _Core::LogLevel::WARN ,
+				MYLOG_PUSH(p_renderInterface->MyLog, _Core::LogLevel::LOG_WARN ,
 					"The local reference of DeferredCommandBufferCompletionToken is not null. However, it's reference is not found inside the PreRenderDeferedCommandBufferStep."
 					" Because it is up to the PreRenderDeferedCommandBufferStep to dispose the token, this means that it's duplicated reference has not been cleared on completion. This may lead to undefined behavior."
 					" Be sure that the token reference is nullified when destroyed.");

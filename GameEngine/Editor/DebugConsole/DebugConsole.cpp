@@ -52,7 +52,7 @@ namespace _GameEngineEditor
 	{
 		if (p_debugCommand->Verb == "print")
 		{
-			MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, ::_Core::LogLevel::INFO, (char*)p_debugCommand->Arguments.at(0).Value.c_str());
+			MYLOG_PUSH(p_debugConsole->GameEngineApplicationInterface->Log, ::_Core::LogLevel::LOG_INFO, (char*)p_debugCommand->Arguments.at(0).Value.c_str());
 		}
 		else if (p_debugCommand->Verb == "transform_show")
 		{
