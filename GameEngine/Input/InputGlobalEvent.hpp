@@ -1,27 +1,10 @@
 #pragma once
-#include <stdint.h>
+
 #include "Functional/Callback/ObserverT.hpp"
-#include "Render/VulkanObjects/Hardware/Window/Window.h"
 
 namespace _GameEngine::_Input
 {
-	enum class InputKey : uint8_t;
-	enum class InputKeyEventAction : uint8_t;
-
-	struct InputGlobalEvent
-	{
-		InputKey Key;
-		InputKeyEventAction Action;
-	};
-
-
-	enum class InputKeyEventAction : uint8_t
-	{
-		PRESSED = 0,
-		RELEASED = 1
-	};
-
-	enum class InputKey : uint8_t
+	enum class InputKey
 	{
 		SPACE = 0,
 		APOSTROPHE = 1,
@@ -159,8 +142,26 @@ namespace _GameEngine::_Input
 		LAST
 	};
 
-	extern _Core::ObserverT<InputGlobalEvent> InputGlobalEvents;
+	enum class InputGlobalEventType
+	{
+		PRESSED, RELEASED, REPEAT
+	};
 
-	void InputGlobalEvents_initialize(_Render::Window* p_window);
-	void InputGlobalEvents_free();
+	struct InputGlobalEvent
+	{
+		InputKey Key;
+		InputGlobalEventType Type;
+	};
+
+	struct InputMouseGlobalEvent
+	{
+		int X; int Y;
+	};
+
+	extern _Core::ObserverT<InputGlobalEvent> InputGlobalEvent_dispatcher;
+	extern _Core::ObserverT<InputMouseGlobalEvent> InputMouseGlobalEvent_dispatcher;
+
+	void InputGlobalEvent_initialize();
+	void InputGlobalEvent_free();
+
 }

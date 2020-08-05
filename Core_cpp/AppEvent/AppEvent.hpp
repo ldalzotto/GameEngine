@@ -7,7 +7,9 @@ namespace _Core
 	enum AppEventType 
 	{
 		WINDOW_CLOSE,
-		WINDOW_RESIZE
+		WINDOW_RESIZE,
+		INPUT_KEY_EVENT,
+		INPUT_MOUSE_EVENT
 	};
 
 	struct AppEvent_Header
@@ -29,13 +31,31 @@ namespace _Core
 		int Height;
 	};
 
+	enum class InputKeyEventType
+	{
+		DOWN, UP 
+	};
+
+	struct InputKeyEvent
+	{
+		AppEvent_Header Header;
+		int Key;
+		InputKeyEventType Type;
+	};
+
+	struct InputMouseEvent
+	{
+		AppEvent_Header Header;
+		int X; int Y;
+	};
+
 	struct AppEventParams;
 
 	extern AppEventParams GlobalAppParams;
 	extern ObserverT<AppEvent_Header> EventDispatcher;
 
 	void AppEvent_initialize(AppEventParams* p_params);
-	bool AppEvent_pool();
+	void AppEvent_pool();
 	void AppEvent_free();
 }
 

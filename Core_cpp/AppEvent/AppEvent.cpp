@@ -3,7 +3,7 @@
 namespace _Core
 {
 	void initPlatformSpecificEventCallback(AppEventParams* p_params);
-	bool poolEventPlatformSepcific();
+	void poolEventPlatformSepcific();
 
 	AppEventParams GlobalAppParams{};
 	ObserverT<AppEvent_Header> EventDispatcher{};
@@ -15,9 +15,9 @@ namespace _Core
 		initPlatformSpecificEventCallback(p_params);
 	};
 
-	bool AppEvent_pool()
+	void AppEvent_pool()
 	{
-		return poolEventPlatformSepcific();
+		poolEventPlatformSepcific();
 	};
 
 	void AppEvent_free()
@@ -32,16 +32,20 @@ namespace _Core
 {
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	bool poolEventPlatformSepcific()
+	void poolEventPlatformSepcific()
 	{
 		MSG msg{};
-		bool l_return = GetMessage(&msg, NULL, 0, 0);
-		if (l_return)
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+		};
+
+		/*
+		while (PeekMessage(&msg, (HWND)Window, 0, 0, PM_REMOVE));
+		{
 		}
-		return l_return;
+		*/
 	};
 
 	void initPlatformSpecificEventCallback(AppEventParams* p_params)
@@ -59,35 +63,61 @@ namespace _Core
 	{
 		switch (uMsg)
 		{
-			return 0;
 		case WM_CLOSE:
 		{
 			WindowEvent l_windowEvent{ {AppEventType::WINDOW_CLOSE}, hwnd };
 			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowEvent);
+			return 0;
 			// DestroyWindow(hwnd);
 		}
-		return 0;
 		case WM_SIZE:
 		{
 			INT l_width = LOWORD(lParam);
 			INT l_height = HIWORD(lParam);
 			WindowResizeEvent l_windowResizeEvent{ {AppEventType::WINDOW_RESIZE}, hwnd, l_width, l_height };
 			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowResizeEvent);
+			return 0;
 		}
-		return 0;
-		case WM_DESTROY:
+		case WM_KEYDOWN:
 		{
-
+			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, wParam , InputKeyEventType::DOWN };
+			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			return 0;
 		}
-		return 0;
+		case WM_KEYUP:
+		{
+			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, wParam , InputKeyEventType::UP };
+			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			return 0;
+		}
 		case WM_LBUTTONDOWN:
 		{
-			int l_test = 0;
+			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, WM_LBUTTONDOWN , InputKeyEventType::DOWN };
+			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			return 0;
 		}
-		return 0;
+		break;
+		case WM_LBUTTONUP:
+		{
+			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, WM_LBUTTONUP , InputKeyEventType::UP };
+			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			return 0;
+		}
+		case WM_MOUSEMOVE:
+		{
+			int xPos = LOWORD(lParam);
+			int yPos = HIWORD(lParam);
+
+			InputMouseEvent l_inputMouseEvent{ {AppEventType::INPUT_MOUSE_EVENT}, xPos, yPos };
+			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputMouseEvent);
+			return 0;
+		}
+		default:
+			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
 
-		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+		return 0;
+	//	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	};
 }
 

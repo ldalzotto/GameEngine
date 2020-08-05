@@ -9,7 +9,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(Test "./src/TransformTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(Test PUBLIC GameEngine)
 
-add_executable(PhysicsRaycastTest "src/PhysicsRaycastTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+add_executable(PhysicsRaycastTest WIN32 "src/PhysicsRaycastTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(PhysicsRaycastTest PUBLIC GameEngine)
 
 add_executable(EntitySelectionTest WIN32 "src/EntitySelectionTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})

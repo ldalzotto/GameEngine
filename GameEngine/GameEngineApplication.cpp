@@ -1,6 +1,7 @@
 #include "GameEngineApplication.h"
 
 #include "AppEvent/AppEvent.hpp"
+#include "Input/InputGlobalEvent.hpp"
 
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -23,6 +24,7 @@ namespace _GameEngine
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
 
 		_Core::AppEvent_initialize(p_params);
+		_Input::InputGlobalEvent_initialize();
 
 		_Core::ObserverT_alloc(&l_gameEngineApplication->NewFrame);
 		_Core::ObserverT_alloc(&l_gameEngineApplication->PreRender);
@@ -79,6 +81,7 @@ namespace _GameEngine
 
 		MyLog_free(&p_app->Log);
 
+		_Input::InputGlobalEvent_free();
 		_Core::AppEvent_free();
 
 		delete p_app;
