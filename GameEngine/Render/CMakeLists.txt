@@ -39,10 +39,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_library(GameEngine_Render STATIC ${GAME_ENGINE_RENDER_PUBLIC} ${GAME_ENGINE_RENDER_PRIVATE})
 # add_executable(GameEngine ${GAME_ENGINE_PUBLIC} ${GAME_ENGINE_PRIVATE})
 
-target_include_directories(GameEngine_Render PUBLIC "./")
+target_include_directories(GameEngine_Render PUBLIC "./" )
 
+target_link_libraries(GameEngine_Render INTERFACE Vulkan::Vulkan)
 target_link_libraries(GameEngine_Render PUBLIC GameEngine_Common)
-target_link_libraries(GameEngine_Render PUBLIC GLFW)
 target_link_libraries(GameEngine_Render PUBLIC STB_IMAGE)
 target_link_libraries(GameEngine_Render PUBLIC ASSIMP)
 target_link_libraries(GameEngine_Render PUBLIC IMGUI)

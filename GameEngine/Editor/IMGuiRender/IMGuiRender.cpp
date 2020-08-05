@@ -3,6 +3,7 @@
 #include "Render/Render.h"
 #include "AppEvent/AppEvent.hpp"
 
+#include "Includes/VulkanIncludes.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_vulkan.h"
 
@@ -220,5 +221,6 @@ namespace _GameEngineEditor
 		ImGuiIO& l_io = ImGui::GetIO();
 		l_io.DisplaySize.x = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.width;
 		l_io.DisplaySize.y = p_renderInterface->SwapChain->SwapChainInfo.SwapExtend.height;
+
 	};
 }

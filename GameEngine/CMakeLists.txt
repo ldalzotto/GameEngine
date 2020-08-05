@@ -40,7 +40,6 @@ add_subdirectory(Common)
 add_subdirectory(Render)
 add_subdirectory(Physics)
 
-target_link_libraries(GameEngine PUBLIC GLFW)
 target_link_libraries(GameEngine PUBLIC GameEngine_Common)
 target_link_libraries(GameEngine PUBLIC GameEngine_Render)
 target_link_libraries(GameEngine PUBLIC GameEngine_Physics)
