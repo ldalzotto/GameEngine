@@ -37,8 +37,8 @@ namespace _GameEngine::_Render
 		p_window->WindowSize.Width = WINDOW_WIDTH;
 		p_window->WindowSize.Height = WINDOW_HEIGHT;
 		Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
-		windowPlatforwSpecific_open(p_window);
 		windowHookToGlobalEvents(p_window);
+		windowPlatforwSpecific_open(p_window);
 	}
 
 	void Window_closeWindow(Window* p_window)
@@ -94,6 +94,8 @@ namespace _GameEngine::_Render
 			_Core::WindowResizeEvent* l_windowResizeEvent = (_Core::WindowResizeEvent*)p_eventHeader;
 			if (memcmp(&l_windowResizeEvent->Window, &p_window->Handle.Window, sizeof(WindowHandle)) == 0)
 			{
+				p_window->WindowSize.Width = l_windowResizeEvent->Width;
+				p_window->WindowSize.Height = l_windowResizeEvent->Height;
 				Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
 				_Core::ObserverT_broadcast(&p_window->OnWindowSizeChanged, (void*)nullptr);
 			}
@@ -121,6 +123,11 @@ namespace _GameEngine::_Render
 			NULL, NULL, _Core::GlobalAppParams.hInstance, NULL);
 		ShowWindow(p_window->Handle.Window, SW_SHOW);
 
+		/*
+		RECT l_rect;
+		GetWindowRect(p_window->Handle.Window, &l_rect);
+		int zd = 0;
+		*/
 		// SetCursor(LoadCursor(_Core::GlobalAppParams.hInstance, IDC_ARROW));
 	};
 

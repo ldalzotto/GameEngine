@@ -73,8 +73,9 @@ namespace _Core
 		}
 		case WM_SIZE:
 		{
-			INT l_width = LOWORD(lParam);
+			INT l_width =  LOWORD(lParam);
 			INT l_height = HIWORD(lParam);
+
 			WindowResizeEvent l_windowResizeEvent{ {AppEventType::WINDOW_RESIZE}, hwnd, l_width, l_height };
 			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowResizeEvent);
 			return 0;

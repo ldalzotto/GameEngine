@@ -1,5 +1,6 @@
 #include "Input.h"
 
+#include <iostream>
 #include <math.h>
 #include "VulkanObjects/Hardware/Window/Window.h"
 
@@ -98,7 +99,8 @@ namespace _GameEngine::_Input
 			p_input->InputMouse.ScreenPosition.x = p_input->InputMouse.CurrentInputMouseEvent.Value.X;
 			p_input->InputMouse.ScreenPosition.y = p_input->InputMouse.CurrentInputMouseEvent.Value.Y;
 
-			// glfwGetCursorPos(p_input->Window->Window, &p_input->InputMouse.ScreenPosition.x, &p_input->InputMouse.ScreenPosition.y);
+			std::cout << "X" << p_input->InputMouse.ScreenPosition.x << "  Y  " << p_input->InputMouse.ScreenPosition.y << std::endl;
+
 			_MathV2::VectorM::min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 
 			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
@@ -122,23 +124,6 @@ namespace _GameEngine::_Input
 		p_input->InputEventsLastFrame.push(*p_event);
 	};
 
-	/*
-	void OnKeyEvent(GLFWwindow* p_window, int key, int scancode, int action, int mods)
-	{
-		InputEvent l_inputEvent{};
-		l_inputEvent.KeyCode = key;
-		l_inputEvent.Action = action;
-		InputInstance->InputEventsLastFrame.push(l_inputEvent);
-	};
-
-	void OnMouseEvent(GLFWwindow* window, int button, int action, int mods)
-	{
-		InputEvent l_inputEvent{};
-		l_inputEvent.KeyCode = button;
-		l_inputEvent.Action = action;
-		InputInstance->InputEventsLastFrame.push(l_inputEvent);
-	};
-	*/
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag)
 	{
