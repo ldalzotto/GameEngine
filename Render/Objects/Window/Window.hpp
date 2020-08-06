@@ -15,6 +15,9 @@ namespace _RenderV2
 	{
 		HWND Window;
 	};
+
+	template <int C, typename T>
+	struct Texture;
 }
 #endif
 
@@ -29,6 +32,7 @@ namespace _RenderV2
 	struct WindowState
 	{
 		bool AskedForClosed;
+		Texture<3, char>* PendingPresentingTexture;
 	};
 
 	struct Window
@@ -49,4 +53,5 @@ namespace _RenderV2
 	bool Window_askedForClose(Window* p_window);
 
 	WindowSize Window_getSize(Window* p_window);
+	void Window_presentTexture(Window* p_window, Texture<3, char>* p_texture);
 }

@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <stdexcept>
 
+#include "Objects/Texture/TextureM.hpp"
+
 #include "Log/LogFormatting.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 
@@ -13,6 +15,7 @@ namespace _RenderV2
 	void windowHookToGlobalEvents(Window* p_window);
 	void windowPlatforwSpecific_open(Window* p_window);
 	void windowPlatforwSpecific_close(Window* p_window);
+	void windowPlatformSpecific_paintTexture(Window* p_window);
 
 	const uint32_t WINDOW_WIDTH = 800;
 	const uint32_t WINDOW_HEIGHT = 600;
@@ -90,6 +93,11 @@ namespace _RenderV2
 			}
 		}
 		break;
+		case _Core::AppEventType::WINDOW_PAINT:
+		{
+			windowPlatformSpecific_paintTexture(p_window);
+		}
+		break;
 		}
 	}
 
@@ -97,6 +105,15 @@ namespace _RenderV2
 	{
 		_Core::CallbackT<Window, _Core::AppEvent_Header> l_appGlobalEvetnCallback = { window_onGlobalEvent, p_window };
 		_Core::ObserverT_register(&_Core::EventDispatcher, (_Core::CallbackT<void, _Core::AppEvent_Header>*) & l_appGlobalEvetnCallback);
+	};
+
+	void Window_presentTexture(Window* p_window, Texture<3, char>* p_texture)
+	{
+		p_window->WindowState.PendingPresentingTexture = p_texture;
+
+		InvalidateRect(p_window->Handle.Window, NULL, TRUE);
+		SendMessage(p_window->Handle.Window, WM_PAINT, NULL, NULL);
+		// windowPlatformSpecific_presentTexture(p_window);
 	};
 
 } // namespace _GameEngine
@@ -116,6 +133,81 @@ namespace _RenderV2
 	void windowPlatforwSpecific_close(Window* p_window)
 	{
 		DestroyWindow(p_window->Handle.Window);
+	};
+
+	void windowPlatformSpecific_paintTexture(Window* p_window)
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(p_window->Handle.Window, &ps);
+
+		if (p_window->WindowState.PendingPresentingTexture)
+		{
+			Texture<3, char>* l_presentTexture = p_window->WindowState.PendingPresentingTexture;
+			//	p_window->WindowState.PendingPresentingTexture = false;
+
+			HDC l_map_hdc = CreateCompatibleDC(hdc);
+			HBITMAP l_map = CreateCompatibleBitmap(hdc, l_presentTexture->Width, l_presentTexture->Height);
+			SelectObject(l_map_hdc, l_map);
+
+
+			{
+				BITMAP structBitmapHeader;
+				memset(&structBitmapHeader, 0, sizeof(BITMAP));
+				HGDIOBJ hBitmap = GetCurrentObject(hdc, OBJ_BITMAP);
+				GetObject(hBitmap, sizeof(BITMAP), &structBitmapHeader);
+			}
+
+			//Set bitmap header
+			{
+				BITMAPINFOHEADER bmih;
+				bmih.biSize = sizeof(BITMAPINFOHEADER);
+				bmih.biBitCount = 8 * (3 * sizeof(char));
+				bmih.biClrImportant = 0;
+				bmih.biClrUsed = 0;
+				bmih.biCompression = BI_RGB;
+				bmih.biHeight = -l_presentTexture->Height;
+				bmih.biWidth = l_presentTexture->Width;
+				bmih.biPlanes = 1;
+				bmih.biSizeImage = TextureM::getSizeInBytes(l_presentTexture);
+				bmih.biXPelsPerMeter = 0;
+				bmih.biYPelsPerMeter = 0;
+
+				BITMAPINFO bmpInfo;
+				bmpInfo.bmiHeader = bmih;
+				bmpInfo.bmiHeader.biSize = sizeof(bmpInfo.bmiHeader);
+
+				// SetDIBitsToDevice(l_map_hdc, )
+
+				if (!SetDIBits(l_map_hdc,
+					l_map,
+					0,
+					l_presentTexture->Height,
+					l_presentTexture->Pixels.Memory,
+					&bmpInfo,
+					DIB_RGB_COLORS))
+				{
+					throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("windowPlatformSpecific_paintTexture : cannot set blit texture !"));
+				};
+			}
+
+
+			{
+				if (!BitBlt(hdc, 0, 0, l_presentTexture->Width, l_presentTexture->Height, l_map_hdc, 0, 0, SRCCOPY))
+				{
+					throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE("windowPlatformSpecific_paintTexture : cannot blit texture !"));
+				};
+			}
+
+
+
+			DeleteDC(l_map_hdc);
+			DeleteObject(l_map);
+			ReleaseDC(p_window->Handle.Window, hdc);
+		}
+
+		EndPaint(p_window->Handle.Window, &ps);
+
+
 	};
 }
 

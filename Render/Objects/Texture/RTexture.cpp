@@ -5,7 +5,7 @@
 
 namespace _RenderV2
 {
-	void RTexture_fill(char* p_texture, const float* p_color, const size_t p_elementSize, const size_t p_pixelCount)
+	void RTexture_fill(char* p_texture, const void* p_color, const size_t p_elementSize, const size_t p_pixelCount)
 	{
 		for (size_t i = 0; i < p_pixelCount; i++)
 		{

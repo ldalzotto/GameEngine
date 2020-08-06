@@ -76,13 +76,23 @@ namespace _Core
 		}
 		case WM_SIZE:
 		{
-			INT l_width =  LOWORD(lParam);
+			INT l_width = LOWORD(lParam);
 			INT l_height = HIWORD(lParam);
 
 			WindowResizeEvent l_windowResizeEvent{ {AppEventType::WINDOW_RESIZE}, hwnd, l_width, l_height };
 			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowResizeEvent);
 			return 0;
 		}
+		//TODO remove when renderV2 is ok
+#if RENDER_V2
+		case WM_PAINT:
+		{
+			AppEvent_Header l_paintEvent;
+			l_paintEvent.EventType = AppEventType::WINDOW_PAINT;
+			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_paintEvent);
+			return 0;
+		}
+#endif // RENDER_V2
 		case WM_KEYDOWN:
 		{
 			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, wParam , InputKeyEventType::DOWN };
@@ -122,7 +132,7 @@ namespace _Core
 		}
 
 		return 0;
-	//	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+		//	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	};
 
 	void Window_handleGenericEventHook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

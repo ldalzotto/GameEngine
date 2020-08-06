@@ -8,6 +8,7 @@ namespace _Core
 	{
 		WINDOW_CLOSE,
 		WINDOW_RESIZE,
+		WINDOW_PAINT,
 		INPUT_KEY_EVENT,
 		INPUT_MOUSE_EVENT
 	};

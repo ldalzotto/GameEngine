@@ -28,6 +28,12 @@ namespace _RenderV2
 		};
 
 		template <int N, typename T>
+		inline static size_t getElementSize()
+		{
+			return N * sizeof(T);
+		};
+
+		template <int N, typename T>
 		inline static void fill(Texture<N, T>* p_texture, const _MathV2::Vector<N, T>* p_color)
 		{
 			RTexture_fill((char*)p_texture->Pixels.Memory, (const T*)p_color, sizeof(T) * N, (size_t)p_texture->Width * p_texture->Height);

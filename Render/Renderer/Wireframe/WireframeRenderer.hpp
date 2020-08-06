@@ -37,5 +37,5 @@ namespace _RenderV2
 		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
 	};
 
-	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, float>* p_to);
+	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to);
 }

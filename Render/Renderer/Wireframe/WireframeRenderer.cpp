@@ -15,7 +15,7 @@ using namespace _MathV2;
 
 namespace _RenderV2
 {
-	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, float>* p_to)
+	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to)
 	{
 		_Core::ArrayT<Polygon<Vector2<int>>> l_clipSpacePolygons;
 		_Core::ArrayT_alloc(&l_clipSpacePolygons, p_input->Polygons->Size);
