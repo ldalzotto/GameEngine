@@ -16,6 +16,12 @@ namespace _MathV2
 
 namespace _RenderV2
 {
+	template <int C, typename T>
+	struct Texture;
+}
+
+namespace _RenderV2
+{
 
 	struct PolygonInput
 	{
@@ -30,5 +36,5 @@ namespace _RenderV2
 		_MathV2::Matrix<4, 4, float>* ProjectionMatrix;
 	};
 
-	void WirerameRenderer_render(WireframeRendererInput* p_input);
+	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, float>* p_to);
 }

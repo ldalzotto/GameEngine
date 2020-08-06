@@ -7,6 +7,8 @@
 
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
 #include "Objects/Mesh.hpp"
+#include "Objects/Texture/TextureM.hpp"
+
 using namespace _RenderV2;
 
 RenderV2 renderV2;
@@ -62,7 +64,16 @@ int main()
 	l_input.Polygons = &l_polygonInput;
 	l_input.ProjectionMatrix = &l_projectionMatrix; //TODO -> copy from other test
 	l_input.ViewMatrix = &l_viewMatrix; //TODO -> copy from other test
-	WirerameRenderer_render(&l_input);
 
+	Texture<3, float> l_renderTexture{};
+	l_renderTexture.Width = 800; l_renderTexture.Height = 600;
+	TextureM::allocPixels(&l_renderTexture);
+	_MathV2::Vector3<float> l_color = {1.0f, 1.0f, 1.0f};
+	TextureM::fill(&l_renderTexture, &l_color);
+
+
+	WirerameRenderer_render(&l_input, &l_renderTexture);
+
+	TextureM::freePixels(&l_renderTexture);
 	RenderV2_free(&renderV2);
 }
