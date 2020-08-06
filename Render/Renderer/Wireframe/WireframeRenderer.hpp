@@ -34,6 +34,7 @@ namespace _RenderV2
 		_Core::VectorT<PolygonInput>* Polygons;
 		_MathV2::Matrix<4, 4, float>* ViewMatrix;
 		_MathV2::Matrix<4, 4, float>* ProjectionMatrix;
+		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
 	};
 
 	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, float>* p_to);

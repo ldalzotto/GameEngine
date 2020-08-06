@@ -124,6 +124,14 @@ namespace _MathV2
 		memcpy((float*)((char*)p_out + (sizeof(float) * 6)), p_col3, sizeof(float) * 3);
 	};
 
+	void RMatrix_4x4_buildFromColumn(const float p_col1[4], const float p_col2[4], const float p_col3[4], const float p_col4[4], float p_out[4][4])
+	{
+		memcpy(p_out, p_col1, sizeof(float) * 4);
+		memcpy((float*)((char*)p_out + (sizeof(float) * 4)), p_col2, sizeof(float) * 4);
+		memcpy((float*)((char*)p_out + (sizeof(float) * 8)), p_col3, sizeof(float) * 4);
+		memcpy((float*)((char*)p_out + (sizeof(float) * 12)), p_col4, sizeof(float) * 4);
+	};
+
 	void RMatrix_mul_specification(
 		const float* p_left, const  short int p_left_columnNumber, const  short int p_left_lineNumber,
 		const float* p_right, const  short int p_right_columnNumber, const  short int p_right_lineNumber, float* p_out)

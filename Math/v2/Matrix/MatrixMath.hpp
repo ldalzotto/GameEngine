@@ -18,6 +18,14 @@ namespace _MathV2
 		};
 
 		template <typename T>
+		inline static Matrix<4, 4, T> build(const Vector4<T>* p_col1, const Vector4<T>* p_col2, const Vector4<T>* p_col3, const Vector4<T>* p_col4)
+		{
+			Matrix<4, 4, T> l_return;
+			RMatrix_4x4_buildFromColumn((T*)(p_col1), (T*)(p_col2), (T*)(p_col3), (T*)(p_col4), l_return.Points);
+			return l_return;
+		};
+
+		template <typename T>
 		inline static Vector3<T> right(const Matrix<3, 3, T>* p_mat)
 		{
 			return *(Vector3<T>*)(p_mat->Points[0]);
