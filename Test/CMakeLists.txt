@@ -18,10 +18,12 @@ target_link_libraries(EntitySelectionTest PUBLIC GameEngine)
 add_executable(MathTest "src/MathTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(MathTest PUBLIC GameEngine)
 target_link_libraries(MathTest PUBLIC Math)
-target_link_libraries(MathTest PUBLIC glm)
 
 add_executable(CameraMatricesTest "src/CameraMatricesTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(CameraMatricesTest PUBLIC GameEngine)
-target_link_libraries(CameraMatricesTest PUBLIC glm)
+
+add_executable(MyRenderTest "src/MyRenderTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+target_link_libraries(MyRenderTest PUBLIC GameEngine)
+target_link_libraries(MyRenderTest PUBLIC MyRender)
 
 copy_assimp_dll(${PROJECT_BINARY_DIR}/${BUILD_TYPE}/Debug)
