@@ -52,6 +52,7 @@ namespace _Core
 		wc.lpfnWndProc = WindowProc;
 		wc.hInstance = GlobalAppParams.hInstance;
 		wc.lpszClassName = CLASS_NAME;
+		wc.hCursor = LoadCursor(GlobalAppParams.hInstance, IDC_ARROW);
 
 		RegisterClass(&wc);
 	};
