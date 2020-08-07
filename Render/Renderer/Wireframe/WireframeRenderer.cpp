@@ -10,6 +10,10 @@
 
 #include "Objects/Polygon.hpp"
 #include "Objects/Vertex.hpp"
+#include "Objects/Texture/TextureM.hpp"
+
+#include "Raster/Rasterizer.hpp"
+
 
 using namespace _MathV2;
 
@@ -17,7 +21,7 @@ namespace _RenderV2
 {
 	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to)
 	{
-		_Core::ArrayT<Polygon<Vector2<int>>> l_clipSpacePolygons;
+		_Core::ArrayT<Polygon<Vector2<float>>> l_clipSpacePolygons;
 		_Core::ArrayT_alloc(&l_clipSpacePolygons, p_input->Polygons->Size);
 		l_clipSpacePolygons.Size = l_clipSpacePolygons.Capacity;
 
@@ -28,7 +32,7 @@ namespace _RenderV2
 			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
 				Polygon<Vector4<float>> l_targetPolygon;
-				Polygon<Vector2<int>>* l_screenSpacePolygon = _Core::ArrayT_at(&l_clipSpacePolygons, l_polygonsIt.CurrentIndex);
+				Polygon<Vector2<float>>* l_screenSpacePolygon = _Core::ArrayT_at(&l_clipSpacePolygons, l_polygonsIt.CurrentIndex);
 
 				// Local to world
 				MatrixM::mul(l_polygonsIt.Current->ModelMatrix, &VectorM::cast(&l_polygonsIt.Current->Polygon->v1->LocalPosition, 1.0f), &tmp_vec4_0);
@@ -50,25 +54,42 @@ namespace _RenderV2
 				VectorM::mul(&l_targetPolygon.v3, 1 / l_targetPolygon.v3.w, &l_targetPolygon.v3);
 
 				// to screen pixel coord
-		
+
 				l_targetPolygon.v1.z = 1.0f; l_targetPolygon.v1.w = 1.0f;
-				MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v1, &tmp_vec4_0);
-				l_screenSpacePolygon->v1.x = nearbyintf(tmp_vec4_0.x); l_screenSpacePolygon->v1.y = nearbyintf(tmp_vec4_0.y);
+				l_screenSpacePolygon->v1 = *VectorM::cast2(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v1, &tmp_vec4_0));
 
 				l_targetPolygon.v2.z = 1.0f; l_targetPolygon.v2.w = 1.0f;
-				MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v2, &tmp_vec4_0);
-				l_screenSpacePolygon->v2.x = nearbyintf(tmp_vec4_0.x); l_screenSpacePolygon->v2.y = nearbyintf(tmp_vec4_0.y);
+				l_screenSpacePolygon->v2 = *VectorM::cast2(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v2, &tmp_vec4_0));
 
 				l_targetPolygon.v3.z = 1.0f; l_targetPolygon.v3.w = 1.0f;
-				MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v3, &tmp_vec4_0);
-				l_screenSpacePolygon->v3.x = nearbyintf(tmp_vec4_0.x); l_screenSpacePolygon->v3.y = nearbyintf(tmp_vec4_0.y);
-
+				l_screenSpacePolygon->v3 = *VectorM::cast2(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v3, &tmp_vec4_0));
 			}
 		}
 
+		_Core::VectorT<_MathV2::Vector2<int>> l_pixelsDrawn;
+		_Core::VectorT_alloc(&l_pixelsDrawn, 0);
+		//Rasterize clip space polygons
+		{
+			_Core::VectorIteratorT<Polygon<Vector2<float>>> l_clipSpacePolygon_it = _Core::ArrayT_buildIterator(&l_clipSpacePolygons);
+			while (_Core::VectorIteratorT_moveNext(&l_clipSpacePolygon_it))
+			{
+				Polygon<Vector2<float>>* l_clipSpacePolygon = l_clipSpacePolygon_it.Current;
+				Rasterizer::line(&l_clipSpacePolygon->v1, &l_clipSpacePolygon->v2, &l_pixelsDrawn);
+				Rasterizer::line(&l_clipSpacePolygon->v2, &l_clipSpacePolygon->v3, &l_pixelsDrawn);
+				Rasterizer::line(&l_clipSpacePolygon->v3, &l_clipSpacePolygon->v1, &l_pixelsDrawn);
+			}
+		}
 
+		//Draw to texture
+		{
+			_Core::VectorIteratorT<_MathV2::Vector2<int>> l_pixel_it = _Core::VectorT_buildIterator(&l_pixelsDrawn);
+			while (_Core::VectorIteratorT_moveNext(&l_pixel_it))
+			{
+				*TextureM::getPixel(p_to, l_pixel_it.Current->x, l_pixel_it.Current->y) = { (char)255,(char)255, (char)255 };
+			}
+		}
 
-
+		_Core::VectorT_free(&l_pixelsDrawn);
 		_Core::ArrayT_free(&l_clipSpacePolygons);
 	};
 }

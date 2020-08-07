@@ -9,6 +9,12 @@ namespace _MathV2
 	struct VectorM
 	{
 		template <typename T>
+		inline static Vector<2, T>* cast2(Vector<4, T>* p_vec)
+		{
+			return (Vector<2, T>*)p_vec;
+		};
+
+		template <typename T>
 		inline static Vector<3, T>* cast(Vector<4, T>* p_vec)
 		{
 			return (Vector<3, T>*)p_vec;

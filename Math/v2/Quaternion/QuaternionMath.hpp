@@ -98,7 +98,7 @@ namespace _MathV2
 		template <typename T>
 		inline static Matrix3x3<T>* extractAxis(const Quaternion<T>* p_quat, Matrix3x3<T>* p_out)
 		{
-			RQuaternion_extractAxis((T*)(p_quat), l_out->Points);
+			RQuaternion_extractAxis((T*)(p_quat), p_out->Points);
 			return p_out;
 		};
 	};

@@ -13,4 +13,5 @@ namespace _RenderV2
 			memcpy(l_pixel, p_color, p_elementSize);
 		}
 	};
+
 }

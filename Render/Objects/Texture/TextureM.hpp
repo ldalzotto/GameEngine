@@ -13,6 +13,7 @@ namespace _RenderV2
 		inline static void allocPixels(Texture<N, T>* p_texture)
 		{
 			_Core::ArrayT_alloc(&p_texture->Pixels, ((size_t)p_texture->Width * p_texture->Height));
+			p_texture->Pixels.Size = p_texture->Pixels.Capacity;
 		};
 
 		template <int N, typename T>
@@ -39,5 +40,10 @@ namespace _RenderV2
 			RTexture_fill((char*)p_texture->Pixels.Memory, (const T*)p_color, sizeof(T) * N, (size_t)p_texture->Width * p_texture->Height);
 		};
 
+		template <int N, typename T>
+		inline static _MathV2::Vector<N, T>* getPixel(Texture<N, T>* p_texture, int W, int H)
+		{
+			return _Core::ArrayT_at(&p_texture->Pixels, (H * p_texture->Width) + W);
+		};
 	};
 }
