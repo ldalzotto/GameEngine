@@ -20,20 +20,22 @@ namespace _RenderV2
 {
 	template <int C, typename T>
 	struct Texture;
+
+	struct Mesh;
 }
 
 namespace _RenderV2
 {
 
-	struct PolygonInput
+	struct RenderableObject
 	{
-		Polygon<Vertex*>* Polygon;
+		Mesh* Mesh;
 		_MathV2::Matrix<4, 4, float>* ModelMatrix;
 	};
 
 	struct WireframeRendererInput
 	{
-		_Core::VectorT<PolygonInput>* Polygons;
+		_Core::VectorT<RenderableObject>* RenderableObjects;
 		_MathV2::Matrix<4, 4, float>* ViewMatrix;
 		_MathV2::Matrix<4, 4, float>* ProjectionMatrix;
 		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;

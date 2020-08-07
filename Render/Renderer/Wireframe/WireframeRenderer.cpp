@@ -10,6 +10,7 @@
 
 #include "Objects/Polygon.hpp"
 #include "Objects/Vertex.hpp"
+#include "Objects/Mesh.hpp"
 #include "Objects/Texture/TextureM.hpp"
 
 #include "Raster/Rasterizer.hpp"
@@ -23,27 +24,49 @@ namespace _RenderV2
 	{
 		bool IsCulled;
 		Polygon<Vector4<float>> TransformedPolygon;
+		_MathV2::Matrix<4, 4, float>* ModelMatrix;
 	};
 
 	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to)
 	{
-		_Core::ArrayT<PolygonPipeline> l_transformedPolygons;
-		_Core::ArrayT_alloc(&l_transformedPolygons, p_input->Polygons->Size);
-		_Core::ArrayT_zeroing(&l_transformedPolygons);
-		l_transformedPolygons.Size = l_transformedPolygons.Capacity;
+		//TODO -> Object culling
+		_Core::VectorT<RenderableObject>* l_renderedObjects = p_input->RenderableObjects;
 
+		_Core::VectorT<PolygonPipeline> l_transformedPolygons;
+		_Core::VectorT_alloc(&l_transformedPolygons, 0);
+
+		// Creating polygon list
+		{
+			_Core::VectorIteratorT<RenderableObject> l_renderedObjects_it = _Core::VectorT_buildIterator(l_renderedObjects);
+			while (_Core::VectorIteratorT_moveNext(&l_renderedObjects_it))
+			{
+				_Core::VectorIteratorT<Polygon<Vertex*>> l_meshPolygons_it = _Core::ArrayT_buildIterator(&l_renderedObjects_it.Current->Mesh->Polygons);
+				while (_Core::VectorIteratorT_moveNext(&l_meshPolygons_it))
+				{
+					PolygonPipeline l_polygon{};
+					l_polygon.ModelMatrix = l_renderedObjects_it.Current->ModelMatrix;
+					l_polygon.TransformedPolygon = {
+						VectorM::cast(&l_meshPolygons_it.Current->v1->LocalPosition, 1.0f),
+						VectorM::cast(&l_meshPolygons_it.Current->v2->LocalPosition, 1.0f),
+						VectorM::cast(&l_meshPolygons_it.Current->v3->LocalPosition, 1.0f)
+					};
+					_Core::VectorT_pushBack(&l_transformedPolygons, &l_polygon);
+				}
+			}
+		}
+		
 		Vector4<float> tmp_vec4_0, tmp_vec4_1, tmp_vec4_2;
 
 		{
-			_Core::VectorIteratorT<PolygonInput> l_polygonsIt = _Core::VectorT_buildIterator(p_input->Polygons);
+			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
 			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
-				PolygonPipeline* l_pipelinePolygon = _Core::ArrayT_at(&l_transformedPolygons, l_polygonsIt.CurrentIndex);
+				PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
 
 				// Local to world
-				MatrixM::mul(l_polygonsIt.Current->ModelMatrix, &VectorM::cast(&l_polygonsIt.Current->Polygon->v1->LocalPosition, 1.0f), &tmp_vec4_0);
-				MatrixM::mul(l_polygonsIt.Current->ModelMatrix, &VectorM::cast(&l_polygonsIt.Current->Polygon->v2->LocalPosition, 1.0f), &tmp_vec4_1);
-				MatrixM::mul(l_polygonsIt.Current->ModelMatrix, &VectorM::cast(&l_polygonsIt.Current->Polygon->v3->LocalPosition, 1.0f), &tmp_vec4_2);
+				MatrixM::mul(l_pipelinePolygon->ModelMatrix, &l_pipelinePolygon->TransformedPolygon.v1, &tmp_vec4_0);
+				MatrixM::mul(l_pipelinePolygon->ModelMatrix, &l_pipelinePolygon->TransformedPolygon.v2, &tmp_vec4_1);
+				MatrixM::mul(l_pipelinePolygon->ModelMatrix, &l_pipelinePolygon->TransformedPolygon.v3, &tmp_vec4_2);
 
 				l_pipelinePolygon->TransformedPolygon.v1 = tmp_vec4_0;
 				l_pipelinePolygon->TransformedPolygon.v2 = tmp_vec4_1;
@@ -53,10 +76,10 @@ namespace _RenderV2
 
 		// Backface culling
 		{
-			_Core::VectorIteratorT<PolygonInput> l_polygonsIt = _Core::VectorT_buildIterator(p_input->Polygons);
+			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
 			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
-				PolygonPipeline* l_pipelinePolygon = _Core::ArrayT_at(&l_transformedPolygons, l_polygonsIt.CurrentIndex);
+				PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
 
 				Vector3<float> l_cameraToPolygon = *VectorM::cast(VectorM::min(&l_pipelinePolygon->TransformedPolygon.v1, p_input->CameraWorldPosition, &tmp_vec4_0));
 				Vector3<float> l_u = *VectorM::cast(VectorM::min(&l_pipelinePolygon->TransformedPolygon.v1, &l_pipelinePolygon->TransformedPolygon.v2, &tmp_vec4_0));
@@ -69,11 +92,11 @@ namespace _RenderV2
 		}
 
 		{
-			_Core::VectorIteratorT<PolygonInput> l_polygonsIt = _Core::VectorT_buildIterator(p_input->Polygons);
+			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
 			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
 				Polygon<Vector4<float>> l_targetPolygon;
-				PolygonPipeline* l_pipelinePolygon = _Core::ArrayT_at(&l_transformedPolygons, l_polygonsIt.CurrentIndex);
+				PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
 
 				if (!l_pipelinePolygon->IsCulled)
 				{
@@ -91,6 +114,8 @@ namespace _RenderV2
 					VectorM::mul(&l_targetPolygon.v2, 1 / l_targetPolygon.v2.w, &l_targetPolygon.v2);
 					VectorM::mul(&l_targetPolygon.v3, 1 / l_targetPolygon.v3.w, &l_targetPolygon.v3);
 
+					//TODO -> Near clipping ? (https://gamedev.stackexchange.com/questions/22295/how-should-i-handling-clipping-vertices-that-are-closer-to-the-eye-than-the-near)
+
 					// to screen pixel coord
 
 					l_targetPolygon.v1.z = 1.0f; l_targetPolygon.v1.w = 1.0f;
@@ -103,7 +128,7 @@ namespace _RenderV2
 					l_pipelinePolygon->TransformedPolygon.v3 = *(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v3, &tmp_vec4_0));
 				}
 
-			
+
 			}
 		}
 
@@ -111,18 +136,20 @@ namespace _RenderV2
 		_Core::VectorT_alloc(&l_pixelsDrawn, 0);
 		//Rasterize clip space polygons
 		{
-			_Core::VectorIteratorT<PolygonPipeline> l_clipSpacePolygon_it = _Core::ArrayT_buildIterator(&l_transformedPolygons);
-			while (_Core::VectorIteratorT_moveNext(&l_clipSpacePolygon_it))
+			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
+			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
-				PolygonPipeline* l_clipSpacePolygon = l_clipSpacePolygon_it.Current;
-				if (!l_clipSpacePolygon->IsCulled)
+				PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
+				if (!l_pipelinePolygon->IsCulled)
 				{
-					Rasterizer::line((Vector2<float>*) & l_clipSpacePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_clipSpacePolygon->TransformedPolygon.v2, &l_pixelsDrawn);
-					Rasterizer::line((Vector2<float>*) & l_clipSpacePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_clipSpacePolygon->TransformedPolygon.v3, &l_pixelsDrawn);
-					Rasterizer::line((Vector2<float>*) & l_clipSpacePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_clipSpacePolygon->TransformedPolygon.v1, &l_pixelsDrawn);
+					Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, &l_pixelsDrawn);
+					Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, &l_pixelsDrawn);
+					Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, &l_pixelsDrawn);
 				}
 			}
 		}
+
+		_Core::VectorT_free(&l_transformedPolygons);
 
 		//Draw to texture
 		{
@@ -137,6 +164,5 @@ namespace _RenderV2
 		}
 
 		_Core::VectorT_free(&l_pixelsDrawn);
-		_Core::ArrayT_free(&l_transformedPolygons);
 	};
 }
