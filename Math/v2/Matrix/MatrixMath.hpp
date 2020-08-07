@@ -130,7 +130,7 @@ namespace _MathV2
 		};
 
 		template <typename T>
-		inline static Vector4<T> getTranslation(Matrix4x4<T>* p_trs)
+		inline static Vector4<T> getTranslation(const Matrix4x4<T>* p_trs)
 		{
 			Vector4<T> l_return;
 			RMatrix_4x4_getTranslation(p_trs->Points, (T*)(&l_return));

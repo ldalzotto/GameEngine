@@ -70,7 +70,7 @@ int main()
 
 	_MathV2::Matrix<4, 4, float> l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
 	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, -1.0040f, -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
-
+	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	Texture<3, char> l_renderTexture{};
 	l_renderTexture.Width = 800; l_renderTexture.Height = 600;
 	TextureM::allocPixels(&l_renderTexture);
@@ -97,6 +97,7 @@ int main()
 		l_input.ProjectionMatrix = &l_projectionMatrix; //TODO -> copy from other test
 		l_input.ViewMatrix = &l_viewMatrix; //TODO -> copy from other tests
 		l_input.GraphicsAPIToScreeMatrix = &renderV2.AppWindow.GraphicsAPIToWindowPixelCoordinates;
+		l_input.CameraWorldPosition = &l_cameraWorldPosition;
 		WirerameRenderer_render(&l_input, &l_renderTexture);
 
 		Window_presentTexture(&renderV2.AppWindow, &l_renderTexture);

@@ -27,6 +27,12 @@ namespace _Core
 	}
 
 	template <typename ELEMENT_TYPE>
+	inline void ArrayT_zeroing(ArrayT<ELEMENT_TYPE>* p_array)
+	{
+		GenericArray_zeroing((GenericArray*)p_array);
+	}
+
+	template <typename ELEMENT_TYPE>
 	inline ELEMENT_TYPE* ArrayT_at(ArrayT<ELEMENT_TYPE>* p_array, size_t p_index)
 	{
 		return (ELEMENT_TYPE*) GenericArray_at((GenericArray*)p_array, p_index);

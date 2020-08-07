@@ -37,6 +37,11 @@ namespace _Core
 		p_genericArray->Size = 0;
 	};
 
+	void GenericArray_zeroing(GenericArray* p_genericArray)
+	{
+		memset(p_genericArray->Memory, 0, GenericArray_getTotalSize(p_genericArray));
+	};
+
 	void GenericArray_resize(GenericArray* p_genericArray, size_t p_newCapacity)
 	{
 		if (p_newCapacity > p_genericArray->Capacity)

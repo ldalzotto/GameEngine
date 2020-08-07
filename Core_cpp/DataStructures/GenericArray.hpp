@@ -21,6 +21,7 @@ namespace _Core
 
 	void GenericArray_alloc(GenericArray* p_genericArray, size_t p_elementSize, size_t p_initialCapacity);
 	void GenericArray_free(GenericArray* p_genericArray);
+	void GenericArray_zeroing(GenericArray* p_genericArray);
 
 	void GenericArray_resize(GenericArray* p_genericArray, size_t p_newCapacity);
 
