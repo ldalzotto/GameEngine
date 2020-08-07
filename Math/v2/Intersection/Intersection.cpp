@@ -1,9 +1,12 @@
 #include "Intersection.h"
 
+#include "Functional/Sort/ElementSorter.hpp"
+#include "v2/Math.h"
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Box/Box.hpp"
 #include "v2/Box/BoxMath.h"
 #include "v2/Segment/SegmentV2Math.hpp"
+#include "v2/Sphere/Sphere.hpp"
 
 namespace _MathV2
 {
@@ -100,6 +103,25 @@ namespace _MathV2
 		// Calculating the first intersection points
 		VectorM::add(VectorM::mul(SegmentM::toVector(p_ray, p_outIntersectionPoint), l_rayDistanceFraction_min, p_outIntersectionPoint), &p_ray->Begin, p_outIntersectionPoint);
 		return true;
+	};
+
+	bool Intersection_AABB_Sphere(const Box* p_AABB, const  Sphere* p_sphere)
+	{
+		// We get the nearest point on the box to the sphere center.
+		Vector3<float> l_nearestPoint;
+		(fabsf(p_sphere->Center.x - (p_AABB->Center.x + p_AABB->Extend.x)) >= fabsf(p_sphere->Center.x - (p_AABB->Center.x - p_AABB->Extend.x))) ? l_nearestPoint.x = p_AABB->Center.x - p_AABB->Extend.x : l_nearestPoint.x = p_AABB->Center.x + p_AABB->Extend.x;
+		(fabsf(p_sphere->Center.y - (p_AABB->Center.y + p_AABB->Extend.y)) >= fabsf(p_sphere->Center.y - (p_AABB->Center.y - p_AABB->Extend.y))) ? l_nearestPoint.y = p_AABB->Center.y - p_AABB->Extend.y : l_nearestPoint.y = p_AABB->Center.y + p_AABB->Extend.y;
+		(fabsf(p_sphere->Center.z - (p_AABB->Center.z + p_AABB->Extend.z)) >= fabsf(p_sphere->Center.z - (p_AABB->Center.z - p_AABB->Extend.z))) ? l_nearestPoint.z = p_AABB->Center.z - p_AABB->Extend.z : l_nearestPoint.z = p_AABB->Center.z + p_AABB->Extend.z;
+
+		return VectorM::distance(&l_nearestPoint, &p_sphere->Center) <= p_sphere->Radius * p_sphere->Radius;
+	};
+
+	bool Contains_AABB_Sphere(const Box* p_AABB, const  Sphere* p_sphere)
+	{
+		// If sphere center is in the box (the sphere may be entirely contained in the box)
+		return (_Core::SortCompare_float_float(p_sphere->Center.x, p_AABB->Center.x + p_AABB->Extend.x) <= 0 && _Core::SortCompare_float_float(p_sphere->Center.x, p_AABB->Center.x - p_AABB->Extend.x) >= 0
+			|| _Core::SortCompare_float_float(p_sphere->Center.y, p_AABB->Center.y + p_AABB->Extend.y) <= 0 && _Core::SortCompare_float_float(p_sphere->Center.y, p_AABB->Center.y - p_AABB->Extend.y) >= 0
+			|| _Core::SortCompare_float_float(p_sphere->Center.z, p_AABB->Center.z + p_AABB->Extend.z) <= 0 && _Core::SortCompare_float_float(p_sphere->Center.z, p_AABB->Center.z - p_AABB->Extend.z) >= 0);
 	};
 
 }

@@ -5,8 +5,12 @@
 #include "DataStructures/Specifications/ArrayT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 
+#include "v2/Box/Box.hpp"
+#include "v2/Sphere/Sphere.hpp"
+#include "v2/Segment/SegmentV2Math.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
+#include "v2/Intersection/Intersection.h"
 
 #include "Objects/Polygon.hpp"
 #include "Objects/Vertex.hpp"
@@ -29,8 +33,20 @@ namespace _RenderV2
 
 	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to)
 	{
-		//TODO -> Object culling
 		_Core::VectorT<RenderableObject>* l_renderedObjects = p_input->RenderableObjects;
+
+		Vector4<float> tmp_vec4_0, tmp_vec4_1, tmp_vec4_2;
+
+		//TODO -> Object culling
+		{
+			/*
+				We cannot exectue the object culling in homogeneous clip space, because a point cannot be outside of the unit cube.
+				What we have to do :
+					- Extract 6 planes from camera frustum.
+					- Project the model bounding box to camera space.
+					- Check if there is at least a min/max values around the main axis are inside.
+			*/
+		}
 
 		_Core::VectorT<PolygonPipeline> l_transformedPolygons;
 		_Core::VectorT_alloc(&l_transformedPolygons, 0);
@@ -54,8 +70,7 @@ namespace _RenderV2
 				}
 			}
 		}
-		
-		Vector4<float> tmp_vec4_0, tmp_vec4_1, tmp_vec4_2;
+
 
 		{
 			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);

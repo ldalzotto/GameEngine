@@ -14,6 +14,7 @@ namespace _MathV2
 	struct Matrix;
 	template <int C, typename T>
 	struct Vector;
+	struct Box;
 }
 
 namespace _RenderV2
@@ -30,6 +31,7 @@ namespace _RenderV2
 	struct RenderableObject
 	{
 		Mesh* Mesh;
+		_MathV2::Box* MeshBoundingBox;
 		_MathV2::Matrix<4, 4, float>* ModelMatrix;
 	};
 

@@ -23,6 +23,11 @@ namespace _Core
 	{
 		NUMERIC_SORT_COMPARE(p_left, p_right);
 	};
+
+	short int SortCompare_float_float(float p_left, float p_right)
+	{
+		NUMERIC_SORT_COMPARE(&p_left, &p_right);
+	};
 	
 	short int SortCompare_uint16_uint16(uint16_t* p_left, uint16_t* p_right)
 	{

@@ -8,6 +8,10 @@
 [X] - # Updating the ImGUI lib to not use glfw (see https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_win32.h).
 [X] - # Updating the InputSystem so that input event are triggered from the Windows window.
 
+-- Math --
+
+# Cleaning the usage of min/max with numerical comparison with tolerance.
+
 -- Camera --
 
 # Storing WorldToClip and ClipToWorld matrices ?

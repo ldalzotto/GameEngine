@@ -8,6 +8,7 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Quaternion/QuaternionMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
+#include "v2/Box/Box.hpp"
 
 #include "Clock/Clock.hpp"
 
@@ -60,10 +61,14 @@ int main()
 	_Core::ArrayT_pushBack(&l_cubeMesh.Polygons, { _Core::ArrayT_at(&l_cubeMesh.Vertices, 0), _Core::ArrayT_at(&l_cubeMesh.Vertices, 3), _Core::ArrayT_at(&l_cubeMesh.Vertices, 4) });
 	_Core::ArrayT_pushBack(&l_cubeMesh.Polygons, { _Core::ArrayT_at(&l_cubeMesh.Vertices, 1), _Core::ArrayT_at(&l_cubeMesh.Vertices, 0), _Core::ArrayT_at(&l_cubeMesh.Vertices, 7) });
 
+	_MathV2::Box l_meshBoundingBox = { {0.0f, 0.0f, 0.0f},{1.0f, 1.0f, 1.0f} };
+
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
+	// l_modelMatrix.Points[3][0] = 3000.0f; l_modelMatrix.Points[3][1] = 3000.0f; l_modelMatrix.Points[3][2] = 3000.0f;
 	_Core::VectorT<RenderableObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
-	_Core::VectorT_pushBack(&l_renderableObjects, RenderableObject{ &l_cubeMesh , &l_modelMatrix });
+	
+	_Core::VectorT_pushBack(&l_renderableObjects, RenderableObject{ &l_cubeMesh , &l_meshBoundingBox, &l_modelMatrix });
 
 	_MathV2::Matrix<4, 4, float> l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
 	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, -1.0040f, -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
