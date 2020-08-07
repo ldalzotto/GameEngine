@@ -82,11 +82,14 @@ namespace _RenderV2
 
 		//Draw to texture
 		{
-			_Core::VectorIteratorT<_MathV2::Vector2<int>> l_pixel_it = _Core::VectorT_buildIterator(&l_pixelsDrawn);
-			while (_Core::VectorIteratorT_moveNext(&l_pixel_it))
+			_Core::VectorT<_MathV2::Vector3<char>> p_drawnColors{};
+			_Core::VectorT_alloc(&p_drawnColors, l_pixelsDrawn.Size);
+			for (size_t i = 0; i < l_pixelsDrawn.Size; i++)
 			{
-				*TextureM::getPixel(p_to, l_pixel_it.Current->x, l_pixel_it.Current->y) = { (char)255,(char)255, (char)255 };
+				_Core::VectorT_pushBack(&p_drawnColors, { (char)255,(char)255, (char)255 });
 			}
+			TextureM::writePixels(p_to, &l_pixelsDrawn, &p_drawnColors);
+			_Core::VectorT_free(&p_drawnColors);
 		}
 
 		_Core::VectorT_free(&l_pixelsDrawn);

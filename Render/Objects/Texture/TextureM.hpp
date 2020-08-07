@@ -3,6 +3,7 @@
 #include "Texture.hpp"
 #include "RTexture.hpp"
 
+#include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/VectorMath.hpp"
 
 namespace _RenderV2
@@ -43,7 +44,14 @@ namespace _RenderV2
 		template <int N, typename T>
 		inline static _MathV2::Vector<N, T>* getPixel(Texture<N, T>* p_texture, int W, int H)
 		{
-			return _Core::ArrayT_at(&p_texture->Pixels, (H * p_texture->Width) + W);
+			return _Core::ArrayT_at(&p_texture->Pixels, ((size_t)H * p_texture->Width) + W);
+		};
+
+		template <int N, typename T>
+		inline static void writePixels(Texture<N, T>* p_texture, const _Core::VectorT<_MathV2::Vector<2, int>>* p_coordinates, const _Core::VectorT<_MathV2::Vector<N, T>>* p_colors)
+		{
+			RTexture l_texture = { (char*)p_texture->Pixels.Memory, p_texture->Width, p_texture->Height, getElementSize<N, T>() };
+			RTexture_drawPixels(&l_texture, (const RTexturePixelCoordinates*)p_coordinates->Memory, (const void*)p_colors->Memory, p_coordinates->Size);
 		};
 	};
 }
