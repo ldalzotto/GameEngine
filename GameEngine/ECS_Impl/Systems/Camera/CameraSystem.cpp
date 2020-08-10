@@ -92,7 +92,7 @@ namespace _GameEngine::_ECS
 
 				_MathV2::Vector3<float> l_worldPosition; _MathV2::TransformM::getWorldPosition(&l_transform->Transform, &l_worldPosition);
 				_MathV2::Vector3<float> l_target; _MathV2::VectorM::add(&l_worldPosition, _MathV2::TransformM::getForward(&l_transform->Transform, &l_target), &l_target);
-				_MathV2::Vector3<float> l_up; _MathV2::VectorM::mul(_MathV2::TransformM::getUp(&l_transform->Transform, &tmp_vec3_0), -1.0f, &l_up);
+				_MathV2::Vector3<float> l_up; _MathV2::VectorM::mul(_MathV2::TransformM::getUp(&l_transform->Transform, &tmp_vec3_0), -1.0f, &l_up);	
 
 				tmp_vec3_0 = { 1.0f, 1.0f, 1.0f };
 				_MathV2::MatrixM::inv(
