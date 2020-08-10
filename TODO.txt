@@ -1,12 +1,19 @@
 -- TODO --
 
--- Removing GLFW dependency --
+-- 3D Models --
 
-[X] - # Creating a window from Windows api (see https://github.com/ldalzotto/Window_RenderTexture_Test).
-[X] - # Updating the Window class to make it platform specific.
-[X] - # Updating the Render engine to make vulkan use the created window (see https://harrylovescode.gitbooks.io/vulkan-api/content/chap05/chap05-windows.html).
-[X] - # Updating the ImGUI lib to not use glfw (see https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_win32.h).
-[X] - # Updating the InputSystem so that input event are triggered from the Windows window.
+# Creating an .obj file importer that converts to the new mesh object
+
+-- RenderV2 --
+
+# Extracting (object culling)/(backface culling)/(rasterization alg)/(texture writing) to separate files with their on functions.
+
+# Ensuring that the Mouse coordinates are the same as the old engine.
+# Plugging the wireframe renderer to the old ECS system.
+	-> This leads to the removal of the Vulkan dependency.
+	-> Because the new render engine doesn't handle texture mapping yet, the assimp dependency is also removed.
+
+# Trygin to add openCL for parallel processing ?
 
 -- Math --
 
@@ -19,6 +26,15 @@
 -- Rendering --
 
 # Refactoring the fact that MaterialInstances allocate external resource immediately.
+
+
+
+
+
+
+
+
+
 
 ~~ LONG TERM OBJECTIVES ~~
 
@@ -47,6 +63,14 @@
 
 -- DONE --
 
+
+-- Removing GLFW dependency --
+
+[X] - # Creating a window from Windows api (see https://github.com/ldalzotto/Window_RenderTexture_Test).
+[X] - # Updating the Window class to make it platform specific.
+[X] - # Updating the Render engine to make vulkan use the created window (see https://harrylovescode.gitbooks.io/vulkan-api/content/chap05/chap05-windows.html).
+[X] - # Updating the ImGUI lib to not use glfw (see https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_win32.h).
+[X] - # Updating the InputSystem so that input event are triggered from the Windows window.
 
 -- Editor - Transform Gizmo --
 
