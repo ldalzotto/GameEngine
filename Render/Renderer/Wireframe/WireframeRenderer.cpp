@@ -19,11 +19,19 @@
 
 #include "Raster/Rasterizer.hpp"
 
+#include "v2/Frustum/FrustumMath.hpp"
+
 
 using namespace _MathV2;
 
 namespace _RenderV2
 {
+	struct RenderableObjectPipeline
+	{
+		bool IsCulled;
+		RenderableObject* RenderableObject;
+	};
+
 	struct PolygonPipeline
 	{
 		bool IsCulled;
@@ -37,39 +45,96 @@ namespace _RenderV2
 
 		Vector4<float> tmp_vec4_0, tmp_vec4_1, tmp_vec4_2;
 
-		//TODO -> Object culling
+		_Core::VectorT<RenderableObjectPipeline> l_renderedObjectsPipeline;
+		_Core::VectorT_alloc(&l_renderedObjectsPipeline, l_renderedObjects->Size);
 		{
-			/*
-				We cannot exectue the object culling in homogeneous clip space, because a point cannot be outside of the unit cube.
-				What we have to do :
-					- Extract 6 planes from camera frustum.
-					- Project the model bounding box to camera space.
-					- Check if there is at least a min/max values around the main axis are inside.
-			*/
+			{
+				_Core::VectorIteratorT<RenderableObject> l_renderedObjects_it = _Core::VectorT_buildIterator(l_renderedObjects);
+				while (_Core::VectorIteratorT_moveNext(&l_renderedObjects_it))
+				{
+					_Core::VectorT_pushBack(&l_renderedObjectsPipeline, { false, l_renderedObjects_it.Current });
+				}
+			}
+
+
+			//Object culling - Done by creating a bouding sphere from the world porjected mesh bounding box (max value of extend).
+			//the, projecting to camera space and checking if min/max for every axis are contained in the camera frustum
+			{
+				/*
+					We cannot exectue the object culling in homogeneous clip space, because a point cannot be outside of the unit cube.
+					What we have to do :
+						- Extract 6 planes from camera frustum.
+						- Project the model bounding box to camera space.
+						- Check if there is at least a min/max values around the main axis are inside.
+				*/
+
+				Frustum l_cameraFrustum = FrustumM::extractFrustumFromProjection(p_input->ProjectionMatrix);
+
+				_Core::VectorIteratorT<RenderableObjectPipeline> l_renderedObjectsPipeline_it = _Core::VectorT_buildIterator(&l_renderedObjectsPipeline);
+				while (_Core::VectorIteratorT_moveNext(&l_renderedObjectsPipeline_it))
+				{
+					Box* l_renderBoxBound_localSpace = l_renderedObjectsPipeline_it.Current->RenderableObject->MeshBoundingBox;
+					Sphere l_renderBox_asSphere_cameraSpace;
+
+					Matrix4x4<float> l_object_to_camera;
+					MatrixM::mul(p_input->ViewMatrix, l_renderedObjectsPipeline_it.Current->RenderableObject->ModelMatrix, &l_object_to_camera);
+
+					{
+						MatrixM::mul(&l_object_to_camera, &VectorM::cast(&l_renderBoxBound_localSpace->Center, 1.0f), &tmp_vec4_0);
+						l_renderBox_asSphere_cameraSpace.Center = *VectorM::cast(&tmp_vec4_0);
+						// l_renderBoxBound_cameraSpace.Center.z *= -1;
+					}
+
+					{
+						SegmentV2<4, float> l_box_extend_localSpace = { {0.0f, 0.0f, 0.0f, 1.0f}, VectorM::cast(&l_renderBoxBound_localSpace->Extend, 1.0f) };
+						SegmentV2<4, float> l_box_extend_worldSpace;
+						SegmentM::mul(&l_box_extend_localSpace, l_renderedObjectsPipeline_it.Current->RenderableObject->ModelMatrix, &l_box_extend_worldSpace);
+						l_renderBox_asSphere_cameraSpace.Radius = fmaxf(
+							fabsf(l_box_extend_worldSpace.End.x - l_box_extend_worldSpace.Begin.x),
+							fmaxf(
+								fabsf(l_box_extend_worldSpace.End.y - l_box_extend_worldSpace.Begin.y),
+								fabsf(l_box_extend_worldSpace.End.z - l_box_extend_worldSpace.Begin.z)
+							)
+						);
+					}
+
+					l_renderedObjectsPipeline_it.Current->IsCulled = !Intersection_Contains_Frustum_Sphere(&l_cameraFrustum, &l_renderBox_asSphere_cameraSpace);
+				}
+
+
+			}
+
+
 		}
+
 
 		_Core::VectorT<PolygonPipeline> l_transformedPolygons;
 		_Core::VectorT_alloc(&l_transformedPolygons, 0);
 
 		// Creating polygon list
 		{
-			_Core::VectorIteratorT<RenderableObject> l_renderedObjects_it = _Core::VectorT_buildIterator(l_renderedObjects);
+			_Core::VectorIteratorT<RenderableObjectPipeline> l_renderedObjects_it = _Core::VectorT_buildIterator(&l_renderedObjectsPipeline);
 			while (_Core::VectorIteratorT_moveNext(&l_renderedObjects_it))
 			{
-				_Core::VectorIteratorT<Polygon<Vertex*>> l_meshPolygons_it = _Core::ArrayT_buildIterator(&l_renderedObjects_it.Current->Mesh->Polygons);
-				while (_Core::VectorIteratorT_moveNext(&l_meshPolygons_it))
+				if (!l_renderedObjects_it.Current->IsCulled)
 				{
-					PolygonPipeline l_polygon{};
-					l_polygon.ModelMatrix = l_renderedObjects_it.Current->ModelMatrix;
-					l_polygon.TransformedPolygon = {
-						VectorM::cast(&l_meshPolygons_it.Current->v1->LocalPosition, 1.0f),
-						VectorM::cast(&l_meshPolygons_it.Current->v2->LocalPosition, 1.0f),
-						VectorM::cast(&l_meshPolygons_it.Current->v3->LocalPosition, 1.0f)
-					};
-					_Core::VectorT_pushBack(&l_transformedPolygons, &l_polygon);
+					_Core::VectorIteratorT<Polygon<Vertex*>> l_meshPolygons_it = _Core::ArrayT_buildIterator(&l_renderedObjects_it.Current->RenderableObject->Mesh->Polygons);
+					while (_Core::VectorIteratorT_moveNext(&l_meshPolygons_it))
+					{
+						PolygonPipeline l_polygon{};
+						l_polygon.ModelMatrix = l_renderedObjects_it.Current->RenderableObject->ModelMatrix;
+						l_polygon.TransformedPolygon = {
+							VectorM::cast(&l_meshPolygons_it.Current->v1->LocalPosition, 1.0f),
+							VectorM::cast(&l_meshPolygons_it.Current->v2->LocalPosition, 1.0f),
+							VectorM::cast(&l_meshPolygons_it.Current->v3->LocalPosition, 1.0f)
+						};
+						_Core::VectorT_pushBack(&l_transformedPolygons, &l_polygon);
+					}
 				}
 			}
 		}
+
+		_Core::VectorT_free(&l_renderedObjectsPipeline);
 
 
 		{

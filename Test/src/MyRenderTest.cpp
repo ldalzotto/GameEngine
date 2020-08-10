@@ -64,7 +64,7 @@ int main()
 	_MathV2::Box l_meshBoundingBox = { {0.0f, 0.0f, 0.0f},{1.0f, 1.0f, 1.0f} };
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	// l_modelMatrix.Points[3][0] = 3000.0f; l_modelMatrix.Points[3][1] = 3000.0f; l_modelMatrix.Points[3][2] = 3000.0f;
+	 // l_modelMatrix.Points[3][0] = 10.0f;
 	_Core::VectorT<RenderableObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
 	
@@ -85,13 +85,12 @@ int main()
 		LastFrameTime = _Core::Clock_currentTime_mics();
 
 		_Core::AppEvent_pool();
-
+		
 		_MathV2::Quaternion<float> tmp_quat_0; _MathV2::Matrix3x3<float> tmp_mat3x3_0; _MathV2::Matrix4x4<float> tmp_mat4x4_0;
 		_MathV2::Matrix4x4<float> l_rotation = _MathV2::Matrix4x4f_Identity;
 		_MathV2::MatrixM::buildRotationMatrix(_MathV2::QuaternionM::extractAxis(_MathV2::QuaternionM::rotateAround(&_MathV2::UP, 0.05f * l_deltaTime * 0.0001f, &tmp_quat_0), &tmp_mat3x3_0), &l_rotation);
 		_MathV2::MatrixM::mul(&l_modelMatrix, &l_rotation, &tmp_mat4x4_0);
 		l_modelMatrix = tmp_mat4x4_0;
-
 
 		_MathV2::Vector3<char> l_color = { 0, 0, 0 };
 		TextureM::fill(&l_renderTexture, &l_color);
