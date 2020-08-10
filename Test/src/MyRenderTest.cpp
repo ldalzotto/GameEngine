@@ -64,7 +64,7 @@ int main()
 	_MathV2::Box l_meshBoundingBox = { {0.0f, 0.0f, 0.0f},{1.0f, 1.0f, 1.0f} };
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	 // l_modelMatrix.Points[3][0] = 10.0f;
+	 l_modelMatrix.Points[3][0] = 9.0f;
 	_Core::VectorT<RenderableObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
 	

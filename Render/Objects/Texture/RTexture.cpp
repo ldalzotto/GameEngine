@@ -26,7 +26,7 @@ namespace _RenderV2
 		{
 			RTexturePixelCoordinates* l_pixelCoord = (RTexturePixelCoordinates*)(((char*)p_pixelCoordinates) + (i * sizeof(RTexturePixelCoordinates)));
 			//TODO -> this filter must be done before.
-			if (l_pixelCoord->X < p_texture->Width && l_pixelCoord->Y < p_texture->Height)
+			if (l_pixelCoord->X < p_texture->Width && l_pixelCoord->X >= 0 && l_pixelCoord->Y < p_texture->Height && l_pixelCoord->Y >= 0)
 			{
 				char* l_colorMemory = (char*)p_colors + (i * p_texture->ElementSize);
 				memcpy(RTexture_getPixel(p_texture, l_pixelCoord->X, l_pixelCoord->Y), l_colorMemory, p_texture->ElementSize);
