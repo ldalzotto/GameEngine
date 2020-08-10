@@ -16,9 +16,10 @@ namespace _RenderV2
 	void windowPlatforwSpecific_open(Window* p_window);
 	void windowPlatforwSpecific_close(Window* p_window);
 	void windowPlatformSpecific_paintTexture(Window* p_window);
+	void windowPlatforwSpecific_getClientRect(Window* p_windout, int* out_width, int* out_height);
 
-	const uint32_t WINDOW_WIDTH = 800;
-	const uint32_t WINDOW_HEIGHT = 600;
+	const uint32_t WINDOW_WIDTH = 1024;
+	const uint32_t WINDOW_HEIGHT = 768;
 
 	const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
@@ -68,6 +69,20 @@ namespace _RenderV2
 		return p_window->WindowSize;
 	};
 
+	bool Window_consumeSizeChangeEvent(Window* p_window)
+	{
+		if (p_window->WindowState.HasResizedThisFrame.HasValue)
+		{
+			windowPlatforwSpecific_getClientRect(p_window, (int*)&p_window->WindowSize.Width, (int*)&p_window->WindowSize.Height);
+			Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
+			_Core::ObserverT_broadcast(&p_window->OnWindowSizeChanged, (void*)nullptr);
+
+			p_window->WindowState.HasResizedThisFrame.HasValue = false;
+			return true;
+		}
+		return false;
+	};
+
 	void window_onGlobalEvent(Window* p_window, _Core::AppEvent_Header* p_eventHeader)
 	{
 		switch (p_eventHeader->EventType)
@@ -86,10 +101,8 @@ namespace _RenderV2
 			_Core::WindowResizeEvent* l_windowResizeEvent = (_Core::WindowResizeEvent*)p_eventHeader;
 			if (memcmp(&l_windowResizeEvent->Window, &p_window->Handle.Window, sizeof(WindowHandle)) == 0)
 			{
-				p_window->WindowSize.Width = l_windowResizeEvent->Width;
-				p_window->WindowSize.Height = l_windowResizeEvent->Height;
-				Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
-				_Core::ObserverT_broadcast(&p_window->OnWindowSizeChanged, (void*)nullptr);
+				p_window->WindowState.HasResizedThisFrame.HasValue = true;
+				p_window->WindowState.HasResizedThisFrame.Value = { (uint32_t)l_windowResizeEvent->Width , (uint32_t)l_windowResizeEvent->Height };
 			}
 		}
 		break;
@@ -113,7 +126,6 @@ namespace _RenderV2
 
 		InvalidateRect(p_window->Handle.Window, NULL, TRUE);
 		SendMessage(p_window->Handle.Window, WM_PAINT, NULL, NULL);
-		// windowPlatformSpecific_presentTexture(p_window);
 	};
 
 } // namespace _GameEngine
@@ -124,8 +136,18 @@ namespace _RenderV2
 {
 	void windowPlatforwSpecific_open(Window* p_window)
 	{
-		p_window->Handle.Window = CreateWindowEx(0, "GameEngine", "Learn to Program Windows", WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT, CW_USEDEFAULT, p_window->WindowSize.Width, p_window->WindowSize.Height,
+		DWORD l_windowStyle = WS_OVERLAPPEDWINDOW;
+
+		RECT l_clientRect = {};
+		l_clientRect.right = p_window->WindowSize.Width;
+		l_clientRect.bottom = p_window->WindowSize.Height;
+		AdjustWindowRect(&l_clientRect, l_windowStyle, false);;
+
+		int l_windowWidth = l_clientRect.right - l_clientRect.left;
+		int l_windowHeight = l_clientRect.bottom - l_clientRect.top;
+
+		p_window->Handle.Window = CreateWindowEx(0, "GameEngine", "Learn to Program Windows", l_windowStyle,
+			CW_USEDEFAULT, CW_USEDEFAULT, l_windowWidth, l_windowHeight,
 			NULL, NULL, _Core::GlobalAppParams.hInstance, NULL);
 		ShowWindow(p_window->Handle.Window, SW_SHOW);
 	};
@@ -148,7 +170,6 @@ namespace _RenderV2
 			HDC l_map_hdc = CreateCompatibleDC(hdc);
 			HBITMAP l_map = CreateCompatibleBitmap(hdc, l_presentTexture->Width, l_presentTexture->Height);
 			SelectObject(l_map_hdc, l_map);
-
 
 			{
 				BITMAP structBitmapHeader;
@@ -208,6 +229,15 @@ namespace _RenderV2
 		EndPaint(p_window->Handle.Window, &ps);
 
 
+	};
+
+	void windowPlatforwSpecific_getClientRect(Window* p_windout, int* out_width, int* out_height)
+	{
+		RECT l_clientRect;
+		GetClientRect(p_windout->Handle.Window, &l_clientRect);
+
+		*out_width = l_clientRect.right - l_clientRect.left;
+		*out_height = l_clientRect.bottom - l_clientRect.top;
 	};
 }
 

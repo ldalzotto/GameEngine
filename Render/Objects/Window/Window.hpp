@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Functional/Callback/ObserverT.hpp"
+#include "Functional/Optional/OptionalT.hpp"
 
 #include "v2/Matrix/Matrix.hpp"
 
@@ -32,8 +33,12 @@ namespace _RenderV2
 	struct WindowState
 	{
 		bool AskedForClosed;
+		_Core::OptionalT<WindowSize> HasResizedThisFrame;
 		Texture<3, char>* PendingPresentingTexture;
 	};
+
+	extern const uint32_t WINDOW_WIDTH;
+	extern const uint32_t WINDOW_HEIGHT;
 
 	struct Window
 	{
@@ -51,6 +56,7 @@ namespace _RenderV2
 	void Window_init(Window* p_window);
 	void Window_closeWindow(Window* p_window);
 	bool Window_askedForClose(Window* p_window);
+	bool Window_consumeSizeChangeEvent(Window* p_window);
 
 	WindowSize Window_getSize(Window* p_window);
 	void Window_presentTexture(Window* p_window, Texture<3, char>* p_texture);

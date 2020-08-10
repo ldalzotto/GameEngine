@@ -1,6 +1,7 @@
 #include "RenderV2.hpp"
 
 #include <cstdlib>
+#include <stdlib.h> 
 
 #include "AppEvent/AppEvent.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
@@ -14,7 +15,6 @@
 
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
 #include "Objects/Mesh.hpp"
-#include "Objects/Texture/TextureM.hpp"
 
 using namespace _RenderV2;
 
@@ -74,10 +74,7 @@ int main()
 	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, (1.0f / 1.0040f), -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
 
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
-	Texture<3, char> l_renderTexture{};
-	l_renderTexture.Width = 800; l_renderTexture.Height = 600;
-	TextureM::allocPixels(&l_renderTexture);
-
+	
 	while (!_RenderV2::Window_askedForClose(&renderV2.AppWindow))
 	{
 		float l_deltaTime = _Core::Clock_currentTime_mics() - LastFrameTime;
@@ -91,9 +88,6 @@ int main()
 		_MathV2::MatrixM::mul(&l_modelMatrix, &l_rotation, &tmp_mat4x4_0);
 		l_modelMatrix = tmp_mat4x4_0;
 
-		_MathV2::Vector3<char> l_color = { 255, 255, 255 };
-		TextureM::fill(&l_renderTexture, &l_color);
-
 		WireframeRendererInput l_input{};
 		l_input.RendererConfiguration.ObjectCullEnabled = true;
 		l_input.RenderableObjects = &l_renderableObjects;
@@ -101,12 +95,10 @@ int main()
 		l_input.ViewMatrix = &l_viewMatrix;
 		l_input.GraphicsAPIToScreeMatrix = &renderV2.AppWindow.GraphicsAPIToWindowPixelCoordinates;
 		l_input.CameraWorldPosition = &l_cameraWorldPosition;
-		WirerameRenderer_render(&l_input, &l_renderTexture);
 
-		Window_presentTexture(&renderV2.AppWindow, &l_renderTexture);
+		RenderV2_render(&renderV2, &l_input);
 	}
 
-	TextureM::freePixels(&l_renderTexture);
 	RenderV2_free(&renderV2);
 
 	_Core::AppEvent_free();
