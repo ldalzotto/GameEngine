@@ -216,17 +216,32 @@ namespace _RenderV2
 		_Core::VectorT_alloc(&l_pixelsDrawn, 0);
 		//Rasterize clip space polygons
 		{
-			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
-			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
+			_Core::VectorT<Vector2<int>> l_pixelDrawnCoordsBuffer;
+			_Core::VectorT_alloc(&l_pixelDrawnCoordsBuffer, 0);
 			{
-				PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
-				if (!l_pipelinePolygon->IsCulled)
+				_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
+				while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 				{
-					Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, &l_pixelsDrawn);
-					Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, &l_pixelsDrawn);
-					Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, &l_pixelsDrawn);
+					PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
+					if (!l_pipelinePolygon->IsCulled)
+					{
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, &l_pixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, &l_pixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, &l_pixelDrawnCoordsBuffer);
+					}
+
+					_Core::VectorIteratorT<Vector2<int>> l_rasteriedPixel_it = _Core::VectorT_buildIterator(&l_pixelDrawnCoordsBuffer);
+					while (_Core::VectorIteratorT_moveNext(&l_rasteriedPixel_it))
+					{
+						if (l_rasteriedPixel_it.Current->x >= 0 && l_rasteriedPixel_it.Current->x < p_to->Width && l_rasteriedPixel_it.Current->y >= 0 && l_rasteriedPixel_it.Current->y < p_to->Height)
+						{
+							_Core::VectorT_pushBack(&l_pixelsDrawn, l_rasteriedPixel_it.Current);
+						}
+					}
+					_Core::VectorT_clear(&l_pixelDrawnCoordsBuffer);
 				}
 			}
+			_Core::VectorT_free(&l_pixelDrawnCoordsBuffer);
 		}
 
 		_Core::VectorT_free(&l_transformedPolygons);
