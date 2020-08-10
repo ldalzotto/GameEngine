@@ -35,13 +35,19 @@ namespace _RenderV2
 		_MathV2::Matrix<4, 4, float>* ModelMatrix;
 	};
 
+	struct RendererConfiguration
+	{
+		bool ObjectCullEnabled;
+	};
+
 	struct WireframeRendererInput
 	{
+		RendererConfiguration RendererConfiguration;
 		_Core::VectorT<RenderableObject>* RenderableObjects;
 		_MathV2::Matrix<4, 4, float>* ViewMatrix;
 		_MathV2::Matrix<4, 4, float>* ProjectionMatrix;
 		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
-		_MathV2::Vector<4, float>* CameraWorldPosition;
+		_MathV2::Vector<4, float>* CameraWorldPosition;	
 	};
 
 	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to);
