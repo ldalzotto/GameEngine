@@ -256,7 +256,6 @@ namespace _MathV2
 		p_out[1][2] = 0.0f;
 		p_out[1][3] = 0.0f;
 
-#if !RENDER_V2
 		p_out[2][0] = 0.0f;
 		p_out[2][1] = 0.0f;
 		p_out[2][2] = -(p_far + p_near) / (p_far - p_near);
@@ -266,17 +265,6 @@ namespace _MathV2
 		p_out[3][1] = 0.0f;
 		p_out[3][2] = (-2.0f * p_far * p_near) / (p_far - p_near);
 		p_out[3][3] = 0.0f;
-#else
-		p_out[2][0] = 0.0f;
-		p_out[2][1] = 0.0f;
-		p_out[2][2] = (p_far - p_near) / (p_far + p_near) ;
-		p_out[2][3] = 1.0f;
-
-		p_out[3][0] = 0.0f;
-		p_out[3][1] = 0.0f;
-		p_out[3][2] = (-2.0f * p_far * p_near) / (p_far - p_near);
-		p_out[3][3] = 0.0f;
-#endif
 	};
 
 	void RMatrix_3x3_lookAt_rotation(const float p_origin[3], const float p_target[3], const float p_up[3], float out_rotationMatrix[3][3])
@@ -286,9 +274,8 @@ namespace _MathV2
 		{
 			RVector_min_specification(p_target, p_origin, l_forward, 3);
 			RVector_normalize_specialization(l_forward, 3, l_forward);
-#if !RENDER_V2
+			//TODO - WARNING : this is true only for view matrices (camera).
 			RVector_3_mul(l_forward, -1.0f, l_forward);
-#endif
 		}
 		float l_right[3];
 		{
