@@ -110,6 +110,10 @@ namespace _GameEngine::_Input
 
 			p_input->InputMouse.CurrentInputMouseEvent.HasValue = false;
 		}
+		else
+		{
+			p_input->InputMouse.MouseDelta = { 0.0, 0.0 };
+		}
 
 	};
 

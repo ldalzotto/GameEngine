@@ -8,7 +8,8 @@
 
 # Extracting (object culling)/(backface culling)/(rasterization alg)/(texture writing) to separate files with their on functions.
 
-# Ensuring that the Mouse coordinates are the same as the old engine.
+[X] # Ensuring that the Mouse coordinates are the same as the old engine.
+
 # Plugging the wireframe renderer to the old ECS system.
 	-> This leads to the removal of the Vulkan dependency.
 	-> Because the new render engine doesn't handle texture mapping yet, the assimp dependency is also removed.
