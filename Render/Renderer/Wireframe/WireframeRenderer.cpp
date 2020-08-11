@@ -21,39 +21,27 @@
 
 #include "v2/Frustum/FrustumMath.hpp"
 
-
 using namespace _MathV2;
 
 namespace _RenderV2
 {
-	struct RenderableObjectPipeline
-	{
-		bool IsCulled;
-		RenderableObject* RenderableObject;
-	};
 
-	struct PolygonPipeline
+	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderMemory* p_memory)
 	{
-		bool IsCulled;
-		Polygon<Vector4<float>> TransformedPolygon;
-		_MathV2::Matrix<4, 4, float>* ModelMatrix;
-	};
 
-	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to)
-	{
+		WireframeRenderMemory_clear(p_memory);
+
 		_Core::VectorT<RenderableObject>* l_renderedObjects = p_input->RenderableObjects;
 
 		Vector4<float> tmp_vec4_0, tmp_vec4_1, tmp_vec4_2;
 
-		_Core::VectorT<RenderableObjectPipeline> l_renderedObjectsPipeline;
-		_Core::VectorT_alloc(&l_renderedObjectsPipeline, l_renderedObjects->Size);
 		{
 			{
 				_Core::VectorIteratorT<RenderableObject> l_renderedObjects_it = _Core::VectorT_buildIterator(l_renderedObjects);
 				while (_Core::VectorIteratorT_moveNext(&l_renderedObjects_it))
 				{
 					RenderableObjectPipeline l_renderableObjectPieline = { false, l_renderedObjects_it.Current };
-					_Core::VectorT_pushBack(&l_renderedObjectsPipeline, &l_renderableObjectPieline);
+					_Core::VectorT_pushBack(&p_memory->RenderableObjectsPipeline, &l_renderableObjectPieline);
 				}
 			}
 
@@ -72,7 +60,7 @@ namespace _RenderV2
 
 					Frustum l_cameraFrustum = FrustumM::extractFrustumFromProjection(p_input->ProjectionMatrix);
 
-					_Core::VectorIteratorT<RenderableObjectPipeline> l_renderedObjectsPipeline_it = _Core::VectorT_buildIterator(&l_renderedObjectsPipeline);
+					_Core::VectorIteratorT<RenderableObjectPipeline> l_renderedObjectsPipeline_it = _Core::VectorT_buildIterator(&p_memory->RenderableObjectsPipeline);
 					while (_Core::VectorIteratorT_moveNext(&l_renderedObjectsPipeline_it))
 					{
 						Box* l_renderBoxBound_localSpace = l_renderedObjectsPipeline_it.Current->RenderableObject->MeshBoundingBox;
@@ -101,13 +89,9 @@ namespace _RenderV2
 			}
 		}
 
-
-		_Core::VectorT<PolygonPipeline> l_transformedPolygons;
-		_Core::VectorT_alloc(&l_transformedPolygons, 0);
-
 		// Creating polygon list
 		{
-			_Core::VectorIteratorT<RenderableObjectPipeline> l_renderedObjects_it = _Core::VectorT_buildIterator(&l_renderedObjectsPipeline);
+			_Core::VectorIteratorT<RenderableObjectPipeline> l_renderedObjects_it = _Core::VectorT_buildIterator(&p_memory->RenderableObjectsPipeline);
 			while (_Core::VectorIteratorT_moveNext(&l_renderedObjects_it))
 			{
 				if (!l_renderedObjects_it.Current->IsCulled)
@@ -122,17 +106,15 @@ namespace _RenderV2
 							VectorM::cast(&l_meshPolygons_it.Current->v2->LocalPosition, 1.0f),
 							VectorM::cast(&l_meshPolygons_it.Current->v3->LocalPosition, 1.0f)
 						};
-						_Core::VectorT_pushBack(&l_transformedPolygons, &l_polygon);
+						_Core::VectorT_pushBack(&p_memory->PolygonPipeline, &l_polygon);
 					}
 				}
 			}
 		}
 
-		_Core::VectorT_free(&l_renderedObjectsPipeline);
-
 
 		{
-			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
+			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&p_memory->PolygonPipeline);
 			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
 				PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
@@ -150,7 +132,7 @@ namespace _RenderV2
 
 		// Backface culling
 		{
-			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
+			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&p_memory->PolygonPipeline);
 			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
 				PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
@@ -166,7 +148,7 @@ namespace _RenderV2
 		}
 
 		{
-			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
+			_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&p_memory->PolygonPipeline);
 			while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 			{
 				Polygon<Vector4<float>> l_targetPolygon;
@@ -201,58 +183,74 @@ namespace _RenderV2
 					l_targetPolygon.v3.z = 1.0f; l_targetPolygon.v3.w = 1.0f;
 					l_pipelinePolygon->TransformedPolygon.v3 = *(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v3, &tmp_vec4_0));
 				}
-
-
 			}
 		}
 
-		_Core::VectorT<_MathV2::Vector2<int>> l_pixelsDrawn;
-		_Core::VectorT_alloc(&l_pixelsDrawn, 0);
 		//Rasterize clip space polygons
 		{
-			_Core::VectorT<Vector2<int>> l_pixelDrawnCoordsBuffer;
-			_Core::VectorT_alloc(&l_pixelDrawnCoordsBuffer, 0);
 			{
-				_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&l_transformedPolygons);
+				_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&p_memory->PolygonPipeline);
 				while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 				{
 					PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
 					if (!l_pipelinePolygon->IsCulled)
 					{
-						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, &l_pixelDrawnCoordsBuffer);
-						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, &l_pixelDrawnCoordsBuffer);
-						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, &l_pixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, &p_memory->PixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, &p_memory->PixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, &p_memory->PixelDrawnCoordsBuffer);
 					}
 
-					_Core::VectorIteratorT<Vector2<int>> l_rasteriedPixel_it = _Core::VectorT_buildIterator(&l_pixelDrawnCoordsBuffer);
+					_Core::VectorIteratorT<Vector2<int>> l_rasteriedPixel_it = _Core::VectorT_buildIterator(&p_memory->PixelDrawnCoordsBuffer);
 					while (_Core::VectorIteratorT_moveNext(&l_rasteriedPixel_it))
 					{
 						if (l_rasteriedPixel_it.Current->x >= 0 && l_rasteriedPixel_it.Current->x < p_to->Width && l_rasteriedPixel_it.Current->y >= 0 && l_rasteriedPixel_it.Current->y < p_to->Height)
 						{
-							_Core::VectorT_pushBack(&l_pixelsDrawn, l_rasteriedPixel_it.Current);
+							_Core::VectorT_pushBack(&p_memory->PixelsDrawn, l_rasteriedPixel_it.Current);
 						}
 					}
-					_Core::VectorT_clear(&l_pixelDrawnCoordsBuffer);
+					_Core::VectorT_clear(&p_memory->PixelDrawnCoordsBuffer);
 				}
 			}
-			_Core::VectorT_free(&l_pixelDrawnCoordsBuffer);
 		}
-
-		_Core::VectorT_free(&l_transformedPolygons);
 
 		//Draw to texture
 		{
-			_Core::VectorT<_MathV2::Vector3<char>> p_drawnColors{};
-			_Core::VectorT_alloc(&p_drawnColors, l_pixelsDrawn.Size);
-			for (size_t i = 0; i < l_pixelsDrawn.Size; i++)
+			//TODO -> We can index data by pixel ?
+			for (size_t i = 0; i < p_memory->PixelsDrawn.Size; i++)
 			{
 				_MathV2::Vector3<char> l_color = { 0, 0, 0 };
-				_Core::VectorT_pushBack(&p_drawnColors, &l_color);
+				_Core::VectorT_pushBack(&p_memory->PixelsDrawnColors, &l_color);
 			}
-			TextureM::writePixels(p_to, &l_pixelsDrawn, &p_drawnColors);
-			_Core::VectorT_free(&p_drawnColors);
+			TextureM::writePixels(p_to, &p_memory->PixelsDrawn, &p_memory->PixelsDrawnColors);
 		}
 
-		_Core::VectorT_free(&l_pixelsDrawn);
+	};
+
+
+	void WireframeRenderMemory_alloc(WireframeRenderMemory* p_memory)
+	{
+		_Core::VectorT_alloc(&p_memory->RenderableObjectsPipeline, 0);
+		_Core::VectorT_alloc(&p_memory->PolygonPipeline, 0);
+		_Core::VectorT_alloc(&p_memory->PixelDrawnCoordsBuffer, 0);
+		_Core::VectorT_alloc(&p_memory->PixelsDrawn, 0);
+		_Core::VectorT_alloc(&p_memory->PixelsDrawnColors, 0);
+	};
+	
+	void WireframeRenderMemory_clear(WireframeRenderMemory* p_memory)
+	{
+		_Core::VectorT_clear(&p_memory->RenderableObjectsPipeline);
+		_Core::VectorT_clear(&p_memory->PolygonPipeline);
+		_Core::VectorT_clear(&p_memory->PixelDrawnCoordsBuffer);
+		_Core::VectorT_clear(&p_memory->PixelsDrawn);
+		_Core::VectorT_clear(&p_memory->PixelsDrawnColors);
+	};
+	
+	void WireframeRenderMemory_free(WireframeRenderMemory* p_memory)
+	{
+		_Core::VectorT_free(&p_memory->RenderableObjectsPipeline);
+		_Core::VectorT_free(&p_memory->PolygonPipeline);
+		_Core::VectorT_free(&p_memory->PixelDrawnCoordsBuffer);
+		_Core::VectorT_free(&p_memory->PixelsDrawn);
+		_Core::VectorT_free(&p_memory->PixelsDrawnColors);
 	};
 }

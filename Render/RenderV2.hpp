@@ -2,6 +2,7 @@
 
 #include "Objects/Window/Window.hpp"
 #include "Objects/Texture/Texture.hpp"
+#include "Renderer/Wireframe/WireframeRenderer.hpp"
 
 namespace _RenderV2
 {
@@ -14,6 +15,7 @@ namespace _RenderV2
 	{
 		Window AppWindow;
 		Texture<3, char> PresentTexture;
+		WireframeRenderMemory WireframeRenderMemory;
 	};
 
 	void RenderV2_initialize(RenderV2* p_render);

@@ -82,6 +82,7 @@ int main()
 		l_input.GraphicsAPIToScreeMatrix = &renderV2.AppWindow.GraphicsAPIToWindowPixelCoordinates;
 		l_input.CameraWorldPosition = &l_cameraWorldPosition;
 
+		// OPTICK_EVENT();
 		RenderV2_render(&renderV2, &l_input);
 	}
 

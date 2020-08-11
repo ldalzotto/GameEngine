@@ -9,6 +9,7 @@ namespace _RenderV2
 	void RenderV2_initialize(RenderV2* p_render)
 	{
 		Window_init(&p_render->AppWindow);
+		WireframeRenderMemory_alloc(&p_render->WireframeRenderMemory);
 	}
 
 	void RenderV2_render(RenderV2* p_render, WireframeRendererInput* p_wireframeRenderInput)
@@ -29,12 +30,13 @@ namespace _RenderV2
 			TextureM::fill(&p_render->PresentTexture, &l_color);
 		}
 
-		WirerameRenderer_render(p_wireframeRenderInput, &p_render->PresentTexture);
+		WirerameRenderer_render(p_wireframeRenderInput, &p_render->PresentTexture, &p_render->WireframeRenderMemory);
 		Window_presentTexture(&p_render->AppWindow, &p_render->PresentTexture);
 	};
 
 	void RenderV2_free(RenderV2* p_render)
 	{
 		TextureM::freePixels(&p_render->PresentTexture);
+		WireframeRenderMemory_free(&p_render->WireframeRenderMemory);
 	}
 }

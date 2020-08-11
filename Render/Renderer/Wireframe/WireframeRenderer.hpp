@@ -1,19 +1,13 @@
 #pragma once
 
 #include "Objects/Polygon.hpp"
-
-namespace _Core
-{
-	template <typename T>
-	struct VectorT;
-}
+#include "v2/Vector/Vector.hpp"
+#include "DataStructures/Specifications/VectorT.hpp"
 
 namespace _MathV2
 {
 	template <int C, int L, typename T>
 	struct Matrix;
-	template <int C, typename T>
-	struct Vector;
 	struct Box;
 }
 
@@ -27,6 +21,7 @@ namespace _RenderV2
 
 namespace _RenderV2
 {
+
 
 	struct RenderableObject
 	{
@@ -50,5 +45,34 @@ namespace _RenderV2
 		_MathV2::Vector<4, float>* CameraWorldPosition;	
 	};
 
-	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to);
+
+	struct RenderableObjectPipeline
+	{
+		bool IsCulled;
+		RenderableObject* RenderableObject;
+	};
+
+	struct PolygonPipeline
+	{
+		bool IsCulled;
+		Polygon<_MathV2::Vector<4, float>> TransformedPolygon;
+		_MathV2::Matrix<4, 4, float>* ModelMatrix;
+	};
+
+
+	struct WireframeRenderMemory
+	{
+		_Core::VectorT<RenderableObjectPipeline> RenderableObjectsPipeline;
+		_Core::VectorT<PolygonPipeline> PolygonPipeline;
+
+		_Core::VectorT<_MathV2::Vector2<int>> PixelDrawnCoordsBuffer;
+		_Core::VectorT<_MathV2::Vector2<int>> PixelsDrawn;
+		_Core::VectorT<_MathV2::Vector3<char>> PixelsDrawnColors;
+	};
+
+	void WireframeRenderMemory_alloc(WireframeRenderMemory* p_memory);
+	void WireframeRenderMemory_clear(WireframeRenderMemory* p_memory);
+	void WireframeRenderMemory_free (WireframeRenderMemory* p_memory);
+
+	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderMemory* p_memory);
 }
