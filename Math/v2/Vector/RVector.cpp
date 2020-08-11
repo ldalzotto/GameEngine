@@ -40,6 +40,13 @@ namespace _MathV2
 		}
 	};
 
+	template <typename T>
+	inline float RVector_distance(const T* p_start, const T* p_end, const short int p_size, T* tmp_vec)
+	{
+		RVector_min(p_start, p_end, tmp_vec, p_size);
+		return RVector_length(tmp_vec, p_size);
+	};
+
 	/**/
 
 	const float RIGHT_arr[3] = { 1.0f, 0.0f, 0.0f };
@@ -88,8 +95,14 @@ namespace _MathV2
 		p_out[2] = p_left[2] + p_right[2];
 	};
 
+	void RVector_min_specification(const int* p_left, const int* p_right, int* p_out, short p_size) { RVector_min<int>(p_left, p_right, p_out, p_size); };
 	void RVector_min_specification(const float* p_left, const float* p_right, float* p_out, short p_size) { RVector_min<float>(p_left, p_right, p_out, p_size); };
 	void RVector_min_specification(const double* p_left, const double* p_right, double* p_out, short p_size) { RVector_min<double>(p_left, p_right, p_out, p_size); };
+
+	void RVector_2_mul(const float p_left[2], const float p_right, float p_out[2])
+	{
+		RVector_mul(p_left, 2, p_right, p_out);
+	};
 
 	void RVector_3_mul(const float p_left[3], const float p_right, float p_out[3])
 	{
@@ -114,15 +127,12 @@ namespace _MathV2
 		// RVector_mul(p_vec, 3, RVector_3_dot(p_vec, p_vec), p_out);
 	};
 
+	float RVector_length_specialization(const int* p_vec, short int p_size) { return RVector_length<int>(p_vec, p_size); }
 	float RVector_length_specialization(const float* p_vec, short int p_size) { return RVector_length<float>(p_vec, p_size); }
 	double RVector_length_specialization(const double* p_vec, short int p_size) { return RVector_length<double>(p_vec, p_size); }
 
-	float RVector_3_distance(const float p_start[3], const float p_end[3])
-	{
-		float l_vector[3];
-		RVector_min(p_end, p_start, l_vector, 3);
-		return RVector_length(l_vector, 3);
-	};
+	float RVector_distance_specialization(const float* p_start, const float* p_end, const short int p_size, float* tmp_vec) { return RVector_distance<float>(p_start, p_end, p_size, tmp_vec); };
+	float RVector_distance_specialization(const int* p_start, const int* p_end, const short int p_size, int* tmp_vec) { return RVector_distance<int>(p_start, p_end, p_size, tmp_vec); };
 
 	void RVector_normalize_specialization(const float* p_vec, short int p_size, float* p_out) { Rvector_normalize(p_vec, p_size, p_out); };
 

@@ -107,10 +107,12 @@ namespace _Core
 
 	void* GenericArray_pushBack_noRealloc(GenericArray* p_genericArray, void* p_value)
 	{
+#ifndef NDEBUG
 		if (p_genericArray->Size >= p_genericArray->Capacity)
 		{
 			throw std::runtime_error("Core_GenericArray_pushBack_noRealloc : impossible to push back. array is already full.");
 		}
+#endif
 
 		return GenericArray_pushBack_realloc(p_genericArray, p_value);
 	};
@@ -132,10 +134,12 @@ namespace _Core
 		l_comparator.UserObject = p_insertGuard->UserObject;
 		l_comparator.ComparedObject = p_value;
 
+#ifndef NDEBUG
 		if (Compare_contains(&l_it, &l_comparator))
 		{
 			throw std::runtime_error("GenericArray_pushBack_realloc_guarded : cannot insert an element that is already present.");
 		}
+#endif
 		GenericArray_pushBack_realloc(p_genericArray, p_value);
 	};
 
@@ -149,10 +153,12 @@ namespace _Core
 			l_comparator.UserObject = p_insertGuard->UserObject;
 			l_comparator.ComparedObject = p_value;
 
+#ifndef NDEBUG
 			if (Compare_contains(&l_it, &l_comparator))
 			{
 				throw std::runtime_error("GenericArray_pushBack_realloc_guarded : cannot insert an element that is already present.");
 			}
+#endif
 		}
 
 		VectorIterator l_it;
@@ -164,8 +170,10 @@ namespace _Core
 
 	void GenericArray_swap(GenericArray* p_genericArray, size_t p_left, size_t p_right)
 	{
+#ifndef NDEBUG
 		if (p_left >= p_genericArray->Size || p_right >= p_genericArray->Size) { throw std::runtime_error("Core_GenericArray_swap : out_of_range"); }
 		if (p_left > p_right) { throw std::runtime_error("Core_GenericArray_swap : invalid indices."); }
+#endif
 		if (p_left == p_right) { return; }
 
 		char* l_leftMemoryTarget = (char*)p_genericArray->Memory + GenericArray_getElementOffset(p_genericArray, p_left);
@@ -181,10 +189,12 @@ namespace _Core
 
 	void GenericArray_erase(GenericArray* p_genericArray, size_t p_index)
 	{
+#ifndef NDEBUG
 		if (p_index >= p_genericArray->Size)
 		{
 			throw std::runtime_error("Core_GenericArray_erase : Erase out of range.");
 		}
+#endif
 
 		// If we are not erasing the last element, then we move memory. Else, we have nothing to do.
 		if (p_index + 1 != p_genericArray->Size)
@@ -213,10 +223,12 @@ namespace _Core
 
 	void GenericArray_isertAt_realloc(GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index)
 	{
+#ifndef NDEBUG
 		if (p_index > p_genericArray->Size)
 		{
 			throw std::runtime_error("Core_GenericArray_isertAt_realloc : out of range");
 		}
+#endif
 
 		if (p_genericArray->Size + p_elementNb > p_genericArray->Capacity)
 		{
@@ -239,20 +251,24 @@ namespace _Core
 
 	void GenericArray_isertAt_noRealloc(GenericArray* p_genericArray, void* p_value, size_t p_elementNb, size_t p_index)
 	{
+#ifndef NDEBUG
 		if ((p_genericArray->Size + p_elementNb) >= p_genericArray->Capacity)
 		{
 			throw std::runtime_error("Core_GenericArray_isertAt_neRealloc : inserted array is too large !");
 		}
+#endif
 
 		return GenericArray_isertAt_realloc(p_genericArray, p_value, p_elementNb, p_index);
 	};
 
 	void GenericArray_isertArrayAt_realloc(GenericArray* p_genericArray, GenericArray* p_insertedArray, size_t p_index)
 	{
+#ifndef NDEBUG
 		if (p_index > p_genericArray->Size)
 		{
 			throw std::runtime_error("GenericArray_isertArrayAt_realloc : out of range");
 		}
+#endif
 
 		if (p_genericArray->Size + p_insertedArray->Size > p_genericArray->Capacity)
 		{

@@ -161,6 +161,10 @@ namespace _RenderV2
 					MatrixM::mul(p_input->ViewMatrix, &l_pipelinePolygon->TransformedPolygon.v2, &tmp_vec4_1);
 					MatrixM::mul(p_input->ViewMatrix, &l_pipelinePolygon->TransformedPolygon.v3, &tmp_vec4_2);
 
+					l_pipelinePolygon->CameraSpacePolygon.v1 = tmp_vec4_0;
+					l_pipelinePolygon->CameraSpacePolygon.v2 = tmp_vec4_1;
+					l_pipelinePolygon->CameraSpacePolygon.v3 = tmp_vec4_2;
+					
 					// camera to clip
 					MatrixM::mul(p_input->ProjectionMatrix, &tmp_vec4_0, &l_targetPolygon.v1);
 					MatrixM::mul(p_input->ProjectionMatrix, &tmp_vec4_1, &l_targetPolygon.v2);
@@ -174,14 +178,20 @@ namespace _RenderV2
 
 					// to screen pixel coord
 
+					float l_screenDepth = l_targetPolygon.v1.z;
 					l_targetPolygon.v1.z = 1.0f; l_targetPolygon.v1.w = 1.0f;
 					l_pipelinePolygon->TransformedPolygon.v1 = *(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v1, &tmp_vec4_0));
+					l_pipelinePolygon->TransformedPolygon.v1.z = l_screenDepth;
 
+					l_screenDepth = l_targetPolygon.v2.z;
 					l_targetPolygon.v2.z = 1.0f; l_targetPolygon.v2.w = 1.0f;
 					l_pipelinePolygon->TransformedPolygon.v2 = *(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v2, &tmp_vec4_0));
+					l_pipelinePolygon->TransformedPolygon.v2.z = l_screenDepth;
 
+					l_screenDepth = l_targetPolygon.v3.z;
 					l_targetPolygon.v3.z = 1.0f; l_targetPolygon.v3.w = 1.0f;
 					l_pipelinePolygon->TransformedPolygon.v3 = *(MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_targetPolygon.v3, &tmp_vec4_0));
+					l_pipelinePolygon->TransformedPolygon.v3.z = l_screenDepth;
 				}
 			}
 		}
@@ -192,18 +202,24 @@ namespace _RenderV2
 				_Core::VectorIteratorT<PolygonPipeline> l_polygonsIt = _Core::VectorT_buildIterator(&p_memory->PolygonPipeline);
 				while (_Core::VectorIteratorT_moveNext(&l_polygonsIt))
 				{
+					//TODO -> Interpolation can be done after clipping to avoid interpolating non visible pixels
+					//Rasterization and interpolation calculation must be dissociated
 					PolygonPipeline* l_pipelinePolygon = l_polygonsIt.Current;
 					if (!l_pipelinePolygon->IsCulled)
 					{
-						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, &p_memory->PixelDrawnCoordsBuffer);
-						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, &p_memory->PixelDrawnCoordsBuffer);
-						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, &p_memory->PixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, 
+							&l_pipelinePolygon->CameraSpacePolygon.v1, &l_pipelinePolygon->CameraSpacePolygon.v2, true, &p_memory->PixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v2, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, 
+							&l_pipelinePolygon->CameraSpacePolygon.v2, &l_pipelinePolygon->CameraSpacePolygon.v3, true, &p_memory->PixelDrawnCoordsBuffer);
+						Rasterizer::line((Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v3, (Vector2<float>*) & l_pipelinePolygon->TransformedPolygon.v1,
+							&l_pipelinePolygon->CameraSpacePolygon.v3, &l_pipelinePolygon->CameraSpacePolygon.v1, true, &p_memory->PixelDrawnCoordsBuffer);
 					}
 
-					_Core::VectorIteratorT<Vector2<int>> l_rasteriedPixel_it = _Core::VectorT_buildIterator(&p_memory->PixelDrawnCoordsBuffer);
+					_Core::VectorIteratorT<LineRasterizationResult> l_rasteriedPixel_it = _Core::VectorT_buildIterator(&p_memory->PixelDrawnCoordsBuffer);
 					while (_Core::VectorIteratorT_moveNext(&l_rasteriedPixel_it))
 					{
-						if (l_rasteriedPixel_it.Current->x >= 0 && l_rasteriedPixel_it.Current->x < p_to->Width && l_rasteriedPixel_it.Current->y >= 0 && l_rasteriedPixel_it.Current->y < p_to->Height)
+						if (l_rasteriedPixel_it.Current->PixelCoord.x >= 0 && l_rasteriedPixel_it.Current->PixelCoord.x < p_to->Width
+							&& l_rasteriedPixel_it.Current->PixelCoord.y >= 0 && l_rasteriedPixel_it.Current->PixelCoord.y < p_to->Height)
 						{
 							_Core::VectorT_pushBack(&p_memory->PixelsDrawn, l_rasteriedPixel_it.Current);
 						}
@@ -218,10 +234,11 @@ namespace _RenderV2
 			//TODO -> We can index data by pixel ?
 			for (size_t i = 0; i < p_memory->PixelsDrawn.Size; i++)
 			{
-				_MathV2::Vector3<char> l_color = { 0, 0, 0 };
-				_Core::VectorT_pushBack(&p_memory->PixelsDrawnColors, &l_color);
+				LineRasterizationResult* l_rasterization = _Core::VectorT_at(&p_memory->PixelsDrawn, i);
+				_MathV2::Vector3<char> l_color = { (char)(l_rasterization->L1 * 255.0f), (char)(l_rasterization->L1 * 255.0f), (char)(l_rasterization->L1 * 255.0f) };
+				TextureM::writePixel(p_to, &l_rasterization->PixelCoord, &l_color);
 			}
-			TextureM::writePixels(p_to, &p_memory->PixelsDrawn, &p_memory->PixelsDrawnColors);
+		//	TextureM::writePixels(p_to, &p_memory->PixelsDrawn, &p_memory->PixelsDrawnColors);
 		}
 
 	};
@@ -233,7 +250,6 @@ namespace _RenderV2
 		_Core::VectorT_alloc(&p_memory->PolygonPipeline, 0);
 		_Core::VectorT_alloc(&p_memory->PixelDrawnCoordsBuffer, 0);
 		_Core::VectorT_alloc(&p_memory->PixelsDrawn, 0);
-		_Core::VectorT_alloc(&p_memory->PixelsDrawnColors, 0);
 	};
 	
 	void WireframeRenderMemory_clear(WireframeRenderMemory* p_memory)
@@ -242,7 +258,6 @@ namespace _RenderV2
 		_Core::VectorT_clear(&p_memory->PolygonPipeline);
 		_Core::VectorT_clear(&p_memory->PixelDrawnCoordsBuffer);
 		_Core::VectorT_clear(&p_memory->PixelsDrawn);
-		_Core::VectorT_clear(&p_memory->PixelsDrawnColors);
 	};
 	
 	void WireframeRenderMemory_free(WireframeRenderMemory* p_memory)
@@ -251,6 +266,5 @@ namespace _RenderV2
 		_Core::VectorT_free(&p_memory->PolygonPipeline);
 		_Core::VectorT_free(&p_memory->PixelDrawnCoordsBuffer);
 		_Core::VectorT_free(&p_memory->PixelsDrawn);
-		_Core::VectorT_free(&p_memory->PixelsDrawnColors);
 	};
 }

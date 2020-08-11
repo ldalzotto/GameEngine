@@ -15,6 +15,7 @@ namespace _MathV2
 	void RVector_min_specification(const float* p_left, const float* p_right, float* p_out, short p_size);
 	void RVector_min_specification(const double* p_left, const double* p_right, double* p_out, short p_size);
 
+	void RVector_2_mul(const float p_left[2], const float p_right, float p_out[2]);
 	void RVector_3_mul(const float p_left[3], const float p_right, float p_out[3]);
 	void RVector_3_mul(const float p_left[3], const float p_right[3], float p_out[3]);
 	void RVector_4_mul(const float p_left[4], const float p_right, float p_out[4]);
@@ -24,7 +25,8 @@ namespace _MathV2
 	float RVector_length_specialization(const float* p_vec, short int p_size);
 	double RVector_length_specialization(const double* p_vec, short int p_size);
 	
-	float RVector_3_distance(const float p_start[3], const float p_end[3]);
+	float RVector_distance_specialization(const float* p_start, const float* p_end, const short int p_size, float* tmp_vec);
+	float RVector_distance_specialization(const int* p_start, const int* p_end, const short int p_size, int* tmp_vec);
 
 	void RVector_normalize_specialization(const float* p_vec, short int p_size, float* p_out);
 

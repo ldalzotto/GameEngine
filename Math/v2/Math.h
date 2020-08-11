@@ -13,5 +13,5 @@ namespace _MathV2
 	double Math_min(double left, double right);
 
 	template<typename T>
-	T Math_sqrt(T p_value);
+	float Math_sqrt(T p_value);
 }

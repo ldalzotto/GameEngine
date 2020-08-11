@@ -1,5 +1,8 @@
 Blibliography :
 
+Rendering.
+ Rasterizer perspective interpolation : https://onedrive.live.com/?cid=6F26DBE7677BCEC4&id=6F26DBE7677BCEC4%21723&parId=6F26DBE7677BCEC4%21720&o=OneUp
+
 Quaternion.
   https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/
 

@@ -21,4 +21,5 @@ namespace _RenderV2
 
 	void RTexture_fill(char* p_texture, const void* p_color, const size_t p_elementSize, const size_t p_pixelCount);
 	void RTexture_drawPixels(const RTexture* p_texture, const RTexturePixelCoordinates* p_pixelCoordinates, const void* p_colors, const size_t p_pixelNumbers);
+	void RTexture_drawPixel(const RTexture* p_texture, const RTexturePixelCoordinates* p_pixelCoordinate, const void* p_color);
 }

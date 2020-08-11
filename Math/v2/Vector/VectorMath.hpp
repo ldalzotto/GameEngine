@@ -8,6 +8,11 @@ namespace _MathV2
 {
 	struct VectorM
 	{
+		inline static Vector<2, float> cast_if(const Vector<2, int>* p_vec)
+		{
+			return Vector<2, float>{(float)p_vec->x, (float)p_vec->y};
+		}
+
 		template <typename T>
 		inline static Vector<2, T>* cast2(Vector<4, T>* p_vec)
 		{
@@ -42,10 +47,11 @@ namespace _MathV2
 		{
 			return RVector_length_specialization((T*)(p_vec), 3);
 		};
-		template <typename T>
-		inline static float distance(const Vector<3, T>* p_start, const Vector<3, T>* p_end)
+		template <typename T, int N>
+		inline static float distance(const Vector<N, T>* p_start, const Vector<N, T>* p_end)
 		{
-			return RVector_3_distance((T*)(p_start), (T*)(p_end));
+			Vector<N, T> tmp_vec;
+			return RVector_distance_specialization((T*)p_start, (T*)p_end, N, (T*)&tmp_vec);
 		};
 		template <typename T, int N>
 		inline static Vector<N, T>* normalize(const Vector<N, T>* p_vec, Vector<N, T>* p_out)
@@ -63,6 +69,12 @@ namespace _MathV2
 		inline static Vector<N, T>* min(const Vector<N, T>* p_left, const Vector<N, T>* p_right, Vector<N, T>* p_out)
 		{
 			RVector_min_specification((const T*)(p_left), (const T*)(p_right), (T*)p_out, N);
+			return p_out;
+		};
+		template <typename T>
+		inline static Vector<2, T>* mul(const Vector<2, T>* p_left, const T p_right, Vector<2, T>* p_out)
+		{
+			RVector_2_mul((T*)(p_left), p_right, (T*)(p_out));
 			return p_out;
 		};
 		template <typename T>

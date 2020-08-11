@@ -53,5 +53,12 @@ namespace _RenderV2
 			RTexture l_texture = { (char*)p_texture->Pixels.Memory, p_texture->Width, p_texture->Height, getElementSize<N, T>() };
 			RTexture_drawPixels(&l_texture, (const RTexturePixelCoordinates*)p_coordinates->Memory, (const void*)p_colors->Memory, p_coordinates->Size);
 		};
+
+		template <int N, typename T>
+		inline static void writePixel(Texture<N, T>* p_texture, const _MathV2::Vector<2, int>* p_coordinate, const _MathV2::Vector<N, T>* p_color)
+		{
+			RTexture l_texture = { (char*)p_texture->Pixels.Memory, p_texture->Width, p_texture->Height, getElementSize<N, T>() };
+			RTexture_drawPixel(&l_texture, (const RTexturePixelCoordinates*)p_coordinate, (const void*)p_color);
+		};
 	};
 }

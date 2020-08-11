@@ -35,5 +35,8 @@ namespace _MathV2
 	float Math_sqrt<float>(float p_value) { return sqrtf(p_value); };
 
 	template<>
-	double Math_sqrt<double>(double p_value) { return sqrt(p_value); };
+	float Math_sqrt<double>(double p_value) { return sqrt(p_value); };
+
+	template<>
+	float Math_sqrt<int>(int p_value) { return sqrt(p_value); };
 }

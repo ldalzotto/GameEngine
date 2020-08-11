@@ -36,7 +36,7 @@ int main()
 
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	l_modelMatrix.Points[3][0] = 0.0f;
+	l_modelMatrix.Points[3][0] = 7.0f; l_modelMatrix.Points[3][1] = 7.0f; l_modelMatrix.Points[3][2] = 7.0f;
 	_Core::VectorT<RenderableObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
 
@@ -82,7 +82,6 @@ int main()
 		l_input.GraphicsAPIToScreeMatrix = &renderV2.AppWindow.GraphicsAPIToWindowPixelCoordinates;
 		l_input.CameraWorldPosition = &l_cameraWorldPosition;
 
-		// OPTICK_EVENT();
 		RenderV2_render(&renderV2, &l_input);
 	}
 

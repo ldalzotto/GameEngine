@@ -30,4 +30,8 @@ namespace _RenderV2
 		}
 	};
 
+	void RTexture_drawPixel(const RTexture* p_texture, const RTexturePixelCoordinates* p_pixelCoordinate, const void* p_color)
+	{
+		memcpy(RTexture_getPixel(p_texture, p_pixelCoordinate->X, p_pixelCoordinate->Y), p_color, p_texture->ElementSize);
+	};
 }

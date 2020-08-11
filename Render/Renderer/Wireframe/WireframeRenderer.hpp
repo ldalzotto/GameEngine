@@ -17,6 +17,7 @@ namespace _RenderV2
 	struct Texture;
 
 	struct Mesh;
+	struct LineRasterizationResult;
 }
 
 namespace _RenderV2
@@ -55,6 +56,7 @@ namespace _RenderV2
 	struct PolygonPipeline
 	{
 		bool IsCulled;
+		Polygon<_MathV2::Vector<4, float>> CameraSpacePolygon;
 		Polygon<_MathV2::Vector<4, float>> TransformedPolygon;
 		_MathV2::Matrix<4, 4, float>* ModelMatrix;
 	};
@@ -65,9 +67,8 @@ namespace _RenderV2
 		_Core::VectorT<RenderableObjectPipeline> RenderableObjectsPipeline;
 		_Core::VectorT<PolygonPipeline> PolygonPipeline;
 
-		_Core::VectorT<_MathV2::Vector2<int>> PixelDrawnCoordsBuffer;
-		_Core::VectorT<_MathV2::Vector2<int>> PixelsDrawn;
-		_Core::VectorT<_MathV2::Vector3<char>> PixelsDrawnColors;
+		_Core::VectorT<LineRasterizationResult> PixelDrawnCoordsBuffer;
+		_Core::VectorT<LineRasterizationResult> PixelsDrawn;
 	};
 
 	void WireframeRenderMemory_alloc(WireframeRenderMemory* p_memory);
