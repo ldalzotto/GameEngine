@@ -110,7 +110,7 @@ namespace _GameEngine::_Render
 		}
 
 		Material_with_MaterialInstances* l_foundMaterialWithInstances = l_materialsFoundIterator.Current;
-		_Core::VectorT_pushBack(&l_materialsFoundIterator.Current->MaterialInstanceV2, p_materialInstance);
+		_Core::VectorT_pushBack(&l_materialsFoundIterator.Current->MaterialInstanceV2, &p_materialInstance);
 	};
 
 	void InstancedMaterialsDataStructure_removeMaterialInstance(InstancedMaterialsDataStructure* p_dataStructure, Material* p_material, MaterialInstance* p_materialInstance)

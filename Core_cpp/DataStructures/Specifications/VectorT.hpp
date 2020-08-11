@@ -3,6 +3,7 @@
 #include "DataStructures/GenericArray.hpp"
 #include "Functional/Iterator/IteratorT.hpp"
 #include "Functional/Comparator/ComparatorT.hpp"
+#include "Functional/Insertor/InsertorT.hpp"
 
 namespace _Core
 {
@@ -34,22 +35,24 @@ namespace _Core
 	}
 
 	template <typename ELEMENT_TYPE>
-	inline void VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE* p_element)
+	inline ELEMENT_TYPE* VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE* p_element)
 	{
-		GenericArray_pushBack_realloc((GenericArray*)p_array, p_element);
+		return (ELEMENT_TYPE*) GenericArray_pushBack_realloc((GenericArray*)p_array, p_element);
+	}
+
+	/*
+	template <typename ELEMENT_TYPE>
+	inline ELEMENT_TYPE* VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE& p_element)
+	{
+		return (ELEMENT_TYPE*) GenericArray_pushBack_realloc((GenericArray*)p_array, &p_element);
 	}
 
 	template <typename ELEMENT_TYPE>
-	inline void VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE& p_element)
+	inline ELEMENT_TYPE* VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE&& p_element)
 	{
-		GenericArray_pushBack_realloc((GenericArray*)p_array, &p_element);
+		return (ELEMENT_TYPE*) GenericArray_pushBack_realloc((GenericArray*)p_array, &p_element);
 	}
-
-	template <typename ELEMENT_TYPE>
-	inline void VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE&& p_element)
-	{
-		GenericArray_pushBack_realloc((GenericArray*)p_array, &p_element);
-	}
+	*/
 
 	template <typename ELEMENT_TYPE>
 	inline void VectorT_buildIterator(VectorT<ELEMENT_TYPE>* p_array, VectorIteratorT<ELEMENT_TYPE>* out_iterator)
@@ -71,6 +74,12 @@ namespace _Core
 		VectorReverseIteratorT<ELEMENT_TYPE> l_it;
 		GenericArray_buildReverseIterator((GenericArray*)p_array, (VectorReverseIterator*)&l_it);
 		return l_it;
+	}
+
+	template <typename ELEMENT_TYPE>
+	inline InsertorT<ELEMENT_TYPE> VectorT_buildInsertor(VectorT<ELEMENT_TYPE>* p_array)
+	{
+		return InsertorT<ELEMENT_TYPE>{(GenericArray*)p_array, (InsertorT_PushBackFn<ELEMENT_TYPE>)VectorT_pushBack<ELEMENT_TYPE>};
 	}
 
 	template <typename ELEMENT_TYPE>

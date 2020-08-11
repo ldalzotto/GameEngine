@@ -88,30 +88,31 @@ namespace _Core
 		p_genericArray->Size = 0;
 	};
 
-	void GenericArray_pushBack_realloc(GenericArray* p_genericArray, void* p_value)
+	void* GenericArray_pushBack_realloc(GenericArray* p_genericArray, void* p_value)
 	{
 		if (p_genericArray->Size >= p_genericArray->Capacity)
 		{
 			GenericArray_resize(p_genericArray, p_genericArray->Capacity == 0 ? 1 : (p_genericArray->Capacity * 2));
-			GenericArray_pushBack_realloc(p_genericArray, p_value);
+			return GenericArray_pushBack_realloc(p_genericArray, p_value);
 		}
 		else
 		{
 			void* p_targetMemory = (char*)p_genericArray->Memory + GenericArray_getElementOffset(p_genericArray, p_genericArray->Size);
 			memcpy(p_targetMemory, p_value, p_genericArray->ElementSize);
 			p_genericArray->Size += 1;
+			return p_targetMemory;
 		}
 
 	}
 
-	void GenericArray_pushBack_noRealloc(GenericArray* p_genericArray, void* p_value)
+	void* GenericArray_pushBack_noRealloc(GenericArray* p_genericArray, void* p_value)
 	{
 		if (p_genericArray->Size >= p_genericArray->Capacity)
 		{
 			throw std::runtime_error("Core_GenericArray_pushBack_noRealloc : impossible to push back. array is already full.");
 		}
 
-		GenericArray_pushBack_realloc(p_genericArray, p_value);
+		return GenericArray_pushBack_realloc(p_genericArray, p_value);
 	};
 
 	void GenericArray_pushBack_realloc_sorted(GenericArray* p_genericArray, void* p_value, ElementSorter* p_elementSorter)

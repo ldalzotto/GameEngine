@@ -1,5 +1,6 @@
 #include "File.hpp"
 
+#include <stdio.h>
 #include <stdexcept>
 #include "DataStructures/Specifications/String.hpp"
 
@@ -7,8 +8,6 @@ namespace _Core
 {
 
 #ifdef _WINDOWS
-
-#include "Include/PlatformInclude.hpp"
 
 #include <stdio.h>
 
@@ -47,6 +46,61 @@ namespace _Core
 		String_append(out_file_string, &l_nullChar);
 	};
 
+
+	FileStream FileStream_open(const char* p_absoluteFilePath)
+	{
+		FileStream l_fs;
+		l_fs.Stream = fopen(p_absoluteFilePath, "r");
+		return l_fs;
+	};
+
+	void FileStream_close(FileStream* p_fs)
+	{
+		fclose(p_fs->Stream);
+	};
+
+	FileLineIterator FileStream_allocLineIterator(FileStream* p_fs)
+	{
+		FileLineIterator l_it{};
+		l_it.FileStream = *p_fs;
+		String_alloc(&l_it.Line, 0);
+		return l_it;
+	};
+
+	bool FileLineIterator_moveNext(FileLineIterator* p_fileLineIterator)
+	{
+		if (p_fileLineIterator->EndOfFile)
+		{
+			return false;
+		}
+
+		String_clear(&p_fileLineIterator->Line);
+		int c = fgetc(p_fileLineIterator->FileStream.Stream);
+		while (true)
+		{
+			// line return
+			if (c == '\n')
+			{
+				return true;
+			}
+			else if (c == EOF)
+			{
+				p_fileLineIterator->EndOfFile = true;
+				return true;
+			}
+			else
+			{
+				String_append(&p_fileLineIterator->Line, (char*)&c);
+			}
+
+			c = fgetc(p_fileLineIterator->FileStream.Stream);
+		}
+	};
+
+	void FileLineIterator_free(FileLineIterator* p_fileLineIterator)
+	{
+		String_free(&p_fileLineIterator->Line);
+	};
 
 #endif
 

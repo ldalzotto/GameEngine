@@ -19,7 +19,8 @@ namespace _RenderV2
 
 		for (;;)
 		{
-			_Core::VectorT_pushBack(out_rasterizedPixels, _MathV2::Vector<2, int>{l_begin_int.x, l_begin_int.y});
+			_MathV2::Vector<2, int> l_pixel{l_begin_int.x, l_begin_int.y};
+			_Core::VectorT_pushBack(out_rasterizedPixels, &l_pixel);
 			e2 = 2 * err;
 			if (e2 >= l_dy)
 			{

@@ -51,9 +51,9 @@ namespace _Core
 	}
 
 	template <typename ELEMENT_TYPE>
-	inline void ArrayT_pushBack(ArrayT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE&& p_element)
+	inline ELEMENT_TYPE* ArrayT_pushBack(ArrayT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE&& p_element)
 	{
-		GenericArray_pushBack_noRealloc((GenericArray*)p_array, &p_element);
+	return (ELEMENT_TYPE*)	GenericArray_pushBack_noRealloc((GenericArray*)p_array, &p_element);
 	}
 
 	template <typename ELEMENT_TYPE>

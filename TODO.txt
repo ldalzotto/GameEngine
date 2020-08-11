@@ -2,7 +2,7 @@
 
 -- 3D Models --
 
-# Creating an .obj file importer that converts to the new mesh object
+[X] # Creating an .obj file importer that converts to the new mesh object
 
 -- RenderV2 --
 
@@ -12,6 +12,13 @@
 # Plugging the wireframe renderer to the old ECS system.
 	-> This leads to the removal of the Vulkan dependency.
 	-> Because the new render engine doesn't handle texture mapping yet, the assimp dependency is also removed.
+
+-- Core --
+
+# Extracting data container template methods from object definition.
+	-> This is to reduce compilation time when we add/remove a method
+
+-- RenderV2 --
 
 # Trygin to add openCL for parallel processing ?
 

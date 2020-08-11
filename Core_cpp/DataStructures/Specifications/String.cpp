@@ -6,7 +6,7 @@
 #include "VectorT.hpp"
 #include "ArrayT.hpp"
 
-#define CORE_STRING_CHAR_NB(in_string) (in_string)->Size - 1
+
 
 namespace _Core
 {
@@ -42,34 +42,32 @@ namespace _Core
 			GenericArray_isertArrayAt_realloc((GenericArray*)p_string, (GenericArray*)&l_appededArray, 0);
 		}
 	};
-	
-	bool String_find(String* p_string, char* p_comparedStr, size_t p_startIndex, size_t* p_outfoundIndex)
+
+	void String_append(String* p_string, StringSlice* p_appended)
 	{
-		ArrayT<char> l_comparedStr = ArrayT_fromCStyleArray(p_comparedStr, strlen(p_comparedStr));
+		char* l_begin = p_appended->Memory + p_appended->Begin;
+		GenericArray l_appededArray; l_appededArray.Memory = l_begin;
+		l_appededArray.Capacity = (p_appended->End - p_appended->Begin);
+		l_appededArray.Size = (p_appended->End - p_appended->Begin);
+		l_appededArray.ElementSize = sizeof(char);
 
-		if (p_string->Size > 0)
+		if (p_string->Size >= 2)
 		{
-			for (*p_outfoundIndex = p_startIndex; *p_outfoundIndex < p_string->Size; (*p_outfoundIndex)++)
-			{
-				size_t l_endIndex = (*p_outfoundIndex) + l_comparedStr.Size;
-				if (l_endIndex > CORE_STRING_CHAR_NB(p_string))
-				{
-					break;
-				}
-
-				char* l_pstringCompareBegin = (char*)GenericArray_at((GenericArray*)p_string, *p_outfoundIndex);
-				char* l_compareStringBegin = p_comparedStr;
-				if (*l_pstringCompareBegin == *l_compareStringBegin)
-				{
-					if (memcmp(l_pstringCompareBegin, l_compareStringBegin, sizeof(char) * l_comparedStr.Size) == 0)
-					{
-						return true;
-					}
-				}
-			}
+			GenericArray_isertArrayAt_realloc((GenericArray*)p_string, &l_appededArray, CORE_STRING_CHAR_NB(p_string));
 		}
+		else
+		{
+			GenericArray_isertArrayAt_realloc((GenericArray*)p_string, &l_appededArray, 0);
+		}
+	};
+		
+	
 
-		return false;
+	void String_clear(String* p_string)
+	{
+		p_string->Size = 0;
+		char l_nulChar = (char)NULL;
+		VectorT_pushBack(p_string, &l_nulChar);
 	};
 
 }

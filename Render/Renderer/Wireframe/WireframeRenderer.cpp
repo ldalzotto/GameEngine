@@ -52,7 +52,8 @@ namespace _RenderV2
 				_Core::VectorIteratorT<RenderableObject> l_renderedObjects_it = _Core::VectorT_buildIterator(l_renderedObjects);
 				while (_Core::VectorIteratorT_moveNext(&l_renderedObjects_it))
 				{
-					_Core::VectorT_pushBack(&l_renderedObjectsPipeline, { false, l_renderedObjects_it.Current });
+					RenderableObjectPipeline l_renderableObjectPieline = { false, l_renderedObjects_it.Current };
+					_Core::VectorT_pushBack(&l_renderedObjectsPipeline, &l_renderableObjectPieline);
 				}
 			}
 
@@ -83,20 +84,14 @@ namespace _RenderV2
 						{
 							MatrixM::mul(&l_object_to_camera, &VectorM::cast(&l_renderBoxBound_localSpace->Center, 1.0f), &tmp_vec4_0);
 							l_renderBox_asSphere_cameraSpace.Center = *VectorM::cast(&tmp_vec4_0);
-							// l_renderBoxBound_cameraSpace.Center.z *= -1;
 						}
 
 						{
 							SegmentV2<4, float> l_box_extend_localSpace = { {0.0f, 0.0f, 0.0f, 1.0f}, VectorM::cast(&l_renderBoxBound_localSpace->Extend, 1.0f) };
 							SegmentV2<4, float> l_box_extend_worldSpace;
 							SegmentM::mul(&l_box_extend_localSpace, l_renderedObjectsPipeline_it.Current->RenderableObject->ModelMatrix, &l_box_extend_worldSpace);
-							l_renderBox_asSphere_cameraSpace.Radius = fmaxf(
-								fabsf(l_box_extend_worldSpace.End.x - l_box_extend_worldSpace.Begin.x),
-								fmaxf(
-									fabsf(l_box_extend_worldSpace.End.y - l_box_extend_worldSpace.Begin.y),
-									fabsf(l_box_extend_worldSpace.End.z - l_box_extend_worldSpace.Begin.z)
-								)
-							);
+							Vector<4, float> l_box_extend_worldSpace_vec; SegmentM::toVector(&l_box_extend_worldSpace, &l_box_extend_worldSpace_vec);
+							l_renderBox_asSphere_cameraSpace.Radius = VectorM::length(VectorM::cast(&l_box_extend_worldSpace_vec));
 						}
 
 						l_renderedObjectsPipeline_it.Current->IsCulled = !Intersection_Contains_Frustum_Sphere(&l_cameraFrustum, &l_renderBox_asSphere_cameraSpace);
@@ -117,7 +112,7 @@ namespace _RenderV2
 			{
 				if (!l_renderedObjects_it.Current->IsCulled)
 				{
-					_Core::VectorIteratorT<Polygon<Vertex*>> l_meshPolygons_it = _Core::ArrayT_buildIterator(&l_renderedObjects_it.Current->RenderableObject->Mesh->Polygons);
+					_Core::VectorIteratorT<Polygon<Vertex*>> l_meshPolygons_it = _Core::VectorT_buildIterator(&l_renderedObjects_it.Current->RenderableObject->Mesh->Polygons);
 					while (_Core::VectorIteratorT_moveNext(&l_meshPolygons_it))
 					{
 						PolygonPipeline l_polygon{};
@@ -251,7 +246,8 @@ namespace _RenderV2
 			_Core::VectorT_alloc(&p_drawnColors, l_pixelsDrawn.Size);
 			for (size_t i = 0; i < l_pixelsDrawn.Size; i++)
 			{
-				_Core::VectorT_pushBack(&p_drawnColors, { (char)0,(char)0, (char)0 });
+				_MathV2::Vector3<char> l_color = { 0, 0, 0 };
+				_Core::VectorT_pushBack(&p_drawnColors, &l_color);
 			}
 			TextureM::writePixels(p_to, &l_pixelsDrawn, &p_drawnColors);
 			_Core::VectorT_free(&p_drawnColors);
