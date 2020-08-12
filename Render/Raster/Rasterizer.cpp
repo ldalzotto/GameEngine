@@ -5,6 +5,8 @@
 #include "DataStructures/Specifications/ArraySliceT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 
+#include <string.h>
+
 namespace _RenderV2
 {
 	//https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
@@ -23,7 +25,9 @@ namespace _RenderV2
 		for (;;)
 		{
 			_MathV2::Vector<2, int> l_pixel{ l_begin_int.x, l_begin_int.y };
-			_Core::VectorT_pushBack(out_rasterizedPixels, &l_pixel);
+			memcpy(((char*)out_rasterizedPixels->Memory) + (out_rasterizedPixels->ElementSize * out_rasterizedPixels->Size), &l_pixel, sizeof(l_pixel));
+			out_rasterizedPixels->Size += 1;
+			// _Core::VectorT_pushBack(out_rasterizedPixels, &l_pixel);
 			e2 = 2 * err;
 			if (e2 >= l_dy)
 			{

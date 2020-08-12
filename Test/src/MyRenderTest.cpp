@@ -47,7 +47,7 @@ int main()
 		_Core::VectorIteratorT<Mesh> l_meshIt = _Core::VectorT_buildIterator(&l_loadedMeshes);
 		while (_Core::VectorIteratorT_moveNext(&l_meshIt))
 		{
-			_MathV2::Box l_meshBoundingBox;
+			_MathV2::Box l_meshBoundingBox{};
 			_MathV2::Box_build(&l_meshBoundingBox, (_Core::VectorT<_MathV2::Vector3<float>>*) & l_meshIt.Current->Vertices);
 
 			RenderedObject l_renderableObject = { *l_meshIt.Current , l_meshBoundingBox, &l_modelMatrix };

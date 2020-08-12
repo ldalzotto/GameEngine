@@ -14,4 +14,13 @@ namespace _MathV2
 
 	template<typename T>
 	float Math_sqrt(T p_value);
+
+	template<>
+	inline float Math_sqrt<float>(float p_value) { return sqrtf(p_value); };
+
+	template<>
+	inline float Math_sqrt<double>(double p_value) { return sqrt(p_value); };
+
+	template<>
+	inline  float Math_sqrt<int>(int p_value) { return sqrt(p_value); };
 }

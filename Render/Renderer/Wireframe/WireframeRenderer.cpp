@@ -276,6 +276,7 @@ namespace _RenderV2
 				_MathV2::Vector2<int>* l_pixel = _Core::VectorT_at(&p_memory->PixelsToDrawV2_ScreenPosition, i);
 				float l_i0 = _Core::VectorT_at(&p_memory->PixelsToDrawV2_Interpolation, i)->Interpolation_0;
 				_MathV2::Vector3<char> l_color = { (char)(l_i0 * 255),(char)(l_i0 * 255),(char)(l_i0 * 255) };
+				// _MathV2::Vector3<char> l_color = { 0,0,0 };
 				TextureM::writePixel(p_to, l_pixel, &l_color);
 			}
 		}
@@ -289,7 +290,7 @@ namespace _RenderV2
 		_Core::VectorT_alloc(&p_memory->PolygonPipeline, 0);
 		_Core::VectorT_alloc(&p_memory->PixelsToDrawV2_ScreenPosition, 0);
 		_Core::VectorT_alloc(&p_memory->PixelsToDrawV2_Interpolation, 0);
-		_Core::VectorT_alloc(&p_memory->PixelDrawnCoordsBufferV2, 0);
+		_Core::VectorT_alloc(&p_memory->PixelDrawnCoordsBufferV2, 1300);
 		_Core::VectorT_alloc(&p_memory->LineRasterisation, 0);
 	};
 
