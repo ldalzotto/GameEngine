@@ -40,6 +40,14 @@ namespace _Core
 		return (ELEMENT_TYPE*) GenericArray_pushBack_realloc((GenericArray*)p_array, p_element);
 	}
 
+	template <typename ELEMENT_TYPE>
+	inline void VectorT_resize(VectorT<ELEMENT_TYPE>* p_array, size_t p_newSize)
+	{
+		GenericArray_resize((GenericArray*)p_array, p_newSize);
+	}
+
+
+
 	/*
 	template <typename ELEMENT_TYPE>
 	inline ELEMENT_TYPE* VectorT_pushBack(VectorT<ELEMENT_TYPE>* p_array, ELEMENT_TYPE& p_element)

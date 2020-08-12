@@ -20,10 +20,8 @@ namespace _RenderV2
 
 	struct Rasterizer
 	{
-		static void line_v2(const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end, _Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels);
-		static void line_interpolation(const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
-			const _MathV2::Vector<4, float>* p_begin_cameraSpace, const _MathV2::Vector<4, float>* p_end_cameraSpace, const _Core::ArraySliceT<_MathV2::Vector<2, int>>* p_pixels,
-			_Core::VectorT < LineRasterizationInterpolation >* in_out_interpolationResult);
+		static void line_v3(const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end, _Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels);
+
 		/*
 		static void line(
 			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end, 

@@ -8,6 +8,12 @@ namespace _MathV2
 	};
 
 	template <typename T>
+	struct Vector<1, T>
+	{
+		T x;
+	};
+
+	template <typename T>
 	struct Vector<2, T>
 	{
 		T x, y;

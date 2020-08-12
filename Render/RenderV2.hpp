@@ -15,7 +15,7 @@ namespace _RenderV2
 	{
 		Window AppWindow;
 		Texture<3, char> PresentTexture;
-		WireframeRenderMemory WireframeRenderMemory;
+		WireframeRenderer_Memory WireframeRenderMemory;
 	};
 
 	void RenderV2_initialize(RenderV2* p_render);

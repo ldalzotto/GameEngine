@@ -11,12 +11,15 @@ namespace _RenderV2
 		return p_texture->Texture + ((((size_t)p_y * p_texture->Width) + p_x) * p_texture->ElementSize);
 	};
 
-	void RTexture_fill(char* p_texture, const void* p_color, const size_t p_elementSize, const size_t p_pixelCount)
+	void RTexture_fill(const RTexture* p_texture, const void* p_color)
 	{
-		for (size_t i = 0; i < p_pixelCount; i++)
+		for (size_t w = 0; w < p_texture->Width; w ++)
 		{
-			char* l_pixel = p_texture + (i * p_elementSize);
-			memcpy(l_pixel, p_color, p_elementSize);
+			for (size_t h = 0; h < p_texture->Height; h++)
+			{
+				char* l_pixel = p_texture->Texture + (p_texture->ElementSize * w) + (p_texture->ElementSize * p_texture->Width * h);
+				memcpy(l_pixel, p_color, p_texture->ElementSize);
+			}
 		}
 	};
 

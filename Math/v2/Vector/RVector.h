@@ -11,6 +11,7 @@ namespace _MathV2
 	bool RVector_3_equals(const float p_left[3], const float p_right[3]);
 
 	void RVector_3_add(const float p_left[3], const float p_right[3], float p_out[3]);
+	void RVector_4_add(const float p_left[4], const float p_right[4], float p_out[4]);
 
 	void RVector_min_specification(const float* p_left, const float* p_right, float* p_out, short p_size);
 	void RVector_min_specification(const double* p_left, const double* p_right, double* p_out, short p_size);

@@ -65,6 +65,12 @@ namespace _MathV2
 			RVector_3_add((T*)(p_left), (T*)(p_right), (T*)p_out);
 			return p_out;
 		};
+		template <typename T>
+		inline static Vector<4, T>* add(const Vector<4, T>* p_left, const Vector<4, T>* p_right, Vector<4, T>* p_out)
+		{
+			RVector_4_add((T*)(p_left), (T*)(p_right), (T*)p_out);
+			return p_out;
+		};
 		template <typename T, int N>
 		inline static Vector<N, T>* min(const Vector<N, T>* p_left, const Vector<N, T>* p_right, Vector<N, T>* p_out)
 		{

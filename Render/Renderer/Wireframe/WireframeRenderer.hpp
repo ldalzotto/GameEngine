@@ -45,51 +45,25 @@ namespace _RenderV2
 		RenderedObject* RenderableObject;
 	};
 
-	struct PolygonPipeline
+	struct PolygonPipelineV2
 	{
-		RenderableObjectPipeline* RenderedObject;
+		RenderedObject* RenderedObject;
 		size_t PolygonIndex;
-
-		bool IsCulled;
 
 		Polygon<_MathV2::Vector<4, float>> CameraSpacePolygon;
 		Polygon<_MathV2::Vector<4, float>> TransformedPolygon;
 	};
 
-	struct LineInterpolationFactor
+	struct WireframeRenderer_Memory
 	{
-		float Interpolation_0, Interpolation_1;
+		_Core::VectorT<PolygonPipelineV2> PolygonPipelines;
+		_Core::VectorT<_MathV2::Vector<2, int>> RasterizedPixelsBuffer;
+		_Core::VectorT<bool> RasterizerBufferV2;
 	};
 
-	struct PixelsPipeline
-	{
-		_Core::ArraySliceT<_MathV2::Vector<2, int>> ScreenPosition;
-		_Core::ArraySliceT<LineInterpolationFactor> Interpolation;
-	};
+	void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory);
+	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_rasterizerBufferSize);
+	void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory);
 
-	struct LineRasterisationResult
-	{
-		PolygonPipeline* UsedPolygon;
-		short int Vertex1_Index; short int Vertex2_Index;
-		PixelsPipeline PixelsToDraw;
-	};
-
-	struct WireframeRenderMemory
-	{
-		_Core::VectorT<RenderableObjectPipeline> RenderableObjectsPipeline;
-		_Core::VectorT<PolygonPipeline> PolygonPipeline;
-
-		_Core::VectorT<_MathV2::Vector<2, int>> PixelDrawnCoordsBufferV2;
-
-		_Core::VectorT<_MathV2::Vector<2, int>> PixelsToDrawV2_ScreenPosition;
-		_Core::VectorT<LineInterpolationFactor> PixelsToDrawV2_Interpolation;
-
-		_Core::VectorT<LineRasterisationResult> LineRasterisation;
-	};
-
-	void WireframeRenderMemory_alloc(WireframeRenderMemory* p_memory);
-	void WireframeRenderMemory_clear(WireframeRenderMemory* p_memory);
-	void WireframeRenderMemory_free (WireframeRenderMemory* p_memory);
-
-	void WirerameRenderer_render(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderMemory* p_memory);
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderer_Memory* p_memory);
 }

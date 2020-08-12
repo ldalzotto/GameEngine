@@ -95,6 +95,14 @@ namespace _MathV2
 		p_out[2] = p_left[2] + p_right[2];
 	};
 
+	void RVector_4_add(const float p_left[4], const float p_right[4], float p_out[4])
+	{
+		p_out[0] = p_left[0] + p_right[0];
+		p_out[1] = p_left[1] + p_right[1];
+		p_out[2] = p_left[2] + p_right[2];
+		p_out[3] = p_left[3] + p_right[3];
+	};
+
 	void RVector_min_specification(const int* p_left, const int* p_right, int* p_out, short p_size) { RVector_min<int>(p_left, p_right, p_out, p_size); };
 	void RVector_min_specification(const float* p_left, const float* p_right, float* p_out, short p_size) { RVector_min<float>(p_left, p_right, p_out, p_size); };
 	void RVector_min_specification(const double* p_left, const double* p_right, double* p_out, short p_size) { RVector_min<double>(p_left, p_right, p_out, p_size); };
