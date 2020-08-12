@@ -6,9 +6,11 @@
 
 namespace _RenderV2
 {
+	using VertexIndex = size_t;
+
 	struct Mesh
 	{
 		_Core::VectorT<Vertex> Vertices;
-		_Core::VectorT<Polygon<Vertex*>> Polygons;
+		_Core::VectorT<Polygon<VertexIndex>> Polygons;
 	};
 }

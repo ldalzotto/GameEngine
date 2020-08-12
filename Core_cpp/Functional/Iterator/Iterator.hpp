@@ -25,4 +25,15 @@ namespace _Core
 	};
 
 	bool VectorReverseIterator_moveNext(VectorIterator* p_vectorIterator);
+
+	struct VectorRangedIterator
+	{
+		GenericArray* Array;
+		void* Current;
+		size_t CurrentIndex;
+		size_t BeginInluded;
+		size_t EndExcluded;
+	};
+
+	bool VectorRangedIterator_moveNext(VectorRangedIterator* p_vectorIterator);
 }

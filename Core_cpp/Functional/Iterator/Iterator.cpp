@@ -32,4 +32,18 @@ namespace _Core
 
 		return p_vectorIterator->Current != nullptr;
 	};
+
+	bool VectorRangedIterator_moveNext(VectorRangedIterator* p_vectorIterator)
+	{
+		p_vectorIterator->CurrentIndex += 1;
+		if (p_vectorIterator->CurrentIndex >= p_vectorIterator->BeginInluded && p_vectorIterator->CurrentIndex < p_vectorIterator->EndExcluded)
+		{
+			p_vectorIterator->Current = GenericArray_at(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
+		}
+		else
+		{
+			p_vectorIterator->Current = nullptr;
+		}
+		return p_vectorIterator->Current != nullptr;
+	};
 }

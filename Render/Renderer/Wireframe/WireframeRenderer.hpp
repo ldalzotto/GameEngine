@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Objects/Polygon.hpp"
+#include "Objects/Resource/Polygon.hpp"
 #include "v2/Vector/Vector.hpp"
+#include "DataStructures/Specifications/ArraySliceT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 
 namespace _MathV2
 {
 	template <int C, int L, typename T>
 	struct Matrix;
-	struct Box;
 }
 
 namespace _RenderV2
@@ -18,19 +18,11 @@ namespace _RenderV2
 
 	struct Mesh;
 	struct LineRasterizationResult;
+	struct RenderedObject;
 }
 
 namespace _RenderV2
 {
-
-
-	struct RenderableObject
-	{
-		Mesh* Mesh;
-		_MathV2::Box* MeshBoundingBox;
-		_MathV2::Matrix<4, 4, float>* ModelMatrix;
-	};
-
 	struct RendererConfiguration
 	{
 		bool ObjectCullEnabled;
@@ -39,7 +31,7 @@ namespace _RenderV2
 	struct WireframeRendererInput
 	{
 		RendererConfiguration RendererConfiguration;
-		_Core::VectorT<RenderableObject>* RenderableObjects;
+		_Core::VectorT<RenderedObject>* RenderableObjects;
 		_MathV2::Matrix<4, 4, float>* ViewMatrix;
 		_MathV2::Matrix<4, 4, float>* ProjectionMatrix;
 		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
@@ -50,25 +42,49 @@ namespace _RenderV2
 	struct RenderableObjectPipeline
 	{
 		bool IsCulled;
-		RenderableObject* RenderableObject;
+		RenderedObject* RenderableObject;
 	};
 
 	struct PolygonPipeline
 	{
+		RenderableObjectPipeline* RenderedObject;
+		size_t PolygonIndex;
+
 		bool IsCulled;
+
 		Polygon<_MathV2::Vector<4, float>> CameraSpacePolygon;
 		Polygon<_MathV2::Vector<4, float>> TransformedPolygon;
-		_MathV2::Matrix<4, 4, float>* ModelMatrix;
 	};
 
+	struct LineInterpolationFactor
+	{
+		float Interpolation_0, Interpolation_1;
+	};
+
+	struct PixelsPipeline
+	{
+		_Core::ArraySliceT<_MathV2::Vector<2, int>> ScreenPosition;
+		_Core::ArraySliceT<LineInterpolationFactor> Interpolation;
+	};
+
+	struct LineRasterisationResult
+	{
+		PolygonPipeline* UsedPolygon;
+		short int Vertex1_Index; short int Vertex2_Index;
+		PixelsPipeline PixelsToDraw;
+	};
 
 	struct WireframeRenderMemory
 	{
 		_Core::VectorT<RenderableObjectPipeline> RenderableObjectsPipeline;
 		_Core::VectorT<PolygonPipeline> PolygonPipeline;
 
-		_Core::VectorT<LineRasterizationResult> PixelDrawnCoordsBuffer;
-		_Core::VectorT<LineRasterizationResult> PixelsDrawn;
+		_Core::VectorT<_MathV2::Vector<2, int>> PixelDrawnCoordsBufferV2;
+
+		_Core::VectorT<_MathV2::Vector<2, int>> PixelsToDrawV2_ScreenPosition;
+		_Core::VectorT<LineInterpolationFactor> PixelsToDrawV2_Interpolation;
+
+		_Core::VectorT<LineRasterisationResult> LineRasterisation;
 	};
 
 	void WireframeRenderMemory_alloc(WireframeRenderMemory* p_memory);

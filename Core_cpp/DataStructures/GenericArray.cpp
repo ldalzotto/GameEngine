@@ -83,6 +83,18 @@ namespace _Core
 		out_iterator->CurrentIndex = p_genericArray->Size;
 	};
 
+	void GenericArray_buildRangedIterator(GenericArray* p_genericArray, VectorRangedIterator* out_iterator, size_t p_begin_included, size_t p_end_excluded)
+	{
+		if (p_begin_included > p_end_excluded) { throw std::runtime_error("GenericArray_buildRangedIterator : begin is higher than end ! "); }
+		if (p_end_excluded > p_genericArray->Size) { throw std::runtime_error("GenericArray_buildRangedIterator : end is out of range ! "); }
+
+		out_iterator->Array = p_genericArray;
+		out_iterator->Current = NULL;
+		out_iterator->CurrentIndex = p_begin_included - 1;
+		out_iterator->BeginInluded = p_begin_included;
+		out_iterator->EndExcluded = p_end_excluded;
+	};
+
 	void GenericArray_clear(GenericArray* p_genericArray)
 	{
 		p_genericArray->Size = 0;

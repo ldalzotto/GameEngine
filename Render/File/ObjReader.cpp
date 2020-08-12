@@ -1,11 +1,10 @@
 #include "ObjReader.hpp"
 
 #include "Read/File/File.hpp"
-#include "Objects/Mesh.hpp"
 
 #include "DataStructures/Specifications/ArrayT.hpp"
 #include "Algorithm/String/StringAlgorithm.hpp"
-#include "Objects/MeshMethods.hpp"
+#include "Objects/Resource/MeshMethods.hpp"
 
 namespace _RenderV2
 {
@@ -73,8 +72,8 @@ namespace _RenderV2
 							_Core::String_split(&l_lineWithoutHeader, &l_spaceSlice, &l_polyFaces);
 							if (l_polyFaces.Size > 0)
 							{
-								Polygon<Vertex*> l_insertedPoly = {};
-								Polygon<Vertex*>* l_polygon = _Core::VectorT_pushBack(&l_currentMesh->Polygons, &l_insertedPoly);
+								Polygon<VertexIndex> l_insertedPoly = {};
+								Polygon<VertexIndex>* l_polygon = _Core::VectorT_pushBack(&l_currentMesh->Polygons, &l_insertedPoly);
 								_Core::VectorT<_Core::String> l_polygVertexIndices; _Core::VectorT_alloc(&l_polygVertexIndices, 3);
 
 								for (size_t i = 0; i < l_polyFaces.Size; i++)
@@ -83,24 +82,23 @@ namespace _RenderV2
 									_Core::String_split(&_Core::String_buildSlice(_Core::VectorT_at(&l_polyFaces, i)), &l_slashSlice, &l_polygVertexIndices);
 									if (l_polygVertexIndices.Size > 0)
 									{
-										Vertex** l_vertex = nullptr;
+										VertexIndex* l_vertexIndex = nullptr;
 										switch (i)
 										{
 										case 0:
-											l_vertex = &l_polygon->v1;
+											l_vertexIndex = &l_polygon->v1;
 											break;
 										case 1:
-											l_vertex = &l_polygon->v2;
+											l_vertexIndex = &l_polygon->v2;
 											break;
 										case 2:
-											l_vertex = &l_polygon->v3;
+											l_vertexIndex = &l_polygon->v3;
 											break;
 										}
 
-										if (l_vertex)
+										if (l_vertexIndex)
 										{
-											int l_index = atoi(_Core::VectorT_at(&l_polygVertexIndices, 0)->Memory) - l_vertexOffset - 1;
-											*l_vertex = _Core::VectorT_at(&l_currentMesh->Vertices, l_index);
+											*l_vertexIndex = atoi(_Core::VectorT_at(&l_polygVertexIndices, 0)->Memory) - l_vertexOffset - 1;
 										}
 
 									}

@@ -14,8 +14,10 @@
 
 #include "Clock/Clock.hpp"
 
+#include "Objects/Resource/Mesh.hpp"
+#include "Objects/RenderedObject.hpp"
+
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
-#include "Objects/Mesh.hpp"
 
 #include "File/ObjReader.hpp"
 
@@ -26,18 +28,15 @@ _Core::TimeClockPrecision LastFrameTime = 0;
 
 int main()
 {
-
-
 	_Core::AppEvent_initialize();
 
 	LastFrameTime = _Core::Clock_currentTime_mics();
 
 	RenderV2_initialize(&renderV2);
 
-
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
 	l_modelMatrix.Points[3][0] = 7.0f; l_modelMatrix.Points[3][1] = 7.0f; l_modelMatrix.Points[3][2] = 7.0f;
-	_Core::VectorT<RenderableObject> l_renderableObjects;
+	_Core::VectorT<RenderedObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
 
 	_Core::VectorT<Mesh> l_loadedMeshes{};
@@ -51,10 +50,11 @@ int main()
 			_MathV2::Box l_meshBoundingBox;
 			_MathV2::Box_build(&l_meshBoundingBox, (_Core::VectorT<_MathV2::Vector3<float>>*) & l_meshIt.Current->Vertices);
 
-			RenderableObject l_renderableObject = { l_meshIt.Current , &l_meshBoundingBox, &l_modelMatrix };
+			RenderedObject l_renderableObject = { *l_meshIt.Current , l_meshBoundingBox, &l_modelMatrix };
 			_Core::VectorT_pushBack(&l_renderableObjects, &l_renderableObject);
 		}
 	}
+	_Core::VectorT_free(&l_loadedMeshes);
 
 	_MathV2::Matrix<4, 4, float> l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
 	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, (1.0f / 1.0040f), -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
@@ -86,7 +86,6 @@ int main()
 	}
 
 
-	_Core::VectorT_free(&l_loadedMeshes);
 	RenderV2_free(&renderV2);
 
 	_Core::AppEvent_free();

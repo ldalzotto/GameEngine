@@ -38,4 +38,20 @@ namespace _Core
 		return VectorReverseIterator_moveNext((VectorIterator*)p_vectorIterator);
 	};
 
+	template <typename ELEMENT_TYPE>
+	struct VectorRangedIteratorT
+	{
+		GenericArray* Array;
+		ELEMENT_TYPE* Current;
+		size_t CurrentIndex;
+		size_t Begin;
+		size_t End;
+	};
+
+	template <typename ELEMENT_TYPE>
+	inline bool VectorRangedIteratorT_moveNext(VectorRangedIteratorT<ELEMENT_TYPE>* p_vectorIterator)
+	{
+		return VectorRangedIterator_moveNext((VectorRangedIterator*)p_vectorIterator);
+	};
+
 }

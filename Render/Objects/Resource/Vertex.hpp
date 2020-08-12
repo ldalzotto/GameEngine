@@ -8,4 +8,10 @@ namespace _RenderV2
 	{
 		_MathV2::Vector3<float> LocalPosition;
 	};
+
+	template<typename T>
+	struct VertexVarying
+	{
+		T Value;
+	};
 }
