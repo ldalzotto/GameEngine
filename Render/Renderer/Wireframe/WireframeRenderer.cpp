@@ -61,7 +61,7 @@ namespace _RenderV2
 					Matrix4x4<float> l_object_to_camera;
 					MatrixM::mul(p_input->ViewMatrix, l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-					if(!ObjectCullingM::isObjectCulled(&l_renderableObject->MeshBoundingBox, &l_object_to_camera, l_renderableObject->ModelMatrix, &l_cameraFrustum))
+					if(!ObjectCullingM::isObjectCulled(&l_renderableObject->MeshBoundingBox, l_renderableObject->ModelMatrix, &l_object_to_camera, &l_cameraFrustum))
 					{
 						// Push polygons
 						for (size_t j = 0; j < l_renderableObject->Mesh.Polygons.Size; j++)
