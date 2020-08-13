@@ -30,12 +30,5 @@ namespace _RenderV2
 			const _MathV2::Vector<2, int>* p_begin, const _MathV2::Vector<2, int>* p_end,
 			_Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels,
 			const _MathV2::Rect<int>* p_clip_rect);
-		/*
-		static void line(
-			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end, 
-			const _MathV2::Vector<4, float>* p_begin_cameraSpace, const _MathV2::Vector<4, float>* p_end_cameraSpace,
-			bool l_interpolate, _Core::VectorT<LineRasterizationResult>* out_rasterizedPixels
-		);
-		*/
 	};
 }

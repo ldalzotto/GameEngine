@@ -35,7 +35,7 @@ int main()
 	RenderV2_initialize(&renderV2);
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	 l_modelMatrix.Points[3][0] = 9.0f; 
+	 // l_modelMatrix.Points[3][0] = 9.0f; 
 	 // l_modelMatrix.Points[3][1] = 5.0f; l_modelMatrix.Points[3][2] = 5.0f;
 	_Core::VectorT<RenderedObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
@@ -52,11 +52,7 @@ int main()
 			_MathV2::Box_build(&l_meshBoundingBox, (_Core::VectorT<_MathV2::Vector3<float>>*) & l_meshIt.Current->Vertices);
 
 			RenderedObject l_renderableObject = { *l_meshIt.Current , l_meshBoundingBox, &l_modelMatrix };
-			_Core::VectorT_pushBack(&l_renderableObjects, &l_renderableObject); 
-			/*
-			l_renderableObject = { *l_meshIt.Current , l_meshBoundingBox, &l_modelMatrix2 };
 			_Core::VectorT_pushBack(&l_renderableObjects, &l_renderableObject);
-			*/
 		}
 	}
 	_Core::VectorT_free(&l_loadedMeshes);
@@ -75,7 +71,7 @@ int main()
 
 		_MathV2::Quaternion<float> tmp_quat_0; _MathV2::Matrix3x3<float> tmp_mat3x3_0; _MathV2::Matrix4x4<float> tmp_mat4x4_0;
 		_MathV2::Matrix4x4<float> l_rotation = _MathV2::Matrix4x4f_Identity;
-		_MathV2::MatrixM::buildRotationMatrix(_MathV2::QuaternionM::extractAxis(_MathV2::QuaternionM::rotateAround(&_MathV2::UP, 0.05f * l_deltaTime * 0.0001f, &tmp_quat_0), &tmp_mat3x3_0), &l_rotation);
+		_MathV2::MatrixM::buildRotationMatrix(_MathV2::QuaternionM::extractAxis(_MathV2::QuaternionM::rotateAround(&_MathV2::UP, 0.02f * l_deltaTime * 0.0001f, &tmp_quat_0), &tmp_mat3x3_0), &l_rotation);
 		_MathV2::MatrixM::mul(&l_modelMatrix, &l_rotation, &tmp_mat4x4_0);
 		l_modelMatrix = tmp_mat4x4_0;
 

@@ -131,6 +131,8 @@ namespace _RenderV2
 					};
 				}
 
+				//TODO -> We can combine matrices operations into one (for performance).
+
 				// World to camera
 				{
 					MatrixM::mul(p_input->ViewMatrix, &l_polygonPipeline->TransformedPolygon.v1, &tmp_vec4_0);

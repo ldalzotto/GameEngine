@@ -14,6 +14,8 @@ namespace _RenderV2
 {
 
 	//https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+	// A possible performance improvement is to store pixel steps in out_rasterizedPixels instead of plain pixel coordinates.
+	// The the consumer can create a cursor to final texture memory and move it to set appropriate color.
 	void line_v3(_MathV2::Vector<2, int>* p_begin, _MathV2::Vector<2, int>* p_end, _Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels)
 	{
 		int	l_dx = abs(p_end->x - p_begin->x); int l_sx = p_begin->x < p_end->x ? 1 : -1;
