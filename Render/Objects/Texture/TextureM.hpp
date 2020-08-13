@@ -5,6 +5,7 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/VectorMath.hpp"
+#include "v2/Rect/Rect.hpp"
 
 namespace _RenderV2
 {
@@ -65,6 +66,12 @@ namespace _RenderV2
 		{
 			RTexture l_texture = { (char*)p_texture->Pixels.Memory, p_texture->Width, p_texture->Height, getElementSize<N, T>() };
 			RTexture_drawPixel(&l_texture, (const RTexturePixelCoordinates*)p_coordinate, (const void*)p_color);
+		};
+
+		template <int N, typename T>
+		inline static _MathV2::Rect<int> buildClipRect(Texture<N, T>* p_texture)
+		{
+			return { {0,0}, {(int)p_texture->Width - 1, (int)p_texture->Height - 1} };
 		};
 	};
 }

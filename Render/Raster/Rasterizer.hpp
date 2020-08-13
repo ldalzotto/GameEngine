@@ -11,6 +11,12 @@ namespace _Core
 	struct ArraySliceT;
 }
 
+namespace _MathV2
+{
+	template<typename T>
+	struct Rect;
+}
+
 namespace _RenderV2
 {
 	struct LineRasterizationInterpolation
@@ -24,7 +30,7 @@ namespace _RenderV2
 		static void line_v3_clipped(
 			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
 			_Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels,
-			const int p_clipMaxWidth, const int p_clipMaxHeight);
+			const _MathV2::Rect<int>* p_clip_rect);
 		/*
 		static void line(
 			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end, 

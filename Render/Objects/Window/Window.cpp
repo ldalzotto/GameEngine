@@ -38,7 +38,6 @@ namespace _RenderV2
 		l_col_3 = { (float)p_window->WindowSize.Width * 0.5f,0.0f, 0.0f, 0.0f };
 		l_col_4 = { 0.0f,(float)p_window->WindowSize.Height * 0.5f, 0.0f, 0.0f };
 		p_window->GraphicsAPIToWindowPixelCoordinates = _MathV2::MatrixM::build(&l_col_1, &l_col_2, &l_col_3, &l_col_4);
-
 	};
 
 	void Window_init(Window* p_window)

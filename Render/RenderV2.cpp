@@ -30,7 +30,7 @@ namespace _RenderV2
 			TextureM::fill(&p_render->PresentTexture, &l_color);
 		}
 
-		WireframeRenderer_renderV2(p_wireframeRenderInput, &p_render->PresentTexture, &p_render->WireframeRenderMemory);
+		WireframeRenderer_renderV2(p_wireframeRenderInput, &p_render->PresentTexture, &TextureM::buildClipRect(&p_render->PresentTexture), &p_render->WireframeRenderMemory);
 		Window_presentTexture(&p_render->AppWindow, &p_render->PresentTexture);
 	};
 

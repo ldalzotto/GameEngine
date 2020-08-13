@@ -7,6 +7,7 @@
 -- RenderV2 --
 
 # Extracting (object culling)/(backface culling)/(rasterization alg)/(texture writing) to separate files with their on functions.
+# Making the final Rendering texture at a finite size.
 # Migrating the gizmo renderer from the old to the new engine.
 
 [X] # Ensuring that the Mouse coordinates are the same as the old engine.

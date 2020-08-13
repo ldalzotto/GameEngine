@@ -9,6 +9,8 @@ namespace _MathV2
 {
 	template <int C, int L, typename T>
 	struct Matrix;
+	template<typename T>
+	struct Rect;
 }
 
 namespace _RenderV2
@@ -19,6 +21,8 @@ namespace _RenderV2
 	struct Mesh;
 	struct LineRasterizationResult;
 	struct RenderedObject;
+
+
 }
 
 namespace _RenderV2
@@ -35,7 +39,7 @@ namespace _RenderV2
 		_MathV2::Matrix<4, 4, float>* ViewMatrix;
 		_MathV2::Matrix<4, 4, float>* ProjectionMatrix;
 		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
-		_MathV2::Vector<4, float>* CameraWorldPosition;	
+		_MathV2::Vector<4, float>* CameraWorldPosition;
 	};
 
 
@@ -65,5 +69,5 @@ namespace _RenderV2
 	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height);
 	void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory);
 
-	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderer_Memory* p_memory);
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, WireframeRenderer_Memory* p_memory);
 }

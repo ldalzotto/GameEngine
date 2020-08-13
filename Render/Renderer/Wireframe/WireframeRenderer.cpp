@@ -12,6 +12,7 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Intersection/Intersection.h"
+#include "v2/Rect/Rect.hpp"
 
 #include "Objects/RenderedObject.hpp"
 #include "Objects/Resource/PolygonMethods.hpp"
@@ -31,20 +32,20 @@ namespace _RenderV2
 {
 	void DrawLineClipped(
 		Vector<4, float>* p_begin, Vector<4, float>* p_end,
-		_Core::VectorT<_MathV2::Vector<2, int>>* in_out_rasterizedPixelsBuffer, _Core::VectorT<bool>* in_rasterizerBufferV2, _RenderV2::Texture<3, char>* p_to)
+		_Core::VectorT<_MathV2::Vector<2, int>>* in_out_rasterizedPixelsBuffer, _Core::VectorT<bool>* in_rasterizerBufferV2, _MathV2::Rect<int>* p_clipRect)
 	{
 		_Core::VectorT_clear(in_out_rasterizedPixelsBuffer);
 
 		// We -1 width and height because we use indices maximum indices (and not pixel count)
-		Rasterizer::line_v3_clipped((Vector2<float>*) p_begin, (Vector2<float>*) p_end, in_out_rasterizedPixelsBuffer, p_to->Width - 1, p_to->Height - 1);
+		Rasterizer::line_v3_clipped((Vector2<float>*) p_begin, (Vector2<float>*) p_end, in_out_rasterizedPixelsBuffer, p_clipRect);
 		for (size_t j = 0; j < in_out_rasterizedPixelsBuffer->Size; j++)
 		{
 			Vector2<int>* l_pixel = &in_out_rasterizedPixelsBuffer->Memory[j];
-			*(bool*)(((char*)in_rasterizerBufferV2->Memory) + TextureM::getElementOffset(l_pixel->x, l_pixel->y, p_to->Width, sizeof(bool))) = true;
+			*(bool*)(((char*)in_rasterizerBufferV2->Memory) + TextureM::getElementOffset(l_pixel->x, l_pixel->y, p_clipRect->Max.x + 1, sizeof(bool))) = true;
 		}
 
 	}
-	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderer_Memory* p_memory)
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, WireframeRenderer_Memory* p_memory)
 	{
 		WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 
@@ -177,9 +178,9 @@ namespace _RenderV2
 
 				// Rasterize
 				{
-					DrawLineClipped(&l_polygonPipeline->TransformedPolygon.v1, &l_polygonPipeline->TransformedPolygon.v2, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to);
-					DrawLineClipped(&l_polygonPipeline->TransformedPolygon.v2, &l_polygonPipeline->TransformedPolygon.v3, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to);
-					DrawLineClipped(&l_polygonPipeline->TransformedPolygon.v3, &l_polygonPipeline->TransformedPolygon.v1, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to);
+					DrawLineClipped(&l_polygonPipeline->TransformedPolygon.v1, &l_polygonPipeline->TransformedPolygon.v2, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to_clipRect );
+					DrawLineClipped(&l_polygonPipeline->TransformedPolygon.v2, &l_polygonPipeline->TransformedPolygon.v3, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to_clipRect);
+					DrawLineClipped(&l_polygonPipeline->TransformedPolygon.v3, &l_polygonPipeline->TransformedPolygon.v1, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to_clipRect);
 				}
 			}
 
