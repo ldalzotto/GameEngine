@@ -8,12 +8,11 @@
 
 #include "v2/Box/Box.hpp"
 #include "v2/Sphere/Sphere.hpp"
-#include "v2/Segment/SegmentV2Math.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Intersection/Intersection.h"
 #include "v2/Rect/Rect.hpp"
 
+#include "Cull/ObjectCulling.hpp"
 #include "Objects/RenderedObject.hpp"
 #include "Objects/Resource/PolygonMethods.hpp"
 #include "Objects/Resource/Vertex.hpp"
@@ -59,27 +58,10 @@ namespace _RenderV2
 				RenderedObject* l_renderableObject = &p_input->RenderableObjects->Memory[i];
 
 				{
-
-					Box* l_renderBoxBound_localSpace = &l_renderableObject->MeshBoundingBox;
-					Sphere l_renderBox_asSphere_cameraSpace;
-
 					Matrix4x4<float> l_object_to_camera;
 					MatrixM::mul(p_input->ViewMatrix, l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-					{
-						MatrixM::mul(&l_object_to_camera, &VectorM::cast(&l_renderBoxBound_localSpace->Center, 1.0f), &tmp_vec4_0);
-						l_renderBox_asSphere_cameraSpace.Center = *VectorM::cast(&tmp_vec4_0);
-					}
-
-					{
-						SegmentV2<4, float> l_box_extend_localSpace = { {0.0f, 0.0f, 0.0f, 1.0f}, VectorM::cast(&l_renderBoxBound_localSpace->Extend, 1.0f) };
-						SegmentV2<4, float> l_box_extend_worldSpace;
-						SegmentM::mul(&l_box_extend_localSpace, l_renderableObject->ModelMatrix, &l_box_extend_worldSpace);
-						Vector<4, float> l_box_extend_worldSpace_vec; SegmentM::toVector(&l_box_extend_worldSpace, &l_box_extend_worldSpace_vec);
-						l_renderBox_asSphere_cameraSpace.Radius = VectorM::length(VectorM::cast(&l_box_extend_worldSpace_vec));
-					}
-
-					if (Intersection_Contains_Frustum_Sphere(&l_cameraFrustum, &l_renderBox_asSphere_cameraSpace))
+					if(!ObjectCullingM::isObjectCulled(&l_renderableObject->MeshBoundingBox, &l_object_to_camera, l_renderableObject->ModelMatrix, &l_cameraFrustum))
 					{
 						// Push polygons
 						for (size_t j = 0; j < l_renderableObject->Mesh.Polygons.Size; j++)
@@ -190,18 +172,15 @@ namespace _RenderV2
 				}
 			}
 
-			for (int w = 0; w < p_to->Width; w++)
+			char* l_rasterizeBufferMemoryCursor = (char*)p_memory->RasterizerBufferV2.Memory;
+			TextureIterator<3, char> l_finalTexture_it = TextureM::buildIterator(p_to);
+			while (TextureIteratorM::moveNext(&l_finalTexture_it))
 			{
-				for (int h = 0; h < p_to->Height; h++)
+				if (*(bool*)l_rasterizeBufferMemoryCursor)
 				{
-
-					bool* l_write = (bool*)((char*)p_memory->RasterizerBufferV2.Memory + TextureM::getElementOffset(w, h, p_to->Width, sizeof(bool)));
-					if (*l_write)
-					{
-						_MathV2::Vector3<char>* l_pixel = (_MathV2::Vector3<char>*) ((char*)p_to->Pixels.Memory + TextureM::getElementOffset(w, h, p_to->Width, p_to->Pixels.ElementSize));
-						*l_pixel = { 0,0,0 };
-					}
+					*l_finalTexture_it.Current = { 0,0,0 };
 				}
+				l_rasterizeBufferMemoryCursor += p_memory->RasterizerBufferV2.ElementSize;
 			}
 		}
 	};

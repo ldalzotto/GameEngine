@@ -27,7 +27,12 @@ namespace _RenderV2
 
 		{
 			_MathV2::Vector3<char> l_color = { 255, 255, 255 };
-			TextureM::fill(&p_render->PresentTexture, &l_color);
+			_MathV2::Vector3<char>* l_pixel = &p_render->PresentTexture.Pixels.Memory[0];
+			TextureIterator<3, char> l_present_it = TextureM::buildIterator(&p_render->PresentTexture);
+			while (TextureIteratorM::moveNext(&l_present_it))
+			{
+				*l_present_it.Current = l_color;
+			}
 		}
 
 		WireframeRenderer_renderV2(p_wireframeRenderInput, &p_render->PresentTexture, &TextureM::buildClipRect(&p_render->PresentTexture), &p_render->WireframeRenderMemory);

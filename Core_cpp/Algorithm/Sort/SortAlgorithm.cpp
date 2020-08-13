@@ -59,7 +59,7 @@ namespace _Core
 			}
 		}
 
-		p_vectorIterator->Current = l_minValue;
+		p_vectorIterator->Current = (char*)l_minValue;
 		p_vectorIterator->CurrentIndex = l_minIndex;
 	};
 

@@ -72,14 +72,14 @@ namespace _Core
 	void GenericArray_buildIterator(GenericArray* p_genericArray, VectorIterator* out_iterator)
 	{
 		out_iterator->Array = p_genericArray;
-		out_iterator->Current = NULL;
+		out_iterator->Current = (char*)p_genericArray->Memory - p_genericArray->ElementSize;
 		out_iterator->CurrentIndex = -1;
 	};
 
 	void GenericArray_buildReverseIterator(GenericArray* p_genericArray, VectorReverseIterator* out_iterator)
 	{
 		out_iterator->Array = p_genericArray;
-		out_iterator->Current = NULL;
+		out_iterator->Current = (char*)p_genericArray->Memory + p_genericArray->ElementSize;
 		out_iterator->CurrentIndex = p_genericArray->Size;
 	};
 
@@ -89,7 +89,7 @@ namespace _Core
 		if (p_end_excluded > p_genericArray->Size) { throw std::runtime_error("GenericArray_buildRangedIterator : end is out of range ! "); }
 
 		out_iterator->Array = p_genericArray;
-		out_iterator->Current = NULL;
+		out_iterator->Current = (char*)GenericArray_at_unchecked(p_genericArray, p_begin_included - 1);
 		out_iterator->CurrentIndex = p_begin_included - 1;
 		out_iterator->BeginInluded = p_begin_included;
 		out_iterator->EndExcluded = p_end_excluded;

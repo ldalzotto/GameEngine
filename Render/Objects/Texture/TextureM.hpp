@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Texture.hpp"
-#include "RTexture.hpp"
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/VectorMath.hpp"
@@ -42,36 +41,33 @@ namespace _RenderV2
 		};
 
 		template <int N, typename T>
-		inline static void fill(Texture<N, T>* p_texture, const _MathV2::Vector<N, T>* p_color)
-		{
-			RTexture l_texture = { (char*)p_texture->Pixels.Memory, p_texture->Width, p_texture->Height, getElementSize<N, T>() };
-			RTexture_fill(&l_texture, (const T*)p_color);
-		};
-
-		template <int N, typename T>
-		inline static _MathV2::Vector<N, T>* getPixel(Texture<N, T>* p_texture, int W, int H)
-		{
-			return _Core::ArrayT_at(&p_texture->Pixels, ((size_t)H * p_texture->Width) + W);
-		};
-
-		template <int N, typename T>
-		inline static void writePixels(Texture<N, T>* p_texture, const _Core::VectorT<_MathV2::Vector<2, int>>* p_coordinates, const _Core::VectorT<_MathV2::Vector<N, T>>* p_colors)
-		{
-			RTexture l_texture = { (char*)p_texture->Pixels.Memory, p_texture->Width, p_texture->Height, getElementSize<N, T>() };
-			RTexture_drawPixels(&l_texture, (const RTexturePixelCoordinates*)p_coordinates->Memory, (const void*)p_colors->Memory, p_coordinates->Size);
-		};
-
-		template <int N, typename T>
-		inline static void writePixel(Texture<N, T>* p_texture, const _MathV2::Vector<2, int>* p_coordinate, const _MathV2::Vector<N, T>* p_color)
-		{
-			RTexture l_texture = { (char*)p_texture->Pixels.Memory, p_texture->Width, p_texture->Height, getElementSize<N, T>() };
-			RTexture_drawPixel(&l_texture, (const RTexturePixelCoordinates*)p_coordinate, (const void*)p_color);
-		};
-
-		template <int N, typename T>
 		inline static _MathV2::Rect<int> buildClipRect(Texture<N, T>* p_texture)
 		{
 			return { {0,0}, {(int)p_texture->Width - 1, (int)p_texture->Height - 1} };
 		};
+
+		template <int N, typename T>
+		inline static TextureIterator<N, T> buildIterator(Texture<N, T>* p_texture)
+		{
+			return TextureIterator<N, T>{p_texture, (_MathV2::Vector<N, T>*) ((char*)p_texture->Pixels.Memory - p_texture->Pixels.ElementSize), (size_t)-1};
+		};
+	};
+
+	struct TextureIteratorM
+	{
+		template <int N, typename T>
+		inline static bool moveNext(TextureIterator<N, T>* p_it)
+		{
+			p_it->Index += 1;
+			p_it->Current = (_MathV2::Vector<N, T>*)((char*)p_it->Current + p_it->Texture->Pixels.ElementSize);
+			return p_it->Index < p_it->Texture->Pixels.Size;
+		}
+
+		template <int N, typename T>
+		inline static void moveNextUnsafe(TextureIterator<N, T>* p_it)
+		{
+			p_it->Index += 1;
+			p_it->Current = (_MathV2::Vector<N, T>*)((char*)p_it->Current + p_it->Texture->Pixels.ElementSize);
+		}
 	};
 }

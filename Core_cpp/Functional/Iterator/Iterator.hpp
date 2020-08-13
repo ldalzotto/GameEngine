@@ -10,7 +10,7 @@ namespace _Core
 	struct VectorIterator
 	{
 		GenericArray* Array;
-		void* Current;
+		char* Current;
 		size_t CurrentIndex;
 	};
 
@@ -20,7 +20,7 @@ namespace _Core
 	struct VectorReverseIterator
 	{
 		GenericArray* Array;
-		void* Current;
+		char* Current;
 		size_t CurrentIndex;
 	};
 
@@ -29,7 +29,7 @@ namespace _Core
 	struct VectorRangedIterator
 	{
 		GenericArray* Array;
-		void* Current;
+		char* Current;
 		size_t CurrentIndex;
 		size_t BeginInluded;
 		size_t EndExcluded;

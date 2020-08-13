@@ -14,4 +14,12 @@ namespace _RenderV2
 		uint16_t Width, Height;
 		_Core::ArrayT<_MathV2::Vector<N, T>> Pixels;
 	};
+
+	template <int N, typename T>
+	struct TextureIterator
+	{
+		Texture<N, T>* Texture;
+		_MathV2::Vector<N, T>* Current;
+		size_t Index;
+	};
 }

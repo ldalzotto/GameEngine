@@ -9,7 +9,7 @@ namespace _Core
 		p_vectorIterator->CurrentIndex += 1;
 		if (p_vectorIterator->CurrentIndex < p_vectorIterator->Array->Size)
 		{
-			p_vectorIterator->Current = GenericArray_at_unchecked(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
+			p_vectorIterator->Current += p_vectorIterator->Array->ElementSize;
 			return true;
 		}
 		else
@@ -21,7 +21,7 @@ namespace _Core
 	bool VectorIterator_moveToIndex(VectorIterator* p_vectorIterator, size_t p_index)
 	{
 		p_vectorIterator->CurrentIndex = p_index;
-		p_vectorIterator->Current = GenericArray_at(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
+		p_vectorIterator->Current = (char*)GenericArray_at(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
 		return p_vectorIterator->Current != nullptr;
 	};
 
@@ -34,7 +34,7 @@ namespace _Core
 		}
 		else
 		{
-			p_vectorIterator->Current = GenericArray_at(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
+			p_vectorIterator->Current -= p_vectorIterator->Array->ElementSize;
 		}
 
 		return p_vectorIterator->Current != nullptr;
@@ -45,7 +45,7 @@ namespace _Core
 		p_vectorIterator->CurrentIndex += 1;
 		if (p_vectorIterator->CurrentIndex >= p_vectorIterator->BeginInluded && p_vectorIterator->CurrentIndex < p_vectorIterator->EndExcluded)
 		{
-			p_vectorIterator->Current = GenericArray_at_unchecked(p_vectorIterator->Array, p_vectorIterator->CurrentIndex);
+			p_vectorIterator->Current += p_vectorIterator->Array->ElementSize;
 			return true;
 		}
 		else
