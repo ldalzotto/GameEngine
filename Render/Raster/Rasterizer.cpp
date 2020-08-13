@@ -1,11 +1,12 @@
 #include "Rasterizer.hpp"
 
 #include <math.h>
+#include <stdexcept>
+
 #include "Constants.hpp"
 #include "v2/Vector/VectorMath.hpp"
 #include "DataStructures/Specifications/ArraySliceT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
-#include "v2/Line/LineMath.hpp"
 
 #include <string.h>
 
@@ -13,8 +14,6 @@ namespace _RenderV2
 {
 
 	//https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-	//TODO - Before executing the rasterization, we can clip the begin and end pixel values to the screen.
-	// This will save us some compute time in case of the line is very huge, because we will rasterise even outside of the screen.
 	void Rasterizer::line_v3(const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end, _Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels)
 	{
 		_MathV2::Vector<2, int> l_begin_int = { rintf(p_begin->x), rintf(p_begin->y) };
@@ -30,8 +29,8 @@ namespace _RenderV2
 		for (;;)
 		{
 			_MathV2::Vector<2, int> l_pixel = { l_begin_int.x, l_begin_int.y };
-			_Core::VectorT_pushBack(out_rasterizedPixels, &l_pixel);
-			// out_rasterizedPixels->Memory[l_rasterizedPixels_bufferIndex] = { l_begin_int.x, l_begin_int.y };
+			// _Core::VectorT_pushBack(out_rasterizedPixels, &l_pixel);
+			out_rasterizedPixels->Memory[l_rasterizedPixels_bufferIndex] = { l_begin_int.x, l_begin_int.y };
 			l_rasterizedPixels_bufferIndex += 1;
 
 			e2 = 2 * err;
@@ -56,6 +55,13 @@ namespace _RenderV2
 		}
 
 		out_rasterizedPixels->Size = l_rasterizedPixels_bufferIndex - 1;
+
+#ifndef NDEBUG
+		if (out_rasterizedPixels->Size > out_rasterizedPixels->Capacity)
+		{
+			throw std::exception("Rasterizer::line_v3 : not enough memory allocated to the Rasterized pixel buffer");
+		}
+#endif
 	};
 
 	enum ClipPosition : short int
@@ -99,12 +105,12 @@ namespace _RenderV2
 	void Rasterizer::line_v3_clipped(
 		const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
 		_Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels,
-		const int p_texWidth, const int p_texHeight)
+		const int p_clipMaxWidth, const int p_clipMaxHeight)
 	{
 		bool l_clipped = false;
 
-		ClipPosition l_beginClip = calculateClip(p_begin, p_texWidth, p_texHeight);
-		ClipPosition l_endClip = calculateClip(p_end, p_texWidth, p_texHeight);
+		ClipPosition l_beginClip = calculateClip(p_begin, p_clipMaxWidth, p_clipMaxHeight);
+		ClipPosition l_endClip = calculateClip(p_end, p_clipMaxWidth, p_clipMaxHeight);
 
 		if ((l_beginClip != ClipPosition::INSIDE) || (l_endClip != ClipPosition::INSIDE))
 		{
@@ -144,40 +150,46 @@ namespace _RenderV2
 
 					if (l_selectedClip & ClipPosition::UP)
 					{
-						l_y = p_texHeight;
-						l_x = l_beginClipped.x + ((p_texWidth / p_texHeight) * (l_endClipped.y - l_y));
+						l_y = p_clipMaxHeight;
+						// deltaX = slope * (fixed position diff)
+						l_x = l_beginClipped.x + (((l_endClipped.x - l_beginClipped.x) / (l_endClipped.y - l_beginClipped.y)) * (l_y - l_beginClipped.y));
 					}
 					else if (l_selectedClip & ClipPosition::DOWN)
 					{
 						l_y = 0;
-						l_x = l_beginClipped.x + ((p_texWidth / p_texHeight) * (l_endClipped.y - l_y));
+						l_x = l_beginClipped.x + (((l_endClipped.x - l_beginClipped.x) / (l_endClipped.y - l_beginClipped.y)) * (l_y - l_beginClipped.y));
 					}
 					else if (l_selectedClip & ClipPosition::RIGHT)
 					{
-						l_x = p_texWidth;
-						l_y = l_beginClipped.y + ((p_texHeight / p_texWidth) * (l_endClipped.x - l_x));
+						l_x = p_clipMaxWidth;
+						l_y =  l_beginClipped.y + (((l_endClipped.y - l_beginClipped.y) / (l_endClipped.x - l_beginClipped.x)) * (l_x - l_beginClipped.x));
 					}
 					else if (l_selectedClip & ClipPosition::LEFT)
 					{
 						l_x = 0;
-						l_y = l_beginClipped.y + ((p_texHeight / p_texWidth) * (l_endClipped.x - l_x));
+						l_y = l_beginClipped.y + (((l_endClipped.y - l_beginClipped.y) / (l_endClipped.x - l_beginClipped.x)) * (l_x - l_beginClipped.x));
 					}
 
 					if (l_selectedPoint == 0)
 					{
 						l_beginClipped.x = l_x;
 						l_beginClipped.y = l_y;
-						l_beginClippedClip = calculateClip(&l_beginClipped, p_texWidth, p_texHeight);
+						l_beginClippedClip = calculateClip(&l_beginClipped, p_clipMaxWidth, p_clipMaxHeight);
 					}
 					else
 					{
 						l_endClipped.x = l_x;
 						l_endClipped.y = l_y;
-						l_endClippedClip = calculateClip(&l_endClipped, p_texWidth, p_texHeight);
+						l_endClippedClip = calculateClip(&l_endClipped, p_clipMaxWidth, p_clipMaxHeight);
 					}
 				}
 			}
 
+
+			if (l_beginClipped.x<0.0f || l_beginClipped.x>p_clipMaxWidth || l_beginClipped.y <0.0f || l_beginClipped.y>p_clipMaxHeight)
+			{
+				int zd = 0;
+			}
 
 			Rasterizer::line_v3(&l_beginClipped, &l_endClipped, out_rasterizedPixels);
 

@@ -35,7 +35,8 @@ int main()
 	RenderV2_initialize(&renderV2);
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	//  l_modelMatrix.Points[3][0] = 5.0f; l_modelMatrix.Points[3][1] = 5.0f; l_modelMatrix.Points[3][2] = 5.0f;
+	 l_modelMatrix.Points[3][0] = 9.0f; 
+	 // l_modelMatrix.Points[3][1] = 5.0f; l_modelMatrix.Points[3][2] = 5.0f;
 	_Core::VectorT<RenderedObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
 

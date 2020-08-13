@@ -33,20 +33,20 @@ namespace _RenderV2
 		Vector<4, float>* p_begin, Vector<4, float>* p_end,
 		_Core::VectorT<_MathV2::Vector<2, int>>* in_out_rasterizedPixelsBuffer, _Core::VectorT<bool>* in_rasterizerBufferV2, _RenderV2::Texture<3, char>* p_to)
 	{
-		_Core::VectorT_resize(in_out_rasterizedPixelsBuffer, (abs(p_begin->x - p_end->x) + abs(p_begin->y - p_end->y)) * 1.2f);
 		_Core::VectorT_clear(in_out_rasterizedPixelsBuffer);
 
-		Rasterizer::line_v3_clipped((Vector2<float>*) p_begin, (Vector2<float>*) p_end, in_out_rasterizedPixelsBuffer, p_to->Width, p_to->Height);
+		// We -1 width and height because we use indices maximum indices (and not pixel count)
+		Rasterizer::line_v3_clipped((Vector2<float>*) p_begin, (Vector2<float>*) p_end, in_out_rasterizedPixelsBuffer, p_to->Width - 1, p_to->Height - 1);
 		for (size_t j = 0; j < in_out_rasterizedPixelsBuffer->Size; j++)
 		{
 			Vector2<int>* l_pixel = &in_out_rasterizedPixelsBuffer->Memory[j];
 			*(bool*)(((char*)in_rasterizerBufferV2->Memory) + TextureM::getElementOffset(l_pixel->x, l_pixel->y, p_to->Width, sizeof(bool))) = true;
 		}
-		
+
 	}
 	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderer_Memory* p_memory)
 	{
-		WireframeRenderer_Memory_clear(p_memory, (size_t)p_to->Width * p_to->Height);
+		WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 
 		Vector4<float> tmp_vec4_0, tmp_vec4_1, tmp_vec4_2;
 
@@ -206,11 +206,13 @@ namespace _RenderV2
 		_Core::VectorT_alloc(&p_memory->RasterizedPixelsBuffer, 0);
 		_Core::VectorT_alloc(&p_memory->RasterizerBufferV2, 0);
 	};
-	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_rasterizerBufferSize)
+	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
 	{
 		_Core::VectorT_clear(&p_memory->PolygonPipelines);
 		_Core::VectorT_clear(&p_memory->RasterizedPixelsBuffer);
-		_Core::VectorT_resize(&p_memory->RasterizerBufferV2, p_rasterizerBufferSize);
+		_Core::VectorT_resize(&p_memory->RasterizedPixelsBuffer, p_width > height ? p_width * 2 : height * 2);
+		_Core::VectorT_resize(&p_memory->RasterizerBufferV2, p_width * height);
+		_Core::VectorT_clear(&p_memory->RasterizerBufferV2);
 		memset(p_memory->RasterizerBufferV2.Memory, 0, p_memory->RasterizerBufferV2.ElementSize * p_memory->RasterizerBufferV2.Capacity);
 
 	};

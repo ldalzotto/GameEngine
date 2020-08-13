@@ -24,7 +24,7 @@ namespace _RenderV2
 		static void line_v3_clipped(
 			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
 			_Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels,
-			const int p_texWidth, const int p_texHeight);
+			const int p_clipMaxWidth, const int p_clipMaxHeight);
 		/*
 		static void line(
 			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end, 

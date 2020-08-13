@@ -62,7 +62,7 @@ namespace _RenderV2
 	};
 
 	void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory);
-	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_rasterizerBufferSize);
+	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height);
 	void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory);
 
 	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderer_Memory* p_memory);
