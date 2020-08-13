@@ -34,13 +34,15 @@ namespace _RenderV2
 		_Core::VectorT<_MathV2::Vector<2, int>>* in_out_rasterizedPixelsBuffer, _Core::VectorT<bool>* in_rasterizerBufferV2, _RenderV2::Texture<3, char>* p_to)
 	{
 		_Core::VectorT_resize(in_out_rasterizedPixelsBuffer, (abs(p_begin->x - p_end->x) + abs(p_begin->y - p_end->y)) * 1.2f);
-		Rasterizer::line_v3((Vector2<float>*) p_begin, (Vector2<float>*) p_end, in_out_rasterizedPixelsBuffer);
+		_Core::VectorT_clear(in_out_rasterizedPixelsBuffer);
+
+		Rasterizer::line_v3_clipped((Vector2<float>*) p_begin, (Vector2<float>*) p_end, in_out_rasterizedPixelsBuffer, p_to->Width, p_to->Height);
 		for (size_t j = 0; j < in_out_rasterizedPixelsBuffer->Size; j++)
 		{
 			Vector2<int>* l_pixel = &in_out_rasterizedPixelsBuffer->Memory[j];
 			*(bool*)(((char*)in_rasterizerBufferV2->Memory) + TextureM::getElementOffset(l_pixel->x, l_pixel->y, p_to->Width, sizeof(bool))) = true;
 		}
-		_Core::VectorT_clear(in_out_rasterizedPixelsBuffer);
+		
 	}
 	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, WireframeRenderer_Memory* p_memory)
 	{
