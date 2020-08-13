@@ -17,24 +17,24 @@ namespace _MathV2
 		DOWN_RIGHT = DOWN & RIGHT
 	};
 
-	ClipPosition calculateClip(const _MathV2::Vector<2, float>* p_point, const _MathV2::Rect<int>* p_clipRect)
+	ClipPosition calculateClip(const _MathV2::Vector<2, int>* p_point, const _MathV2::Rect<int>* p_clipRect)
 	{
 		short int l_pos = (short int)ClipPosition::INSIDE;
 
-		if (p_point->y > p_clipRect->Max.y + FLOAT_TOLERANCE)
+		if (p_point->y > p_clipRect->Max.y)
 		{
 			l_pos |= (short int)ClipPosition::UP;
 		}
-		else if (p_point->y < p_clipRect->Min.y - FLOAT_TOLERANCE)
+		else if (p_point->y < p_clipRect->Min.y)
 		{
 			l_pos |= (short int)ClipPosition::DOWN;
 		}
 
-		if (p_point->x > p_clipRect->Max.x + FLOAT_TOLERANCE)
+		if (p_point->x > p_clipRect->Max.x)
 		{
 			l_pos |= (short int)ClipPosition::RIGHT;
 		}
-		else if (p_point->x < p_clipRect->Min.x - FLOAT_TOLERANCE)
+		else if (p_point->x < p_clipRect->Min.x)
 		{
 			l_pos |= (short int)ClipPosition::LEFT;
 		}
@@ -43,8 +43,8 @@ namespace _MathV2
 	}
 
 
-	bool ClipM::clip(const Vector<2, float>* in_clippedSegment_begin, const Vector<2, float>* in_clippedSegment_end,
-		const Rect<int>* p_clippedRect, Vector<2, float>* out_clippedSegment_begin, Vector<2, float>* out_clippedSegment_end)
+	bool ClipM::clip(const Vector<2, int>* in_clippedSegment_begin, const Vector<2, int>* in_clippedSegment_end,
+		const Rect<int>* p_clippedRect, Vector<2, int>* out_clippedSegment_begin, Vector<2, int>* out_clippedSegment_end)
 	{
 	
 		ClipPosition l_beginClip = calculateClip(in_clippedSegment_begin, p_clippedRect);

@@ -56,6 +56,7 @@ namespace _RenderV2
 
 		Polygon<_MathV2::Vector<4, float>> CameraSpacePolygon;
 		Polygon<_MathV2::Vector<4, float>> TransformedPolygon;
+		Polygon<_MathV2::Vector<2, int>> PixelPolygon;
 	};
 
 	struct WireframeRenderer_Memory
