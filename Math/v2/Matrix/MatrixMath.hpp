@@ -160,9 +160,9 @@ namespace _MathV2
 		};
 
 		template <typename T>
-		inline static Vector4<T>* clipSpaceMul(const Matrix4x4<T>* p_projectionmatrix, const Vector4<T>* p_pos, Vector4<T>* p_out)
+		inline static Vector4<T>* mul_homogeneous(const Matrix4x4<T>* p_projectionmatrix, const Vector4<T>* p_pos, Vector4<T>* p_out)
 		{
-			RMatrix_4x4_clipSpaceMul(p_projectionmatrix->Points, (T*)(p_pos), (T*)(p_out));
+			RMatrix_4x4_mul_homogeneous(p_projectionmatrix->Points, (T*)(p_pos), (T*)(p_out));
 			return p_out;
 		};
 	};

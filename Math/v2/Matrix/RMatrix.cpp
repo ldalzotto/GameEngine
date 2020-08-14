@@ -291,7 +291,7 @@ namespace _MathV2
 		RMatrix_3x3_buildFromColumn(l_right, l_up, l_forward, out_rotationMatrix);
 	};
 
-	void RMatrix_4x4_clipSpaceMul(const float p_projectionmatrix[4][4], const float p_pos[4], float out_pos[4])
+	void RMatrix_4x4_mul_homogeneous(const float p_projectionmatrix[4][4], const float p_pos[4], float out_pos[4])
 	{
 		RMatrix_mul_specification((const float*)p_projectionmatrix, 4, 4, p_pos, 1, 4, out_pos);
 		// RMatrix_4x4_mul_4(p_projectionmatrix, p_pos, out_pos);

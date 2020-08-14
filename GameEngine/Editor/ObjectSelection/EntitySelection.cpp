@@ -708,9 +708,9 @@ namespace _GameEngineEditor
 					Matrix4x4<float> l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera);
 					Matrix4x4<float> l_clipToWorldMatrix; MatrixM::inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
-					Vector4<float> l_selectedEntityTransformClip; MatrixM::clipSpaceMul(&l_worldToClipMatrix, &VectorM::cast(&l_followedWorldPosition, 1.0f), &l_selectedEntityTransformClip);
+					Vector4<float> l_selectedEntityTransformClip; MatrixM::mul_homogeneous(&l_worldToClipMatrix, &VectorM::cast(&l_followedWorldPosition, 1.0f), &l_selectedEntityTransformClip);
 					l_selectedEntityTransformClip.z = 0.99f; //Fixed distance in clip space from near plane.
-					l_transformGizmoWorldPosition = *VectorM::cast(MatrixM::clipSpaceMul(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &tmp_vec4_0));
+					l_transformGizmoWorldPosition = *VectorM::cast(MatrixM::mul_homogeneous(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &tmp_vec4_0));
 				}
 
 				TransformM::setWorldPosition(&l_transformGizmotransform->Transform, &l_transformGizmoWorldPosition);

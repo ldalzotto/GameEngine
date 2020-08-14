@@ -4,6 +4,7 @@
 #include "v2/Vector/Vector.hpp"
 #include "DataStructures/Specifications/ArraySliceT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
+#include "Raster/Rasterizer.hpp"
 
 namespace _MathV2
 {
@@ -21,8 +22,6 @@ namespace _RenderV2
 	struct Mesh;
 	struct LineRasterizationResult;
 	struct RenderedObject;
-
-
 }
 
 namespace _RenderV2
@@ -62,8 +61,7 @@ namespace _RenderV2
 	struct WireframeRenderer_Memory
 	{
 		_Core::VectorT<PolygonPipelineV2> PolygonPipelines;
-		_Core::VectorT<_MathV2::Vector<2, int>> RasterizedPixelsBuffer;
-		_Core::VectorT<bool> RasterizerBufferV2;
+		_Core::VectorT<RasterizationStep> RasterizedPixelsBuffer;
 	};
 
 	void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory);

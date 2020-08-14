@@ -19,16 +19,27 @@ namespace _MathV2
 
 namespace _RenderV2
 {
-	struct LineRasterizationInterpolation
+	enum class RasterizationStepDirection : short int
 	{
-		float L1, L2;
+		NONE = 0,
+		ADD = 1,
+		REMOVE = 2
 	};
+
+	struct RasterizationStep
+	{
+		RasterizationStepDirection XDirection;
+		RasterizationStepDirection YDirection;
+	};
+
 
 	struct Rasterizer
 	{
-		static void line_v3_clipped(
+		static bool line_v3_clipped(
 			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
-			_Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels,
-			const _MathV2::Rect<int>* p_clip_rect);
+			_Core::VectorT<RasterizationStep>* out_rasterizedPixels,
+			const _MathV2::Rect<int>* p_clip_rect,
+			_MathV2::Vector<2, int>* out_clipped_begin,
+			_MathV2::Vector<2, int>* out_clipped_end);
 	};
 }
