@@ -64,7 +64,7 @@ namespace _RenderV2
 	};
 
 	void Rasterizer::line_v3_clipped(
-		const _MathV2::Vector<2, int>* p_begin, const _MathV2::Vector<2, int>* p_end,
+		const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
 		_Core::VectorT<_MathV2::Vector<2, int>>* out_rasterizedPixels,
 		const _MathV2::Rect<int>* p_clip_rect)
 	{
@@ -74,6 +74,23 @@ namespace _RenderV2
 		{
 			line_v3(&l_beginClipped, &l_endClipped, out_rasterizedPixels);
 		};
+
+		/*
+			_MathV2::Vector<2, int> l_beginClipped = *p_begin;
+	_MathV2::Vector<2, int> l_endClipped = *p_end;
+
+		line_v3(&l_beginClipped, &l_endClipped, out_rasterizedPixels);
+
+		size_t l_initialSize = out_rasterizedPixels->Size;
+		for (size_t i = out_rasterizedPixels->Size; i--; i <= l_initialSize)
+		{
+			if (out_rasterizedPixels->Memory[i].x < 0 || out_rasterizedPixels->Memory[i].x >= p_clip_rect->Max.x ||
+				out_rasterizedPixels->Memory[i].y < 0 || out_rasterizedPixels->Memory[i].y >= p_clip_rect->Max.y)
+			{
+				_Core::VectorT_erase(out_rasterizedPixels, i);
+			}
+		}
+		*/
 	}
 
 }

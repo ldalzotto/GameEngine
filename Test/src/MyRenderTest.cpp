@@ -19,6 +19,8 @@
 
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
 
+#include "v2/Clip/ClipMath.hpp"
+
 #include "File/ObjReader.hpp"
 
 using namespace _RenderV2;
@@ -28,6 +30,17 @@ _Core::TimeClockPrecision LastFrameTime = 0;
 
 int main()
 {
+
+	/*
+	{
+		_MathV2::Vector2<int> l_begin = { 780, 500 };
+		_MathV2::Vector2<int> l_end = { 820, 800 };
+		_MathV2::Rect<int> l_clip = { {0,0}, {800, 600} };
+		_MathV2::Vector2<int> out_begin, out_end;
+		_MathV2::ClipM::clip(&l_begin, &l_end, &l_clip, &out_begin, &out_end);
+	}
+	*/
+
 	_Core::AppEvent_initialize();
 
 	LastFrameTime = _Core::Clock_currentTime_mics();
@@ -35,15 +48,15 @@ int main()
 	RenderV2_initialize(&renderV2);
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	 // l_modelMatrix.Points[3][0] = 9.0f; 
-	 // l_modelMatrix.Points[3][1] = 5.0f; l_modelMatrix.Points[3][2] = 5.0f;
+	l_modelMatrix.Points[3][0] = 9.0f;
+	// l_modelMatrix.Points[3][1] = 5.0f; l_modelMatrix.Points[3][2] = 5.0f;
 	_Core::VectorT<RenderedObject> l_renderableObjects;
 	_Core::VectorT_alloc(&l_renderableObjects, 0);
 
 	_Core::VectorT<Mesh> l_loadedMeshes{};
 	_Core::VectorT_alloc(&l_loadedMeshes, 0);
 	{
-		ObjReader_loadMeshes("C:/Users/loicd/Desktop/CubeTest.obj", &_Core::VectorT_buildInsertor(&l_loadedMeshes));
+		ObjReader_loadMeshes("C:/Users/loicd/Desktop/BigCube.obj", &_Core::VectorT_buildInsertor(&l_loadedMeshes));
 
 		_Core::VectorIteratorT<Mesh> l_meshIt = _Core::VectorT_buildIterator(&l_loadedMeshes);
 		while (_Core::VectorIteratorT_moveNext(&l_meshIt))
@@ -62,6 +75,7 @@ int main()
 
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 
+
 	while (!_RenderV2::Window_askedForClose(&renderV2.AppWindow))
 	{
 		float l_deltaTime = _Core::Clock_currentTime_mics() - LastFrameTime;
@@ -71,9 +85,10 @@ int main()
 
 		_MathV2::Quaternion<float> tmp_quat_0; _MathV2::Matrix3x3<float> tmp_mat3x3_0; _MathV2::Matrix4x4<float> tmp_mat4x4_0;
 		_MathV2::Matrix4x4<float> l_rotation = _MathV2::Matrix4x4f_Identity;
-		_MathV2::MatrixM::buildRotationMatrix(_MathV2::QuaternionM::extractAxis(_MathV2::QuaternionM::rotateAround(&_MathV2::UP, 0.02f * l_deltaTime * 0.0001f, &tmp_quat_0), &tmp_mat3x3_0), &l_rotation);
+		_MathV2::MatrixM::buildRotationMatrix(_MathV2::QuaternionM::extractAxis(_MathV2::QuaternionM::rotateAround(&_MathV2::UP, 0.000001f * l_deltaTime, &tmp_quat_0), &tmp_mat3x3_0), &l_rotation);
 		_MathV2::MatrixM::mul(&l_modelMatrix, &l_rotation, &tmp_mat4x4_0);
 		l_modelMatrix = tmp_mat4x4_0;
+
 
 		WireframeRendererInput l_input{};
 		l_input.RendererConfiguration.ObjectCullEnabled = true;

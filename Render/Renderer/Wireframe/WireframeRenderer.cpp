@@ -30,7 +30,7 @@ using namespace _MathV2;
 namespace _RenderV2
 {
 	void DrawLineClipped(
-		Vector<2, int>* p_begin, Vector<2, int>* p_end,
+		Vector<2, float>* p_begin, Vector<2, float>* p_end,
 		_Core::VectorT<_MathV2::Vector<2, int>>* in_out_rasterizedPixelsBuffer, _Core::VectorT<bool>* in_rasterizerBufferV2, _MathV2::Rect<int>* p_clipRect)
 	{
 		_Core::VectorT_clear(in_out_rasterizedPixelsBuffer);
@@ -159,14 +159,14 @@ namespace _RenderV2
 				}
 
 				{
-					l_polygonPipeline->PixelPolygon.v1 = { (int)rintf(l_polygonPipeline->TransformedPolygon.v1.x),  (int)rintf(l_polygonPipeline->TransformedPolygon.v1.y) };
-					l_polygonPipeline->PixelPolygon.v2 = { (int)rintf(l_polygonPipeline->TransformedPolygon.v2.x),  (int)rintf(l_polygonPipeline->TransformedPolygon.v2.y) };
-					l_polygonPipeline->PixelPolygon.v3 = { (int)rintf(l_polygonPipeline->TransformedPolygon.v3.x),  (int)rintf(l_polygonPipeline->TransformedPolygon.v3.y) };
+					l_polygonPipeline->PixelPolygon.v1 = { l_polygonPipeline->TransformedPolygon.v1.x,  l_polygonPipeline->TransformedPolygon.v1.y };
+					l_polygonPipeline->PixelPolygon.v2 = { l_polygonPipeline->TransformedPolygon.v2.x,  l_polygonPipeline->TransformedPolygon.v2.y };
+					l_polygonPipeline->PixelPolygon.v3 = { l_polygonPipeline->TransformedPolygon.v3.x,  l_polygonPipeline->TransformedPolygon.v3.y };
 				}
 
 				// Rasterize
 				{
-					DrawLineClipped(&l_polygonPipeline->PixelPolygon.v1, &l_polygonPipeline->PixelPolygon.v2, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to_clipRect );
+					DrawLineClipped(&l_polygonPipeline->PixelPolygon.v1, &l_polygonPipeline->PixelPolygon.v2, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to_clipRect);
 					DrawLineClipped(&l_polygonPipeline->PixelPolygon.v2, &l_polygonPipeline->PixelPolygon.v3, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to_clipRect);
 					DrawLineClipped(&l_polygonPipeline->PixelPolygon.v3, &l_polygonPipeline->PixelPolygon.v1, &p_memory->RasterizedPixelsBuffer, &p_memory->RasterizerBufferV2, p_to_clipRect);
 				}

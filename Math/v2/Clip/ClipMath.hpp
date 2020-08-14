@@ -7,7 +7,7 @@ namespace _MathV2
 {
 	struct ClipM
 	{
-		static bool clip(const Vector<2, int>* in_clippedSegment_begin, const Vector<2, int>* in_clippedSegment_end,
+		static bool clip(const Vector<2, float>* in_clippedSegment_begin, const Vector<2, float>* in_clippedSegment_end,
 			const Rect<int>* p_clippedRect, Vector<2, int>* out_clippedSegment_begin, Vector<2, int>* out_clippedSegment_end);
 	};
 }
