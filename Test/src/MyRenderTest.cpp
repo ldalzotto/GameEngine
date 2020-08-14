@@ -11,6 +11,7 @@
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Box/Box.hpp"
 #include "v2/Box/BoxMath.h"
+#include "v2/Frustum/FrustumMath.hpp"
 
 #include "Clock/Clock.hpp"
 
@@ -49,10 +50,12 @@ int main(int argc, char* argv[])
 	_MathV2::Matrix<4, 4, float> l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
 	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, (1.0f / 1.0040f), -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
+	_MathV2::Frustum l_cameraFrustum = _MathV2::FrustumM::extractFrustumFromProjection(&l_projectionMatrix);
 
 	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = &l_viewMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = &l_projectionMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = &l_cameraWorldPosition;
+	renderV2.GlobalBuffer.CameraBuffer.CameraFrustum = &l_cameraFrustum;
 
 	while (!_RenderV2::Window_askedForClose(&renderV2.AppWindow))
 	{

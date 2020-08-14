@@ -15,8 +15,6 @@
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
 
-#include "v2/Frustum/FrustumMath.hpp"
-
 using namespace _MathV2;
 
 namespace _RenderV2
@@ -28,8 +26,6 @@ namespace _RenderV2
 		Polygon<Vector<4, float>> tmp_poly_4f_0, tmp_poly_4f_1;
 
 		{
-			Frustum l_cameraFrustum = FrustumM::extractFrustumFromProjection(p_input->CameraBuffer->ProjectionMatrix);
-
 			for (size_t i = 0; i < p_input->RenderableObjectsBuffer->RenderedObjects.Size; i++)
 			{
 				RenderedObject* l_renderableObject = &p_input->RenderableObjectsBuffer->RenderedObjects.Memory[i];
@@ -38,7 +34,7 @@ namespace _RenderV2
 					Matrix4x4<float> l_object_to_camera;
 					MatrixM::mul(p_input->CameraBuffer->ViewMatrix, l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, l_renderableObject->ModelMatrix, &l_object_to_camera, &l_cameraFrustum))
+					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, l_renderableObject->ModelMatrix, &l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 					{
 						// Push polygons
 						for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
