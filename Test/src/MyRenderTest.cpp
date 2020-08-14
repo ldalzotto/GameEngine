@@ -17,10 +17,7 @@
 #include "Objects/Resource/Mesh.hpp"
 #include "Objects/RenderedObject.hpp"
 
-#include "Renderer/Wireframe/WireframeRenderer.hpp"
-
 #include "v2/Clip/ClipMath.hpp"
-
 #include "File/ObjReader.hpp"
 
 using namespace _RenderV2;
@@ -30,17 +27,6 @@ _Core::TimeClockPrecision LastFrameTime = 0;
 
 int main()
 {
-
-	/*
-	{
-		_MathV2::Vector2<int> l_begin = { 780, 500 };
-		_MathV2::Vector2<int> l_end = { 820, 800 };
-		_MathV2::Rect<int> l_clip = { {0,0}, {800, 600} };
-		_MathV2::Vector2<int> out_begin, out_end;
-		_MathV2::ClipM::clip(&l_begin, &l_end, &l_clip, &out_begin, &out_end);
-	}
-	*/
-
 	_Core::AppEvent_initialize();
 
 	LastFrameTime = _Core::Clock_currentTime_mics();
@@ -49,9 +35,6 @@ int main()
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
 	l_modelMatrix.Points[3][0] = 9.0f;
-	// l_modelMatrix.Points[3][1] = 5.0f; l_modelMatrix.Points[3][2] = 5.0f;
-	_Core::VectorT<RenderedObject> l_renderableObjects;
-	_Core::VectorT_alloc(&l_renderableObjects, 0);
 
 	_Core::VectorT<Mesh> l_loadedMeshes{};
 	_Core::VectorT_alloc(&l_loadedMeshes, 0);
@@ -65,16 +48,18 @@ int main()
 			_MathV2::Box_build(&l_meshBoundingBox, (_Core::VectorT<_MathV2::Vector3<float>>*) & l_meshIt.Current->Vertices);
 
 			RenderedObject l_renderableObject = { *l_meshIt.Current , l_meshBoundingBox, &l_modelMatrix };
-			_Core::VectorT_pushBack(&l_renderableObjects, &l_renderableObject);
+			_Core::VectorT_pushBack(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject);
 		}
 	}
 	_Core::VectorT_free(&l_loadedMeshes);
 
 	_MathV2::Matrix<4, 4, float> l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
 	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, (1.0f / 1.0040f), -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
-
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 
+	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = &l_viewMatrix;
+	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = &l_projectionMatrix;
+	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = &l_cameraWorldPosition;
 
 	while (!_RenderV2::Window_askedForClose(&renderV2.AppWindow))
 	{
@@ -89,16 +74,7 @@ int main()
 		_MathV2::MatrixM::mul(&l_modelMatrix, &l_rotation, &tmp_mat4x4_0);
 		l_modelMatrix = tmp_mat4x4_0;
 
-
-		WireframeRendererInput l_input{};
-		l_input.RendererConfiguration.ObjectCullEnabled = true;
-		l_input.RenderableObjects = &l_renderableObjects;
-		l_input.ProjectionMatrix = &l_projectionMatrix;
-		l_input.ViewMatrix = &l_viewMatrix;
-		l_input.GraphicsAPIToScreeMatrix = &renderV2.AppWindow.GraphicsAPIToWindowPixelCoordinates;
-		l_input.CameraWorldPosition = &l_cameraWorldPosition;
-
-		RenderV2_render(&renderV2, &l_input);
+		RenderV2_render(&renderV2);
 	}
 
 

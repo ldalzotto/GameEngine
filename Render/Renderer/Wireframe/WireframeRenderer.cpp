@@ -11,6 +11,9 @@
 
 #include "Renderer/Draw/DrawFunctions.hpp"
 
+#include "Renderer/GlobalBuffers/CameraBuffer.hpp"
+#include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
+
 #include "v2/Frustum/FrustumMath.hpp"
 
 using namespace _MathV2;
@@ -24,15 +27,15 @@ namespace _RenderV2
 		Polygon<Vector<4, float>> tmp_poly_4f_0, tmp_poly_4f_1;
 
 		{
-			Frustum l_cameraFrustum = FrustumM::extractFrustumFromProjection(p_input->ProjectionMatrix);
+			Frustum l_cameraFrustum = FrustumM::extractFrustumFromProjection(p_input->CameraBuffer->ProjectionMatrix);
 
-			for (size_t i = 0; i < p_input->RenderableObjects->Size; i++)
+			for (size_t i = 0; i < p_input->RenderableObjectsBuffer->RenderedObjects.Size; i++)
 			{
-				RenderedObject* l_renderableObject = &p_input->RenderableObjects->Memory[i];
+				RenderedObject* l_renderableObject = &p_input->RenderableObjectsBuffer->RenderedObjects.Memory[i];
 
 				{
 					Matrix4x4<float> l_object_to_camera;
-					MatrixM::mul(p_input->ViewMatrix, l_renderableObject->ModelMatrix, &l_object_to_camera);
+					MatrixM::mul(p_input->CameraBuffer->ViewMatrix, l_renderableObject->ModelMatrix, &l_object_to_camera);
 
 					if (!ObjectCullingM::isObjectCulled(&l_renderableObject->MeshBoundingBox, l_renderableObject->ModelMatrix, &l_object_to_camera, &l_cameraFrustum))
 					{
@@ -65,7 +68,7 @@ namespace _RenderV2
 				l_polygonPipeline->TransformedPolygon = *PolygonM::mul(&l_polygonPipeline->TransformedPolygon, l_polygonPipeline->RenderedObject->ModelMatrix, &tmp_poly_4f_0);
 
 				// Backface culling
-				if (BackfaceCullingM::isCulled(&l_polygonPipeline->TransformedPolygon, p_input->CameraWorldPosition))
+				if (BackfaceCullingM::isCulled(&l_polygonPipeline->TransformedPolygon, p_input->CameraBuffer->WorldPosition))
 				{
 					continue;
 				};
@@ -73,10 +76,10 @@ namespace _RenderV2
 				//TODO -> We can combine matrices operations into one (for performance).
 
 				// World to camera
-				PolygonM::mul(&l_polygonPipeline->TransformedPolygon, p_input->ViewMatrix, &l_polygonPipeline->CameraSpacePolygon);
+				PolygonM::mul(&l_polygonPipeline->TransformedPolygon, p_input->CameraBuffer->ViewMatrix, &l_polygonPipeline->CameraSpacePolygon);
 
 				// Camera to clip
-				PolygonM::mul_homogeneous(&l_polygonPipeline->CameraSpacePolygon, p_input->ProjectionMatrix, &l_polygonPipeline->TransformedPolygon);
+				PolygonM::mul_homogeneous(&l_polygonPipeline->CameraSpacePolygon, p_input->CameraBuffer->ProjectionMatrix, &l_polygonPipeline->TransformedPolygon);
 
 				// To pixel
 				{

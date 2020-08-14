@@ -2,7 +2,6 @@
 
 #include "Objects/Resource/Polygon.hpp"
 #include "v2/Vector/Vector.hpp"
-#include "DataStructures/Specifications/ArraySliceT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "Raster/Rasterizer.hpp"
 
@@ -19,26 +18,19 @@ namespace _RenderV2
 	template <int C, typename T>
 	struct Texture;
 
-	struct Mesh;
-	struct LineRasterizationResult;
 	struct RenderedObject;
+
+	struct CameraBuffer;
+	struct RenderedObjectsBuffer;
 }
 
 namespace _RenderV2
 {
-	struct RendererConfiguration
-	{
-		bool ObjectCullEnabled;
-	};
-
 	struct WireframeRendererInput
 	{
-		RendererConfiguration RendererConfiguration;
-		_Core::VectorT<RenderedObject>* RenderableObjects;
-		_MathV2::Matrix<4, 4, float>* ViewMatrix;
-		_MathV2::Matrix<4, 4, float>* ProjectionMatrix;
+		RenderedObjectsBuffer* RenderableObjectsBuffer;
+		CameraBuffer* CameraBuffer;
 		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
-		_MathV2::Vector<4, float>* CameraWorldPosition;
 	};
 
 
