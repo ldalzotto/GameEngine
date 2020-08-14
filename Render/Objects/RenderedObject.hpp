@@ -1,5 +1,7 @@
 #pragma once
 
+#include "v2/Matrix/Matrix.hpp"
+
 namespace _RenderV2
 {
 	struct Mesh;
@@ -7,9 +9,6 @@ namespace _RenderV2
 
 namespace _MathV2
 {
-	template<int C, int L, typename T>
-	struct Matrix;
-
 	struct Box;
 }
 
@@ -19,6 +18,6 @@ namespace _RenderV2
 	{
 		Mesh* Mesh;
 		_MathV2::Box* MeshBoundingBox;
-		_MathV2::Matrix<4, 4, float>* ModelMatrix;
+		_MathV2::Matrix<4, 4, float> ModelMatrix;
 	};
 }

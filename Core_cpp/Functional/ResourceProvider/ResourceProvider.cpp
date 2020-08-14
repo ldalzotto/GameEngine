@@ -31,7 +31,7 @@ namespace _Core
 		if (VectorT_find(&p_resourceProvider->Resources, &l_comparator, &l_resourceHeaderFound))
 		{
 			l_resourceHeaderFound.Current->UsageCount += 1;
-			return l_resourceHeaderFound.Current;
+			return l_resourceHeaderFound.Current->Memory;
 		}
 		else
 		{

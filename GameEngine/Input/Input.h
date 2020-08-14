@@ -8,7 +8,7 @@
 
 #include <queue>
 
-namespace _GameEngine::_Render
+namespace _RenderV2
 {
 	struct Window;
 }
@@ -46,7 +46,7 @@ namespace _GameEngine::_Input
 
 	struct Input
 	{
-		_Render::Window* Window;
+		_RenderV2::Window* Window;
 		::_Core::Log* Log;
 
 		std::vector<KeyStateFlag> InputState;
@@ -56,7 +56,7 @@ namespace _GameEngine::_Input
 		InputMouse InputMouse;
 	};
 
-	void Input_build(Input* p_input, _Render::Window* p_window, ::_Core::Log* Log);
+	void Input_build(Input* p_input, _RenderV2::Window* p_window, ::_Core::Log* Log);
 	void Input_free(Input* p_input);
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);

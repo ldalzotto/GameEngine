@@ -1,14 +1,12 @@
 #pragma once
 
 #include "ECS/ComponentT.hpp"
+#include "v2/Box/Box.hpp"
 
-#include "Materials/Material.h"
-
-namespace _GameEngine::_Render
+namespace _RenderV2
 {
-	struct RenderInterface;
-	struct ModelProjection;
-	struct MaterialInstance;
+	struct RenderV2Interface;
+	struct MeshResource;
 }
 
 namespace _GameEngine::_ECS
@@ -18,10 +16,9 @@ namespace _GameEngine::_ECS
 	struct MeshRenderer
 	{
 		_ECS::ComponentHeaderT<MeshRenderer> ComponentHeader;
-		_Render::RenderInterface* RenderInterface;
-		
-		_Render::MaterialInstance* MaterialInstance;
-		_Render::MaterialUniqueKey MaterialUniqueKey;
+		_RenderV2::RenderV2Interface* RenderInterface;
+		_RenderV2::MeshResource* MeshResource;
+		_MathV2::Box MeshBoundingBox;
 	};
 
 	template <>
@@ -32,9 +29,8 @@ namespace _GameEngine::_ECS
 
 	struct MeshRendererInitInfo
 	{
-		_Render::MaterialUniqueKey* MaterialUniqueKey;
-		std::unordered_map<std::string, void*> InputParameters;
+		char* MeshResourcePath;
 	};
 
-	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
+	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _RenderV2::RenderV2Interface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
 }

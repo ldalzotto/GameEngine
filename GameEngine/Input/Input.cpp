@@ -2,7 +2,8 @@
 
 #include <iostream>
 #include <math.h>
-#include "VulkanObjects/Hardware/Window/Window.h"
+
+#include "Objects/Window/Window.hpp"
 
 #include "v2/Math.h"
 #include "v2/Vector/VectorMath.hpp"
@@ -24,7 +25,7 @@ namespace _GameEngine::_Input
 		return l_segment;
 	};
 
-	void Input_build(Input* p_input, _Render::Window* p_window, ::_Core::Log* Log)
+	void Input_build(Input* p_input, _RenderV2::Window* p_window, ::_Core::Log* Log)
 	{
 		InputInstance = p_input;
 		p_input->Window = p_window;
@@ -103,7 +104,7 @@ namespace _GameEngine::_Input
 
 			_MathV2::VectorM::min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 
-			auto l_windowDimensions = _Render::Window_getSize(p_input->Window);
+			auto l_windowDimensions = _RenderV2::Window_getSize(p_input->Window);
 
 			p_input->InputMouse.ScreenPosition.x = _MathV2::Math_max(_MathV2::Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);
 			p_input->InputMouse.ScreenPosition.y = _MathV2::Math_max(_MathV2::Math_min(p_input->InputMouse.ScreenPosition.y, static_cast<double>(l_windowDimensions.Height)), 0.0f);

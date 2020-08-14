@@ -1,5 +1,6 @@
 #pragma once
 
+#if 0
 
 namespace _GameEngine
 {
@@ -22,3 +23,5 @@ namespace _GameEngineEditor
 
 	void DebugConsole_draw(DebugConsole* p_debugConsole);
 }
+
+#endif

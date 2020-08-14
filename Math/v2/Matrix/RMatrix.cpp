@@ -258,7 +258,7 @@ namespace _MathV2
 
 		p_out[2][0] = 0.0f;
 		p_out[2][1] = 0.0f;
-		p_out[2][2] = -(p_far + p_near) / (p_far - p_near);
+		p_out[2][2] = (p_far - p_near) / (p_far + p_near);
 		p_out[2][3] = -1.0f;
 
 		p_out[3][0] = 0.0f;

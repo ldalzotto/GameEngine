@@ -4,36 +4,37 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "v2/Vector/VectorMath.hpp"
+#include "v2/Frustum/FrustumMath.hpp"
 
-#include "Render/RenderInterface.h"
-#include "Render/VulkanObjects/SwapChain/SwapChain.h"
-#include "Render/VulkanObjects/Hardware/Window/Window.h"
-
+#include "RenderV2Interface.hpp"
+#include "Objects/SwapChain/SwapChain.hpp"
+#include "Objects/Window/Window.hpp"
 #include "ECS/Component.h"
 
 namespace _GameEngine::_ECS
 {
 	ComponentType CameraType = "Camera";
 
-	void camera_onSwapChainBuild(Camera* p_camera, _Render::RenderInterface* p_renderInterface)
+	void camera_onSwapChainBuild(Camera* p_camera, _RenderV2::RenderV2Interface* p_renderInterface)
 	{
 		Camera_buildProjectionMatrix(p_camera);
 	};
 
 	void camera_onDetached(Camera* p_camera, ECS*)
 	{
-		_Core::ObserverT_unRegister(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) & p_camera->OnSwapChainBuilded);
+		_Core::ObserverT_unRegister(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _RenderV2::RenderV2Interface>*) & p_camera->OnSwapChainBuilded);
 	};
 
-	void Camera_init(Camera* p_camera, _Render::RenderInterface* p_renderInterface)
+	void Camera_init(Camera* p_camera, _RenderV2::RenderV2Interface* p_renderInterface)
 	{
 		p_camera->RenderInterface = p_renderInterface;
 		p_camera->OnSwapChainBuilded = { camera_onSwapChainBuild, p_camera };
-		_Core::ObserverT_register(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _Render::RenderInterface>*) & p_camera->OnSwapChainBuilded);
+		_Core::ObserverT_register(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _RenderV2::RenderV2Interface>*) & p_camera->OnSwapChainBuilded);
 
 		p_camera->ComponentHeader.OnComponentFree = camera_onDetached;
 
 		Camera_buildProjectionMatrix(p_camera);
+
 	};
 
 	_MathV2::Matrix4x4<float> Camera_worldToClipMatrix(Camera* p_camera)
@@ -46,7 +47,8 @@ namespace _GameEngine::_ECS
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
 		_MathV2::MatrixM::perspective<float>(45.0f * _MathV2::DEG_TO_RAD,
-			((float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.width / (float)p_camera->RenderInterface->SwapChain->SwapChainInfo.SwapExtend.height), 0.1f, 50.0f, &p_camera->ProjectionMatrix);
+			((float)p_camera->RenderInterface->SwapChain->PresentTexture.Width / (float)p_camera->RenderInterface->SwapChain->PresentTexture.Height), 0.1f, 50.0f, &p_camera->ProjectionMatrix);
+		p_camera->CameraFrustum = _MathV2::FrustumM::extractFrustumFromProjection(&p_camera->ProjectionMatrix);
 	};
 
 	_MathV2::SegmentV2<3, float> Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint)
@@ -56,7 +58,7 @@ namespace _GameEngine::_ECS
 		tmp_vec3_0 = { p_screenPoint.x, p_screenPoint.y, 1.0f };
 		_MathV2::Vector2<float> l_graphicsAPIPixelCoord = *_MathV2::VectorM::cast(
 			_MathV2::MatrixM::mul(
-				&p_camera->RenderInterface->Window->WindowToGraphicsAPIPixelCoordinates,
+				&p_camera->RenderInterface->AppWindow->WindowToGraphicsAPIPixelCoordinates,
 				&tmp_vec3_0,
 				&tmp_vec3_1)
 		);

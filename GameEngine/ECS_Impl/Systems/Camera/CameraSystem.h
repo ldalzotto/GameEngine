@@ -4,6 +4,7 @@
 #include "ECS/EntityFilter.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "Functional/Sequencer/SortedSequencer.hpp"
+#include "v2/Vector/Vector.hpp"
 
 namespace _GameEngine
 {

@@ -31,9 +31,9 @@
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
 
-#include "Render/Gizmo/Gizmo.h"
-#include "Render/RenderInterface.h"
-#include "Render/VulkanObjects/Hardware/Window/Window.h"
+// #include "Render/Gizmo/Gizmo.h"
+#include "RenderV2.hpp"
+#include "Objects/Window/Window.hpp"
 
 using namespace _GameEngine;
 using namespace _MathV2;
@@ -335,8 +335,8 @@ namespace _GameEngineEditor
 
 
 		SegmentV2<3, float> l_deltaPositionDirection_worldSpace = entitySelection_rayCastMouseDeltaPosition_againstPlane(p_entitySelection, &l_transformGizmoPlane->Collider);
-		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.Begin);
-		_Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.End);
+		// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.Begin);
+		// _Render::Gizmo_drawPoint(p_entitySelection->RenderInterface->Gizmo, &l_deltaPositionDirection_worldSpace.End);
 
 		// Perform rotation.
 
@@ -435,11 +435,11 @@ namespace _GameEngineEditor
 		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
 		_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_selectedEntity);
 		tmp_vec3_0 = { 1.0f, 1.0f, 1.0f };
-		_Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_meshRendererBound->BoundingBox,
-			TransformM::getLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0), true, &tmp_vec3_0);
+		// _Render::Gizmo_drawBox(p_entitySelection->RenderInterface->Gizmo, &l_meshRendererBound->BoundingBox,
+		// 	TransformM::getLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0), true, &tmp_vec3_0);
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, const Vector4<float>* p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const Vector4<float>* p_color)
 	{
 		_ECS::Entity* l_arrowEntity;
 		_ECS::TransformComponent* l_transform;
@@ -461,14 +461,7 @@ namespace _GameEngineEditor
 		{
 			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			_Render::MaterialUniqueKey l_materialKey{};
-			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoFragment.spv";
-			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoVertex.spv";
-			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
-			l_meshRendererInitInfo.InputParameters = {
-				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj"},
-				{_Render::MATERIALINSTANCE_COLOR, (Vector4<float>*)p_color}
-			};
+			l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj";
 
 			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshRenderer, p_ecs);
@@ -481,7 +474,7 @@ namespace _GameEngineEditor
 		return l_transform;
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, const Vector4<float>* p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const Vector4<float>* p_color)
 	{
 		_ECS::Entity* l_rotationEntity;
 		_ECS::TransformComponent* l_transform;
@@ -503,14 +496,7 @@ namespace _GameEngineEditor
 		{
 			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			_Render::MaterialUniqueKey l_materialKey{};
-			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoFragment.spv";
-			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoVertex.spv";
-			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
-			l_meshRendererInitInfo.InputParameters = {
-				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/RotationGizmo.obj"},
-				{_Render::MATERIALINSTANCE_COLOR, (Vector4<float>*)p_color}
-			};
+			l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/RotationGizmo.obj";
 
 			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_rotationEntity, l_meshRenderer, p_ecs);
@@ -523,7 +509,7 @@ namespace _GameEngineEditor
 		return l_transform;
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocScale(_ECS::ECS* p_ecs, _Render::RenderInterface* p_renderInterface, const Vector4<float>* p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocScale(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const Vector4<float>* p_color)
 	{
 		_ECS::Entity* l_arrowEntity;
 		_ECS::TransformComponent* l_transform;
@@ -545,14 +531,7 @@ namespace _GameEngineEditor
 		{
 			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
 			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
-			_Render::MaterialUniqueKey l_materialKey{};
-			l_materialKey.FragmentShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoFragment.spv";
-			l_materialKey.VertexShaderPath = "E:/GameProjects/GameEngine/Assets/Shader/out/3DGizmoVertex.spv";
-			l_meshRendererInitInfo.MaterialUniqueKey = &l_materialKey;
-			l_meshRendererInitInfo.InputParameters = {
-				{_Render::MATERIALINSTANCE_MESH_KEY, "E:/GameProjects/GameEngine/Assets/Models/ScaleGizmo.obj"},
-				{_Render::MATERIALINSTANCE_COLOR, (Vector4<float>*)p_color}
-			};
+			l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ScaleGizmo.obj";
 
 			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshRenderer, p_ecs);

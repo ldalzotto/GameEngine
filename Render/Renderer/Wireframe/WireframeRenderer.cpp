@@ -28,13 +28,13 @@ namespace _RenderV2
 		{
 			for (size_t i = 0; i < p_input->RenderableObjectsBuffer->RenderedObjects.Size; i++)
 			{
-				RenderedObject* l_renderableObject = &p_input->RenderableObjectsBuffer->RenderedObjects.Memory[i];
+				RenderedObject* l_renderableObject = p_input->RenderableObjectsBuffer->RenderedObjects.Memory[i];
 
 				{
 					Matrix4x4<float> l_object_to_camera;
-					MatrixM::mul(p_input->CameraBuffer->ViewMatrix, l_renderableObject->ModelMatrix, &l_object_to_camera);
+					MatrixM::mul(p_input->CameraBuffer->ViewMatrix, &l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, l_renderableObject->ModelMatrix, &l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
+					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, &l_renderableObject->ModelMatrix, &l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 					{
 						// Push polygons
 						for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
@@ -62,10 +62,10 @@ namespace _RenderV2
 				PolygonPipelineV2* l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
 
 				// Local to world
-				l_polygonPipeline->TransformedPolygon = *PolygonM::mul(&l_polygonPipeline->TransformedPolygon, l_polygonPipeline->RenderedObject->ModelMatrix, &tmp_poly_4f_0);
+				l_polygonPipeline->TransformedPolygon = *PolygonM::mul(&l_polygonPipeline->TransformedPolygon, &l_polygonPipeline->RenderedObject->ModelMatrix, &tmp_poly_4f_0);
 
 				// Backface culling
-				if (BackfaceCullingM::isCulled(&l_polygonPipeline->TransformedPolygon, p_input->CameraBuffer->WorldPosition))
+				if (BackfaceCullingM::isCulled(&l_polygonPipeline->TransformedPolygon, &p_input->CameraBuffer->WorldPosition))
 				{
 					continue;
 				};

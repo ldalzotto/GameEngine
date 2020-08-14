@@ -1,8 +1,8 @@
 #include "MeshRenderer.h"
 
-#include "RenderInterface.h"
-#include "Resources/MaterialResourceProvider.h"
-#include "Materials/MaterialInstance.h"
+#include "v2/Box/BoxMath.h"
+#include "RenderV2Interface.hpp"
+#include "Objects/Resource/MeshResourceProvider.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -10,27 +10,19 @@ namespace _GameEngine::_ECS
 
 	void MeshRenderer_free(MeshRenderer* p_meshRenderer, ECS*);
 
-	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _Render::RenderInterface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo)
+	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _RenderV2::RenderV2Interface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo)
 	{
 		p_meshRenderer->RenderInterface = p_renderInterface;
-		p_meshRenderer->MaterialUniqueKey = *p_mehsRendererInfo->MaterialUniqueKey;
+		_RenderV2::MeshResourceKey l_meshResourceKey; 
+		_Core::String_alloc(&l_meshResourceKey.MeshPathAbsolute, 0); _Core::String_append(&l_meshResourceKey.MeshPathAbsolute, p_mehsRendererInfo->MeshResourcePath);
+		p_meshRenderer->MeshResource = _Core::ResourceProviderT_useResource(p_renderInterface->Resources.MeshResourceProvider, &l_meshResourceKey, _RenderV2::MeshResourceKey_getHashCode(&l_meshResourceKey));
+		_MathV2::Box_build(&p_meshRenderer->MeshBoundingBox, (_Core::VectorT<_MathV2::Vector3<float>>*)&p_meshRenderer->MeshResource->Mesh.Vertices);
 		p_meshRenderer->ComponentHeader.OnComponentFree = MeshRenderer_free;
-		
-
-		_Render::Material* l_material 
-				= _Render::MaterialResourceProvider_UseResource(p_renderInterface->ResourceProvidersInterface.MaterialResourceProvider, &p_meshRenderer->MaterialUniqueKey);
-
-		_Render::MaterialInstanceInitInfo l_materialInstanceInitInfo{};
-		l_materialInstanceInitInfo.MaterialInstanceInputParameters = p_mehsRendererInfo->InputParameters;
-		l_materialInstanceInitInfo.SourceMaterial = l_material;
-
-		p_meshRenderer->MaterialInstance = _Render::MaterialInstance_alloc(p_renderInterface, &l_materialInstanceInitInfo);
 	};
 
 	void MeshRenderer_free(MeshRenderer* p_meshRenderer, ECS*)
 	{
 		MeshRenderer* l_meshRenderer = (MeshRenderer*)p_meshRenderer;
-		_Render::MaterialInstance_free(&l_meshRenderer->MaterialInstance);
-		_Render::MaterialResourceProvider_ReleaseResource(l_meshRenderer->RenderInterface->ResourceProvidersInterface.MaterialResourceProvider, &l_meshRenderer->MaterialUniqueKey);
+		_Core::ResourceProviderT_releaseResource(l_meshRenderer->RenderInterface->Resources.MeshResourceProvider, _RenderV2::MeshResourceKey_getHashCode(&l_meshRenderer->MeshResource->Key));
 	};
 }

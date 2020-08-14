@@ -1,4 +1,8 @@
 #include "TransformWindow.h"
+
+#if 0
+
+
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "imgui.h"
 #include "v2/Transform/TransformM.hpp"
@@ -42,3 +46,5 @@ namespace _GameEngineEditor
 		p_transformWindow->Window = nullptr;
 	};
 }
+
+#endif

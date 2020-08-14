@@ -16,9 +16,8 @@
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
-#include "Render/RenderInterface.h"
-#include "Render/RenderStep/PushCameraBuffer.h"
-#include "Render/VulkanObjects/Hardware/Window/Window.h"
+#include "RenderV2Interface.hpp"
+#include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -47,6 +46,11 @@ namespace _GameEngine::_ECS
 		l_operation.Camera = EntityT_getComponent<Camera>(p_entity);
 		l_operation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
 		_Core::VectorT_pushBack(&l_cameraSystem->Operations, &l_operation);
+
+		_RenderV2::CameraBuffer* l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
+		l_cameraBuffer->ViewMatrix = &l_operation.Camera->ViewMatrix;
+		l_cameraBuffer->ProjectionMatrix = &l_operation.Camera->ProjectionMatrix;
+		l_cameraBuffer->CameraFrustum = &l_operation.Camera->CameraFrustum;
 	}
 
 	void cameraSystem_onEntityNoMoreElligible(void* p_cameraSystem, Entity* p_entity)
@@ -81,11 +85,13 @@ namespace _GameEngine::_ECS
 	void cameraSystem_update(void* p_cameraSystem, void* p_gameEngineInterface)
 	{
 		CameraSystem* l_cameraSystem = (CameraSystem*)p_cameraSystem;
+
 		_Core::VectorIteratorT<CameraSystemOperation> l_operations = _Core::VectorT_buildIterator(&l_cameraSystem->Operations);
 		while (_Core::VectorIteratorT_moveNext(&l_operations))
 		{
 			TransformComponent* l_transform = l_operations.Current->TransformComponent;
 			Camera* l_camera = l_operations.Current->Camera;
+			_RenderV2::CameraBuffer* l_cameraBuffer = l_camera->RenderInterface->GlobalBuffer.CameraBuffer;
 
 			{
 				_MathV2::Vector3<float> tmp_vec3_0; _MathV2::Matrix4x4<float> tmp_mat4_0; _MathV2::Matrix3x3<float> tmp_mat3_0;
@@ -103,11 +109,9 @@ namespace _GameEngine::_ECS
 						&tmp_mat4_0),
 					&l_camera->ViewMatrix
 				);
-			}
 
-			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.Projection = l_camera->ProjectionMatrix;
-			l_camera->RenderInterface->PushCameraBuffer->CameraProjection.View = l_camera->ViewMatrix;
-			_Render::PushCameraBuffer_pushToGPU(l_camera->RenderInterface->PushCameraBuffer, l_camera->RenderInterface->Device);
+				l_cameraBuffer->WorldPosition = _MathV2::VectorM::cast(&l_worldPosition, 1.0f);
+			}
 		}
 	};
 

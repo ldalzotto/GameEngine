@@ -35,27 +35,31 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	l_modelMatrix.Points[3][0] = 9.0f;
+	// l_modelMatrix.Points[3][0] = 9.0f;
 
 	MeshResourceKey l_meshResourceKey;
-	_Core::String_alloc(&l_meshResourceKey.MeshPathAbsolute, 0); _Core::String_append(&l_meshResourceKey.MeshPathAbsolute, "C:/Users/loicd/Desktop/BigCube.obj");
+	_Core::String_alloc(&l_meshResourceKey.MeshPathAbsolute, 0); _Core::String_append(&l_meshResourceKey.MeshPathAbsolute, "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj");
 	MeshResource* l_mesh = _Core::ResourceProviderT_useResource(&renderV2.Resources.MeshResourceProvider, &l_meshResourceKey, MeshResourceKey_getHashCode(&l_meshResourceKey));
+	RenderedObject* l_renderableObject = new RenderedObject();
 	_MathV2::Box l_meshBoundingBox{};
 	{
 		_MathV2::Box_build(&l_meshBoundingBox, (_Core::VectorT<_MathV2::Vector3<float>>*) & l_mesh->Mesh.Vertices);
-		RenderedObject l_renderableObject = { &l_mesh->Mesh , &l_meshBoundingBox, &l_modelMatrix };
+		*l_renderableObject = { &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
 		_Core::VectorT_pushBack(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject);
 	}
 
 	_MathV2::Matrix<4, 4, float> l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
-	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, (1.0f / 1.0040f), -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
+	// _MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.7275f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, (1.0f / 1.0040f), -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
+	_MathV2::Matrix<4, 4, float> l_projectionMatrix = { 1.5088f, 0.00f, 0.00f, 0.00f, 0.00f, 2.4142f, 0.00f, 0.00f, 0.00f, 0.00f, (1.0f / 1.0040f), -1.0000f, 0.00f, 0.00f, -0.2004f, 0.00f };
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	_MathV2::Frustum l_cameraFrustum = _MathV2::FrustumM::extractFrustumFromProjection(&l_projectionMatrix);
 
 	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = &l_viewMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = &l_projectionMatrix;
-	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = &l_cameraWorldPosition;
+	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = l_cameraWorldPosition;
 	renderV2.GlobalBuffer.CameraBuffer.CameraFrustum = &l_cameraFrustum;
+
+	
 
 	while (!_RenderV2::Window_askedForClose(&renderV2.AppWindow))
 	{

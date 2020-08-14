@@ -1,8 +1,6 @@
 #include "GameEngineApplicationInterface.h"
 #include "GameEngineApplication.h"
 
-#include "Render/Render.h"
-
 namespace _GameEngine
 {
 	void GameEngineApplicationInterface_build(GameEngineApplicationInterface* p_interface, GameEngineApplication* p_gameEngineApplication)

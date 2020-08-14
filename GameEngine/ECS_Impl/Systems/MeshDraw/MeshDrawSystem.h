@@ -3,15 +3,16 @@
 #include "ECS/EntityFilter.hpp"
 #include "ECS/System.h"
 #include "Functional/Sequencer/SortedSequencer.hpp"
+#include "v2/Matrix/Matrix.hpp"
+
+namespace _RenderV2
+{
+	struct RenderedObject;
+}
 
 namespace _GameEngine
 {
 	struct UpdateSequencer;
-
-	namespace _Render
-	{
-		struct Render;
-	}
 
 	namespace _ECS
 	{
@@ -26,12 +27,12 @@ namespace _GameEngine::_ECS
 {
 	::_Core::SortedSequencerPriority MeshDrawSystem_updatePriorityBefore();
 	
-
 	struct MeshDrawSystemOperation
 	{
 		Entity* Entity;
 		TransformComponent* TransformComponent;
 		MeshRenderer* MeshRenderer;
+		_RenderV2::RenderedObject* RenderedObject;
 	};
 
 	struct MeshDrawSystem

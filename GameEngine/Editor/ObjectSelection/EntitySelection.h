@@ -9,12 +9,16 @@
 
 namespace _GameEngine
 {
-	namespace _Render { struct RenderInterface; }
 	namespace _Input { struct Input; }
 	namespace _Physics { struct PhysicsInterface; }
 	namespace _ECS {
 		struct ECS; struct Entity; struct TransformComponent; struct CameraSystem; struct Camera;
 	}
+}
+
+namespace _RenderV2
+{
+	struct RenderV2Interface;
 }
 
 namespace _GameEngineEditor
@@ -82,7 +86,7 @@ namespace _GameEngineEditor
 	{
 		_GameEngine::_ECS::ECS* ECS;
 		_GameEngine::_Input::Input* Input;
-		_GameEngine::_Render::RenderInterface* RenderInterface;
+		_RenderV2::RenderV2Interface* RenderInterface;
 		_GameEngine::_Physics::PhysicsInterface* PhysicsInterface;
 
 		TransformGizmo TransformGizmoV2;

@@ -34,8 +34,8 @@ namespace _GameEngine
 		MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
 		UpdateSequencer_alloc(&l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->GameEngineApplicationInterface);
 		_Physics::Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
-		_Render::Render_build(&l_gameEngineApplication->Render, &l_gameEngineApplication->Log);
-		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.Window, &l_gameEngineApplication->Log);
+		_RenderV2::RenderV2_initialize(&l_gameEngineApplication->Render);
+		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.AppWindow, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
 
@@ -70,7 +70,7 @@ namespace _GameEngine
 
 		_ECS::EntityComponent_free(&p_app->ECS);
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
-		_Render::Render_free(&p_app->Render);
+		_RenderV2::RenderV2_free(&p_app->Render);
 		_Physics::Physics_free(&p_app->Physics);
 		_Input::Input_free(&p_app->Input);
 		UpdateSequencer_free(&p_app->UpdateSequencer);
@@ -89,7 +89,7 @@ namespace _GameEngine
 
 	void app_mainLoop(GameEngineApplication* p_app)
 	{
-		while (!Window_askedForClose(&p_app->Render.Window))
+		while (!_RenderV2::Window_askedForClose(&p_app->Render.AppWindow))
 		{
 			_Core::AppEvent_pool();
 			_GameLoop::update(&p_app->GameLoop);
@@ -124,7 +124,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		_Core::ObserverT_broadcast(&l_app->PreRender, &l_app->GameEngineApplicationInterface);
-		Render_render(&l_app->Render);
+		_RenderV2::RenderV2_render(&l_app->Render);
 	};
 
 	void app_endOfFrame(void* p_closure)

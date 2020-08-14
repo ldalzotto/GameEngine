@@ -2,18 +2,20 @@
 
 #include "v2/Matrix/Matrix.hpp"
 #include "v2/Segment/SegmentV2.hpp"
+#include "v2/Frustum/Frustum.hpp"
+
 #include "Functional/Callback/CallbackT.hpp"
 #include "ECS/ComponentT.hpp"
-
-namespace _GameEngine
-{
-	namespace _Render { struct RenderInterface; }
-}
 
 namespace _MathV2
 {
 	template <int N, typename T>
 	struct Vector;
+}
+
+namespace _RenderV2
+{
+	struct RenderV2Interface;
 }
 
 namespace _GameEngine::_ECS
@@ -23,10 +25,11 @@ namespace _GameEngine::_ECS
 	struct Camera
 	{ 
 		_ECS::ComponentHeaderT<Camera> ComponentHeader;
-		_Render::RenderInterface* RenderInterface;
+		_RenderV2::RenderV2Interface* RenderInterface;
 		_MathV2::Matrix4x4<float> ProjectionMatrix;
 		_MathV2::Matrix4x4<float> ViewMatrix;
-		_Core::CallbackT<Camera, _Render::RenderInterface> OnSwapChainBuilded;
+		_MathV2::Frustum CameraFrustum;
+		_Core::CallbackT<Camera, _RenderV2::RenderV2Interface> OnSwapChainBuilded;
 	};
 
 	template <>
@@ -35,7 +38,7 @@ namespace _GameEngine::_ECS
 		return &CameraType;
 	};
 
-	void Camera_init(Camera* p_camera, _Render::RenderInterface* p_renderInterface);
+	void Camera_init(Camera* p_camera, _RenderV2::RenderV2Interface* p_renderInterface);
 	void Camera_buildProjectionMatrix(Camera* p_camera);
 
 	_MathV2::Matrix4x4<float> Camera_worldToClipMatrix(Camera* p_camera);

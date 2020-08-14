@@ -1,5 +1,6 @@
 #include "IMGuiRender.h"
 
+#if 0
 #include "Render/Render.h"
 #include "AppEvent/AppEvent.hpp"
 
@@ -224,3 +225,4 @@ namespace _GameEngineEditor
 
 	};
 }
+#endif

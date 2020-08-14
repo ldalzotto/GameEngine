@@ -1,5 +1,6 @@
 #pragma once
 
+#if 0
 #include "Includes/VulkanIncludes.h"
 
 #include <vector>
@@ -42,3 +43,4 @@ namespace _GameEngineEditor
 	void IMGuiRender_init(IMGuiRender* p_imguiTest, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
 	void IMGuiRender_free(IMGuiRender* p_imguiTest, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
 }
+#endif

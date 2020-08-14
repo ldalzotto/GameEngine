@@ -15,11 +15,9 @@
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "EngineSequencers/EngineSequencers.h"
 
-#include "RenderInterface.h"
-#include "Materials/Material.h"
-#include "Shader/ShaderParameterKeys.h"
-#include "Materials/MaterialInstance.h"
-#include "Materials/MaterialInstanceContainer.h"
+#include "RenderV2Interface.hpp"
+#include "Objects/Resource/MeshResourceProvider.hpp"
+#include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -36,6 +34,11 @@ namespace _GameEngine::_ECS
 	bool MeshDrawSystemOperation_EqualsEntity(MeshDrawSystemOperation* p_left, Entity* p_right, void* p_null)
 	{
 		return p_left->Entity == p_right;
+	};
+
+	bool MeshDrawSystemOperation_EqualsRenderedObject(_RenderV2::RenderedObject** p_left, _RenderV2::RenderedObject** p_right, void* p_null)
+	{
+		return *p_left == *p_right;
 	};
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_gameEngineInterface);
@@ -75,10 +78,12 @@ namespace _GameEngine::_ECS
 		l_meshDrawOperation.Entity = p_entity;
 		l_meshDrawOperation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
 		l_meshDrawOperation.MeshRenderer = EntityT_getComponent<MeshRenderer>(p_entity);
+		l_meshDrawOperation.RenderedObject = (_RenderV2::RenderedObject*)malloc(sizeof(_RenderV2::RenderedObject));
 		_Core::VectorT_pushBack(&l_meshDrawSystem->MeshDrawSystemOperations, &l_meshDrawOperation);
 
-		_Render::MaterialInstanceContainer_addMaterialInstance(l_meshDrawOperation.MeshRenderer->RenderInterface->MaterialInstanceContainer, 
-						l_meshDrawOperation.MeshRenderer->MaterialInstance->SourceMaterial, l_meshDrawOperation.MeshRenderer->MaterialInstance);
+		l_meshDrawOperation.RenderedObject->Mesh = &l_meshDrawOperation.MeshRenderer->MeshResource->Mesh;
+		l_meshDrawOperation.RenderedObject->MeshBoundingBox = &l_meshDrawOperation.MeshRenderer->MeshBoundingBox;
+		_Core::VectorT_pushBack(&l_meshDrawOperation.MeshRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, &l_meshDrawOperation.RenderedObject);
 	};
 
 	void meshDrawSystem_onComponentsDetached(void* p_meshDrawSystem, Entity* p_entity)
@@ -88,7 +93,11 @@ namespace _GameEngine::_ECS
 			_Core::CompareT_find(_Core::VectorT_buildIterator(&l_meshDrawSystem->MeshDrawSystemOperations), _Core::ComparatorT<MeshDrawSystemOperation, Entity, void>{MeshDrawSystemOperation_EqualsEntity, p_entity});
 		{
 			MeshRenderer* l_mesRenderer = l_involvedOperation.Current->MeshRenderer;
-			_Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
+			//TODO -> Adding a unique ID the the rendered object list
+			// _Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
+			free(l_involvedOperation.Current->RenderedObject);
+			_Core::VectorT_eraseCompare(&l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects,
+				_Core::ComparatorT<_RenderV2::RenderedObject*, _RenderV2::RenderedObject*, void>{ MeshDrawSystemOperation_EqualsRenderedObject, &l_involvedOperation.Current->RenderedObject, nullptr});
 			_Core::VectorT_erase(&l_meshDrawSystem->MeshDrawSystemOperations, l_involvedOperation.CurrentIndex);
 		}
 	};
@@ -103,10 +112,7 @@ namespace _GameEngine::_ECS
 			MeshDrawSystemOperation* l_operation = l_operations.Current;
 			if (l_operation->TransformComponent->Transform.UserFlag_HasChanged)
 			{
-				_Render::ModelProjection l_meshUniform{};
-				_MathV2::TransformM::getLocalToWorldMatrix(&l_operation->TransformComponent->Transform, &l_meshUniform.Model);
-				_Render::MaterialInstance_pushUniformBuffer(l_operation->MeshRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MODEL_BUFFER, &l_meshUniform);
-
+				_MathV2::TransformM::getLocalToWorldMatrix(&l_operation->TransformComponent->Transform, &l_operation->RenderedObject->ModelMatrix);
 				l_operation->TransformComponent->Transform.UserFlag_HasChanged = false;
 			}
 		}

@@ -1,5 +1,6 @@
 #pragma once
 
+#if 0
 #include "Editor/IMGuiRender/DrawableWindow.h"
 
 namespace _GameEngine::_ECS
@@ -19,3 +20,4 @@ namespace _GameEngineEditor
 
 	DrawableWindow TransformWindow_allocDrawableWindow(TransformWindow** p_transformWindow);
 }
+#endif

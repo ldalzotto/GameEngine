@@ -21,8 +21,8 @@ namespace _GameEngineEditor
 	{
 		GameEngineApplicationInterface* GameEngineApplicationInterface;
 		_Core::CallbackT<GameEngineEditor, void> OnPreRender;
-		IMGuiRender IMGuiRender;
-		DebugConsole DebugConsole;
+		// IMGuiRender IMGuiRender;
+		// DebugConsole DebugConsole;
 		DrawableWindows DrawableWindows;
 		EntitySelection EntitySelection;
 	};

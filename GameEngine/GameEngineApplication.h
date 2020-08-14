@@ -12,7 +12,7 @@
 #include "EngineSequencers/EngineSequencers.h"
 
 #include "Physics/Physics.h"
-#include "Render/Render.h"
+#include "RenderV2.hpp"
 #include "ECS/ECS.h"
 #include "Input/Input.h"
 
@@ -38,7 +38,7 @@ namespace _GameEngine
 		::_Core::Log Log;
 		::_Core::Clock Clock;
 		_Physics::Physics Physics;
-		_Render::Render Render;
+		_RenderV2::RenderV2 Render;
 		_Input::Input Input;
 		_ECS::ECS ECS;
 

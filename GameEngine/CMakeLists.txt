@@ -7,7 +7,6 @@ file(GLOB_RECURSE GAME_ENGINE_PRIVATE
 	"./GameLoop/*.cpp"
 	"./Input/*.cpp"
 	"./EngineSequencers/*.cpp"
-	"RenderHook.cpp"
 	"./Editor/*cpp"
 )
 SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.cpp ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.cpp)
@@ -18,7 +17,6 @@ file(GLOB_RECURSE GAME_ENGINE_PUBLIC
 	"./GameLoop/*.h"
 	"./Input/*.h"
 	"./EngineSequencers/*.h"
-	"RenderHook.h"
 	"./Editor/*h"
 )
 SET(GAME_ENGINE_PUBLIC ${GAME_ENGINE_PUBLIC} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationConfiguration.hpp ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.h)
@@ -37,9 +35,8 @@ add_library(GameEngine STATIC ${GAME_ENGINE_PUBLIC} ${GAME_ENGINE_PRIVATE})
 target_include_directories(GameEngine PUBLIC "./")
 
 add_subdirectory(Common)
-add_subdirectory(Render)
 add_subdirectory(Physics)
 
 target_link_libraries(GameEngine PUBLIC GameEngine_Common)
-target_link_libraries(GameEngine PUBLIC GameEngine_Render)
+target_link_libraries(GameEngine PUBLIC MyRender)
 target_link_libraries(GameEngine PUBLIC GameEngine_Physics)

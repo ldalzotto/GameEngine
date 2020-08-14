@@ -7,6 +7,6 @@ namespace _RenderV2
 {
 	struct RenderedObjectsBuffer
 	{
-		_Core::VectorT<RenderedObject> RenderedObjects;
+		_Core::VectorT<RenderedObject*> RenderedObjects;
 	};
 }

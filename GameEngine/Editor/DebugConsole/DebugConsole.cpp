@@ -1,5 +1,6 @@
 #include "DebugConsole.h"
 
+#if 0
 #include <string>
 
 #include "GameEngineApplicationInterface.h"
@@ -86,3 +87,4 @@ namespace _GameEngineEditor
 		}
 	};
 }
+#endif

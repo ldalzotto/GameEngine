@@ -9,11 +9,13 @@ namespace _RenderV2
 {
 	void GlobalBuffers_alloc(GlobalBuffers* p_buffer)
 	{
+		// p_buffer->CameraBuffer = (CameraBuffer*)calloc(1, sizeof(CameraBuffer));
 		_Core::VectorT_alloc(&p_buffer->RenderedObjectsBuffer.RenderedObjects, 0);
 	};
 
 	void GlobalBuffers_free(GlobalBuffers* p_buffer)
 	{
+		// free(p_buffer->CameraBuffer);
 		_Core::VectorT_free(&p_buffer->RenderedObjectsBuffer.RenderedObjects);
 	};
 
@@ -31,6 +33,8 @@ namespace _RenderV2
 
 		SwapChainM::alloc(&p_render->SwapChain, &p_render->RenderInterface);
 		RenderV2Interface_build(&p_render->RenderInterface, p_render);
+
+		SwapChainM::resize(&p_render->SwapChain, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
 	}
 
 	void RenderV2_render(RenderV2* p_render)
