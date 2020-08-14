@@ -5,6 +5,7 @@
 
 namespace _Core
 {
+	//TODO -> use RAII instead.
 	struct Resource_Header
 	{
 		size_t UsageCount;

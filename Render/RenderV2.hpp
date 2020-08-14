@@ -1,7 +1,9 @@
 #pragma once
 
+#include "RenderV2Interface.hpp"
+
 #include "Objects/Window/Window.hpp"
-#include "Objects/Texture/Texture.hpp"
+#include "Objects/SwapChain/SwapChain.hpp"
 
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
 
@@ -9,11 +11,6 @@
 
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
-
-namespace _RenderV2
-{
-	struct WireframeRendererInput; 
-}
 
 namespace _RenderV2
 {
@@ -30,8 +27,10 @@ namespace _RenderV2
 
 	struct RenderV2
 	{
+		RenderV2Interface RenderInterface;
+
 		Window AppWindow;
-		Texture<3, char> PresentTexture;
+		SwapChain SwapChain;
 
 		RenderResourceProvider Resources;
 
