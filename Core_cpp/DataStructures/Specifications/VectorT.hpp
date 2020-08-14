@@ -40,6 +40,12 @@ namespace _Core
 		return (ELEMENT_TYPE*) GenericArray_pushBack_realloc((GenericArray*)p_array, p_element);
 	}
 
+	template <typename ELEMENT_TYPE, typename COMPARED_TYPE, typename USER_TYPE>
+	inline bool VectorT_find(VectorT<ELEMENT_TYPE>* p_array, ComparatorT<ELEMENT_TYPE, COMPARED_TYPE, USER_TYPE>* p_comparator, VectorIteratorT<ELEMENT_TYPE>* out_iterator)
+	{
+		return GenericArray_find((GenericArray*)p_array, (Comparator*)p_comparator, (VectorIterator*)out_iterator);
+	}
+
 	template <typename ELEMENT_TYPE>
 	inline void VectorT_resize(VectorT<ELEMENT_TYPE>* p_array, size_t p_newSize)
 	{

@@ -18,6 +18,12 @@ namespace _RenderV2
 
 	void RenderV2_initialize(RenderV2* p_render)
 	{
+		_Core::ResourceAllocatorT<MeshResource, MeshResourceKey> l_meshResourceAllocator;
+		l_meshResourceAllocator.AllocFn = (_Core::AllocateResourceT_Function<MeshResource, MeshResourceKey>) MeshResource_allocate;
+		l_meshResourceAllocator.FreeFn = (_Core::FreeResourceT_Function<MeshResource>) MeshResource_free;
+		_Core::ResourceProviderT_alloc(&p_render->Resources.MeshResourceProvider, &l_meshResourceAllocator);
+
+
 		Window_init(&p_render->AppWindow);
 		WireframeRenderer_Memory_alloc(&p_render->WireframeRenderMemory);
 		GlobalBuffers_alloc(&p_render->GlobalBuffer);
@@ -61,5 +67,6 @@ namespace _RenderV2
 		GlobalBuffers_free(&p_render->GlobalBuffer);
 		TextureM::freePixels(&p_render->PresentTexture);
 		WireframeRenderer_Memory_free(&p_render->WireframeRenderMemory);
+		_Core::ResourceProviderT_free(&p_render->Resources.MeshResourceProvider);
 	}
 }

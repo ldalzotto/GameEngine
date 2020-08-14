@@ -2,13 +2,12 @@
 
 #include "Read/File/File.hpp"
 
-#include "DataStructures/Specifications/ArrayT.hpp"
 #include "Algorithm/String/StringAlgorithm.hpp"
 #include "Objects/Resource/MeshMethods.hpp"
 
 namespace _RenderV2
 {
-	void ObjReader_loadMeshes(const char* p_fileAbsolutePath, _Core::InsertorT<Mesh>* out_mesh)
+	void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh* out_mesh)
 	{
 		_Core::FileStream l_fs = _Core::FileStream_open(p_fileAbsolutePath);
 		_Core::FileLineIterator l_it = _Core::FileStream_allocLineIterator(&l_fs);
@@ -19,8 +18,7 @@ namespace _RenderV2
 			_Core::StringSlice l_vHeader = { "v", 0, 1 };
 			_Core::StringSlice l_fHeader = { "f", 0, 1 };
 
-			Mesh* l_currentMesh = nullptr;
-			size_t l_vertexOffset = 0; // The .obj file doesn't keep adding vertex indices from previous model. 
+			bool l_meshProcessed = false;
 			while (_Core::FileLineIterator_moveNext(&l_it))
 			{
 				size_t l_dataBegin_index;
@@ -32,17 +30,19 @@ namespace _RenderV2
 
 				if (_Core::String_equals(&l_lineHeaderSlice, &l_oHeader))
 				{
-					Mesh l_mesh{};
-					if (l_currentMesh)
+					if (l_meshProcessed)
 					{
-						l_vertexOffset += l_currentMesh->Vertices.Size;
+						return;
 					}
-					l_currentMesh = _Core::InsertorT_pushBack(out_mesh, &l_mesh);
-					Mesh_alloc(l_currentMesh);
+					if (out_mesh)
+					{
+						Mesh_alloc(out_mesh);
+						l_meshProcessed = true;
+					}
 				}
 				else if (_Core::String_equals(&l_lineHeaderSlice, &l_vHeader))
 				{
-					if (l_currentMesh)
+					if (out_mesh)
 					{
 						_Core::VectorT<_Core::String> l_verticesPositions;
 						_Core::VectorT_alloc(&l_verticesPositions, 3);
@@ -52,7 +52,7 @@ namespace _RenderV2
 							if (l_verticesPositions.Size > 0)
 							{
 								Vertex l_insertedVertex = {};
-								Vertex* l_vertex = _Core::VectorT_pushBack(&l_currentMesh->Vertices, &l_insertedVertex);
+								Vertex* l_vertex = _Core::VectorT_pushBack(&out_mesh->Vertices, &l_insertedVertex);
 								l_vertex->LocalPosition.x = (float)atof(_Core::VectorT_at(&l_verticesPositions, 0)->Memory);
 								l_vertex->LocalPosition.y = (float)atof(_Core::VectorT_at(&l_verticesPositions, 1)->Memory);
 								l_vertex->LocalPosition.z = (float)atof(_Core::VectorT_at(&l_verticesPositions, 2)->Memory);
@@ -65,7 +65,7 @@ namespace _RenderV2
 				}
 				else if (_Core::String_equals(&l_lineHeaderSlice, &l_fHeader))
 				{
-					if (l_currentMesh)
+					if (out_mesh)
 					{
 						_Core::VectorT<_Core::String> l_polyFaces; _Core::VectorT_alloc(&l_polyFaces, 3);
 						{
@@ -73,7 +73,7 @@ namespace _RenderV2
 							if (l_polyFaces.Size > 0)
 							{
 								Polygon<VertexIndex> l_insertedPoly = {};
-								Polygon<VertexIndex>* l_polygon = _Core::VectorT_pushBack(&l_currentMesh->Polygons, &l_insertedPoly);
+								Polygon<VertexIndex>* l_polygon = _Core::VectorT_pushBack(&out_mesh->Polygons, &l_insertedPoly);
 								_Core::VectorT<_Core::String> l_polygVertexIndices; _Core::VectorT_alloc(&l_polygVertexIndices, 3);
 
 								for (size_t i = 0; i < l_polyFaces.Size; i++)
@@ -98,7 +98,7 @@ namespace _RenderV2
 
 										if (l_vertexIndex)
 										{
-											*l_vertexIndex = atoi(_Core::VectorT_at(&l_polygVertexIndices, 0)->Memory) - l_vertexOffset - 1;
+											*l_vertexIndex = atoi(_Core::VectorT_at(&l_polygVertexIndices, 0)->Memory) - 1;
 										}
 
 									}

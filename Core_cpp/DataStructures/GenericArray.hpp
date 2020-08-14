@@ -42,6 +42,8 @@ namespace _Core
 	void GenericArray_pushBack_realloc_guarded(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard);
 	void* GenericArray_pushBack_realloc_guarded_sorted(GenericArray* p_genericArray, void* p_value, Asserter* p_insertGuard, ElementSorter* p_elementSorter);
 
+	bool GenericArray_find(GenericArray* p_genericArray, const Comparator* p_comparator, VectorIterator* out_iterator);
+
 	void GenericArray_swap(GenericArray* p_genericArray, size_t p_left, size_t p_right);
 
 	void GenericArray_erase(GenericArray* p_genericArray, size_t p_index);

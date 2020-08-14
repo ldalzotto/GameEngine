@@ -5,6 +5,7 @@
 #include "Cull/ObjectCulling.hpp"
 #include "Cull/BackfaceCulling.hpp"
 
+#include "Objects/Resource/Mesh.hpp"
 #include "Objects/RenderedObject.hpp"
 #include "Objects/Resource/PolygonMethods.hpp"
 #include "Objects/Texture/TextureM.hpp"
@@ -37,21 +38,21 @@ namespace _RenderV2
 					Matrix4x4<float> l_object_to_camera;
 					MatrixM::mul(p_input->CameraBuffer->ViewMatrix, l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-					if (!ObjectCullingM::isObjectCulled(&l_renderableObject->MeshBoundingBox, l_renderableObject->ModelMatrix, &l_object_to_camera, &l_cameraFrustum))
+					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, l_renderableObject->ModelMatrix, &l_object_to_camera, &l_cameraFrustum))
 					{
 						// Push polygons
-						for (size_t j = 0; j < l_renderableObject->Mesh.Polygons.Size; j++)
+						for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
 						{
-							Polygon<VertexIndex>* l_polygon = &l_renderableObject->Mesh.Polygons.Memory[j];
+							Polygon<VertexIndex>* l_polygon = &l_renderableObject->Mesh->Polygons.Memory[j];
 
 							PolygonPipelineV2 l_polygonPipeline{};
 							l_polygonPipeline.RenderedObject = l_renderableObject;
 							l_polygonPipeline.PolygonIndex = j;
 
 							l_polygonPipeline.TransformedPolygon = {
-								VectorM::cast(&l_renderableObject->Mesh.Vertices.Memory[l_polygon->v1].LocalPosition, 1.0f),
-								VectorM::cast(&l_renderableObject->Mesh.Vertices.Memory[l_polygon->v2].LocalPosition, 1.0f),
-								VectorM::cast(&l_renderableObject->Mesh.Vertices.Memory[l_polygon->v3].LocalPosition, 1.0f)
+								VectorM::cast(&l_renderableObject->Mesh->Vertices.Memory[l_polygon->v1].LocalPosition, 1.0f),
+								VectorM::cast(&l_renderableObject->Mesh->Vertices.Memory[l_polygon->v2].LocalPosition, 1.0f),
+								VectorM::cast(&l_renderableObject->Mesh->Vertices.Memory[l_polygon->v3].LocalPosition, 1.0f)
 							};
 							_Core::VectorT_pushBack(&p_memory->PolygonPipelines, &l_polygonPipeline);
 						}

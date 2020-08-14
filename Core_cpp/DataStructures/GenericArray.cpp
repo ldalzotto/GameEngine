@@ -180,6 +180,13 @@ namespace _Core
 		return GenericArray_at_unchecked(p_genericArray, l_it.CurrentIndex);
 	};
 
+	bool GenericArray_find(GenericArray* p_genericArray, const Comparator* p_comparator, VectorIterator* out_iterator)
+	{
+		GenericArray_buildIterator(p_genericArray, out_iterator);
+		Compare_find(out_iterator, p_comparator);
+		return out_iterator->Current;
+	};
+
 	void GenericArray_swap(GenericArray* p_genericArray, size_t p_left, size_t p_right)
 	{
 #ifndef NDEBUG
