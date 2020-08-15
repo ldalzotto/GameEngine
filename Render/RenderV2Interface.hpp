@@ -16,6 +16,7 @@ namespace _RenderV2
 	struct Window;
 	struct SwapChain;
 	struct WireframeRenderer_Memory;
+	struct GizmoBuffer;
 }
 
 namespace _RenderV2
@@ -40,6 +41,7 @@ namespace _RenderV2
 
 		GlobalBuffersInterface GlobalBuffer;
 		WireframeRenderer_Memory* WireframeRenderMemory;
+		GizmoBuffer* GizmoBuffer;
 	};
 
 	void RenderV2Interface_build(RenderV2Interface* p_renderInterface, RenderV2* p_render);

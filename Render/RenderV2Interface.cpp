@@ -12,5 +12,6 @@ namespace _RenderV2
 		p_renderInterface->GlobalBuffer.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 		p_renderInterface->GlobalBuffer.RenderedObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectsBuffer;
 		p_renderInterface->WireframeRenderMemory = &p_render->WireframeRenderMemory;
+		p_renderInterface->GizmoBuffer = &p_render->GizmoBuffer;
 	};
 }

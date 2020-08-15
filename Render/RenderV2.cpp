@@ -30,6 +30,7 @@ namespace _RenderV2
 		Window_init(&p_render->AppWindow);
 		WireframeRenderer_Memory_alloc(&p_render->WireframeRenderMemory);
 		GlobalBuffers_alloc(&p_render->GlobalBuffer);
+		GizmoBuffer_alloc(&p_render->GizmoBuffer);
 
 		SwapChainM::alloc(&p_render->SwapChain, &p_render->RenderInterface);
 		RenderV2Interface_build(&p_render->RenderInterface, p_render);
@@ -45,7 +46,7 @@ namespace _RenderV2
 		}
 
 		{
-			_MathV2::Vector3<char> l_color = { 255, 255, 255 };
+			_MathV2::Vector3<char> l_color = { 0,0,0 };
 			_MathV2::Vector3<char>* l_pixel = &p_render->SwapChain.PresentTexture.Pixels.Memory[0];
 			TextureIterator<3, char> l_present_it = TextureM::buildIterator(&p_render->SwapChain.PresentTexture);
 			while (TextureIteratorM::moveNext(&l_present_it))
@@ -61,11 +62,19 @@ namespace _RenderV2
 			l_wireFrameRendererInput.GraphicsAPIToScreeMatrix = &p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
 			WireframeRenderer_renderV2(&l_wireFrameRendererInput, &p_render->SwapChain.PresentTexture, &TextureM::buildClipRect(&p_render->SwapChain.PresentTexture), &p_render->WireframeRenderMemory);
 		}
+		{
+			GizmoRendererInput l_gizmoRendererInput;
+			l_gizmoRendererInput.Buffer = &p_render->GizmoBuffer;
+			l_gizmoRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
+			l_gizmoRendererInput.GraphicsAPIToScreeMatrix = &p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
+			Gizmo::render(&l_gizmoRendererInput, &p_render->SwapChain.PresentTexture, &TextureM::buildClipRect(&p_render->SwapChain.PresentTexture), &p_render->WireframeRenderMemory.RasterizedPixelsBuffer);
+		}
 		Window_presentTexture(&p_render->AppWindow, &p_render->SwapChain.PresentTexture);
 	};
 
 	void RenderV2_free(RenderV2* p_render)
 	{
+		GizmoBuffer_free(&p_render->GizmoBuffer);
 		GlobalBuffers_free(&p_render->GlobalBuffer);
 		SwapChainM::free(&p_render->SwapChain);
 		WireframeRenderer_Memory_free(&p_render->WireframeRenderMemory);

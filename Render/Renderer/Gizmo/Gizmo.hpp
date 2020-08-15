@@ -2,6 +2,30 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/Vector.hpp"
+#include "Renderer/GlobalBuffers/CameraBuffer.hpp"
+#include "Raster/Rasterizer.hpp"
+
+namespace _MathV2
+{
+	template<typename T>
+	struct Rect;
+	template<int C, int L, typename T>
+	struct Matrix;
+	struct Box;
+	struct Transform;
+}
+
+namespace _Core
+{
+	template<typename T>
+	struct VectorT;
+}
+
+namespace _RenderV2
+{
+	template<int C, typename T>
+	struct Texture;
+}
 
 namespace _RenderV2
 {
@@ -25,8 +49,29 @@ namespace _RenderV2
 		_Core::VectorT<GizmoLine> Lines;
 	};
 
+	void GizmoBuffer_alloc(GizmoBuffer* p_buffer);
+	void GizmoBuffer_clear(GizmoBuffer* p_buffer);
+	void GizmoBuffer_free(GizmoBuffer* p_buffer);
+
+	struct GizmoRendererInput
+	{
+		GizmoBuffer* Buffer;
+		CameraBuffer* CameraBuffer;
+		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
+	};
+
 	struct Gizmo
 	{
-		static void render(GizmoBuffer* p_gizmoBuffer);
+		static void render(GizmoRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
+
+		static void drawLine      (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end);
+		static void drawLine      (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end, const _MathV2::Vector3<char>* p_color);
+		static void drawPoint     (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point);
+		static void drawPoint     (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point, const _MathV2::Vector3<char>* p_color);
+		static void drawBox       (GizmoBuffer* p_gizmo, const _MathV2::Box* p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<char>* p_color = nullptr);
+		static void drawTransform (GizmoBuffer* p_gizmo, _MathV2::Transform* p_transform);
+		static void drawTransform (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_center, const _MathV2::Vector3<float>* p_right, const _MathV2::Vector3<float>* p_up, const _MathV2::Vector3<float>* p_forward);
+
+
 	};
 }

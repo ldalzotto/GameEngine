@@ -6,6 +6,7 @@
 #include "Objects/SwapChain/SwapChain.hpp"
 
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
+#include "Renderer/Gizmo/Gizmo.hpp"
 
 #include "Objects/Resource/MeshResourceProvider.hpp"
 
@@ -36,6 +37,7 @@ namespace _RenderV2
 
 		GlobalBuffers GlobalBuffer;
 		WireframeRenderer_Memory WireframeRenderMemory;
+		GizmoBuffer GizmoBuffer;
 	};
 
 	void RenderV2_initialize(RenderV2* p_render);
