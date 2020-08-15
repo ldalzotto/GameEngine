@@ -56,14 +56,9 @@ namespace _GameEngine::_ECS
 			l_operation.MeshRenderer = EntityT_getComponent<MeshRenderer>(p_entity);
 			l_operation.Entity = p_entity;
 		}
-		// _Core::VectorT_pushBack(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, &l_operation);
 
-		l_operation.Bound->Boxcollider = new _Physics::BoxCollider();
-		_Physics::BoxCollider l_boxCollider{};
-		l_boxCollider.Box = &l_operation.MeshRenderer->MeshBoundingBox;
 		_ECS::TransformComponent* l_transformComponent = EntityT_getComponent<TransformComponent>(p_entity);
-		l_boxCollider.Transform = &l_transformComponent->Transform;
-		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_boxCollider);
+		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_operation.MeshRenderer->MeshBoundingBox, &l_transformComponent->Transform);
 		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_operation.Bound->Boxcollider);
 	};
 
@@ -71,38 +66,13 @@ namespace _GameEngine::_ECS
 	{
 		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 		MeshRendererBound* l_rendererBound = EntityT_getComponent<MeshRendererBound>(p_entity);
-		// _Core::VectorT_eraseCompare(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, _Core::ComparatorT<_ECS::MeshRendererBoundCalculationOperation, Entity*, void>{ MeshRendererBoundOperation_EqualsEntity, &p_entity });
 		_Physics::World_removeBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_rendererBound->Boxcollider);
+		_Physics::BoxCollider_free(&l_rendererBound->Boxcollider);
 	};
 
 	void meshRendererBoundSystem_update(void* p_system, void* p_gameEngineInterface)
 	{
-		/*
-		MeshRendererBoundSystem* l_meshrendererBoundSystem = (MeshRendererBoundSystem*)p_system;
 
-		for (size_t i = 0; i < l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate.Size; i++)
-		{
-			MeshRendererBoundCalculationOperation* l_operation = _Core::VectorT_at(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate, i);
-
-			_Render::Mesh* l_mesh = _Render::MaterialInstance_getMesh(l_operation->MeshRenderer->MaterialInstance, _Render::MATERIALINSTANCE_MESH_KEY);
-
-			//TODO - This is not the most optimal as we copy vertices to a temporary vector.
-			_Core::VectorT<_MathV2::Vector3<float>> l_vertices;
-			_Core::VectorT_alloc(&l_vertices, l_mesh->Vertices.size());
-			{
-				for (size_t i = 0; i < l_vertices.Capacity; i++)
-				{
-					_Core::VectorT_pushBack(&l_vertices, &l_mesh->Vertices.at(i).pos);
-				}
-				_MathV2::Box_build(&l_operation->Bound->BoundingBox, &l_vertices);
-
-
-			}
-			_Core::VectorT_free(&l_vertices);
-		}
-
-		_Core::VectorT_clear(&l_meshrendererBoundSystem->MeshRendererBoundsToCaluclate);
-		*/
 	};
 
 	void MeshrendererBoundSystem_free(void* p_system, void* p_null)

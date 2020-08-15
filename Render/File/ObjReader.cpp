@@ -102,9 +102,9 @@ namespace _RenderV2
 										}
 
 									}
+									_Core::String_freeIteratorOfStrings(&_Core::VectorT_buildIterator(&l_polygVertexIndices));
+									_Core::VectorT_clear(&l_polygVertexIndices);
 								}
-
-								_Core::String_freeIteratorOfStrings(&_Core::VectorT_buildIterator(&l_polygVertexIndices));
 								_Core::VectorT_free(&l_polygVertexIndices);
 							}
 						}
