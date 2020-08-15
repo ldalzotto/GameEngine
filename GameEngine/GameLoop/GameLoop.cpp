@@ -67,15 +67,13 @@ namespace _GameEngine
 
 				p_gameLoop->NewFrameCallback(p_gameLoop->NewFrameCallbackClosure);
 
-				while (p_gameLoop->AccumulatedElapsedTime_mics >= p_gameLoop->TimeBetweenUpdates_mics)
-				{
-					p_gameLoop->UpdateCallback(p_gameLoop->UpdateCallbackClosure, p_gameLoop->TimeBetweenUpdates_mics * 0.000001f);
-					p_gameLoop->AccumulatedElapsedTime_mics -= p_gameLoop->TimeBetweenUpdates_mics;
-					p_gameLoop->EndOfUpdateCallback(p_gameLoop->EndOfUpdateCallbackClosure);
-				}
+				p_gameLoop->UpdateCallback(p_gameLoop->UpdateCallbackClosure, p_gameLoop->TimeBetweenUpdates_mics * 0.000001f);
+				p_gameLoop->EndOfUpdateCallback(p_gameLoop->EndOfUpdateCallbackClosure);
 
 				p_gameLoop->RenderCallback(p_gameLoop->RenderCallbackClosure);
 
+				//TODO -> having a more precise loop (while delta < max  {} delta -= max) but preventing some piece of code to run twice.
+				p_gameLoop->AccumulatedElapsedTime_mics = 0;
 			}
 
 			p_gameLoop->EndofFrameCallback(p_gameLoop->EndOfFrameClosure);

@@ -100,7 +100,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
 		Clock_newFrame(&l_app->Clock);
-		_Input::Input_update(&l_app->Input);
+		_Input::Input_newFrame(&l_app->Input);
 		_Core::ObserverT_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
 	};
 
@@ -110,7 +110,6 @@ namespace _GameEngine
 		Clock_newUpdate(&l_app->Clock, p_delta);
 
 		_ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);
-
 		UpdateSequencer_execute(&l_app->UpdateSequencer, &l_app->GameEngineApplicationInterface);
 	};
 

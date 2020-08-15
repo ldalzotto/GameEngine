@@ -52,25 +52,8 @@ namespace _GameEngine::_Input
 		InputInstance = nullptr;
 	};
 
-	void Input_update(Input* p_input)
+	void Input_consumeLastFrameEvents(_GameEngine::_Input::Input* p_input)
 	{
-		if (p_input->InputKeysReleasedThisFrame.size() > 0)
-		{
-			for (InputKey& l_inputKeyReleasedLastFrame : p_input->InputKeysReleasedThisFrame)
-			{
-				p_input->InputState.at(static_cast<int>(l_inputKeyReleasedLastFrame)) = KeyStateFlag::NONE;
-			}
-
-			p_input->InputKeysReleasedThisFrame.clear();
-		}
-
-		while (p_input->InputKeysJustPressedThisFrame.size() > 0)
-		{
-			InputKey l_inputKeyCode = p_input->InputKeysJustPressedThisFrame.at(p_input->InputKeysJustPressedThisFrame.size() - 1);
-			p_input->InputEventsLastFrame.push(InputGlobalEvent{ l_inputKeyCode, InputGlobalEventType::REPEAT });
-			p_input->InputKeysJustPressedThisFrame.pop_back();
-		}
-
 		while (p_input->InputEventsLastFrame.size() > 0)
 		{
 			InputGlobalEvent l_inputEvent = p_input->InputEventsLastFrame.front();
@@ -93,6 +76,29 @@ namespace _GameEngine::_Input
 
 			p_input->InputEventsLastFrame.pop();
 		}
+	};
+
+
+	void Input_newFrame(Input* p_input)
+	{
+		if (p_input->InputKeysReleasedThisFrame.size() > 0)
+		{
+			for (InputKey& l_inputKeyReleasedLastFrame : p_input->InputKeysReleasedThisFrame)
+			{
+				p_input->InputState.at(static_cast<int>(l_inputKeyReleasedLastFrame)) = KeyStateFlag::NONE;
+			}
+
+			p_input->InputKeysReleasedThisFrame.clear();
+		}
+
+		while (p_input->InputKeysJustPressedThisFrame.size() > 0)
+		{
+			InputKey l_inputKeyCode = p_input->InputKeysJustPressedThisFrame.at(p_input->InputKeysJustPressedThisFrame.size() - 1);
+			p_input->InputEventsLastFrame.push(InputGlobalEvent{ l_inputKeyCode, InputGlobalEventType::REPEAT });
+			p_input->InputKeysJustPressedThisFrame.pop_back();
+		}
+
+		Input_consumeLastFrameEvents(p_input);
 
 		if (p_input->InputMouse.CurrentInputMouseEvent.HasValue)
 		{
@@ -116,8 +122,21 @@ namespace _GameEngine::_Input
 			p_input->InputMouse.MouseDelta = { 0.0, 0.0 };
 		}
 
-	};
+	}
 
+	/*
+	void Input_updateAfterUpdateFrame(Input* p_input)
+	{
+		while (p_input->InputKeysJustPressedThisFrame.size() > 0)
+		{
+			InputKey l_inputKeyCode = p_input->InputKeysJustPressedThisFrame.at(p_input->InputKeysJustPressedThisFrame.size() - 1);
+			p_input->InputEventsLastFrame.push(InputGlobalEvent{ l_inputKeyCode, InputGlobalEventType::REPEAT });
+			p_input->InputKeysJustPressedThisFrame.pop_back();
+		}
+
+		Input_consumeLastFrameEvents(p_input);
+	};
+	*/
 	void OnMouseMoveEvent(Input* p_input, InputMouseGlobalEvent* p_event)
 	{
 		p_input->InputMouse.CurrentInputMouseEvent.Value = *p_event;

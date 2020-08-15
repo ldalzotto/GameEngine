@@ -215,20 +215,20 @@ namespace _GameEngineEditor
 		_Physics::RaycastHit l_endHit;
 		if (_Physics::RayCast_against(&l_raycastedPlane, l_mouseDelta_end_ray.Begin, l_mouseDelta_end_ray.End, &l_endHit))
 		{
-			_RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_endHit.HitPoint);
+			// _RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_endHit.HitPoint);
 			l_mouseDelta_worldPosition.End = l_endHit.HitPoint;
 		}
 		_Physics::RaycastHit l_beginHit;
 		if (_Physics::RayCast_against(&l_raycastedPlane, l_mouseDelta_begin_ray.Begin, l_mouseDelta_begin_ray.End, &l_beginHit))
 		{
-			_RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_beginHit.HitPoint);
+			// _RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_beginHit.HitPoint);
 			l_mouseDelta_worldPosition.Begin = l_beginHit.HitPoint;
 		}
 
 
 		Matrix4x4<float> tmp_mat4_0;
-		_RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
-			TransformM::getLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0), true);
+		// _RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
+		// 	TransformM::getLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0), true);
 
 		return l_mouseDelta_worldPosition;
 	}
@@ -437,8 +437,8 @@ namespace _GameEngineEditor
 		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
 		_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_selectedEntity);
 		tmp_vec3_0 = { (char)255, (char)255, (char)255 };
-		 _RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_meshRendererBound->Boxcollider->Box,
-			TransformM::getLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0), true, &tmp_vec3_0);
+		// _RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_meshRendererBound->Boxcollider->Box,
+		// 	TransformM::getLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0), true, &tmp_vec3_0);
 	}
 
 	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const Vector4<float>* p_color)
@@ -652,8 +652,8 @@ namespace _GameEngineEditor
 		{
 			Box l_planeBox;
 			l_planeBox.Center = { 0.0f, 0.0f, 0.0f };
-			// l_planeBox.Extend = { FLT_MAX, 0.0f, FLT_MAX };
-			l_planeBox.Extend = { 2.0f, 0.0f, 2.0f };
+			l_planeBox.Extend = { FLT_MAX, 0.0f, FLT_MAX };
+			//l_planeBox.Extend = { 2.0f, 0.0f, 2.0f };
 
 			p_transformGizmo->TransformGizmoMovementGuidePlane.Box = l_planeBox;
 

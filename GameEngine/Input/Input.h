@@ -60,5 +60,8 @@ namespace _GameEngine::_Input
 	void Input_free(Input* p_input);
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);
-	void Input_update(Input* p_input);
+	void Input_newFrame(Input* p_input);
+
+	//We make this call to flush "JUST PRESSED" events. That way, we ensure that this event is set for only one "update loop" frame.
+	// void Input_updateAfterUpdateFrame(Input* p_input);
 }
