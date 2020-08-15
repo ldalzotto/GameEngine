@@ -28,7 +28,7 @@ namespace _Core
 	bool VectorReverseIterator_moveNext(VectorIterator* p_vectorIterator)
 	{
 		p_vectorIterator->CurrentIndex -= 1;
-		if (p_vectorIterator->CurrentIndex + 1 > p_vectorIterator->Array->Size)
+		if (p_vectorIterator->CurrentIndex  > p_vectorIterator->Array->Size)
 		{
 			p_vectorIterator->Current = nullptr;
 		}

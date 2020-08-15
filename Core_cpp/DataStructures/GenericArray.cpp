@@ -79,7 +79,7 @@ namespace _Core
 	void GenericArray_buildReverseIterator(GenericArray* p_genericArray, VectorReverseIterator* out_iterator)
 	{
 		out_iterator->Array = p_genericArray;
-		out_iterator->Current = (char*)p_genericArray->Memory + p_genericArray->ElementSize;
+		out_iterator->Current = (char*)p_genericArray->Memory + GenericArray_getElementOffset(p_genericArray, p_genericArray->Size);
 		out_iterator->CurrentIndex = p_genericArray->Size;
 	};
 
