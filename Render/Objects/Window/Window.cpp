@@ -18,8 +18,8 @@ namespace _RenderV2
 	void windowPlatformSpecific_paintTexture(Window* p_window);
 	void windowPlatforwSpecific_getClientRect(Window* p_windout, int* out_width, int* out_height);
 
-	const uint32_t WINDOW_WIDTH = 1584;
-	const uint32_t WINDOW_HEIGHT = 1061;
+	const uint32_t WINDOW_WIDTH = 800;
+	const uint32_t WINDOW_HEIGHT = 600;
 
 	const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
