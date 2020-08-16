@@ -5,7 +5,10 @@
 #include "v2/Vector/Vector.hpp"
 #include "v2/Matrix/Matrix.hpp"
 
-#include "Functional/Equals/Equals.hpp"
+extern "C"
+{
+	#include "Functional/Equals/Equals.h"
+}
 
 namespace _MathV2
 {
@@ -14,9 +17,9 @@ namespace _MathV2
 	{
 		static bool equals(const Quaternion<float>* p_left, const Quaternion<float>* p_right)
 		{
-			return _Core::Equals_float(&p_left->x, &p_right->x)
-				&& _Core::Equals_float(&p_left->y, &p_right->y)
-				&& _Core::Equals_float(&p_left->z, &p_right->z);
+			return Equals_float(&p_left->x, &p_right->x)
+				&& Equals_float(&p_left->y, &p_right->y)
+				&& Equals_float(&p_left->z, &p_right->z);
 		};
 
 		template <typename T>

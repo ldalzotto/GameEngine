@@ -1,6 +1,6 @@
 
 #include "ClipMath.hpp"
-#include "Constants.hpp"
+#include "Constants.h"
 #include <math.h>
 
 namespace _MathV2

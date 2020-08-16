@@ -1,6 +1,6 @@
 #include "Observer.hpp"
 #include "Callback.hpp"
-#include "Functional/Equals/Equals.hpp"
+#include "Functional/Equals/Equals.h"
 
 namespace _Core
 {

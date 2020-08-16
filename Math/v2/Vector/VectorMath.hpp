@@ -1,5 +1,10 @@
 #pragma once
 
+extern "C"
+{
+#include "v2/_source/VectorC.h"
+}
+
 #include "Vector.hpp"
 #include "v2/Quaternion/Quaternion.hpp"
 #include "RVector.h"
@@ -42,96 +47,106 @@ namespace _MathV2
 		{
 			return Vector<3, T>{p_x, p_y, p_z};
 		};
-		template <typename T>
-		inline static float length(const Vector<3, T>* p_vec)
-		{
-			return RVector_length_specialization((T*)(p_vec), 3);
-		};
+		
 		template <typename T, int N>
 		inline static float distance(const Vector<N, T>* p_start, const Vector<N, T>* p_end)
 		{
-			Vector<N, T> tmp_vec;
-			return RVector_distance_specialization((T*)p_start, (T*)p_end, N, (T*)&tmp_vec);
+			return Vec_Distance_3f((const VECTOR3F_PTR)p_start, (const VECTOR3F_PTR)p_end);
 		};
-		template <typename T, int N>
-		inline static Vector<N, T>* normalize(const Vector<N, T>* p_vec, Vector<N, T>* p_out)
+
+		inline static Vector<3, float>* normalize(const Vector<3, float>* p_vec, Vector<3, float>* p_out)
 		{
-			RVector_normalize_specialization((T*)(p_vec), N,(T*)(p_out));
+			Vec_Normalize_3f((const VECTOR3F_PTR)p_vec, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<3, T>* add(const Vector<3, T>* p_left, const Vector<3, T>* p_right, Vector<3, T>* p_out)
+
+		inline static Vector<3, float>* add(const Vector<3, float>* p_left, const Vector<3, float>* p_right, Vector<3, float>* p_out)
 		{
-			RVector_3_add((T*)(p_left), (T*)(p_right), (T*)p_out);
+			Vec_Add_3f_3f((const VECTOR3F_PTR)p_left, (const VECTOR3F_PTR)p_right, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<4, T>* add(const Vector<4, T>* p_left, const Vector<4, T>* p_right, Vector<4, T>* p_out)
+
+		inline static Vector<4, float>* add(const Vector<4, float>* p_left, const Vector<4, float>* p_right, Vector<4, float>* p_out)
 		{
-			RVector_4_add((T*)(p_left), (T*)(p_right), (T*)p_out);
+			Vec_Add_4f_4f((const VECTOR4F_PTR)p_left, (const VECTOR4F_PTR)p_right, (VECTOR4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T, int N>
-		inline static Vector<N, T>* min(const Vector<N, T>* p_left, const Vector<N, T>* p_right, Vector<N, T>* p_out)
+
+		inline static Vector<2, double>* min(const Vector<2, double>* p_left, const Vector<2, double>* p_right, Vector<2, double>* p_out)
 		{
-			RVector_min_specification((const T*)(p_left), (const T*)(p_right), (T*)p_out, N);
+			Vec_Min_2d_2d((const VECTOR2D_PTR)p_left, (const VECTOR2D_PTR)p_right, (VECTOR2D_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<2, T>* mul(const Vector<2, T>* p_left, const T p_right, Vector<2, T>* p_out)
+
+		inline static Vector<3, float>* min(const Vector<3, float>* p_left, const Vector<3, float>* p_right, Vector<3, float>* p_out)
 		{
-			RVector_2_mul((T*)(p_left), p_right, (T*)(p_out));
+			Vec_Min_3f_3f((const VECTOR3F_PTR)p_left, (const VECTOR3F_PTR)p_right, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<3, T>* mul(const Vector<3, T>* p_left, const T p_right, Vector<3, T>* p_out)
+
+		inline static Vector<4, float>* min(const Vector<4, float>* p_left, const Vector<4, float>* p_right, Vector<4, float>* p_out)
 		{
-			RVector_3_mul((T*)(p_left), p_right, (T*)(p_out));
+			Vec_Min_4f_4f((const VECTOR4F_PTR)p_left, (const VECTOR4F_PTR)p_right, (VECTOR4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<3, T>* mul(const Vector<3, T>* p_left, const Vector<3, T>* p_right, Vector<3, T>* p_out)
+
+		inline static Vector<2, float>* mul(const Vector<2, float>* p_left, const float p_right, Vector<2, float>* p_out)
 		{
-			RVector_3_mul((T*)(p_left), (T*)p_right, (T*)(p_out));
+			Vec_Mul_2f_1f((const VECTOR2F_PTR)p_left, p_right, (VECTOR2F_PTR)p_out);
 			return p_out;
 		};
+
+		inline static Vector<3, float>* mul(const Vector<3, float>* p_left, const float p_right, Vector<3, float>* p_out)
+		{
+			Vec_Mul_3f_1f((const VECTOR3F_PTR)(p_left), p_right, (VECTOR3F_PTR)(p_out));
+			return p_out;
+		};
+
+		inline static Vector<3, float>* mul(const Vector<3, float>* p_left, const Vector<3, float>* p_right, Vector<3, float>* p_out)
+		{
+			Vec_Mul_3f_3f((const VECTOR3F_PTR)(p_left), (const VECTOR3F_PTR)p_right, (VECTOR3F_PTR)(p_out));
+			return p_out;
+		};
+
 		template <typename T>
 		inline static Vector<3, T>* inv(const Vector<3, T>* p_vec, Vector<3, T>* p_out)
 		{
-			RVector_3_inv((T*)(p_vec), (T*)(p_out));
+			Vec_Inv_3f((const VECTOR3F_PTR)p_vec, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static float dot(const Vector<3, T>* p_left, const  Vector<3, T>* p_right)
+
+		inline static float dot(const Vector<3, float>* p_left, const  Vector<3, float>* p_right)
 		{
-			return RVector_3_dot((T*)(p_left), (T*)(p_right));
+			return Vec_Dot_3f((const VECTOR3F_PTR)p_left, (const VECTOR3F_PTR)p_right);
 		};
+
 		template <typename T>
 		inline static Vector<3, T>* project(const Vector<3, T>* p_vec, const Vector<3, T>* p_projectedOn, Vector<3, T>* p_out)
 		{
-			RVector_3_project((T*)(p_vec), (T*)(p_projectedOn), (T*)(p_out));
+			Vec_Project_3f((const VECTOR3F_PTR)p_vec, (const VECTOR3F_PTR)p_projectedOn, (VECTOR3F_PTR) p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<3, T>* cross(const Vector<3, T>* p_left, const Vector<3, T>* p_right, Vector<3, T>* p_out)
+
+		inline static Vector<3, float>* cross(const Vector<3, float>* p_left, const Vector<3, float>* p_right, Vector<3, float>* p_out)
 		{
-			RVector_3_cross((T*)(p_left), (T*)(p_right), (T*)(p_out));
+			Vec_Cross_3f((const VECTOR3F_PTR)p_left, (const VECTOR3F_PTR)p_right, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
+
 		template <typename T>
 		inline static float angle(const Vector<3, T>* p_begin, const Vector<3, T>* p_end)
 		{
-			return RVector_3_angle((T*)(p_begin), (T*)(p_end));
+			return Vec_Angle_3f((const VECTOR3F_PTR)p_begin, (const VECTOR3F_PTR)p_end);
 		};
 		template <typename T>
 		inline static float angle_normalized(const Vector<3, T>* p_begin, const Vector<3, T>* p_end)
 		{
-			return RVector_3_angle_normalized((T*)(p_begin), (T*)(p_end));
+			return Vec_Angle_Normalized_3f((const VECTOR3F_PTR)p_begin, (const VECTOR3F_PTR)p_end);
 		};
 		template <typename T>
 		inline static short int angleSign(const Vector<3, T>* p_begin, const Vector<3, T>* p_end, const Vector<3, T>* p_referenceAxis)
 		{
-			return RVector_3_angleSign((T*)(p_begin), (T*)(p_end), (T*)(p_referenceAxis));
+			return Vec_AngleSign_3f((const VECTOR3F_PTR)p_begin, (const VECTOR3F_PTR)p_end, (VECTOR3F_PTR)p_referenceAxis);
 		};
 		template <typename T>
 		inline static Vector<3, T>* rotate(const Vector<3, T>* p_vec, const  Quaternion<T>* p_rotation, Vector<3, T>* p_out)
@@ -140,31 +155,35 @@ namespace _MathV2
 			return p_out;
 		};
 
-		template <typename T>
-		inline static bool equals(const Vector<2, T>* p_left, const Vector<2, T>* p_right)
+		inline static bool equals(const Vector<2, float>* p_left, const Vector<2, float>* p_right)
 		{
-			return RVector_2_equals((T*)(p_left), (T*)(p_right));
-		};
-		template <typename T>
-		inline static bool equals(const Vector<3, T>* p_left, const Vector<3, T>* p_right)
-		{
-			return RVector_3_equals((T*)(p_left), (T*)(p_right));
+			return Vec_Equals_2f((const VECTOR2F_PTR)p_left, (const VECTOR2F_PTR)p_right);
 		};
 
-		template <typename T>
-		inline static float length(const Vector<4, T>* p_vec)
+		inline static bool equals(const Vector<2, double>* p_left, const Vector<2, double>* p_right)
 		{
-			return RVector_4_length((T*)(p_vec));
+			return Vec_Equals_2d((const VECTOR2D_PTR)p_left, (const VECTOR2D_PTR)p_right);
 		};
 
-		template <typename T>
-		inline static Vector<4, T>* mul(const Vector<4, T>* p_left, const T p_right, Vector<4, T>* p_out)
+		inline static bool equals(const Vector<3, float>* p_left, const Vector<3, float>* p_right)
 		{
-			RVector_4_mul((T*)(p_left), p_right, (T*)(p_out));
+			return Vec_Equals_3f((const VECTOR3F_PTR)p_left, (const VECTOR3F_PTR)p_right);
+		};
+
+		inline static float length(const Vector<3, float>* p_vec)
+		{
+			return Vec_Length_3f((const VECTOR3F_PTR)p_vec);
+		};
+
+		inline static float length(const Vector<4, float>* p_vec)
+		{
+			return Vec_Length_4f((const VECTOR4F_PTR) p_vec);
+		};
+
+		inline static Vector<4, float>* mul(const Vector<4, float>* p_left, const float p_right, Vector<4, float>* p_out)
+		{
+			Vec_Mul_4f_1f((const VECTOR4F_PTR)p_left, p_right, (VECTOR4F_PTR)p_out);
 			return p_out;
 		};
-
-
-
 	};
 }

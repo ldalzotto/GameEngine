@@ -1,6 +1,6 @@
 #include "Intersection.h"
 
-#include "Constants.hpp"
+#include "Constants.h"
 
 #include "Functional/Sort/ElementSorter.hpp"
 #include "v2/Math.h"

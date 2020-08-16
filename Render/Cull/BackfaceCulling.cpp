@@ -1,6 +1,6 @@
 #include "BackfaceCulling.hpp"
 
-#include "Constants.hpp"
+#include "Constants.h"
 #include "Objects/Resource/Polygon.hpp"
 #include "v2/Vector/VectorMath.hpp"
 

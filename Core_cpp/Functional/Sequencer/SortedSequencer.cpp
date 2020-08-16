@@ -4,7 +4,10 @@
 
 #include "Functional/Sort/ElementSorter.hpp"
 #include "Algorithm/Compare/CompareAlgorithmT.hpp"
-#include "Functional/Equals/Equals.hpp"
+extern "C"
+{
+#include "Functional/Equals/Equals.h"
+}
 
 namespace _Core
 {

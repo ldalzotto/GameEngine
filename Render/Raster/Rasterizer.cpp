@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdexcept>
 
-#include "Constants.hpp"
+#include "Constants.h"
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Clip/ClipMath.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"

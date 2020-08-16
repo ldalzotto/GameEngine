@@ -4,7 +4,10 @@
 #include <stdlib.h>
 
 #include "v2/Math.h"
-#include "Functional/Equals/Equals.hpp"
+extern "C"
+{
+#include "Functional/Equals/Equals.h"
+}
 #include "v2/Quaternion/RQuaternion.h"
 
 namespace _MathV2
@@ -71,21 +74,21 @@ namespace _MathV2
 
 	bool RVector_2_equals(const double p_left[2], const double p_right[2])
 	{
-		return _Core::Equals_double(&p_left[0], &p_right[0])
-			&& _Core::Equals_double(&p_left[1], &p_right[1]);
+		return Equals_double(&p_left[0], &p_right[0])
+			&& Equals_double(&p_left[1], &p_right[1]);
 	};
 
 	bool RVector_2_equals(const float p_left[2], const float p_right[2])
 	{
-		return _Core::Equals_float(&p_left[0], &p_right[0])
-			&& _Core::Equals_float(&p_left[1], &p_right[1]);
+		return Equals_float(&p_left[0], &p_right[0])
+			&& Equals_float(&p_left[1], &p_right[1]);
 	};
 
 	bool RVector_3_equals(const float p_left[3], const float p_right[3])
 	{
-		return _Core::Equals_float(&p_left[0], &p_right[0])
-			&& _Core::Equals_float(&p_left[1], &p_right[1])
-			&& _Core::Equals_float(&p_left[2], &p_right[2]);
+		return Equals_float(&p_left[0], &p_right[0])
+			&& Equals_float(&p_left[1], &p_right[1])
+			&& Equals_float(&p_left[2], &p_right[2]);
 	};
 
 	void RVector_3_add(const float p_left[3], const float p_right[3], float p_out[3])
