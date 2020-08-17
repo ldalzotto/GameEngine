@@ -16,28 +16,23 @@ namespace _MathV2
 
 	struct QuaternionM
 	{
-		static bool equals(const Quaternion<float>* p_left, const Quaternion<float>* p_right)
+		inline static bool equals(const Quaternion<float>* p_left, const Quaternion<float>* p_right)
 		{
-			return Equals_float(&p_left->x, &p_right->x)
-				&& Equals_float(&p_left->y, &p_right->y)
-				&& Equals_float(&p_left->z, &p_right->z);
+			return Quat_Equals((const QUATERNION4F_PTR)p_left, (const QUATERNION4F_PTR)p_right);
 		};
 
-		template <typename T>
-		inline static Quaternion<T> build(const Vector<4, T>* p_quat)
+		inline static Quaternion<float> build(const Vector<4, float>* p_quat)
 		{
-			return *(Quaternion<T>*) p_vec4;
+			Quaternion<float> l_return;
+			Quat_Build_4f((const VECTOR4F_PTR)p_quat, (QUATERNION4F_PTR)&l_return);
+			return l_return;
 		}
-		template <typename T>
-		inline static Quaternion<T> build(const Vector<3, T>* p_vector, const  T p_scalar)
+
+		inline static Quaternion<float> build(const Vector<3, float>* p_vector, const  float p_scalar)
 		{
-			return Quaternion<T>
-			{
-				p_vector->x,
-					p_vector->y,
-					p_vector->z,
-					p_scalar
-			};
+			Quaternion<float> l_return;
+			Quat_Build_3f_1f((const VECTOR3F_PTR)p_vector, p_scalar, (QUATERNION4F_PTR)&l_return);
+			return l_return;
 		};
 
 		inline static Quaternion<float>* fromDirection(const Vector<3, float>* p_vect, Quaternion<float>* p_out)

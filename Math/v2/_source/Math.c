@@ -28,6 +28,14 @@ bool Vec_Equals_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right)
 		&& Equals_float(&p_left->z, &p_right->z);
 };
 
+bool Vec_Equals_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right)
+{
+	return Equals_float(&p_left->x, &p_right->x)
+		&& Equals_float(&p_left->y, &p_right->y)
+		&& Equals_float(&p_left->z, &p_right->z)
+		&& Equals_float(&p_left->w, &p_right->w);
+};
+
 /* VECTOR - MIN */
 
 inline void Vec_Min_Xd_Xd(const char* p_left, const char* p_right, const short int p_elementCount, char* p_out)
@@ -272,7 +280,7 @@ short int Vec_AngleSign_3f(const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end,
 void Vec_Rotate_3f(const VECTOR3F_PTR p_vector, const QUATERNION4F_PTR p_rotation, VECTOR3F_PTR p_out)
 {
 	QUATERNION4F l_vectorAsQuat;
-	Quat_Build(p_vector, 0.0f, &l_vectorAsQuat);
+	Quat_Build_3f_1f(p_vector, 0.0f, &l_vectorAsQuat);
 
 	QUATERNION4F l_rotatedVector;
 	Quat_Mul(p_rotation, &l_vectorAsQuat, &l_rotatedVector);
@@ -291,7 +299,17 @@ void Vec_Rotate_3f(const VECTOR3F_PTR p_vector, const QUATERNION4F_PTR p_rotatio
 
 /* QUATERNION */
 
-void Quat_Build(const VECTOR3F_PTR p_vec, float p_scal, QUATERNION4F_PTR p_out)
+bool Quat_Equals(const QUATERNION4F_PTR p_left, const QUATERNION4F_PTR p_right)
+{
+	return Vec_Equals_4f(&p_left->Points, &p_right->Points);
+};
+
+void Quat_Build_4f(const VECTOR4F_PTR p_points, QUATERNION4F_PTR p_out)
+{
+	p_out->Points = *p_points;
+};
+
+void Quat_Build_3f_1f(const VECTOR3F_PTR p_vec, float p_scal, QUATERNION4F_PTR p_out)
 {
 	p_out->Vec = *p_vec;
 	p_out->Scal = p_scal;
