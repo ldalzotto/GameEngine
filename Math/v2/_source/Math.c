@@ -1,6 +1,7 @@
 #include "VectorC.h"
 #include "QuaternionC.h"
 #include "MatrixC.h"
+#include "SegmentC.h"
 
 #include "Constants.h"
 
@@ -766,3 +767,92 @@ void Mat_LookAtRotation_F(const VECTOR3F_PTR p_origin, const VECTOR3F_PTR p_targ
 	out_rotationMatrix->Col1 = l_up;
 	out_rotationMatrix->Col2 = l_forward;
 }
+
+/* SEGMENT */
+
+/* SEGMENT - Generic methods */
+
+inline void Seg_Direction_VXF(
+	const char* p_begin, const char* p_end,
+	char* p_out, short int p_vectorElementCount)
+{
+	Vec_Min_Xf_Xf(p_end, p_begin, p_vectorElementCount, p_out);
+	Vec_Normalize_Xf(p_out, p_vectorElementCount, p_out);
+}
+
+inline void Seg_ToVector_VXF(
+	const char* p_begin, const char* p_end,
+	char* p_out, short int p_vectorElementCount
+)
+{
+	Vec_Min_Xf_Xf(p_end, p_begin, p_vectorElementCount, p_out);
+}
+
+inline void Seg_Mul_VXF_VXF(
+	const char* p_begin, const char* p_end,
+	const char* p_right,
+	char* out_begin, char* out_end,
+	short int p_vectorElementCount
+)
+{
+	Vec_Mul_Xf_Xf(p_begin, p_vectorElementCount, p_right, out_begin);
+	Vec_Mul_Xf_Xf(p_end, p_vectorElementCount, p_right, out_end);
+}
+
+inline void Seg_Mul_VXF_MXxXF(
+	const char* p_begin, const char* p_end,
+	const char* p_matrix,
+	char* out_begin, char* out_end,
+	const short int p_vectorElementCount,
+	const size_t p_matrixLineSize,
+	const size_t p_vectorSize
+)
+{
+	Mat_Mul_MXxXf_MXxXf(p_matrix, p_begin, p_vectorElementCount, 1, p_matrixLineSize, p_vectorSize, out_begin);
+	Mat_Mul_MXxXf_MXxXf(p_matrix, p_end, p_vectorElementCount, 1, p_matrixLineSize, p_vectorSize, out_end);
+}
+
+void Seg_Direction_V2F(const SEGMENT_VECTOR2F_PTR p_segment, VECTOR2F_PTR p_out)
+{
+	Seg_Direction_VXF(p_segment->Begin.Points, p_segment->End.Points, p_out->Points, 2);
+};
+
+void Seg_ToVector_V2F(const SEGMENT_VECTOR2F_PTR p_segment, VECTOR2F_PTR p_out)
+{
+	Seg_ToVector_VXF(p_segment->Begin.Points, p_segment->End.Points, p_out->Points, 2);
+};
+
+void Seg_Mul_V2F_V2F(const SEGMENT_VECTOR2F_PTR p_segment, const VECTOR2F_PTR p_right, SEGMENT_VECTOR2F_PTR p_out)
+{
+	Seg_Mul_VXF_VXF(p_segment->Begin.Points, p_segment->End.Points, p_right, p_out->Begin.Points, p_out->End.Points, 2);
+};
+
+void Seg_Direction_V3F(const SEGMENT_VECTOR3F_PTR p_segment, VECTOR3F_PTR p_out)
+{
+	Seg_Direction_VXF(p_segment->Begin.Points, p_segment->End.Points, p_out->Points, 3);
+};
+void Seg_ToVector_V3F(const SEGMENT_VECTOR3F_PTR p_segment, VECTOR3F_PTR p_out)
+{
+	Seg_ToVector_VXF(p_segment->Begin.Points, p_segment->End.Points, p_out->Points, 3);
+};
+void Seg_Mul_V3F_V3F(const SEGMENT_VECTOR3F_PTR p_segment, const VECTOR3F_PTR p_right, SEGMENT_VECTOR3F_PTR p_out)
+{
+	Seg_Mul_VXF_VXF(p_segment->Begin.Points, p_segment->End.Points, p_right, p_out->Begin.Points, p_out->End.Points, 4);
+};
+
+void Seg_Direction_V4F(const SEGMENT_VECTOR4F_PTR p_segment, VECTOR4F_PTR p_out)
+{
+	Seg_Direction_VXF(p_segment->Begin.Points, p_segment->End.Points, p_out->Points, 4);
+};
+void Seg_ToVector_V4F(const SEGMENT_VECTOR4F_PTR p_segment, VECTOR4F_PTR p_out)
+{
+	Seg_ToVector_VXF(p_segment->Begin.Points, p_segment->End.Points, p_out->Points, 3);
+};
+void Seg_Mul_V4F_V4F(const SEGMENT_VECTOR4F_PTR p_segment, const VECTOR4F_PTR p_right, SEGMENT_VECTOR4F_PTR p_out)
+{
+	Seg_Mul_VXF_VXF(p_segment->Begin.Points, p_segment->End.Points, p_right, p_out->Begin.Points, p_out->End.Points, 4);
+};
+void Seg_Mul_V4F_M4F(const SEGMENT_VECTOR4F_PTR p_segment, const MATRIX4F_PTR p_right, SEGMENT_VECTOR4F_PTR p_out)
+{
+	Seg_Mul_VXF_MXxXF(p_segment->Begin.Points, p_segment->End.Points, p_right, p_out->Begin.Points, p_out->End.Points, 4, sizeof(VECTOR4F), sizeof(VECTOR4F));
+};

@@ -4,7 +4,10 @@
 #include "v2/Matrix/Matrix.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Segment/SegmentV2.hpp"
-#include "v2/Segment/RSegment.h"
+extern "C"
+{
+#include "v2/_source/SegmentC.h"
+}
 
 namespace _MathV2
 {
@@ -28,27 +31,27 @@ namespace _MathV2
 			return l_return;
 		};
 		
-		template <int N, typename T>
-		inline static _MathV2::Vector<N, T>* direction(const _MathV2::SegmentV2<N, T>* p_segment, _MathV2::Vector<N, T>* p_out)
+		inline static _MathV2::Vector<3, float>* direction(const _MathV2::SegmentV2<3, float>* p_segment, _MathV2::Vector<3, float>* p_out)
 		{
-			RSegment l_rSegment = {N, (void*)&p_segment->Begin, (void*)&p_segment->End};
-			RSegment_direction(&l_rSegment, (T*)p_out);
+			Seg_Direction_V3F((const SEGMENT_VECTOR3F_PTR)p_segment, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
 
-		template <int N, typename T>
-		inline static _MathV2::Vector<N, T>* toVector(const _MathV2::SegmentV2<N, T>* p_segment, _MathV2::Vector<N, T>* p_out)
+		inline static _MathV2::Vector<4, float>* toVector(const _MathV2::SegmentV2<4, float>* p_segment, _MathV2::Vector<4, float>* p_out)
 		{
-			RSegment l_rSegment = { N, (void*)&p_segment->Begin, (void*)&p_segment->End };
-			RSegment_toVector(&l_rSegment, (T*)p_out);
+			Seg_ToVector_V4F((const SEGMENT_VECTOR4F_PTR)p_segment, (VECTOR4F_PTR)p_out);
 			return p_out;
 		};
 
-		template <int N, typename T>
-		inline static _MathV2::SegmentV2<N, T>* mul(const _MathV2::SegmentV2<N, T>* p_segment, const _MathV2::Matrix<N, N, T>* p_matrix, _MathV2::SegmentV2<N, T>* p_out)
+		inline static _MathV2::Vector<3, float>* toVector(const _MathV2::SegmentV2<3, float>* p_segment, _MathV2::Vector<3, float>* p_out)
 		{
-			MatrixM::mul(p_matrix, &p_segment->Begin, &p_out->Begin);
-			MatrixM::mul(p_matrix, &p_segment->End, &p_out->End);
+			Seg_ToVector_V3F((const SEGMENT_VECTOR3F_PTR)p_segment, (VECTOR3F_PTR)p_out);
+			return p_out;
+		};
+
+		inline static _MathV2::SegmentV2<4, float>* mul(const _MathV2::SegmentV2<4, float>* p_segment, const _MathV2::Matrix<4, 4, float>* p_matrix, _MathV2::SegmentV2<4, float>* p_out)
+		{
+			Seg_Mul_V4F_M4F((const SEGMENT_VECTOR4F_PTR)p_segment, (const MATRIX4F_PTR)p_matrix, (SEGMENT_VECTOR4F_PTR)p_out);
 			return p_out;
 		};
 	};
