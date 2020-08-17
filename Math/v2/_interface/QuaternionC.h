@@ -1,9 +1,11 @@
 #pragma once
 
 #include "QuaternionC_def.h"
-#include "VectorC_def.h"
+#include "v2/_source/VectorC_def.h"
 
 #include <stdbool.h>
+
+const QUATERNION4F QUATERNION4F_IDENTITY = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 bool Quat_Equals(const QUATERNION4F_PTR p_left, const QUATERNION4F_PTR p_right);
 

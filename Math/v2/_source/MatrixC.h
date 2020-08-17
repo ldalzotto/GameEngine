@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MatrixC_def.h"
-#include "QuaternionC_def.h"
+#include "v2/_interface/QuaternionC_def.h"
 
 const MATRIX4F MATRIX4F_IDENTITYF = { 1.0f, 0.0f, 0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f };
 

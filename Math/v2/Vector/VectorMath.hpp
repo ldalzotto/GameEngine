@@ -2,11 +2,11 @@
 
 extern "C"
 {
+#include "v2/_interface/QuaternionC_def.h"
 #include "v2/_source/VectorC.h"
 }
 
 #include "Vector.hpp"
-#include "v2/Quaternion/Quaternion.hpp"
 
 namespace _MathV2
 {
@@ -147,9 +147,9 @@ namespace _MathV2
 			return Vec_AngleSign_3f((const VECTOR3F_PTR)p_begin, (const VECTOR3F_PTR)p_end, (VECTOR3F_PTR)p_referenceAxis);
 		};
 
-		inline static Vector<3, float>* rotate(const Vector<3, float>* p_vec, const  Quaternion<float>* p_rotation, Vector<3, float>* p_out)
+		inline static Vector<3, float>* rotate(const Vector<3, float>* p_vec, const QUATERNION4F_PTR p_rotation, Vector<3, float>* p_out)
 		{
-			Vec_Rotate_3f((const VECTOR3F_PTR)p_vec,(const QUATERNION4F_PTR) p_rotation, (VECTOR3F_PTR)p_out);
+			Vec_Rotate_3f((const VECTOR3F_PTR)p_vec, p_rotation, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
 

@@ -7,7 +7,10 @@
 #include "AppEvent/AppEvent.hpp"
 
 #include "v2/Math.h"
-#include "v2/Quaternion/QuaternionMath.hpp"
+extern "C"
+{
+#include "v2/_interface/QuaternionC.h"
+}
 #include "v2/Transform/TransformM.hpp"
 
 #include "ECS/ComponentT.hpp"
@@ -27,7 +30,7 @@ using namespace _GameEngine::_Test;
 
 void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 {
-	_MathV2::Vector3<float> tmp_vec3_0;
+	VECTOR3F tmp_vec3_0;
 
 	// Camera
 	{
@@ -49,7 +52,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
 			tmp_vec3_0 = { (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f };
-			_MathV2::QuaternionM::fromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
+			Quat_FromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
 			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
@@ -60,7 +63,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		CubeCreationInfo l_cubeCreationInfo{};
 		l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-		l_cubeCreationInfo.LocalRotation = _MathV2::Quaternionf_Identity;
+		l_cubeCreationInfo.LocalRotation = QUATERNION4F_IDENTITY;
 		l_cubeCreationInfo.WithMeshBound = true;
 		_ECS::Entity* l_instancaitedEntity; _ECS::TransformComponent* l_instranciatedTransform;
 		EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_instancaitedEntity, &l_instranciatedTransform);
@@ -71,7 +74,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 			l_cubeCreationInfo.LocalPosition = { 0.0f, -3.0f, 2.0f };
 			l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-			l_cubeCreationInfo.LocalRotation = _MathV2::Quaternionf_Identity;
+			l_cubeCreationInfo.LocalRotation = QUATERNION4F_IDENTITY;
 			l_cubeCreationInfo.WithMeshBound = true;
 			_ECS::Entity* l_childInstanciatedEntity; _ECS::TransformComponent* l_childInstranciatedTransform;
 			EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);

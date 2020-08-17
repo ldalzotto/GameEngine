@@ -15,12 +15,17 @@
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
 
+#include "Clock/Clock.hpp"
+#include <iostream>
+
 using namespace _MathV2;
 
 namespace _RenderV2
 {
 	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, WireframeRenderer_Memory* p_memory)
 	{
+		_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
+
 		WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 		_MathV2::Vector<3, char> l_wireframeColor = { 255,0,0 };
 		Polygon<Vector<4, float>> tmp_poly_4f_0, tmp_poly_4f_1;
@@ -57,8 +62,6 @@ namespace _RenderV2
 				}
 			}
 
-			//TODO -> To avoid calculating the same matrices from the same vertices (because one vertex is usually owned by multiple polygon)
-			// we can store result in an indexed array, based on the rendered mesh vertex index.
 			for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
 			{
 				PolygonPipelineV2* l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
@@ -97,6 +100,9 @@ namespace _RenderV2
 
 
 		}
+
+		_Core::TimeClockPrecision l_after = _Core::Clock_currentTime_mics();
+		std::cout << l_after - l_before << std::endl;
 	};
 
 

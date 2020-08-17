@@ -8,7 +8,10 @@
 
 #include "v2/Math.h"
 #include "v2/Matrix/MatrixMath.hpp"
-#include "v2/Quaternion/QuaternionMath.hpp"
+extern "C"
+{
+#include "v2/_interface/QuaternionC.h"
+}
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Box/Box.hpp"
 #include "v2/Box/BoxMath.h"
@@ -72,9 +75,12 @@ int main(int argc, char* argv[])
 
 		_Core::AppEvent_pool();
 
-		_MathV2::Quaternion<float> tmp_quat_0; _MathV2::Matrix3x3<float> tmp_mat3x3_0; _MathV2::Matrix4x4<float> tmp_mat4x4_0;
+		QUATERNION4F tmp_quat_0; _MathV2::Matrix3x3<float> tmp_mat3x3_0; _MathV2::Matrix4x4<float> tmp_mat4x4_0;
 		_MathV2::Matrix4x4<float> l_rotation = _MathV2::Matrix4x4f_Identity;
-		_MathV2::MatrixM::buildRotationMatrix(_MathV2::QuaternionM::extractAxis(_MathV2::QuaternionM::rotateAround(&_MathV2::UP, 0.000001f * l_deltaTime, &tmp_quat_0), &tmp_mat3x3_0), &l_rotation);
+
+		Quat_RotateAround((VECTOR3F_PTR)&VECTOR3F_UP, 0.000001f * l_deltaTime, &tmp_quat_0);
+		Quat_ExtractAxis(&tmp_quat_0, tmp_mat3x3_0.Points);
+		_MathV2::MatrixM::buildRotationMatrix(&tmp_mat3x3_0, &l_rotation);
 		l_renderableObject.ModelMatrix = *_MathV2::MatrixM::mul(&l_renderableObject.ModelMatrix, &l_rotation, &tmp_mat4x4_0);
 
 		RenderV2_render(&renderV2);

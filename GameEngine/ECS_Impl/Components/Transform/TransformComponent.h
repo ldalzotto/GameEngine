@@ -1,7 +1,10 @@
 #pragma once
 
 #include "v2/Transform/Transform.hpp"
-
+extern "C"
+{
+#include "v2/_interface/QuaternionC.h"
+}
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "ECS/ComponentT.hpp"
 
@@ -24,7 +27,7 @@ namespace _GameEngine::_ECS
 	struct TransformInitInfo
 	{
 		_MathV2::Vector3<float> LocalPosition;
-		_MathV2::Quaternion<float> LocalRotation = _MathV2::Quaternionf_Identity;
+		QUATERNION4F LocalRotation = QUATERNION4F_IDENTITY;
 		_MathV2::Vector3<float> LocalScale = {1.0f, 1.0f, 1.0f};
 	};
 

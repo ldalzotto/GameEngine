@@ -1,7 +1,7 @@
 #pragma once
 
 #include "VectorC_def.h"
-#include "QuaternionC_def.h"
+#include "v2/_interface/QuaternionC_def.h"
 #include <stdbool.h>
 
  const VECTOR3F VECTOR3F_RIGHT = {1.0f, 0.0f, 0.0f};

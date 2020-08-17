@@ -2,7 +2,11 @@
 
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
-#include "v2/Quaternion/QuaternionMath.hpp"
+
+extern "C"
+{
+#include "v2/_interface/QuaternionC.h"
+}
 
 namespace _MathV2
 {
@@ -36,7 +40,7 @@ namespace _MathV2
 	{
 		if (p_transform->Parent)
 		{
-			_MathV2::Vector3<float> tmp_vec3; _MathV2::Quaternion<float> tmp_quat;
+			_MathV2::Vector3<float> tmp_vec3; QUATERNION4F tmp_quat;
 			// Because the child referential has changed, we must update the local positions to fit the new referential.
 			TransformM::setLocalPosition(p_transform, TransformM::getWorldPosition(p_transform, &tmp_vec3));
 			TransformM::setLocalRotation(p_transform, TransformM::getWorldRotation(p_transform, &tmp_quat));
@@ -57,9 +61,9 @@ namespace _MathV2
 		}
 	};
 
-	void TransformM::setLocalRotation(Transform* p_transform, const Quaternion<float>* p_localRotation)
+	void TransformM::setLocalRotation(Transform* p_transform, const QUATERNION4F_PTR p_localRotation)
 	{
-		if (!QuaternionM::equals(&p_transform->LocalRotation, p_localRotation))
+		if (!Quat_Equals(&p_transform->LocalRotation, p_localRotation))
 		{
 			TransformM::markMatricsForRecalculation(p_transform);
 			p_transform->LocalRotation = *p_localRotation;
@@ -99,7 +103,7 @@ namespace _MathV2
 		TransformM::setWorldPosition(p_transform, VectorM::add(TransformM::getWorldPosition(p_transform, &tmp_vec3), p_worldPosition_delta, &tmp_vec3));
 	};
 
-	void TransformM::setWorldRotation(Transform* p_transform, const _MathV2::Quaternion<float>* p_worldRotation)
+	void TransformM::setWorldRotation(Transform* p_transform, const QUATERNION4F_PTR p_worldRotation)
 	{
 		if (p_transform->Parent == nullptr)
 		{
@@ -107,13 +111,11 @@ namespace _MathV2
 		}
 		else
 		{
-			Quaternion<float> tmp_quat_0, tmp_quat_1;
-			Quaternion<float> l_settedLocalQuaternion;
-			QuaternionM::mul(
-				QuaternionM::conjugate(TransformM::getWorldRotation(p_transform->Parent, &tmp_quat_1), &tmp_quat_1),
-				p_worldRotation,
-				&l_settedLocalQuaternion
-			);
+			QUATERNION4F tmp_quat_0, tmp_quat_1;
+			QUATERNION4F l_settedLocalQuaternion;
+
+			Quat_conjugate(TransformM::getWorldRotation(p_transform->Parent, &tmp_quat_1), &tmp_quat_0);
+			Quat_Mul(&tmp_quat_0, p_worldRotation, &l_settedLocalQuaternion);
 			TransformM::setLocalRotation(p_transform, &l_settedLocalQuaternion);
 		}
 	};
@@ -162,12 +164,12 @@ namespace _MathV2
 		return p_out;
 	};
 
-	Quaternion<float>* TransformM::getWorldRotation(Transform* p_transform, Quaternion<float>* p_out)
+	QUATERNION4F_PTR TransformM::getWorldRotation(Transform* p_transform, QUATERNION4F_PTR p_out)
 	{
 		if (p_transform->Parent)
 		{
-			Quaternion<float> tmp_quat_0;
-			QuaternionM::mul(TransformM::getWorldRotation(p_transform->Parent, &tmp_quat_0), &p_transform->LocalRotation, p_out);
+			QUATERNION4F tmp_quat_0;
+			Quat_Mul(TransformM::getWorldRotation(p_transform->Parent, &tmp_quat_0), &p_transform->LocalRotation, p_out);
 		}
 		else
 		{

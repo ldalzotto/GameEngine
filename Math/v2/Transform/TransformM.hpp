@@ -12,12 +12,12 @@ namespace _MathV2
 		static void markMatricsForRecalculation(Transform* p_transform);
 
 		static void setLocalPosition(Transform* p_transform, const _MathV2::Vector3<float>* p_localPosition);
-		static void setLocalRotation(Transform* p_transform, const _MathV2::Quaternion<float>* p_localRotation);
+		static void setLocalRotation(Transform* p_transform, const QUATERNION4F_PTR p_localRotation);
 		static void setLocalScale(Transform* p_transform, const _MathV2::Vector3<float>* p_localScale);
 
 		static void setWorldPosition(Transform* p_transform, const _MathV2::Vector3<float>* p_worldPosition);
 		static void addToWorldPosition(Transform* p_transform, const _MathV2::Vector3<float>* p_worldPosition_delta);
-		static void setWorldRotation(Transform* p_transform, const _MathV2::Quaternion<float>* p_worldRotation);
+		static void setWorldRotation(Transform* p_transform, const QUATERNION4F_PTR p_worldRotation);
 		static void setWorldScale(Transform* p_transform, const _MathV2::Vector3<float>* p_worldScale);
 
 		static _MathV2::Matrix4x4<float>* getLocalToWorldMatrix(Transform* p_transform, _MathV2::Matrix4x4<float>* p_out);
@@ -26,7 +26,7 @@ namespace _MathV2
 		static _MathV2::Matrix4x4<float>* calculateMatrixToProjectFromTransformToAnother(Transform* p_source, Transform* p_target, _MathV2::Matrix4x4<float>* p_out);
 
 		static _MathV2::Vector3<float>* getWorldPosition(Transform* p_transform, _MathV2::Vector3<float>* p_out);
-		static _MathV2::Quaternion<float>* getWorldRotation(Transform* p_transform, _MathV2::Quaternion<float>* p_out);
+		static QUATERNION4F_PTR getWorldRotation(Transform* p_transform, QUATERNION4F_PTR p_out);
 		static _MathV2::Vector3<float>* getWorldScaleFactor(Transform* p_transform, _MathV2::Vector3<float>* p_out);
 
 		static _MathV2::Vector3<float>* getRight(Transform* p_transform, _MathV2::Vector3<float>* p_out);

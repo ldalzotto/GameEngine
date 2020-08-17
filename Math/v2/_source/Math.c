@@ -1,5 +1,5 @@
 #include "VectorC.h"
-#include "QuaternionC.h"
+#include "v2/_interface/QuaternionC.h"
 #include "MatrixC.h"
 #include "SegmentC.h"
 
@@ -290,8 +290,7 @@ void Vec_Rotate_3f(const VECTOR3F_PTR p_vector, const QUATERNION4F_PTR p_rotatio
 		QUATERNION4F l_tmp;
 		Quat_conjugate(p_rotation, &l_tmp);
 
-		QUATERNION4F l_rotatedVector_cpy;
-		memcpy(l_rotatedVector_cpy, l_rotatedVector, sizeof(QUATERNION4F));
+		QUATERNION4F l_rotatedVector_cpy = l_rotatedVector;
 		Quat_Mul(&l_rotatedVector_cpy, &l_tmp, &l_rotatedVector);
 	}
 
@@ -705,11 +704,6 @@ void Mat_GetTranslation_M4F(const MATRIX4F_PTR p_mat, VECTOR4F_PTR out_translati
 
 void Mat_GetScale_M4F(const MATRIX4F_PTR p_trs, VECTOR4F_PTR out_scale)
 {
-	float l_c0[4], l_c1[4], l_c2[4];
-	memcpy(l_c0, p_trs[0], sizeof(float) * 4);
-	memcpy(l_c0, p_trs[1], sizeof(float) * 4);
-	memcpy(l_c0, p_trs[2], sizeof(float) * 4);
-
 	out_scale->x = Vec_Length_3f(&p_trs->Col0.Vec3);
 	out_scale->y = Vec_Length_3f(&p_trs->Col1.Vec3);
 	out_scale->z = Vec_Length_3f(&p_trs->Col2.Vec3);

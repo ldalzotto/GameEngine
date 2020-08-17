@@ -9,7 +9,10 @@
 #include "v2/Segment/SegmentV2Math.hpp"
 #include "v2/Intersection/Intersection.h"
 #include "v2/Transform/TransformM.hpp"
-#include "v2/Quaternion/QuaternionMath.hpp"
+extern "C"
+{
+#include "v2/_interface/QuaternionC.h"
+}
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 
@@ -254,7 +257,7 @@ namespace _GameEngineEditor
 
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
-		Vector3<float> tmp_vec3_1, tmp_vec3_0; Quaternion<float> tmp_quat_1;
+		Vector3<float> tmp_vec3_1, tmp_vec3_0; QUATERNION4F tmp_quat_1;
 
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
 		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
@@ -300,30 +303,26 @@ namespace _GameEngineEditor
 			//We position the guide plane
 			if (l_selectedRotation == p_entitySelection->TransformGizmoV2.RightGizmo)
 			{
-				Quaternion<float> tmp_quat_0, tmp_quat_1, tmp_quat_2;
-				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform,
-					QuaternionM::mul(
-						TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2),
-						QuaternionM::rotateAround((const Vector<3, float>*) &VECTOR3F_FORWARD, -M_PI * 0.5f, &tmp_quat_0),
-						&tmp_quat_1
-					)
-				);
+				QUATERNION4F tmp_quat_0, tmp_quat_1, tmp_quat_2;
+
+				TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2);
+				Quat_RotateAround((VECTOR3F_PTR)&VECTOR3F_FORWARD, -M_PI * 0.5f, &tmp_quat_0);
+				Quat_Mul(&tmp_quat_2, &tmp_quat_0, &tmp_quat_1);
+				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
 			}
 			else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.UpGizmo)
 			{
-				Quaternion<float> tmp_quat;
+				QUATERNION4F tmp_quat;
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, TransformM::getWorldRotation(&p_entitySelection->TransformGizmoV2.ForwardGizmo->Transform, &tmp_quat));
 			}
 			else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ForwardGizmo)
 			{
-				Quaternion<float> tmp_quat_0, tmp_quat_1, tmp_quat_2;
-				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform,
-					QuaternionM::mul(
-						TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2),
-						QuaternionM::rotateAround((const Vector<3, float>*)&VECTOR3F_RIGHT, M_PI * 0.5f, &tmp_quat_0),
-						&tmp_quat_1
-					)
-				);
+				QUATERNION4F tmp_quat_0, tmp_quat_1, tmp_quat_2;
+
+				TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2);
+				Quat_RotateAround((VECTOR3F_PTR)&VECTOR3F_RIGHT, M_PI * 0.5f, &tmp_quat_0);
+				Quat_Mul(&tmp_quat_2, &tmp_quat_0, &tmp_quat_1);
+				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
 			}
 
 			l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
@@ -366,20 +365,19 @@ namespace _GameEngineEditor
 			}
 		}
 
-		Quaternion<float> tmp_quat_0, tmp_quat_1;
-		Quaternion<float> l_nextRotation;
-		QuaternionM::mul(
-			QuaternionM::rotateAround(&l_rotationAxis_worldSpace, l_deltaRotation, &tmp_quat_0),
-			TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_1),
-			&l_nextRotation
-		);
+		QUATERNION4F tmp_quat_0, tmp_quat_1;
+		QUATERNION4F l_nextRotation;
+		
+		Quat_RotateAround((VECTOR3F_PTR)&l_rotationAxis_worldSpace, l_deltaRotation, &tmp_quat_0);
+		TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_1);
+		Quat_Mul(&tmp_quat_0, &tmp_quat_1, &l_nextRotation);
 
 		TransformM::setWorldRotation(&l_transformComponent->Transform, &l_nextRotation);
 	};
 
 	void EntitySelection_scaleSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
-		Vector3<float> tmp_vec3_0, tmp_vec3_1; Quaternion<float> tmp_quat_1;
+		Vector3<float> tmp_vec3_0, tmp_vec3_1; QUATERNION4F tmp_quat_1;
 
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
 		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
@@ -454,7 +452,7 @@ namespace _GameEngineEditor
 			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
-			l_transformInitInfo.LocalRotation = Quaternionf_Identity;
+			l_transformInitInfo.LocalRotation = QUATERNION4F_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
 			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
@@ -489,7 +487,7 @@ namespace _GameEngineEditor
 			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
-			l_transformInitInfo.LocalRotation = Quaternionf_Identity;
+			l_transformInitInfo.LocalRotation = QUATERNION4F_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
 			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
@@ -524,7 +522,7 @@ namespace _GameEngineEditor
 			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
-			l_transformInitInfo.LocalRotation = Quaternionf_Identity;
+			l_transformInitInfo.LocalRotation = QUATERNION4F_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
 			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
@@ -555,7 +553,7 @@ namespace _GameEngineEditor
 			TransformGizmoV2_free(p_transformGizmo, p_ecs);
 		}
 
-		Vector3<float> tmp_vec3_0; Quaternion<float> tmp_quat_0;
+		VECTOR3F tmp_vec3_0; QUATERNION4F tmp_quat_0;
 		_ECS::Entity* l_transformGizmo = _ECS::Entity_alloc();
 		{
 			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_transformGizmo);
@@ -565,7 +563,7 @@ namespace _GameEngineEditor
 			p_transformGizmo->TransformGizoEntity = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
 			_ECS::TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = p_initialWorldPosition;
-			l_transformInitInfo.LocalRotation = Quaternionf_Identity;
+			l_transformInitInfo.LocalRotation = QUATERNION4F_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
 			_ECS::TransformComponent_init(p_transformGizmo->TransformGizoEntity, &l_transformInitInfo);
@@ -592,10 +590,12 @@ namespace _GameEngineEditor
 			TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->UpGizmo->Transform);
 
 			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
-			TransformM::setLocalRotation(&p_transformGizmo->RightGizmo->Transform, QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
+			Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->RightGizmo->Transform, &tmp_quat_0);
 			tmp_vec3_0 = { -M_PI * 0.5f, 0.0f, 0.0f };
-			TransformM::setLocalRotation(&p_transformGizmo->UpGizmo->Transform, QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
-			TransformM::setLocalRotation(&p_transformGizmo->ForwardGizmo->Transform, &Quaternionf_Identity);
+			Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->UpGizmo->Transform, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->ForwardGizmo->Transform, (QUATERNION4F_PTR)&QUATERNION4F_IDENTITY);
 		}
 		break;
 		case SelectedGizmoType::ROTATION:
@@ -606,10 +606,12 @@ namespace _GameEngineEditor
 			p_transformGizmo->ForwardGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, &_Color::BLUE);
 
 			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
-			TransformM::setLocalRotation(&p_transformGizmo->ForwardGizmo->Transform, QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
+			Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->ForwardGizmo->Transform,  &tmp_quat_0);
 			tmp_vec3_0 = { 0.0f, 0.0f, -M_PI * 0.5f };
-			TransformM::setLocalRotation(&p_transformGizmo->UpGizmo->Transform, QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
-			TransformM::setLocalRotation(&p_transformGizmo->RightGizmo->Transform, &Quaternionf_Identity);
+			Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->UpGizmo->Transform, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->RightGizmo->Transform, (QUATERNION4F_PTR)&QUATERNION4F_IDENTITY);
 
 			TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->RightGizmo->Transform);
 			TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->UpGizmo->Transform);
@@ -634,10 +636,12 @@ namespace _GameEngineEditor
 			TransformM::addChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->ForwardGizmo->Transform);
 
 			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
-			TransformM::setLocalRotation(&p_transformGizmo->RightGizmo->Transform, QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
+			Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->RightGizmo->Transform, &tmp_quat_0);
 			tmp_vec3_0 = { -M_PI * 0.5f, 0.0f, 0.0f };
-			TransformM::setLocalRotation(&p_transformGizmo->UpGizmo->Transform, QuaternionM::fromEulerAngle(&tmp_vec3_0, &tmp_quat_0));
-			TransformM::setLocalRotation(&p_transformGizmo->ForwardGizmo->Transform, &Quaternionf_Identity);
+			Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->UpGizmo->Transform, &tmp_quat_0);
+			TransformM::setLocalRotation(&p_transformGizmo->ForwardGizmo->Transform, (QUATERNION4F_PTR)&QUATERNION4F_IDENTITY);
 		}
 		break;
 		}
@@ -682,7 +686,7 @@ namespace _GameEngineEditor
 			if (l_transformGizmotransform)
 			{
 				Vector3<float> l_followedWorldPosition; TransformM::getWorldPosition(&p_followedTransform, &l_followedWorldPosition);
-				Quaternion<float> l_followedRotation; TransformM::getWorldRotation(&p_followedTransform, &l_followedRotation);
+				QUATERNION4F l_followedRotation; TransformM::getWorldRotation(&p_followedTransform, &l_followedRotation);
 
 				Vector3<float> l_transformGizmoWorldPosition;
 				{

@@ -2,9 +2,9 @@
 
 #include "v2/Vector/Vector.hpp"
 #include "v2/Matrix/Matrix.hpp"
-#include "v2/Quaternion/Quaternion.hpp"
 extern "C"
 {
+#include "v2/_interface/QuaternionC_def.h"
 #include "v2/_source/MatrixC.h"
 }
 
@@ -73,9 +73,9 @@ namespace _MathV2
 			return p_out;
 		};
 
-		inline static Matrix4x4<float>* buildTRS(Vector3<float>* p_position, Quaternion<float>* p_quaternion, Vector3<float>* p_scale, Matrix4x4<float>* p_out)
+		inline static Matrix4x4<float>* buildTRS(Vector3<float>* p_position, QUATERNION4F_PTR p_quaternion, Vector3<float>* p_scale, Matrix4x4<float>* p_out)
 		{
-			Mat_TRS_Quat_M4F((const VECTOR3F_PTR)p_position, (const QUATERNION4F_PTR)p_quaternion, (const VECTOR3F_PTR)p_scale, (MATRIX4F_PTR)p_out);
+			Mat_TRS_Quat_M4F((const VECTOR3F_PTR)p_position, p_quaternion, (const VECTOR3F_PTR)p_scale, (MATRIX4F_PTR)p_out);
 			return p_out;
 		};
 
