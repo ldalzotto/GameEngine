@@ -518,30 +518,6 @@ void Quat_RotateAround(const VECTOR3F_PTR p_axis, const  float p_angle, QUATERNI
 
 /* MATRIX */
 
-/*
-	inline float RMatrix_multiplication_line_column_v3(const RMatrix& p_left, const size_t p_left_elementSize, const RMatrix& p_right, const size_t p_right_elementSize, int p_leftLineIndex, int p_rightColumnIndex)
-	{
-		float l_return = 0.0f;
-		for (short int i = 0; i < p_left.ColumnCount; i++)
-		{
-			l_return += (*(float*)RMatrix_float_getAddresFromRaw_v3(p_left, i, p_leftLineIndex, p_left_elementSize) * *(float*)RMatrix_float_getAddresFromRaw_v3(p_right, p_rightColumnIndex, i, p_right_elementSize));
-		}
-		return l_return;
-	};
-
-	inline void RMatrix_multiplication_matrix_matrix_v3(const RMatrix& p_left, const size_t p_left_elementSize, const RMatrix& p_right, const size_t p_right_elementSize, RMatrix& p_out)
-	{
-		for (int i = 0; i < p_left.LineCount; i++)
-		{
-			for (int j = 0; j < p_right.ColumnCount; j++)
-			{
-				*(float*)RMatrix_float_getAddresFromRaw_v3(p_out, j, i, p_left_elementSize) = RMatrix_multiplication_line_column_v3(p_left, p_left_elementSize, p_right, p_right_elementSize, i, j);
-			}
-		}
-	}
-
-*/
-
 inline float Mat_Mul_line_column_Xf(const float* p_left_line, const float* p_right_column, const short int p_leftColumnCount, const size_t p_fullColumnSize)
 {
 	float l_return = 0.0f;
@@ -642,6 +618,12 @@ void Mat_Mul_M4F_V4F(const MATRIX4F_PTR p_left, const VECTOR4F_PTR p_right, VECT
 	Mat_Mul_MXxXf_MXxXf(p_left, p_right, 4, 1, sizeof(VECTOR4F), sizeof(VECTOR4F), p_out);
 };
 
+void Mat_Mul_M4F_V4F_Homogeneous(const MATRIX4F_PTR p_projectionmatrix, const VECTOR4F_PTR p_pos, VECTOR4F_PTR out_pos)
+{
+	Mat_Mul_M4F_V4F(p_projectionmatrix, p_pos, out_pos);
+	Vec_Mul_4f_1f(out_pos, 1.0f / out_pos->w, out_pos);
+};
+
 void Mat_Mul_M3F_V3F(const MATRIX3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
 {
 	Mat_Mul_MXxXf_MXxXf(p_left, p_right, 3, 1, sizeof(VECTOR3F), sizeof(VECTOR3F), p_out);
@@ -714,3 +696,73 @@ void Mat_TRS_Quat_M4F(const VECTOR3F_PTR p_position, const QUATERNION4F_PTR p_qu
 	MATRIX3F l_axis; Quat_ExtractAxis(p_quat, l_axis.Points);
 	Mat_TRS_Axis_M4F(p_position, &l_axis, p_scale, out_TRS);
 };
+
+void Mat_GetTranslation_M4F(const MATRIX4F_PTR p_mat, VECTOR4F_PTR out_translation)
+{
+	*out_translation = p_mat->Col3;
+};
+
+void Mat_GetScale_M4F(const MATRIX4F_PTR p_trs, VECTOR4F_PTR out_scale)
+{
+	float l_c0[4], l_c1[4], l_c2[4];
+	memcpy(l_c0, p_trs[0], sizeof(float) * 4);
+	memcpy(l_c0, p_trs[1], sizeof(float) * 4);
+	memcpy(l_c0, p_trs[2], sizeof(float) * 4);
+
+	out_scale->x = Vec_Length_3f(&p_trs->Col0.Vec3);
+	out_scale->y = Vec_Length_3f(&p_trs->Col1.Vec3);
+	out_scale->z = Vec_Length_3f(&p_trs->Col2.Vec3);
+	out_scale->w = 0.0f;
+};
+
+/* MATRIX - Rotation related operations */
+
+void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_near, const float p_far, MATRIX4F_PTR p_out)
+{
+	float l_halfTan = tanf(p_fov / 2.0f);
+
+	p_out->_00 = 1.0f / (p_aspect * l_halfTan);
+	p_out->_01 = 0.0f;
+	p_out->_02 = 0.0f;
+	p_out->_03 = 0.0f;
+
+	p_out->_10 = 0.0f;
+	p_out->_11 = 1.0f / l_halfTan;
+	p_out->_12 = 0.0f;
+	p_out->_13 = 0.0f;
+
+	p_out->_20 = 0.0f;
+	p_out->_21 = 0.0f;
+	p_out->_22 = -(p_far + p_near) / (p_far - p_near);
+	p_out->_23 = -1.0f;
+
+	p_out->_30 = 0.0f;
+	p_out->_31 = 0.0f;
+	p_out->_32 = (-2.0f * p_far * p_near) / (p_far - p_near);
+	p_out->_33 = 0.0f;
+}
+
+void Mat_LookAtRotation_F(const VECTOR3F_PTR p_origin, const VECTOR3F_PTR p_target, const VECTOR3F_PTR p_up, MATRIX3F_PTR out_rotationMatrix)
+{
+	VECTOR3F l_forward;
+	{
+		Vec_Min_3f_3f(p_target, p_origin, &l_forward);
+		Vec_Normalize_3f(&l_forward, &l_forward);
+		//TODO - WARNING : this is true only for view matrices (camera).
+		Vec_Mul_3f_1f(&l_forward, -1.0f, &l_forward);
+	}
+	VECTOR3F l_right;
+	{
+		Vec_Cross_3f(&l_forward, p_up, &l_right);
+		Vec_Normalize_3f(&l_right, &l_right);
+	}
+	VECTOR3F l_up;
+	{
+		Vec_Cross_3f(&l_right, &l_forward, &l_up);
+		Vec_Normalize_3f(&l_up, &l_up);
+	}
+
+	out_rotationMatrix->Col0 = l_right;
+	out_rotationMatrix->Col1 = l_up;
+	out_rotationMatrix->Col2 = l_forward;
+}

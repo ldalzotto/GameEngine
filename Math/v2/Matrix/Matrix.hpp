@@ -1,5 +1,7 @@
 #pragma once
 
+#include "v2/Vector/Vector.hpp"
+
 namespace _MathV2
 {
 	/* Matrices are column driven */
@@ -10,7 +12,11 @@ namespace _MathV2
 	template<typename T>
 	struct Matrix<3, 3, T>
 	{
-		T Points[3][3];
+		union
+		{
+			T Points[3][3];
+			struct { Vector<3, T> Right; Vector<3, T> Up; Vector<3, T> Forward; };
+		};
 	};
 
 	template<typename T>
@@ -36,7 +42,11 @@ Convention
 	template <typename T>
 	struct Matrix<4, 4, T>
 	{
-		T Points[4][4];
+		union
+		{
+			T Points[4][4];
+			struct { Vector<4, T> Right; Vector<4, T> Up; Vector<4, T> Forward; Vector<4, T> Col3; };
+		};
 	};
 
 	template<typename T>

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "v2/Matrix/RMatrix.h"
-
 namespace _MathV2
 {
 	struct RSegment

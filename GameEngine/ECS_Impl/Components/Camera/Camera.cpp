@@ -46,7 +46,7 @@ namespace _GameEngine::_ECS
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
-		_MathV2::MatrixM::perspective<float>(45.0f * _MathV2::DEG_TO_RAD,
+		_MathV2::MatrixM::perspective(45.0f * _MathV2::DEG_TO_RAD,
 			((float)p_camera->RenderInterface->SwapChain->PresentTexture.Width / (float)p_camera->RenderInterface->SwapChain->PresentTexture.Height), 0.1f, 50.0f, &p_camera->ProjectionMatrix);
 		p_camera->CameraFrustum = _MathV2::FrustumM::extractFrustumFromProjection(&p_camera->ProjectionMatrix);
 	};

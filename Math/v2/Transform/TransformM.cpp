@@ -194,21 +194,21 @@ namespace _MathV2
 	Vector3<float>* TransformM::getRight(Transform* p_transform, Vector3<float>* p_out)
 	{
 		Matrix4x4<float> tmp_mat4_1;
-		VectorM::normalize(VectorM::cast(&MatrixM::right(TransformM::getLocalToWorldMatrix(p_transform, &tmp_mat4_1))), p_out);
+		VectorM::normalize(VectorM::cast(&TransformM::getLocalToWorldMatrix(p_transform, &tmp_mat4_1)->Right), p_out);
 		return p_out;
 	};
 
 	Vector3<float>* TransformM::getUp(Transform* p_transform, Vector3<float>* p_out)
 	{
 		Matrix4x4<float> tmp_mat4_1;
-		VectorM::normalize(VectorM::cast(&MatrixM::up(TransformM::getLocalToWorldMatrix(p_transform, &tmp_mat4_1))), p_out);
+		VectorM::normalize(VectorM::cast(&TransformM::getLocalToWorldMatrix(p_transform, &tmp_mat4_1)->Up), p_out);
 		return p_out;
 	};
 
 	Vector3<float>* TransformM::getForward(Transform* p_transform, Vector3<float>* p_out)
 	{
 		Matrix4x4<float> tmp_mat4_1;
-		VectorM::normalize(VectorM::cast(&MatrixM::forward(TransformM::getLocalToWorldMatrix(p_transform, &tmp_mat4_1))), p_out);
+		VectorM::normalize(VectorM::cast(&TransformM::getLocalToWorldMatrix(p_transform, &tmp_mat4_1)->Forward), p_out);
 		return p_out;
 	};
 

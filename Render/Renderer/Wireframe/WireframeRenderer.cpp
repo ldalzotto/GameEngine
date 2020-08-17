@@ -57,6 +57,8 @@ namespace _RenderV2
 				}
 			}
 
+			//TODO -> To avoid calculating the same matrices from the same vertices (because one vertex is usually owned by multiple polygon)
+			// we can store result in an indexed array, based on the rendered mesh vertex index.
 			for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
 			{
 				PolygonPipelineV2* l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
