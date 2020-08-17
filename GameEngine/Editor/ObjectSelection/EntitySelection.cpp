@@ -419,7 +419,7 @@ namespace _GameEngineEditor
 		if (l_dot >= 0.000f) { l_scaleSign = 1.0f; }
 		else { l_scaleSign = -1.0f; }
 
-		float l_scaleLength = VectorM::length(&l_deltaScale3D);
+		float l_scaleLength = VectorM::length(&l_deltaScale3D) * VectorM::length(&l_transformComponent->Transform.LocalScale) ;
 		VectorM::mul(&l_selectedScaleForward_localSpace, l_scaleLength, &l_deltaScale3D);
 		VectorM::mul(&l_deltaScale3D, l_scaleSign, &l_deltaScale3D);
 
