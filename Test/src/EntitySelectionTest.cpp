@@ -72,7 +72,6 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			l_cubeCreationInfo.LocalPosition = { 0.0f, -3.0f, 2.0f };
 			l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 			l_cubeCreationInfo.LocalRotation = _MathV2::Quaternionf_Identity;
-			// _Math::Quaternion_fromEulerAngles(_Math::Vector3f{ 1518.0f, 184.0f, -471.0f }, &l_cubeCreationInfo.LocalRotation);
 			l_cubeCreationInfo.WithMeshBound = true;
 			_ECS::Entity* l_childInstanciatedEntity; _ECS::TransformComponent* l_childInstranciatedTransform;
 			EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);

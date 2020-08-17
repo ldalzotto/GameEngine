@@ -112,15 +112,13 @@ namespace _MathV2
 
 		inline static Matrix4x4<float>* buildTRS(Vector3<float>* p_position, Quaternion<float>* p_quaternion, Vector3<float>* p_scale, Matrix4x4<float>* p_out)
 		{
-			// Mat_TRS_Quat_M4F((const VECTOR3F_PTR)p_position, (const QUATERNION4F_PTR)p_quaternion, (const VECTOR3F_PTR)p_scale, (MATRIX4F_PTR)p_out);
 			RMatrix_4x4_buildTRS((float*)(p_position), (float*)(p_quaternion), (float*)(p_scale), p_out->Points);
 			return p_out;
 		};
 
 		inline static Matrix4x4<float>* buildTRS(Vector3<float>* p_position, Matrix3x3<float>* p_axis, Vector3<float>* p_scale, Matrix4x4<float>* p_out)
 		{
-			// RMatrix_4x4_buildTRS((float*)(p_position), p_axis->Points, (float *)(p_scale), p_out->Points);
-			Mat_TRS_Axis_M4F((const VECTOR3F_PTR)p_position, (const MATRIX3F_PTR)p_axis, (const VECTOR3F_PTR)p_scale, (MATRIX4F_PTR)p_out);
+			RMatrix_4x4_buildTRS((float*)(p_position), p_axis->Points, (float *)(p_scale), p_out->Points);
 			return p_out;
 		};
 

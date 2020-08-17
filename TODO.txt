@@ -1,5 +1,7 @@
 -- TODO --
 
+Entity Selection - Scaling seems to be unstable.
+
 -- 3D Models --
 
 [X] # Creating an .obj file importer that converts to the new mesh object

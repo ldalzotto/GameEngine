@@ -696,9 +696,9 @@ void Mat_RotationSeparatedAxis_M4F(const VECTOR3F_PTR p_right, const VECTOR3F_PT
 
 void Mat_Scale_M4F(const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_mat)
 {
-	out_mat->_00 *= p_scale->x;
-	out_mat->_11 *= p_scale->y;
-	out_mat->_22 *= p_scale->z;
+	Vec_Mul_3f_1f(&out_mat->Col0.Vec3, p_scale->x, &out_mat->Col0.Vec3);
+	Vec_Mul_3f_1f(&out_mat->Col1.Vec3, p_scale->y, &out_mat->Col1.Vec3);
+	Vec_Mul_3f_1f(&out_mat->Col2.Vec3, p_scale->z, &out_mat->Col2.Vec3);
 };
 
 void Mat_TRS_Axis_M4F(const VECTOR3F_PTR p_position, const MATRIX3F_PTR p_axis, const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_TRS)
