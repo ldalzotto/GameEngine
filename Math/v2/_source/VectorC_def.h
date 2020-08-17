@@ -23,6 +23,7 @@ typedef struct VECTOR4F_TYP
 	{
 		struct { float x, y, z, w; };
 		float Points[4];
+		struct { VECTOR3F Vec3; float Vec3_w; };
 	};
 } VECTOR4F, * VECTOR4F_PTR;
 

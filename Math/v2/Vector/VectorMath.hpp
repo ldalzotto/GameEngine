@@ -48,8 +48,7 @@ namespace _MathV2
 			return Vector<3, T>{p_x, p_y, p_z};
 		};
 		
-		template <typename T, int N>
-		inline static float distance(const Vector<N, T>* p_start, const Vector<N, T>* p_end)
+		inline static float distance(const Vector<3, float>* p_start, const Vector<3, float>* p_end)
 		{
 			return Vec_Distance_3f((const VECTOR3F_PTR)p_start, (const VECTOR3F_PTR)p_end);
 		};
@@ -108,8 +107,7 @@ namespace _MathV2
 			return p_out;
 		};
 
-		template <typename T>
-		inline static Vector<3, T>* inv(const Vector<3, T>* p_vec, Vector<3, T>* p_out)
+		inline static Vector<3, float>* inv(const Vector<3, float>* p_vec, Vector<3, float>* p_out)
 		{
 			Vec_Inv_3f((const VECTOR3F_PTR)p_vec, (VECTOR3F_PTR)p_out);
 			return p_out;
@@ -120,8 +118,8 @@ namespace _MathV2
 			return Vec_Dot_3f((const VECTOR3F_PTR)p_left, (const VECTOR3F_PTR)p_right);
 		};
 
-		template <typename T>
-		inline static Vector<3, T>* project(const Vector<3, T>* p_vec, const Vector<3, T>* p_projectedOn, Vector<3, T>* p_out)
+		
+		inline static Vector<3, float>* project(const Vector<3, float>* p_vec, const Vector<3, float>* p_projectedOn, Vector<3, float>* p_out)
 		{
 			Vec_Project_3f((const VECTOR3F_PTR)p_vec, (const VECTOR3F_PTR)p_projectedOn, (VECTOR3F_PTR) p_out);
 			return p_out;
@@ -133,25 +131,26 @@ namespace _MathV2
 			return p_out;
 		};
 
-		template <typename T>
-		inline static float angle(const Vector<3, T>* p_begin, const Vector<3, T>* p_end)
+		inline static float angle(const Vector<3, float>* p_begin, const Vector<3, float>* p_end)
 		{
 			return Vec_Angle_3f((const VECTOR3F_PTR)p_begin, (const VECTOR3F_PTR)p_end);
 		};
-		template <typename T>
-		inline static float angle_normalized(const Vector<3, T>* p_begin, const Vector<3, T>* p_end)
+		
+
+		inline static float angle_normalized(const Vector<3, float>* p_begin, const Vector<3, float>* p_end)
 		{
 			return Vec_Angle_Normalized_3f((const VECTOR3F_PTR)p_begin, (const VECTOR3F_PTR)p_end);
 		};
-		template <typename T>
-		inline static short int angleSign(const Vector<3, T>* p_begin, const Vector<3, T>* p_end, const Vector<3, T>* p_referenceAxis)
+		
+
+		inline static short int angleSign(const Vector<3, float>* p_begin, const Vector<3, float>* p_end, const Vector<3, float>* p_referenceAxis)
 		{
 			return Vec_AngleSign_3f((const VECTOR3F_PTR)p_begin, (const VECTOR3F_PTR)p_end, (VECTOR3F_PTR)p_referenceAxis);
 		};
-		template <typename T>
-		inline static Vector<3, T>* rotate(const Vector<3, T>* p_vec, const  Quaternion<T>* p_rotation, Vector<3, T>* p_out)
+
+		inline static Vector<3, float>* rotate(const Vector<3, float>* p_vec, const  Quaternion<float>* p_rotation, Vector<3, float>* p_out)
 		{
-			RVector_3_rotate((T*)(p_vec), (T*)(p_rotation), (T*)(p_out));
+			Vec_Rotate_3f((const VECTOR3F_PTR)p_vec,(const QUATERNION4F_PTR) p_rotation, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
 

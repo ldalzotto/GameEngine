@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VectorC_def.h"
+#include "QuaternionC_def.h"
 #include <stdbool.h>
 
  const VECTOR3F VECTOR3F_RIGHT = {1.0f, 0.0f, 0.0f};
@@ -42,3 +43,4 @@ float Vec_Distance_3f(const VECTOR3F_PTR p_start, const VECTOR3F_PTR p_end);
 float Vec_Angle_3f(const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end);
 float Vec_Angle_Normalized_3f(const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end);
 short int Vec_AngleSign_3f(const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end, VECTOR3F_PTR p_referenceAxis);
+void Vec_Rotate_3f(const VECTOR3F_PTR p_vector, const QUATERNION4F_PTR p_rotation, VECTOR3F_PTR p_out);

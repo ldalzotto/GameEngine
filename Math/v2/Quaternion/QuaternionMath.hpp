@@ -7,12 +7,13 @@
 
 extern "C"
 {
-	#include "Functional/Equals/Equals.h"
+#include "Functional/Equals/Equals.h"
+#include "v2/_source/QuaternionC.h"
 }
 
 namespace _MathV2
 {
-	 
+
 	struct QuaternionM
 	{
 		static bool equals(const Quaternion<float>* p_left, const Quaternion<float>* p_right)
@@ -32,76 +33,76 @@ namespace _MathV2
 		{
 			return Quaternion<T>
 			{
-				    p_vector->x,
+				p_vector->x,
 					p_vector->y,
 					p_vector->z,
 					p_scalar
 			};
 		};
-		template <typename T>
-		inline static Quaternion<T>* fromDirection(const Vector<3, T>* p_vect, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* fromDirection(const Vector<3, float>* p_vect, Quaternion<float>* p_out)
 		{
-			RQuaternion_fromDirection((T*)(p_vect), (T*)(p_out));
+			Quat_FromDirection((const VECTOR3F_PTR)p_vect, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* fromAxis(const Matrix<3, 3, T>* p_axis, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* fromAxis(const Matrix<3, 3, float>* p_axis, Quaternion<float>* p_out)
 		{
-			RQuaternion_fromAxis(p_axis->Points, (T*)(p_out));
+			Quat_FromAxis(p_axis->Points, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* fromEulerAngle(const Vector<3, T>* p_eulerAngle, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* fromEulerAngle(const Vector<3, float>* p_eulerAngle, Quaternion<float>* p_out)
 		{
-			RQuaternion_fromEulerAngle((T*)(p_eulerAngle), (T*)(p_out));
+			Quat_FromEulerAngle((const VECTOR3F_PTR)p_eulerAngle, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* fromTo(const Vector<3, T>* p_from, const  Vector<3, T>* p_to, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* fromTo(const Vector<3, float>* p_from, const  Vector<3, float>* p_to, Quaternion<float>* p_out)
 		{
-			RQuaternion_fromTo((T*)(p_from), (T*)(p_to), (T*)(p_out));
+			Quat_FromTo((const VECTOR3F_PTR)p_from, (const VECTOR3F_PTR)p_to, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Vector<3, T>* vector(const Quaternion<T>* p_quat, Vector<3, T>* p_out)
+
+		inline static Vector<3, float>* vector(const Quaternion<float>* p_quat, Vector<3, float>* p_out)
 		{
-			*p_out = *(Vector<3, T>*)(p_quat);
+			*p_out = *(Vector<3, float>*)(p_quat);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* conjugate(const Quaternion<T>* p_quat, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* conjugate(const Quaternion<float>* p_quat, Quaternion<float>* p_out)
 		{
-			RQuaternion_conjugate((T*)(p_quat), (T*)(p_out));
+			Quat_conjugate((const QUATERNION4F_PTR)p_quat, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* normalize(const Quaternion<T>* p_quat, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* normalize(const Quaternion<float>* p_quat, Quaternion<float>* p_out)
 		{
-			RQuaternion_normalize((T*)(p_quat), (T*)(p_out));
+			Quat_Normalize((const QUATERNION4F_PTR)p_quat, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* mul(const Quaternion<T>* p_left, const  Quaternion<T>* p_right, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* mul(const Quaternion<float>* p_left, const  Quaternion<float>* p_right, Quaternion<float>* p_out)
 		{
-			RQuaternion_mul((T*)(p_left), (T*)(p_right), (T*)(p_out));
+			Quat_Mul((const QUATERNION4F_PTR)p_left, (const QUATERNION4F_PTR)p_right, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* cross(const Quaternion<T>* p_left, const  Quaternion<T>* p_right, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* cross(const Quaternion<float>* p_left, const  Quaternion<float>* p_right, Quaternion<float>* p_out)
 		{
-			RQuaternion_cross((T*)(p_left), (T*)(p_right), (T*)(p_out));
+			Quat_Cross((const QUATERNION4F_PTR)p_left, (const QUATERNION4F_PTR)p_right, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Quaternion<T>* rotateAround(const Vector3<T>* p_axis, const  T p_angle, Quaternion<T>* p_out)
+
+		inline static Quaternion<float>* rotateAround(const Vector3<float>* p_axis, const  float p_angle, Quaternion<float>* p_out)
 		{
-			RQuaternion_rotateAround((T*)(p_axis), p_angle, (T*)(p_out));
+			Quat_RotateAround((const VECTOR3F_PTR)p_axis, p_angle, (QUATERNION4F_PTR)p_out);
 			return p_out;
 		};
-		template <typename T>
-		inline static Matrix3x3<T>* extractAxis(const Quaternion<T>* p_quat, Matrix3x3<T>* p_out)
+
+		inline static Matrix3x3<float>* extractAxis(const Quaternion<float>* p_quat, Matrix3x3<float>* p_out)
 		{
-			RQuaternion_extractAxis((T*)(p_quat), p_out->Points);
+			Quat_ExtractAxis((const QUATERNION4F_PTR)p_quat, p_out->Points);
 			return p_out;
 		};
 	};
