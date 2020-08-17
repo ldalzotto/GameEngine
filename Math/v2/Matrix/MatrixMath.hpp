@@ -4,6 +4,10 @@
 #include "v2/Matrix/Matrix.hpp"
 #include "v2/Quaternion/Quaternion.hpp"
 #include "v2/Matrix/RMatrix.h"
+extern "C"
+{
+#include "v2/_source/MatrixC.h"
+}
 
 namespace _MathV2
 {
@@ -64,68 +68,59 @@ namespace _MathV2
 			RMatrix_4x4_setColumn(p_mat->Points, p_colIndex, (T*)(p_col), 4);
 		};
 
-		template <typename T, int C1, int L1, int C2, int L2>
-		inline static Matrix<C2, L1, T >* mul(const Matrix<C1, L1, T>* p_left, const Matrix<C2, L2, T >* p_right, Matrix<C2, L1, T >* p_out)
+		inline static Matrix<4, 4, float>* mul(const Matrix<4, 4, float>* p_left, const Matrix<4, 4, float>* p_right, Matrix<4, 4, float>* p_out)
 		{
-			RMatrix_mul_specification((const T*)p_left->Points, C1, L1, (const T*)p_right, C2, L2, (T*)p_out);
+			Mat_Mul_M4F_M4F((const MATRIX4F_PTR)p_left, (const MATRIX4F_PTR)p_right, (MATRIX4F_PTR)p_out);
 			return p_out;
 		};
 
-		template <typename T, int C1, int L1>
-		inline static Vector<L1, T>* mul(const Matrix<C1, L1, T>* p_left, const Vector<L1, T>* p_right, Vector<L1, T>* p_out)
+		inline static Vector<4, float>* mul(const Matrix<4, 4, float>* p_left, const Vector<4, float>* p_right, Vector<4, float>* p_out)
 		{
-			RMatrix_mul_specification((const T*)p_left->Points, C1, L1, (const T*)p_right, 1, L1, (T*)p_out);
+			Mat_Mul_M4F_V4F((const MATRIX4F_PTR)p_left, (const VECTOR4F_PTR)p_right, (VECTOR4F_PTR)p_out);
 			return p_out;
 		};
 
-		template <typename T>
-		inline static Matrix4x4<T>* inv(const Matrix4x4<T>* p_mat, Matrix4x4<T>* p_out)
+		inline static Vector<3, float>* mul(const Matrix<3, 3, float>* p_left, const Vector<3, float>* p_right, Vector<3, float>* p_out)
 		{
-			RMatrix_4x4_inv(p_mat->Points, p_out->Points);
+			Mat_Mul_M3F_V3F((const MATRIX3F_PTR)p_left, (const VECTOR3F_PTR)p_right, (VECTOR3F_PTR)p_out);
 			return p_out;
 		};
 
-		template <typename T>
-		inline static Matrix4x4<T>* buildTranslationMatrix(Vector3<T>* p_translation, Matrix4x4<T>* p_out)
+		inline static Matrix4x4<float>* inv(const Matrix4x4<float>* p_mat, Matrix4x4<float>* p_out)
 		{
-			*p_out = Matrix4x4f_Identity;
-			RMatrix_4x4_buildTranslationMatrix(p_out->Points, (T*)(p_translation));
+			Mat_Inv_M4F((const MATRIX4F_PTR)p_mat, (MATRIX4F_PTR)p_out);
+			return p_out;
+		};
+
+		inline static Matrix4x4<float>* buildTranslationMatrix(Vector3<float>* p_translation, Matrix4x4<float>* p_out)
+		{
+			Mat_Translation_M4F((const VECTOR3F_PTR)p_translation, (MATRIX4F_PTR)p_out);
 			return p_out;
 		}
 
-		template <typename T>
-		inline static Matrix4x4<T>* buildRotationMatrix(const Matrix3x3<T>* p_axis, Matrix4x4<T>* p_out)
+		inline static Matrix4x4<float>* buildRotationMatrix(const Matrix3x3<float>* p_axis, Matrix4x4<float>* p_out)
 		{
-			RMatrix_4x4_buildRotationMatrix(p_out->Points, p_axis->Points);
+			Mat_RotationAxis_M4F((const MATRIX3F_PTR)p_axis, (MATRIX4F_PTR)p_out);
 			return p_out;
 		}
 
-		template <typename T>
-		inline static Matrix3x3<T>* buildAxisMatrix(Vector3<T>* p_right, Vector3<T>* p_up, Vector3<T>* p_forward, Matrix3x3<T>* p_out)
+		inline static Matrix4x4<float>* buildScaleMatrix(const Vector3<float>* p_scale, Matrix4x4<float>* p_out)
 		{
-			RMatrix_3x3_buildFromColumn((T*)(p_right), (T*)(p_up), (T*)(p_forward), p_out->Points);
+			Mat_Scale_M4F((const VECTOR3F_PTR)p_scale, (MATRIX4F_PTR)p_out);
 			return p_out;
 		};
 
-		template <typename T>
-		inline static Matrix4x4<T>* buildScaleMatrix(const Vector3<T>* p_scale, Matrix4x4<T>* p_out)
+		inline static Matrix4x4<float>* buildTRS(Vector3<float>* p_position, Quaternion<float>* p_quaternion, Vector3<float>* p_scale, Matrix4x4<float>* p_out)
 		{
-			*p_out = Matrix4x4f_Identity;
-			RMatrix_4x4_buildScaleMatrix(p_out->Points, (T*)(&p_scale));
+			// Mat_TRS_Quat_M4F((const VECTOR3F_PTR)p_position, (const QUATERNION4F_PTR)p_quaternion, (const VECTOR3F_PTR)p_scale, (MATRIX4F_PTR)p_out);
+			RMatrix_4x4_buildTRS((float*)(p_position), (float*)(p_quaternion), (float*)(p_scale), p_out->Points);
 			return p_out;
 		};
 
-		template <typename T>
-		inline static Matrix4x4<T>* buildTRS(Vector3<T>* p_position, Quaternion<T>* p_quaternion, Vector3<T>* p_scale, Matrix4x4<T>* p_out)
+		inline static Matrix4x4<float>* buildTRS(Vector3<float>* p_position, Matrix3x3<float>* p_axis, Vector3<float>* p_scale, Matrix4x4<float>* p_out)
 		{
-			RMatrix_4x4_buildTRS((T*)(p_position), (T*)(p_quaternion), (T*)(p_scale), p_out->Points);
-			return p_out;
-		};
-
-		template <typename T>
-		inline static Matrix4x4<T>* buildTRS(Vector3<T>* p_position, Matrix3x3<T>* p_axis, Vector3<T>* p_scale, Matrix4x4<T>* p_out)
-		{
-			RMatrix_4x4_buildTRS((T*)(p_position), p_axis->Points, (T*)(p_scale), p_out->Points);
+			// RMatrix_4x4_buildTRS((float*)(p_position), p_axis->Points, (float *)(p_scale), p_out->Points);
+			Mat_TRS_Axis_M4F((const VECTOR3F_PTR)p_position, (const MATRIX3F_PTR)p_axis, (const VECTOR3F_PTR)p_scale, (MATRIX4F_PTR)p_out);
 			return p_out;
 		};
 

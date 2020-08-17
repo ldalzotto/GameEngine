@@ -1,5 +1,6 @@
 #include "VectorC.h"
 #include "QuaternionC.h"
+#include "MatrixC.h"
 
 #include "Constants.h"
 
@@ -512,4 +513,204 @@ void Quat_RotateAround(const VECTOR3F_PTR p_axis, const  float p_angle, QUATERNI
 {
 	Vec_Mul_3f_1f(p_axis, sinf(p_angle * 0.5f), out_quat);
 	out_quat->w = cosf(p_angle * 0.5f);
+};
+
+
+/* MATRIX */
+
+/*
+	inline float RMatrix_multiplication_line_column_v3(const RMatrix& p_left, const size_t p_left_elementSize, const RMatrix& p_right, const size_t p_right_elementSize, int p_leftLineIndex, int p_rightColumnIndex)
+	{
+		float l_return = 0.0f;
+		for (short int i = 0; i < p_left.ColumnCount; i++)
+		{
+			l_return += (*(float*)RMatrix_float_getAddresFromRaw_v3(p_left, i, p_leftLineIndex, p_left_elementSize) * *(float*)RMatrix_float_getAddresFromRaw_v3(p_right, p_rightColumnIndex, i, p_right_elementSize));
+		}
+		return l_return;
+	};
+
+	inline void RMatrix_multiplication_matrix_matrix_v3(const RMatrix& p_left, const size_t p_left_elementSize, const RMatrix& p_right, const size_t p_right_elementSize, RMatrix& p_out)
+	{
+		for (int i = 0; i < p_left.LineCount; i++)
+		{
+			for (int j = 0; j < p_right.ColumnCount; j++)
+			{
+				*(float*)RMatrix_float_getAddresFromRaw_v3(p_out, j, i, p_left_elementSize) = RMatrix_multiplication_line_column_v3(p_left, p_left_elementSize, p_right, p_right_elementSize, i, j);
+			}
+		}
+	}
+
+*/
+
+inline float Mat_Mul_line_column_Xf(const float* p_left_line, const float* p_right_column, const short int p_leftColumnCount, const size_t p_fullColumnSize)
+{
+	float l_return = 0.0f;
+	char* l_left_lineCursor = p_left_line;
+	char* l_right_columnCursor = p_right_column;
+
+	for (short int i = 0; i < p_leftColumnCount; i++)
+	{
+		l_return += (*((float*)l_left_lineCursor) * *((float*)l_right_columnCursor));
+
+		l_left_lineCursor += p_fullColumnSize;
+		l_right_columnCursor += sizeof(float);
+	}
+
+	return l_return;
+};
+
+inline void Mat_Mul_MXxXf_MXxXf(const float* p_left, const float* p_right,
+	const short int p_left_lineCount, const short int p_right_columnCount,
+	const size_t p_left_lineSize, const size_t p_right_columnSize,
+	float* p_out)
+{
+	char* l_leftCursor = (char*)p_left;
+	char* l_rightCursor = (char*)p_right;
+	char* l_outCursor = (char*)p_out;
+
+	for (short int i = 0; i < p_right_columnCount; i++)
+	{
+		for (short int j = 0; j < p_left_lineCount; j++)
+		{
+			*(float*)l_outCursor = Mat_Mul_line_column_Xf(l_leftCursor, l_rightCursor, p_left_lineCount, p_right_columnSize);
+
+			l_outCursor += sizeof(float);
+			l_leftCursor += sizeof(float);
+		}
+
+		l_leftCursor = (char*)p_left;
+		l_rightCursor += p_right_columnSize;
+	}
+};
+
+inline void Mat_Mul_MXxXf_f(const float* p_mat, const float p_value, float* p_out, short int p_matrix_elementCount)
+{
+	char* l_mat_cursor = p_mat;
+
+	for (short int i = 0; i < p_matrix_elementCount; i++)
+	{
+		*(float*)l_mat_cursor *= p_value;
+		l_mat_cursor += sizeof(float);
+	}
+};
+
+inline float Mat_Det_M4F(const MATRIX4F_PTR p_mat, const short int p_colIndex, const short int p_lineIndex)
+{
+	MATRIX3F l_mat3x3 = { 0 };
+	{
+
+		char* l_mat3_cursor = l_mat3x3.Points;
+		char* l_mat_cursor = p_mat->Points;
+
+		for (short int c = 0; c < 4; c++)
+		{
+			if (c != p_colIndex)
+			{
+
+				for (short int l = 0; l < 4; l++)
+				{
+					if (l != p_lineIndex)
+					{
+						*(float*)l_mat3_cursor = *(float*)l_mat_cursor;
+						l_mat3_cursor += sizeof(float);
+					}
+
+					l_mat_cursor += sizeof(float);
+				}
+			}
+			else
+			{
+				l_mat_cursor += sizeof(VECTOR4F);
+			}
+		}
+	}
+
+	return
+		(l_mat3x3._00 * ((l_mat3x3._11 * l_mat3x3._22) - (l_mat3x3._12 * l_mat3x3._21))) +
+		(l_mat3x3._10 * ((l_mat3x3._21 * l_mat3x3._02) - (l_mat3x3._22 * l_mat3x3._01))) +
+		(l_mat3x3._20 * ((l_mat3x3._01 * l_mat3x3._12) - (l_mat3x3._02 * l_mat3x3._11)));
+};
+
+
+void Mat_Mul_M4F_M4F(const MATRIX4F_PTR p_left, const MATRIX4F_PTR p_right, MATRIX4F_PTR p_out)
+{
+	Mat_Mul_MXxXf_MXxXf(p_left, p_right, 4, 4, sizeof(VECTOR4F), sizeof(VECTOR4F), p_out);
+};
+
+void Mat_Mul_M4F_V4F(const MATRIX4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out)
+{
+	Mat_Mul_MXxXf_MXxXf(p_left, p_right, 4, 1, sizeof(VECTOR4F), sizeof(VECTOR4F), p_out);
+};
+
+void Mat_Mul_M3F_V3F(const MATRIX3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
+{
+	Mat_Mul_MXxXf_MXxXf(p_left, p_right, 3, 1, sizeof(VECTOR3F), sizeof(VECTOR3F), p_out);
+};
+
+void Mat_Inv_M4F(const MATRIX4F_PTR p_matrix, MATRIX4F_PTR p_out)
+{
+	float l_det = (p_matrix->_00 * Mat_Det_M4F(p_matrix, 0, 0)) - (p_matrix->_01 * Mat_Det_M4F(p_matrix, 0, 1)) + (p_matrix->_02 * Mat_Det_M4F(p_matrix, 0, 2)) - (p_matrix->_03 * Mat_Det_M4F(p_matrix, 0, 3));
+
+	{
+		p_out->_00 = Mat_Det_M4F(p_matrix, 0, 0);
+		p_out->_01 = -Mat_Det_M4F(p_matrix, 1, 0);
+		p_out->_02 = Mat_Det_M4F(p_matrix, 2, 0);
+		p_out->_03 = -Mat_Det_M4F(p_matrix, 3, 0);
+		p_out->_10 = -Mat_Det_M4F(p_matrix, 0, 1);
+		p_out->_11 = Mat_Det_M4F(p_matrix, 1, 1);
+		p_out->_12 = -Mat_Det_M4F(p_matrix, 2, 1);
+		p_out->_13 = Mat_Det_M4F(p_matrix, 3, 1);
+		p_out->_20 = Mat_Det_M4F(p_matrix, 0, 2);
+		p_out->_21 = -Mat_Det_M4F(p_matrix, 1, 2);
+		p_out->_22 = Mat_Det_M4F(p_matrix, 2, 2);
+		p_out->_23 = -Mat_Det_M4F(p_matrix, 3, 2);
+		p_out->_30 = -Mat_Det_M4F(p_matrix, 0, 3);
+		p_out->_31 = Mat_Det_M4F(p_matrix, 1, 3);
+		p_out->_32 = -Mat_Det_M4F(p_matrix, 2, 3);
+		p_out->_33 = Mat_Det_M4F(p_matrix, 3, 3);
+	}
+
+	Mat_Mul_MXxXf_f(p_out->Points, 1.0f / l_det, p_out->Points, 16);
+};
+
+/* MATRIX - TRS related operaions */
+
+void Mat_Translation_M4F(const VECTOR3F_PTR p_translation, MATRIX4F_PTR out_mat)
+{
+	out_mat->Col3.Vec3 = *p_translation;
+};
+
+void Mat_RotationAxis_M4F(const MATRIX3F_PTR p_axis, MATRIX4F_PTR out_mat)
+{
+	out_mat->Col0.Vec3 = p_axis->Col0;
+	out_mat->Col1.Vec3 = p_axis->Col1;
+	out_mat->Col2.Vec3 = p_axis->Col2;
+};
+
+void Mat_RotationSeparatedAxis_M4F(const VECTOR3F_PTR p_right, const VECTOR3F_PTR p_up, const VECTOR3F_PTR p_forward, MATRIX4F_PTR out_mat)
+{
+	out_mat->Col0.Vec3 = *p_right;
+	out_mat->Col1.Vec3 = *p_up;
+	out_mat->Col2.Vec3 = *p_forward;
+};
+
+void Mat_Scale_M4F(const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_mat)
+{
+	out_mat->_00 *= p_scale->x;
+	out_mat->_11 *= p_scale->y;
+	out_mat->_22 *= p_scale->z;
+};
+
+void Mat_TRS_Axis_M4F(const VECTOR3F_PTR p_position, const MATRIX3F_PTR p_axis, const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_TRS)
+{
+	*out_TRS = MATRIX4F_IDENTITYF;
+	Mat_Translation_M4F(p_position, out_TRS);
+	Mat_RotationAxis_M4F(p_axis, out_TRS);
+	Mat_Scale_M4F(p_scale, out_TRS);
+};
+
+void Mat_TRS_Quat_M4F(const VECTOR3F_PTR p_position, const QUATERNION4F_PTR p_quat, const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_TRS)
+{
+	MATRIX3F l_axis; Quat_ExtractAxis(p_quat, l_axis.Points);
+	Mat_TRS_Axis_M4F(p_position, &l_axis, p_scale, out_TRS);
 };
