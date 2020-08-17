@@ -226,9 +226,9 @@ namespace _GameEngineEditor
 		}
 
 
-		Matrix4x4<float> tmp_mat4_0;
-		// _RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
-		// 	TransformM::getLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0), true);
+		// Matrix4x4<float> tmp_mat4_0;
+		//  _RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
+		//  	TransformM::getLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0), true);
 
 		return l_mouseDelta_worldPosition;
 	}
@@ -300,10 +300,10 @@ namespace _GameEngineEditor
 			//We position the guide plane
 			if (l_selectedRotation == p_entitySelection->TransformGizmoV2.RightGizmo)
 			{
-				Quaternion<float> tmp_quat_0, tmp_quat_1;
+				Quaternion<float> tmp_quat_0, tmp_quat_1, tmp_quat_2;
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform,
 					QuaternionM::mul(
-						&l_transformComponent->Transform.LocalRotation,
+						TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2),
 						QuaternionM::rotateAround(&FORWARD, -M_PI * 0.5f, &tmp_quat_0),
 						&tmp_quat_1
 					)
@@ -316,10 +316,10 @@ namespace _GameEngineEditor
 			}
 			else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ForwardGizmo)
 			{
-				Quaternion<float> tmp_quat_0, tmp_quat_1;
+				Quaternion<float> tmp_quat_0, tmp_quat_1, tmp_quat_2;
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform,
 					QuaternionM::mul(
-						&l_transformComponent->Transform.LocalRotation,
+						TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2),
 						QuaternionM::rotateAround(&RIGHT, M_PI * 0.5f, &tmp_quat_0),
 						&tmp_quat_1
 					)
@@ -653,7 +653,7 @@ namespace _GameEngineEditor
 			Box l_planeBox;
 			l_planeBox.Center = { 0.0f, 0.0f, 0.0f };
 			l_planeBox.Extend = { FLT_MAX, 0.0f, FLT_MAX };
-			//l_planeBox.Extend = { 2.0f, 0.0f, 2.0f };
+			// l_planeBox.Extend = { 2.0f, 0.0f, 2.0f };
 
 			p_transformGizmo->TransformGizmoMovementGuidePlane.Box = l_planeBox;
 
