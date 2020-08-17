@@ -40,8 +40,4 @@ namespace _MathV2
 	template <typename T>
 	using Vector4 = Vector<4, T>;
 
-	extern const Vector3<float> RIGHT;
-	extern const Vector3<float> UP;
-	extern const Vector3<float> FORWARD;
-
 }

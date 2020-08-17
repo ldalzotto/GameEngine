@@ -304,7 +304,7 @@ namespace _GameEngineEditor
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform,
 					QuaternionM::mul(
 						TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2),
-						QuaternionM::rotateAround(&FORWARD, -M_PI * 0.5f, &tmp_quat_0),
+						QuaternionM::rotateAround((const Vector<3, float>*) &VECTOR3F_FORWARD, -M_PI * 0.5f, &tmp_quat_0),
 						&tmp_quat_1
 					)
 				);
@@ -320,7 +320,7 @@ namespace _GameEngineEditor
 				TransformM::setLocalRotation(&l_transformGizmoPlane->Transform,
 					QuaternionM::mul(
 						TransformM::getWorldRotation(&l_transformComponent->Transform, &tmp_quat_2),
-						QuaternionM::rotateAround(&RIGHT, M_PI * 0.5f, &tmp_quat_0),
+						QuaternionM::rotateAround((const Vector<3, float>*)&VECTOR3F_RIGHT, M_PI * 0.5f, &tmp_quat_0),
 						&tmp_quat_1
 					)
 				);
