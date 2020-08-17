@@ -7,7 +7,6 @@ extern "C"
 
 #include "Vector.hpp"
 #include "v2/Quaternion/Quaternion.hpp"
-#include "RVector.h"
 
 namespace _MathV2
 {
