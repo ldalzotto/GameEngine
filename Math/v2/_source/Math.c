@@ -853,6 +853,11 @@ void Seg_Mul_V3F_V3F(const SEGMENT_VECTOR3F_PTR p_segment, const VECTOR3F_PTR p_
 {
 	Seg_Mul_VXF_VXF(p_segment->Begin.Points, p_segment->End.Points, p_right, p_out->Begin.Points, p_out->End.Points, 4);
 };
+void Seg_Mul_V3F_M3F(const SEGMENT_VECTOR3F_PTR p_segment, const MATRIX3F_PTR p_right, SEGMENT_VECTOR3F_PTR p_out)
+{
+	Seg_Mul_VXF_MXxXF(p_segment->Begin.Points, p_segment->End.Points, p_right, p_out->Begin.Points, p_out->End.Points, 3, sizeof(VECTOR3F), sizeof(VECTOR3F));
+};
+
 
 void Seg_Direction_V4F(const SEGMENT_VECTOR4F_PTR p_segment, VECTOR4F_PTR p_out)
 {
@@ -968,7 +973,7 @@ void BoxPoints_Mul_F_M4F(const BOXFPOINTS_PTR p_boxPoints, const MATRIX4F_PTR p_
 	VECTOR4F tmp_vec4_0, tmp_vec4_1;
 	for (short int i = 0; i < 8; i++)
 	{
-		tmp_vec4_0 = (VECTOR4F) { .Vec3 = p_boxPoints->Points[i], .Vec3_w = 1.0f };
+		tmp_vec4_0 = (VECTOR4F){ .Vec3 = p_boxPoints->Points[i], .Vec3_w = 1.0f };
 		Mat_Mul_M4F_V4F(p_matrix, &tmp_vec4_0, &tmp_vec4_1);
 		p_out->Points[i] = tmp_vec4_1.Vec3;
 	}
@@ -985,10 +990,16 @@ void BoxPoints_Mul_F_M4F(const BOXFPOINTS_PTR p_boxPoints, const MATRIX4F_PTR p_
 
 void Plane_Build_EquationFactors(const float p_a, const float p_b, const float p_c, const float p_d, PLANE_PTR p_out)
 {
-	p_out->Normal = (VECTOR3F) { p_a, p_b, p_c };
+	p_out->Normal = (VECTOR3F){ p_a, p_b, p_c };
 	Vec_Normalize_3f(&p_out->Normal, &p_out->Normal);
 	p_out->Point = (VECTOR3F){ 0.0f, 0.0f, p_d / p_c };
 };
+
+void Plane_Build_Normal_Point(const VECTOR3F_PTR p_normal, const VECTOR3F_PTR p_point, PLANE_PTR p_out)
+{
+	p_out->Normal = *p_normal;
+	p_out->Point = *p_point;
+}
 
 void  Plane_Build_3Points(const VECTOR3F_PTR p_0, const  VECTOR3F_PTR p_1, const  VECTOR3F_PTR p_2, PLANE_PTR p_out)
 {

@@ -13,6 +13,7 @@ extern "C"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/TransformC.h"
+#include "v2/_interface/PlaneC.h"
 }
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
@@ -225,17 +226,26 @@ namespace _GameEngineEditor
 			// _RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_endHit.HitPoint);
 			l_mouseDelta_worldPosition.End = *(VECTOR3F_PTR)&l_endHit.HitPoint;
 		}
+		else
+		{
+			return SEGMENT_VECTOR3F{ .Begin = VECTOR3F_ZERO,.End = VECTOR3F_ZERO };
+		}
 		_Physics::RaycastHit l_beginHit;
 		if (_Physics::RayCast_against(&l_raycastedPlane, (_MathV2::Vector<3, float>*) & l_mouseDelta_begin_ray.Begin, (_MathV2::Vector<3, float>*) & l_mouseDelta_begin_ray.End, &l_beginHit))
 		{
 			// _RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_beginHit.HitPoint);
 			l_mouseDelta_worldPosition.Begin = *(VECTOR3F_PTR)&l_beginHit.HitPoint;
 		}
+		else
+		{
+			return SEGMENT_VECTOR3F{ .Begin = VECTOR3F_ZERO,.End = VECTOR3F_ZERO };
+		}
 
 
-		// Matrix4x4<float> tmp_mat4_0;
+		// MATRIX4F tmp_mat4_0;
+		// Transform_GetLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0);
 		//  _RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
-		//  	TransformM::getLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0), true);
+		//  	(_MathV2::Matrix4x4<float>*)&tmp_mat4_0, true);
 
 		return l_mouseDelta_worldPosition;
 	}
@@ -273,8 +283,20 @@ namespace _GameEngineEditor
 			// /!\ We don't take the selectedArrow transform because it's position is not in world space (always positioned to have the same size).
 			Transform_GetWorldPosition(&l_transformComponent->Transform, &tmp_vec3_1);
 			Transform_SetWorldPosition(&l_transformGizmoPlane->Transform, &tmp_vec3_1);
+
 			if (!l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet)
 			{
+				/*
+				VECTOR3F l_selectedObject_worldPosition; Transform_GetWorldPosition(&l_transformComponent->Transform, &l_selectedObject_worldPosition);
+				VECTOR3F l_selectedObject_worldPosition_forward;
+				Transform_GetForward(&l_selectedArrow->Transform, &tmp_vec3_0);
+				Vec_Add_3f_3f(&l_selectedObject_worldPosition, &tmp_vec3_0, &l_selectedObject_worldPosition_forward);
+				VECTOR3F l_cameraWorldPosition; Transform_GetWorldPosition(l_entitySelectionState->CachedStructures.ActiveCameraTransform, &l_cameraWorldPosition);
+
+				PLANE l_normalToDirectionPlane;
+				Plane_Build_3Points(&l_selectedObject_worldPosition, &l_selectedObject_worldPosition_forward, &l_cameraWorldPosition, &l_normalToDirectionPlane);
+				*/
+				
 				Transform_GetWorldRotation(&l_selectedArrow->Transform, &tmp_quat_1);
 				Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
 				l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
