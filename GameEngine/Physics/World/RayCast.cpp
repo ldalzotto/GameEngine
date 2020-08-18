@@ -8,7 +8,6 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Intersection/Intersection.h"
 #include "v2/Transform/TransformM.hpp"
-#include "v2/Box/BoxMath.h"
 extern "C"
 {
 #include "v2/_interface/SegmentC.h"
@@ -80,7 +79,7 @@ namespace _GameEngine::_Physics
 			_MathV2::Vector3<float> l_intersectionPointLocal;
 			Seg_Mul_V4F_M4F(&l_segment, (MATRIX4F_PTR)TransformM::getWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0), &tmp_segment_4f);
 			tmp_segment_3f.Begin = tmp_segment_4f.Begin.Vec3; tmp_segment_3f.End = tmp_segment_4f.End.Vec3;
-			if (Intersection_AABB_Ray(l_boxCollider->Box, &tmp_segment_3f, &l_intersectionPointLocal))
+			if (Intersection_AABB_Ray((BOXF_PTR)l_boxCollider->Box, &tmp_segment_3f, &l_intersectionPointLocal))
 			{
 				RaycastHit hit{};
 

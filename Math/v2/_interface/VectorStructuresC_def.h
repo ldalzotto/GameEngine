@@ -1,10 +1,7 @@
 #pragma once
 
-extern "C"
-{
 #include "v2/_interface/VectorC_def.h"
 #include "DataStructuresC/_interface/ARRAY_def.h"
-}
 
 typedef struct ARRAY_VECTOR3F_TYP
 {

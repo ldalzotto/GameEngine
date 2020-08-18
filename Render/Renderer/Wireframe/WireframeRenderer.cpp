@@ -83,6 +83,15 @@ namespace _RenderV2
 				// Camera to clip
 				PolygonM::mul_homogeneous(&l_polygonPipeline->CameraSpacePolygon, p_input->CameraBuffer->ProjectionMatrix, &l_polygonPipeline->TransformedPolygon);
 
+#if 0
+				// This check prevents prolygon that have vertex behind the camera to be rendered
+				if (l_polygonPipeline->TransformedPolygon.v1.z > 1.0f ||
+					l_polygonPipeline->TransformedPolygon.v2.z > 1.0f ||
+					l_polygonPipeline->TransformedPolygon.v3.z > 1.0f)
+				{
+					continue;
+				}
+#endif
 				// To pixel
 				{
 					tmp_poly_4f_1 = l_polygonPipeline->TransformedPolygon;

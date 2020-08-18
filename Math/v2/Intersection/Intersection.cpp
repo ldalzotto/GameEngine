@@ -5,11 +5,10 @@
 #include "Functional/Sort/ElementSorter.hpp"
 #include "v2/Math.h"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Box/Box.hpp"
-#include "v2/Box/BoxMath.h"
 extern "C"
 {
 #include "v2/_interface/SegmentC.h"
+#include "v2/_interface/BoxC.h"
 }
 
 #include "v2/Plane/PlaneMath.hpp"
@@ -17,10 +16,10 @@ extern "C"
 
 namespace _MathV2
 {
-	bool Intersection_AABB_Ray(const Box* p_AABB, const SEGMENT_VECTOR3F_PTR p_ray, _MathV2::Vector<3, float>* p_outIntersectionPoint)
+	bool Intersection_AABB_Ray(const BOXF_PTR p_AABB, const SEGMENT_VECTOR3F_PTR p_ray, _MathV2::Vector<3, float>* p_outIntersectionPoint)
 	{
-		Vector3<float> l_boxMin, l_boxMax;
-		Box_extractMinMax(p_AABB, &l_boxMin, &l_boxMax);
+		VECTOR3F l_boxMin, l_boxMax;
+		Box_ExtractMinMax_F(p_AABB, &l_boxMin, &l_boxMax);
 
 		/*
 			Ray distance fractions are normalized % of length of the p_ray length.
@@ -113,7 +112,7 @@ namespace _MathV2
 		return true;
 	};
 
-	bool Intersection_AABB_Sphere(const Box* p_AABB, const SPHEREF_PTR p_sphere)
+	bool Intersection_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere)
 	{
 		// We get the nearest point on the box to the sphere center.
 		Vector3<float> l_nearestPoint;
@@ -124,7 +123,7 @@ namespace _MathV2
 		return VectorM::distance(&l_nearestPoint, (Vector3<float>*)&p_sphere->Center) <= p_sphere->Radius * p_sphere->Radius;
 	};
 
-	bool Contains_AABB_Sphere(const Box* p_AABB, const SPHEREF_PTR p_sphere)
+	bool Contains_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere)
 	{
 		// If sphere center is in the box (the sphere may be entirely contained in the box)
 		return (_Core::SortCompare_float_float(p_sphere->Center.x, p_AABB->Center.x + p_AABB->Extend.x) <= 0 && _Core::SortCompare_float_float(p_sphere->Center.x, p_AABB->Center.x - p_AABB->Extend.x) >= 0

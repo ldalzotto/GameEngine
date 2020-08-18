@@ -4,9 +4,10 @@
 #include "v2/_interface/QuaternionC_def.h"
 #include <stdbool.h>
 
- const VECTOR3F VECTOR3F_RIGHT = {1.0f, 0.0f, 0.0f};
- const VECTOR3F VECTOR3F_UP = { 0.0f, 1.0f, 0.0f };
- const VECTOR3F VECTOR3F_FORWARD = { 0.0f, 0.0f, 1.0f };
+const VECTOR3F VECTOR3F_ZERO = { 0.0f, 0.0f, 0.0f };
+const VECTOR3F VECTOR3F_RIGHT = { 1.0f, 0.0f, 0.0f };
+const VECTOR3F VECTOR3F_UP = { 0.0f, 1.0f, 0.0f };
+const VECTOR3F VECTOR3F_FORWARD = { 0.0f, 0.0f, 1.0f };
 
 bool Vec_Equals_2d(const VECTOR2D_PTR p_left, const VECTOR2D_PTR p_right);
 bool Vec_Equals_2f(const VECTOR2F_PTR p_left, const VECTOR2F_PTR p_right);
@@ -20,7 +21,7 @@ void Vec_Add_3f_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR
 void Vec_Add_4f_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out);
 
 void Vec_Mul_2f_1f(const VECTOR2F_PTR p_left, const float p_right, VECTOR2F_PTR p_out);
-void Vec_Mul_3f_1f(const VECTOR3F_PTR p_left,const float p_right, VECTOR3F_PTR p_out);
+void Vec_Mul_3f_1f(const VECTOR3F_PTR p_left, const float p_right, VECTOR3F_PTR p_out);
 void Vec_Mul_3f_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out);
 void Vec_Mul_4f_1f(const VECTOR4F_PTR p_left, const float p_right, VECTOR4F_PTR p_out);
 void Vec_Mul_4f_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out);

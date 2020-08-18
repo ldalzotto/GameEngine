@@ -1,5 +1,10 @@
 #pragma once
 
+extern "C"
+{
+#include "v2/_interface/BoxC_def.h"
+}
+
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
@@ -11,7 +16,7 @@ namespace _MathV2
 	struct Rect;
 	template<int C, int L, typename T>
 	struct Matrix;
-	struct Box;
+
 	struct Transform;
 }
 
@@ -68,7 +73,7 @@ namespace _RenderV2
 		static void drawLine      (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end, const _MathV2::Vector3<char>* p_color);
 		static void drawPoint     (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point);
 		static void drawPoint     (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point, const _MathV2::Vector3<char>* p_color);
-		static void drawBox       (GizmoBuffer* p_gizmo, const _MathV2::Box* p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<char>* p_color = nullptr);
+		static void drawBox       (GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<char>* p_color = nullptr);
 		static void drawTransform (GizmoBuffer* p_gizmo, _MathV2::Transform* p_transform);
 		static void drawTransform (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_center, const _MathV2::Vector3<float>* p_right, const _MathV2::Vector3<float>* p_up, const _MathV2::Vector3<float>* p_forward);
 

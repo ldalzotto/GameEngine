@@ -2,6 +2,8 @@
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/SegmentC.h"
+#include "v2/_interface/BoxC.h"
+#include "v2/_interface/VectorStructuresC.h"
 
 #include "Constants.h"
 
@@ -516,7 +518,9 @@ void Quat_RotateAround(const VECTOR3F_PTR p_axis, const  float p_angle, QUATERNI
 };
 
 
-/* MATRIX */
+/************************ MATRIX *************************/
+
+#if 1
 
 inline float Mat_Mul_line_column_Xf(const float* p_left_line, const float* p_right_column, const short int p_leftColumnCount, const size_t p_fullColumnSize)
 {
@@ -762,7 +766,11 @@ void Mat_LookAtRotation_F(const VECTOR3F_PTR p_origin, const VECTOR3F_PTR p_targ
 	out_rotationMatrix->Col2 = l_forward;
 }
 
-/* SEGMENT */
+#endif
+
+/************************ SEGMENT *************************/
+
+#if 1
 
 /* SEGMENT - Generic methods */
 
@@ -773,6 +781,7 @@ inline void Seg_Direction_VXF(
 	Vec_Min_Xf_Xf(p_end, p_begin, p_vectorElementCount, p_out);
 	Vec_Normalize_Xf(p_out, p_vectorElementCount, p_out);
 }
+
 
 inline void Seg_ToVector_VXF(
 	const char* p_begin, const char* p_end,
@@ -850,3 +859,108 @@ void Seg_Mul_V4F_M4F(const SEGMENT_VECTOR4F_PTR p_segment, const MATRIX4F_PTR p_
 {
 	Seg_Mul_VXF_MXxXF(p_segment->Begin.Points, p_segment->End.Points, p_right, p_out->Begin.Points, p_out->End.Points, 4, sizeof(VECTOR4F), sizeof(VECTOR4F));
 };
+#endif
+
+
+/************************ BOX *************************/
+
+#if 1
+
+void Box_Grow_F(BOXF_PTR p_box, const VECTOR3F_PTR p_growingPoint)
+{
+	VECTOR3F l_delta; Vec_Min_3f_3f(p_growingPoint, &p_box->Center, &l_delta);
+
+	if (fabs(l_delta.x) > p_box->Extend.x)
+	{
+		p_box->Extend.x = fabsf(l_delta.x);
+	}
+	if (fabs(l_delta.y) > p_box->Extend.y)
+	{
+		p_box->Extend.y = fabsf(l_delta.y);
+	}
+	if (fabs(l_delta.z) > p_box->Extend.z)
+	{
+		p_box->Extend.z = fabsf(l_delta.z);
+	}
+};
+
+void Box_Build_F(BOXF_PTR p_box, ARRAY_VECTOR3F_PTR p_points)
+{
+	//Calculate approximate center
+	VECTOR3F l_approximateCenter = VECTOR3F_ZERO;
+	{
+		ARRAY_VECTOR3F_ITERATOR l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
+		while (Iter_MoveNext_Vector3F(&l_pointsIt))
+		{
+			Vec_Add_3f_3f(&l_approximateCenter, l_pointsIt.Current, &l_approximateCenter);
+		}
+		Vec_Mul_3f_1f(&l_approximateCenter, 1.0f / p_points->Size, &l_approximateCenter);
+	}
+
+	//Calculate min-max
+	VECTOR3F l_min = l_approximateCenter, l_max = l_approximateCenter;
+	{
+		ARRAY_VECTOR3F_ITERATOR l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
+		while (Iter_MoveNext_Vector3F(&l_pointsIt))
+		{
+			if (l_pointsIt.Current->x <= l_min.x) { l_min.x = l_pointsIt.Current->x; }
+			if (l_pointsIt.Current->y <= l_min.y) { l_min.y = l_pointsIt.Current->y; }
+			if (l_pointsIt.Current->z <= l_min.z) { l_min.z = l_pointsIt.Current->z; }
+
+
+			if (l_pointsIt.Current->x >= l_max.x) { l_max.x = l_pointsIt.Current->x; }
+			if (l_pointsIt.Current->y >= l_max.y) { l_max.y = l_pointsIt.Current->y; }
+			if (l_pointsIt.Current->z >= l_max.z) { l_max.z = l_pointsIt.Current->z; }
+		}
+	}
+
+	//calculate accurate center
+	{
+		p_box->Center = VECTOR3F_ZERO;
+
+		Vec_Add_3f_3f(&p_box->Center, &l_min, &p_box->Center);
+		Vec_Add_3f_3f(&p_box->Center, &l_max, &p_box->Center);
+		Vec_Mul_3f_1f(&p_box->Center, 0.5f, &p_box->Center);
+	}
+
+	Box_Grow_F(p_box, &l_min);
+	Box_Grow_F(p_box, &l_max);
+};
+
+void Box_ExtractPoints_F(const BOXF_PTR p_box, BOXFPOINTS_PTR p_out)
+{
+
+	VECTOR3F tmp_vec3;
+
+	// Set gizmo positions
+	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_F);
+	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_D_F);
+	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_B);
+	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_D_B);
+	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_U_F);
+	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_F);
+	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_U_B);
+	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_B);
+
+	return p_out;
+};
+
+void Box_ExtractMinMax_F(const BOXF_PTR p_box, VECTOR3F_PTR out_min, VECTOR3F_PTR out_max)
+{
+	VECTOR3F tmp_vec3;
+	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, out_min);
+	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, out_max);
+};
+
+void BoxPoints_Mul_F_M4F(const BOXFPOINTS_PTR p_boxPoints, const MATRIX4F_PTR p_matrix, BOXFPOINTS_PTR p_out)
+{
+	VECTOR4F tmp_vec4_0, tmp_vec4_1;
+	for (short int i = 0; i < 8; i++)
+	{
+		tmp_vec4_0 = (VECTOR4F) { .Vec3 = p_boxPoints->Points[i], .Vec3_w = 1.0f };
+		Mat_Mul_M4F_V4F(p_matrix, &tmp_vec4_0, &tmp_vec4_1);
+		p_out->Points[i] = tmp_vec4_1.Vec3;
+	}
+}
+
+#endif

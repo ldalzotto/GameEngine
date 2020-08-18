@@ -1,7 +1,10 @@
 #pragma once
 
 #include "ECS/ComponentT.hpp"
-#include "v2/Box/Box.hpp"
+extern "C"
+{
+#include "v2/_interface/BoxC_def.h"
+}
 
 namespace _RenderV2
 {
@@ -18,7 +21,7 @@ namespace _GameEngine::_ECS
 		_ECS::ComponentHeaderT<MeshRenderer> ComponentHeader;
 		_RenderV2::RenderV2Interface* RenderInterface;
 		_RenderV2::MeshResource* MeshResource;
-		_MathV2::Box MeshBoundingBox;
+		BOXF MeshBoundingBox;
 	};
 
 	template <>

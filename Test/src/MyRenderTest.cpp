@@ -11,6 +11,7 @@
 extern "C"
 {
 #include "v2/_interface/QuaternionC.h"
+#include "v2/_interface/BoxC.h"
 }
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Box/Box.hpp"
@@ -39,16 +40,17 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	// l_modelMatrix.Points[3][0] = 9.0f;
+	 // l_modelMatrix.Points[3][0] = 15.0f;
 
 	MeshResourceKey l_meshResourceKey;
 	_Core::String_alloc(&l_meshResourceKey.MeshPathAbsolute, 0); _Core::String_append(&l_meshResourceKey.MeshPathAbsolute, "C:/Users/loicd/Desktop/BigCube.obj");
 	MeshResource* l_mesh = _Core::ResourceProviderT_useResource(&renderV2.Resources.MeshResourceProvider, &l_meshResourceKey, MeshResourceKey_getHashCode(&l_meshResourceKey));
 	RenderedObject l_renderableObject;
 	RenderedObject* l_renderableObject_ptr = &l_renderableObject;
-	_MathV2::Box l_meshBoundingBox{};
+	BOXF l_meshBoundingBox{};
 	{
-		_MathV2::Box_build(&l_meshBoundingBox, (_Core::VectorT<_MathV2::Vector3<float>>*) & l_mesh->Mesh.Vertices);
+		ARRAY_VECTOR3F l_vertices = { .Memory = (VECTOR3F_PTR)l_mesh->Mesh.Vertices.Memory, .Size = l_mesh->Mesh.Vertices.Size, .Capacity = l_mesh->Mesh.Vertices.Capacity };
+		Box_Build_F(&l_meshBoundingBox, &l_vertices);
 		l_renderableObject = { &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
 		_Core::VectorT_pushBack(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
 	}

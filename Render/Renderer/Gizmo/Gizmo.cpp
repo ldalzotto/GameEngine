@@ -1,9 +1,12 @@
 #include "Gizmo.hpp"
 
+extern "C"
+{
+#include "v2/_interface/BoxC.h"
+}
 #include "Renderer/Draw/DrawFunctions.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Box/BoxMath.h"
 #include "v2/Transform/TransformM.hpp"
 
 using namespace _MathV2;
@@ -151,7 +154,7 @@ namespace _RenderV2
 		}
 	};
 	
-	void Gizmo::drawBox(GizmoBuffer* p_gizmo, const _MathV2::Box* p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter, const _MathV2::Vector3<char>* p_color)
+	void Gizmo::drawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter, const _MathV2::Vector3<char>* p_color)
 	{
 		_MathV2::Vector3<char> l_color = { 255, 255, 255 };
 		if (p_color)
@@ -159,18 +162,18 @@ namespace _RenderV2
 			l_color = *p_color;
 		}
 
-		BoxPoints l_boxPoints; BoxPoints_mul(Box_extractPoints(p_box, &l_boxPoints), p_localToWorldMatrix, &l_boxPoints);
+		BOXFPOINTS l_boxPoints; Box_ExtractPoints_F(p_box, &l_boxPoints); BoxPoints_Mul_F_M4F(&l_boxPoints, (const MATRIX4F_PTR)p_localToWorldMatrix, &l_boxPoints);
 
 		GizmoVertexIndex LDF_index, LDB_index, LUF_index, RDF_index, LUB_index, RUF_index, RDB_index, RUB_index;
 		{
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.L_D_F, &LDF_index);
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.L_D_B, &LDB_index);
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.L_U_F, &LUF_index);
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.R_D_F, &RDF_index);
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.L_U_B, &LUB_index);
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.R_U_F, &RUF_index);
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.R_D_B, &RDB_index);
-			Gizmo_pushVertex(p_gizmo, &l_boxPoints.R_U_B, &RUB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_D_F, &LDF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_D_B, &LDB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_U_F, &LUF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_D_F, &RDF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_U_B, &LUB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_U_F, &RUF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_D_B, &RDB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_U_B, &RUB_index);
 		}
 
 		Gizmo_drawLine_indices(p_gizmo, &LDF_index, &LDB_index, &l_color);
@@ -188,7 +191,7 @@ namespace _RenderV2
 
 		if (p_withCenter)
 		{
-			Gizmo::drawPoint(p_gizmo, &l_boxPoints.Center, &l_color);
+			Gizmo::drawPoint(p_gizmo, (_MathV2::Vector<3, float>*) &l_boxPoints.Center, &l_color);
 		}
 	};
 	

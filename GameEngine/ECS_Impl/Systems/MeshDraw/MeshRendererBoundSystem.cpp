@@ -1,7 +1,5 @@
 #include "MeshRendererBoundSystem.h"
 
-#include "v2/Box/BoxMath.h"
-
 #include "Algorithm/Compare/CompareAlgorithmT.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "EngineSequencers.h"

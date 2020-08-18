@@ -9,7 +9,7 @@ namespace _GameEngine::_Physics
 		return *p_left == *p_right;
 	};
 
-	BoxCollider* BoxCollider_alloc(_MathV2::Box* p_box, _MathV2::Transform* ptransform)
+	BoxCollider* BoxCollider_alloc(BOXF_PTR p_box, _MathV2::Transform* ptransform)
 	{
 		BoxCollider* l_boxCollider = (BoxCollider*)malloc(sizeof(BoxCollider));
 		l_boxCollider->Box = p_box;

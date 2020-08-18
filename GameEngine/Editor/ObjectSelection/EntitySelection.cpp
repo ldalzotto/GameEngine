@@ -399,10 +399,11 @@ namespace _GameEngineEditor
 		{
 			SEGMENT_VECTOR4F tmp_seg4_0; SEGMENT_VECTOR3F tmp_seg3_0; Matrix4x4<float> tmp_mat4_0;
 			TransformM::getForward(&l_selectedScale->Transform, (Vector3<float>*) & tmp_vec3_0);
-			SEGMENT_VECTOR4F l_forwardSegment; l_forwardSegment.Begin = { 0.0f, 0.0f, 0.0f, 1.0f }; l_forwardSegment.End.Vec3 = tmp_vec3_0; l_forwardSegment.End.Vec3_w = 1.0f;
+			SEGMENT_VECTOR4F l_forwardSegment = { .Begin = { 0.0f, 0.0f, 0.0f, 1.0f }, .End = {tmp_vec3_0.x, tmp_vec3_0.y, tmp_vec3_0.z, 1.0f} };
+			// ; l_forwardSegment.End.Vec3_w = 1.0f;
 
 			Seg_Mul_V4F_M4F(&l_forwardSegment, (MATRIX4F_PTR)TransformM::getWorldToLocalMatrix(&l_transformComponent->Transform, &tmp_mat4_0), &tmp_seg4_0);
-			tmp_seg3_0.Begin = tmp_seg4_0.Begin.Vec3; tmp_seg3_0.End = tmp_seg4_0.End.Vec3;
+			tmp_seg3_0 = { tmp_seg4_0.Begin.Vec3, tmp_seg4_0.End.Vec3 };
 			Seg_ToVector_V3F(&tmp_seg3_0, &l_selectedScaleForward_localSpace);
 		}
 
@@ -659,7 +660,7 @@ namespace _GameEngineEditor
 
 		//Plane instance
 		{
-			Box l_planeBox;
+			BOXF l_planeBox;
 			l_planeBox.Center = { 0.0f, 0.0f, 0.0f };
 			l_planeBox.Extend = { FLT_MAX, 0.0f, FLT_MAX };
 			// l_planeBox.Extend = { 2.0f, 0.0f, 2.0f };

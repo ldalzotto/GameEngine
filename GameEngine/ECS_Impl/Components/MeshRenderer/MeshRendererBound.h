@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ECS/ComponentT.hpp"
-#include "v2/Box/Box.hpp"
 
 namespace _GameEngine::_Physics
 {

@@ -1,5 +1,10 @@
 #pragma once
 
+extern "C"
+{
+#include "v2/_interface/BoxC_def.h"
+}
+
 #include "v2/Matrix/Matrix.hpp"
 
 namespace _RenderV2
@@ -7,17 +12,12 @@ namespace _RenderV2
 	struct Mesh;
 }
 
-namespace _MathV2
-{
-	struct Box;
-}
-
 namespace _RenderV2
 {
 	struct RenderedObject
 	{
 		Mesh* Mesh;
-		_MathV2::Box* MeshBoundingBox;
+		BOXF_PTR MeshBoundingBox;
 		_MathV2::Matrix<4, 4, float> ModelMatrix;
 	};
 }

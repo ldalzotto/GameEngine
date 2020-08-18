@@ -2,7 +2,10 @@
 
 #include <stdint.h>
 
-#include "v2/Box/Box.hpp"
+extern "C"
+{
+#include "v2/_interface/BoxC_def.h"
+}
 #include "v2/Transform/Transform.hpp"
 
 #include "Physics/World/Collider/BoxCollider.h"
@@ -32,7 +35,7 @@ namespace _GameEngineEditor
 	struct TransformGizmoPlane
 	{
 		_MathV2::Transform Transform;
-		_MathV2::Box Box;
+		BOXF Box;
 		_GameEngine::_Physics::BoxCollider Collider;
 	};
 
