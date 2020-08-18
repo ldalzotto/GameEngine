@@ -1,7 +1,7 @@
 #pragma once
 
 #include "QuaternionC_def.h"
-#include "v2/_source/VectorC_def.h"
+#include "v2/_interface/VectorC_def.h"
 
 #include <stdbool.h>
 

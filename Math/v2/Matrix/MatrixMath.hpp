@@ -5,7 +5,7 @@
 extern "C"
 {
 #include "v2/_interface/QuaternionC_def.h"
-#include "v2/_source/MatrixC.h"
+#include "v2/_interface/MatrixC.h"
 }
 
 namespace _MathV2

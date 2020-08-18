@@ -1,6 +1,6 @@
-#include "VectorC.h"
+#include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
-#include "MatrixC.h"
+#include "v2/_interface/MatrixC.h"
 #include "v2/_interface/SegmentC.h"
 
 #include "Constants.h"

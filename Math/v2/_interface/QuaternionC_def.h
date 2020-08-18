@@ -1,6 +1,6 @@
 #pragma once
 
-#include "v2/_source/VectorC_def.h"
+#include "v2/_interface/VectorC_def.h"
 
 typedef struct QUATERNION4F_TYP
 {

@@ -3,7 +3,7 @@
 extern "C"
 {
 #include "v2/_interface/QuaternionC_def.h"
-#include "v2/_source/VectorC.h"
+#include "v2/_interface/VectorC.h"
 }
 
 #include "Vector.hpp"
