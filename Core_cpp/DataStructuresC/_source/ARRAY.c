@@ -61,6 +61,26 @@ void Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 	}
 }
 
+char Arr_Erase(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_index)
+{
+#ifndef NDEBUG
+	if (p_index >= p_array->Size)
+	{
+		return 1;
+	}
+#endif
+
+	// If we are not erasing the last element, then we move memory. Else, we have nothing to do.
+	if (p_index + 1 != p_array->Size)
+	{
+		void* p_targetMemory = (char*)p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_index);
+		memmove(p_targetMemory, (char*)p_targetMemory + p_elementSize, (p_array->Size - p_index - 1) * p_elementSize);
+	}
+
+	p_array->Size -= 1;
+	return 0;
+}
+
 
 void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ARRAY_ITERATOR_PTR p_iter)
 {

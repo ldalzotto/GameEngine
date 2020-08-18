@@ -19,5 +19,6 @@ typedef struct MATRIX4F_TYP
 		float Points[16];
 		struct { float _00, _01, _02, _03, _10, _11, _12, _13, _20, _21, _22, _23, _30, _31, _32, _33; };
 		struct { VECTOR4F Col0, Col1, Col2, Col3; };
+		struct { VECTOR4F Right, Up, Forward, Col3_Direction; };
 	};
 } MATRIX4F, * MATRIX4F_PTR;

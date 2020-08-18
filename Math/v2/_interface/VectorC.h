@@ -4,10 +4,10 @@
 #include "v2/_interface/QuaternionC_def.h"
 #include <stdbool.h>
 
-const VECTOR3F VECTOR3F_ZERO = { 0.0f, 0.0f, 0.0f };
-const VECTOR3F VECTOR3F_RIGHT = { 1.0f, 0.0f, 0.0f };
-const VECTOR3F VECTOR3F_UP = { 0.0f, 1.0f, 0.0f };
-const VECTOR3F VECTOR3F_FORWARD = { 0.0f, 0.0f, 1.0f };
+extern const VECTOR3F VECTOR3F_ZERO;
+extern const VECTOR3F VECTOR3F_RIGHT;
+extern const VECTOR3F VECTOR3F_UP;
+extern const VECTOR3F VECTOR3F_FORWARD;
 
 bool Vec_Equals_2d(const VECTOR2D_PTR p_left, const VECTOR2D_PTR p_right);
 bool Vec_Equals_2f(const VECTOR2F_PTR p_left, const VECTOR2F_PTR p_right);

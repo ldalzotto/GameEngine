@@ -3,7 +3,7 @@
 #include "MatrixC_def.h"
 #include "v2/_interface/QuaternionC_def.h"
 
-const MATRIX4F MATRIX4F_IDENTITYF = { 1.0f, 0.0f, 0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f };
+extern const MATRIX4F MATRIX4F_IDENTITYF;
 
 void Mat_Mul_M4F_M4F(const MATRIX4F_PTR p_left, const MATRIX4F_PTR p_right, MATRIX4F_PTR p_out);
 void Mat_Mul_M4F_V4F(const MATRIX4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out);

@@ -5,7 +5,7 @@
 
 #include <stdbool.h>
 
-const QUATERNION4F QUATERNION4F_IDENTITY = { 0.0f, 0.0f, 0.0f, 1.0f };
+extern const QUATERNION4F QUATERNION4F_IDENTITY;
 
 bool Quat_Equals(const QUATERNION4F_PTR p_left, const QUATERNION4F_PTR p_right);
 

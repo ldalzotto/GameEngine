@@ -40,6 +40,12 @@ bool Vec_Equals_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right)
 		&& Equals_float(&p_left->w, &p_right->w);
 };
 
+
+const VECTOR3F VECTOR3F_ZERO = { 0.0f, 0.0f, 0.0f };
+const VECTOR3F VECTOR3F_RIGHT = { 1.0f, 0.0f, 0.0f };
+const VECTOR3F VECTOR3F_UP = { 0.0f, 1.0f, 0.0f };
+const VECTOR3F VECTOR3F_FORWARD = { 0.0f, 0.0f, 1.0f };
+
 /* VECTOR - MIN */
 
 inline void Vec_Min_Xd_Xd(const char* p_left, const char* p_right, const short int p_elementCount, char* p_out)
@@ -300,7 +306,9 @@ void Vec_Rotate_3f(const VECTOR3F_PTR p_vector, const QUATERNION4F_PTR p_rotatio
 };
 
 
-/* QUATERNION */
+/******************** QUATERNION ************************/
+
+const QUATERNION4F QUATERNION4F_IDENTITY = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 bool Quat_Equals(const QUATERNION4F_PTR p_left, const QUATERNION4F_PTR p_right)
 {
@@ -521,6 +529,8 @@ void Quat_RotateAround(const VECTOR3F_PTR p_axis, const  float p_angle, QUATERNI
 /************************ MATRIX *************************/
 
 #if 1
+
+extern const MATRIX4F MATRIX4F_IDENTITYF = { 1.0f, 0.0f, 0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f };
 
 inline float Mat_Mul_line_column_Xf(const float* p_left_line, const float* p_right_column, const short int p_leftColumnCount, const size_t p_fullColumnSize)
 {
