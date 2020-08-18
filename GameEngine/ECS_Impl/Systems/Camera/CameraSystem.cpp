@@ -2,7 +2,11 @@
 
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Transform/TransformM.hpp"
+
+extern "C"
+{
+#include "v2/_interface/TransformC.h"
+}
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
@@ -96,9 +100,13 @@ namespace _GameEngine::_ECS
 			{
 				_MathV2::Vector3<float> tmp_vec3_0; _MathV2::Matrix4x4<float> tmp_mat4_0; _MathV2::Matrix3x3<float> tmp_mat3_0;
 
-				_MathV2::Vector3<float> l_worldPosition; _MathV2::TransformM::getWorldPosition(&l_transform->Transform, &l_worldPosition);
-				_MathV2::Vector3<float> l_target; _MathV2::VectorM::add(&l_worldPosition, _MathV2::TransformM::getForward(&l_transform->Transform, &l_target), &l_target);
-				_MathV2::Vector3<float> l_up; _MathV2::VectorM::mul(_MathV2::TransformM::getUp(&l_transform->Transform, &tmp_vec3_0), -1.0f, &l_up);	
+				_MathV2::Vector3<float> l_worldPosition; Transform_GetWorldPosition(&l_transform->Transform, (VECTOR3F_PTR)&l_worldPosition);
+				_MathV2::Vector3<float> l_target;
+				Transform_GetForward(&l_transform->Transform, (VECTOR3F_PTR)&l_target);
+				_MathV2::VectorM::add(&l_worldPosition, &l_target, &l_target);
+				_MathV2::Vector3<float> l_up;
+				Transform_GetUp(&l_transform->Transform, (VECTOR3F_PTR)&tmp_vec3_0);
+				_MathV2::VectorM::mul(&tmp_vec3_0, -1.0f, &l_up);
 
 				tmp_vec3_0 = { 1.0f, 1.0f, 1.0f };
 				_MathV2::MatrixM::inv(

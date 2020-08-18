@@ -9,14 +9,14 @@ namespace _GameEngine::_Physics
 		return *p_left == *p_right;
 	};
 
-	BoxCollider* BoxCollider_alloc(BOXF_PTR p_box, _MathV2::Transform* ptransform)
+	BoxCollider* BoxCollider_alloc(BOXF_PTR p_box, TRANSFORM_PTR ptransform)
 	{
 		BoxCollider* l_boxCollider = (BoxCollider*)malloc(sizeof(BoxCollider));
 		l_boxCollider->Box = p_box;
 		l_boxCollider->Transform = ptransform;
 		return l_boxCollider;
 	};
-	
+
 	void BoxCollider_free(BoxCollider** p_boxCollider)
 	{
 		free((*p_boxCollider));

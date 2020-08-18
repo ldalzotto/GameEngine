@@ -5,8 +5,8 @@
 extern "C"
 {
 #include "v2/_interface/BoxC_def.h"
+#include "v2/_interface/TransformC_def.h"
 }
-#include "v2/Transform/Transform.hpp"
 
 #include "Physics/World/Collider/BoxCollider.h"
 
@@ -34,7 +34,7 @@ namespace _GameEngineEditor
 	/* The TransformGizmoPlane is used to project mouse delta position to world space. According to SelectedGizmoType, he is oriented and positioned to fit specific requirements. */
 	struct TransformGizmoPlane
 	{
-		_MathV2::Transform Transform;
+		TRANSFORM Transform;
 		BOXF Box;
 		_GameEngine::_Physics::BoxCollider Collider;
 	};

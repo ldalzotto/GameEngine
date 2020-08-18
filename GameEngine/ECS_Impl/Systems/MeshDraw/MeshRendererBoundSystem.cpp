@@ -56,7 +56,7 @@ namespace _GameEngine::_ECS
 		}
 
 		_ECS::TransformComponent* l_transformComponent = EntityT_getComponent<TransformComponent>(p_entity);
-		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_operation.MeshRenderer->MeshBoundingBox, &l_transformComponent->Transform);
+		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_operation.MeshRenderer->MeshBoundingBox, (TRANSFORM_PTR)&l_transformComponent->Transform);
 		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_operation.Bound->Boxcollider);
 	};
 
@@ -92,10 +92,10 @@ namespace _GameEngine::_ECS
 		l_meshRendererBoundSystem->PhysicsInterface = p_physicsInterface;
 		//_Core::VectorT_alloc(&l_meshRendererBoundSystem->MeshRendererBoundsToCaluclate, 2);
 
-		EntityFilter_alloc_2c(&l_meshRendererBoundSystem->EntityFilter, p_ecs, 
-			&MeshRendererBoundType, &MeshRendererType, 
+		EntityFilter_alloc_2c(&l_meshRendererBoundSystem->EntityFilter, p_ecs,
+			&MeshRendererBoundType, &MeshRendererType,
 			l_meshRendererBoundSystem, meshRendererBoundSystem_onComponentAttached, meshRendererBoundSystem_onComponentRemoved);
 
-		_ECS::SystemHeader_init(&l_meshRendererBoundSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*)&p_updateSequencer->UpdateSequencer);
+		_ECS::SystemHeader_init(&l_meshRendererBoundSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*) & p_updateSequencer->UpdateSequencer);
 	};
 }

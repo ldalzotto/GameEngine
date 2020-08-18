@@ -7,7 +7,10 @@
 #include "EngineSequencers.h"
 #include "Algorithm/Compare/CompareAlgorithmT.hpp"
 
-#include "v2/Transform/TransformM.hpp"
+extern "C"
+{
+#include "v2/_interface/TransformC.h"
+}
 
 #include "ECS/ECS.h"
 #include "ECS/EntityT.hpp"
@@ -66,7 +69,7 @@ namespace _GameEngine::_ECS
 		l_meshDrawSystem->Header.Update = { meshDrawSystem_getUpdatePriority(), {MeshDrawSystem_update, l_meshDrawSystem} };
 
 		EntityFilter_alloc_2c(&l_meshDrawSystem->EntityFilter, p_ecs, &MeshRendererType, &TransformComponentType, l_meshDrawSystem, meshDrawSystem_onComponentsAttached, meshDrawSystem_onComponentsDetached);
-		_ECS::SystemHeader_init(&l_meshDrawSystem->Header, p_ecs, (_Core::SortedSequencer*)&p_updateSequencer->UpdateSequencer);
+		_ECS::SystemHeader_init(&l_meshDrawSystem->Header, p_ecs, (_Core::SortedSequencer*) & p_updateSequencer->UpdateSequencer);
 	}
 
 
@@ -74,7 +77,7 @@ namespace _GameEngine::_ECS
 	void meshDrawSystem_onComponentsAttached(void* p_meshDrawSystem, Entity* p_entity)
 	{
 		MeshDrawSystem* l_meshDrawSystem = (MeshDrawSystem*)p_meshDrawSystem;
-		MeshDrawSystemOperation l_meshDrawOperation {};
+		MeshDrawSystemOperation l_meshDrawOperation{};
 		l_meshDrawOperation.Entity = p_entity;
 		l_meshDrawOperation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
 		l_meshDrawOperation.MeshRenderer = EntityT_getComponent<MeshRenderer>(p_entity);
@@ -97,7 +100,7 @@ namespace _GameEngine::_ECS
 			// _Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 			free(l_involvedOperation.Current->RenderedObject);
 			_Core::VectorT_eraseCompare(&l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects,
-				_Core::ComparatorT<_RenderV2::RenderedObject*, _RenderV2::RenderedObject*, void>{ MeshDrawSystemOperation_EqualsRenderedObject, &l_involvedOperation.Current->RenderedObject, nullptr});
+				_Core::ComparatorT<_RenderV2::RenderedObject*, _RenderV2::RenderedObject*, void>{ MeshDrawSystemOperation_EqualsRenderedObject, &l_involvedOperation.Current->RenderedObject, nullptr });
 			_Core::VectorT_erase(&l_meshDrawSystem->MeshDrawSystemOperations, l_involvedOperation.CurrentIndex);
 		}
 	};
@@ -112,7 +115,7 @@ namespace _GameEngine::_ECS
 			MeshDrawSystemOperation* l_operation = l_operations.Current;
 			if (l_operation->TransformComponent->Transform.UserFlag_HasChanged)
 			{
-				_MathV2::TransformM::getLocalToWorldMatrix(&l_operation->TransformComponent->Transform, &l_operation->RenderedObject->ModelMatrix);
+				Transform_GetLocalToWorldMatrix(&l_operation->TransformComponent->Transform, (MATRIX4F_PTR)&l_operation->RenderedObject->ModelMatrix);
 				l_operation->TransformComponent->Transform.UserFlag_HasChanged = false;
 			}
 		}

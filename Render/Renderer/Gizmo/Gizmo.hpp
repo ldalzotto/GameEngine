@@ -2,6 +2,7 @@
 
 extern "C"
 {
+#include "v2/_interface/TransformC_def.h"
 #include "v2/_interface/BoxC_def.h"
 }
 
@@ -16,8 +17,6 @@ namespace _MathV2
 	struct Rect;
 	template<int C, int L, typename T>
 	struct Matrix;
-
-	struct Transform;
 }
 
 namespace _Core
@@ -69,13 +68,13 @@ namespace _RenderV2
 	{
 		static void render(GizmoRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
 
-		static void drawLine      (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end);
-		static void drawLine      (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end, const _MathV2::Vector3<char>* p_color);
-		static void drawPoint     (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point);
-		static void drawPoint     (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point, const _MathV2::Vector3<char>* p_color);
-		static void drawBox       (GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<char>* p_color = nullptr);
-		static void drawTransform (GizmoBuffer* p_gizmo, _MathV2::Transform* p_transform);
-		static void drawTransform (GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_center, const _MathV2::Vector3<float>* p_right, const _MathV2::Vector3<float>* p_up, const _MathV2::Vector3<float>* p_forward);
+		static void drawLine(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end);
+		static void drawLine(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end, const _MathV2::Vector3<char>* p_color);
+		static void drawPoint(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point);
+		static void drawPoint(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point, const _MathV2::Vector3<char>* p_color);
+		static void drawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<char>* p_color = nullptr);
+		static void drawTransform(GizmoBuffer* p_gizmo, TRANSFORM_PTR p_transform);
+		static void drawTransform(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_center, const _MathV2::Vector3<float>* p_right, const _MathV2::Vector3<float>* p_up, const _MathV2::Vector3<float>* p_forward);
 
 
 	};

@@ -14,8 +14,6 @@ extern "C"
 #include "v2/_interface/BoxC.h"
 }
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Box/Box.hpp"
-#include "v2/Box/BoxMath.h"
 #include "v2/Frustum/FrustumMath.hpp"
 
 #include "Clock/Clock.hpp"
@@ -40,7 +38,7 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
-	 // l_modelMatrix.Points[3][0] = 15.0f;
+	// l_modelMatrix.Points[3][0] = 15.0f;
 
 	MeshResourceKey l_meshResourceKey;
 	_Core::String_alloc(&l_meshResourceKey.MeshPathAbsolute, 0); _Core::String_append(&l_meshResourceKey.MeshPathAbsolute, "C:/Users/loicd/Desktop/BigCube.obj");
@@ -59,7 +57,7 @@ int main(int argc, char* argv[])
 	_MathV2::Matrix<4, 4, float> l_projectionMatrix;
 	_MathV2::MatrixM::perspective(45.0f * _MathV2::DEG_TO_RAD,
 		((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, 50.0f, &l_projectionMatrix);
-		
+
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	_MathV2::Frustum l_cameraFrustum = _MathV2::FrustumM::extractFrustumFromProjection(&l_projectionMatrix);
 
@@ -68,7 +66,7 @@ int main(int argc, char* argv[])
 	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = l_cameraWorldPosition;
 	renderV2.GlobalBuffer.CameraBuffer.CameraFrustum = &l_cameraFrustum;
 
-	
+
 
 	while (!_RenderV2::Window_askedForClose(&renderV2.AppWindow))
 	{

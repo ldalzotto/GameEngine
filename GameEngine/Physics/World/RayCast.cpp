@@ -7,10 +7,11 @@
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Intersection/Intersection.h"
-#include "v2/Transform/TransformM.hpp"
+
 extern "C"
 {
 #include "v2/_interface/SegmentC.h"
+#include "v2/_interface/TransformC.h"
 }
 #include <math.h>
 #include "World/World.h"
@@ -71,21 +72,25 @@ namespace _GameEngine::_Physics
 		auto l_boxCollidersIt = _Core::ArrayT_buildIterator(p_comparedColliders);
 		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
-			SEGMENT_VECTOR4F tmp_segment_4f; SEGMENT_VECTOR3F tmp_segment_3f; _MathV2::Matrix4x4<float> tmp_mat4_0;
+			SEGMENT_VECTOR4F tmp_segment_4f; SEGMENT_VECTOR3F tmp_segment_3f; MATRIX4F tmp_mat4_0;
 
 			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
 
 			// We project the ray to the box local space, to perform an AABB test.
-			_MathV2::Vector3<float> l_intersectionPointLocal;
-			Seg_Mul_V4F_M4F(&l_segment, (MATRIX4F_PTR)TransformM::getWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0), &tmp_segment_4f);
+			VECTOR3F l_intersectionPointLocal;
+			Transform_GetWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0);
+			Seg_Mul_V4F_M4F(&l_segment, &tmp_mat4_0, &tmp_segment_4f);
 			tmp_segment_3f.Begin = tmp_segment_4f.Begin.Vec3; tmp_segment_3f.End = tmp_segment_4f.End.Vec3;
-			if (Intersection_AABB_Ray((BOXF_PTR)l_boxCollider->Box, &tmp_segment_3f, &l_intersectionPointLocal))
+			if (Intersection_AABB_Ray((BOXF_PTR)l_boxCollider->Box, &tmp_segment_3f, (_MathV2::Vector3<float>*) & l_intersectionPointLocal))
 			{
 				RaycastHit hit{};
 
 				// The intersection point is then projected back to world space.
-				_MathV2::Vector4<float> tmp_vec4;
-				hit.HitPoint = *VectorM::cast(MatrixM::mul(TransformM::getLocalToWorldMatrix(l_boxCollider->Transform, &tmp_mat4_0), &VectorM::cast(&l_intersectionPointLocal, 1.0f), &tmp_vec4));
+				VECTOR4F tmp_vec4, tmp_vec4_1;
+				Transform_GetLocalToWorldMatrix(l_boxCollider->Transform, &tmp_mat4_0);
+				tmp_vec4.Vec3 = l_intersectionPointLocal; tmp_vec4.Vec3_w = 1.0f;
+				Mat_Mul_M4F_V4F(&tmp_mat4_0, &tmp_vec4, &tmp_vec4_1);
+				hit.HitPoint = *(_MathV2::Vector3<float>*) & tmp_vec4_1.Vec3;
 				hit.Collider = l_boxCollider;
 				_Core::VectorT_pushBack(out_intersectionPoints, &hit);
 			}

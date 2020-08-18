@@ -3,11 +3,11 @@
 extern "C"
 {
 #include "v2/_interface/BoxC.h"
+#include "v2/_interface/TransformC.h"
 }
 #include "Renderer/Draw/DrawFunctions.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Transform/TransformM.hpp"
 
 using namespace _MathV2;
 
@@ -68,7 +68,7 @@ namespace _RenderV2
 
 	void Gizmo_drawLine_indices(GizmoBuffer* p_gizmo, GizmoVertexIndex* p_begin, GizmoVertexIndex* p_end, const _MathV2::Vector<3, char>* p_color)
 	{
-		GizmoLine l_line = {*p_begin , *p_end, *p_color};
+		GizmoLine l_line = { *p_begin , *p_end, *p_color };
 		_Core::VectorT_pushBack(&p_gizmo->Lines, &l_line);
 	}
 
@@ -82,7 +82,7 @@ namespace _RenderV2
 
 	void Gizmo::drawLine(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end)
 	{
-		Vector3<char> l_color = { 255, 255, 255 };
+		Vector3<char> l_color = { (char)255, 255, 255 };
 		Gizmo::drawLine(p_gizmo, p_begin, p_end, &l_color);
 	};
 
@@ -94,13 +94,13 @@ namespace _RenderV2
 		Gizmo_pushVertex(p_gizmo, p_end, &l_endIndex);
 		Gizmo_drawLine_indices(p_gizmo, &l_beginIndex, &l_endIndex, p_color);
 	};
-	
+
 	void Gizmo::drawPoint(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point)
 	{
-		Vector3<char> l_color = { 255, 255, 255 };
+		Vector3<char> l_color = { (char)255, 255, 255 };
 		Gizmo::drawPoint(p_gizmo, p_point, &l_color);
 	};
-	
+
 	void Gizmo::drawPoint(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point, const _MathV2::Vector3<char>* p_color)
 	{
 		Vector3<float> tmp_vec3;
@@ -153,7 +153,7 @@ namespace _RenderV2
 			Gizmo_drawLine_indices(p_gizmo, &l_beginIndex, &l_endIndex, p_color);
 		}
 	};
-	
+
 	void Gizmo::drawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter, const _MathV2::Vector3<char>* p_color)
 	{
 		_MathV2::Vector3<char> l_color = { 255, 255, 255 };
@@ -166,14 +166,14 @@ namespace _RenderV2
 
 		GizmoVertexIndex LDF_index, LDB_index, LUF_index, RDF_index, LUB_index, RUF_index, RDB_index, RUB_index;
 		{
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_D_F, &LDF_index);
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_D_B, &LDB_index);
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_U_F, &LUF_index);
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_D_F, &RDF_index);
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.L_U_B, &LUB_index);
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_U_F, &RUF_index);
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_D_B, &RDB_index);
-			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*)&l_boxPoints.R_U_B, &RUB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.L_D_F, &LDF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.L_D_B, &LDB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.L_U_F, &LUF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.R_D_F, &RDF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.L_U_B, &LUB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.R_U_F, &RUF_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.R_D_B, &RDB_index);
+			Gizmo_pushVertex(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.R_U_B, &RUB_index);
 		}
 
 		Gizmo_drawLine_indices(p_gizmo, &LDF_index, &LDB_index, &l_color);
@@ -191,18 +191,21 @@ namespace _RenderV2
 
 		if (p_withCenter)
 		{
-			Gizmo::drawPoint(p_gizmo, (_MathV2::Vector<3, float>*) &l_boxPoints.Center, &l_color);
+			Gizmo::drawPoint(p_gizmo, (_MathV2::Vector<3, float>*) & l_boxPoints.Center, &l_color);
 		}
 	};
-	
-	void Gizmo::drawTransform(GizmoBuffer* p_gizmo, _MathV2::Transform* p_transform)
+
+	void Gizmo::drawTransform(GizmoBuffer* p_gizmo, TRANSFORM_PTR p_transform)
 	{
-		Vector3<float> tmp_vec3_0, tmp_vec3_1, tmp_vec3_2, tmp_vec3_3;
-		Gizmo::drawTransform(p_gizmo, TransformM::getWorldPosition(p_transform, &tmp_vec3_0),
-			TransformM::getRight(p_transform, &tmp_vec3_1), TransformM::getUp(p_transform, &tmp_vec3_2), TransformM::getForward(p_transform, &tmp_vec3_3));
+		VECTOR3F tmp_vec3_0, tmp_vec3_1, tmp_vec3_2, tmp_vec3_3;
+		Transform_GetWorldPosition(p_transform, &tmp_vec3_0);
+		Transform_GetRight(p_transform, &tmp_vec3_1);
+		Transform_GetUp(p_transform, &tmp_vec3_2);
+		Transform_GetForward(p_transform, &tmp_vec3_3);
+		Gizmo::drawTransform(p_gizmo, (const _MathV2::Vector3<float>*) & tmp_vec3_0, (const _MathV2::Vector3<float>*) & tmp_vec3_1, (const _MathV2::Vector3<float>*) & tmp_vec3_2, (const _MathV2::Vector3<float>*) & tmp_vec3_3);
 
 	};
-	
+
 	void Gizmo::drawTransform(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_center, const _MathV2::Vector3<float>* p_right, const _MathV2::Vector3<float>* p_up, const _MathV2::Vector3<float>* p_forward)
 	{
 		Vector3<char> tmp_vec3_1;

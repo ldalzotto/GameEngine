@@ -10,8 +10,8 @@
 extern "C"
 {
 #include "v2/_interface/QuaternionC.h"
+#include "v2/_interface/TransformC.h"
 }
-#include "v2/Transform/TransformM.hpp"
 
 #include "ECS/ComponentT.hpp"
 #include "ECS/ECSEventQueueT.hpp"
@@ -79,7 +79,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			_ECS::Entity* l_childInstanciatedEntity; _ECS::TransformComponent* l_childInstranciatedTransform;
 			EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);
 
-			_MathV2::TransformM::addChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
+			Transform_AddChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
 		}
 	}
 }

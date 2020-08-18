@@ -1,5 +1,9 @@
 -- TODO --
 
+Entity Selection - The Guide plane is not correctly oriented, instead of begin fixed for direction axes it must depend of the camera position : 
+	- Position & Scale : The plane normal must face the camera as mush as possible, by staying // to the axis involved.
+	- Rotation : The plane is always facing the camera.
+
 Entity Selection - Scaling seems to be unstable.
 
 -- 3D Models --

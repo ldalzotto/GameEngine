@@ -1,19 +1,8 @@
 #include "v2/_interface/TransformC.h"
 
-#include "DataStructuresC/_interface/ARRAY.h"
-
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
-
-inline void Arr_Alloc_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, size_t p_initialCapacity) { Arr_Alloc((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), p_initialCapacity); };
-inline void Arr_Free_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr) { Arr_Free((ARRAY_PTR)p_arr); };
-inline void Arr_PushBackRealloc_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, TRANSFORM_PTR* p_value) { Arr_PushBackRealloc((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), (char*)p_value); };
-inline char Arr_Erase_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, size_t p_index) { return Arr_Erase((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), p_index); };
-
-inline void Arr_BuildIterator_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, ARRAY_TRANSFORMHANDLE_ITERATOR_PTR p_iter) { Arr_BuildIterator((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), (ARRAY_ITERATOR_PTR)p_iter); }
-inline bool Iter_MoveNext_TransformPtr(ARRAY_TRANSFORMHANDLE_ITERATOR_PTR p_iter) { return Iter_MoveNext((ARRAY_ITERATOR_PTR)p_iter, sizeof(TRANSFORM_PTR)); }
-
 
 void Arr_EraseCompare_TransformPtr_EqualsTransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_array, const TRANSFORM_PTR p_comparedTransform)
 {
@@ -64,6 +53,95 @@ void Transform_AddChild(TRANSFORM_PTR p_transform, TRANSFORM_PTR p_newChild)
 		Arr_PushBackRealloc_TransformPtr(&p_transform->Childs, &p_newChild);
 
 		Transform_MarkMatricsForRecalculation(p_newChild);
+	}
+};
+
+void Transform_SetLocalPosition(TRANSFORM_PTR p_transform, const VECTOR3F_PTR p_localPosition)
+{
+	if (!Vec_Equals_3f(&p_transform->LocalPosition, p_localPosition))
+	{
+		Transform_MarkMatricsForRecalculation(p_transform);
+		p_transform->LocalPosition = *p_localPosition;
+	}
+};
+
+void Transform_SetLocalRotation(TRANSFORM_PTR p_transform, const QUATERNION4F_PTR p_localRotation)
+{
+	if (!Quat_Equals(&p_transform->LocalRotation, p_localRotation))
+	{
+		Transform_MarkMatricsForRecalculation(p_transform);
+		p_transform->LocalRotation = *p_localRotation;
+	}
+};
+
+void Transform_SetLocalScale(TRANSFORM_PTR p_transform, const VECTOR3F_PTR p_localScale)
+{
+	if (!Vec_Equals_3f(&p_transform->LocalScale, p_localScale))
+	{
+		Transform_MarkMatricsForRecalculation(p_transform);
+		p_transform->LocalScale = *p_localScale;
+	}
+};
+
+void Transform_SetWorldPosition(TRANSFORM_PTR p_transform, const VECTOR3F_PTR p_worldPosition)
+{
+	if (p_transform->Parent == NULL)
+	{
+		Transform_SetLocalPosition(p_transform, p_worldPosition);
+	}
+	else
+	{
+		MATRIX4F tmp_mat4; VECTOR4F tmp_vec4;
+		VECTOR4F l_localPosition;
+		Transform_GetWorldToLocalMatrix(p_transform->Parent, &tmp_mat4);
+		tmp_vec4.Vec3 = *p_worldPosition; tmp_vec4.Vec3_w = 1.0f;
+		Mat_Mul_M4F_V4F(&tmp_mat4, &tmp_vec4, &l_localPosition);
+		Transform_SetLocalPosition(p_transform, &l_localPosition.Vec3);
+	}
+};
+
+void Transform_AddToWorldPosition(TRANSFORM_PTR p_transform, const VECTOR3F_PTR p_worldPosition_delta)
+{
+	VECTOR3F tmp_vec3;
+	Transform_GetWorldPosition(p_transform, &tmp_vec3);
+	Vec_Add_3f_3f(&tmp_vec3, p_worldPosition_delta, &tmp_vec3);
+	Transform_SetWorldPosition(p_transform, &tmp_vec3);
+};
+
+
+void Transform_SetWorldRotation(TRANSFORM_PTR p_transform, const QUATERNION4F_PTR p_worldRotation)
+{
+	if (p_transform->Parent == NULL)
+	{
+		Transform_SetLocalRotation(p_transform, p_worldRotation);
+	}
+	else
+	{
+		QUATERNION4F tmp_quat_0, tmp_quat_1;
+		QUATERNION4F l_settedLocalQuaternion;
+
+		Transform_GetWorldRotation(p_transform->Parent, &tmp_quat_1);
+		Quat_conjugate(&tmp_quat_1, &tmp_quat_0);
+		Quat_Mul(&tmp_quat_0, p_worldRotation, &l_settedLocalQuaternion);
+		Transform_SetLocalRotation(p_transform, &l_settedLocalQuaternion);
+	}
+};
+
+void Transform_SetWorldScale(TRANSFORM_PTR p_transform, const VECTOR3F_PTR p_worldScale)
+{
+	if (p_transform->Parent == NULL)
+	{
+		Transform_SetLocalScale(p_transform, p_worldScale);
+	}
+	else
+	{
+		VECTOR3F tmp_vec3_0, tmp_vec3_1;
+		VECTOR3F l_parentWorldScale;
+		Transform_GetWorldScaleFactor(p_transform->Parent, &l_parentWorldScale);
+
+		Vec_Inv_3f(&l_parentWorldScale, &tmp_vec3_0);
+		Vec_Mul_3f_3f(p_worldScale, &tmp_vec3_0, &tmp_vec3_1);
+		Transform_SetLocalScale(p_transform, &tmp_vec3_1);
 	}
 };
 
@@ -126,7 +204,7 @@ void Transform_GetWorldRotation(TRANSFORM_PTR p_transform, QUATERNION4F_PTR p_ou
 	if (p_transform->Parent)
 	{
 		QUATERNION4F tmp_quat_0;
-		Transform_GetWorldRotation(p_transform, &tmp_quat_0);
+		Transform_GetWorldRotation(p_transform->Parent, &tmp_quat_0);
 		Quat_Mul(&tmp_quat_0, &p_transform->LocalRotation, p_out);
 	}
 	else

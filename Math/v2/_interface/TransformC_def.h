@@ -6,7 +6,7 @@
 #include "MatrixC_def.h"
 #include "DataStructuresC/_interface/ARRAY_def.h"
 
-typedef struct TRANSFORM_TYP *TRANSFORM_PTR;
+typedef struct TRANSFORM_TYP* TRANSFORM_PTR;
 
 typedef struct ARRAY_TRANSFORMHANDLE_TYP
 {
@@ -33,4 +33,4 @@ typedef struct TRANSFORM_TYP
 	/** This matrix will always be relative to the top level Transform (a Transform without parent). */
 	MATRIX4F LocalToWorldMatrix;
 
-} TRANSFORM,* TRANSFORM_PTR;
+} TRANSFORM, * TRANSFORM_PTR;

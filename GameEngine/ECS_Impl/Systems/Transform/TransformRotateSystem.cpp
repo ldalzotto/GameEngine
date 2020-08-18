@@ -5,8 +5,6 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
-#include "v2/Transform/TransformM.hpp"
-
 #include "EngineSequencers.h"
 
 #include "ECS/ECS.h"
@@ -18,6 +16,7 @@
 
 extern "C"
 {
+#include "v2/_interface/TransformC.h"
 #include "v2/_interface/QuaternionC.h"
 }
 
@@ -80,7 +79,7 @@ namespace _GameEngine::_ECS
 			&TransformComponentType, &TransformRotateType,
 			l_transformRotateSystem, TransformRotationSystemV2_onComponentMatchAdded, TransformRotationSystemV2_onComponentmathRemoved);
 
-		_ECS::SystemHeader_init(&l_transformRotateSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*)&p_updateSequencer->UpdateSequencer);
+		_ECS::SystemHeader_init(&l_transformRotateSystem->SystemHeader, p_ecs, (_Core::SortedSequencer*) & p_updateSequencer->UpdateSequencer);
 	};
 
 	void TransformRotationSystemV2_update(void* p_transformRotateSystem, void* p_gameEngineInterface)
@@ -95,7 +94,7 @@ namespace _GameEngine::_ECS
 			QUATERNION4F l_newLocalRotation;
 			Quat_RotateAround((VECTOR3F_PTR)&l_operations.Current->TransformRotate->Axis, l_operations.Current->TransformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime, &tmp_quat_0);
 			Quat_Mul(&l_operations.Current->TransformComponent->Transform.LocalRotation, &tmp_quat_0, &l_newLocalRotation);
-			_MathV2::TransformM::setLocalRotation(&l_operations.Current->TransformComponent->Transform, &l_newLocalRotation);
+			Transform_SetLocalRotation(&l_operations.Current->TransformComponent->Transform, &l_newLocalRotation);
 		}
 	};
 

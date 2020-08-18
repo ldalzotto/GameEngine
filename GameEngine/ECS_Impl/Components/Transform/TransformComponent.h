@@ -1,10 +1,11 @@
 #pragma once
 
-#include "v2/Transform/Transform.hpp"
 extern "C"
 {
+#include "v2/_interface/TransformC_def.h"
 #include "v2/_interface/QuaternionC.h"
 }
+#include "v2/Vector/Vector.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "ECS/ComponentT.hpp"
 
@@ -15,7 +16,7 @@ namespace _GameEngine::_ECS
 	struct TransformComponent
 	{
 		_ECS::ComponentHeaderT<TransformComponent> ComponentHeader;
-		_MathV2::Transform Transform;
+		TRANSFORM Transform;
 	};
 
 	template <>
@@ -28,9 +29,9 @@ namespace _GameEngine::_ECS
 	{
 		_MathV2::Vector3<float> LocalPosition;
 		QUATERNION4F LocalRotation = QUATERNION4F_IDENTITY;
-		_MathV2::Vector3<float> LocalScale = {1.0f, 1.0f, 1.0f};
+		_MathV2::Vector3<float> LocalScale = { 1.0f, 1.0f, 1.0f };
 	};
 
 	void TransformComponent_init(TransformComponent* p_component, TransformInitInfo* p_transformInitInfo);
-	TransformComponent* TransformComponent_castFromTransform(_MathV2::Transform* p_transform);
+	TransformComponent* TransformComponent_castFromTransform(TRANSFORM_PTR p_transform);
 }
