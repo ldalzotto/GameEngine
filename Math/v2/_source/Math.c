@@ -4,6 +4,7 @@
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/VectorStructuresC.h"
+#include "v2/_interface/PlaneC.h"
 
 #include "Constants.h"
 
@@ -972,5 +973,38 @@ void BoxPoints_Mul_F_M4F(const BOXFPOINTS_PTR p_boxPoints, const MATRIX4F_PTR p_
 		p_out->Points[i] = tmp_vec4_1.Vec3;
 	}
 }
+
+#endif
+
+
+
+/************************ PLANE *************************/
+
+#if 1
+
+
+void Plane_Build_EquationFactors(const float p_a, const float p_b, const float p_c, const float p_d, PLANE_PTR p_out)
+{
+	p_out->Normal = (VECTOR3F) { p_a, p_b, p_c };
+	Vec_Normalize_3f(&p_out->Normal, &p_out->Normal);
+	p_out->Point = (VECTOR3F){ 0.0f, 0.0f, p_d / p_c };
+};
+
+void  Plane_Build_3Points(const VECTOR3F_PTR p_0, const  VECTOR3F_PTR p_1, const  VECTOR3F_PTR p_2, PLANE_PTR p_out)
+{
+	VECTOR3F l_01; Vec_Min_3f_3f(p_1, p_0, &l_01);
+	VECTOR3F l_02; Vec_Min_3f_3f(p_2, p_0, &l_02);
+	VECTOR3F l_cross;
+	Vec_Cross_3f(&l_01, &l_02, &p_out->Normal);
+	Vec_Normalize_3f(&p_out->Normal, &p_out->Normal);
+	p_out->Point = *p_0;
+};
+
+float Plane_MinimumDistance_V3F(const PLANE_PTR p_plane, const VECTOR3F_PTR p_point)
+{
+	VECTOR3F l_d;
+	Vec_Min_3f_3f(p_point, &p_plane->Point, &l_d);
+	return fabsf(Vec_Dot_3f(&l_d, &p_plane->Normal));
+};
 
 #endif

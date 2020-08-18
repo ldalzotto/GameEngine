@@ -1,11 +1,14 @@
 #pragma once
 
-#include "v2/Plane/Plane.hpp"
+extern "C"
+{
+#include "v2/_interface/PlaneC_def.h"
+}
 
 namespace _MathV2
 {
 	struct Frustum
 	{
-		Plane Left, Right, Bottom, Up, Near, Far;
+		PLANE Left, Right, Bottom, Up, Near, Far;
 	};
 }

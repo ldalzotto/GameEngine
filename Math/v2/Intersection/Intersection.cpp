@@ -11,7 +11,6 @@ extern "C"
 #include "v2/_interface/BoxC.h"
 }
 
-#include "v2/Plane/PlaneMath.hpp"
 #include "v2/Frustum/Frustum.hpp"
 
 namespace _MathV2
@@ -131,11 +130,11 @@ namespace _MathV2
 			|| _Core::SortCompare_float_float(p_sphere->Center.z, p_AABB->Center.z + p_AABB->Extend.z) <= 0 && _Core::SortCompare_float_float(p_sphere->Center.z, p_AABB->Center.z - p_AABB->Extend.z) >= 0);
 	};
 
-	bool Intersection_Contains_Plane_Segment(const Plane* p_plane, const SEGMENT_VECTOR3F_PTR p_segment)
+	bool Intersection_Contains_Plane_Segment(const PLANE_PTR p_plane, const SEGMENT_VECTOR3F_PTR p_segment)
 	{
 		Vector3<float> tmp_vec3_0;
-		float l_beginDot = VectorM::dot(&p_plane->Normal, VectorM::min((_MathV2::Vector3<float>*) & p_segment->Begin, &p_plane->Point, &tmp_vec3_0));
-		float l_endDot = VectorM::dot(&p_plane->Normal, VectorM::min((_MathV2::Vector3<float>*) & p_segment->End, &p_plane->Point, &tmp_vec3_0));
+		float l_beginDot = VectorM::dot((_MathV2::Vector3<float>*) &p_plane->Normal, VectorM::min((_MathV2::Vector3<float>*) & p_segment->Begin, (_MathV2::Vector3<float>*) &p_plane->Point, &tmp_vec3_0));
+		float l_endDot = VectorM::dot((_MathV2::Vector3<float>*) &p_plane->Normal, VectorM::min((_MathV2::Vector3<float>*) & p_segment->End, (_MathV2::Vector3<float>*) &p_plane->Point, &tmp_vec3_0));
 		return ((l_beginDot >= FLOAT_TOLERANCE && l_endDot >= FLOAT_TOLERANCE)
 			|| (l_beginDot >= FLOAT_TOLERANCE && l_endDot <= -FLOAT_TOLERANCE)
 			|| (l_beginDot <= -FLOAT_TOLERANCE && l_endDot >= FLOAT_TOLERANCE));
@@ -147,17 +146,17 @@ namespace _MathV2
 		SEGMENT_VECTOR3F l_sphereProjected_x;
 		l_boxDelta_axis = { p_frustumProjectedSphere->Radius, 0.0f, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_x.End);
 		l_boxDelta_axis = { -p_frustumProjectedSphere->Radius, 0.0f, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_x.Begin);
-		if (Intersection_Contains_Plane_Segment(&p_frustum->Right, &l_sphereProjected_x) && Intersection_Contains_Plane_Segment(&p_frustum->Left, &l_sphereProjected_x))
+		if (Intersection_Contains_Plane_Segment((const PLANE_PTR)&p_frustum->Right, &l_sphereProjected_x) && Intersection_Contains_Plane_Segment((const PLANE_PTR)&p_frustum->Left, &l_sphereProjected_x))
 		{
 			SEGMENT_VECTOR3F l_sphereProjected_y;
 			l_boxDelta_axis = { 0.0f, p_frustumProjectedSphere->Radius, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_y.End);
 			l_boxDelta_axis = { 0.0f, -p_frustumProjectedSphere->Radius, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_y.Begin);
-			if (Intersection_Contains_Plane_Segment(&p_frustum->Up, &l_sphereProjected_y) && Intersection_Contains_Plane_Segment(&p_frustum->Bottom, &l_sphereProjected_y))
+			if (Intersection_Contains_Plane_Segment((const PLANE_PTR)&p_frustum->Up, &l_sphereProjected_y) && Intersection_Contains_Plane_Segment((const PLANE_PTR)&p_frustum->Bottom, &l_sphereProjected_y))
 			{
 				SEGMENT_VECTOR3F l_sphereProjected_z;
 				l_boxDelta_axis = { 0.0f, 0.0f, p_frustumProjectedSphere->Radius }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_z.End);
 				l_boxDelta_axis = { 0.0f, 0.0f, -p_frustumProjectedSphere->Radius }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_z.Begin);
-				if (Intersection_Contains_Plane_Segment(&p_frustum->Near, &l_sphereProjected_z) && Intersection_Contains_Plane_Segment(&p_frustum->Far, &l_sphereProjected_z))
+				if (Intersection_Contains_Plane_Segment((const PLANE_PTR)&p_frustum->Near, &l_sphereProjected_z) && Intersection_Contains_Plane_Segment((const PLANE_PTR)&p_frustum->Far, &l_sphereProjected_z))
 				{
 					return true;
 				}

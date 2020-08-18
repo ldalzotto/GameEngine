@@ -1,6 +1,11 @@
 #include "FrustumMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
-#include "v2/Plane/PlaneMath.hpp"
+
+extern "C"
+{
+#include "v2/_interface/PlaneC.h"
+}
+
 #include "v2/Vector/VectorMath.hpp"
 
 namespace _MathV2
@@ -52,14 +57,14 @@ namespace _MathV2
 		VectorM::mul(&l_left_bottom_near, 1.0f / l_left_bottom_near.w, &l_left_bottom_near);
 
 
-		l_frustum.Left = PlaneM::build(VectorM::cast(&l_left_bottom_near), VectorM::cast(&l_left_bottom_far), VectorM::cast(&l_left_up_near));
-		l_frustum.Right = PlaneM::build(VectorM::cast(&l_right_bottom_near), VectorM::cast(&l_right_up_near), VectorM::cast(&l_right_bottom_far));
+		Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_left_bottom_far, (VECTOR3F_PTR)&l_left_up_near, &l_frustum.Left);
+		Plane_Build_3Points((VECTOR3F_PTR)&l_right_bottom_near, (VECTOR3F_PTR)&l_right_up_near, (VECTOR3F_PTR)&l_right_bottom_far, &l_frustum.Right);
 
-		l_frustum.Bottom = PlaneM::build(VectorM::cast(&l_left_bottom_near), VectorM::cast(&l_right_bottom_near), VectorM::cast(&l_left_bottom_far));
-		l_frustum.Up = PlaneM::build(VectorM::cast(&l_left_up_near), VectorM::cast(&l_left_up_far), VectorM::cast(&l_right_up_near));
+		Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_right_bottom_near, (VECTOR3F_PTR)&l_left_bottom_far, &l_frustum.Bottom);
+		Plane_Build_3Points((VECTOR3F_PTR)&l_left_up_near, (VECTOR3F_PTR)&l_left_up_far, (VECTOR3F_PTR)&l_right_up_near, &l_frustum.Up);
 
-		l_frustum.Near = PlaneM::build(VectorM::cast(&l_left_bottom_near), VectorM::cast(&l_left_up_near), VectorM::cast(&l_right_bottom_near));
-		l_frustum.Far = PlaneM::build(VectorM::cast(&l_left_bottom_far), VectorM::cast(&l_right_bottom_far), VectorM::cast(&l_left_up_far));
+		Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_left_up_near, (VECTOR3F_PTR)&l_right_bottom_near, &l_frustum.Near);
+		Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_far, (VECTOR3F_PTR)&l_right_bottom_far, (VECTOR3F_PTR)&l_left_up_far, &l_frustum.Far);
 
 #endif
 
