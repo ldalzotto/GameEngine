@@ -7,7 +7,7 @@ extern "C"
 #include "v2/Intersection/Intersection.h"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Sphere/Sphere.hpp"
+
 #include "v2/Box/Box.hpp"
 
 using namespace _MathV2;
@@ -15,16 +15,16 @@ using namespace _MathV2;
 namespace _RenderV2
 {
 	bool ObjectCullingM::isObjectCulled(const _MathV2::Box* p_objectBoundingBox_localSpace, const _MathV2::Matrix<4, 4, float>* p_modelMatrix,
-			const _MathV2::Matrix<4, 4, float>* p_objectToCamera_matrix, const _MathV2::Frustum* p_cameraFrustum)
+		const _MathV2::Matrix<4, 4, float>* p_objectToCamera_matrix, const _MathV2::Frustum* p_cameraFrustum)
 	{
-		Sphere l_renderBox_asSphere_cameraSpace;
+		SPHEREF l_renderBox_asSphere_cameraSpace;
 		{
 			Vector<4, float> tmp_vec4_0;
 			MatrixM::mul(p_objectToCamera_matrix, &VectorM::cast(&p_objectBoundingBox_localSpace->Center, 1.0f), &tmp_vec4_0);
-			l_renderBox_asSphere_cameraSpace.Center = *VectorM::cast(&tmp_vec4_0);
+			l_renderBox_asSphere_cameraSpace.Center = { tmp_vec4_0.x, tmp_vec4_0.y, tmp_vec4_0.z };
 		}
 		{
-			SEGMENT_VECTOR4F l_box_extend_localSpace; l_box_extend_localSpace.Begin = { 0.0f, 0.0f, 0.0f, 1.0f }; 
+			SEGMENT_VECTOR4F l_box_extend_localSpace; l_box_extend_localSpace.Begin = { 0.0f, 0.0f, 0.0f, 1.0f };
 			l_box_extend_localSpace.End = { p_objectBoundingBox_localSpace->Extend.x, p_objectBoundingBox_localSpace->Extend.y, p_objectBoundingBox_localSpace->Extend.z, 1.0f };
 			SEGMENT_VECTOR4F l_box_extend_worldSpace;
 			Seg_Mul_V4F_M4F(&l_box_extend_localSpace, (MATRIX4F_PTR)p_modelMatrix, &l_box_extend_worldSpace);

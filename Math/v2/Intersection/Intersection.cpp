@@ -11,7 +11,6 @@ extern "C"
 {
 #include "v2/_interface/SegmentC.h"
 }
-#include "v2/Sphere/Sphere.hpp"
 
 #include "v2/Plane/PlaneMath.hpp"
 #include "v2/Frustum/Frustum.hpp"
@@ -114,7 +113,7 @@ namespace _MathV2
 		return true;
 	};
 
-	bool Intersection_AABB_Sphere(const Box* p_AABB, const  Sphere* p_sphere)
+	bool Intersection_AABB_Sphere(const Box* p_AABB, const SPHEREF_PTR p_sphere)
 	{
 		// We get the nearest point on the box to the sphere center.
 		Vector3<float> l_nearestPoint;
@@ -122,10 +121,10 @@ namespace _MathV2
 		(fabsf(p_sphere->Center.y - (p_AABB->Center.y + p_AABB->Extend.y)) >= fabsf(p_sphere->Center.y - (p_AABB->Center.y - p_AABB->Extend.y))) ? l_nearestPoint.y = p_AABB->Center.y - p_AABB->Extend.y : l_nearestPoint.y = p_AABB->Center.y + p_AABB->Extend.y;
 		(fabsf(p_sphere->Center.z - (p_AABB->Center.z + p_AABB->Extend.z)) >= fabsf(p_sphere->Center.z - (p_AABB->Center.z - p_AABB->Extend.z))) ? l_nearestPoint.z = p_AABB->Center.z - p_AABB->Extend.z : l_nearestPoint.z = p_AABB->Center.z + p_AABB->Extend.z;
 
-		return VectorM::distance(&l_nearestPoint, &p_sphere->Center) <= p_sphere->Radius * p_sphere->Radius;
+		return VectorM::distance(&l_nearestPoint, (Vector3<float>*)&p_sphere->Center) <= p_sphere->Radius * p_sphere->Radius;
 	};
 
-	bool Contains_AABB_Sphere(const Box* p_AABB, const  Sphere* p_sphere)
+	bool Contains_AABB_Sphere(const Box* p_AABB, const SPHEREF_PTR p_sphere)
 	{
 		// If sphere center is in the box (the sphere may be entirely contained in the box)
 		return (_Core::SortCompare_float_float(p_sphere->Center.x, p_AABB->Center.x + p_AABB->Extend.x) <= 0 && _Core::SortCompare_float_float(p_sphere->Center.x, p_AABB->Center.x - p_AABB->Extend.x) >= 0
@@ -143,22 +142,22 @@ namespace _MathV2
 			|| (l_beginDot <= -FLOAT_TOLERANCE && l_endDot >= FLOAT_TOLERANCE));
 	};
 
-	bool Intersection_Contains_Frustum_Sphere(const Frustum* p_frustum, const Sphere* p_frustumProjectedSphere)
+	bool Intersection_Contains_Frustum_Sphere(const Frustum* p_frustum, const SPHEREF_PTR p_frustumProjectedSphere)
 	{
 		Vector3<float> l_boxDelta_axis;
 		SEGMENT_VECTOR3F l_sphereProjected_x;
-		l_boxDelta_axis = { p_frustumProjectedSphere->Radius, 0.0f, 0.0f }; VectorM::add(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_x.End);
-		l_boxDelta_axis = { -p_frustumProjectedSphere->Radius, 0.0f, 0.0f }; VectorM::add(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_x.Begin);
+		l_boxDelta_axis = { p_frustumProjectedSphere->Radius, 0.0f, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_x.End);
+		l_boxDelta_axis = { -p_frustumProjectedSphere->Radius, 0.0f, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_x.Begin);
 		if (Intersection_Contains_Plane_Segment(&p_frustum->Right, &l_sphereProjected_x) && Intersection_Contains_Plane_Segment(&p_frustum->Left, &l_sphereProjected_x))
 		{
 			SEGMENT_VECTOR3F l_sphereProjected_y;
-			l_boxDelta_axis = { 0.0f, p_frustumProjectedSphere->Radius, 0.0f }; VectorM::add(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_y.End);
-			l_boxDelta_axis = { 0.0f, -p_frustumProjectedSphere->Radius, 0.0f }; VectorM::add(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_y.Begin);
+			l_boxDelta_axis = { 0.0f, p_frustumProjectedSphere->Radius, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_y.End);
+			l_boxDelta_axis = { 0.0f, -p_frustumProjectedSphere->Radius, 0.0f }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_y.Begin);
 			if (Intersection_Contains_Plane_Segment(&p_frustum->Up, &l_sphereProjected_y) && Intersection_Contains_Plane_Segment(&p_frustum->Bottom, &l_sphereProjected_y))
 			{
 				SEGMENT_VECTOR3F l_sphereProjected_z;
-				l_boxDelta_axis = { 0.0f, 0.0f, p_frustumProjectedSphere->Radius }; VectorM::add(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_z.End);
-				l_boxDelta_axis = { 0.0f, 0.0f, -p_frustumProjectedSphere->Radius }; VectorM::add(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_z.Begin);
+				l_boxDelta_axis = { 0.0f, 0.0f, p_frustumProjectedSphere->Radius }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_z.End);
+				l_boxDelta_axis = { 0.0f, 0.0f, -p_frustumProjectedSphere->Radius }; VectorM::add((_MathV2::Vector3<float>*) &p_frustumProjectedSphere->Center, &l_boxDelta_axis, (_MathV2::Vector3<float>*) & l_sphereProjected_z.Begin);
 				if (Intersection_Contains_Plane_Segment(&p_frustum->Near, &l_sphereProjected_z) && Intersection_Contains_Plane_Segment(&p_frustum->Far, &l_sphereProjected_z))
 				{
 					return true;
