@@ -4,7 +4,10 @@
 
 #include "Functional/Optional/OptionalT.hpp"
 #include "v2/Vector/Vector.hpp"
-#include "v2/Segment/SegmentV2.hpp"
+extern "C"
+{
+#include "v2/_interface/SegmentC_def.h"
+}
 
 #include <queue>
 
@@ -42,7 +45,7 @@ namespace _GameEngine::_Input
 		_MathV2::Vector2<double> MouseDelta;
 	};
 
-	_MathV2::SegmentV2<2, float> InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
+	SEGMENT_VECTOR2F InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
 
 	struct Input
 	{

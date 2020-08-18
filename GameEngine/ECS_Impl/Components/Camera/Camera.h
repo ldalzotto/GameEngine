@@ -1,7 +1,10 @@
 #pragma once
 
 #include "v2/Matrix/Matrix.hpp"
-#include "v2/Segment/SegmentV2.hpp"
+extern "C"
+{
+#include "v2/_interface/SegmentC_def.h"
+}
 #include "v2/Frustum/Frustum.hpp"
 
 #include "Functional/Callback/CallbackT.hpp"
@@ -23,7 +26,7 @@ namespace _GameEngine::_ECS
 	extern ComponentType CameraType;
 
 	struct Camera
-	{ 
+	{
 		_ECS::ComponentHeaderT<Camera> ComponentHeader;
 		_RenderV2::RenderV2Interface* RenderInterface;
 		_MathV2::Matrix4x4<float> ProjectionMatrix;
@@ -43,5 +46,5 @@ namespace _GameEngine::_ECS
 
 	_MathV2::Matrix4x4<float> Camera_worldToClipMatrix(Camera* p_camera);
 
-	_MathV2::SegmentV2<3, float> Camera_buildWorldSpaceRay(Camera* p_camera, _MathV2::Vector<2, float>& p_screenPoint);
+	SEGMENT_VECTOR3F Camera_buildWorldSpaceRay(Camera* p_camera, VECTOR2F_PTR p_screenPoint);
 }

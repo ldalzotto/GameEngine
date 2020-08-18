@@ -27,7 +27,7 @@ namespace _GameEngine::_Physics
 
 	/** Returned RayCastHits are not sorted. */
 	void RayCastAll(World* p_world, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
-	bool RayCast(World* p_world, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, RaycastHit* out_hit);
-	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
-	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, RaycastHit* out_hit);
+	bool RayCast(World* p_world, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, RaycastHit* out_hit);
+	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
+	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, RaycastHit* out_hit);
 }

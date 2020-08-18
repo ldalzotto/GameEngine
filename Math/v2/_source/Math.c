@@ -1,7 +1,7 @@
 #include "VectorC.h"
 #include "v2/_interface/QuaternionC.h"
 #include "MatrixC.h"
-#include "SegmentC.h"
+#include "v2/_interface/SegmentC.h"
 
 #include "Constants.h"
 

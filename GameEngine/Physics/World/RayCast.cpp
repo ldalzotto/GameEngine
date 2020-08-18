@@ -9,7 +9,10 @@
 #include "v2/Intersection/Intersection.h"
 #include "v2/Transform/TransformM.hpp"
 #include "v2/Box/BoxMath.h"
-#include "v2/Segment/SegmentV2Math.hpp"
+extern "C"
+{
+#include "v2/_interface/SegmentC.h"
+}
 #include <math.h>
 #include "World/World.h"
 #include "Collider/BoxCollider.h"
@@ -30,7 +33,7 @@ namespace _GameEngine::_Physics
 		float l_leftDistance = 0.0f;
 		if (!p_comparatorObject->DistanceCalculated)
 		{
-			l_leftDistance =  VectorM::distance(&p_comparatorObject->RayBegin, &p_left->HitPoint);
+			l_leftDistance = VectorM::distance(&p_comparatorObject->RayBegin, &p_left->HitPoint);
 		}
 		else
 		{
@@ -50,32 +53,34 @@ namespace _GameEngine::_Physics
 
 	void RayCastAll(World* p_world, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
-		RayCastAll_against((_Core::ArrayT<BoxCollider*>*)&p_world->BoxColliders, p_begin, p_end, out_intersectionPoints);
+		RayCastAll_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, &p_begin, &p_end, out_intersectionPoints);
 	};
 
-	bool RayCast(World* p_world, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, RaycastHit* out_hit)
+	bool RayCast(World* p_world, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, RaycastHit* out_hit)
 	{
 		return RayCast_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, p_begin, p_end, out_hit);
 	};
 
-	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
+	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
-		SegmentV2<4, float> l_segment;
+		SEGMENT_VECTOR4F l_segment;
 		{
-			l_segment.Begin = VectorM::cast(&p_begin, 1.0f);
-			l_segment.End = VectorM::cast(&p_end, 1.0f);
+			l_segment.Begin = *(VECTOR4F_PTR)&VectorM::cast(p_begin, 1.0f);
+			l_segment.End = *(VECTOR4F_PTR)&VectorM::cast(p_end, 1.0f);
 		}
-		
+
 		auto l_boxCollidersIt = _Core::ArrayT_buildIterator(p_comparedColliders);
 		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
-			SegmentV2<4, float> tmp_segment; _MathV2::Matrix4x4<float> tmp_mat4_0;
+			SEGMENT_VECTOR4F tmp_segment_4f; SEGMENT_VECTOR3F tmp_segment_3f; _MathV2::Matrix4x4<float> tmp_mat4_0;
 
 			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
-			
+
 			// We project the ray to the box local space, to perform an AABB test.
 			_MathV2::Vector3<float> l_intersectionPointLocal;
-			if (Intersection_AABB_Ray(l_boxCollider->Box, &SegmentM::cast(SegmentM::mul(&l_segment, TransformM::getWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0), &tmp_segment)), &l_intersectionPointLocal))
+			Seg_Mul_V4F_M4F(&l_segment, (MATRIX4F_PTR)TransformM::getWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0), &tmp_segment_4f);
+			tmp_segment_3f.Begin = tmp_segment_4f.Begin.Vec3; tmp_segment_3f.End = tmp_segment_4f.End.Vec3;
+			if (Intersection_AABB_Ray(l_boxCollider->Box, &tmp_segment_3f, &l_intersectionPointLocal))
 			{
 				RaycastHit hit{};
 
@@ -87,8 +92,8 @@ namespace _GameEngine::_Physics
 			}
 		}
 	};
-	
-	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, RaycastHit* out_hit)
+
+	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, RaycastHit* out_hit)
 	{
 		bool l_return = false;
 		_Core::VectorT<RaycastHit> l_hits;
@@ -101,7 +106,7 @@ namespace _GameEngine::_Physics
 				// We use a return value instead of directly returning to free the l_hits vector.
 				l_return = true;
 				RaycastHitDistanceComparatorObject l_raycastMinComparatorObject{};
-				l_raycastMinComparatorObject.RayBegin = p_begin;
+				l_raycastMinComparatorObject.RayBegin = *p_begin;
 				*out_hit = *_Core::SortT_min(_Core::VectorT_buildIterator(&l_hits), 0,
 					_Core::ElementSorterT<RaycastHit, RaycastHit, RaycastHitDistanceComparatorObject> { RaycastHit_distanceMinComparator, & l_raycastMinComparatorObject });
 			}
