@@ -1,0 +1,17 @@
+#pragma once
+
+extern "C"
+{
+#include "v2/_interface/VectorC_def.h"
+#include "DataStructuresC/_interface/ARRAY_def.h"
+}
+
+typedef struct ARRAY_VECTOR3F_TYP
+{
+	ARRAY_TYPE_DEFINITION(VECTOR3F)
+}ARRAY_VECTOR3F, * ARRAY_VECTOR3F_PTR;
+
+typedef struct ARRAY_VECTOR3F_ITERATOR_TYP
+{
+	ARRAY_ITERATOR_DEFINITION(ARRAY_VECTOR3F, VECTOR3F)
+} ARRAY_VECTOR3F_ITERATOR, * ARRAY_VECTOR3F_ITERATOR_PTR;

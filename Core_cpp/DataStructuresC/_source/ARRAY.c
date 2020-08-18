@@ -1,0 +1,84 @@
+#include "DataStructuresC/_interface/ARRAY.h"
+#include <string.h>
+
+#define ARRAY_ELEMENTSIZE_PARAMETER_INPUT p_array, p_elementSize
+
+inline size_t Arr_GetCapacitySize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
+{
+	return p_elementSize * p_array->Capacity;
+}
+
+inline size_t Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_index)
+{
+	return p_elementSize * p_index;
+};
+
+void Arr_Alloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_initialCapacity)
+{
+	p_array->Capacity = p_initialCapacity;
+	p_array->Memory = malloc(Arr_GetCapacitySize(p_array, p_elementSize));
+	p_array->Size = 0;
+};
+
+void Arr_Free(ARRAY_PTR p_array)
+{
+	free(p_array->Memory);
+	p_array->Memory = NULL;
+	p_array->Capacity = 0;
+	p_array->Size = 0;
+};
+
+void Arr_Zeroing(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
+{
+	memset(p_array->Memory, 0, Arr_GetCapacitySize(p_array, p_elementSize));
+};
+
+void Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_newCapacity)
+{
+	if (p_newCapacity > p_array->Capacity)
+	{
+		void* l_newMemory = realloc(p_array->Memory, p_newCapacity * p_elementSize);
+		if (l_newMemory)
+		{
+			p_array->Memory = l_newMemory;
+			p_array->Capacity = p_newCapacity;
+		}
+	}
+}
+
+void Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
+{
+	if (p_array->Size >= p_array->Capacity)
+	{
+		Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Capacity == 0 ? 1 : (p_array->Capacity * 2));
+		return Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_value);
+	}
+	else
+	{
+		void* p_targetMemory = (char*)p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Size);
+		memcpy(p_targetMemory, p_value, p_elementSize);
+		p_array->Size += 1;
+	}
+}
+
+
+void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ARRAY_ITERATOR_PTR p_iter)
+{
+	p_iter->Array = p_array;
+	p_iter->Current = p_array->Memory - p_elementSize;
+	p_iter->CurrentIndex = -1;
+};
+
+bool Iter_MoveNext(ARRAY_ITERATOR_PTR p_iterator, size_t p_elementSize)
+{
+	p_iterator->CurrentIndex += 1;
+	if (p_iterator->CurrentIndex < p_iterator->Array->Size)
+	{
+		p_iterator->Current += p_elementSize;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+};

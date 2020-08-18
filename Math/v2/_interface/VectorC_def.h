@@ -27,8 +27,6 @@ typedef struct VECTOR4F_TYP
 	};
 } VECTOR4F, * VECTOR4F_PTR;
 
-
-
 typedef struct VECTOR2D_TYP
 {
 	union
