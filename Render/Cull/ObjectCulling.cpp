@@ -15,7 +15,7 @@ using namespace _MathV2;
 namespace _RenderV2
 {
 	bool ObjectCullingM::isObjectCulled(const BOXF_PTR p_objectBoundingBox_localSpace, const _MathV2::Matrix<4, 4, float>* p_modelMatrix,
-		const _MathV2::Matrix<4, 4, float>* p_objectToCamera_matrix, const _MathV2::Frustum* p_cameraFrustum)
+		const _MathV2::Matrix<4, 4, float>* p_objectToCamera_matrix, const FRUSTUM_PTR p_cameraFrustum)
 	{
 		SPHEREF l_renderBox_asSphere_cameraSpace;
 		{

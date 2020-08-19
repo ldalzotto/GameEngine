@@ -5,6 +5,7 @@
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/VectorStructuresC.h"
 #include "v2/_interface/PlaneC.h"
+#include "v2/_interface/FrustumC.h"
 
 #include "Constants.h"
 
@@ -1024,6 +1025,68 @@ void Plane_ProjectPoint(const PLANE_PTR p_plane, const VECTOR3F_PTR p_point, VEC
 	VECTOR3F l_displacement_alongPlaneNormal; Vec_Project_3f(&l_displacement, &p_plane->Normal, &l_displacement_alongPlaneNormal);
 	VECTOR3F l_displacement_alongPlane; Vec_Min_3f_3f(&l_displacement, &l_displacement_alongPlaneNormal, &l_displacement_alongPlane);
 	Vec_Add_3f_3f(&p_plane->Point, &l_displacement_alongPlane, out_projectedPoint);
+};
+
+#endif
+
+
+/************************ FRUSTUM *************************/
+
+#if 1
+
+// Reference  http://deptinfo.unice.fr/twiki/pub/Minfo03/AlgosJeux3DMariani/planeextraction.pdf
+void Frustum_ExtractFromProjection(const MATRIX4F_PTR p_projection, FRUSTUM_PTR out_frustum)
+{
+	//TODO - Having a more direct way instead of calling inv of projection ? (more efficient - see link above)
+
+	MATRIX4F l_projection_inverted;
+	Mat_Inv_M4F(p_projection, &l_projection_inverted);
+
+	VECTOR4F l_right_up_far, l_right_up_near, l_right_bottom_far, l_right_bottom_near;
+	VECTOR4F l_left_up_far, l_left_up_near, l_left_bottom_far, l_left_bottom_near;
+
+	VECTOR4F tmp_vec4_0 = { 1.0f, 1.0f, -1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_up_far);
+	Vec_Mul_4f_1f(&l_right_up_far, 1.0f / l_right_up_far.w, &l_right_up_far);
+
+	tmp_vec4_0 = (VECTOR4F){ 1.0f, 1.0f, 1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_up_near);
+	Vec_Mul_4f_1f(&l_right_up_near, 1.0f / l_right_up_near.w, &l_right_up_near);
+
+	tmp_vec4_0 = (VECTOR4F){ 1.0f, -1.0f, -1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_far);
+	Vec_Mul_4f_1f(&l_right_bottom_far, 1.0f / l_right_bottom_far.w, &l_right_bottom_far);
+
+	tmp_vec4_0 = (VECTOR4F){ 1.0f, -1.0f, 1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_near);
+	Vec_Mul_4f_1f(&l_right_bottom_near, 1.0f / l_right_bottom_near.w, &l_right_bottom_near);
+
+
+	tmp_vec4_0 = (VECTOR4F){ -1.0f, 1.0f, -1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_up_far);
+	Vec_Mul_4f_1f(&l_left_up_far, 1.0f / l_left_up_far.w, &l_left_up_far);
+
+	tmp_vec4_0 = (VECTOR4F){ -1.0f, 1.0f, 1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_up_near);
+	Vec_Mul_4f_1f(&l_left_up_near, 1.0f / l_left_up_near.w, &l_left_up_near);
+
+	tmp_vec4_0 = (VECTOR4F){ -1.0f, -1.0f, -1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_far);
+	Vec_Mul_4f_1f(&l_left_bottom_far, 1.0f / l_left_bottom_far.w, &l_left_bottom_far);
+
+	tmp_vec4_0 = (VECTOR4F){ -1.0f, -1.0f, 1.0f, -1.0f };
+	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_near);
+	Vec_Mul_4f_1f(&l_left_bottom_near, 1.0f / l_left_bottom_near.w, &l_left_bottom_near);
+
+
+	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_left_bottom_far, (VECTOR3F_PTR)&l_left_up_near, &out_frustum->Left);
+	Plane_Build_3Points((VECTOR3F_PTR)&l_right_bottom_near, (VECTOR3F_PTR)&l_right_up_near, (VECTOR3F_PTR)&l_right_bottom_far, &out_frustum->Right);
+
+	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_right_bottom_near, (VECTOR3F_PTR)&l_left_bottom_far, &out_frustum->Bottom);
+	Plane_Build_3Points((VECTOR3F_PTR)&l_left_up_near, (VECTOR3F_PTR)&l_left_up_far, (VECTOR3F_PTR)&l_right_up_near, &out_frustum->Up);
+
+	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_left_up_near, (VECTOR3F_PTR)&l_right_bottom_near, &out_frustum->Near);
+	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_far, (VECTOR3F_PTR)&l_right_bottom_far, (VECTOR3F_PTR)&l_left_up_far, &out_frustum->Far);
 };
 
 #endif

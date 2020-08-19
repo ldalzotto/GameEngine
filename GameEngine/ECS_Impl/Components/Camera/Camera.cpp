@@ -4,7 +4,10 @@
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Frustum/FrustumMath.hpp"
+extern "C"
+{
+#include "v2/_interface/FrustumC.h"
+}
 
 #include "RenderV2Interface.hpp"
 #include "Objects/SwapChain/SwapChain.hpp"
@@ -48,7 +51,7 @@ namespace _GameEngine::_ECS
 	{
 		_MathV2::MatrixM::perspective(45.0f * _MathV2::DEG_TO_RAD,
 			((float)p_camera->RenderInterface->SwapChain->PresentTexture.Width / (float)p_camera->RenderInterface->SwapChain->PresentTexture.Height), 0.1f, 50.0f, &p_camera->ProjectionMatrix);
-		p_camera->CameraFrustum = _MathV2::FrustumM::extractFrustumFromProjection(&p_camera->ProjectionMatrix);
+		Frustum_ExtractFromProjection((MATRIX4F_PTR)&p_camera->ProjectionMatrix, &p_camera->CameraFrustum);
 	};
 
 	SEGMENT_VECTOR3F Camera_buildWorldSpaceRay(Camera* p_camera, VECTOR2F_PTR p_screenPoint)

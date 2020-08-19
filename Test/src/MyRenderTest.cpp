@@ -12,9 +12,9 @@ extern "C"
 {
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/BoxC.h"
+#include "v2/_interface/FrustumC.h"
 }
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Frustum/FrustumMath.hpp"
 
 #include "Clock/Clock.hpp"
 
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 		((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, 50.0f, &l_projectionMatrix);
 
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
-	_MathV2::Frustum l_cameraFrustum = _MathV2::FrustumM::extractFrustumFromProjection(&l_projectionMatrix);
+	FRUSTUM l_cameraFrustum; Frustum_ExtractFromProjection((MATRIX4F_PTR)&l_projectionMatrix, &l_cameraFrustum);
 
 	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = &l_viewMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = &l_projectionMatrix;

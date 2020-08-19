@@ -5,16 +5,13 @@ extern "C"
 #include "v2/_interface/SegmentC_def.h"
 #include "v2/_interface/SphereC_def.h"
 #include "v2/_interface/BoxC_def.h"
+#include "v2/_interface/FrustumC_def.h"
 }
 
 namespace _MathV2
 {
-	struct Box;
-
 	template <int N, typename T>
 	struct Vector;
-
-	struct Frustum;
 }
 
 namespace _MathV2
@@ -24,5 +21,5 @@ namespace _MathV2
 	bool Contains_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere);
 
 	// Sphere is projected in frustum space
-	bool Intersection_Contains_Frustum_Sphere(const Frustum* p_frustum, const SPHEREF_PTR p_frustumProjectedSphere);
+	bool Intersection_Contains_Frustum_Sphere(const FRUSTUM_PTR p_frustum, const SPHEREF_PTR p_frustumProjectedSphere);
 }

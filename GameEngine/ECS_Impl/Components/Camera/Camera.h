@@ -4,8 +4,8 @@
 extern "C"
 {
 #include "v2/_interface/SegmentC_def.h"
+#include "v2/_interface/FrustumC_def.h"
 }
-#include "v2/Frustum/Frustum.hpp"
 
 #include "Functional/Callback/CallbackT.hpp"
 #include "ECS/ComponentT.hpp"
@@ -31,7 +31,7 @@ namespace _GameEngine::_ECS
 		_RenderV2::RenderV2Interface* RenderInterface;
 		_MathV2::Matrix4x4<float> ProjectionMatrix;
 		_MathV2::Matrix4x4<float> ViewMatrix;
-		_MathV2::Frustum CameraFrustum;
+		FRUSTUM CameraFrustum;
 		_Core::CallbackT<Camera, _RenderV2::RenderV2Interface> OnSwapChainBuilded;
 	};
 
