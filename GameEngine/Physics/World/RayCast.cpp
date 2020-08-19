@@ -81,7 +81,7 @@ namespace _GameEngine::_Physics
 			Transform_GetWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0);
 			Seg_Mul_V4F_M4F(&l_segment, &tmp_mat4_0, &tmp_segment_4f);
 			tmp_segment_3f.Begin = tmp_segment_4f.Begin.Vec3; tmp_segment_3f.End = tmp_segment_4f.End.Vec3;
-			if (Intersection_AABB_Ray((BOXF_PTR)l_boxCollider->Box, &tmp_segment_3f, (_MathV2::Vector3<float>*) & l_intersectionPointLocal))
+			if (Intersection_AABB_Ray((BOXF_PTR)l_boxCollider->Box, &tmp_segment_3f, & l_intersectionPointLocal))
 			{
 				RaycastHit hit{};
 
