@@ -1,4 +1,5 @@
-﻿#include "v2/_interface/VectorC.h"
+﻿#include "v2/Math.h"
+#include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/SegmentC.h"
@@ -15,6 +16,35 @@
 #include <string.h>
 
 #include "Functional/Equals/Equals.h"
+
+/* MATH - Functions */
+
+float DEG_TO_RAD = (M_PI / 180.0f);
+float RAD_TO_DEG = (180.0f / M_PI);
+
+double Math_max(double left, double right)
+{
+	if (right > left)
+	{
+		return right;
+	}
+	else
+	{
+		return left;
+	}
+};
+
+double Math_min(double left, double right)
+{
+	if (right < left)
+	{
+		return right;
+	}
+	else
+	{
+		return left;
+	}
+};
 
 /* VECTOR - Equals */
 bool Vec_Equals_2d(const VECTOR2D_PTR p_left, const VECTOR2D_PTR p_right)

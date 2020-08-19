@@ -1,8 +1,8 @@
 #include "Camera.h"
 
-#include "v2/Math.h"
 extern "C"
 {
+#include "v2/Math.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/FrustumC.h"
 }
@@ -47,7 +47,7 @@ namespace _GameEngine::_ECS
 
 	void Camera_buildProjectionMatrix(Camera* p_camera)
 	{
-		Mat_Perspective_M4F(45.0f * _MathV2::DEG_TO_RAD,
+		Mat_Perspective_M4F(45.0f * DEG_TO_RAD,
 			((float)p_camera->RenderInterface->SwapChain->PresentTexture.Width / (float)p_camera->RenderInterface->SwapChain->PresentTexture.Height), 0.1f, 50.0f, &p_camera->ProjectionMatrix);
 		Frustum_ExtractFromProjection((MATRIX4F_PTR)&p_camera->ProjectionMatrix, &p_camera->CameraFrustum);
 	};

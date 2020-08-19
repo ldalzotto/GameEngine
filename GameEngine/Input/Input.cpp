@@ -5,9 +5,9 @@
 
 #include "Objects/Window/Window.hpp"
 
-#include "v2/Math.h"
 extern "C"
 {
+#include "v2/Math.h"
 #include "v2/_interface/VectorC.h"
 }
 
@@ -115,8 +115,8 @@ namespace _GameEngine::_Input
 
 			auto l_windowDimensions = _RenderV2::Window_getSize(p_input->Window);
 
-			p_input->InputMouse.ScreenPosition.x = _MathV2::Math_max(_MathV2::Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);
-			p_input->InputMouse.ScreenPosition.y = _MathV2::Math_max(_MathV2::Math_min(p_input->InputMouse.ScreenPosition.y, static_cast<double>(l_windowDimensions.Height)), 0.0f);
+			p_input->InputMouse.ScreenPosition.x = Math_max(Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);
+			p_input->InputMouse.ScreenPosition.y = Math_max(Math_min(p_input->InputMouse.ScreenPosition.y, static_cast<double>(l_windowDimensions.Height)), 0.0f);
 
 			p_input->InputMouse.CurrentInputMouseEvent.HasValue = false;
 		}

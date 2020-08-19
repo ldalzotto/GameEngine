@@ -5,10 +5,10 @@
 #include "Editor/GameEngineEditor.h"
 #include "GameEngineApplicationInterface.h"
 
-#include "v2/Math.h"
 
 extern "C"
 {
+#include "v2/Math.h"
 #include "v2/_interface/Intersection.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/SegmentC.h"
@@ -43,7 +43,6 @@ extern "C"
 #include "Objects/Window/Window.hpp"
 
 using namespace _GameEngine;
-using namespace _MathV2;
 
 /*
 	The EntitySelection is currently missing features.

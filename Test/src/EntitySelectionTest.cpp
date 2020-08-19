@@ -6,9 +6,9 @@
 #include "GameEngineApplication.h"
 #include "AppEvent/AppEvent.hpp"
 
-#include "v2/Math.h"
 extern "C"
 {
+#include "v2/Math.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/TransformC.h"
 }
