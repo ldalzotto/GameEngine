@@ -68,7 +68,7 @@ namespace _RenderV2
 				l_polygonPipeline->TransformedPolygon = *PolygonM::mul(&l_polygonPipeline->TransformedPolygon, &l_polygonPipeline->RenderedObject->ModelMatrix, &tmp_poly_4f_0);
 
 				// Backface culling
-				if (BackfaceCullingM::isCulled(&l_polygonPipeline->TransformedPolygon, &p_input->CameraBuffer->WorldPosition))
+				if (BackfaceCullingM::isCulled((Polygon<VECTOR4F>*)&l_polygonPipeline->TransformedPolygon, (VECTOR4F_PTR) &p_input->CameraBuffer->WorldPosition))
 				{
 					continue;
 				};

@@ -2,22 +2,27 @@
 
 #include "Constants.h"
 #include "Objects/Resource/Polygon.hpp"
-#include "v2/Vector/VectorMath.hpp"
 
-using namespace _MathV2;
+extern "C"
+{
+#include "v2/_interface/VectorC.h"
+}
 
 namespace _RenderV2
 {
-	bool BackfaceCullingM::isCulled(const Polygon<_MathV2::Vector<4, float>>* p_polygon, const _MathV2::Vector<4, float>* p_cameraWorldPosition)
+	bool BackfaceCullingM::isCulled(const Polygon<VECTOR4F>* p_polygon, const VECTOR4F_PTR p_cameraWorldPosition)
 	{
-		Vector<4, float> tmp_vec4_0;
+		VECTOR4F tmp_vec4_0;
 
-		Vector3<float> l_cameraToPolygon = *VectorM::cast(VectorM::min(&p_polygon->v1, p_cameraWorldPosition, &tmp_vec4_0));
-		Vector3<float> l_u = *VectorM::cast(VectorM::min(&p_polygon->v1, &p_polygon->v2, &tmp_vec4_0));
-		Vector3<float> l_v = *VectorM::cast(VectorM::min(&p_polygon->v1, &p_polygon->v3, &tmp_vec4_0));
-		Vector3<float> l_n;
-		VectorM::cross(&l_u, &l_v, &l_n);
+		Vec_Min_4f_4f((VECTOR4F_PTR)&p_polygon->v1, p_cameraWorldPosition, &tmp_vec4_0);
+		VECTOR3F l_cameraToPolygon = tmp_vec4_0.Vec3;
+		Vec_Min_4f_4f((VECTOR4F_PTR)&p_polygon->v1, (VECTOR4F_PTR)&p_polygon->v2, &tmp_vec4_0);
+		VECTOR3F l_u = tmp_vec4_0.Vec3;
+		Vec_Min_4f_4f((VECTOR4F_PTR)&p_polygon->v1, (VECTOR4F_PTR)&p_polygon->v3, &tmp_vec4_0);
+		VECTOR3F l_v = tmp_vec4_0.Vec3;
+		VECTOR3F l_n;
+		Vec_Cross_3f(&l_u, &l_v, &l_n);
 
-		return VectorM::dot(&l_cameraToPolygon, &l_n) > FLOAT_TOLERANCE;
+		return Vec_Dot_3f(&l_cameraToPolygon, &l_n) > FLOAT_TOLERANCE;
 	};
 }

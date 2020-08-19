@@ -6,11 +6,9 @@ extern "C"
 #include "v2/_interface/VectorC_def.h"
 #include "v2/_interface/Intersection.h"
 #include "v2/_interface/MatrixC.h"
+#include "v2/_interface/VectorC.h"
 }
-#include "v2/Vector/VectorMath.hpp"
 
-
-using namespace _MathV2;
 
 namespace _RenderV2
 {
@@ -29,8 +27,8 @@ namespace _RenderV2
 			l_box_extend_localSpace.End = { p_objectBoundingBox_localSpace->Extend.x, p_objectBoundingBox_localSpace->Extend.y, p_objectBoundingBox_localSpace->Extend.z, 1.0f };
 			SEGMENT_VECTOR4F l_box_extend_worldSpace;
 			Seg_Mul_V4F_M4F(&l_box_extend_localSpace, (MATRIX4F_PTR)p_modelMatrix, &l_box_extend_worldSpace);
-			Vector<4, float> l_box_extend_worldSpace_vec; Seg_ToVector_V4F(&l_box_extend_worldSpace, (VECTOR4F_PTR)&l_box_extend_worldSpace_vec);
-			l_renderBox_asSphere_cameraSpace.Radius = VectorM::length(VectorM::cast(&l_box_extend_worldSpace_vec));
+			VECTOR4F l_box_extend_worldSpace_vec; Seg_ToVector_V4F(&l_box_extend_worldSpace, (VECTOR4F_PTR)&l_box_extend_worldSpace_vec);
+			l_renderBox_asSphere_cameraSpace.Radius = Vec_Length_3f(&l_box_extend_worldSpace_vec.Vec3);
 		}
 
 		return !Intersection_Contains_Frustum_Sphere(p_cameraFrustum, &l_renderBox_asSphere_cameraSpace);
