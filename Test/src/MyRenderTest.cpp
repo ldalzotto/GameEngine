@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 		MATRIX4F l_rotation = MATRIX4F_IDENTITYF;
 
 		Quat_RotateAround((const VECTOR3F_PTR)&VECTOR3F_UP, 0.000001f * l_deltaTime, &tmp_quat_0);
-		Quat_ExtractAxis(&tmp_quat_0, (float(*)[3])tmp_mat3x3_0.Points);
+		Quat_ExtractAxis(&tmp_quat_0, &tmp_mat3x3_0);
 		Mat_RotationAxis_M4F(&tmp_mat3x3_0, &l_rotation);
 		Mat_Mul_M4F_M4F(&l_renderableObject.ModelMatrix, (MATRIX4F_PTR)&l_rotation, &tmp_mat4x4_0);
 		l_renderableObject.ModelMatrix = tmp_mat4x4_0;
