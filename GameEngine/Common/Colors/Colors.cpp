@@ -2,7 +2,7 @@
 
 namespace _GameEngine::_Color
 {
-	const _MathV2::Vector4<float> RED = { 1.0f, 0.0f, 0.0f, 1.0f };
-	const _MathV2::Vector4<float> GREEN = { 0.0f, 1.0f, 0.0f, 1.0f };
-	const _MathV2::Vector4<float> BLUE = { 0.0f, 0.0f, 1.0f, 1.0f };
+	const VECTOR3C RED = { 255, 0, 0 };
+	const VECTOR3C GREEN = { 0, 255, 0 };
+	const VECTOR3C BLUE = { 0, 0, 255 };
 }

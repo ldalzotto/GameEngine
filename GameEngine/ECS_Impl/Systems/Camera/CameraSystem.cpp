@@ -1,11 +1,10 @@
 #include "CameraSystem.h"
 
-#include "v2/Vector/VectorMath.hpp"
-
 extern "C"
 {
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/TransformC.h"
+#include "v2/_interface/VectorC.h"
 }
 
 #include "DataStructures/Specifications/VectorT.hpp"
@@ -98,22 +97,22 @@ namespace _GameEngine::_ECS
 			_RenderV2::CameraBuffer* l_cameraBuffer = l_camera->RenderInterface->GlobalBuffer.CameraBuffer;
 
 			{
-				_MathV2::Vector3<float> tmp_vec3_0; MATRIX4F tmp_mat4_0; MATRIX3F tmp_mat3_0;
+				VECTOR3F tmp_vec3_0; MATRIX4F tmp_mat4_0; MATRIX3F tmp_mat3_0;
 
-				_MathV2::Vector3<float> l_worldPosition; Transform_GetWorldPosition(&l_transform->Transform, (VECTOR3F_PTR)&l_worldPosition);
-				_MathV2::Vector3<float> l_target;
-				Transform_GetForward(&l_transform->Transform, (VECTOR3F_PTR)&l_target);
-				_MathV2::VectorM::add(&l_worldPosition, &l_target, &l_target);
-				_MathV2::Vector3<float> l_up;
-				Transform_GetUp(&l_transform->Transform, (VECTOR3F_PTR)&tmp_vec3_0);
-				_MathV2::VectorM::mul(&tmp_vec3_0, -1.0f, &l_up);
+				VECTOR3F l_worldPosition; Transform_GetWorldPosition(&l_transform->Transform, &l_worldPosition);
+				VECTOR3F l_target;
+				Transform_GetForward(&l_transform->Transform, &l_target);
+				Vec_Add_3f_3f(&l_worldPosition, &l_target, &l_target);
+				VECTOR3F l_up;
+				Transform_GetUp(&l_transform->Transform, &tmp_vec3_0);
+				Vec_Mul_3f_1f(&tmp_vec3_0, -1.0f, &l_up);
 
 				tmp_vec3_0 = { 1.0f, 1.0f, 1.0f };
-				Mat_LookAtRotation_F((VECTOR3F_PTR)&l_worldPosition, (VECTOR3F_PTR)&l_target, (VECTOR3F_PTR)&l_up, &tmp_mat3_0);
-				Mat_TRS_Axis_M4F((VECTOR3F_PTR)&l_worldPosition, &tmp_mat3_0, (VECTOR3F_PTR)&tmp_vec3_0, &tmp_mat4_0);
+				Mat_LookAtRotation_F(&l_worldPosition, &l_target, &l_up, &tmp_mat3_0);
+				Mat_TRS_Axis_M4F(&l_worldPosition, &tmp_mat3_0, &tmp_vec3_0, &tmp_mat4_0);
 				Mat_Inv_M4F(&tmp_mat4_0, &l_camera->ViewMatrix);
 
-				l_cameraBuffer->WorldPosition = _MathV2::VectorM::cast(&l_worldPosition, 1.0f);
+				l_cameraBuffer->WorldPosition.Vec3 = l_worldPosition; l_cameraBuffer->WorldPosition.Vec3_w = 1.0f;
 			}
 		}
 	};

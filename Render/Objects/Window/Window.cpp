@@ -124,7 +124,7 @@ namespace _RenderV2
 		_Core::ObserverT_register(&_Core::EventDispatcher, (_Core::CallbackT<void, _Core::AppEvent_Header>*) & l_appGlobalEvetnCallback);
 	};
 
-	void Window_presentTexture(Window* p_window, Texture<3, char>* p_texture)
+	void Window_presentTexture(Window* p_window, Texture3C* p_texture)
 	{
 		p_window->WindowState.PendingPresentingTexture = p_texture;
 
@@ -168,7 +168,7 @@ namespace _RenderV2
 
 		if (p_window->WindowState.PendingPresentingTexture)
 		{
-			Texture<3, char>* l_presentTexture = p_window->WindowState.PendingPresentingTexture;
+			Texture3C* l_presentTexture = p_window->WindowState.PendingPresentingTexture;
 			//	p_window->WindowState.PendingPresentingTexture = false;
 
 			HDC l_map_hdc = CreateCompatibleDC(hdc);

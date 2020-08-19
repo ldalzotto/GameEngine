@@ -1,10 +1,13 @@
 #pragma once
 
-#include "v2/Vector/Vector.hpp"
+extern "C"
+{
+#include "v2/_interface/VectorC_def.h"
+}
 
 namespace _GameEngine::_Color
 {
-	extern const _MathV2::Vector4<float> RED;
-	extern const _MathV2::Vector4<float> GREEN;
-	extern const _MathV2::Vector4<float> BLUE;
+	extern const VECTOR3C RED;
+	extern const VECTOR3C GREEN;
+	extern const VECTOR3C BLUE;
 }

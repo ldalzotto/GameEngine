@@ -16,17 +16,15 @@
 #include "Clock/Clock.hpp"
 #include <iostream>
 
-using namespace _MathV2;
-
 namespace _RenderV2
 {
-	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3C* p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
 	{
 		_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
 
 		WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
-		_MathV2::Vector<3, char> l_wireframeColor = { 255,0,0 };
-		Polygon<Vector<4, float>> tmp_poly_4f_0, tmp_poly_4f_1;
+		VECTOR3C l_wireframeColor = { 255,0,0 };
+		Polygon<VECTOR4F> tmp_poly_4f_0, tmp_poly_4f_1;
 
 		{
 			for (size_t i = 0; i < p_input->RenderableObjectsBuffer->RenderedObjects.Size; i++)
@@ -48,11 +46,10 @@ namespace _RenderV2
 							l_polygonPipeline.RenderedObject = l_renderableObject;
 							l_polygonPipeline.PolygonIndex = j;
 
-							l_polygonPipeline.TransformedPolygon = {
-								VectorM::cast(&l_renderableObject->Mesh->Vertices.Memory[l_polygon->v1].LocalPosition, 1.0f),
-								VectorM::cast(&l_renderableObject->Mesh->Vertices.Memory[l_polygon->v2].LocalPosition, 1.0f),
-								VectorM::cast(&l_renderableObject->Mesh->Vertices.Memory[l_polygon->v3].LocalPosition, 1.0f)
-							};
+							l_polygonPipeline.TransformedPolygon.v1.Vec3 = l_renderableObject->Mesh->Vertices.Memory[l_polygon->v1].LocalPosition; l_polygonPipeline.TransformedPolygon.v1.Vec3_w = 1.0f;
+							l_polygonPipeline.TransformedPolygon.v2.Vec3 = l_renderableObject->Mesh->Vertices.Memory[l_polygon->v2].LocalPosition; l_polygonPipeline.TransformedPolygon.v2.Vec3_w = 1.0f;
+							l_polygonPipeline.TransformedPolygon.v3.Vec3 = l_renderableObject->Mesh->Vertices.Memory[l_polygon->v3].LocalPosition; l_polygonPipeline.TransformedPolygon.v3.Vec3_w = 1.0f;
+
 							_Core::VectorT_pushBack(&p_memory->PolygonPipelines, &l_polygonPipeline);
 						}
 
@@ -68,7 +65,7 @@ namespace _RenderV2
 				l_polygonPipeline->TransformedPolygon = *PolygonM::mul(&l_polygonPipeline->TransformedPolygon, &l_polygonPipeline->RenderedObject->ModelMatrix, &tmp_poly_4f_0);
 
 				// Backface culling
-				if (BackfaceCullingM::isCulled((Polygon<VECTOR4F>*)&l_polygonPipeline->TransformedPolygon, (VECTOR4F_PTR) &p_input->CameraBuffer->WorldPosition))
+				if (BackfaceCullingM::isCulled((Polygon<VECTOR4F>*) & l_polygonPipeline->TransformedPolygon, (VECTOR4F_PTR)&p_input->CameraBuffer->WorldPosition))
 				{
 					continue;
 				};
@@ -94,7 +91,8 @@ namespace _RenderV2
 				{
 					tmp_poly_4f_1 = l_polygonPipeline->TransformedPolygon;
 					tmp_poly_4f_1.v1.z = 1.0f; tmp_poly_4f_1.v2.z = 1.0f; tmp_poly_4f_1.v3.z = 1.0f;
-					l_polygonPipeline->PixelPolygon = PolygonM::cast_value_2(PolygonM::mul(&tmp_poly_4f_1, (MATRIX4F_PTR)p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0));
+					PolygonM::mul(&tmp_poly_4f_1, p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0);
+					l_polygonPipeline->PixelPolygon = { tmp_poly_4f_0.v1.Vec3.Vec2, tmp_poly_4f_0.v2.Vec3.Vec2 , tmp_poly_4f_0.v3.Vec3.Vec2 };
 				}
 
 				// Rasterize

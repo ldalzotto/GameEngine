@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 	Mat_Perspective_M4F(45.0f * _MathV2::DEG_TO_RAD,
 		((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, 50.0f, &l_projectionMatrix);
 
-	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
+	VECTOR4F l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	FRUSTUM l_cameraFrustum; Frustum_ExtractFromProjection((MATRIX4F_PTR)&l_projectionMatrix, &l_cameraFrustum);
 
 	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = (MATRIX4F_PTR)&l_viewMatrix;

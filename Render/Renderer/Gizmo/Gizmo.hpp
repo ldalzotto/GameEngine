@@ -5,10 +5,10 @@ extern "C"
 #include "v2/_interface/TransformC_def.h"
 #include "v2/_interface/BoxC_def.h"
 #include "v2/_interface/RectC_def.h"
+#include "v2/_interface/VectorC_def.h"
 }
 
 #include "DataStructures/Specifications/VectorT.hpp"
-#include "v2/Vector/Vector.hpp"
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 #include "Raster/Rasterizer.hpp"
 
@@ -20,15 +20,14 @@ namespace _Core
 
 namespace _RenderV2
 {
-	template<int C, typename T>
-	struct Texture;
+	struct Texture3C;
 }
 
 namespace _RenderV2
 {
 	struct GizmoVertex
 	{
-		_MathV2::Vector<4, float> WorldPosition;
+		VECTOR4F WorldPosition;
 	};
 
 	using GizmoVertexIndex = size_t;
@@ -37,7 +36,7 @@ namespace _RenderV2
 	{
 		GizmoVertexIndex v1;
 		GizmoVertexIndex v2;
-		_MathV2::Vector<3, char> Color;
+		VECTOR3C Color;
 	};
 
 	struct GizmoBuffer
@@ -59,15 +58,15 @@ namespace _RenderV2
 
 	struct Gizmo
 	{
-		static void render(GizmoRendererInput* p_input, Texture<3, char>* p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
+		static void render(GizmoRendererInput* p_input, Texture3C* p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
 
-		static void drawLine(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end);
-		static void drawLine(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end, const _MathV2::Vector3<char>* p_color);
-		static void drawPoint(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point);
-		static void drawPoint(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_point, const _MathV2::Vector3<char>* p_color);
-		static void drawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const MATRIX4F_PTR p_localToWorldMatrix, bool p_withCenter = true, const _MathV2::Vector3<char>* p_color = nullptr);
+		static void drawLine(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end);
+		static void drawLine(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end, const VECTOR3C_PTR p_color);
+		static void drawPoint(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_point);
+		static void drawPoint(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_point, const VECTOR3C_PTR p_color);
+		static void drawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const MATRIX4F_PTR p_localToWorldMatrix, bool p_withCenter = true, const VECTOR3C_PTR p_color = nullptr);
 		static void drawTransform(GizmoBuffer* p_gizmo, TRANSFORM_PTR p_transform);
-		static void drawTransform(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_center, const _MathV2::Vector3<float>* p_right, const _MathV2::Vector3<float>* p_up, const _MathV2::Vector3<float>* p_forward);
+		static void drawTransform(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_center, const VECTOR3F_PTR p_right, const VECTOR3F_PTR p_up, const VECTOR3F_PTR p_forward);
 
 
 	};

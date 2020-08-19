@@ -46,3 +46,12 @@ typedef struct VECTOR2I_TYP
 		int Points[2];
 	};
 } VECTOR2I, * VECTOR2I_PTR;
+
+typedef struct VECTOR3C_TYP
+{
+	union
+	{
+		char Points[3];
+		struct { char x, y, z; };
+	};
+} VECTOR3C, * VECTOR3C_PTR;

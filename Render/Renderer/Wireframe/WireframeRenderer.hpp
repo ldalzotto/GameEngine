@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Objects/Resource/Polygon.hpp"
-#include "v2/Vector/Vector.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "Raster/Rasterizer.hpp"
 
@@ -9,12 +8,12 @@ extern "C"
 {
 #include "v2/_interface/MatrixC_def.h"
 #include "v2/_interface/RectC_def.h"
+#include "v2/_interface/VectorC_def.h"
 }
 
 namespace _RenderV2
 {
-	template <int C, typename T>
-	struct Texture;
+	struct Texture3C;
 
 	struct RenderedObject;
 
@@ -43,9 +42,9 @@ namespace _RenderV2
 		RenderedObject* RenderedObject;
 		size_t PolygonIndex;
 
-		Polygon<_MathV2::Vector<4, float>> CameraSpacePolygon;
-		Polygon<_MathV2::Vector<4, float>> TransformedPolygon;
-		Polygon<_MathV2::Vector<2, float>> PixelPolygon;
+		Polygon<VECTOR4F> CameraSpacePolygon;
+		Polygon<VECTOR4F> TransformedPolygon;
+		Polygon<VECTOR2F> PixelPolygon;
 	};
 
 	struct WireframeRenderer_Memory
@@ -58,5 +57,5 @@ namespace _RenderV2
 	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height);
 	void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory);
 
-	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory);
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3C* p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory);
 }

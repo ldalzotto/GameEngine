@@ -3,10 +3,11 @@
 #include "InputGlobalEvent.hpp"
 
 #include "Functional/Optional/OptionalT.hpp"
-#include "v2/Vector/Vector.hpp"
+
 extern "C"
 {
 #include "v2/_interface/SegmentC_def.h"
+#include "v2/_interface/VectorC_def.h"
 }
 
 #include <queue>
@@ -39,10 +40,10 @@ namespace _GameEngine::_Input
 		float MouseSentitivityperPixel = 0.01f;
 
 		_Core::OptionalT< InputMouseGlobalEvent > CurrentInputMouseEvent;
-		_MathV2::Vector2<double> ScreenPosition;
+		VECTOR2D ScreenPosition;
 
-		_MathV2::Vector2<double> LastFrameMouseAbsoluteScreenPosition;
-		_MathV2::Vector2<double> MouseDelta;
+		VECTOR2D LastFrameMouseAbsoluteScreenPosition;
+		VECTOR2D MouseDelta;
 	};
 
 	SEGMENT_VECTOR2F InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);

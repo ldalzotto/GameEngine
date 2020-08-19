@@ -10,12 +10,6 @@ extern "C"
 #include "Functional/Callback/CallbackT.hpp"
 #include "ECS/ComponentT.hpp"
 
-namespace _MathV2
-{
-	template <int N, typename T>
-	struct Vector;
-}
-
 namespace _RenderV2
 {
 	struct RenderV2Interface;

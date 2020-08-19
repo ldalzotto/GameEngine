@@ -13,7 +13,7 @@ namespace _RenderV2
 	struct SwapChain
 	{
 		RenderV2Interface* RenderInterface;
-		Texture<3, char> PresentTexture;
+		Texture3C PresentTexture;
 
 		// The swap chain can be rebuild if the @ref MustBeRebuilt is set to true.
 		// This event notify when such an event has occured.

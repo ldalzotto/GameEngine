@@ -6,7 +6,10 @@
 #include "Objects/Window/Window.hpp"
 
 #include "v2/Math.h"
-#include "v2/Vector/VectorMath.hpp"
+extern "C"
+{
+#include "v2/_interface/VectorC.h"
+}
 
 namespace _GameEngine::_Input
 {
@@ -108,7 +111,7 @@ namespace _GameEngine::_Input
 
 			std::cout << "X" << p_input->InputMouse.ScreenPosition.x << "  Y  " << p_input->InputMouse.ScreenPosition.y << std::endl;
 
-			_MathV2::VectorM::min(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
+			Vec_Min_2d_2d(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 
 			auto l_windowDimensions = _RenderV2::Window_getSize(p_input->Window);
 

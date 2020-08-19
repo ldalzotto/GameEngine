@@ -46,9 +46,9 @@ namespace _RenderV2
 		}
 
 		{
-			_MathV2::Vector3<char> l_color = { 0,0,0 };
-			_MathV2::Vector3<char>* l_pixel = &p_render->SwapChain.PresentTexture.Pixels.Memory[0];
-			TextureIterator<3, char> l_present_it = TextureM::buildIterator(&p_render->SwapChain.PresentTexture);
+			VECTOR3C l_color = { 0,0,0 };
+			VECTOR3C_PTR l_pixel = &p_render->SwapChain.PresentTexture.Pixels.Memory[0];
+			TextureIterator3C l_present_it = TextureM::buildIterator(&p_render->SwapChain.PresentTexture);
 			while (TextureIteratorM::moveNext(&l_present_it))
 			{
 				*l_present_it.Current = l_color;

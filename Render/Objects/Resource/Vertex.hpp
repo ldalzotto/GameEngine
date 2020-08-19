@@ -1,12 +1,15 @@
 #pragma once
 
-#include "v2/Vector/Vector.hpp"
+extern "C"
+{
+#include "v2/_interface/VectorC_def.h"
+}
 
 namespace _RenderV2
 {
 	struct Vertex
 	{
-		_MathV2::Vector3<float> LocalPosition;
+		VECTOR3F LocalPosition;
 	};
 
 	template<typename T>

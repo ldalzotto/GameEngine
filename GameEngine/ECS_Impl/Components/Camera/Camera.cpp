@@ -1,8 +1,6 @@
 #include "Camera.h"
 
 #include "v2/Math.h"
-#include "v2/Vector/Vector.hpp"
-#include "v2/Vector/VectorMath.hpp"
 extern "C"
 {
 #include "v2/_interface/MatrixC.h"

@@ -4,9 +4,6 @@
 #include "Algorithm/Sort/SortAlgorithmT.hpp"
 #include "DataStructures/Specifications/ArrayT.hpp"
 
-#include "v2/Vector/VectorMath.hpp"
-
-
 extern "C"
 {
 #include "_interface/Functional.h"
@@ -14,18 +11,18 @@ extern "C"
 #include "v2/_interface/Intersection.h"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/TransformC.h"
+#include "v2/_interface/VectorC.h"
 }
 #include <math.h>
 #include "World/World.h"
 #include "Collider/BoxCollider.h"
 
-using namespace _MathV2;
 
 namespace _GameEngine::_Physics
 {
 	struct RaycastHitDistanceComparatorObject
 	{
-		_MathV2::Vector3<float> RayBegin;
+		VECTOR3F RayBegin;
 		bool DistanceCalculated;
 		float CachedDistance;
 	};
@@ -35,14 +32,14 @@ namespace _GameEngine::_Physics
 		float l_leftDistance = 0.0f;
 		if (!p_comparatorObject->DistanceCalculated)
 		{
-			l_leftDistance = VectorM::distance(&p_comparatorObject->RayBegin, &p_left->HitPoint);
+			l_leftDistance = Vec_Distance_3f(&p_comparatorObject->RayBegin, &p_left->HitPoint);
 		}
 		else
 		{
 			l_leftDistance = p_comparatorObject->CachedDistance;
 		}
 
-		float l_rightDistance = VectorM::distance(&p_comparatorObject->RayBegin, &p_right->HitPoint);
+		float l_rightDistance = Vec_Distance_3f(&p_comparatorObject->RayBegin, &p_right->HitPoint);
 		short l_comparisonResult = Compare_float_float(&l_leftDistance, &l_rightDistance);
 
 		if (l_comparisonResult >= 0) { p_comparatorObject->CachedDistance = l_leftDistance; p_comparatorObject->DistanceCalculated = true; }
@@ -53,22 +50,22 @@ namespace _GameEngine::_Physics
 namespace _GameEngine::_Physics
 {
 
-	void RayCastAll(World* p_world, _MathV2::Vector3<float>& p_begin, _MathV2::Vector3<float>& p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
+	void RayCastAll(World* p_world, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
-		RayCastAll_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, &p_begin, &p_end, out_intersectionPoints);
+		RayCastAll_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, p_begin, p_end, out_intersectionPoints);
 	};
 
-	bool RayCast(World* p_world, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, RaycastHit* out_hit)
+	bool RayCast(World* p_world, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, RaycastHit* out_hit)
 	{
 		return RayCast_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, p_begin, p_end, out_hit);
 	};
 
-	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
+	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
 		SEGMENT_VECTOR4F l_segment;
 		{
-			l_segment.Begin = *(VECTOR4F_PTR)&VectorM::cast(p_begin, 1.0f);
-			l_segment.End = *(VECTOR4F_PTR)&VectorM::cast(p_end, 1.0f);
+			l_segment.Begin.Vec3 = *p_begin; l_segment.Begin.Vec3_w = 1.0f;
+			l_segment.End.Vec3 = *p_end; l_segment.End.Vec3_w = 1.0f;
 		}
 
 		auto l_boxCollidersIt = _Core::ArrayT_buildIterator(p_comparedColliders);
@@ -92,14 +89,14 @@ namespace _GameEngine::_Physics
 				Transform_GetLocalToWorldMatrix(l_boxCollider->Transform, &tmp_mat4_0);
 				tmp_vec4.Vec3 = l_intersectionPointLocal; tmp_vec4.Vec3_w = 1.0f;
 				Mat_Mul_M4F_V4F(&tmp_mat4_0, &tmp_vec4, &tmp_vec4_1);
-				hit.HitPoint = *(_MathV2::Vector3<float>*) & tmp_vec4_1.Vec3;
+				hit.HitPoint = tmp_vec4_1.Vec3;
 				hit.Collider = l_boxCollider;
 				_Core::VectorT_pushBack(out_intersectionPoints, &hit);
 			}
 		}
 	};
 
-	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, _MathV2::Vector3<float>* p_begin, _MathV2::Vector3<float>* p_end, RaycastHit* out_hit)
+	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, RaycastHit* out_hit)
 	{
 		bool l_return = false;
 		_Core::VectorT<RaycastHit> l_hits;

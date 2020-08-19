@@ -92,7 +92,7 @@ namespace _GameEngine::_ECS
 		{
 			QUATERNION4F tmp_quat_0;
 			QUATERNION4F l_newLocalRotation;
-			Quat_RotateAround((VECTOR3F_PTR)&l_operations.Current->TransformRotate->Axis, l_operations.Current->TransformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime, &tmp_quat_0);
+			Quat_RotateAround(&l_operations.Current->TransformRotate->Axis, l_operations.Current->TransformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime, &tmp_quat_0);
 			Quat_Mul(&l_operations.Current->TransformComponent->Transform.LocalRotation, &tmp_quat_0, &l_newLocalRotation);
 			Transform_SetLocalRotation(&l_operations.Current->TransformComponent->Transform, &l_newLocalRotation);
 		}

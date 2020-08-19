@@ -20,8 +20,7 @@ namespace _RenderV2
 		HWND Window;
 	};
 
-	template <int C, typename T>
-	struct Texture;
+	struct Texture3C;
 }
 #endif
 
@@ -37,7 +36,7 @@ namespace _RenderV2
 	{
 		bool AskedForClosed;
 		_Core::OptionalT<WindowSize> HasResizedThisFrame;
-		Texture<3, char>* PendingPresentingTexture;
+		Texture3C* PendingPresentingTexture;
 	};
 
 	extern const uint32_t WINDOW_WIDTH;
@@ -62,5 +61,5 @@ namespace _RenderV2
 	bool Window_consumeSizeChangeEvent(Window* p_window);
 
 	WindowSize Window_getSize(Window* p_window);
-	void Window_presentTexture(Window* p_window, Texture<3, char>* p_texture);
+	void Window_presentTexture(Window* p_window,  Texture3C* p_texture);
 }

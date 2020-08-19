@@ -3,23 +3,23 @@
 #include <stdint.h>
 
 #include "DataStructures/Specifications/ArrayT.hpp"
-
-#include "v2/Vector/Vector.hpp"
+extern "C"
+{
+#include "v2/_interface/VectorC_def.h"
+}
 
 namespace _RenderV2
 {
-	template <int N, typename T>
-	struct Texture
+	struct Texture3C
 	{
 		uint16_t Width, Height;
-		_Core::ArrayT<_MathV2::Vector<N, T>> Pixels;
+		_Core::ArrayT<VECTOR3C> Pixels;
 	};
 
-	template <int N, typename T>
-	struct TextureIterator
+	struct TextureIterator3C
 	{
-		Texture<N, T>* Texture;
-		_MathV2::Vector<N, T>* Current;
+		Texture3C* Texture;
+		VECTOR3C_PTR Current;
 		size_t Index;
 	};
 }

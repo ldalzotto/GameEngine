@@ -7,14 +7,14 @@
 namespace _RenderV2
 {
 	void DrawM::DrawLineClipped(
-		_MathV2::Vector<2, float>* p_begin, _MathV2::Vector<2, float>* p_end,
+		VECTOR2F_PTR p_begin, VECTOR2F_PTR p_end,
 		_Core::VectorT<RasterizationStep>* in_out_rasterizedPixelsBuffer,
-		Texture<3, char>* p_to, RECTI_PTR  p_clipRect,
-		_MathV2::Vector<3, char>* p_color)
+		Texture3C* p_to, RECTI_PTR p_clipRect,
+		VECTOR3C_PTR p_color)
 	{
 		_Core::VectorT_clear(in_out_rasterizedPixelsBuffer);
 
-		_MathV2::Vector<2, int> l_clippedBegin, l_clippedEnd;
+		VECTOR2I l_clippedBegin, l_clippedEnd;
 		if (Rasterizer::line_v3_clipped(p_begin, p_end, in_out_rasterizedPixelsBuffer, p_clipRect, &l_clippedBegin, &l_clippedEnd))
 		{
 
@@ -38,7 +38,7 @@ namespace _RenderV2
 				{
 					l_to_memory_cursor += (p_to->Pixels.ElementSize * p_to->Width);
 				}
-				*(_MathV2::Vector3<char>*)	l_to_memory_cursor = *p_color;
+				*(VECTOR3C_PTR)	l_to_memory_cursor = *p_color;
 			}
 		}
 	};
