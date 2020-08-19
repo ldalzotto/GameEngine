@@ -29,7 +29,7 @@ void Transform_GetForward(TRANSFORM_PTR p_transform, VECTOR3F_PTR p_out);
 
 inline void Arr_Alloc_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, size_t p_initialCapacity) { Arr_Alloc((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), p_initialCapacity); };
 inline void Arr_Free_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr) { Arr_Free((ARRAY_PTR)p_arr); };
-inline void Arr_PushBackRealloc_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, TRANSFORM_PTR* p_value) { Arr_PushBackRealloc((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), (char*)p_value); };
+inline char Arr_PushBackRealloc_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, TRANSFORM_PTR* p_value) { return Arr_PushBackRealloc((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), (char*)p_value); };
 inline char Arr_Erase_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, size_t p_index) { return Arr_Erase((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), p_index); };
 
 inline void Arr_BuildIterator_TransformPtr(ARRAY_TRANSFORMHANDLE_PTR p_arr, ARRAY_TRANSFORMHANDLE_ITERATOR_PTR p_iter) { Arr_BuildIterator((ARRAY_PTR)p_arr, sizeof(TRANSFORM_PTR), (ARRAY_ITERATOR_PTR)p_iter); }

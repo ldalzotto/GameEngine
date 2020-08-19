@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Objects/Resource/Polygon.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "Raster/Rasterizer.hpp"
 
 extern "C"
 {
+#include "Objects/Resource/Polygon_def.h"
 #include "v2/_interface/MatrixC_def.h"
 #include "v2/_interface/RectC_def.h"
 #include "v2/_interface/VectorC_def.h"
@@ -42,9 +42,9 @@ namespace _RenderV2
 		RenderedObject* RenderedObject;
 		size_t PolygonIndex;
 
-		Polygon<VECTOR4F> CameraSpacePolygon;
-		Polygon<VECTOR4F> TransformedPolygon;
-		Polygon<VECTOR2F> PixelPolygon;
+		POLYGON4F CameraSpacePolygon;
+		POLYGON4F TransformedPolygon;
+		POLYGON2F PixelPolygon;
 	};
 
 	struct WireframeRenderer_Memory

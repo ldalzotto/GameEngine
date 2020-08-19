@@ -1,6 +1,9 @@
 #include "MeshResourceProvider.hpp"
 
-#include "Objects/Resource/MeshMethods.hpp"
+extern "C"
+{
+#include "Objects/Resource/Mesh.h"
+}
 #include "Functional/Hash/Hash.hpp"
 #include "File/ObjReader.hpp"
 
@@ -30,7 +33,7 @@ namespace _RenderV2
 	
 	void MeshResource_free(MeshResource* p_meshResource)
 	{
-		Mesh_free(&p_meshResource->Mesh);
+		Mesh_Free(&p_meshResource->Mesh);
 		_Core::String_free(&p_meshResource->Key.MeshPathAbsolute);
 	};
 }

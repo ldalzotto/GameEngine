@@ -1,4 +1,5 @@
 #include "_interface/DataStructures/ARRAY.h"
+#include <stdlib.h>
 #include <string.h>
 
 #define ARRAY_ELEMENTSIZE_PARAMETER_INPUT p_array, p_elementSize
@@ -33,24 +34,33 @@ void Arr_Zeroing(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
 	memset(p_array->Memory, 0, Arr_GetCapacitySize(p_array, p_elementSize));
 };
 
-void Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_newCapacity)
+char Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_newCapacity)
 {
 	if (p_newCapacity > p_array->Capacity)
 	{
 		void* l_newMemory = realloc(p_array->Memory, p_newCapacity * p_elementSize);
-		if (l_newMemory)
+		if (l_newMemory != NULL)
 		{
 			p_array->Memory = l_newMemory;
 			p_array->Capacity = p_newCapacity;
+			return 0;
+		}
+		else
+		{
+			return 1;
 		}
 	}
+	return 0;
 }
 
-void Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
+char Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 {
 	if (p_array->Size >= p_array->Capacity)
 	{
-		Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Capacity == 0 ? 1 : (p_array->Capacity * 2));
+		if (Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Capacity == 0 ? 1 : (p_array->Capacity * 2)))
+		{
+			return 1;
+		};
 		Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_value);
 	}
 	else
@@ -59,6 +69,8 @@ void Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 		memcpy(p_targetMemory, p_value, p_elementSize);
 		p_array->Size += 1;
 	}
+
+	return 0;
 }
 
 char Arr_Erase(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_index)

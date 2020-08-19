@@ -18,7 +18,6 @@ extern "C"
 
 #include "Clock/Clock.hpp"
 
-#include "Objects/Resource/Mesh.hpp"
 #include "Objects/RenderedObject.hpp"
 
 #include "File/ObjReader.hpp"

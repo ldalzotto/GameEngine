@@ -2,7 +2,11 @@
 
 #include "DataStructures/Specifications/String.hpp"
 #include "Functional/ResourceProvider/ResourceProviderT.hpp"
-#include "Objects/Resource/Mesh.hpp"
+
+extern "C"
+{
+#include "Objects/Resource/Mesh_def.h"
+}
 
 namespace _RenderV2
 {
@@ -19,7 +23,7 @@ namespace _RenderV2
 	struct MeshResource
 	{
 		MeshResourceKey Key;
-		Mesh Mesh;
+		MESH Mesh;
 	};
 
 	void MeshResource_allocate(MeshResource* p_meshResource, MeshResourceKey* p_key);

@@ -2,12 +2,16 @@
 
 #include "Read/File/File.hpp"
 
+extern "C"
+{
+#include "Objects/Resource/Vertex.h"
+#include "Objects/Resource/Mesh.h"
+}
 #include "Algorithm/String/StringAlgorithm.hpp"
-#include "Objects/Resource/MeshMethods.hpp"
 
 namespace _RenderV2
 {
-	void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh* out_mesh)
+	void ObjReader_loadMesh(const char* p_fileAbsolutePath, MESH_PTR out_mesh)
 	{
 		_Core::FileStream l_fs = _Core::FileStream_open(p_fileAbsolutePath);
 		_Core::FileLineIterator l_it = _Core::FileStream_allocLineIterator(&l_fs);
@@ -36,7 +40,7 @@ namespace _RenderV2
 					}
 					if (out_mesh)
 					{
-						Mesh_alloc(out_mesh);
+						Mesh_Alloc(out_mesh);
 						l_meshProcessed = true;
 					}
 				}
@@ -51,8 +55,9 @@ namespace _RenderV2
 							_Core::String_split(&l_lineWithoutHeader, &l_spaceSlice, &l_verticesPositions);
 							if (l_verticesPositions.Size > 0)
 							{
-								Vertex l_insertedVertex = {};
-								Vertex* l_vertex = _Core::VectorT_pushBack(&out_mesh->Vertices, &l_insertedVertex);
+								VERTEX l_insertedVertex = {};
+								Arr_PushBackRealloc_Vertex(&out_mesh->Vertices, &l_insertedVertex);
+								VERTEX_PTR l_vertex = &out_mesh->Vertices.Memory[out_mesh->Vertices.Size - 1];
 								l_vertex->LocalPosition.x = (float)atof(_Core::VectorT_at(&l_verticesPositions, 0)->Memory);
 								l_vertex->LocalPosition.y = (float)atof(_Core::VectorT_at(&l_verticesPositions, 1)->Memory);
 								l_vertex->LocalPosition.z = (float)atof(_Core::VectorT_at(&l_verticesPositions, 2)->Memory);
@@ -72,8 +77,10 @@ namespace _RenderV2
 							_Core::String_split(&l_lineWithoutHeader, &l_spaceSlice, &l_polyFaces);
 							if (l_polyFaces.Size > 0)
 							{
-								Polygon<VertexIndex> l_insertedPoly = {};
-								Polygon<VertexIndex>* l_polygon = _Core::VectorT_pushBack(&out_mesh->Polygons, &l_insertedPoly);
+								POLYGON_VERTEXINDEX l_insertedPoly = {};
+								Arr_PushBackRealloc_Polygon_VertexIndex(&out_mesh->Polygons, &l_insertedPoly);
+								POLYGON_VERTEXINDEX_PTR l_polygon = &out_mesh->Polygons.Memory[out_mesh->Polygons.Size - 1];
+
 								_Core::VectorT<_Core::String> l_polygVertexIndices; _Core::VectorT_alloc(&l_polygVertexIndices, 3);
 
 								for (size_t i = 0; i < l_polyFaces.Size; i++)

@@ -3,9 +3,13 @@
 #include "Cull/ObjectCulling.hpp"
 #include "Cull/BackfaceCulling.hpp"
 
-#include "Objects/Resource/Mesh.hpp"
 #include "Objects/RenderedObject.hpp"
-#include "Objects/Resource/PolygonMethods.hpp"
+extern "C"
+{
+#include "Objects/Resource/Polygon.h"
+#include "v2/_interface/MatrixC.h"
+}
+
 #include "Objects/Texture/TextureM.hpp"
 
 #include "Renderer/Draw/DrawFunctions.hpp"
@@ -24,7 +28,7 @@ namespace _RenderV2
 
 		WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 		VECTOR3C l_wireframeColor = { 255,0,0 };
-		Polygon<VECTOR4F> tmp_poly_4f_0, tmp_poly_4f_1;
+		POLYGON4F tmp_poly_4f_0, tmp_poly_4f_1;
 
 		{
 			for (size_t i = 0; i < p_input->RenderableObjectsBuffer->RenderedObjects.Size; i++)
@@ -40,7 +44,7 @@ namespace _RenderV2
 						// Push polygons
 						for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
 						{
-							Polygon<VertexIndex>* l_polygon = &l_renderableObject->Mesh->Polygons.Memory[j];
+							POLYGON_VERTEXINDEX_PTR l_polygon = &l_renderableObject->Mesh->Polygons.Memory[j];
 
 							PolygonPipelineV2 l_polygonPipeline{};
 							l_polygonPipeline.RenderedObject = l_renderableObject;
@@ -62,10 +66,11 @@ namespace _RenderV2
 				PolygonPipelineV2* l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
 
 				// Local to world
-				l_polygonPipeline->TransformedPolygon = *PolygonM::mul(&l_polygonPipeline->TransformedPolygon, &l_polygonPipeline->RenderedObject->ModelMatrix, &tmp_poly_4f_0);
+				Polygon_Mul_V4F_M4F(&l_polygonPipeline->TransformedPolygon, &l_polygonPipeline->RenderedObject->ModelMatrix, &tmp_poly_4f_0);
+				l_polygonPipeline->TransformedPolygon = tmp_poly_4f_0;
 
 				// Backface culling
-				if (BackfaceCullingM::isCulled((Polygon<VECTOR4F>*) & l_polygonPipeline->TransformedPolygon, (VECTOR4F_PTR)&p_input->CameraBuffer->WorldPosition))
+				if (BackfaceCullingM::isCulled(&l_polygonPipeline->TransformedPolygon, &p_input->CameraBuffer->WorldPosition))
 				{
 					continue;
 				};
@@ -73,10 +78,10 @@ namespace _RenderV2
 				//TODO -> We can combine matrices operations into one (for performance).
 
 				// World to camera
-				PolygonM::mul(&l_polygonPipeline->TransformedPolygon, p_input->CameraBuffer->ViewMatrix, &l_polygonPipeline->CameraSpacePolygon);
+				Polygon_Mul_V4F_M4F(&l_polygonPipeline->TransformedPolygon, p_input->CameraBuffer->ViewMatrix, &l_polygonPipeline->CameraSpacePolygon);
 
 				// Camera to clip
-				PolygonM::mul_homogeneous(&l_polygonPipeline->CameraSpacePolygon, p_input->CameraBuffer->ProjectionMatrix, &l_polygonPipeline->TransformedPolygon);
+				Polygon_MulHomogeneous_V4F_M4F(&l_polygonPipeline->CameraSpacePolygon, p_input->CameraBuffer->ProjectionMatrix, &l_polygonPipeline->TransformedPolygon);
 
 #if 0
 				// This check prevents prolygon that have vertex behind the camera to be rendered
@@ -85,13 +90,13 @@ namespace _RenderV2
 					l_polygonPipeline->TransformedPolygon.v3.z > 1.0f)
 				{
 					continue;
-				}
+			}
 #endif
 				// To pixel
 				{
 					tmp_poly_4f_1 = l_polygonPipeline->TransformedPolygon;
 					tmp_poly_4f_1.v1.z = 1.0f; tmp_poly_4f_1.v2.z = 1.0f; tmp_poly_4f_1.v3.z = 1.0f;
-					PolygonM::mul(&tmp_poly_4f_1, p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0);
+					Polygon_Mul_V4F_M4F(&tmp_poly_4f_1, p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0);
 					l_polygonPipeline->PixelPolygon = { tmp_poly_4f_0.v1.Vec3.Vec2, tmp_poly_4f_0.v2.Vec3.Vec2 , tmp_poly_4f_0.v3.Vec3.Vec2 };
 				}
 
@@ -101,14 +106,14 @@ namespace _RenderV2
 					DrawM::DrawLineClipped(&l_polygonPipeline->PixelPolygon.v2, &l_polygonPipeline->PixelPolygon.v3, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
 					DrawM::DrawLineClipped(&l_polygonPipeline->PixelPolygon.v3, &l_polygonPipeline->PixelPolygon.v1, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
 				}
-			}
-
-
 		}
+
+
+	}
 
 		_Core::TimeClockPrecision l_after = _Core::Clock_currentTime_mics();
 		std::cout << l_after - l_before << std::endl;
-	};
+};
 
 
 	void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
