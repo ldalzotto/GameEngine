@@ -130,6 +130,5 @@ namespace _MathV2
 		*out_clippedSegment_end = { (int)rintf(l_clippedSegment_end.x) , (int)rintf(l_clippedSegment_end.y) };
 
 		return true;
-
 	}
 }

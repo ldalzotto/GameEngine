@@ -6,6 +6,7 @@
 #include "v2/_interface/VectorStructuresC.h"
 #include "v2/_interface/PlaneC.h"
 #include "v2/_interface/FrustumC.h"
+#include "v2/_interface/RectC.h"
 
 #include "Constants.h"
 
@@ -1091,6 +1092,135 @@ void Frustum_ExtractFromProjection(const MATRIX4F_PTR p_projection, FRUSTUM_PTR 
 
 	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_left_up_near, (VECTOR3F_PTR)&l_right_bottom_near, &out_frustum->Near);
 	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_far, (VECTOR3F_PTR)&l_right_bottom_far, (VECTOR3F_PTR)&l_left_up_far, &out_frustum->Far);
+};
+
+#endif
+
+/************************ CLIP *************************/
+
+#if 1
+
+typedef short int CLIPPOSITION;
+const CLIPPOSITION CLIPPOSITION_INSIDE = 0;
+const CLIPPOSITION CLIPPOSITION_UP = 1;
+const CLIPPOSITION CLIPPOSITION_DOWN = 2;
+const CLIPPOSITION CLIPPOSITION_LEFT = 4;
+const CLIPPOSITION CLIPPOSITION_RIGHT = 8;
+const CLIPPOSITION CLIPPOSITION_UP_LEFT = 1 & 4;
+const CLIPPOSITION CLIPPOSITION_UP_RIGHT = 1 & 8;
+const CLIPPOSITION CLIPPOSITION_DOWN_LEFT = 2 & 4;
+const CLIPPOSITION CLIPPOSITION_DOWN_RIGHT = 2 & 8;
+
+CLIPPOSITION Rect_CalculateClipPosition(const VECTOR2F_PTR p_point, const RECTI_PTR p_clipRect)
+{
+	CLIPPOSITION l_pos = CLIPPOSITION_INSIDE;
+
+	if (p_point->y > p_clipRect->Max.y)
+	{
+		l_pos |= CLIPPOSITION_UP;
+	}
+	else if (p_point->y < p_clipRect->Min.y)
+	{
+		l_pos |= CLIPPOSITION_DOWN;
+	}
+
+	if (p_point->x > p_clipRect->Max.x)
+	{
+		l_pos |= CLIPPOSITION_RIGHT;
+	}
+	else if (p_point->x < p_clipRect->Min.x)
+	{
+		l_pos |= CLIPPOSITION_LEFT;
+	}
+
+	return l_pos;
+}
+
+bool Rect_ClipSegment_Int(const VECTOR2F_PTR in_clippedSegment_begin, const VECTOR2F_PTR in_clippedSegment_end,
+	const RECTI_PTR p_clippedRect, VECTOR2I_PTR out_clippedSegment_begin, VECTOR2I_PTR out_clippedSegment_end)
+{
+	CLIPPOSITION l_beginClip = Rect_CalculateClipPosition(in_clippedSegment_begin, p_clippedRect);
+	CLIPPOSITION l_endClip = Rect_CalculateClipPosition(in_clippedSegment_end, p_clippedRect);
+
+	VECTOR2F l_clippedSegment_begin = *in_clippedSegment_begin;
+	VECTOR2F l_clippedSegment_end = *in_clippedSegment_end;
+
+	if ((l_beginClip != CLIPPOSITION_INSIDE) || (l_endClip != CLIPPOSITION_INSIDE))
+	{
+		CLIPPOSITION l_beginClippedClip = l_beginClip;
+		CLIPPOSITION l_endClippedClip = l_endClip;
+
+		// Not the same region
+		while (true)
+		{
+			if ((l_beginClippedClip == CLIPPOSITION_INSIDE) && (l_endClippedClip == CLIPPOSITION_INSIDE))
+			{
+				break;
+			}
+			else if (l_beginClippedClip & l_endClippedClip)
+			{
+				return false;
+			}
+			else
+			{
+				short int l_selectedPoint = 0;
+				CLIPPOSITION l_selectedClip;
+				if (l_beginClippedClip != CLIPPOSITION_INSIDE)
+				{
+					l_selectedPoint = 0;
+					l_selectedClip = l_beginClippedClip;
+				}
+				else if (l_endClippedClip != CLIPPOSITION_INSIDE)
+				{
+					l_selectedPoint = 1;
+					l_selectedClip = l_endClippedClip;
+				}
+
+				float l_x, l_y;
+
+				if (l_selectedClip & CLIPPOSITION_UP)
+				{
+					l_y = p_clippedRect->Max.y;
+					// deltaX = slope * (fixed position diff)
+					l_x = l_clippedSegment_begin.x + (((float)(l_clippedSegment_end.x - l_clippedSegment_begin.x) / (l_clippedSegment_end.y - l_clippedSegment_begin.y)) * (l_y - l_clippedSegment_begin.y));
+				}
+				else if (l_selectedClip & CLIPPOSITION_DOWN)
+				{
+					l_y = p_clippedRect->Min.y;
+					l_x = l_clippedSegment_begin.x + (((float)(l_clippedSegment_end.x - l_clippedSegment_begin.x) / (l_clippedSegment_end.y - l_clippedSegment_begin.y)) * (l_y - l_clippedSegment_begin.y));
+				}
+				else if (l_selectedClip & CLIPPOSITION_RIGHT)
+				{
+					l_x = p_clippedRect->Max.x;
+					l_y = l_clippedSegment_begin.y + (((float)(l_clippedSegment_end.y - l_clippedSegment_begin.y) / (l_clippedSegment_end.x - l_clippedSegment_begin.x)) * (l_x - l_clippedSegment_begin.x));
+				}
+				else if (l_selectedClip & CLIPPOSITION_LEFT)
+				{
+					l_x = p_clippedRect->Min.x;
+					l_y = l_clippedSegment_begin.y + (((float)(l_clippedSegment_end.y - l_clippedSegment_begin.y) / (l_clippedSegment_end.x - l_clippedSegment_begin.x)) * (l_x - l_clippedSegment_begin.x));
+				}
+
+				if (l_selectedPoint == 0)
+				{
+					l_clippedSegment_begin.x = l_x;
+					l_clippedSegment_begin.y = l_y;
+					l_beginClippedClip = Rect_CalculateClipPosition(&l_clippedSegment_begin, p_clippedRect);
+				}
+				else
+				{
+					l_clippedSegment_end.x = l_x;
+					l_clippedSegment_end.y = l_y;
+					l_endClippedClip = Rect_CalculateClipPosition(&l_clippedSegment_end, p_clippedRect);
+				}
+			}
+		}
+
+	}
+
+	*out_clippedSegment_begin = (VECTOR2I) { (int)rintf(l_clippedSegment_begin.x) , (int)rintf(l_clippedSegment_begin.y) };
+	*out_clippedSegment_end = (VECTOR2I){ (int)rintf(l_clippedSegment_end.x) , (int)rintf(l_clippedSegment_end.y) };
+
+	return true;
 };
 
 #endif

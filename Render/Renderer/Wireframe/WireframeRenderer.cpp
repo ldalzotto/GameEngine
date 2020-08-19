@@ -22,7 +22,7 @@ namespace _RenderV2
 {
 	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, WireframeRenderer_Memory* p_memory)
 	{
-	//	_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
+		_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
 
 		WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 		_MathV2::Vector<3, char> l_wireframeColor = { 255,0,0 };
@@ -108,8 +108,8 @@ namespace _RenderV2
 
 		}
 
-		// _Core::TimeClockPrecision l_after = _Core::Clock_currentTime_mics();
-		// std::cout << l_after - l_before << std::endl;
+		_Core::TimeClockPrecision l_after = _Core::Clock_currentTime_mics();
+		std::cout << l_after - l_before << std::endl;
 	};
 
 

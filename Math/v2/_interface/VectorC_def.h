@@ -1,4 +1,5 @@
 #pragma once
+
 typedef struct VECTOR2F_TYP
 {
 	union
@@ -36,3 +37,12 @@ typedef struct VECTOR2D_TYP
 		double Points[2];
 	};
 } VECTOR2D, * VECTOR2D_PTR;
+
+typedef struct VECTOR2I_TYP
+{
+	union
+	{
+		struct { int x, y; };
+		double Points[2];
+	};
+} VECTOR2I, * VECTOR2I_PTR;
