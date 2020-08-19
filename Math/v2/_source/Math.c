@@ -641,6 +641,11 @@ void Mat_Mul_M4F_V4F_Homogeneous(const MATRIX4F_PTR p_projectionmatrix, const VE
 	Vec_Mul_4f_1f(out_pos, 1.0f / out_pos->w, out_pos);
 };
 
+void Mat_Mul_M3F_M3F(const MATRIX3F_PTR p_left, const MATRIX3F_PTR p_right, MATRIX3F_PTR p_out)
+{
+	Mat_Mul_MXxXf_MXxXf(p_left, p_right, 3, 3, sizeof(VECTOR4F), sizeof(VECTOR4F), p_out);
+};
+
 void Mat_Mul_M3F_V3F(const MATRIX3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
 {
 	Mat_Mul_MXxXf_MXxXf(p_left, p_right, 3, 1, sizeof(VECTOR3F), sizeof(VECTOR3F), p_out);

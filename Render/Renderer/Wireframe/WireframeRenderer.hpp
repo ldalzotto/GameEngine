@@ -5,10 +5,13 @@
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "Raster/Rasterizer.hpp"
 
+extern "C"
+{
+#include "v2/_interface/MatrixC_def.h"
+}
+
 namespace _MathV2
 {
-	template <int C, int L, typename T>
-	struct Matrix;
 	template<typename T>
 	struct Rect;
 }
@@ -30,7 +33,7 @@ namespace _RenderV2
 	{
 		RenderedObjectsBuffer* RenderableObjectsBuffer;
 		CameraBuffer* CameraBuffer;
-		_MathV2::Matrix<4, 4, float>* GraphicsAPIToScreeMatrix;
+		MATRIX4F_PTR GraphicsAPIToScreeMatrix;
 	};
 
 

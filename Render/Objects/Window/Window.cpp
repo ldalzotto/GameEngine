@@ -8,7 +8,6 @@
 #include "Objects/Texture/TextureM.hpp"
 
 #include "Log/LogFormatting.hpp"
-#include "v2/Matrix/MatrixMath.hpp"
 
 namespace _RenderV2
 {
@@ -26,18 +25,24 @@ namespace _RenderV2
 	// void window_size_callback(GLFWwindow* window, int width, int height);
 	void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
 	{
-		_MathV2::Vector3<float> l_right, l_up, l_forward;
+		VECTOR3F l_right, l_up, l_forward;
 		l_right = { 2.0f / (float)p_window->WindowSize.Width , 0.0f, 0.0f };
 		l_up = { 0.0f, 2.0f / (float)p_window->WindowSize.Height, 0.0f };
 		l_forward = { -1.0f, -1.0f, 0.0f };
-		p_window->WindowToGraphicsAPIPixelCoordinates = _MathV2::MatrixM::build(&l_right, &l_up, &l_forward);
+		p_window->WindowToGraphicsAPIPixelCoordinates.Right = l_right;
+		p_window->WindowToGraphicsAPIPixelCoordinates.Up = l_up;
+		p_window->WindowToGraphicsAPIPixelCoordinates.Forward = l_forward;
 
-		_MathV2::Vector4<float> l_col_1, l_col_2, l_col_3, l_col_4;
+		VECTOR4F l_col_1, l_col_2, l_col_3, l_col_4;
 		l_col_1 = { (float)p_window->WindowSize.Width / 2.0f , 0.0f, 0.0f, 0.0f };
 		l_col_2 = { 0.0f,(float)p_window->WindowSize.Height / 2.0f, 0.0f, 0.0f };
 		l_col_3 = { (float)p_window->WindowSize.Width * 0.5f,0.0f, 0.0f, 0.0f };
 		l_col_4 = { 0.0f,(float)p_window->WindowSize.Height * 0.5f, 0.0f, 0.0f };
-		p_window->GraphicsAPIToWindowPixelCoordinates = _MathV2::MatrixM::build(&l_col_1, &l_col_2, &l_col_3, &l_col_4);
+		p_window->GraphicsAPIToWindowPixelCoordinates.Col0 = l_col_1;
+		p_window->GraphicsAPIToWindowPixelCoordinates.Col1 = l_col_2;
+		p_window->GraphicsAPIToWindowPixelCoordinates.Col2 = l_col_3;
+		p_window->GraphicsAPIToWindowPixelCoordinates.Col3 = l_col_4;
+
 	};
 
 	void Window_init(Window* p_window)

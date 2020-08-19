@@ -59,7 +59,7 @@ namespace _RenderV2
 			WireframeRendererInput l_wireFrameRendererInput;
 			l_wireFrameRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectsBuffer;
-			l_wireFrameRendererInput.GraphicsAPIToScreeMatrix = &p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
+			l_wireFrameRendererInput.GraphicsAPIToScreeMatrix = (MATRIX4F_PTR) &p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
 			WireframeRenderer_renderV2(&l_wireFrameRendererInput, &p_render->SwapChain.PresentTexture, &TextureM::buildClipRect(&p_render->SwapChain.PresentTexture), &p_render->WireframeRenderMemory);
 		}
 		{

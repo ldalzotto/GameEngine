@@ -15,9 +15,9 @@ extern "C"
 #include "v2/_interface/TransformC.h"
 #include "v2/_interface/PlaneC.h"
 #include "v2/_interface/GeometryUtils.h"
+#include "v2/_interface/MatrixC.h"
 }
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Matrix/MatrixMath.hpp"
 
 #include <iostream>
 
@@ -199,7 +199,7 @@ namespace _GameEngineEditor
 				&tmp_vec2_0
 			);
 
-		TransformGizmo_setSelectedGizmo(&l_entitySelectionState->TransformGizmoSelectionState, TransformGizmo_determinedSelectedGizmoComponent(&p_entitySelection->TransformGizmoV2, & l_ray));
+		TransformGizmo_setSelectedGizmo(&l_entitySelectionState->TransformGizmoSelectionState, TransformGizmo_determinedSelectedGizmoComponent(&p_entitySelection->TransformGizmoV2, &l_ray));
 	};
 
 	SEGMENT_VECTOR3F entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, _Physics::BoxCollider* p_testedCollider)
@@ -269,7 +269,7 @@ namespace _GameEngineEditor
 			break;
 		}
 	};
-	
+
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
 		VECTOR3F tmp_vec3_1, tmp_vec3_0; QUATERNION4F tmp_quat_1;
@@ -294,7 +294,7 @@ namespace _GameEngineEditor
 				Transform_GetForward(&l_selectedArrow->Transform, &tmp_vec3_0);
 				Geom_LookAtPoint_DirectionVector_PerpendicularToNormal(&tmp_vec3_0, &l_selectedObject_worldPosition, &l_cameraWorldPosition, &l_projectedCameraPos_rotationDirection);
 				Quat_FromTo((const VECTOR3F_PTR)&VECTOR3F_UP, &l_projectedCameraPos_rotationDirection, &tmp_quat_1);
-				
+
 				Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
 				l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 			}
@@ -474,7 +474,7 @@ namespace _GameEngineEditor
 		Transform_GetLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0);
 
 		_RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_meshRendererBound->Boxcollider->Box,
-			(_MathV2::Matrix4x4<float>*) & tmp_mat_0, true, &tmp_vec3_0);
+			&tmp_mat_0, true, &tmp_vec3_0);
 	}
 
 	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const Vector4<float>* p_color)
@@ -717,7 +717,7 @@ namespace _GameEngineEditor
 
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, TRANSFORM_PTR p_followedTransform)
 	{
-		Vector4<float> tmp_vec4_0;
+		VECTOR4F tmp_vec4_0;
 		// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
 		{
 			_ECS::TransformComponent* l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
@@ -726,14 +726,17 @@ namespace _GameEngineEditor
 				Vector3<float> l_followedWorldPosition; Transform_GetWorldPosition(p_followedTransform, (VECTOR3F_PTR)&l_followedWorldPosition);
 				QUATERNION4F l_followedRotation; Transform_GetWorldRotation(p_followedTransform, &l_followedRotation);
 
-				Vector3<float> l_transformGizmoWorldPosition;
+				VECTOR3F l_transformGizmoWorldPosition;
 				{
-					Matrix4x4<float> l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera);
-					Matrix4x4<float> l_clipToWorldMatrix; MatrixM::inv(&l_worldToClipMatrix, &l_clipToWorldMatrix);
+					MATRIX4F l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera);
+					MATRIX4F l_clipToWorldMatrix; Mat_Inv_M4F(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
-					Vector4<float> l_selectedEntityTransformClip; MatrixM::mul_homogeneous(&l_worldToClipMatrix, &VectorM::cast(&l_followedWorldPosition, 1.0f), &l_selectedEntityTransformClip);
+					VECTOR4F l_selectedEntityTransformClip;
+					tmp_vec4_0.Vec3 = *(VECTOR3F_PTR)&l_followedWorldPosition; tmp_vec4_0.Vec3_w = 1.0f;
+					Mat_Mul_M4F_V4F_Homogeneous(&l_worldToClipMatrix, &tmp_vec4_0, &l_selectedEntityTransformClip);
 					l_selectedEntityTransformClip.z = 0.99f; //Fixed distance in clip space from near plane.
-					l_transformGizmoWorldPosition = *VectorM::cast(MatrixM::mul_homogeneous(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &tmp_vec4_0));
+					Mat_Mul_M4F_V4F_Homogeneous(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &tmp_vec4_0);
+					l_transformGizmoWorldPosition = tmp_vec4_0.Vec3;
 				}
 
 				Transform_SetWorldPosition(&l_transformGizmotransform->Transform, (VECTOR3F_PTR)&l_transformGizmoWorldPosition);

@@ -3,9 +3,9 @@
 extern "C"
 {
 #include "v2/_interface/BoxC_def.h"
+#include "v2/_interface/MatrixC_def.h"
 }
 
-#include "v2/Matrix/Matrix.hpp"
 
 namespace _RenderV2
 {
@@ -18,6 +18,6 @@ namespace _RenderV2
 	{
 		Mesh* Mesh;
 		BOXF_PTR MeshBoundingBox;
-		_MathV2::Matrix<4, 4, float> ModelMatrix;
+		MATRIX4F ModelMatrix;
 	};
 }

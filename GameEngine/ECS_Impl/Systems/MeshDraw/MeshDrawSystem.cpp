@@ -115,7 +115,7 @@ namespace _GameEngine::_ECS
 			MeshDrawSystemOperation* l_operation = l_operations.Current;
 			if (l_operation->TransformComponent->Transform.UserFlag_HasChanged)
 			{
-				Transform_GetLocalToWorldMatrix(&l_operation->TransformComponent->Transform, (MATRIX4F_PTR)&l_operation->RenderedObject->ModelMatrix);
+				Transform_GetLocalToWorldMatrix(&l_operation->TransformComponent->Transform, &l_operation->RenderedObject->ModelMatrix);
 				l_operation->TransformComponent->Transform.UserFlag_HasChanged = false;
 			}
 		}

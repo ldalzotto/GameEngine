@@ -7,12 +7,12 @@
 #include "DataStructures/Specifications/VectorT.hpp"
 
 #include "v2/Math.h"
-#include "v2/Matrix/MatrixMath.hpp"
 extern "C"
 {
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/FrustumC.h"
+#include "v2/_interface/MatrixC.h"
 }
 #include "v2/Vector/VectorMath.hpp"
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
 	RenderV2_initialize(&renderV2);
 
-	_MathV2::Matrix<4, 4, float> l_modelMatrix = _MathV2::Matrix4x4f_Identity;
+	MATRIX4F l_modelMatrix = MATRIX4F_IDENTITYF;
 	// l_modelMatrix.Points[3][0] = 15.0f;
 
 	MeshResourceKey l_meshResourceKey;
@@ -53,16 +53,16 @@ int main(int argc, char* argv[])
 		_Core::VectorT_pushBack(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
 	}
 
-	_MathV2::Matrix<4, 4, float> l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
-	_MathV2::Matrix<4, 4, float> l_projectionMatrix;
-	_MathV2::MatrixM::perspective(45.0f * _MathV2::DEG_TO_RAD,
+	MATRIX4F l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
+	MATRIX4F l_projectionMatrix;
+	Mat_Perspective_M4F(45.0f * _MathV2::DEG_TO_RAD,
 		((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, 50.0f, &l_projectionMatrix);
 
 	_MathV2::Vector<4, float> l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	FRUSTUM l_cameraFrustum; Frustum_ExtractFromProjection((MATRIX4F_PTR)&l_projectionMatrix, &l_cameraFrustum);
 
-	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = &l_viewMatrix;
-	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = &l_projectionMatrix;
+	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = (MATRIX4F_PTR)&l_viewMatrix;
+	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = (MATRIX4F_PTR)&l_projectionMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = l_cameraWorldPosition;
 	renderV2.GlobalBuffer.CameraBuffer.CameraFrustum = &l_cameraFrustum;
 
@@ -75,14 +75,15 @@ int main(int argc, char* argv[])
 
 		_Core::AppEvent_pool();
 
-		QUATERNION4F tmp_quat_0; _MathV2::Matrix3x3<float> tmp_mat3x3_0; _MathV2::Matrix4x4<float> tmp_mat4x4_0;
-		_MathV2::Matrix4x4<float> l_rotation = _MathV2::Matrix4x4f_Identity;
+		QUATERNION4F tmp_quat_0; MATRIX3F tmp_mat3x3_0; MATRIX4F tmp_mat4x4_0;
+		MATRIX4F l_rotation = MATRIX4F_IDENTITYF;
 
 		Quat_RotateAround((VECTOR3F_PTR)&VECTOR3F_UP, 0.000001f * l_deltaTime, &tmp_quat_0);
-		Quat_ExtractAxis(&tmp_quat_0, tmp_mat3x3_0.Points);
-		_MathV2::MatrixM::buildRotationMatrix(&tmp_mat3x3_0, &l_rotation);
-		l_renderableObject.ModelMatrix = *_MathV2::MatrixM::mul(&l_renderableObject.ModelMatrix, &l_rotation, &tmp_mat4x4_0);
-
+		Quat_ExtractAxis(&tmp_quat_0, (float(*)[3])tmp_mat3x3_0.Points);
+		Mat_RotationAxis_M4F(&tmp_mat3x3_0, &l_rotation);
+		Mat_Mul_M4F_M4F(&l_renderableObject.ModelMatrix, (MATRIX4F_PTR)&l_rotation, &tmp_mat4x4_0);
+		l_renderableObject.ModelMatrix = tmp_mat4x4_0;
+		
 		RenderV2_render(&renderV2);
 	}
 

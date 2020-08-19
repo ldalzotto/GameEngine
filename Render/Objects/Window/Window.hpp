@@ -3,7 +3,10 @@
 #include "Functional/Callback/ObserverT.hpp"
 #include "Functional/Optional/OptionalT.hpp"
 
-#include "v2/Matrix/Matrix.hpp"
+extern "C"
+{
+#include "v2/_interface/MatrixC_def.h"
+}
 
 #include <vector>
 #include <string>
@@ -47,8 +50,8 @@ namespace _RenderV2
 
 		WindowState WindowState;
 
-		_MathV2::Matrix3x3<float> WindowToGraphicsAPIPixelCoordinates;
-		_MathV2::Matrix4x4<float> GraphicsAPIToWindowPixelCoordinates;
+		MATRIX3F WindowToGraphicsAPIPixelCoordinates;
+		MATRIX4F GraphicsAPIToWindowPixelCoordinates;
 
 		_Core::ObserverT<void> OnWindowSizeChanged;
 	};

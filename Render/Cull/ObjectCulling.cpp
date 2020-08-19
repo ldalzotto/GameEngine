@@ -5,8 +5,8 @@ extern "C"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/VectorC_def.h"
 #include "v2/_interface/Intersection.h"
+#include "v2/_interface/MatrixC.h"
 }
-#include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
 
 
@@ -14,14 +14,14 @@ using namespace _MathV2;
 
 namespace _RenderV2
 {
-	bool ObjectCullingM::isObjectCulled(const BOXF_PTR p_objectBoundingBox_localSpace, const _MathV2::Matrix<4, 4, float>* p_modelMatrix,
-		const _MathV2::Matrix<4, 4, float>* p_objectToCamera_matrix, const FRUSTUM_PTR p_cameraFrustum)
+	bool ObjectCullingM::isObjectCulled(const BOXF_PTR p_objectBoundingBox_localSpace, const MATRIX4F_PTR p_modelMatrix,
+		const MATRIX4F_PTR p_objectToCamera_matrix, const FRUSTUM_PTR p_cameraFrustum)
 	{
 		SPHEREF l_renderBox_asSphere_cameraSpace;
 		{
 			VECTOR4F tmp_vec4_0, tmp_vec4_1;
 			tmp_vec4_0 = { p_objectBoundingBox_localSpace->Center.x, p_objectBoundingBox_localSpace->Center.y, p_objectBoundingBox_localSpace->Center.z, 1.0f };
-			MatrixM::mul(p_objectToCamera_matrix, (_MathV2::Vector4<float>*)&tmp_vec4_0, (_MathV2::Vector4<float>*) &tmp_vec4_1);
+			Mat_Mul_M4F_V4F(p_objectToCamera_matrix, & tmp_vec4_0, & tmp_vec4_1);
 			l_renderBox_asSphere_cameraSpace.Center = tmp_vec4_1.Vec3;
 		}
 		{

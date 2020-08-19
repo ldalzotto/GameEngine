@@ -4,9 +4,9 @@ extern "C"
 {
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/TransformC.h"
+#include "v2/_interface/MatrixC.h"
 }
 #include "Renderer/Draw/DrawFunctions.hpp"
-#include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
 
 using namespace _MathV2;
@@ -38,28 +38,34 @@ namespace _RenderV2
 		_Core::VectorIteratorT<GizmoLine> l_gizmoLines = _Core::VectorT_buildIterator(&p_input->Buffer->Lines);
 		while (_Core::VectorIteratorT_moveNext(&l_gizmoLines))
 		{
-			_MathV2::Vector4<float> tmp_vec4_0;
+			VECTOR4F tmp_vec4_0;
 
-			_MathV2::Vector4<float> l_lineBegin;
-			_MathV2::Vector4<float> l_lineEnd;
+			VECTOR4F l_lineBegin;
+			VECTOR4F l_lineEnd;
 
 			// World to camera
-			_MathV2::MatrixM::mul(p_input->CameraBuffer->ViewMatrix, &_Core::VectorT_at(&p_input->Buffer->Vertices, l_gizmoLines.Current->v1)->WorldPosition, &l_lineBegin);
-			_MathV2::MatrixM::mul(p_input->CameraBuffer->ViewMatrix, &_Core::VectorT_at(&p_input->Buffer->Vertices, l_gizmoLines.Current->v2)->WorldPosition, &l_lineEnd);
+			Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, (VECTOR4F_PTR)&_Core::VectorT_at(&p_input->Buffer->Vertices, l_gizmoLines.Current->v1)->WorldPosition, &l_lineBegin);
+			Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, (VECTOR4F_PTR)&_Core::VectorT_at(&p_input->Buffer->Vertices, l_gizmoLines.Current->v2)->WorldPosition, &l_lineEnd);
 
 			// Camera to clip
-			l_lineBegin = *_MathV2::MatrixM::mul_homogeneous(p_input->CameraBuffer->ProjectionMatrix, &l_lineBegin, &tmp_vec4_0);
-			l_lineEnd = *_MathV2::MatrixM::mul_homogeneous(p_input->CameraBuffer->ProjectionMatrix, &l_lineEnd, &tmp_vec4_0);
+			Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &l_lineBegin, &tmp_vec4_0);
+			l_lineBegin = tmp_vec4_0;
+			Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &l_lineEnd, &tmp_vec4_0);
+			l_lineEnd = tmp_vec4_0;
 
 			// To pixel
 			{
-				l_lineBegin.z = 1.0f; l_lineBegin = *_MathV2::MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_lineBegin, &tmp_vec4_0);
-				l_lineEnd.z = 1.0f; l_lineEnd = *_MathV2::MatrixM::mul(p_input->GraphicsAPIToScreeMatrix, &l_lineEnd, &tmp_vec4_0);
+				l_lineBegin.z = 1.0f;
+				Mat_Mul_M4F_V4F(p_input->GraphicsAPIToScreeMatrix, &l_lineBegin, &tmp_vec4_0);
+				l_lineBegin = tmp_vec4_0;
+				l_lineEnd.z = 1.0f;
+				Mat_Mul_M4F_V4F(p_input->GraphicsAPIToScreeMatrix, &l_lineEnd, &tmp_vec4_0);
+				l_lineEnd = tmp_vec4_0;
 			}
 
 			// Rasterize
 			{
-				DrawM::DrawLineClipped(_MathV2::VectorM::cast2(&l_lineBegin), _MathV2::VectorM::cast2(&l_lineEnd), RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_gizmoLines.Current->Color);
+				DrawM::DrawLineClipped((_MathV2::Vector2<float>*)&l_lineBegin.Vec3.Vec2, (_MathV2::Vector2<float>*) & l_lineEnd.Vec3.Vec2, RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_gizmoLines.Current->Color);
 			}
 		}
 
@@ -154,7 +160,7 @@ namespace _RenderV2
 		}
 	};
 
-	void Gizmo::drawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const _MathV2::Matrix<4, 4, float>* p_localToWorldMatrix, bool p_withCenter, const _MathV2::Vector3<char>* p_color)
+	void Gizmo::drawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const MATRIX4F_PTR p_localToWorldMatrix, bool p_withCenter, const _MathV2::Vector3<char>* p_color)
 	{
 		_MathV2::Vector3<char> l_color = { 255, 255, 255 };
 		if (p_color)
@@ -162,7 +168,7 @@ namespace _RenderV2
 			l_color = *p_color;
 		}
 
-		BOXFPOINTS l_boxPoints; Box_ExtractPoints_F(p_box, &l_boxPoints); BoxPoints_Mul_F_M4F(&l_boxPoints, (const MATRIX4F_PTR)p_localToWorldMatrix, &l_boxPoints);
+		BOXFPOINTS l_boxPoints; Box_ExtractPoints_F(p_box, &l_boxPoints); BoxPoints_Mul_F_M4F(&l_boxPoints, p_localToWorldMatrix, &l_boxPoints);
 
 		GizmoVertexIndex LDF_index, LDB_index, LUF_index, RDF_index, LUB_index, RUF_index, RDB_index, RUB_index;
 		{

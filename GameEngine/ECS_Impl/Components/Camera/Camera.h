@@ -1,10 +1,10 @@
 #pragma once
 
-#include "v2/Matrix/Matrix.hpp"
 extern "C"
 {
 #include "v2/_interface/SegmentC_def.h"
 #include "v2/_interface/FrustumC_def.h"
+#include "v2/_interface/MatrixC_def.h"
 }
 
 #include "Functional/Callback/CallbackT.hpp"
@@ -29,8 +29,8 @@ namespace _GameEngine::_ECS
 	{
 		_ECS::ComponentHeaderT<Camera> ComponentHeader;
 		_RenderV2::RenderV2Interface* RenderInterface;
-		_MathV2::Matrix4x4<float> ProjectionMatrix;
-		_MathV2::Matrix4x4<float> ViewMatrix;
+		MATRIX4F ProjectionMatrix;
+		MATRIX4F ViewMatrix;
 		FRUSTUM CameraFrustum;
 		_Core::CallbackT<Camera, _RenderV2::RenderV2Interface> OnSwapChainBuilded;
 	};
@@ -44,7 +44,7 @@ namespace _GameEngine::_ECS
 	void Camera_init(Camera* p_camera, _RenderV2::RenderV2Interface* p_renderInterface);
 	void Camera_buildProjectionMatrix(Camera* p_camera);
 
-	_MathV2::Matrix4x4<float> Camera_worldToClipMatrix(Camera* p_camera);
+	MATRIX4F Camera_worldToClipMatrix(Camera* p_camera);
 
 	SEGMENT_VECTOR3F Camera_buildWorldSpaceRay(Camera* p_camera, VECTOR2F_PTR p_screenPoint);
 }

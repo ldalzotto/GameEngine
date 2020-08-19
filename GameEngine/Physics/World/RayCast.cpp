@@ -5,12 +5,12 @@
 #include "DataStructures/Specifications/ArrayT.hpp"
 
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Matrix/MatrixMath.hpp"
 
 
 extern "C"
 {
 #include "_interface/Functional.h"
+#include "v2/_interface/MatrixC.h"
 #include "v2/_interface/Intersection.h"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/TransformC.h"

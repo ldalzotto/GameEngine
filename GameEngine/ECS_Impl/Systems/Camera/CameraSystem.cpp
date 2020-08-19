@@ -1,10 +1,10 @@
 #include "CameraSystem.h"
 
-#include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
 
 extern "C"
 {
+#include "v2/_interface/MatrixC.h"
 #include "v2/_interface/TransformC.h"
 }
 
@@ -52,8 +52,8 @@ namespace _GameEngine::_ECS
 		_Core::VectorT_pushBack(&l_cameraSystem->Operations, &l_operation);
 
 		_RenderV2::CameraBuffer* l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
-		l_cameraBuffer->ViewMatrix = &l_operation.Camera->ViewMatrix;
-		l_cameraBuffer->ProjectionMatrix = &l_operation.Camera->ProjectionMatrix;
+		l_cameraBuffer->ViewMatrix = (MATRIX4F_PTR)&l_operation.Camera->ViewMatrix;
+		l_cameraBuffer->ProjectionMatrix = (MATRIX4F_PTR)&l_operation.Camera->ProjectionMatrix;
 		l_cameraBuffer->CameraFrustum = &l_operation.Camera->CameraFrustum;
 	}
 
@@ -98,7 +98,7 @@ namespace _GameEngine::_ECS
 			_RenderV2::CameraBuffer* l_cameraBuffer = l_camera->RenderInterface->GlobalBuffer.CameraBuffer;
 
 			{
-				_MathV2::Vector3<float> tmp_vec3_0; _MathV2::Matrix4x4<float> tmp_mat4_0; _MathV2::Matrix3x3<float> tmp_mat3_0;
+				_MathV2::Vector3<float> tmp_vec3_0; MATRIX4F tmp_mat4_0; MATRIX3F tmp_mat3_0;
 
 				_MathV2::Vector3<float> l_worldPosition; Transform_GetWorldPosition(&l_transform->Transform, (VECTOR3F_PTR)&l_worldPosition);
 				_MathV2::Vector3<float> l_target;
@@ -109,14 +109,9 @@ namespace _GameEngine::_ECS
 				_MathV2::VectorM::mul(&tmp_vec3_0, -1.0f, &l_up);
 
 				tmp_vec3_0 = { 1.0f, 1.0f, 1.0f };
-				_MathV2::MatrixM::inv(
-					_MathV2::MatrixM::buildTRS(
-						&l_worldPosition,
-						_MathV2::MatrixM::lookAt_rotation(&l_worldPosition, &l_target, &l_up, &tmp_mat3_0),
-						&tmp_vec3_0,
-						&tmp_mat4_0),
-					&l_camera->ViewMatrix
-				);
+				Mat_LookAtRotation_F((VECTOR3F_PTR)&l_worldPosition, (VECTOR3F_PTR)&l_target, (VECTOR3F_PTR)&l_up, &tmp_mat3_0);
+				Mat_TRS_Axis_M4F((VECTOR3F_PTR)&l_worldPosition, &tmp_mat3_0, (VECTOR3F_PTR)&tmp_vec3_0, &tmp_mat4_0);
+				Mat_Inv_M4F(&tmp_mat4_0, &l_camera->ViewMatrix);
 
 				l_cameraBuffer->WorldPosition = _MathV2::VectorM::cast(&l_worldPosition, 1.0f);
 			}

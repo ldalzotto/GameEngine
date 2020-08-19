@@ -1,7 +1,5 @@
 #include "WireframeRenderer.hpp"
 
-#include "v2/Matrix/MatrixMath.hpp"
-
 #include "Cull/ObjectCulling.hpp"
 #include "Cull/BackfaceCulling.hpp"
 
@@ -24,7 +22,7 @@ namespace _RenderV2
 {
 	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, WireframeRenderer_Memory* p_memory)
 	{
-		_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
+	//	_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
 
 		WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 		_MathV2::Vector<3, char> l_wireframeColor = { 255,0,0 };
@@ -36,10 +34,10 @@ namespace _RenderV2
 				RenderedObject* l_renderableObject = p_input->RenderableObjectsBuffer->RenderedObjects.Memory[i];
 
 				{
-					Matrix4x4<float> l_object_to_camera;
-					MatrixM::mul(p_input->CameraBuffer->ViewMatrix, &l_renderableObject->ModelMatrix, &l_object_to_camera);
+					MATRIX4F l_object_to_camera;
+					Mat_Mul_M4F_M4F((MATRIX4F_PTR)p_input->CameraBuffer->ViewMatrix, &l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, &l_renderableObject->ModelMatrix, &l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
+					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, (MATRIX4F_PTR)&l_renderableObject->ModelMatrix, (MATRIX4F_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 					{
 						// Push polygons
 						for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
@@ -96,7 +94,7 @@ namespace _RenderV2
 				{
 					tmp_poly_4f_1 = l_polygonPipeline->TransformedPolygon;
 					tmp_poly_4f_1.v1.z = 1.0f; tmp_poly_4f_1.v2.z = 1.0f; tmp_poly_4f_1.v3.z = 1.0f;
-					l_polygonPipeline->PixelPolygon = PolygonM::cast_value_2(PolygonM::mul(&tmp_poly_4f_1, p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0));
+					l_polygonPipeline->PixelPolygon = PolygonM::cast_value_2(PolygonM::mul(&tmp_poly_4f_1, (MATRIX4F_PTR)p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0));
 				}
 
 				// Rasterize
@@ -110,8 +108,8 @@ namespace _RenderV2
 
 		}
 
-		_Core::TimeClockPrecision l_after = _Core::Clock_currentTime_mics();
-		std::cout << l_after - l_before << std::endl;
+		// _Core::TimeClockPrecision l_after = _Core::Clock_currentTime_mics();
+		// std::cout << l_after - l_before << std::endl;
 	};
 
 

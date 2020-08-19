@@ -9,6 +9,7 @@ typedef struct MATRIX3F_TYP
 		float Points[9];
 		struct { float _00, _01, _02, _10, _11, _12, _20, _21, _22; };
 		struct { VECTOR3F Col0, Col1, Col2; };
+		struct { VECTOR3F Right, Up, Forward; };
 	};
 } MATRIX3F, * MATRIX3F_PTR;
 
