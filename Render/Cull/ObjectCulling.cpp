@@ -4,8 +4,8 @@ extern "C"
 {
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/VectorC_def.h"
+#include "v2/_interface/Intersection.h"
 }
-#include "v2/Intersection/Intersection.h"
 #include "v2/Matrix/MatrixMath.hpp"
 #include "v2/Vector/VectorMath.hpp"
 

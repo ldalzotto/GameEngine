@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DataStructuresC/_interface/ARRAY.h"
+#include "_interface/DataStructures/ARRAY.h"
 #include "TransformC_def.h"
 #include "v2/_interface/MatrixC_def.h"
 

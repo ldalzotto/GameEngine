@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Functional/Equals/Equals.h"
 
@@ -52,8 +53,8 @@ const VECTOR3F VECTOR3F_FORWARD = { 0.0f, 0.0f, 1.0f };
 
 inline void Vec_Min_Xd_Xd(const char* p_left, const char* p_right, const short int p_elementCount, char* p_out)
 {
-	char* l_leftCursor = p_left;
-	char* l_rightCursor = p_right;
+	char* l_leftCursor = (char*)p_left;
+	char* l_rightCursor = (char*)p_right;
 	char* l_outCursor = p_out;
 
 	for (short int i = 0; i < p_elementCount; i++)
@@ -68,8 +69,8 @@ inline void Vec_Min_Xd_Xd(const char* p_left, const char* p_right, const short i
 
 inline void Vec_Min_Xf_Xf(const char* p_left, const char* p_right, const short int p_elementCount, char* p_out)
 {
-	char* l_leftCursor = p_left;
-	char* l_rightCursor = p_right;
+	char* l_leftCursor = (char*)p_left;
+	char* l_rightCursor = (char*)p_right;
 	char* l_outCursor = p_out;
 
 	for (short int i = 0; i < p_elementCount; i++)
@@ -84,7 +85,7 @@ inline void Vec_Min_Xf_Xf(const char* p_left, const char* p_right, const short i
 
 void Vec_Min_2d_2d(const VECTOR2D_PTR p_left, const VECTOR2D_PTR p_right, VECTOR2D_PTR p_out)
 {
-	Vec_Min_Xd_Xd(p_left, p_right, 2, p_out);
+	Vec_Min_Xd_Xd((const char*)p_left, (const char*)p_right, 2, (char*)p_out);
 };
 
 void Vec_Min_3f_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
@@ -958,8 +959,6 @@ void Box_ExtractPoints_F(const BOXF_PTR p_box, BOXFPOINTS_PTR p_out)
 	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_F);
 	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_U_B);
 	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_B);
-
-	return p_out;
 };
 
 void Box_ExtractMinMax_F(const BOXF_PTR p_box, VECTOR3F_PTR out_min, VECTOR3F_PTR out_max)

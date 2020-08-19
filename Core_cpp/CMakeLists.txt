@@ -10,3 +10,6 @@ add_library(Core_cpp ${CORE_CPP_HEADER} ${CORE_CPP_SOURCE})
 
 target_include_directories(Core_cpp PUBLIC "./")
 
+
+target_link_libraries(Core_cpp PUBLIC Core_c)
+

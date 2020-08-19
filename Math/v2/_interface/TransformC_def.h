@@ -4,7 +4,7 @@
 #include "VectorC_def.h"
 #include "QuaternionC_def.h"
 #include "MatrixC_def.h"
-#include "DataStructuresC/_interface/ARRAY_def.h"
+#include "_interface/DataStructures/ARRAY_def.h"
 
 typedef struct TRANSFORM_TYP* TRANSFORM_PTR;
 

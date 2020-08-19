@@ -7,6 +7,7 @@
 extern "C"
 {
 #include "Functional/Equals/Equals.h"
+#include "_interface/Functional.h"
 }
 
 namespace _Core
@@ -24,7 +25,7 @@ namespace _Core
 
 	short int SortedSequencerOperation_elementSorter(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right, void* p_null)
 	{
-		return SortCompare_uint16_uint16(&p_left->Priority, &p_right->Priority);
+		return Compare_uint16_uint16(&p_left->Priority, &p_right->Priority);
 	}
 
 	void SortedSequencer_alloc(SortedSequencer* p_sequencer)

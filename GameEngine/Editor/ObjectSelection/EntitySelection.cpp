@@ -6,10 +6,10 @@
 #include "GameEngineApplicationInterface.h"
 
 #include "v2/Math.h"
-#include "v2/Intersection/Intersection.h"
 
 extern "C"
 {
+#include "v2/_interface/Intersection.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/TransformC.h"

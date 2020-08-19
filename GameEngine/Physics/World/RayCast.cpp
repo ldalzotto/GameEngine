@@ -6,10 +6,12 @@
 
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
-#include "v2/Intersection/Intersection.h"
+
 
 extern "C"
 {
+#include "_interface/Functional.h"
+#include "v2/_interface/Intersection.h"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/TransformC.h"
 }
@@ -41,7 +43,7 @@ namespace _GameEngine::_Physics
 		}
 
 		float l_rightDistance = VectorM::distance(&p_comparatorObject->RayBegin, &p_right->HitPoint);
-		short l_comparisonResult = _Core::SortCompare_float_float(&l_leftDistance, &l_rightDistance);
+		short l_comparisonResult = Compare_float_float(&l_leftDistance, &l_rightDistance);
 
 		if (l_comparisonResult >= 0) { p_comparatorObject->CachedDistance = l_leftDistance; p_comparatorObject->DistanceCalculated = true; }
 		return l_comparisonResult;

@@ -1,4 +1,4 @@
-#include "DataStructuresC/_interface/ARRAY.h"
+#include "_interface/DataStructures/ARRAY.h"
 #include <string.h>
 
 #define ARRAY_ELEMENTSIZE_PARAMETER_INPUT p_array, p_elementSize
@@ -51,7 +51,7 @@ void Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 	if (p_array->Size >= p_array->Capacity)
 	{
 		Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Capacity == 0 ? 1 : (p_array->Capacity * 2));
-		return Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_value);
+		Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_value);
 	}
 	else
 	{
