@@ -14,6 +14,7 @@ extern "C"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/TransformC.h"
 #include "v2/_interface/PlaneC.h"
+#include "v2/_interface/GeometryUtils.h"
 }
 #include "v2/Vector/VectorMath.hpp"
 #include "v2/Matrix/MatrixMath.hpp"
@@ -268,7 +269,7 @@ namespace _GameEngineEditor
 			break;
 		}
 	};
-
+	
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
 		VECTOR3F tmp_vec3_1, tmp_vec3_0; QUATERNION4F tmp_quat_1;
@@ -286,18 +287,14 @@ namespace _GameEngineEditor
 
 			if (!l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet)
 			{
-				/*
 				VECTOR3F l_selectedObject_worldPosition; Transform_GetWorldPosition(&l_transformComponent->Transform, &l_selectedObject_worldPosition);
-				VECTOR3F l_selectedObject_worldPosition_forward;
-				Transform_GetForward(&l_selectedArrow->Transform, &tmp_vec3_0);
-				Vec_Add_3f_3f(&l_selectedObject_worldPosition, &tmp_vec3_0, &l_selectedObject_worldPosition_forward);
-				VECTOR3F l_cameraWorldPosition; Transform_GetWorldPosition(l_entitySelectionState->CachedStructures.ActiveCameraTransform, &l_cameraWorldPosition);
+				VECTOR3F l_cameraWorldPosition; Transform_GetWorldPosition(&l_entitySelectionState->CachedStructures.ActiveCameraTransform->Transform, &l_cameraWorldPosition);
 
-				PLANE l_normalToDirectionPlane;
-				Plane_Build_3Points(&l_selectedObject_worldPosition, &l_selectedObject_worldPosition_forward, &l_cameraWorldPosition, &l_normalToDirectionPlane);
-				*/
+				VECTOR3F l_projectedCameraPos_rotationDirection;
+				Transform_GetForward(&l_selectedArrow->Transform, &tmp_vec3_0);
+				Geom_LookAtPoint_DirectionVector_PerpendicularToNormal(&tmp_vec3_0, &l_selectedObject_worldPosition, &l_cameraWorldPosition, &l_projectedCameraPos_rotationDirection);
+				Quat_FromTo((const VECTOR3F_PTR)&VECTOR3F_UP, &l_projectedCameraPos_rotationDirection, &tmp_quat_1);
 				
-				Transform_GetWorldRotation(&l_selectedArrow->Transform, &tmp_quat_1);
 				Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
 				l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 			}
@@ -328,41 +325,31 @@ namespace _GameEngineEditor
 		if (!l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet)
 		{
 			//We position the guide plane
-			if (l_selectedRotation == p_entitySelection->TransformGizmoV2.RightGizmo)
-			{
-				QUATERNION4F tmp_quat_0, tmp_quat_1, tmp_quat_2;
+			VECTOR3F l_selectedObject_worldPosition; Transform_GetWorldPosition(&l_transformComponent->Transform, &l_selectedObject_worldPosition);
+			VECTOR3F l_cameraWorldPosition; Transform_GetWorldPosition(&l_entitySelectionState->CachedStructures.ActiveCameraTransform->Transform, &l_cameraWorldPosition);
 
-				Transform_GetWorldRotation(&l_transformComponent->Transform, &tmp_quat_2);
-				Quat_RotateAround((VECTOR3F_PTR)&VECTOR3F_FORWARD, -M_PI * 0.5f, &tmp_quat_0);
-				Quat_Mul(&tmp_quat_2, &tmp_quat_0, &tmp_quat_1);
-				Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
-			}
-			else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.UpGizmo)
-			{
-				QUATERNION4F tmp_quat;
-				Transform_GetWorldRotation(&p_entitySelection->TransformGizmoV2.ForwardGizmo->Transform, &tmp_quat);
-				Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat);
-			}
-			else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ForwardGizmo)
-			{
-				QUATERNION4F tmp_quat_0, tmp_quat_1, tmp_quat_2;
-
-				Transform_GetWorldRotation(&l_transformComponent->Transform, &tmp_quat_2);
-				Quat_RotateAround((VECTOR3F_PTR)&VECTOR3F_RIGHT, M_PI * 0.5f, &tmp_quat_0);
-				Quat_Mul(&tmp_quat_2, &tmp_quat_0, &tmp_quat_1);
-				Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
-			}
+			VECTOR3F l_selectedObject_toCamera_direction; Vec_Min_3f_3f(&l_cameraWorldPosition, &l_selectedObject_worldPosition, &l_selectedObject_toCamera_direction);
+			Vec_Normalize_3f(&l_selectedObject_toCamera_direction, &l_selectedObject_toCamera_direction);
+			QUATERNION4F l_planeOritentation; Quat_FromTo((const VECTOR3F_PTR)&VECTOR3F_UP, &l_selectedObject_toCamera_direction, &l_planeOritentation);
+			Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &l_planeOritentation);
 
 			l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 		}
 
 		//calcualte rotation axis, the normal to the plane
 		{
-			VECTOR3F tmp_vec3_0, tmp_vec3_1;
-			l_rotationAxis_worldSpace;
-			Transform_GetForward(&l_transformGizmoPlane->Transform, &tmp_vec3_0);
-			Transform_GetRight(&l_transformGizmoPlane->Transform, &tmp_vec3_1);
-			Vec_Cross_3f(&tmp_vec3_0, &tmp_vec3_1, (VECTOR3F_PTR)&l_rotationAxis_worldSpace);
+			if (l_selectedRotation == p_entitySelection->TransformGizmoV2.RightGizmo)
+			{
+				Transform_GetRight(&l_transformComponent->Transform, (VECTOR3F_PTR)&l_rotationAxis_worldSpace);
+			}
+			else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.UpGizmo)
+			{
+				Transform_GetUp(&l_transformComponent->Transform, (VECTOR3F_PTR)&l_rotationAxis_worldSpace);
+			}
+			else if (l_selectedRotation == p_entitySelection->TransformGizmoV2.ForwardGizmo)
+			{
+				Transform_GetForward(&l_transformComponent->Transform, (VECTOR3F_PTR)&l_rotationAxis_worldSpace);
+			}
 		}
 
 
@@ -425,7 +412,14 @@ namespace _GameEngineEditor
 			Transform_SetWorldPosition(&l_transformGizmoPlane->Transform, &tmp_vec3_1);
 			if (!l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet)
 			{
-				Transform_GetWorldRotation(&l_selectedScale->Transform, &tmp_quat_1);
+				VECTOR3F l_selectedObject_worldPosition; Transform_GetWorldPosition(&l_transformComponent->Transform, &l_selectedObject_worldPosition);
+				VECTOR3F l_cameraWorldPosition; Transform_GetWorldPosition(&l_entitySelectionState->CachedStructures.ActiveCameraTransform->Transform, &l_cameraWorldPosition);
+
+				VECTOR3F l_projectedCameraPos_rotationDirection;
+				Transform_GetForward(&l_selectedScale->Transform, &tmp_vec3_0);
+				Geom_LookAtPoint_DirectionVector_PerpendicularToNormal(&tmp_vec3_0, &l_selectedObject_worldPosition, &l_cameraWorldPosition, &l_projectedCameraPos_rotationDirection);
+				Quat_FromTo((const VECTOR3F_PTR)&VECTOR3F_UP, &l_projectedCameraPos_rotationDirection, &tmp_quat_1);
+
 				Transform_SetLocalRotation(&l_transformGizmoPlane->Transform, &tmp_quat_1);
 				l_entitySelectionState->TransformGizmoSelectionState.GuidePlaneRotationSet = true;
 			}

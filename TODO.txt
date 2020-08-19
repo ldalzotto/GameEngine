@@ -1,6 +1,6 @@
 -- TODO --
 
-Entity Selection - The Guide plane is not correctly oriented, instead of begin fixed for direction axes it must depend of the camera position : 
+[X] Entity Selection - The Guide plane is not correctly oriented, instead of begin fixed for direction axes it must depend of the camera position : 
 	- Position & Scale : The plane normal must face the camera as mush as possible, by staying // to the axis involved. We create a plane perpendicular to the direction, then we project the camera position to it. The direction from
 		the projected point will give us the wanted normal vector of the guide plane.
 	- Rotation : The plane is always facing the camera.

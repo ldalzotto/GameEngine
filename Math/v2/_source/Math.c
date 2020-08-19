@@ -1,4 +1,4 @@
-#include "v2/_interface/VectorC.h"
+﻿#include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/SegmentC.h"
@@ -1016,6 +1016,14 @@ float Plane_MinimumDistance_V3F(const PLANE_PTR p_plane, const VECTOR3F_PTR p_po
 	VECTOR3F l_d;
 	Vec_Min_3f_3f(p_point, &p_plane->Point, &l_d);
 	return fabsf(Vec_Dot_3f(&l_d, &p_plane->Normal));
+};
+
+void Plane_ProjectPoint(const PLANE_PTR p_plane, const VECTOR3F_PTR p_point, VECTOR3F_PTR out_projectedPoint)
+{
+	VECTOR3F l_displacement; Vec_Min_3f_3f(p_point, &p_plane->Point, &l_displacement);
+	VECTOR3F l_displacement_alongPlaneNormal; Vec_Project_3f(&l_displacement, &p_plane->Normal, &l_displacement_alongPlaneNormal);
+	VECTOR3F l_displacement_alongPlane; Vec_Min_3f_3f(&l_displacement, &l_displacement_alongPlaneNormal, &l_displacement_alongPlane);
+	Vec_Add_3f_3f(&p_plane->Point, &l_displacement_alongPlane, out_projectedPoint);
 };
 
 #endif
