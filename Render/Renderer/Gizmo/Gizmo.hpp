@@ -4,18 +4,13 @@ extern "C"
 {
 #include "v2/_interface/TransformC_def.h"
 #include "v2/_interface/BoxC_def.h"
+#include "v2/_interface/RectC_def.h"
 }
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/Vector.hpp"
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 #include "Raster/Rasterizer.hpp"
-
-namespace _MathV2
-{
-	template<typename T>
-	struct Rect;
-}
 
 namespace _Core
 {
@@ -64,7 +59,7 @@ namespace _RenderV2
 
 	struct Gizmo
 	{
-		static void render(GizmoRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
+		static void render(GizmoRendererInput* p_input, Texture<3, char>* p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
 
 		static void drawLine(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end);
 		static void drawLine(GizmoBuffer* p_gizmo, const _MathV2::Vector3<float>* p_begin, const _MathV2::Vector3<float>* p_end, const _MathV2::Vector3<char>* p_color);

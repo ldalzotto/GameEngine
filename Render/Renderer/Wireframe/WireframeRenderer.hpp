@@ -8,12 +8,7 @@
 extern "C"
 {
 #include "v2/_interface/MatrixC_def.h"
-}
-
-namespace _MathV2
-{
-	template<typename T>
-	struct Rect;
+#include "v2/_interface/RectC_def.h"
 }
 
 namespace _RenderV2
@@ -63,5 +58,5 @@ namespace _RenderV2
 	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height);
 	void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory);
 
-	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, WireframeRenderer_Memory* p_memory);
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory);
 }

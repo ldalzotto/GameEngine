@@ -21,7 +21,6 @@ extern "C"
 #include "Objects/Resource/Mesh.hpp"
 #include "Objects/RenderedObject.hpp"
 
-#include "v2/Clip/ClipMath.hpp"
 #include "File/ObjReader.hpp"
 
 using namespace _RenderV2;
@@ -38,7 +37,7 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	MATRIX4F l_modelMatrix = MATRIX4F_IDENTITYF;
-	// l_modelMatrix.Points[3][0] = 15.0f;
+	// l_modelMatrix.Col3.x = 12.0f;
 
 	MeshResourceKey l_meshResourceKey;
 	_Core::String_alloc(&l_meshResourceKey.MeshPathAbsolute, 0); _Core::String_append(&l_meshResourceKey.MeshPathAbsolute, "C:/Users/loicd/Desktop/BigCube.obj");

@@ -43,6 +43,6 @@ typedef struct VECTOR2I_TYP
 	union
 	{
 		struct { int x, y; };
-		double Points[2];
+		int Points[2];
 	};
 } VECTOR2I, * VECTOR2I_PTR;

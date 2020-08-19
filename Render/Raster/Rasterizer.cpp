@@ -5,9 +5,11 @@
 
 #include "Constants.h"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Clip/ClipMath.hpp"
+extern "C"
+{
+#include "v2/_interface/RectC.h"
+}
 #include "DataStructures/Specifications/VectorT.hpp"
-#include "v2/Rect/Rect.hpp"
 #include <string.h>
 
 namespace _RenderV2
@@ -71,12 +73,12 @@ namespace _RenderV2
 	bool Rasterizer::line_v3_clipped(
 		const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
 		_Core::VectorT<RasterizationStep>* out_rasterizedPixels,
-		const _MathV2::Rect<int>* p_clip_rect,
+		const RECTI_PTR p_clip_rect,
 		_MathV2::Vector<2, int>* out_clipped_begin,
 		_MathV2::Vector<2, int>* out_clipped_end
 	)
 	{
-		if (_MathV2::ClipM::clip(p_begin, p_end, p_clip_rect, out_clipped_begin, out_clipped_end))
+		if (Rect_ClipSegment_Int((VECTOR2F_PTR)p_begin, (VECTOR2F_PTR)p_end, p_clip_rect, (VECTOR2I_PTR)out_clipped_begin, (VECTOR2I_PTR)out_clipped_end))
 		{
 			line_v3(out_clipped_begin, out_clipped_end, out_rasterizedPixels);
 			return true;

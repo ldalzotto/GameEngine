@@ -9,7 +9,7 @@ namespace _RenderV2
 	void DrawM::DrawLineClipped(
 		_MathV2::Vector<2, float>* p_begin, _MathV2::Vector<2, float>* p_end,
 		_Core::VectorT<RasterizationStep>* in_out_rasterizedPixelsBuffer,
-		Texture<3, char>* p_to, _MathV2::Rect<int>* p_clipRect,
+		Texture<3, char>* p_to, RECTI_PTR  p_clipRect,
 		_MathV2::Vector<3, char>* p_color)
 	{
 		_Core::VectorT_clear(in_out_rasterizedPixelsBuffer);

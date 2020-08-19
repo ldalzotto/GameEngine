@@ -4,7 +4,10 @@
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "v2/Vector/VectorMath.hpp"
-#include "v2/Rect/Rect.hpp"
+extern "C"
+{
+#include "v2/_interface/RectC_def.h"
+}
 
 namespace _RenderV2
 {
@@ -41,7 +44,7 @@ namespace _RenderV2
 		};
 
 		template <int N, typename T>
-		inline static _MathV2::Rect<int> buildClipRect(Texture<N, T>* p_texture)
+		inline static RECTI buildClipRect(Texture<N, T>* p_texture)
 		{
 			return { {0,0}, {(int)p_texture->Width - 1, (int)p_texture->Height - 1} };
 		};

@@ -1,6 +1,10 @@
 #pragma once
 
 #include "v2/Vector/Vector.hpp"
+extern "C"
+{
+#include "v2/_interface/RectC_def.h"
+}
 
 namespace _Core
 {
@@ -9,12 +13,6 @@ namespace _Core
 
 	template <typename T>
 	struct ArraySliceT;
-}
-
-namespace _MathV2
-{
-	template<typename T>
-	struct Rect;
 }
 
 namespace _RenderV2
@@ -38,7 +36,7 @@ namespace _RenderV2
 		static bool line_v3_clipped(
 			const _MathV2::Vector<2, float>* p_begin, const _MathV2::Vector<2, float>* p_end,
 			_Core::VectorT<RasterizationStep>* out_rasterizedPixels,
-			const _MathV2::Rect<int>* p_clip_rect,
+			const RECTI_PTR p_clip_rect,
 			_MathV2::Vector<2, int>* out_clipped_begin,
 			_MathV2::Vector<2, int>* out_clipped_end);
 	};

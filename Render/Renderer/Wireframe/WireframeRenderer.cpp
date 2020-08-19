@@ -20,7 +20,7 @@ using namespace _MathV2;
 
 namespace _RenderV2
 {
-	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, _MathV2::Rect<int>* p_to_clipRect, WireframeRenderer_Memory* p_memory)
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture<3, char>* p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
 	{
 		_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
 

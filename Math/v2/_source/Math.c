@@ -1157,6 +1157,7 @@ bool Rect_ClipSegment_Int(const VECTOR2F_PTR in_clippedSegment_begin, const VECT
 			{
 				break;
 			}
+			// Outside of the rect
 			else if (l_beginClippedClip & l_endClippedClip)
 			{
 				return false;
