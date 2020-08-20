@@ -20,7 +20,7 @@ namespace _GameEngine::_ECS
 	{
 		_ECS::ComponentHeaderT<MeshRenderer> ComponentHeader;
 		_RenderV2::RenderV2Interface* RenderInterface;
-		MESHRESOURCE_PTR MeshResource;
+		MESHRESOURCE_HANDLE MeshResource;
 		BOXF MeshBoundingBox;
 	};
 

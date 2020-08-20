@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 	MATRIX4F l_modelMatrix = MATRIX4F_IDENTITYF;
 	// l_modelMatrix.Col3.x = 12.0f;
 
-	MESHRESOURCE_PTR l_mesh;
+	MESHRESOURCE_HANDLE l_mesh;
 	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);
 	RenderedObject l_renderableObject;
 	RenderedObject* l_renderableObject_ptr = &l_renderableObject;
