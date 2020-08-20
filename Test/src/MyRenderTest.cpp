@@ -1,4 +1,3 @@
-#include "RenderV2.hpp"
 
 #include <cstdlib>
 #include <stdlib.h> 
@@ -7,6 +6,7 @@
 
 extern "C"
 {
+#include "RenderV2.h"
 #include "AppEvent/AppEvent.h"
 #include "v2/Math.h"
 #include "v2/_interface/VectorC.h"
@@ -16,18 +16,16 @@ extern "C"
 #include "v2/_interface/MatrixC.h"
 
 #include "DataStructures/STRING.h"
+#include "Objects/RenderedObject.h"
+#include "Clock/Clock.h"
 }
 
-#include "Clock/Clock.hpp"
 
-#include "Objects/RenderedObject.hpp"
 
 #include "File/ObjReader.h"
 
-using namespace _RenderV2;
-
 RenderV2 renderV2;
-_Core::TimeClockPrecision LastFrameTime = 0;
+TimeClockPrecision LastFrameTime = 0;
 
 int main(int argc, char* argv[])
 {
@@ -51,7 +49,7 @@ int main(int argc, char* argv[])
 
 	AppEvent_initialize();
 
-	LastFrameTime = _Core::Clock_currentTime_mics();
+	LastFrameTime = Clock_currentTime_mics();
 
 	RenderV2_initialize(&renderV2);
 
@@ -60,14 +58,14 @@ int main(int argc, char* argv[])
 
 	MESHRESOURCE_HANDLE l_mesh;
 	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);
-	RenderedObject l_renderableObject;
-	RenderedObject* l_renderableObject_ptr = &l_renderableObject;
+	RENDEREDOBJECT l_renderableObject;
+	RENDEREDOBJECT_PTR l_renderableObject_ptr = &l_renderableObject;
 	BOXF l_meshBoundingBox{};
 	{
 		ARRAY_VECTOR3F l_vertices = { .Memory = (VECTOR3F_PTR)l_mesh->Mesh.Vertices.Memory, .Size = l_mesh->Mesh.Vertices.Size, .Capacity = l_mesh->Mesh.Vertices.Capacity };
 		Box_Build_F(&l_meshBoundingBox, &l_vertices);
 		l_renderableObject = { &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
-		_Core::VectorT_pushBack(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
+		Arr_PushBackRealloc_RenderedObjectHandle(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
 	}
 
 	MATRIX4F l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
@@ -85,10 +83,10 @@ int main(int argc, char* argv[])
 
 
 
-	while (!_RenderV2::Window_askedForClose(&renderV2.AppWindow))
+	while (!Window_askedForClose(&renderV2.AppWindow))
 	{
-		float l_deltaTime = _Core::Clock_currentTime_mics() - LastFrameTime;
-		LastFrameTime = _Core::Clock_currentTime_mics();
+		float l_deltaTime = Clock_currentTime_mics() - LastFrameTime;
+		LastFrameTime = Clock_currentTime_mics();
 
 		AppEvent_pool();
 

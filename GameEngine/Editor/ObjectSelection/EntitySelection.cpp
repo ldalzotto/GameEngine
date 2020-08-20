@@ -17,6 +17,8 @@ extern "C"
 #include "v2/_interface/GeometryUtils.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorC.h"
+#include "Renderer/Gizmo/Gizmo.h"
+#include "RenderV2.h"
 }
 
 #include <iostream>
@@ -37,10 +39,6 @@ extern "C"
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
 
-// #include "Render/Gizmo/Gizmo.h"
-#include "Renderer/Gizmo/Gizmo.hpp"
-#include "RenderV2.hpp"
-#include "Objects/Window/Window.hpp"
 
 using namespace _GameEngine;
 
@@ -466,11 +464,11 @@ namespace _GameEngineEditor
 		tmp_vec3_0 = { (char)255, (char)255, (char)255 };
 		Transform_GetLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0);
 
-		_RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_meshRendererBound->Boxcollider->Box,
+		Gizmo_DrawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_meshRendererBound->Boxcollider->Box,
 			&tmp_mat_0, true, &tmp_vec3_0);
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const VECTOR3C_PTR p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, RenderV2Interface* p_renderInterface, const VECTOR3C_PTR p_color)
 	{
 		_ECS::Entity* l_arrowEntity;
 		_ECS::TransformComponent* l_transform;
@@ -505,7 +503,7 @@ namespace _GameEngineEditor
 		return l_transform;
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const VECTOR3C_PTR p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, RenderV2Interface* p_renderInterface, const VECTOR3C_PTR p_color)
 	{
 		_ECS::Entity* l_rotationEntity;
 		_ECS::TransformComponent* l_transform;
@@ -540,7 +538,7 @@ namespace _GameEngineEditor
 		return l_transform;
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocScale(_ECS::ECS* p_ecs, _RenderV2::RenderV2Interface* p_renderInterface, const VECTOR3C_PTR p_color)
+	_ECS::TransformComponent* transformGizmoV2_allocScale(_ECS::ECS* p_ecs, RenderV2Interface* p_renderInterface, const VECTOR3C_PTR p_color)
 	{
 		_ECS::Entity* l_arrowEntity;
 		_ECS::TransformComponent* l_transform;

@@ -3,12 +3,12 @@
 #include <iostream>
 #include <math.h>
 
-#include "Objects/Window/Window.hpp"
 
 extern "C"
 {
 #include "v2/Math.h"
 #include "v2/_interface/VectorC.h"
+#include "Objects/Window/Window.h"
 }
 
 namespace _GameEngine::_Input
@@ -28,7 +28,7 @@ namespace _GameEngine::_Input
 		return l_segment;
 	};
 
-	void Input_build(Input* p_input, _RenderV2::Window* p_window, ::_Core::Log* Log)
+	void Input_build(Input* p_input, Window* p_window, ::_Core::Log* Log)
 	{
 		InputInstance = p_input;
 		p_input->Window = p_window;
@@ -113,7 +113,7 @@ namespace _GameEngine::_Input
 
 			Vec_Min_2d_2d(&p_input->InputMouse.ScreenPosition, &p_input->InputMouse.LastFrameMouseAbsoluteScreenPosition, &p_input->InputMouse.MouseDelta);
 
-			auto l_windowDimensions = _RenderV2::Window_getSize(p_input->Window);
+			auto l_windowDimensions = Window_getSize(p_input->Window);
 
 			p_input->InputMouse.ScreenPosition.x = Math_max(Math_min(p_input->InputMouse.ScreenPosition.x, static_cast<double>(l_windowDimensions.Width)), 0.0f);
 			p_input->InputMouse.ScreenPosition.y = Math_max(Math_min(p_input->InputMouse.ScreenPosition.y, static_cast<double>(l_windowDimensions.Height)), 0.0f);

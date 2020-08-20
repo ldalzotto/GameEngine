@@ -8,14 +8,10 @@ extern "C"
 {
 #include "v2/_interface/SegmentC_def.h"
 #include "v2/_interface/VectorC_def.h"
+#include "Objects/Window/Window_def.h"
 }
 
 #include <queue>
-
-namespace _RenderV2
-{
-	struct Window;
-}
 
 namespace _Core
 {
@@ -50,7 +46,7 @@ namespace _GameEngine::_Input
 
 	struct Input
 	{
-		_RenderV2::Window* Window;
+		Window* Window;
 		::_Core::Log* Log;
 
 		std::vector<KeyStateFlag> InputState;
@@ -60,7 +56,7 @@ namespace _GameEngine::_Input
 		InputMouse InputMouse;
 	};
 
-	void Input_build(Input* p_input, _RenderV2::Window* p_window, ::_Core::Log* Log);
+	void Input_build(Input* p_input, Window* p_window, ::_Core::Log* Log);
 	void Input_free(Input* p_input);
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);

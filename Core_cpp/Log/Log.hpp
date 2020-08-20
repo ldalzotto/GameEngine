@@ -7,14 +7,9 @@
 extern "C"
 {
 #include "DataStructures/STRING_def.h"
+#include "Clock/Clock.h"
 }
 #include "Log/LogFormatting.hpp"
-#include "Clock/Clock.hpp"
-
-namespace _Core
-{
-	struct Clock;
-}
 
 namespace _Core
 {
@@ -43,12 +38,12 @@ namespace _Core
 	struct Log
 	{
 		VectorT<LogMessage> LogMessages;
-		Clock* Clock;
+		CLOCK_PTR Clock;
 
 		char TmpFinalMessage[LOG_FINAL_MESSAGE_MAX_SIZE];
 	};
 
-	void MyLog_build(Log* p_myLog, Clock* p_clock);
+	void MyLog_build(Log* p_myLog, CLOCK_PTR p_clock);
 	void MyLog_free(Log* p_myLog);
 	void MyLog_pushLog(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, char* p_message);
 	void MyLog_pushLog_string(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, STRING_PTR p_message);

@@ -1,7 +1,7 @@
 #include "TransformRotateSystem.h"
 
 #include "GameEngineApplicationInterface.h"
-#include "Clock/Clock.hpp"
+
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
@@ -16,6 +16,7 @@
 
 extern "C"
 {
+#include "Clock/Clock.h"
 #include "v2/_interface/TransformC.h"
 #include "v2/_interface/QuaternionC.h"
 }

@@ -7,10 +7,7 @@ extern "C"
 #include "Objects/Resource/Mesh_def.h"
 }
 
-namespace _RenderV2
-{
-	struct RenderV2Interface;
-}
+typedef struct RenderV2Interface_TYP RenderV2Interface;
 
 namespace _GameEngine::_ECS
 {
@@ -19,7 +16,7 @@ namespace _GameEngine::_ECS
 	struct MeshRenderer
 	{
 		_ECS::ComponentHeaderT<MeshRenderer> ComponentHeader;
-		_RenderV2::RenderV2Interface* RenderInterface;
+		RenderV2Interface* RenderInterface;
 		MESHRESOURCE_HANDLE MeshResource;
 		BOXF MeshBoundingBox;
 	};
@@ -35,5 +32,5 @@ namespace _GameEngine::_ECS
 		char* MeshResourcePath;
 	};
 
-	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _RenderV2::RenderV2Interface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
+	void MeshRenderer_init(MeshRenderer* p_meshRenderer, RenderV2Interface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo);
 }

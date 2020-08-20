@@ -2,6 +2,8 @@
 
 #include <functional>
 
+typedef struct CLOCK_TYP CLOCK;
+
 namespace _GameEngine
 {
 	struct GameEngineApplicationInterface;
@@ -10,7 +12,6 @@ namespace _GameEngine
 namespace _Core
 {
 	struct Log;
-	struct Clock;
 
 	template <typename INPUT_TYPE = _GameEngine::GameEngineApplicationInterface>
 	struct ObserverT;
@@ -26,10 +27,7 @@ namespace _GameEngine
 	namespace _Physics { struct PhysicsInterface; }
 }
 
-namespace _RenderV2
-{
-	struct RenderV2Interface;
-}
+typedef struct RenderV2Interface_TYP RenderV2Interface;
 
 namespace _GameEngine
 {
@@ -42,9 +40,9 @@ namespace _GameEngine
 
 		GameLoop* GameLoop;
 		::_Core::Log* Log;
-		::_Core::Clock* Clock;
+		CLOCK* Clock;
 		_Physics::PhysicsInterface* PhysicsInterface;
-		_RenderV2::RenderV2Interface* RenderInterface;
+		RenderV2Interface* RenderInterface;
 		_Input::Input* Input;
 		_ECS::ECS* ECS;
 	};

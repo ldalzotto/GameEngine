@@ -4,8 +4,8 @@ extern "C"
 {
 #include "v2/_interface/BoxC.h"
 #include "Objects/Resource/MeshResourceProviderV2.h"
+#include "RenderV2Interface.h"
 }
-#include "RenderV2Interface.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -13,7 +13,7 @@ namespace _GameEngine::_ECS
 
 	void MeshRenderer_free(MeshRenderer* p_meshRenderer, ECS*);
 
-	void MeshRenderer_init(MeshRenderer* p_meshRenderer, _RenderV2::RenderV2Interface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo)
+	void MeshRenderer_init(MeshRenderer* p_meshRenderer, RenderV2Interface* p_renderInterface, MeshRendererInitInfo* p_mehsRendererInfo)
 	{
 		p_meshRenderer->RenderInterface = p_renderInterface;
 

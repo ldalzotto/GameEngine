@@ -6,6 +6,8 @@ extern "C"
 #include "v2/_interface/TransformC.h"
 #include "v2/_interface/VectorC.h"
 #include "Functional/Hash.h"
+#include "Renderer/GlobalBuffers/CameraBuffer.h"
+#include "RenderV2Interface.h"
 }
 
 #include "DataStructures/Specifications/VectorT.hpp"
@@ -20,8 +22,6 @@ extern "C"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
 
-#include "RenderV2Interface.hpp"
-#include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -51,7 +51,7 @@ namespace _GameEngine::_ECS
 		l_operation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
 		_Core::VectorT_pushBack(&l_cameraSystem->Operations, &l_operation);
 
-		_RenderV2::CameraBuffer* l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
+		CAMERABUFFER_PTR l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
 		l_cameraBuffer->ViewMatrix = (MATRIX4F_PTR)&l_operation.Camera->ViewMatrix;
 		l_cameraBuffer->ProjectionMatrix = (MATRIX4F_PTR)&l_operation.Camera->ProjectionMatrix;
 		l_cameraBuffer->CameraFrustum = &l_operation.Camera->CameraFrustum;
@@ -95,7 +95,7 @@ namespace _GameEngine::_ECS
 		{
 			TransformComponent* l_transform = l_operations.Current->TransformComponent;
 			Camera* l_camera = l_operations.Current->Camera;
-			_RenderV2::CameraBuffer* l_cameraBuffer = l_camera->RenderInterface->GlobalBuffer.CameraBuffer;
+			CAMERABUFFER_PTR l_cameraBuffer = l_camera->RenderInterface->GlobalBuffer.CameraBuffer;
 
 			{
 				VECTOR3F tmp_vec3_0; MATRIX4F tmp_mat4_0; MATRIX3F tmp_mat3_0;

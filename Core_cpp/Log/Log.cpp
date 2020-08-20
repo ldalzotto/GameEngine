@@ -10,7 +10,7 @@ extern "C"
 
 namespace _Core
 {
-	void MyLog_build(Log* p_myLog, Clock* p_clock)
+	void MyLog_build(Log* p_myLog, CLOCK_PTR p_clock)
 	{
 		p_myLog->Clock = p_clock;
 		VectorT_alloc(&p_myLog->LogMessages, 0);

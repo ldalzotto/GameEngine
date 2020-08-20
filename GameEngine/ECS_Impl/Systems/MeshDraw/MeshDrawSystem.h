@@ -4,10 +4,9 @@
 #include "ECS/System.h"
 #include "Functional/Sequencer/SortedSequencer.hpp"
 
-
-namespace _RenderV2
+extern "C"
 {
-	struct RenderedObject;
+#include "Objects/RenderedObject.h"
 }
 
 namespace _GameEngine
@@ -32,7 +31,7 @@ namespace _GameEngine::_ECS
 		Entity* Entity;
 		TransformComponent* TransformComponent;
 		MeshRenderer* MeshRenderer;
-		_RenderV2::RenderedObject* RenderedObject;
+		RENDEREDOBJECT_HANDLE RenderedObject;
 	};
 
 	struct MeshDrawSystem

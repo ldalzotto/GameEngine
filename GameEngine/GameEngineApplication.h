@@ -5,14 +5,17 @@
 
 #include "Functional/Callback/ObserverT.hpp"
 
-#include "Clock/Clock.hpp"
+extern "C"
+{
+#include "Clock/Clock.h"
+#include "RenderV2.h"
+}
 #include "Log/Log.hpp"
 
 #include "GameLoop/GameLoop.h"
 #include "EngineSequencers/EngineSequencers.h"
 
 #include "Physics/Physics.h"
-#include "RenderV2.hpp"
 #include "ECS/ECS.h"
 #include "Input/Input.h"
 
@@ -36,9 +39,9 @@ namespace _GameEngine
 
 		GameLoop GameLoop;
 		::_Core::Log Log;
-		::_Core::Clock Clock;
+		CLOCK Clock;
 		_Physics::Physics Physics;
-		_RenderV2::RenderV2 Render;
+		RenderV2 Render;
 		_Input::Input Input;
 		_ECS::ECS ECS;
 

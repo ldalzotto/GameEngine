@@ -5,32 +5,31 @@ extern "C"
 #include "v2/Math.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/FrustumC.h"
+#include "Objects/Window/Window.h"
+#include "Objects/SwapChain/SwapChain.h"
+#include "RenderV2Interface.h"
 }
 
-#include "RenderV2Interface.hpp"
-#include "Objects/SwapChain/SwapChain.hpp"
-#include "Objects/Window/Window.hpp"
 #include "ECS/Component.h"
 
 namespace _GameEngine::_ECS
 {
 	ComponentType CameraType = "Camera";
 
-	void camera_onSwapChainBuild(Camera* p_camera, _RenderV2::RenderV2Interface* p_renderInterface)
+	void camera_onSwapChainBuild(Camera* p_camera, void* p_null)
 	{
 		Camera_buildProjectionMatrix(p_camera);
 	};
 
 	void camera_onDetached(Camera* p_camera, ECS*)
 	{
-		_Core::ObserverT_unRegister(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _RenderV2::RenderV2Interface>*) & p_camera->OnSwapChainBuilded);
+		SwapChain_UnRegisterOnSwapChainBuilded(p_camera->RenderInterface->SwapChain, (void(*)(void*, void*)) camera_onSwapChainBuild, p_camera);
 	};
 
-	void Camera_init(Camera* p_camera, _RenderV2::RenderV2Interface* p_renderInterface)
+	void Camera_init(Camera* p_camera, RenderV2Interface* p_renderInterface)
 	{
 		p_camera->RenderInterface = p_renderInterface;
-		p_camera->OnSwapChainBuilded = { camera_onSwapChainBuild, p_camera };
-		_Core::ObserverT_register(&p_camera->RenderInterface->SwapChain->OnSwapChainBuilded, (_Core::CallbackT<void, _RenderV2::RenderV2Interface>*) & p_camera->OnSwapChainBuilded);
+		SwapChain_RegisterOnSwapChainBuilded(p_camera->RenderInterface->SwapChain, (void(*)(void*, void*)) camera_onSwapChainBuild, p_camera);
 
 		p_camera->ComponentHeader.OnComponentFree = camera_onDetached;
 

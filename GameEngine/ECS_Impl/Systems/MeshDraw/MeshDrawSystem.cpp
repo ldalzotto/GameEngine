@@ -10,6 +10,8 @@
 extern "C"
 {
 #include "v2/_interface/TransformC.h"
+#include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
+#include "RenderV2Interface.h"
 }
 
 #include "ECS/ECS.h"
@@ -18,8 +20,6 @@ extern "C"
 #include "ECS_Impl/Components/Transform/TransformComponent.h"
 #include "EngineSequencers/EngineSequencers.h"
 
-#include "RenderV2Interface.hpp"
-#include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
 
 namespace _GameEngine::_ECS
 {
@@ -36,11 +36,6 @@ namespace _GameEngine::_ECS
 	bool MeshDrawSystemOperation_EqualsEntity(MeshDrawSystemOperation* p_left, Entity* p_right, void* p_null)
 	{
 		return p_left->Entity == p_right;
-	};
-
-	bool MeshDrawSystemOperation_EqualsRenderedObject(_RenderV2::RenderedObject** p_left, _RenderV2::RenderedObject** p_right, void* p_null)
-	{
-		return *p_left == *p_right;
 	};
 
 	void MeshDrawSystem_update(void* p_meshDrawSystem, void* p_gameEngineInterface);
@@ -80,12 +75,12 @@ namespace _GameEngine::_ECS
 		l_meshDrawOperation.Entity = p_entity;
 		l_meshDrawOperation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
 		l_meshDrawOperation.MeshRenderer = EntityT_getComponent<MeshRenderer>(p_entity);
-		l_meshDrawOperation.RenderedObject = (_RenderV2::RenderedObject*)malloc(sizeof(_RenderV2::RenderedObject));
+		l_meshDrawOperation.RenderedObject = (RENDEREDOBJECT_PTR)malloc(sizeof(RENDEREDOBJECT));
 		_Core::VectorT_pushBack(&l_meshDrawSystem->MeshDrawSystemOperations, &l_meshDrawOperation);
 
 		l_meshDrawOperation.RenderedObject->Mesh = &l_meshDrawOperation.MeshRenderer->MeshResource->Mesh;
 		l_meshDrawOperation.RenderedObject->MeshBoundingBox = &l_meshDrawOperation.MeshRenderer->MeshBoundingBox;
-		_Core::VectorT_pushBack(&l_meshDrawOperation.MeshRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, &l_meshDrawOperation.RenderedObject);
+		Arr_PushBackRealloc_RenderedObjectHandle(&l_meshDrawOperation.MeshRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, &l_meshDrawOperation.RenderedObject);
 	};
 
 	void meshDrawSystem_onComponentsDetached(void* p_meshDrawSystem, Entity* p_entity)
@@ -98,8 +93,18 @@ namespace _GameEngine::_ECS
 			//TODO -> Adding a unique ID the the rendered object list
 			// _Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
 			free(l_involvedOperation.Current->RenderedObject);
-			_Core::VectorT_eraseCompare(&l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects,
-				_Core::ComparatorT<_RenderV2::RenderedObject*, _RenderV2::RenderedObject*, void>{ MeshDrawSystemOperation_EqualsRenderedObject, &l_involvedOperation.Current->RenderedObject, nullptr });
+
+			for (size_t i = 0; i < l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Size; i++)
+			{
+				RENDEREDOBJECT_HANDLE l_renderedObject = l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Memory[i];
+				if (l_renderedObject == l_involvedOperation.Current->RenderedObject)
+				{
+					//Erase
+					Arr_Erase_RenderedObjectHandle(&l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, i);
+					break;
+				}
+			}
+
 			_Core::VectorT_erase(&l_meshDrawSystem->MeshDrawSystemOperations, l_involvedOperation.CurrentIndex);
 		}
 	};

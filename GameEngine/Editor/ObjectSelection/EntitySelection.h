@@ -19,10 +19,7 @@ namespace _GameEngine
 	}
 }
 
-namespace _RenderV2
-{
-	struct RenderV2Interface;
-}
+typedef struct RenderV2Interface_TYP RenderV2Interface;
 
 namespace _GameEngineEditor
 {
@@ -89,7 +86,7 @@ namespace _GameEngineEditor
 	{
 		_GameEngine::_ECS::ECS* ECS;
 		_GameEngine::_Input::Input* Input;
-		_RenderV2::RenderV2Interface* RenderInterface;
+		RenderV2Interface* RenderInterface;
 		_GameEngine::_Physics::PhysicsInterface* PhysicsInterface;
 
 		TransformGizmo TransformGizmoV2;

@@ -37,7 +37,7 @@ namespace _GameEngine
 		MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
 		UpdateSequencer_alloc(&l_gameEngineApplication->UpdateSequencer, &l_gameEngineApplication->GameEngineApplicationInterface);
 		_Physics::Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
-		_RenderV2::RenderV2_initialize(&l_gameEngineApplication->Render);
+		RenderV2_initialize(&l_gameEngineApplication->Render);
 		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.AppWindow, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
@@ -73,7 +73,7 @@ namespace _GameEngine
 
 		_ECS::EntityComponent_free(&p_app->ECS);
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
-		_RenderV2::RenderV2_free(&p_app->Render);
+		RenderV2_free(&p_app->Render);
 		_Physics::Physics_free(&p_app->Physics);
 		_Input::Input_free(&p_app->Input);
 		UpdateSequencer_free(&p_app->UpdateSequencer);
@@ -92,7 +92,7 @@ namespace _GameEngine
 
 	void app_mainLoop(GameEngineApplication* p_app)
 	{
-		while (!_RenderV2::Window_askedForClose(&p_app->Render.AppWindow))
+		while (!Window_askedForClose(&p_app->Render.AppWindow))
 		{
 			AppEvent_pool();
 			_GameLoop::update(&p_app->GameLoop);
@@ -102,7 +102,7 @@ namespace _GameEngine
 	void app_newFrame(void* p_gameEngineApplication)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
-		Clock_newFrame(&l_app->Clock);
+		Clock_NewFrame(&l_app->Clock);
 		_Input::Input_newFrame(&l_app->Input);
 		_Core::ObserverT_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
 	};
@@ -110,7 +110,7 @@ namespace _GameEngine
 	void app_update(void* p_closure, float p_delta)
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
-		Clock_newUpdate(&l_app->Clock, p_delta);
+		Clock_NewUpdate(&l_app->Clock, p_delta);
 
 		_ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);
 		UpdateSequencer_execute(&l_app->UpdateSequencer, &l_app->GameEngineApplicationInterface);
@@ -126,7 +126,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		_Core::ObserverT_broadcast(&l_app->PreRender, &l_app->GameEngineApplicationInterface);
-		_RenderV2::RenderV2_render(&l_app->Render);
+		RenderV2_render(&l_app->Render);
 	};
 
 	void app_endOfFrame(void* p_closure)
