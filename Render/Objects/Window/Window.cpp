@@ -5,7 +5,10 @@
 #include <unordered_map>
 #include <stdexcept>
 
-#include "Objects/Texture/TextureM.hpp"
+extern "C"
+{
+#include "Objects/Texture/Texture.h"
+}
 
 #include "Log/LogFormatting.hpp"
 
@@ -124,7 +127,7 @@ namespace _RenderV2
 		_Core::ObserverT_register(&_Core::EventDispatcher, (_Core::CallbackT<void, _Core::AppEvent_Header>*) & l_appGlobalEvetnCallback);
 	};
 
-	void Window_presentTexture(Window* p_window, Texture3C* p_texture)
+	void Window_presentTexture(Window* p_window, TEXTURE3C_PTR p_texture)
 	{
 		p_window->WindowState.PendingPresentingTexture = p_texture;
 
@@ -168,7 +171,7 @@ namespace _RenderV2
 
 		if (p_window->WindowState.PendingPresentingTexture)
 		{
-			Texture3C* l_presentTexture = p_window->WindowState.PendingPresentingTexture;
+			TEXTURE3C_PTR l_presentTexture = p_window->WindowState.PendingPresentingTexture;
 			//	p_window->WindowState.PendingPresentingTexture = false;
 
 			HDC l_map_hdc = CreateCompatibleDC(hdc);
@@ -193,7 +196,7 @@ namespace _RenderV2
 				bmih.biHeight = -l_presentTexture->Height;
 				bmih.biWidth = l_presentTexture->Width;
 				bmih.biPlanes = 1;
-				bmih.biSizeImage = TextureM::getSizeInBytes(l_presentTexture);
+				bmih.biSizeImage = Texture_GetSizeInBytes_3C(l_presentTexture);
 				bmih.biXPelsPerMeter = 0;
 				bmih.biYPelsPerMeter = 0;
 

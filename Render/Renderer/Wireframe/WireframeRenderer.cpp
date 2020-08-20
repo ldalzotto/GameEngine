@@ -1,16 +1,14 @@
 #include "WireframeRenderer.hpp"
 
-#include "Cull/ObjectCulling.hpp"
-#include "Cull/BackfaceCulling.hpp"
-
 #include "Objects/RenderedObject.hpp"
 extern "C"
 {
+
+#include "Cull/ObjectCulling.h"
+#include "Cull/BackfaceCulling.h"
 #include "Objects/Resource/Polygon.h"
 #include "v2/_interface/MatrixC.h"
 }
-
-#include "Objects/Texture/TextureM.hpp"
 
 #include "Renderer/Draw/DrawFunctions.hpp"
 
@@ -22,7 +20,7 @@ extern "C"
 
 namespace _RenderV2
 {
-	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3C* p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
+	void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
 	{
 		_Core::TimeClockPrecision l_before = _Core::Clock_currentTime_mics();
 
@@ -39,7 +37,7 @@ namespace _RenderV2
 					MATRIX4F l_object_to_camera;
 					Mat_Mul_M4F_M4F((MATRIX4F_PTR)p_input->CameraBuffer->ViewMatrix, &l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-					if (!ObjectCullingM::isObjectCulled(l_renderableObject->MeshBoundingBox, (MATRIX4F_PTR)&l_renderableObject->ModelMatrix, (MATRIX4F_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
+					if (!ObjectCulled_Boxf(l_renderableObject->MeshBoundingBox, (MATRIX4F_PTR)&l_renderableObject->ModelMatrix, (MATRIX4F_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 					{
 						// Push polygons
 						for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
@@ -70,7 +68,7 @@ namespace _RenderV2
 				l_polygonPipeline->TransformedPolygon = tmp_poly_4f_0;
 
 				// Backface culling
-				if (BackfaceCullingM::isCulled(&l_polygonPipeline->TransformedPolygon, &p_input->CameraBuffer->WorldPosition))
+				if (BackFaceCulled_Poly4F(&l_polygonPipeline->TransformedPolygon, &p_input->CameraBuffer->WorldPosition))
 				{
 					continue;
 				};

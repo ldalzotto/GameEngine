@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Objects/Texture/Texture.hpp"
+extern "C"
+{
+#include "Objects/Texture/Texture_def.h"
+}
 #include "Functional/Callback/ObserverT.hpp"
 
 namespace _RenderV2
@@ -13,7 +16,7 @@ namespace _RenderV2
 	struct SwapChain
 	{
 		RenderV2Interface* RenderInterface;
-		Texture3C PresentTexture;
+		TEXTURE3C PresentTexture;
 
 		// The swap chain can be rebuild if the @ref MustBeRebuilt is set to true.
 		// This event notify when such an event has occured.

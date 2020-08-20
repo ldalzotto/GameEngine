@@ -6,6 +6,7 @@
 extern "C"
 {
 #include "v2/_interface/MatrixC_def.h"
+#include "Objects/Texture/Texture_def.h"
 }
 
 #include <vector>
@@ -19,8 +20,6 @@ namespace _RenderV2
 	{
 		HWND Window;
 	};
-
-	struct Texture3C;
 }
 #endif
 
@@ -36,7 +35,7 @@ namespace _RenderV2
 	{
 		bool AskedForClosed;
 		_Core::OptionalT<WindowSize> HasResizedThisFrame;
-		Texture3C* PendingPresentingTexture;
+		TEXTURE3C_PTR PendingPresentingTexture;
 	};
 
 	extern const uint32_t WINDOW_WIDTH;
@@ -61,5 +60,5 @@ namespace _RenderV2
 	bool Window_consumeSizeChangeEvent(Window* p_window);
 
 	WindowSize Window_getSize(Window* p_window);
-	void Window_presentTexture(Window* p_window,  Texture3C* p_texture);
+	void Window_presentTexture(Window* p_window, TEXTURE3C_PTR p_texture);
 }

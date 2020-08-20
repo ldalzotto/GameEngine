@@ -31,7 +31,7 @@ namespace _RenderV2
 		_Core::VectorT_free(&p_buffer->Vertices);
 	};
 
-	void Gizmo::render(GizmoRendererInput* p_input, Texture3C* p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer)
+	void Gizmo::render(GizmoRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer)
 	{
 		_Core::VectorIteratorT<GizmoLine> l_gizmoLines = _Core::VectorT_buildIterator(&p_input->Buffer->Lines);
 		while (_Core::VectorIteratorT_moveNext(&l_gizmoLines))

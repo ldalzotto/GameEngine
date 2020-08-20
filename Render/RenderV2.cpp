@@ -3,7 +3,11 @@
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
 
 #include "Objects/SwapChain/SwapChainMethods.hpp"
-#include "Objects/Texture/TextureM.hpp"
+
+extern "C"
+{
+#include "Objects/Texture/Texture.h"
+}
 
 namespace _RenderV2
 {
@@ -44,27 +48,31 @@ namespace _RenderV2
 
 		{
 			VECTOR3C l_color = { 0,0,0 };
-			VECTOR3C_PTR l_pixel = &p_render->SwapChain.PresentTexture.Pixels.Memory[0];
-			TextureIterator3C l_present_it = TextureM::buildIterator(&p_render->SwapChain.PresentTexture);
-			while (TextureIteratorM::moveNext(&l_present_it))
+			TEXTURE3C_MEMORYCURSOR l_presentTextureCursor;
+			Texture_CreateMemoryCursor_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureCursor);
+			while (!TextureMemCursor_IsOutofBound_3C(&l_presentTextureCursor))
 			{
-				*l_present_it.Current = l_color;
+				*l_presentTextureCursor.Current = l_color;
+				TextureMemCursor_MoveNextPixel_3C(&l_presentTextureCursor);
 			}
 		}
+
+		RECTI l_presentTextureClip;
+		Texture_CuildClipRect_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureClip);
 
 		{
 			WireframeRendererInput l_wireFrameRendererInput;
 			l_wireFrameRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectsBuffer;
 			l_wireFrameRendererInput.GraphicsAPIToScreeMatrix = (MATRIX4F_PTR) &p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
-			WireframeRenderer_renderV2(&l_wireFrameRendererInput, &p_render->SwapChain.PresentTexture, &TextureM::buildClipRect(&p_render->SwapChain.PresentTexture), &p_render->WireframeRenderMemory);
+			WireframeRenderer_renderV2(&l_wireFrameRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory);
 		}
 		{
 			GizmoRendererInput l_gizmoRendererInput;
 			l_gizmoRendererInput.Buffer = &p_render->GizmoBuffer;
 			l_gizmoRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 			l_gizmoRendererInput.GraphicsAPIToScreeMatrix = &p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
-			Gizmo::render(&l_gizmoRendererInput, &p_render->SwapChain.PresentTexture, &TextureM::buildClipRect(&p_render->SwapChain.PresentTexture), &p_render->WireframeRenderMemory.RasterizedPixelsBuffer);
+			Gizmo::render(&l_gizmoRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory.RasterizedPixelsBuffer);
 		}
 		Window_presentTexture(&p_render->AppWindow, &p_render->SwapChain.PresentTexture);
 	};

@@ -1,7 +1,10 @@
 #include "SwapChainMethods.hpp"
 
 #include "RenderV2Interface.hpp"
-#include "Objects/Texture/TextureM.hpp"
+extern "C"
+{
+#include "Objects/Texture/Texture.h"
+}
 #include "Objects/Window/Window.hpp"
 
 namespace _RenderV2
@@ -15,18 +18,16 @@ namespace _RenderV2
 	void SwapChainM::free(SwapChain* p_swapChain)
 	{
 		_Core::ObserverT_free(&p_swapChain->OnSwapChainBuilded);
-		TextureM::freePixels(&p_swapChain->PresentTexture);
+		Texture_Free_3C(&p_swapChain->PresentTexture);
 	};
 
 	void SwapChainM::resize(SwapChain* p_swapChain, uint32_t p_width, uint32_t p_height)
 	{
 		if (p_swapChain->PresentTexture.Pixels.Memory)
 		{
-			TextureM::freePixels(&p_swapChain->PresentTexture);
+			Texture_Free_3C(&p_swapChain->PresentTexture);
 		}
-		p_swapChain->PresentTexture.Width = p_swapChain->RenderInterface->AppWindow->WindowSize.Width;
-		p_swapChain->PresentTexture.Height = p_swapChain->RenderInterface->AppWindow->WindowSize.Height;
-		TextureM::allocPixels(&p_swapChain->PresentTexture);
+		Texture_Alloc_3C(&p_swapChain->PresentTexture, p_swapChain->RenderInterface->AppWindow->WindowSize.Width, p_swapChain->RenderInterface->AppWindow->WindowSize.Height);
 
 		_Core::ObserverT_broadcast(&p_swapChain->OnSwapChainBuilded, p_swapChain->RenderInterface);
 	};

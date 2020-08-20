@@ -6,6 +6,7 @@ extern "C"
 #include "v2/_interface/BoxC_def.h"
 #include "v2/_interface/RectC_def.h"
 #include "v2/_interface/VectorC_def.h"
+#include "Objects/Texture/Texture_def.h"
 }
 
 #include "DataStructures/Specifications/VectorT.hpp"
@@ -16,11 +17,6 @@ namespace _Core
 {
 	template<typename T>
 	struct VectorT;
-}
-
-namespace _RenderV2
-{
-	struct Texture3C;
 }
 
 namespace _RenderV2
@@ -58,7 +54,7 @@ namespace _RenderV2
 
 	struct Gizmo
 	{
-		static void render(GizmoRendererInput* p_input, Texture3C* p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
+		static void render(GizmoRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
 
 		static void drawLine(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end);
 		static void drawLine(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end, const VECTOR3C_PTR p_color);
