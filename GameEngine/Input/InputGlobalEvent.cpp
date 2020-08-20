@@ -22,21 +22,24 @@ namespace _GameEngine::_Input
 }
 
 #ifdef _WIN32
-#include "AppEvent/AppEvent.hpp"
+extern "C"
+{
+#include "AppEvent/AppEvent.h"
+}
 namespace _GameEngine::_Input
 {
-	void inputGlobalEventPlatformSpecific_handleInputEvent(void* p_null, _Core::AppEvent_Header* p_eventHeader);
+	void inputGlobalEventPlatformSpecific_handleInputEvent(void* p_null, AppEvent_Header* p_eventHeader);
 
 	void inputGlobalEventPlatformSpecific_initialize()
 	{
-		_Core::AppEventObserver_Register(&_Core::EventDispatcher, (void(*)(void*, _Core::AppEvent_Header*))inputGlobalEventPlatformSpecific_handleInputEvent, nullptr);
+		AppEventObserver_Register(&EventDispatcher, (void(*)(void*, AppEvent_Header*))inputGlobalEventPlatformSpecific_handleInputEvent, nullptr);
 	};
 
-	void inputGlobalEventPlatformSpecific_handleInputEvent(void* p_null, _Core::AppEvent_Header* p_eventHeader)
+	void inputGlobalEventPlatformSpecific_handleInputEvent(void* p_null, AppEvent_Header* p_eventHeader)
 	{
-		if (p_eventHeader->EventType == _Core::AppEventType::INPUT_KEY_EVENT)
+		if (*p_eventHeader == AppEventType_INPUT_KEY_EVENT)
 		{
-			_Core::InputKeyEvent* l_inputKeyEvent = (_Core::InputKeyEvent*)p_eventHeader;
+			InputKeyEvent* l_inputKeyEvent = (InputKeyEvent*)p_eventHeader;
 			InputGlobalEvent l_inputGlobalEvent;
 			l_inputGlobalEvent.Type = static_cast<InputGlobalEventType>(l_inputKeyEvent->Type);
 
@@ -189,9 +192,9 @@ namespace _GameEngine::_Input
 
 			_Core::ObserverT_broadcast(&InputGlobalEvent_dispatcher, &l_inputGlobalEvent);
 		}
-		else if (p_eventHeader->EventType == _Core::AppEventType::INPUT_MOUSE_EVENT)
+		else if (*p_eventHeader == AppEventType_INPUT_MOUSE_EVENT)
 		{
-			_Core::InputMouseEvent* l_inputMouseEvent = (_Core::InputMouseEvent*)p_eventHeader;
+			InputMouseEvent* l_inputMouseEvent = (InputMouseEvent*)p_eventHeader;
 			InputMouseGlobalEvent l_inputMouseGlobalEvent;
 			l_inputMouseGlobalEvent.X = l_inputMouseEvent->X;
 			l_inputMouseGlobalEvent.Y = l_inputMouseEvent->Y;

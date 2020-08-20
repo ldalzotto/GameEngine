@@ -1,6 +1,9 @@
 #include "GameEngineApplication.h"
 
-#include "AppEvent/AppEvent.hpp"
+extern "C"
+{
+#include "AppEvent/AppEvent.h"
+}
 #include "Input/InputGlobalEvent.hpp"
 
 #include "ECS_Impl/Systems/Camera/CameraSystem.h"
@@ -23,7 +26,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
 
-		_Core::AppEvent_initialize();
+		AppEvent_initialize();
 		_Input::InputGlobalEvent_initialize();
 
 		_Core::ObserverT_alloc(&l_gameEngineApplication->NewFrame);
@@ -82,7 +85,7 @@ namespace _GameEngine
 		MyLog_free(&p_app->Log);
 
 		_Input::InputGlobalEvent_free();
-		_Core::AppEvent_free();
+		AppEvent_free();
 
 		delete p_app;
 	}
@@ -91,7 +94,7 @@ namespace _GameEngine
 	{
 		while (!_RenderV2::Window_askedForClose(&p_app->Render.AppWindow))
 		{
-			_Core::AppEvent_pool();
+			AppEvent_pool();
 			_GameLoop::update(&p_app->GameLoop);
 		}
 	};

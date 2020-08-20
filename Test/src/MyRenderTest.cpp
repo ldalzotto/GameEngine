@@ -3,11 +3,11 @@
 #include <cstdlib>
 #include <stdlib.h> 
 
-#include "AppEvent/AppEvent.hpp"
 #include "DataStructures/Specifications/VectorT.hpp"
 
 extern "C"
 {
+#include "AppEvent/AppEvent.h"
 #include "v2/Math.h"
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	*/
 
 
-	_Core::AppEvent_initialize();
+	AppEvent_initialize();
 
 	LastFrameTime = _Core::Clock_currentTime_mics();
 
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 		float l_deltaTime = _Core::Clock_currentTime_mics() - LastFrameTime;
 		LastFrameTime = _Core::Clock_currentTime_mics();
 
-		_Core::AppEvent_pool();
+		AppEvent_pool();
 
 		QUATERNION4F tmp_quat_0; MATRIX3F tmp_mat3x3_0; MATRIX4F tmp_mat4x4_0;
 		MATRIX4F l_rotation = MATRIX4F_IDENTITYF;
@@ -107,5 +107,5 @@ int main(int argc, char* argv[])
 	MeshResourceProvider_ReleaseResource(&renderV2.Resources.MeshResourceProvider, &l_mesh->Key);
 	RenderV2_free(&renderV2);
 
-	_Core::AppEvent_free();
+	AppEvent_free();
 }

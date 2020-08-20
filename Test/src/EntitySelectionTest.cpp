@@ -4,7 +4,6 @@
 #include "Lib/EntityConfigurations.h"
 
 #include "GameEngineApplication.h"
-#include "AppEvent/AppEvent.hpp"
 
 extern "C"
 {

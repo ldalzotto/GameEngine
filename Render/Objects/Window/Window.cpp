@@ -1,12 +1,12 @@
 #include "Window.hpp"
 
-#include "AppEvent/AppEvent.hpp"
 
 #include <unordered_map>
 #include <stdexcept>
 
 extern "C"
 {
+#include "AppEvent/AppEvent.h"
 #include "Objects/Texture/Texture.h"
 }
 
@@ -90,22 +90,22 @@ namespace _RenderV2
 		return false;
 	};
 
-	void window_onGlobalEvent(Window* p_window, _Core::AppEvent_Header* p_eventHeader)
+	void window_onGlobalEvent(Window* p_window, AppEvent_Header* p_eventHeader)
 	{
-		switch (p_eventHeader->EventType)
+		switch (*p_eventHeader)
 		{
-		case _Core::AppEventType::WINDOW_CLOSE:
+		case AppEventType_WINDOW_CLOSE:
 		{
-			_Core::WindowEvent* l_windowEvent = (_Core::WindowEvent*)p_eventHeader;
+			WindowEvent* l_windowEvent = (WindowEvent*)p_eventHeader;
 			if (memcmp(&l_windowEvent->Window, &p_window->Handle.Window, sizeof(WindowHandle)) == 0)
 			{
 				p_window->WindowState.AskedForClosed = true;
 			}
 		}
 		break;
-		case _Core::AppEventType::WINDOW_RESIZE:
+		case AppEventType_WINDOW_RESIZE:
 		{
-			_Core::WindowResizeEvent* l_windowResizeEvent = (_Core::WindowResizeEvent*)p_eventHeader;
+			WindowResizeEvent* l_windowResizeEvent = (WindowResizeEvent*)p_eventHeader;
 			if (memcmp(&l_windowResizeEvent->Window, &p_window->Handle.Window, sizeof(WindowHandle)) == 0)
 			{
 				p_window->WindowState.HasResizedThisFrame.HasValue = true;
@@ -113,7 +113,7 @@ namespace _RenderV2
 			}
 		}
 		break;
-		case _Core::AppEventType::WINDOW_PAINT:
+		case AppEventType_WINDOW_PAINT:
 		{
 			windowPlatformSpecific_paintTexture(p_window);
 		}
@@ -123,8 +123,7 @@ namespace _RenderV2
 
 	void windowHookToGlobalEvents(Window* p_window)
 	{
-		_Core::CallbackT<Window, _Core::AppEvent_Header> l_appGlobalEvetnCallback = { window_onGlobalEvent, p_window };
-		_Core::AppEventObserver_Register(&_Core::EventDispatcher, (void(*)(void*, _Core::AppEvent_Header*))window_onGlobalEvent, p_window);
+		AppEventObserver_Register(&EventDispatcher, (void(*)(void*, AppEvent_Header*))window_onGlobalEvent, p_window);
 	};
 
 	void Window_presentTexture(Window* p_window, TEXTURE3C_PTR p_texture)
@@ -155,7 +154,7 @@ namespace _RenderV2
 
 		p_window->Handle.Window = CreateWindowEx(0, "GameEngine", "Learn to Program Windows", l_windowStyle,
 			CW_USEDEFAULT, CW_USEDEFAULT, l_windowWidth, l_windowHeight,
-			NULL, NULL, _Core::GlobalAppParams.hInstance, NULL);
+			NULL, NULL, GlobalAppParams.hInstance, NULL);
 		ShowWindow(p_window->Handle.Window, SW_SHOW);
 	};
 
