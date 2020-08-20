@@ -1,11 +1,14 @@
 #pragma once
 
-#include "DataStructures/Specifications/String.hpp"
+extern "C"
+{
+#include "DataStructures/STRING_def.h"
+}
 
 namespace _Core
 {
-	String Log_formatError(char* p_file, int p_line, char* p_message);
-	String Log_formatError_string(const char* p_file, int p_line, String* p_message);
+	STRING Log_formatError(char* p_file, int p_line, char* p_message);
+	STRING Log_formatError_string(const char* p_file, int p_line, STRING_PTR p_message);
 }
 
 

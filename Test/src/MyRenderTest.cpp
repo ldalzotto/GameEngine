@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 	// l_modelMatrix.Col3.x = 12.0f;
 
 	MeshResourceKey l_meshResourceKey;
-	_Core::String_alloc(&l_meshResourceKey.MeshPathAbsolute, 0); _Core::String_append(&l_meshResourceKey.MeshPathAbsolute, "C:/Users/loicd/Desktop/BigCube.obj");
+	String_Alloc(&l_meshResourceKey.MeshPathAbsolute, 0); String_AppendRaw(&l_meshResourceKey.MeshPathAbsolute, "C:/Users/loicd/Desktop/BigCube.obj");
 	MeshResource* l_mesh = _Core::ResourceProviderT_useResource(&renderV2.Resources.MeshResourceProvider, &l_meshResourceKey, MeshResourceKey_getHashCode(&l_meshResourceKey));
 	RenderedObject l_renderableObject;
 	RenderedObject* l_renderableObject_ptr = &l_renderableObject;

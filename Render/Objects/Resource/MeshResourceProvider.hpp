@@ -1,18 +1,18 @@
 #pragma once
 
-#include "DataStructures/Specifications/String.hpp"
 #include "Functional/ResourceProvider/ResourceProviderT.hpp"
 
 extern "C"
 {
 #include "Objects/Resource/Mesh_def.h"
+#include "DataStructures/STRING_def.h"
 }
 
 namespace _RenderV2
 {
 	struct MeshResourceKey
 	{
-		_Core::String MeshPathAbsolute;
+		STRING MeshPathAbsolute;
 	};
 
 	void MeshResourceKey_alloc(MeshResourceKey* p_key, char* p_meshPath);

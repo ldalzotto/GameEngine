@@ -4,7 +4,10 @@
 #include <stdlib.h>
 
 #include "DataStructures/Specifications/VectorT.hpp"
-#include "DataStructures/Specifications/String.hpp"
+extern "C"
+{
+#include "DataStructures/STRING_def.h"
+}
 #include "Log/LogFormatting.hpp"
 #include "Clock/Clock.hpp"
 
@@ -48,7 +51,7 @@ namespace _Core
 	void MyLog_build(Log* p_myLog, Clock* p_clock);
 	void MyLog_free(Log* p_myLog);
 	void MyLog_pushLog(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, char* p_message);
-	void MyLog_pushLog_string(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, String* p_message);
+	void MyLog_pushLog_string(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, STRING_PTR p_message);
 	void MyLog_processLogs(Log* p_myLog);
 
 #define MYLOG_PUSH(MYLOGPTR, LOGLEVEL, MESSAGE)  MyLog_pushLog(MYLOGPTR, LOGLEVEL,__FILE__, __LINE__, MESSAGE)

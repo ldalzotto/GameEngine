@@ -3,6 +3,10 @@
 #include "Constants.h"
 #include <string.h>
 #include <stdio.h>
+extern "C"
+{
+#include "DataStructures/STRING.h"
+}
 
 namespace _Core
 {
@@ -36,10 +40,10 @@ namespace _Core
 		VectorT_pushBack(&p_myLog->LogMessages, &l_logMessage);
 	};
 
-	void MyLog_pushLog_string(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, String* p_message)
+	void MyLog_pushLog_string(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, STRING_PTR p_message)
 	{
 		MyLog_pushLog(p_myLog, p_logLevel, p_filePath, p_line, (char*)p_message->Memory);
-		String_free(p_message);
+		String_Free(p_message);
 	};
 
 	void MyLog_processLogs(Log* p_myLog)

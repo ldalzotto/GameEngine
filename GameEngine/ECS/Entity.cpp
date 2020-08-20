@@ -6,6 +6,11 @@
 #include "ECS/ECS.h"
 #include "Algorithm/Compare/CompareAlgorithmT.hpp"
 
+extern "C"
+{
+#include "DataStructures/STRING.h"
+}
+
 namespace _GameEngine::_ECS
 {
 
@@ -33,10 +38,10 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<ComponentHeader*, ComponentType, void>{Component_comparator, p_unlinkedComponent->ComponentType}))
 		{
-			::_Core::String l_errorMessage; ::_Core::String_alloc(&l_errorMessage, 100);
-			::_Core::String_append(&l_errorMessage, "Trying to add a component were it's type ( ");
-			::_Core::String_append(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType->c_str());
-			::_Core::String_append(&l_errorMessage, " ) is aleady present as a component.");
+			STRING l_errorMessage; String_Alloc(&l_errorMessage, 100);
+			String_AppendRaw(&l_errorMessage, "Trying to add a component were it's type ( ");
+			String_AppendRaw(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType->c_str());
+			String_AppendRaw(&l_errorMessage, " ) is aleady present as a component.");
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_STRING(&l_errorMessage));
 		}
 #endif
