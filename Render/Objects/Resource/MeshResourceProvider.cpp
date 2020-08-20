@@ -3,9 +3,9 @@
 extern "C"
 {
 #include "Objects/Resource/Mesh.h"
+#include "File/ObjReader.h"
 }
 #include "Functional/Hash/Hash.hpp"
-#include "File/ObjReader.hpp"
 
 namespace _RenderV2
 {

@@ -2,8 +2,8 @@
 
 #include "Mesh_def.h"
 
-#include "_interface/Error/ErrorHandler.h"
-#include "_interface/DataStructures/ARRAY.h"
+#include "Error/ErrorHandler.h"
+#include "DataStructures/ARRAY.h"
 
 void Mesh_Alloc(MESH_PTR p_mesh);
 void Mesh_Free(MESH_PTR p_mesh);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vertex_def.h"
-#include "_interface/DataStructures/ARRAY_def.h"
+#include "DataStructures/ARRAY_def.h"
 #include "Objects/Resource/Polygon_def.h"
 
 typedef size_t VertexIndex;

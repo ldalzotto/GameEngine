@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "Constants.h"
-#include "_interface/Functional.h"
+#include "Functional.h"
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/BoxC.h"

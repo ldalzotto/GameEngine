@@ -65,7 +65,7 @@ namespace _Core
 
 #ifdef _WIN32
 
-#include "Include/PlatformInclude.hpp"
+#include "Include/PlatformInclude.h"
 namespace _Core
 {
 	struct AppEventParams

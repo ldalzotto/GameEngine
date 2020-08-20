@@ -14,13 +14,15 @@ extern "C"
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/FrustumC.h"
 #include "v2/_interface/MatrixC.h"
+
+#include "DataStructures/STRING.h"
 }
 
 #include "Clock/Clock.hpp"
 
 #include "Objects/RenderedObject.hpp"
 
-#include "File/ObjReader.hpp"
+#include "File/ObjReader.h"
 
 using namespace _RenderV2;
 
@@ -29,6 +31,24 @@ _Core::TimeClockPrecision LastFrameTime = 0;
 
 int main(int argc, char* argv[])
 {
+	STRING l_str; String_Alloc(&l_str, 0);
+	String_AppendRaw(&l_str, "Ta mere");
+	String_AppendRaw(&l_str, " en slip.");
+
+	const char* l_steez = "bonjour";
+	STRINGSLICE l_slice = { (char*)l_steez, 2, 5};
+	String_AppendSlice(&l_str, &l_slice);
+
+	/*
+	MESHRESOURCE_PROVIDER l_prov;
+	MeshResourceProvider_Alloc(&l_prov);
+	MESHRESOURCE_KEY l_k;
+	MESHRESOURCE_PTR l_ins;
+	MeshResourceProvider_UseResource(&l_prov, &l_k, &l_ins);
+	MeshResourceProvider_Free(&l_prov);
+	*/
+
+
 	_Core::AppEvent_initialize();
 
 	LastFrameTime = _Core::Clock_currentTime_mics();

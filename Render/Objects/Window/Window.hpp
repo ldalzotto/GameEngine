@@ -12,7 +12,7 @@ extern "C"
 #include <string>
 
 #ifdef _WIN32
-#include "Include/PlatformInclude.hpp"
+#include "Include/PlatformInclude.h"
 namespace _RenderV2
 {
 	struct WindowHandle

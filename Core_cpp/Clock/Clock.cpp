@@ -15,7 +15,7 @@ namespace _Core
 
 #ifdef _WINDOWS
 
-#include "Include/PlatformInclude.hpp"
+#include "Include/PlatformInclude.h"
 #include <sysinfoapi.h>
 
 	TimeClockPrecision Clock_currentTime_mics()

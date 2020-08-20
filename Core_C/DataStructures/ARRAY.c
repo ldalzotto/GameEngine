@@ -1,4 +1,4 @@
-#include "_interface/DataStructures/ARRAY.h"
+#include "DataStructures/ARRAY.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -32,6 +32,11 @@ void Arr_Free(ARRAY_PTR p_array)
 void Arr_Zeroing(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
 {
 	memset(p_array->Memory, 0, Arr_GetCapacitySize(p_array, p_elementSize));
+};
+
+void Arr_Clear(ARRAY_PTR p_array)
+{
+	p_array->Size = 0;
 };
 
 char Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_newCapacity)
@@ -72,6 +77,37 @@ char Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 
 	return 0;
 }
+
+
+char Arr_InsertAtRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value, size_t p_elementNb, size_t p_index)
+{
+#ifndef NDEBUG
+	if (p_index > p_array->Size)
+	{
+		return 1;
+	}
+#endif
+
+	if (p_array->Size + p_elementNb > p_array->Capacity)
+	{
+		Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Capacity == 0 ? 1 : (p_array->Capacity * 2));
+		Arr_InsertAtRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_value, p_elementNb, p_index);
+	}
+	else
+	{
+		void* l_initialElement = (char*)p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_index);
+		// If we insert between existing elements, we move down memory to give space for new elements
+		if (p_array->Size - p_index > 0)
+		{
+			void* l_targetElement = (char*)p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_index + p_elementNb);
+			memmove(l_targetElement, l_initialElement, p_elementSize * (p_array->Size - p_index));
+		}
+		memcpy(l_initialElement, p_value, p_elementSize * p_elementNb);
+		p_array->Size += p_elementNb;
+	}
+
+	return 0;
+};
 
 char Arr_Erase(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_index)
 {

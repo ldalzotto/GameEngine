@@ -1,7 +1,7 @@
 #pragma once
 
 #include "VectorStructuresC_def.h"
-#include "_interface/DataStructures/ARRAY.h"
+#include "DataStructures/ARRAY.h"
 
 inline void Arr_Alloc_Vector3F(ARRAY_VECTOR3F_PTR p_arr, size_t p_initialCapacity) { Arr_Alloc((ARRAY_PTR)p_arr, sizeof(VECTOR3F), p_initialCapacity); };
 inline void Arr_Free_Vector3F(ARRAY_VECTOR3F_PTR p_arr) { Arr_Free((ARRAY_PTR)p_arr); };
