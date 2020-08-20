@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Callback.hpp"
+extern "C"
+{
+	#include "Functional/Callback/Callback.h"
+}
 
 namespace _Core
 {

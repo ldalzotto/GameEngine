@@ -1,7 +1,10 @@
 #pragma once
 
 #include <stdint.h>
-#include "Functional/Callback/Callback.hpp"
+extern "C"
+{
+#include "Functional/Callback/Callback.h"
+}
 #include "DataStructures/Specifications/ArrayT.hpp"
 #include "DataStructures/Specifications/SortedVectorT.hpp"
 

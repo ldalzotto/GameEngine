@@ -1,6 +1,10 @@
 #pragma once
 
-#include "Functional/Callback/ObserverT.hpp"
+
+extern "C"
+{
+#include "Functional/Callback/Observer_def.h"
+}
 
 namespace _Core
 {
@@ -52,15 +56,20 @@ namespace _Core
 
 	struct AppEventParams;
 
+	typedef Observer AppEventObserver;
+	
+	void AppEventObserver_Register(AppEventObserver* p_observer, void(*p_callback)(void*, AppEvent_Header*), void* p_closure);
+
 	extern AppEventParams GlobalAppParams;
-	extern ObserverT<AppEvent_Header> EventDispatcher;
+	extern AppEventObserver EventDispatcher;
 
 	void AppEvent_initialize();
 	void AppEvent_pool();
 	void AppEvent_free();
 
 	struct PlatformSpecificGenericEvent;
-	extern ObserverT<PlatformSpecificGenericEvent> EventPoolHook;
+	typedef Observer PlatformSpecificEventHook;
+	extern PlatformSpecificEventHook EventPoolHook;
 }
 
 #ifdef _WIN32

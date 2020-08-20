@@ -1,10 +1,10 @@
 #pragma once
 
 #include "DataStructures/Specifications/VectorT.hpp"
-#include "Raster/Rasterizer.hpp"
 
 extern "C"
 {
+#include "Raster/Rasterizer_def.h"
 #include "Objects/Resource/Polygon_def.h"
 #include "v2/_interface/MatrixC_def.h"
 #include "v2/_interface/RectC_def.h"
@@ -49,7 +49,7 @@ namespace _RenderV2
 	struct WireframeRenderer_Memory
 	{
 		_Core::VectorT<PolygonPipelineV2> PolygonPipelines;
-		_Core::VectorT<RasterizationStep> RasterizedPixelsBuffer;
+		ARRAY_RASTERISATIONSTEP RasterizedPixelsBuffer;
 	};
 
 	void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory);

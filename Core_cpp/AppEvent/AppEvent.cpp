@@ -1,5 +1,9 @@
 #include "AppEvent.hpp"
 
+extern "C"
+{
+#include "Functional/Callback/Observer.h"
+}
 
 namespace _Core
 {
@@ -7,12 +11,19 @@ namespace _Core
 	void poolEventPlatformSepcific();
 
 	AppEventParams GlobalAppParams{};
-	ObserverT<AppEvent_Header> EventDispatcher{};
-	ObserverT<PlatformSpecificGenericEvent> EventPoolHook;
+	AppEventObserver EventDispatcher{};
+	void AppEventObserver_Register(AppEventObserver* p_observer, void(*p_callback)(void*, AppEvent_Header*), void* p_closure)
+	{
+		Callback l_c = { (void(*)(void*, void*)) p_callback , p_closure};
+		Observer_Register(p_observer, &l_c);
+	};
+	
+	PlatformSpecificEventHook EventPoolHook;
 
 	void AppEvent_initialize()
 	{
-		ObserverT_alloc(&EventDispatcher); ObserverT_alloc(&EventPoolHook);
+		Observer_Alloc(&EventDispatcher);
+		Observer_Alloc(&EventPoolHook);
 		initPlatformSpecificEventCallback();
 	};
 
@@ -23,7 +34,7 @@ namespace _Core
 
 	void AppEvent_free()
 	{
-		ObserverT_free(&EventDispatcher); ObserverT_free(&EventPoolHook);
+		Observer_Free(&EventDispatcher); Observer_Free(&EventPoolHook);
 	};
 }
 
@@ -31,6 +42,11 @@ namespace _Core
 
 namespace _Core
 {
+	inline void AppEventObserver_Broadcast(AppEventObserver* p_observer, AppEvent_Header* p_appEvent)
+	{
+		Observer_Broadcast(p_observer, p_appEvent);
+	};
+
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	void poolEventPlatformSepcific()
@@ -71,7 +87,7 @@ namespace _Core
 		case WM_CLOSE:
 		{
 			WindowEvent l_windowEvent{ {AppEventType::WINDOW_CLOSE}, hwnd };
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowEvent);
 			return 0;
 		}
 		case WM_SIZE:
@@ -80,7 +96,7 @@ namespace _Core
 			INT l_height = HIWORD(lParam);
 
 			WindowResizeEvent l_windowResizeEvent{ {AppEventType::WINDOW_RESIZE}, hwnd, l_width, l_height };
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowResizeEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowResizeEvent);
 			return 0;
 		}
 		//TODO remove when renderV2 is ok
@@ -89,33 +105,33 @@ namespace _Core
 		{
 			AppEvent_Header l_paintEvent;
 			l_paintEvent.EventType = AppEventType::WINDOW_PAINT;
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_paintEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_paintEvent);
 			return 0;
 		}
 #endif // RENDER_V2
 		case WM_KEYDOWN:
 		{
 			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, wParam , InputKeyEventType::DOWN };
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
 			return 0;
 		}
 		case WM_KEYUP:
 		{
 			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, wParam , InputKeyEventType::UP };
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
 		{
 			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, WM_LBUTTONDOWN , InputKeyEventType::DOWN };
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
 			return 0;
 		}
 		break;
 		case WM_LBUTTONUP:
 		{
 			InputKeyEvent l_inputKeyEvent{ {AppEventType::INPUT_KEY_EVENT}, WM_LBUTTONUP , InputKeyEventType::UP };
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
 			return 0;
 		}
 		case WM_MOUSEMOVE:
@@ -124,7 +140,7 @@ namespace _Core
 			int yPos = HIWORD(lParam);
 
 			InputMouseEvent l_inputMouseEvent{ {AppEventType::INPUT_MOUSE_EVENT}, xPos, yPos };
-			ObserverT_broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputMouseEvent);
+			AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputMouseEvent);
 			return 0;
 		}
 		default:
@@ -139,7 +155,7 @@ namespace _Core
 	{
 		PlatformSpecificGenericEvent l_genericEvent;
 		l_genericEvent.hwnd = hwnd; l_genericEvent.uMsg = uMsg; l_genericEvent.wParam = wParam; l_genericEvent.lParam = lParam;
-		_Core::ObserverT_broadcast(&EventPoolHook, &l_genericEvent);
+		AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_genericEvent);
 	};
 }
 

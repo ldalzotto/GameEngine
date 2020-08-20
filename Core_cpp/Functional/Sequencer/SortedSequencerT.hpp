@@ -46,6 +46,6 @@ namespace _Core
 	template <typename INPUT_TYPE, typename AFTER_EXECUTION_CLOSURE_TYPE>
 	inline void SortedSequencerT_execute_afterCallback(SortedSequencerT<INPUT_TYPE>* p_sortedSequencer, INPUT_TYPE* p_input, CallbackT<AFTER_EXECUTION_CLOSURE_TYPE, void>* p_afterEveryExecutionCallback)
 	{
-		SortedSequencer_execute_afterCallback((::_Core::SortedSequencer*)p_sortedSequencer, p_input, (::_Core::Callback*)p_afterEveryExecutionCallback);
+		SortedSequencer_execute_afterCallback((::_Core::SortedSequencer*)p_sortedSequencer, p_input, (Callback_PTR)p_afterEveryExecutionCallback);
 	};
 }

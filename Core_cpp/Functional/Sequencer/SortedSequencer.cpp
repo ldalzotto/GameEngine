@@ -20,7 +20,7 @@ namespace _Core
 	bool SortedSequencerOperations_equal(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right, void* p_null)
 	{
 		return SortedSequencerPriority_equals(&p_left->Priority, &p_right->Priority, nullptr) 
-			&& Callback_equals(&p_left->OperationCallback, &p_right->OperationCallback, nullptr);
+			&& Callback_equals(&p_left->OperationCallback, &p_right->OperationCallback);
 	}
 
 	short int SortedSequencerOperation_elementSorter(SortedSequencerOperation* p_left, SortedSequencerOperation* p_right, void* p_null)

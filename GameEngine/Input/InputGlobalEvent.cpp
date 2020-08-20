@@ -29,8 +29,7 @@ namespace _GameEngine::_Input
 
 	void inputGlobalEventPlatformSpecific_initialize()
 	{
-		_Core::CallbackT<void, _Core::AppEvent_Header> l_callback = { inputGlobalEventPlatformSpecific_handleInputEvent, nullptr };
-		_Core::ObserverT_register(&_Core::EventDispatcher, &l_callback);
+		_Core::AppEventObserver_Register(&_Core::EventDispatcher, (void(*)(void*, _Core::AppEvent_Header*))inputGlobalEventPlatformSpecific_handleInputEvent, nullptr);
 	};
 
 	void inputGlobalEventPlatformSpecific_handleInputEvent(void* p_null, _Core::AppEvent_Header* p_eventHeader)

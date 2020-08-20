@@ -9,9 +9,6 @@ extern "C"
 #include "Objects/Texture/Texture_def.h"
 }
 
-#include <vector>
-#include <string>
-
 #ifdef _WIN32
 #include "Include/PlatformInclude.h"
 namespace _RenderV2

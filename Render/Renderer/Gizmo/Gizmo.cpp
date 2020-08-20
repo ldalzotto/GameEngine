@@ -6,8 +6,8 @@ extern "C"
 #include "v2/_interface/TransformC.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorC.h"
+#include "Renderer/Draw/DrawFunctions.h"
 }
-#include "Renderer/Draw/DrawFunctions.hpp"
 
 namespace _RenderV2
 {
@@ -31,7 +31,7 @@ namespace _RenderV2
 		_Core::VectorT_free(&p_buffer->Vertices);
 	};
 
-	void Gizmo::render(GizmoRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer)
+	void Gizmo::render(GizmoRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer)
 	{
 		_Core::VectorIteratorT<GizmoLine> l_gizmoLines = _Core::VectorT_buildIterator(&p_input->Buffer->Lines);
 		while (_Core::VectorIteratorT_moveNext(&l_gizmoLines))
@@ -63,7 +63,7 @@ namespace _RenderV2
 
 			// Rasterize
 			{
-				DrawM::DrawLineClipped(&l_lineBegin.Vec3.Vec2, & l_lineEnd.Vec3.Vec2, RasterizedPixelsBuffer, p_to, p_to_clipRect, (VECTOR3C_PTR) &l_gizmoLines.Current->Color);
+				Draw_LineClipped(&l_lineBegin.Vec3.Vec2, & l_lineEnd.Vec3.Vec2, RasterizedPixelsBuffer, p_to, p_to_clipRect, (VECTOR3C_PTR) &l_gizmoLines.Current->Color);
 			}
 		}
 

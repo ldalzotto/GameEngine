@@ -124,7 +124,7 @@ namespace _RenderV2
 	void windowHookToGlobalEvents(Window* p_window)
 	{
 		_Core::CallbackT<Window, _Core::AppEvent_Header> l_appGlobalEvetnCallback = { window_onGlobalEvent, p_window };
-		_Core::ObserverT_register(&_Core::EventDispatcher, (_Core::CallbackT<void, _Core::AppEvent_Header>*) & l_appGlobalEvetnCallback);
+		_Core::AppEventObserver_Register(&_Core::EventDispatcher, (void(*)(void*, _Core::AppEvent_Header*))window_onGlobalEvent, p_window);
 	};
 
 	void Window_presentTexture(Window* p_window, TEXTURE3C_PTR p_texture)

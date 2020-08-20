@@ -3,14 +3,14 @@
 #include "Objects/RenderedObject.hpp"
 extern "C"
 {
-
 #include "Cull/ObjectCulling.h"
 #include "Cull/BackfaceCulling.h"
 #include "Objects/Resource/Polygon.h"
 #include "v2/_interface/MatrixC.h"
+#include "Raster/Rasterizer.h"
+#include "Renderer/Draw/DrawFunctions.h"
 }
 
-#include "Renderer/Draw/DrawFunctions.hpp"
 
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
@@ -100,9 +100,9 @@ namespace _RenderV2
 
 				// Rasterize
 				{
-					DrawM::DrawLineClipped(&l_polygonPipeline->PixelPolygon.v1, &l_polygonPipeline->PixelPolygon.v2, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-					DrawM::DrawLineClipped(&l_polygonPipeline->PixelPolygon.v2, &l_polygonPipeline->PixelPolygon.v3, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-					DrawM::DrawLineClipped(&l_polygonPipeline->PixelPolygon.v3, &l_polygonPipeline->PixelPolygon.v1, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+					Draw_LineClipped(&l_polygonPipeline->PixelPolygon.v1, &l_polygonPipeline->PixelPolygon.v2, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+					Draw_LineClipped(&l_polygonPipeline->PixelPolygon.v2, &l_polygonPipeline->PixelPolygon.v3, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+					Draw_LineClipped(&l_polygonPipeline->PixelPolygon.v3, &l_polygonPipeline->PixelPolygon.v1, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
 				}
 		}
 
@@ -117,18 +117,18 @@ namespace _RenderV2
 	void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 	{
 		_Core::VectorT_alloc(&p_memory->PolygonPipelines, 0);
-		_Core::VectorT_alloc(&p_memory->RasterizedPixelsBuffer, 0);
+		Arr_Alloc_RasterisationStep(&p_memory->RasterizedPixelsBuffer, 0);
 	};
 	void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
 	{
 		_Core::VectorT_clear(&p_memory->PolygonPipelines);
-		_Core::VectorT_clear(&p_memory->RasterizedPixelsBuffer);
-		_Core::VectorT_resize(&p_memory->RasterizedPixelsBuffer, p_width > height ? p_width * 2 : height * 2);
+		Arr_Clear_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
+		Arr_Resize_RasterisationStep(&p_memory->RasterizedPixelsBuffer, p_width > height ? p_width * 2 : height * 2);
 
 	};
 	void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 	{
 		_Core::VectorT_free(&p_memory->PolygonPipelines);
-		_Core::VectorT_free(&p_memory->RasterizedPixelsBuffer);
+		Arr_Free_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 	};
 }

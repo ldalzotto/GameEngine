@@ -7,11 +7,11 @@ extern "C"
 #include "v2/_interface/RectC_def.h"
 #include "v2/_interface/VectorC_def.h"
 #include "Objects/Texture/Texture_def.h"
+#include "Raster/Rasterizer_def.h"
 }
 
 #include "DataStructures/Specifications/VectorT.hpp"
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
-#include "Raster/Rasterizer.hpp"
 
 namespace _Core
 {
@@ -54,7 +54,7 @@ namespace _RenderV2
 
 	struct Gizmo
 	{
-		static void render(GizmoRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, _Core::VectorT<RasterizationStep>* RasterizedPixelsBuffer);
+		static void render(GizmoRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer);
 
 		static void drawLine(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end);
 		static void drawLine(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end, const VECTOR3C_PTR p_color);
