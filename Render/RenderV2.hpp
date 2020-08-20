@@ -8,7 +8,10 @@
 #include "Renderer/Wireframe/WireframeRenderer.hpp"
 #include "Renderer/Gizmo/Gizmo.hpp"
 
-#include "Objects/Resource/MeshResourceProvider.hpp"
+extern "C"
+{
+#include "Objects/Resource/MeshResourceProviderV2.h"
+}
 
 #include "Renderer/GlobalBuffers/CameraBuffer.hpp"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
@@ -23,7 +26,7 @@ namespace _RenderV2
 
 	struct RenderResourceProvider
 	{
-		_Core::ResourceProviderT<MeshResource, MeshResourceKey> MeshResourceProvider;
+		MESHRESOURCE_PROVIDER MeshResourceProvider;
 	};
 
 	struct RenderV2

@@ -4,12 +4,12 @@
 extern "C"
 {
 #include "v2/_interface/BoxC_def.h"
+#include "Objects/Resource/Mesh_def.h"
 }
 
 namespace _RenderV2
 {
 	struct RenderV2Interface;
-	struct MeshResource;
 }
 
 namespace _GameEngine::_ECS
@@ -20,7 +20,7 @@ namespace _GameEngine::_ECS
 	{
 		_ECS::ComponentHeaderT<MeshRenderer> ComponentHeader;
 		_RenderV2::RenderV2Interface* RenderInterface;
-		_RenderV2::MeshResource* MeshResource;
+		MESHRESOURCE_PTR MeshResource;
 		BOXF MeshBoundingBox;
 	};
 

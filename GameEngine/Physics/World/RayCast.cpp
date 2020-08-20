@@ -6,7 +6,7 @@
 
 extern "C"
 {
-#include "Functional.h"
+#include "Functional/Compare.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/Intersection.h"
 #include "v2/_interface/SegmentC.h"

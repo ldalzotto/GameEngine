@@ -19,7 +19,6 @@ extern "C"
 #include "EngineSequencers/EngineSequencers.h"
 
 #include "RenderV2Interface.hpp"
-#include "Objects/Resource/MeshResourceProvider.hpp"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.hpp"
 
 namespace _GameEngine::_ECS

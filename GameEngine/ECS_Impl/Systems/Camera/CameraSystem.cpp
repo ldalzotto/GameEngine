@@ -5,11 +5,12 @@ extern "C"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/TransformC.h"
 #include "v2/_interface/VectorC.h"
+#include "Functional/Hash.h"
 }
 
 #include "DataStructures/Specifications/VectorT.hpp"
 
-#include "Functional/Hash/Hash.hpp"
+
 
 #include "EngineSequencers.h"
 
@@ -24,7 +25,7 @@ extern "C"
 
 namespace _GameEngine::_ECS
 {
-	SystemV2Key CameraSystemKey = _Core::Hash_string("CameraSystem");
+	SystemV2Key CameraSystemKey = Hash_string("CameraSystem");
 
 	::_Core::SortedSequencerPriority CameraSystem_getUpdatePriority()
 	{

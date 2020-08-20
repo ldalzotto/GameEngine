@@ -58,9 +58,8 @@ int main(int argc, char* argv[])
 	MATRIX4F l_modelMatrix = MATRIX4F_IDENTITYF;
 	// l_modelMatrix.Col3.x = 12.0f;
 
-	MeshResourceKey l_meshResourceKey;
-	String_Alloc(&l_meshResourceKey.MeshPathAbsolute, 0); String_AppendRaw(&l_meshResourceKey.MeshPathAbsolute, "C:/Users/loicd/Desktop/BigCube.obj");
-	MeshResource* l_mesh = _Core::ResourceProviderT_useResource(&renderV2.Resources.MeshResourceProvider, &l_meshResourceKey, MeshResourceKey_getHashCode(&l_meshResourceKey));
+	MESHRESOURCE_PTR l_mesh;
+	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);
 	RenderedObject l_renderableObject;
 	RenderedObject* l_renderableObject_ptr = &l_renderableObject;
 	BOXF l_meshBoundingBox{};
@@ -105,8 +104,7 @@ int main(int argc, char* argv[])
 		RenderV2_render(&renderV2);
 	}
 
-
-	_Core::ResourceProviderT_releaseResource(&renderV2.Resources.MeshResourceProvider, MeshResourceKey_getHashCode(&l_mesh->Key));
+	MeshResourceProvider_ReleaseResource(&renderV2.Resources.MeshResourceProvider, &l_mesh->Key);
 	RenderV2_free(&renderV2);
 
 	_Core::AppEvent_free();

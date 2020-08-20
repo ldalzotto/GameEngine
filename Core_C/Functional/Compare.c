@@ -1,4 +1,4 @@
-#include "Functional.h"
+#include "Compare.h"
 #include "Constants.h"
 
 

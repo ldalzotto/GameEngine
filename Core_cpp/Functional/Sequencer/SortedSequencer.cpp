@@ -7,7 +7,7 @@
 extern "C"
 {
 #include "Functional/Equals/Equals.h"
-#include "Functional.h"
+#include "Functional/Compare.h"
 }
 
 namespace _Core

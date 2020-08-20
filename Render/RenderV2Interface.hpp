@@ -1,10 +1,6 @@
 #pragma once
 
-namespace _Core
-{
-	template<typename T, typename TT>
-	struct ResourceProviderT;
-}
+typedef struct MESHRESOURCE_PROVIDER_TYP MESHRESOURCE_PROVIDER;
 
 namespace _RenderV2
 {
@@ -29,7 +25,7 @@ namespace _RenderV2
 
 	struct RenderResourceProviderInterface
 	{
-		_Core::ResourceProviderT<MeshResource, MeshResourceKey>* MeshResourceProvider;
+		MESHRESOURCE_PROVIDER* MeshResourceProvider;
 	};
 
 	struct RenderV2Interface
