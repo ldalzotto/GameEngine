@@ -2,24 +2,24 @@
 
 #include <stdlib.h>
 
-typedef struct ARRAY_TYP
+typedef struct Array_TYP
 {
 	char* Memory;
 	size_t Size;
 	size_t Capacity;
-} ARRAY, *ARRAY_PTR;
+} Array, *Array_PTR;
 
 #define ARRAY_TYPE_DEFINITION(ArrayElement) \
 ArrayElement* Memory; \
 size_t Size; \
 size_t Capacity;
 
-typedef struct ARRAY_ITERATOR_TYP
+typedef struct ArrayIterator_TYP
 {
-	ARRAY_PTR Array;
+	Array_PTR Array;
 	char* Current;
 	size_t CurrentIndex;
-} ARRAY_ITERATOR, * ARRAY_ITERATOR_PTR;
+} ArrayIterator, * ArrayIterator_PTR;
 
 #define ARRAY_ITERATOR_DEFINITION(ArrayType, ArrayElement) \
 ArrayType* Array; \

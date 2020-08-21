@@ -14,7 +14,7 @@ namespace _GameEngine::_ECS
 	{
 		_ECS::ComponentHeaderT<TransformRotate> ComponentHeader;
 		float Speed;
-		VECTOR3F Axis;
+		Vector3f Axis;
 	};
 
 	template <>

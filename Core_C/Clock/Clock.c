@@ -1,12 +1,12 @@
 #include "Clock.h"
 
 
-void Clock_NewFrame(CLOCK_PTR p_clock)
+void Clock_NewFrame(Clock_PTR p_clock)
 {
 	p_clock->FrameCount += 1;
 };
 
-void Clock_NewUpdate(CLOCK_PTR p_clock, float p_delta)
+void Clock_NewUpdate(Clock_PTR p_clock, float p_delta)
 {
 	p_clock->DeltaTime = p_delta;
 };

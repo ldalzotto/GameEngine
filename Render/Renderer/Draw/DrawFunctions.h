@@ -8,7 +8,7 @@
 
 
 void Draw_LineClipped(
-	VECTOR2F_PTR p_begin, VECTOR2F_PTR p_end,
+	Vector2f_PTR p_begin, Vector2f_PTR p_end,
 	ARRAY_RASTERISATIONSTEP_PTR in_out_rasterizedPixelsBuffer,
-	TEXTURE3C_PTR p_to, RECTI_PTR p_clipRect,
-	VECTOR3C_PTR p_color);
+	Texture3c_PTR p_to, Recti_PTR p_clipRect,
+	Vector3c_PTR p_color);

@@ -25,7 +25,7 @@ typedef struct WindowState_TYP
 	bool AskedForClosed;
 	bool HasResizedThisFrame;
 	WindowSize HasResizedThisFrame_WindowSize;
-	TEXTURE3C_PTR PendingPresentingTexture;
+	Texture3c_PTR PendingPresentingTexture;
 } WindowState;
 
 typedef Observer OnWindowSizeChangedObserver;
@@ -37,8 +37,8 @@ typedef struct Window_TYP
 
 	WindowState WindowState;
 
-	MATRIX3F WindowToGraphicsAPIPixelCoordinates;
-	MATRIX4F GraphicsAPIToWindowPixelCoordinates;
+	Matrix3f WindowToGraphicsAPIPixelCoordinates;
+	Matrix4f GraphicsAPIToWindowPixelCoordinates;
 
 	OnWindowSizeChangedObserver OnWindowSizeChanged;
 }Window, * Window_PTR;

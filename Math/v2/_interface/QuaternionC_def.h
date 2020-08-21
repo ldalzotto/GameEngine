@@ -2,12 +2,12 @@
 
 #include "v2/_interface/VectorC_def.h"
 
-typedef struct QUATERNION4F_TYP
+typedef struct Quaternion4f_TYP
 {
 	union
 	{
 		struct { float x,y,z,w; };
-		VECTOR4F Points;
-		struct { VECTOR3F Vec; float Scal; };
+		Vector4f Points;
+		struct { Vector3f Vec; float Scal; };
 	};
-} QUATERNION4F, *QUATERNION4F_PTR;
+} Quaternion4f, *Quaternion4f_PTR;

@@ -2,19 +2,19 @@
 
 #include "v2/_interface/VectorC_def.h"
 
-typedef struct POLYGON2F_TYP
+typedef struct Polygon2f_TYP
 {
-	VECTOR2F v1;
-	VECTOR2F v2;
-	VECTOR2F v3;
-}POLYGON2F, * POLYGON2F_PTR;
+	Vector2f v1;
+	Vector2f v2;
+	Vector2f v3;
+}Polygon2f, * Polygon2f_PTR;
 
-typedef struct POLYGON4F_TYP
+typedef struct Polygon4f_TYP
 {
-	VECTOR4F v1;
-	VECTOR4F v2;
-	VECTOR4F v3;
-}POLYGON4F, * POLYGON4F_PTR;
+	Vector4f v1;
+	Vector4f v2;
+	Vector4f v3;
+}Polygon4f, * Polygon4f_PTR;
 
 #define POLYGON_TYPE_DEFINITION(ElementType) \
 ElementType v1; \

@@ -24,12 +24,12 @@ namespace _GameEngine::_Physics
 	struct RaycastHit
 	{
 		BoxCollider* Collider;
-		VECTOR3F HitPoint;
+		Vector3f HitPoint;
 	};
 
 	/** Returned RayCastHits are not sorted. */
-	void RayCastAll(World* p_world, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
-	bool RayCast(World* p_world, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, RaycastHit* out_hit);
-	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
-	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, RaycastHit* out_hit);
+	void RayCastAll(World* p_world, Vector3f_PTR p_begin, Vector3f_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
+	bool RayCast(World* p_world, Vector3f_PTR p_begin, Vector3f_PTR p_end, RaycastHit* out_hit);
+	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, Vector3f_PTR p_begin, Vector3f_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints);
+	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, Vector3f_PTR p_begin, Vector3f_PTR p_end, RaycastHit* out_hit);
 }

@@ -47,26 +47,26 @@ double Math_min(double left, double right)
 };
 
 /* VECTOR - Equals */
-bool Vec_Equals_2d(const VECTOR2D_PTR p_left, const VECTOR2D_PTR p_right)
+bool Vec_Equals_2d(const Vector2d_PTR p_left, const Vector2d_PTR p_right)
 {
 	return Equals_double(&p_left->x, &p_right->x)
 		&& Equals_double(&p_left->y, &p_right->y);
 };
 
-bool Vec_Equals_2f(const VECTOR2F_PTR p_left, const VECTOR2F_PTR p_right)
+bool Vec_Equals_2f(const Vector2f_PTR p_left, const Vector2f_PTR p_right)
 {
 	return Equals_float(&p_left->x, &p_right->x)
 		&& Equals_float(&p_left->y, &p_right->y);
 };
 
-bool Vec_Equals_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right)
+bool Vec_Equals_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right)
 {
 	return Equals_float(&p_left->x, &p_right->x)
 		&& Equals_float(&p_left->y, &p_right->y)
 		&& Equals_float(&p_left->z, &p_right->z);
 };
 
-bool Vec_Equals_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right)
+bool Vec_Equals_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right)
 {
 	return Equals_float(&p_left->x, &p_right->x)
 		&& Equals_float(&p_left->y, &p_right->y)
@@ -75,10 +75,10 @@ bool Vec_Equals_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right)
 };
 
 
-const VECTOR3F VECTOR3F_ZERO = { 0.0f, 0.0f, 0.0f };
-const VECTOR3F VECTOR3F_RIGHT = { 1.0f, 0.0f, 0.0f };
-const VECTOR3F VECTOR3F_UP = { 0.0f, 1.0f, 0.0f };
-const VECTOR3F VECTOR3F_FORWARD = { 0.0f, 0.0f, 1.0f };
+const Vector3f Vector3f_ZERO = { 0.0f, 0.0f, 0.0f };
+const Vector3f Vector3f_RIGHT = { 1.0f, 0.0f, 0.0f };
+const Vector3f Vector3f_UP = { 0.0f, 1.0f, 0.0f };
+const Vector3f Vector3f_FORWARD = { 0.0f, 0.0f, 1.0f };
 
 /* VECTOR - MIN */
 
@@ -114,17 +114,17 @@ inline void Vec_Min_Xf_Xf(const char* p_left, const char* p_right, const short i
 	}
 };
 
-void Vec_Min_2d_2d(const VECTOR2D_PTR p_left, const VECTOR2D_PTR p_right, VECTOR2D_PTR p_out)
+void Vec_Min_2d_2d(const Vector2d_PTR p_left, const Vector2d_PTR p_right, Vector2d_PTR p_out)
 {
 	Vec_Min_Xd_Xd((const char*)p_left, (const char*)p_right, 2, (char*)p_out);
 };
 
-void Vec_Min_3f_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
+void Vec_Min_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
 	Vec_Min_Xf_Xf((const char*)p_left, (const char*)p_right, 3, (char*)p_out);
 }
 
-void Vec_Min_4f_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out)
+void Vec_Min_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
 {
 	Vec_Min_Xf_Xf((const char*)p_left, (const char*)p_right, 4, (char*)p_out);
 };
@@ -147,12 +147,12 @@ inline void Vec_Add_Xf_Xf(const char* p_left, const char* p_right, const short i
 	}
 };
 
-void Vec_Add_3f_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
+void Vec_Add_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
 	Vec_Add_Xf_Xf((const char*)p_left, (const char*)p_right, 3, (char*)p_out);
 }
 
-void Vec_Add_4f_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out)
+void Vec_Add_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
 {
 	Vec_Add_Xf_Xf((const char*)p_left, (const char*)p_right, 4, (char*)p_out);
 };
@@ -187,32 +187,32 @@ inline void Vec_Mul_Xf_Xf(const char* p_left, const short int p_elementCount, co
 	}
 };
 
-void Vec_Mul_2f_1f(const VECTOR2F_PTR p_left, const float p_right, VECTOR2F_PTR p_out)
+void Vec_Mul_2f_1f(const Vector2f_PTR p_left, const float p_right, Vector2f_PTR p_out)
 {
 	Vec_Mul_Xf_1f((const char*)p_left, 2, p_right, (char*)p_out);
 };
 
-void Vec_Mul_3f_1f(const VECTOR3F_PTR p_left, const float p_right, VECTOR3F_PTR p_out)
+void Vec_Mul_3f_1f(const Vector3f_PTR p_left, const float p_right, Vector3f_PTR p_out)
 {
 	Vec_Mul_Xf_1f((const char*)p_left, 3, p_right, (char*)p_out);
 };
 
-void Vec_Mul_3f_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
+void Vec_Mul_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
 	Vec_Mul_Xf_Xf((const char*)p_left, 3, (const char*)p_right, (char*)p_out);
 };
 
-void Vec_Mul_4f_1f(const VECTOR4F_PTR p_left, const float p_right, VECTOR4F_PTR p_out)
+void Vec_Mul_4f_1f(const Vector4f_PTR p_left, const float p_right, Vector4f_PTR p_out)
 {
 	Vec_Mul_Xf_1f((const char*)p_left, 4, p_right, (char*)p_out);
 };
 
-void Vec_Mul_4f_4f(const VECTOR4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out)
+void Vec_Mul_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
 {
 	Vec_Mul_Xf_Xf((const char*)p_left, 4, (const char*)p_right, (char*)p_out);
 };
 
-void Vec_Inv_3f(const VECTOR3F_PTR p_vec, VECTOR3F_PTR p_out)
+void Vec_Inv_3f(const Vector3f_PTR p_vec, Vector3f_PTR p_out)
 {
 	char* l_vecCursor = (char*)p_vec;
 	char* l_outCursor = (char*)p_out;
@@ -227,7 +227,7 @@ void Vec_Inv_3f(const VECTOR3F_PTR p_vec, VECTOR3F_PTR p_out)
 
 /* VECTOR - Geometric operations */
 
-float Vec_Dot_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right)
+float Vec_Dot_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right)
 {
 	float l_return = 0.0f;
 	char* l_leftCursor = (char*)p_left;
@@ -241,7 +241,7 @@ float Vec_Dot_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right)
 	return l_return;
 };
 
-void Vec_Cross_3f(const VECTOR3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
+void Vec_Cross_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
 	p_out->x = (p_left->y * p_right->z) - (p_left->z * p_right->y);
 	p_out->y = (p_left->z * p_right->x) - (p_left->x * p_right->z);
@@ -260,12 +260,12 @@ inline float Vec_Length_Xf(const char* p_vec, const short int p_elementCount)
 	return sqrtf(l_return);
 };
 
-float Vec_Length_3f(const VECTOR3F_PTR p_left)
+float Vec_Length_3f(const Vector3f_PTR p_left)
 {
 	return Vec_Length_Xf((const char*)p_left, 3);
 };
 
-float Vec_Length_4f(const VECTOR4F_PTR p_left)
+float Vec_Length_4f(const Vector4f_PTR p_left)
 {
 	return Vec_Length_Xf((const char*)p_left, 4);
 };
@@ -284,55 +284,55 @@ inline void Vec_Normalize_Xf(const char* p_vec, const short int p_elementCount, 
 	}
 };
 
-void Vec_Normalize_3f(const VECTOR3F_PTR p_vec, VECTOR3F_PTR p_out)
+void Vec_Normalize_3f(const Vector3f_PTR p_vec, Vector3f_PTR p_out)
 {
 	Vec_Normalize_Xf((const char*)p_vec, 3, (char*)p_out);
 };
 
-void Vec_Project_3f(const VECTOR3F_PTR p_vec, const VECTOR3F_PTR p_projectedOn, VECTOR3F_PTR p_out)
+void Vec_Project_3f(const Vector3f_PTR p_vec, const Vector3f_PTR p_projectedOn, Vector3f_PTR p_out)
 {
 	Vec_Mul_3f_1f(p_projectedOn, (Vec_Dot_3f(p_vec, p_projectedOn) / Vec_Length_3f(p_projectedOn)), p_out);
 };
 
-float Vec_Distance_3f(const VECTOR3F_PTR p_start, const VECTOR3F_PTR p_end)
+float Vec_Distance_3f(const Vector3f_PTR p_start, const Vector3f_PTR p_end)
 {
-	VECTOR3F l_vec;
+	Vector3f l_vec;
 	Vec_Min_3f_3f(p_start, p_end, &l_vec);
 	return Vec_Length_3f(&l_vec);
 };
 
-float Vec_Angle_3f(const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end)
+float Vec_Angle_3f(const Vector3f_PTR p_begin, const Vector3f_PTR p_end)
 {
 	return acosf(
 		Vec_Dot_3f(p_begin, p_end) / (Vec_Length_3f(p_begin), Vec_Length_3f(p_end))
 	);
 };
 
-float Vec_Angle_Normalized_3f(const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end)
+float Vec_Angle_Normalized_3f(const Vector3f_PTR p_begin, const Vector3f_PTR p_end)
 {
 	return acosf(Vec_Dot_3f(p_begin, p_end));
 };
 
-short int Vec_AngleSign_3f(const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end, VECTOR3F_PTR p_referenceAxis)
+short int Vec_AngleSign_3f(const Vector3f_PTR p_begin, const Vector3f_PTR p_end, Vector3f_PTR p_referenceAxis)
 {
-	VECTOR3F l_cross;
+	Vector3f l_cross;
 	Vec_Cross_3f(p_begin, p_end, &l_cross);
 	float l_dot = Vec_Dot_3f(&l_cross, p_referenceAxis);
 	return l_dot >= FLOAT_TOLERANCE ? 1 : -1;
 };
 
-void Vec_Rotate_3f(const VECTOR3F_PTR p_vector, const QUATERNION4F_PTR p_rotation, VECTOR3F_PTR p_out)
+void Vec_Rotate_3f(const Vector3f_PTR p_vector, const Quaternion4f_PTR p_rotation, Vector3f_PTR p_out)
 {
-	QUATERNION4F l_vectorAsQuat;
+	Quaternion4f l_vectorAsQuat;
 	Quat_Build_3f_1f(p_vector, 0.0f, &l_vectorAsQuat);
 
-	QUATERNION4F l_rotatedVector;
+	Quaternion4f l_rotatedVector;
 	Quat_Mul(p_rotation, &l_vectorAsQuat, &l_rotatedVector);
 	{
-		QUATERNION4F l_tmp;
+		Quaternion4f l_tmp;
 		Quat_conjugate(p_rotation, &l_tmp);
 
-		QUATERNION4F l_rotatedVector_cpy = l_rotatedVector;
+		Quaternion4f l_rotatedVector_cpy = l_rotatedVector;
 		Quat_Mul(&l_rotatedVector_cpy, &l_tmp, &l_rotatedVector);
 	}
 
@@ -342,19 +342,19 @@ void Vec_Rotate_3f(const VECTOR3F_PTR p_vector, const QUATERNION4F_PTR p_rotatio
 
 /******************** QUATERNION ************************/
 
-const QUATERNION4F QUATERNION4F_IDENTITY = { 0.0f, 0.0f, 0.0f, 1.0f };
+const Quaternion4f Quaternion4f_IDENTITY = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-bool Quat_Equals(const QUATERNION4F_PTR p_left, const QUATERNION4F_PTR p_right)
+bool Quat_Equals(const Quaternion4f_PTR p_left, const Quaternion4f_PTR p_right)
 {
 	return Vec_Equals_4f(&p_left->Points, &p_right->Points);
 };
 
-void Quat_Build_4f(const VECTOR4F_PTR p_points, QUATERNION4F_PTR p_out)
+void Quat_Build_4f(const Vector4f_PTR p_points, Quaternion4f_PTR p_out)
 {
 	p_out->Points = *p_points;
 };
 
-void Quat_Build_3f_1f(const VECTOR3F_PTR p_vec, float p_scal, QUATERNION4F_PTR p_out)
+void Quat_Build_3f_1f(const Vector3f_PTR p_vec, float p_scal, Quaternion4f_PTR p_out)
 {
 	p_out->Vec = *p_vec;
 	p_out->Scal = p_scal;
@@ -362,16 +362,16 @@ void Quat_Build_3f_1f(const VECTOR3F_PTR p_vec, float p_scal, QUATERNION4F_PTR p
 
 /* QUATERNION - OPERATION */
 
-void Quat_Normalize(const QUATERNION4F_PTR p_quat, QUATERNION4F_PTR p_out)
+void Quat_Normalize(const Quaternion4f_PTR p_quat, Quaternion4f_PTR p_out)
 {
-	Vec_Mul_4f_1f(&p_quat->Points, 1.0f / Vec_Length_4f(&p_quat->Points), (VECTOR4F_PTR)p_out);
+	Vec_Mul_4f_1f(&p_quat->Points, 1.0f / Vec_Length_4f(&p_quat->Points), (Vector4f_PTR)p_out);
 };
 
-void Quat_Mul(const QUATERNION4F_PTR p_left, const QUATERNION4F_PTR p_right, QUATERNION4F_PTR p_out)
+void Quat_Mul(const Quaternion4f_PTR p_left, const Quaternion4f_PTR p_right, Quaternion4f_PTR p_out)
 {
 	Vec_Mul_3f_1f(&p_left->Vec, p_right->w, &p_out->Vec);
 	{
-		VECTOR3F l_tmp;
+		Vector3f l_tmp;
 		Vec_Mul_3f_1f(&p_right->Vec, p_left->w, &l_tmp);
 		Vec_Add_3f_3f(&p_out->Vec, &l_tmp, &p_out->Vec);
 
@@ -383,20 +383,20 @@ void Quat_Mul(const QUATERNION4F_PTR p_left, const QUATERNION4F_PTR p_right, QUA
 	Quat_Normalize(p_out, p_out);
 };
 
-void Quat_Cross(const QUATERNION4F_PTR p_left, const  QUATERNION4F_PTR p_right, QUATERNION4F_PTR p_out)
+void Quat_Cross(const Quaternion4f_PTR p_left, const  Quaternion4f_PTR p_right, Quaternion4f_PTR p_out)
 {
-	VECTOR3F l_rotatedLeft;
-	Vec_Rotate_3f((const VECTOR3F_PTR)&VECTOR3F_FORWARD, p_left, &l_rotatedLeft);
+	Vector3f l_rotatedLeft;
+	Vec_Rotate_3f((const Vector3f_PTR)&Vector3f_FORWARD, p_left, &l_rotatedLeft);
 
-	VECTOR3F l_rotatedRight;
-	Vec_Rotate_3f((const VECTOR3F_PTR)&VECTOR3F_FORWARD, p_right, &l_rotatedRight);
+	Vector3f l_rotatedRight;
+	Vec_Rotate_3f((const Vector3f_PTR)&Vector3f_FORWARD, p_right, &l_rotatedRight);
 
-	VECTOR3F l_crossResult;
+	Vector3f l_crossResult;
 	Vec_Cross_3f(&l_rotatedLeft, &l_rotatedRight, &l_crossResult);
 	Quat_RotateAround(&l_crossResult, 0.0f, p_out);
 };
 
-void Quat_ExtractAxis(const QUATERNION4F_PTR quat, MATRIX3F_PTR out_axis)
+void Quat_ExtractAxis(const Quaternion4f_PTR quat, Matrix3f_PTR out_axis)
 {
 	float l_qxx = quat->x * quat->x;
 	float l_qxy = quat->x * quat->y;
@@ -433,14 +433,14 @@ void Quat_ExtractAxis(const QUATERNION4F_PTR quat, MATRIX3F_PTR out_axis)
 
 /* QUATERNIOn - BUILD */
 
-void Quat_FromDirection(const VECTOR3F_PTR p_vec, QUATERNION4F_PTR p_out)
+void Quat_FromDirection(const Vector3f_PTR p_vec, Quaternion4f_PTR p_out)
 {
-	float l_angle = Vec_Angle_3f((const VECTOR3F_PTR)&VECTOR3F_FORWARD, p_vec);
+	float l_angle = Vec_Angle_3f((const Vector3f_PTR)&Vector3f_FORWARD, p_vec);
 	Vec_Mul_3f_1f(p_vec, sinf(l_angle * 0.5f), &p_out->Vec);
 	p_out->w = cosf(l_angle * 0.5f);
 };
 
-void Quat_FromAxis(const float p_axis[3][3], QUATERNION4F_PTR p_out)
+void Quat_FromAxis(const float p_axis[3][3], Quaternion4f_PTR p_out)
 {
 	const float* l_right = p_axis[0];
 	const float* l_up = p_axis[1];
@@ -511,49 +511,49 @@ void Quat_FromAxis(const float p_axis[3][3], QUATERNION4F_PTR p_out)
 
 };
 
-void Quat_FromEulerAngle(const VECTOR3F_PTR p_eulerAngle, QUATERNION4F_PTR p_out)
+void Quat_FromEulerAngle(const Vector3f_PTR p_eulerAngle, Quaternion4f_PTR p_out)
 {
 	{
-		QUATERNION4F l_yaw;
-		Quat_RotateAround((const VECTOR3F_PTR)&VECTOR3F_UP, p_eulerAngle->y, &l_yaw);
+		Quaternion4f l_yaw;
+		Quat_RotateAround((const Vector3f_PTR)&Vector3f_UP, p_eulerAngle->y, &l_yaw);
 		p_out->x = 0.0f; p_out->y = 0.0f; p_out->z = 0.0f; p_out->w = 1.0f;
-		QUATERNION4F l_tmp;
-		memcpy(&l_tmp, p_out, sizeof(QUATERNION4F));
+		Quaternion4f l_tmp;
+		memcpy(&l_tmp, p_out, sizeof(Quaternion4f));
 		Quat_Mul(&l_tmp, &l_yaw, p_out);
 	}
 	{
-		QUATERNION4F l_pitch;
-		Quat_RotateAround((const VECTOR3F_PTR)&VECTOR3F_RIGHT, p_eulerAngle->x, &l_pitch);
-		QUATERNION4F l_tmp;
-		memcpy(&l_tmp, p_out, sizeof(QUATERNION4F));
+		Quaternion4f l_pitch;
+		Quat_RotateAround((const Vector3f_PTR)&Vector3f_RIGHT, p_eulerAngle->x, &l_pitch);
+		Quaternion4f l_tmp;
+		memcpy(&l_tmp, p_out, sizeof(Quaternion4f));
 		Quat_Mul(&l_tmp, &l_pitch, p_out);
 	}
 	{
-		QUATERNION4F l_roll;
-		Quat_RotateAround((const VECTOR3F_PTR)&VECTOR3F_FORWARD, p_eulerAngle->z, &l_roll);
-		QUATERNION4F l_tmp;
-		memcpy(&l_tmp, p_out, sizeof(QUATERNION4F));
+		Quaternion4f l_roll;
+		Quat_RotateAround((const Vector3f_PTR)&Vector3f_FORWARD, p_eulerAngle->z, &l_roll);
+		Quaternion4f l_tmp;
+		memcpy(&l_tmp, p_out, sizeof(Quaternion4f));
 		Quat_Mul(&l_tmp, &l_roll, p_out);
 	}
 
 };
 
-void Quat_FromTo(const VECTOR3F_PTR p_from, const  VECTOR3F_PTR p_to, QUATERNION4F_PTR p_out)
+void Quat_FromTo(const Vector3f_PTR p_from, const  Vector3f_PTR p_to, Quaternion4f_PTR p_out)
 {
 	float l_angle = Vec_Angle_3f(p_from, p_to);
-	VECTOR3F l_rotationAxis;
+	Vector3f l_rotationAxis;
 	Vec_Cross_3f(p_from, p_to, &l_rotationAxis);
 	Quat_RotateAround(&l_rotationAxis, l_angle, p_out);
 };
 
-void Quat_conjugate(const QUATERNION4F_PTR p_quat, QUATERNION4F_PTR p_out)
+void Quat_conjugate(const Quaternion4f_PTR p_quat, Quaternion4f_PTR p_out)
 {
 	Vec_Mul_3f_1f(&p_quat->Vec, -1.0f, &p_out->Vec);
 	p_out->Scal = p_quat->Scal;
 };
 
 
-void Quat_RotateAround(const VECTOR3F_PTR p_axis, const  float p_angle, QUATERNION4F_PTR out_quat)
+void Quat_RotateAround(const Vector3f_PTR p_axis, const  float p_angle, Quaternion4f_PTR out_quat)
 {
 	Vec_Mul_3f_1f(p_axis, sinf(p_angle * 0.5f), &out_quat->Vec);
 	out_quat->w = cosf(p_angle * 0.5f);
@@ -564,7 +564,7 @@ void Quat_RotateAround(const VECTOR3F_PTR p_axis, const  float p_angle, QUATERNI
 
 #if 1
 
-extern const MATRIX4F MATRIX4F_IDENTITYF = { 1.0f, 0.0f, 0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f };
+extern const Matrix4f Matrix4f_IDENTITYF = { 1.0f, 0.0f, 0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f };
 
 inline float Mat_Mul_line_column_Xf(const char* p_left_line, const char* p_right_column, const short int p_leftColumnCount, const size_t p_fullColumnSize)
 {
@@ -618,9 +618,9 @@ inline void Mat_Mul_MXxXf_f(const float* p_mat, const float p_value, float* p_ou
 	}
 };
 
-inline float Mat_Det_M4F(const MATRIX4F_PTR p_mat, const short int p_colIndex, const short int p_lineIndex)
+inline float Mat_Det_M4F(const Matrix4f_PTR p_mat, const short int p_colIndex, const short int p_lineIndex)
 {
-	MATRIX3F l_mat3x3 = { 0 };
+	Matrix3f l_mat3x3 = { 0 };
 	{
 
 		char* l_mat3_cursor = (char*)l_mat3x3.Points;
@@ -644,7 +644,7 @@ inline float Mat_Det_M4F(const MATRIX4F_PTR p_mat, const short int p_colIndex, c
 			}
 			else
 			{
-				l_mat_cursor += sizeof(VECTOR4F);
+				l_mat_cursor += sizeof(Vector4f);
 			}
 		}
 	}
@@ -656,33 +656,33 @@ inline float Mat_Det_M4F(const MATRIX4F_PTR p_mat, const short int p_colIndex, c
 };
 
 
-void Mat_Mul_M4F_M4F(const MATRIX4F_PTR p_left, const MATRIX4F_PTR p_right, MATRIX4F_PTR p_out)
+void Mat_Mul_M4F_M4F(const Matrix4f_PTR p_left, const Matrix4f_PTR p_right, Matrix4f_PTR p_out)
 {
-	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 4, sizeof(VECTOR4F), sizeof(VECTOR4F), (char*)p_out);
+	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 4, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
 };
 
-void Mat_Mul_M4F_V4F(const MATRIX4F_PTR p_left, const VECTOR4F_PTR p_right, VECTOR4F_PTR p_out)
+void Mat_Mul_M4F_V4F(const Matrix4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
 {
-	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 1, sizeof(VECTOR4F), sizeof(VECTOR4F), (char*)p_out);
+	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 1, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
 };
 
-void Mat_Mul_M4F_V4F_Homogeneous(const MATRIX4F_PTR p_projectionmatrix, const VECTOR4F_PTR p_pos, VECTOR4F_PTR out_pos)
+void Mat_Mul_M4F_V4F_Homogeneous(const Matrix4f_PTR p_projectionmatrix, const Vector4f_PTR p_pos, Vector4f_PTR out_pos)
 {
 	Mat_Mul_M4F_V4F(p_projectionmatrix, p_pos, out_pos);
 	Vec_Mul_4f_1f(out_pos, 1.0f / out_pos->w, out_pos);
 };
 
-void Mat_Mul_M3F_M3F(const MATRIX3F_PTR p_left, const MATRIX3F_PTR p_right, MATRIX3F_PTR p_out)
+void Mat_Mul_M3F_M3F(const Matrix3f_PTR p_left, const Matrix3f_PTR p_right, Matrix3f_PTR p_out)
 {
-	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 3, 3, sizeof(VECTOR4F), sizeof(VECTOR4F), (char*)p_out);
+	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 3, 3, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
 };
 
-void Mat_Mul_M3F_V3F(const MATRIX3F_PTR p_left, const VECTOR3F_PTR p_right, VECTOR3F_PTR p_out)
+void Mat_Mul_M3F_V3F(const Matrix3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
-	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 3, 1, sizeof(VECTOR3F), sizeof(VECTOR3F), (char*)p_out);
+	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 3, 1, sizeof(Vector3f), sizeof(Vector3f), (char*)p_out);
 };
 
-void Mat_Inv_M4F(const MATRIX4F_PTR p_matrix, MATRIX4F_PTR p_out)
+void Mat_Inv_M4F(const Matrix4f_PTR p_matrix, Matrix4f_PTR p_out)
 {
 	float l_det = (p_matrix->_00 * Mat_Det_M4F(p_matrix, 0, 0)) - (p_matrix->_01 * Mat_Det_M4F(p_matrix, 0, 1)) + (p_matrix->_02 * Mat_Det_M4F(p_matrix, 0, 2)) - (p_matrix->_03 * Mat_Det_M4F(p_matrix, 0, 3));
 
@@ -710,52 +710,52 @@ void Mat_Inv_M4F(const MATRIX4F_PTR p_matrix, MATRIX4F_PTR p_out)
 
 /* MATRIX - TRS related operaions */
 
-void Mat_Translation_M4F(const VECTOR3F_PTR p_translation, MATRIX4F_PTR out_mat)
+void Mat_Translation_M4F(const Vector3f_PTR p_translation, Matrix4f_PTR out_mat)
 {
 	out_mat->Col3.Vec3 = *p_translation;
 };
 
-void Mat_RotationAxis_M4F(const MATRIX3F_PTR p_axis, MATRIX4F_PTR out_mat)
+void Mat_RotationAxis_M4F(const Matrix3f_PTR p_axis, Matrix4f_PTR out_mat)
 {
 	out_mat->Col0.Vec3 = p_axis->Col0;
 	out_mat->Col1.Vec3 = p_axis->Col1;
 	out_mat->Col2.Vec3 = p_axis->Col2;
 };
 
-void Mat_RotationSeparatedAxis_M4F(const VECTOR3F_PTR p_right, const VECTOR3F_PTR p_up, const VECTOR3F_PTR p_forward, MATRIX4F_PTR out_mat)
+void Mat_RotationSeparatedAxis_M4F(const Vector3f_PTR p_right, const Vector3f_PTR p_up, const Vector3f_PTR p_forward, Matrix4f_PTR out_mat)
 {
 	out_mat->Col0.Vec3 = *p_right;
 	out_mat->Col1.Vec3 = *p_up;
 	out_mat->Col2.Vec3 = *p_forward;
 };
 
-void Mat_Scale_M4F(const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_mat)
+void Mat_Scale_M4F(const Vector3f_PTR p_scale, Matrix4f_PTR out_mat)
 {
 	Vec_Mul_3f_1f(&out_mat->Col0.Vec3, p_scale->x, &out_mat->Col0.Vec3);
 	Vec_Mul_3f_1f(&out_mat->Col1.Vec3, p_scale->y, &out_mat->Col1.Vec3);
 	Vec_Mul_3f_1f(&out_mat->Col2.Vec3, p_scale->z, &out_mat->Col2.Vec3);
 };
 
-void Mat_TRS_Axis_M4F(const VECTOR3F_PTR p_position, const MATRIX3F_PTR p_axis, const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_TRS)
+void Mat_TRS_Axis_M4F(const Vector3f_PTR p_position, const Matrix3f_PTR p_axis, const Vector3f_PTR p_scale, Matrix4f_PTR out_TRS)
 {
-	*out_TRS = MATRIX4F_IDENTITYF;
+	*out_TRS = Matrix4f_IDENTITYF;
 	Mat_Translation_M4F(p_position, out_TRS);
 	Mat_RotationAxis_M4F(p_axis, out_TRS);
 	Mat_Scale_M4F(p_scale, out_TRS);
 };
 
-void Mat_TRS_Quat_M4F(const VECTOR3F_PTR p_position, const QUATERNION4F_PTR p_quat, const VECTOR3F_PTR p_scale, MATRIX4F_PTR out_TRS)
+void Mat_TRS_Quat_M4F(const Vector3f_PTR p_position, const Quaternion4f_PTR p_quat, const Vector3f_PTR p_scale, Matrix4f_PTR out_TRS)
 {
-	MATRIX3F l_axis; Quat_ExtractAxis(p_quat, &l_axis);
+	Matrix3f l_axis; Quat_ExtractAxis(p_quat, &l_axis);
 	Mat_TRS_Axis_M4F(p_position, &l_axis, p_scale, out_TRS);
 };
 
-void Mat_GetTranslation_M4F(const MATRIX4F_PTR p_mat, VECTOR4F_PTR out_translation)
+void Mat_GetTranslation_M4F(const Matrix4f_PTR p_mat, Vector4f_PTR out_translation)
 {
 	*out_translation = p_mat->Col3;
 };
 
-void Mat_GetScale_M4F(const MATRIX4F_PTR p_trs, VECTOR4F_PTR out_scale)
+void Mat_GetScale_M4F(const Matrix4f_PTR p_trs, Vector4f_PTR out_scale)
 {
 	out_scale->x = Vec_Length_3f(&p_trs->Col0.Vec3);
 	out_scale->y = Vec_Length_3f(&p_trs->Col1.Vec3);
@@ -765,7 +765,7 @@ void Mat_GetScale_M4F(const MATRIX4F_PTR p_trs, VECTOR4F_PTR out_scale)
 
 /* MATRIX - Rotation related operations */
 
-void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_near, const float p_far, MATRIX4F_PTR p_out)
+void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_near, const float p_far, Matrix4f_PTR p_out)
 {
 	float l_halfTan = tanf(p_fov / 2.0f);
 
@@ -790,21 +790,21 @@ void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_
 	p_out->_33 = 0.0f;
 }
 
-void Mat_LookAtRotation_F(const VECTOR3F_PTR p_origin, const VECTOR3F_PTR p_target, const VECTOR3F_PTR p_up, MATRIX3F_PTR out_rotationMatrix)
+void Mat_LookAtRotation_F(const Vector3f_PTR p_origin, const Vector3f_PTR p_target, const Vector3f_PTR p_up, Matrix3f_PTR out_rotationMatrix)
 {
-	VECTOR3F l_forward;
+	Vector3f l_forward;
 	{
 		Vec_Min_3f_3f(p_target, p_origin, &l_forward);
 		Vec_Normalize_3f(&l_forward, &l_forward);
 		//TODO - WARNING : this is true only for view matrices (camera).
 		Vec_Mul_3f_1f(&l_forward, -1.0f, &l_forward);
 	}
-	VECTOR3F l_right;
+	Vector3f l_right;
 	{
 		Vec_Cross_3f(&l_forward, p_up, &l_right);
 		Vec_Normalize_3f(&l_right, &l_right);
 	}
-	VECTOR3F l_up;
+	Vector3f l_up;
 	{
 		Vec_Cross_3f(&l_right, &l_forward, &l_up);
 		Vec_Normalize_3f(&l_up, &l_up);
@@ -864,54 +864,54 @@ inline void Seg_Mul_VXF_MXxXF(
 	Mat_Mul_MXxXf_MXxXf(p_matrix, p_end, p_vectorElementCount, 1, p_matrixLineSize, p_vectorSize, out_end);
 }
 
-void Seg_Direction_V2F(const SEGMENT_VECTOR2F_PTR p_segment, VECTOR2F_PTR p_out)
+void Seg_Direction_V2F(const Segment_Vector2f_PTR p_segment, Vector2f_PTR p_out)
 {
 	Seg_Direction_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (char*)p_out->Points, 2);
 };
 
-void Seg_ToVector_V2F(const SEGMENT_VECTOR2F_PTR p_segment, VECTOR2F_PTR p_out)
+void Seg_ToVector_V2F(const Segment_Vector2f_PTR p_segment, Vector2f_PTR p_out)
 {
 	Seg_ToVector_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (char*)p_out->Points, 2);
 };
 
-void Seg_Mul_V2F_V2F(const SEGMENT_VECTOR2F_PTR p_segment, const VECTOR2F_PTR p_right, SEGMENT_VECTOR2F_PTR p_out)
+void Seg_Mul_V2F_V2F(const Segment_Vector2f_PTR p_segment, const Vector2f_PTR p_right, Segment_Vector2f_PTR p_out)
 {
 	Seg_Mul_VXF_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (const char*)p_right, (char*)p_out->Begin.Points, (char*)p_out->End.Points, 2);
 };
 
-void Seg_Direction_V3F(const SEGMENT_VECTOR3F_PTR p_segment, VECTOR3F_PTR p_out)
+void Seg_Direction_V3F(const Segment_Vector3f_PTR p_segment, Vector3f_PTR p_out)
 {
 	Seg_Direction_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (char*)p_out->Points, 3);
 };
-void Seg_ToVector_V3F(const SEGMENT_VECTOR3F_PTR p_segment, VECTOR3F_PTR p_out)
+void Seg_ToVector_V3F(const Segment_Vector3f_PTR p_segment, Vector3f_PTR p_out)
 {
 	Seg_ToVector_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (char*)p_out->Points, 3);
 };
-void Seg_Mul_V3F_V3F(const SEGMENT_VECTOR3F_PTR p_segment, const VECTOR3F_PTR p_right, SEGMENT_VECTOR3F_PTR p_out)
+void Seg_Mul_V3F_V3F(const Segment_Vector3f_PTR p_segment, const Vector3f_PTR p_right, Segment_Vector3f_PTR p_out)
 {
 	Seg_Mul_VXF_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (const char*)p_right, (char*)p_out->Begin.Points, (char*)p_out->End.Points, 4);
 };
-void Seg_Mul_V3F_M3F(const SEGMENT_VECTOR3F_PTR p_segment, const MATRIX3F_PTR p_right, SEGMENT_VECTOR3F_PTR p_out)
+void Seg_Mul_V3F_M3F(const Segment_Vector3f_PTR p_segment, const Matrix3f_PTR p_right, Segment_Vector3f_PTR p_out)
 {
-	Seg_Mul_VXF_MXxXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (const char*)p_right, (char*)p_out->Begin.Points, (char*)p_out->End.Points, 3, sizeof(VECTOR3F), sizeof(VECTOR3F));
+	Seg_Mul_VXF_MXxXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (const char*)p_right, (char*)p_out->Begin.Points, (char*)p_out->End.Points, 3, sizeof(Vector3f), sizeof(Vector3f));
 };
 
 
-void Seg_Direction_V4F(const SEGMENT_VECTOR4F_PTR p_segment, VECTOR4F_PTR p_out)
+void Seg_Direction_V4F(const Segment_Vector4f_PTR p_segment, Vector4f_PTR p_out)
 {
 	Seg_Direction_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (char*)p_out->Points, 4);
 };
-void Seg_ToVector_V4F(const SEGMENT_VECTOR4F_PTR p_segment, VECTOR4F_PTR p_out)
+void Seg_ToVector_V4F(const Segment_Vector4f_PTR p_segment, Vector4f_PTR p_out)
 {
 	Seg_ToVector_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (char*)p_out->Points, 3);
 };
-void Seg_Mul_V4F_V4F(const SEGMENT_VECTOR4F_PTR p_segment, const VECTOR4F_PTR p_right, SEGMENT_VECTOR4F_PTR p_out)
+void Seg_Mul_V4F_V4F(const Segment_Vector4f_PTR p_segment, const Vector4f_PTR p_right, Segment_Vector4f_PTR p_out)
 {
 	Seg_Mul_VXF_VXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (const char*)p_right, (char*)p_out->Begin.Points, (char*)p_out->End.Points, 4);
 };
-void Seg_Mul_V4F_M4F(const SEGMENT_VECTOR4F_PTR p_segment, const MATRIX4F_PTR p_right, SEGMENT_VECTOR4F_PTR p_out)
+void Seg_Mul_V4F_M4F(const Segment_Vector4f_PTR p_segment, const Matrix4f_PTR p_right, Segment_Vector4f_PTR p_out)
 {
-	Seg_Mul_VXF_MXxXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (const char*)p_right, (char*)p_out->Begin.Points, (char*)p_out->End.Points, 4, sizeof(VECTOR4F), sizeof(VECTOR4F));
+	Seg_Mul_VXF_MXxXF((const char*)p_segment->Begin.Points, (const char*)p_segment->End.Points, (const char*)p_right, (char*)p_out->Begin.Points, (char*)p_out->End.Points, 4, sizeof(Vector4f), sizeof(Vector4f));
 };
 #endif
 
@@ -920,9 +920,9 @@ void Seg_Mul_V4F_M4F(const SEGMENT_VECTOR4F_PTR p_segment, const MATRIX4F_PTR p_
 
 #if 1
 
-void Box_Grow_F(BOXF_PTR p_box, const VECTOR3F_PTR p_growingPoint)
+void Box_Grow_F(BoxF_PTR p_box, const Vector3f_PTR p_growingPoint)
 {
-	VECTOR3F l_delta; Vec_Min_3f_3f(p_growingPoint, &p_box->Center, &l_delta);
+	Vector3f l_delta; Vec_Min_3f_3f(p_growingPoint, &p_box->Center, &l_delta);
 
 	if (fabs(l_delta.x) > p_box->Extend.x)
 	{
@@ -938,12 +938,12 @@ void Box_Grow_F(BOXF_PTR p_box, const VECTOR3F_PTR p_growingPoint)
 	}
 };
 
-void Box_Build_F(BOXF_PTR p_box, ARRAY_VECTOR3F_PTR p_points)
+void Box_Build_F(BoxF_PTR p_box, Array_Vector3f_PTR p_points)
 {
 	//Calculate approximate center
-	VECTOR3F l_approximateCenter = VECTOR3F_ZERO;
+	Vector3f l_approximateCenter = Vector3f_ZERO;
 	{
-		ARRAY_VECTOR3F_ITERATOR l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
+		Array_Vector3f_Iterator l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
 		while (Iter_MoveNext_Vector3F(&l_pointsIt))
 		{
 			Vec_Add_3f_3f(&l_approximateCenter, l_pointsIt.Current, &l_approximateCenter);
@@ -952,9 +952,9 @@ void Box_Build_F(BOXF_PTR p_box, ARRAY_VECTOR3F_PTR p_points)
 	}
 
 	//Calculate min-max
-	VECTOR3F l_min = l_approximateCenter, l_max = l_approximateCenter;
+	Vector3f l_min = l_approximateCenter, l_max = l_approximateCenter;
 	{
-		ARRAY_VECTOR3F_ITERATOR l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
+		Array_Vector3f_Iterator l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
 		while (Iter_MoveNext_Vector3F(&l_pointsIt))
 		{
 			if (l_pointsIt.Current->x <= l_min.x) { l_min.x = l_pointsIt.Current->x; }
@@ -970,7 +970,7 @@ void Box_Build_F(BOXF_PTR p_box, ARRAY_VECTOR3F_PTR p_points)
 
 	//calculate accurate center
 	{
-		p_box->Center = VECTOR3F_ZERO;
+		p_box->Center = Vector3f_ZERO;
 
 		Vec_Add_3f_3f(&p_box->Center, &l_min, &p_box->Center);
 		Vec_Add_3f_3f(&p_box->Center, &l_max, &p_box->Center);
@@ -981,35 +981,35 @@ void Box_Build_F(BOXF_PTR p_box, ARRAY_VECTOR3F_PTR p_points)
 	Box_Grow_F(p_box, &l_max);
 };
 
-void Box_ExtractPoints_F(const BOXF_PTR p_box, BOXFPOINTS_PTR p_out)
+void Box_ExtractPoints_F(const BoxF_PTR p_box, BoxFPoints_PTR p_out)
 {
 
-	VECTOR3F tmp_vec3;
+	Vector3f tmp_vec3;
 
 	// Set gizmo positions
-	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_F);
-	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_D_F);
-	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_B);
-	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_D_B);
-	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_U_F);
-	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_F);
-	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_U_B);
-	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_B);
+	tmp_vec3 = (Vector3f){ p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_F);
+	tmp_vec3 = (Vector3f){ p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_D_F);
+	tmp_vec3 = (Vector3f){ p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_B);
+	tmp_vec3 = (Vector3f){ p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_D_B);
+	tmp_vec3 = (Vector3f){ -p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_U_F);
+	tmp_vec3 = (Vector3f){ -p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_F);
+	tmp_vec3 = (Vector3f){ -p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_U_B);
+	tmp_vec3 = (Vector3f){ -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->L_D_B);
 };
 
-void Box_ExtractMinMax_F(const BOXF_PTR p_box, VECTOR3F_PTR out_min, VECTOR3F_PTR out_max)
+void Box_ExtractMinMax_F(const BoxF_PTR p_box, Vector3f_PTR out_min, Vector3f_PTR out_max)
 {
-	VECTOR3F tmp_vec3;
-	tmp_vec3 = (VECTOR3F){ -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, out_min);
-	tmp_vec3 = (VECTOR3F){ p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, out_max);
+	Vector3f tmp_vec3;
+	tmp_vec3 = (Vector3f){ -p_box->Extend.x, -p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, out_min);
+	tmp_vec3 = (Vector3f){ p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, out_max);
 };
 
-void BoxPoints_Mul_F_M4F(const BOXFPOINTS_PTR p_boxPoints, const MATRIX4F_PTR p_matrix, BOXFPOINTS_PTR p_out)
+void BoxPoints_Mul_F_M4F(const BoxFPoints_PTR p_boxPoints, const Matrix4f_PTR p_matrix, BoxFPoints_PTR p_out)
 {
-	VECTOR4F tmp_vec4_0, tmp_vec4_1;
+	Vector4f tmp_vec4_0, tmp_vec4_1;
 	for (short int i = 0; i < 8; i++)
 	{
-		tmp_vec4_0 = (VECTOR4F){ .Vec3 = p_boxPoints->Points[i], .Vec3_w = 1.0f };
+		tmp_vec4_0 = (Vector4f){ .Vec3 = p_boxPoints->Points[i], .Vec3_w = 1.0f };
 		Mat_Mul_M4F_V4F(p_matrix, &tmp_vec4_0, &tmp_vec4_1);
 		p_out->Points[i] = tmp_vec4_1.Vec3;
 	}
@@ -1019,108 +1019,108 @@ void BoxPoints_Mul_F_M4F(const BOXFPOINTS_PTR p_boxPoints, const MATRIX4F_PTR p_
 
 
 
-/************************ PLANE *************************/
+/************************ Plane *************************/
 
 #if 1
 
 
-void Plane_Build_EquationFactors(const float p_a, const float p_b, const float p_c, const float p_d, PLANE_PTR p_out)
+void Plane_Build_EquationFactors(const float p_a, const float p_b, const float p_c, const float p_d, Plane_PTR p_out)
 {
-	p_out->Normal = (VECTOR3F){ p_a, p_b, p_c };
+	p_out->Normal = (Vector3f){ p_a, p_b, p_c };
 	Vec_Normalize_3f(&p_out->Normal, &p_out->Normal);
-	p_out->Point = (VECTOR3F){ 0.0f, 0.0f, p_d / p_c };
+	p_out->Point = (Vector3f){ 0.0f, 0.0f, p_d / p_c };
 };
 
-void Plane_Build_Normal_Point(const VECTOR3F_PTR p_normal, const VECTOR3F_PTR p_point, PLANE_PTR p_out)
+void Plane_Build_Normal_Point(const Vector3f_PTR p_normal, const Vector3f_PTR p_point, Plane_PTR p_out)
 {
 	p_out->Normal = *p_normal;
 	p_out->Point = *p_point;
 }
 
-void  Plane_Build_3Points(const VECTOR3F_PTR p_0, const  VECTOR3F_PTR p_1, const  VECTOR3F_PTR p_2, PLANE_PTR p_out)
+void  Plane_Build_3Points(const Vector3f_PTR p_0, const  Vector3f_PTR p_1, const  Vector3f_PTR p_2, Plane_PTR p_out)
 {
-	VECTOR3F l_01; Vec_Min_3f_3f(p_1, p_0, &l_01);
-	VECTOR3F l_02; Vec_Min_3f_3f(p_2, p_0, &l_02);
+	Vector3f l_01; Vec_Min_3f_3f(p_1, p_0, &l_01);
+	Vector3f l_02; Vec_Min_3f_3f(p_2, p_0, &l_02);
 	Vec_Cross_3f(&l_01, &l_02, &p_out->Normal);
 	Vec_Normalize_3f(&p_out->Normal, &p_out->Normal);
 	p_out->Point = *p_0;
 };
 
-float Plane_MinimumDistance_V3F(const PLANE_PTR p_plane, const VECTOR3F_PTR p_point)
+float Plane_MinimumDistance_V3F(const Plane_PTR p_plane, const Vector3f_PTR p_point)
 {
-	VECTOR3F l_d;
+	Vector3f l_d;
 	Vec_Min_3f_3f(p_point, &p_plane->Point, &l_d);
 	return fabsf(Vec_Dot_3f(&l_d, &p_plane->Normal));
 };
 
-void Plane_ProjectPoint(const PLANE_PTR p_plane, const VECTOR3F_PTR p_point, VECTOR3F_PTR out_projectedPoint)
+void Plane_ProjectPoint(const Plane_PTR p_plane, const Vector3f_PTR p_point, Vector3f_PTR out_projectedPoint)
 {
-	VECTOR3F l_displacement; Vec_Min_3f_3f(p_point, &p_plane->Point, &l_displacement);
-	VECTOR3F l_displacement_alongPlaneNormal; Vec_Project_3f(&l_displacement, &p_plane->Normal, &l_displacement_alongPlaneNormal);
-	VECTOR3F l_displacement_alongPlane; Vec_Min_3f_3f(&l_displacement, &l_displacement_alongPlaneNormal, &l_displacement_alongPlane);
+	Vector3f l_displacement; Vec_Min_3f_3f(p_point, &p_plane->Point, &l_displacement);
+	Vector3f l_displacement_alongPlaneNormal; Vec_Project_3f(&l_displacement, &p_plane->Normal, &l_displacement_alongPlaneNormal);
+	Vector3f l_displacement_alongPlane; Vec_Min_3f_3f(&l_displacement, &l_displacement_alongPlaneNormal, &l_displacement_alongPlane);
 	Vec_Add_3f_3f(&p_plane->Point, &l_displacement_alongPlane, out_projectedPoint);
 };
 
 #endif
 
 
-/************************ FRUSTUM *************************/
+/************************ Frustum *************************/
 
 #if 1
 
 // Reference  http://deptinfo.unice.fr/twiki/pub/Minfo03/AlgosJeux3DMariani/planeextraction.pdf
-void Frustum_ExtractFromProjection(const MATRIX4F_PTR p_projection, FRUSTUM_PTR out_frustum)
+void Frustum_ExtractFromProjection(const Matrix4f_PTR p_projection, Frustum_PTR out_frustum)
 {
 	//TODO - Having a more direct way instead of calling inv of projection ? (more efficient - see link above)
 
-	MATRIX4F l_projection_inverted;
+	Matrix4f l_projection_inverted;
 	Mat_Inv_M4F(p_projection, &l_projection_inverted);
 
-	VECTOR4F l_right_up_far, l_right_up_near, l_right_bottom_far, l_right_bottom_near;
-	VECTOR4F l_left_up_far, l_left_up_near, l_left_bottom_far, l_left_bottom_near;
+	Vector4f l_right_up_far, l_right_up_near, l_right_bottom_far, l_right_bottom_near;
+	Vector4f l_left_up_far, l_left_up_near, l_left_bottom_far, l_left_bottom_near;
 
-	VECTOR4F tmp_vec4_0 = { 1.0f, 1.0f, -1.0f, -1.0f };
+	Vector4f tmp_vec4_0 = { 1.0f, 1.0f, -1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_up_far);
 	Vec_Mul_4f_1f(&l_right_up_far, 1.0f / l_right_up_far.w, &l_right_up_far);
 
-	tmp_vec4_0 = (VECTOR4F){ 1.0f, 1.0f, 1.0f, -1.0f };
+	tmp_vec4_0 = (Vector4f){ 1.0f, 1.0f, 1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_up_near);
 	Vec_Mul_4f_1f(&l_right_up_near, 1.0f / l_right_up_near.w, &l_right_up_near);
 
-	tmp_vec4_0 = (VECTOR4F){ 1.0f, -1.0f, -1.0f, -1.0f };
+	tmp_vec4_0 = (Vector4f){ 1.0f, -1.0f, -1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_far);
 	Vec_Mul_4f_1f(&l_right_bottom_far, 1.0f / l_right_bottom_far.w, &l_right_bottom_far);
 
-	tmp_vec4_0 = (VECTOR4F){ 1.0f, -1.0f, 1.0f, -1.0f };
+	tmp_vec4_0 = (Vector4f){ 1.0f, -1.0f, 1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_near);
 	Vec_Mul_4f_1f(&l_right_bottom_near, 1.0f / l_right_bottom_near.w, &l_right_bottom_near);
 
 
-	tmp_vec4_0 = (VECTOR4F){ -1.0f, 1.0f, -1.0f, -1.0f };
+	tmp_vec4_0 = (Vector4f){ -1.0f, 1.0f, -1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_up_far);
 	Vec_Mul_4f_1f(&l_left_up_far, 1.0f / l_left_up_far.w, &l_left_up_far);
 
-	tmp_vec4_0 = (VECTOR4F){ -1.0f, 1.0f, 1.0f, -1.0f };
+	tmp_vec4_0 = (Vector4f){ -1.0f, 1.0f, 1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_up_near);
 	Vec_Mul_4f_1f(&l_left_up_near, 1.0f / l_left_up_near.w, &l_left_up_near);
 
-	tmp_vec4_0 = (VECTOR4F){ -1.0f, -1.0f, -1.0f, -1.0f };
+	tmp_vec4_0 = (Vector4f){ -1.0f, -1.0f, -1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_far);
 	Vec_Mul_4f_1f(&l_left_bottom_far, 1.0f / l_left_bottom_far.w, &l_left_bottom_far);
 
-	tmp_vec4_0 = (VECTOR4F){ -1.0f, -1.0f, 1.0f, -1.0f };
+	tmp_vec4_0 = (Vector4f){ -1.0f, -1.0f, 1.0f, -1.0f };
 	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_near);
 	Vec_Mul_4f_1f(&l_left_bottom_near, 1.0f / l_left_bottom_near.w, &l_left_bottom_near);
 
 
-	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_left_bottom_far, (VECTOR3F_PTR)&l_left_up_near, &out_frustum->Left);
-	Plane_Build_3Points((VECTOR3F_PTR)&l_right_bottom_near, (VECTOR3F_PTR)&l_right_up_near, (VECTOR3F_PTR)&l_right_bottom_far, &out_frustum->Right);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_left_bottom_far, (Vector3f_PTR)&l_left_up_near, &out_frustum->Left);
+	Plane_Build_3Points((Vector3f_PTR)&l_right_bottom_near, (Vector3f_PTR)&l_right_up_near, (Vector3f_PTR)&l_right_bottom_far, &out_frustum->Right);
 
-	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_right_bottom_near, (VECTOR3F_PTR)&l_left_bottom_far, &out_frustum->Bottom);
-	Plane_Build_3Points((VECTOR3F_PTR)&l_left_up_near, (VECTOR3F_PTR)&l_left_up_far, (VECTOR3F_PTR)&l_right_up_near, &out_frustum->Up);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_right_bottom_near, (Vector3f_PTR)&l_left_bottom_far, &out_frustum->Bottom);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_up_near, (Vector3f_PTR)&l_left_up_far, (Vector3f_PTR)&l_right_up_near, &out_frustum->Up);
 
-	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_near, (VECTOR3F_PTR)&l_left_up_near, (VECTOR3F_PTR)&l_right_bottom_near, &out_frustum->Near);
-	Plane_Build_3Points((VECTOR3F_PTR)&l_left_bottom_far, (VECTOR3F_PTR)&l_right_bottom_far, (VECTOR3F_PTR)&l_left_up_far, &out_frustum->Far);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_left_up_near, (Vector3f_PTR)&l_right_bottom_near, &out_frustum->Near);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_far, (Vector3f_PTR)&l_right_bottom_far, (Vector3f_PTR)&l_left_up_far, &out_frustum->Far);
 };
 
 #endif
@@ -1140,7 +1140,7 @@ const CLIPPOSITION CLIPPOSITION_UP_RIGHT = 1 & 8;
 const CLIPPOSITION CLIPPOSITION_DOWN_LEFT = 2 & 4;
 const CLIPPOSITION CLIPPOSITION_DOWN_RIGHT = 2 & 8;
 
-CLIPPOSITION Rect_CalculateClipPosition(const VECTOR2F_PTR p_point, const RECTI_PTR p_clipRect)
+CLIPPOSITION Rect_CalculateClipPosition(const Vector2f_PTR p_point, const Recti_PTR p_clipRect)
 {
 	CLIPPOSITION l_pos = CLIPPOSITION_INSIDE;
 
@@ -1165,14 +1165,14 @@ CLIPPOSITION Rect_CalculateClipPosition(const VECTOR2F_PTR p_point, const RECTI_
 	return l_pos;
 }
 
-bool Rect_ClipSegment_Int(const VECTOR2F_PTR in_clippedSegment_begin, const VECTOR2F_PTR in_clippedSegment_end,
-	const RECTI_PTR p_clippedRect, VECTOR2I_PTR out_clippedSegment_begin, VECTOR2I_PTR out_clippedSegment_end)
+bool Rect_ClipSegment_Int(const Vector2f_PTR in_clippedSegment_begin, const Vector2f_PTR in_clippedSegment_end,
+	const Recti_PTR p_clippedRect, Vector2i_PTR out_clippedSegment_begin, Vector2i_PTR out_clippedSegment_end)
 {
 	CLIPPOSITION l_beginClip = Rect_CalculateClipPosition(in_clippedSegment_begin, p_clippedRect);
 	CLIPPOSITION l_endClip = Rect_CalculateClipPosition(in_clippedSegment_end, p_clippedRect);
 
-	VECTOR2F l_clippedSegment_begin = *in_clippedSegment_begin;
-	VECTOR2F l_clippedSegment_end = *in_clippedSegment_end;
+	Vector2f l_clippedSegment_begin = *in_clippedSegment_begin;
+	Vector2f l_clippedSegment_end = *in_clippedSegment_end;
 
 	if ((l_beginClip != CLIPPOSITION_INSIDE) || (l_endClip != CLIPPOSITION_INSIDE))
 	{
@@ -1247,8 +1247,8 @@ bool Rect_ClipSegment_Int(const VECTOR2F_PTR in_clippedSegment_begin, const VECT
 
 	}
 
-	*out_clippedSegment_begin = (VECTOR2I){ (int)rintf(l_clippedSegment_begin.x) , (int)rintf(l_clippedSegment_begin.y) };
-	*out_clippedSegment_end = (VECTOR2I){ (int)rintf(l_clippedSegment_end.x) , (int)rintf(l_clippedSegment_end.y) };
+	*out_clippedSegment_begin = (Vector2i){ (int)rintf(l_clippedSegment_begin.x) , (int)rintf(l_clippedSegment_begin.y) };
+	*out_clippedSegment_end = (Vector2i){ (int)rintf(l_clippedSegment_end.x) , (int)rintf(l_clippedSegment_end.y) };
 
 	return true;
 };

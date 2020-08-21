@@ -3,17 +3,17 @@
 #include "v2/_interface/VectorC_def.h"
 #include "DataStructures/ARRAY_def.h"
 
-typedef struct ARRAY_VECTOR3F_TYP
+typedef struct Array_Vector3f_TYP
 {
-	ARRAY_TYPE_DEFINITION(VECTOR3F)
-}ARRAY_VECTOR3F, * ARRAY_VECTOR3F_PTR;
+	ARRAY_TYPE_DEFINITION(Vector3f)
+}Array_Vector3f, * Array_Vector3f_PTR;
 
-typedef struct ARRAY_VECTOR3F_ITERATOR_TYP
+typedef struct Array_Vector3f_Iterator_TYP
 {
-	ARRAY_ITERATOR_DEFINITION(ARRAY_VECTOR3F, VECTOR3F)
-} ARRAY_VECTOR3F_ITERATOR, * ARRAY_VECTOR3F_ITERATOR_PTR;
+	ARRAY_ITERATOR_DEFINITION(Array_Vector3f, Vector3f)
+} Array_Vector3f_Iterator, * Array_Vector3f_Iterator_PTR;
 
-typedef struct ARRAY_VECTOR3C_TYP
+typedef struct ARRAY_Vector3c_TYP
 {
-	ARRAY_TYPE_DEFINITION(VECTOR3C)
-}ARRAY_VECTOR3C, * ARRAY_VECTOR3C_PTR;
+	ARRAY_TYPE_DEFINITION(Vector3c)
+}ARRAY_Vector3c, * ARRAY_Vector3c_PTR;

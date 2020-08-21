@@ -1,7 +1,7 @@
 #include "File.h"
 
 #include <stdio.h>
-#include "DataStructures/STRING.h"
+#include "DataStructures/String.h"
 
 
 
@@ -9,12 +9,12 @@
 
 #include <stdio.h>
 
-	void File_readFile_byte(char* p_absoluteFilePath, STRING_PTR out_file_byte)
+	void File_readFile_byte(char* p_absoluteFilePath, String_PTR out_file_byte)
 	{
 		HANDLE l_file = CreateFile(p_absoluteFilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (l_file == INVALID_HANDLE_VALUE)
 		{
-			STRING l_errorMessage;
+			String l_errorMessage;
 			String_Alloc(&l_errorMessage, 100);
 			String_AppendRaw(&l_errorMessage, "Failed to open file : ");
 			String_AppendRaw(&l_errorMessage, p_absoluteFilePath);
@@ -25,7 +25,7 @@
 		LARGE_INTEGER l_size;
 		if (!GetFileSizeEx(l_file, &l_size))
 		{
-			STRING l_errorMessage;
+			String l_errorMessage;
 			String_Alloc(&l_errorMessage, 100);
 			String_AppendRaw(&l_errorMessage, "Failed to get file size : ");
 			String_AppendRaw(&l_errorMessage, p_absoluteFilePath);
@@ -39,7 +39,7 @@
 		CloseHandle(l_file);
 	};
 
-	void File_readFile_string(char* p_absoluteFilePath, STRING_PTR out_file_string)
+	void File_readFile_string(char* p_absoluteFilePath, String_PTR out_file_string)
 	{
 		File_readFile_byte(p_absoluteFilePath, out_file_string);
 		char l_nullChar = NULL;

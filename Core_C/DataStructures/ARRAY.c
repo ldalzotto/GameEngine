@@ -21,7 +21,7 @@ void Arr_Alloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_initialCapacity)
 	p_array->Size = 0;
 };
 
-void Arr_Free(ARRAY_PTR p_array)
+void Arr_Free(Array_PTR p_array)
 {
 	free(p_array->Memory);
 	p_array->Memory = NULL;
@@ -34,7 +34,7 @@ void Arr_Zeroing(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
 	memset(p_array->Memory, 0, Arr_GetCapacitySize(p_array, p_elementSize));
 };
 
-void Arr_Clear(ARRAY_PTR p_array)
+void Arr_Clear(Array_PTR p_array)
 {
 	p_array->Size = 0;
 };
@@ -130,14 +130,14 @@ char Arr_Erase(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_index)
 }
 
 
-void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ARRAY_ITERATOR_PTR p_iter)
+void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ArrayIterator_PTR p_iter)
 {
 	p_iter->Array = p_array;
 	p_iter->Current = p_array->Memory - p_elementSize;
 	p_iter->CurrentIndex = -1;
 };
 
-bool Iter_MoveNext(ARRAY_ITERATOR_PTR p_iterator, size_t p_elementSize)
+bool Iter_MoveNext(ArrayIterator_PTR p_iterator, size_t p_elementSize)
 {
 	p_iterator->CurrentIndex += 1;
 	if (p_iterator->CurrentIndex < p_iterator->Array->Size)

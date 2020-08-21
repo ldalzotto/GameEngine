@@ -29,7 +29,7 @@ using namespace _GameEngine::_Test;
 
 void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 {
-	VECTOR3F tmp_vec3_0;
+	Vector3f tmp_vec3_0;
 
 	// Camera
 	{
@@ -62,7 +62,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		CubeCreationInfo l_cubeCreationInfo{};
 		l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 		l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-		l_cubeCreationInfo.LocalRotation = QUATERNION4F_IDENTITY;
+		l_cubeCreationInfo.LocalRotation = Quaternion4f_IDENTITY;
 		l_cubeCreationInfo.WithMeshBound = true;
 		_ECS::Entity* l_instancaitedEntity; _ECS::TransformComponent* l_instranciatedTransform;
 		EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_instancaitedEntity, &l_instranciatedTransform);
@@ -73,7 +73,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
 			l_cubeCreationInfo.LocalPosition = { 0.0f, -3.0f, 2.0f };
 			l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-			l_cubeCreationInfo.LocalRotation = QUATERNION4F_IDENTITY;
+			l_cubeCreationInfo.LocalRotation = Quaternion4f_IDENTITY;
 			l_cubeCreationInfo.WithMeshBound = true;
 			_ECS::Entity* l_childInstanciatedEntity; _ECS::TransformComponent* l_childInstranciatedTransform;
 			EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);

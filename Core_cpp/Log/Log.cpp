@@ -5,12 +5,12 @@
 #include <stdio.h>
 extern "C"
 {
-#include "DataStructures/STRING.h"
+#include "DataStructures/String.h"
 }
 
 namespace _Core
 {
-	void MyLog_build(Log* p_myLog, CLOCK_PTR p_clock)
+	void MyLog_build(Log* p_myLog, Clock_PTR p_clock)
 	{
 		p_myLog->Clock = p_clock;
 		VectorT_alloc(&p_myLog->LogMessages, 0);
@@ -40,7 +40,7 @@ namespace _Core
 		VectorT_pushBack(&p_myLog->LogMessages, &l_logMessage);
 	};
 
-	void MyLog_pushLog_string(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, STRING_PTR p_message)
+	void MyLog_pushLog_string(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_line, String_PTR p_message)
 	{
 		MyLog_pushLog(p_myLog, p_logLevel, p_filePath, p_line, (char*)p_message->Memory);
 		String_Free(p_message);

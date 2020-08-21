@@ -5,5 +5,5 @@
 
 typedef struct RENDEREDOBJECT_BUFFER_TYP
 {
-	ARRAY_REDEREDOBJECT_HANDLE RenderedObjects;
+	Array_RenderedObjectHandle RenderedObjects;
 }RENDEREDOBJECT_BUFFER, * RENDEREDOBJECT_BUFFER_PTR;

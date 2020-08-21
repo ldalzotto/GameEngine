@@ -7,9 +7,9 @@
 #include "v2/_interface/FrustumC_def.h"
 
 
-bool Intersection_AABB_Ray(const BOXF_PTR p_AABB, const SEGMENT_VECTOR3F_PTR p_ray, VECTOR3F_PTR p_outIntersectionPoint);
-bool Intersection_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere);
-bool Contains_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere);
+bool Intersection_AABB_Ray(const BoxF_PTR p_AABB, const Segment_Vector3f_PTR p_ray, Vector3f_PTR p_outIntersectionPoint);
+bool Intersection_AABB_Sphere(const BoxF_PTR p_AABB, const Spheref_PTR p_sphere);
+bool Contains_AABB_Sphere(const BoxF_PTR p_AABB, const Spheref_PTR p_sphere);
 
 // Sphere is projected in frustum space
-bool Intersection_Contains_Frustum_Sphere(const FRUSTUM_PTR p_frustum, const SPHEREF_PTR p_frustumProjectedSphere);
+bool Intersection_Contains_Frustum_Sphere(const Frustum_PTR p_frustum, const Spheref_PTR p_frustumProjectedSphere);

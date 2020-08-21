@@ -3,12 +3,12 @@
 #include "v2/_interface/VectorC_def.h"
 #include "DataStructures/ARRAY_def.h"
 
-typedef struct VERTEX_TYP
+typedef struct Vertex_TYP
 {
-	VECTOR3F LocalPosition;
-}VERTEX, * VERTEX_PTR;
+	Vector3f LocalPosition;
+}Vertex, * Vertex_PTR;
 
-typedef struct ARRAY_VERTEX_TYP
+typedef struct Array_Vertex_TYP
 {
-	ARRAY_TYPE_DEFINITION(VERTEX)
-} ARRAY_VERTEX, * ARRAY_VERTEX_PTR;
+	ARRAY_TYPE_DEFINITION(Vertex)
+} Array_Vertex, * Array_Vertex_PTR;

@@ -11,7 +11,7 @@ typedef Observer OnSwapChainBuildedObserver;
 typedef struct SwapChain_TYP
 {
 	RenderV2Interface* RenderInterface;
-	TEXTURE3C PresentTexture;
+	Texture3c PresentTexture;
 
 	// The swap chain can be rebuild if the @ref MustBeRebuilt is set to true.
 	// This event notify when such an event has occured.

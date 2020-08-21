@@ -19,9 +19,9 @@ namespace _GameEngine::_ECS
 	{
 		_ECS::ComponentHeaderT<Camera> ComponentHeader;
 		RenderV2Interface* RenderInterface;
-		MATRIX4F ProjectionMatrix;
-		MATRIX4F ViewMatrix;
-		FRUSTUM CameraFrustum;
+		Matrix4f ProjectionMatrix;
+		Matrix4f ViewMatrix;
+		Frustum CameraFrustum;
 	};
 
 	template <>
@@ -33,7 +33,7 @@ namespace _GameEngine::_ECS
 	void Camera_init(Camera* p_camera, RenderV2Interface* p_renderInterface);
 	void Camera_buildProjectionMatrix(Camera* p_camera);
 
-	MATRIX4F Camera_worldToClipMatrix(Camera* p_camera);
+	Matrix4f Camera_worldToClipMatrix(Camera* p_camera);
 
-	SEGMENT_VECTOR3F Camera_buildWorldSpaceRay(Camera* p_camera, VECTOR2F_PTR p_screenPoint);
+	Segment_Vector3f Camera_buildWorldSpaceRay(Camera* p_camera, Vector2f_PTR p_screenPoint);
 }

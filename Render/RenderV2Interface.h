@@ -1,6 +1,6 @@
 #pragma once
 
-typedef struct MESHRESOURCE_PROVIDER_TYP MESHRESOURCE_PROVIDER;
+typedef struct MeshResource_Provider_TYP MeshResource_Provider;
 typedef struct Window_TYP Window;
 typedef struct CAMERABUFFER_TYP CameraBuffer;
 typedef struct RENDEREDOBJECT_BUFFER_TYP RENDEREDOBJECT_BUFFER;
@@ -18,7 +18,7 @@ typedef struct GlobalBuffersInterface_TYP
 
 typedef struct RenderResourceProviderInterface_TYP
 {
-	MESHRESOURCE_PROVIDER* MeshResourceProvider;
+	MeshResource_Provider* MeshResourceProvider;
 }RenderResourceProviderInterface, * RenderResourceProviderInterface_PTR;
 
 typedef struct RenderV2Interface_TYP

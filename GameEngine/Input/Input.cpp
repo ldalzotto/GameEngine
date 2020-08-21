@@ -20,9 +20,9 @@ namespace _GameEngine::_Input
 
 	bool InputKey_isMouse(InputKey p_inputKey);
 
-	SEGMENT_VECTOR2F InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse)
+	Segment_Vector2f InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse)
 	{
-		SEGMENT_VECTOR2F l_segment;
+		Segment_Vector2f l_segment;
 		l_segment.Begin = { (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.x, (float)p_inputMouse->LastFrameMouseAbsoluteScreenPosition.y };
 		l_segment.End = { (float)p_inputMouse->ScreenPosition.x, (float)p_inputMouse->ScreenPosition.y };
 		return l_segment;

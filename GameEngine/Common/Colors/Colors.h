@@ -7,7 +7,7 @@ extern "C"
 
 namespace _GameEngine::_Color
 {
-	extern const VECTOR3C RED;
-	extern const VECTOR3C GREEN;
-	extern const VECTOR3C BLUE;
+	extern const Vector3c RED;
+	extern const Vector3c GREEN;
+	extern const Vector3c BLUE;
 }

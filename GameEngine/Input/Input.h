@@ -36,13 +36,13 @@ namespace _GameEngine::_Input
 		float MouseSentitivityperPixel = 0.01f;
 
 		_Core::OptionalT< InputMouseGlobalEvent > CurrentInputMouseEvent;
-		VECTOR2D ScreenPosition;
+		Vector2d ScreenPosition;
 
-		VECTOR2D LastFrameMouseAbsoluteScreenPosition;
-		VECTOR2D MouseDelta;
+		Vector2d LastFrameMouseAbsoluteScreenPosition;
+		Vector2d MouseDelta;
 	};
 
-	SEGMENT_VECTOR2F InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
+	Segment_Vector2f InputMouse_getMouseDeltaScreenPosition(InputMouse* p_inputMouse);
 
 	struct Input
 	{

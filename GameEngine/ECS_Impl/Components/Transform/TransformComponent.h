@@ -16,7 +16,7 @@ namespace _GameEngine::_ECS
 	struct TransformComponent
 	{
 		_ECS::ComponentHeaderT<TransformComponent> ComponentHeader;
-		TRANSFORM Transform;
+		Transform Transform;
 	};
 
 	template <>
@@ -27,11 +27,11 @@ namespace _GameEngine::_ECS
 
 	struct TransformInitInfo
 	{
-		VECTOR3F LocalPosition;
-		QUATERNION4F LocalRotation = QUATERNION4F_IDENTITY;
-		VECTOR3F LocalScale = { 1.0f, 1.0f, 1.0f };
+		Vector3f LocalPosition;
+		Quaternion4f LocalRotation = Quaternion4f_IDENTITY;
+		Vector3f LocalScale = { 1.0f, 1.0f, 1.0f };
 	};
 
 	void TransformComponent_init(TransformComponent* p_component, TransformInitInfo* p_transformInitInfo);
-	TransformComponent* TransformComponent_castFromTransform(TRANSFORM_PTR p_transform);
+	TransformComponent* TransformComponent_castFromTransform(Transform_PTR p_transform);
 }

@@ -19,7 +19,7 @@ namespace _GameEngine::_ECS
 
 		MeshResourceProvider_UseResource(p_renderInterface->Resources.MeshResourceProvider, p_mehsRendererInfo->MeshResourcePath, &p_meshRenderer->MeshResource);
 
-		ARRAY_VECTOR3F l_vertices = { .Memory = (VECTOR3F*)p_meshRenderer->MeshResource->Mesh.Vertices.Memory, .Size = p_meshRenderer->MeshResource->Mesh.Vertices.Size, .Capacity = p_meshRenderer->MeshResource->Mesh.Vertices.Capacity };
+		Array_Vector3f l_vertices = { .Memory = (Vector3f*)p_meshRenderer->MeshResource->Mesh.Vertices.Memory, .Size = p_meshRenderer->MeshResource->Mesh.Vertices.Size, .Capacity = p_meshRenderer->MeshResource->Mesh.Vertices.Capacity };
 		Box_Build_F(&p_meshRenderer->MeshBoundingBox, &l_vertices);
 		p_meshRenderer->ComponentHeader.OnComponentFree = MeshRenderer_free;
 	};

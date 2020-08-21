@@ -2,15 +2,15 @@
 #include "Functional/ToString/ToString.hpp"
 extern "C"
 {
-#include "DataStructures/STRING.h"
+#include "DataStructures/String.h"
 }
 
 
 namespace _Core
 {
-	STRING Log_formatError(char* p_file, int p_line, char* p_message)
+	String Log_formatError(char* p_file, int p_line, char* p_message)
 	{
-		STRING l_str;
+		String l_str;
 		String_Alloc(&l_str, 100);
 
 		char l_intContainer[50];
@@ -24,12 +24,12 @@ namespace _Core
 		return l_str;
 	};
 
-	STRING Log_formatError_string(const char* p_file, int p_line, STRING_PTR p_message)
+	String Log_formatError_string(const char* p_file, int p_line, String_PTR p_message)
 	{
-		STRING l_errorMessage;
+		String l_errorMessage;
 		String_Alloc(&l_errorMessage, 0);
 
-		STRING l_lineString;
+		String l_lineString;
 		String_Alloc(&l_lineString, 0);
 
 		ToString_int(&l_lineString, &p_line);

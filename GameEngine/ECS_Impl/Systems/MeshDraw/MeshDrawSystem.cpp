@@ -75,7 +75,7 @@ namespace _GameEngine::_ECS
 		l_meshDrawOperation.Entity = p_entity;
 		l_meshDrawOperation.TransformComponent = EntityT_getComponent<TransformComponent>(p_entity);
 		l_meshDrawOperation.MeshRenderer = EntityT_getComponent<MeshRenderer>(p_entity);
-		l_meshDrawOperation.RenderedObject = (RENDEREDOBJECT_PTR)malloc(sizeof(RENDEREDOBJECT));
+		l_meshDrawOperation.RenderedObject = (RenderedObject_PTR)malloc(sizeof(RenderedObject));
 		_Core::VectorT_pushBack(&l_meshDrawSystem->MeshDrawSystemOperations, &l_meshDrawOperation);
 
 		l_meshDrawOperation.RenderedObject->Mesh = &l_meshDrawOperation.MeshRenderer->MeshResource->Mesh;
@@ -96,7 +96,7 @@ namespace _GameEngine::_ECS
 
 			for (size_t i = 0; i < l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Size; i++)
 			{
-				RENDEREDOBJECT_HANDLE l_renderedObject = l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Memory[i];
+				RenderedObject_HANDLE l_renderedObject = l_mesRenderer->RenderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Memory[i];
 				if (l_renderedObject == l_involvedOperation.Current->RenderedObject)
 				{
 					//Erase

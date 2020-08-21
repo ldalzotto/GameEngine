@@ -40,8 +40,8 @@ void RenderV2_render(RenderV2* p_render)
 	}
 
 	{
-		VECTOR3C l_color = { 0,0,0 };
-		TEXTURE3C_MEMORYCURSOR l_presentTextureCursor;
+		Vector3c l_color = { 0,0,0 };
+		Texture3c_MemoryCursor l_presentTextureCursor;
 		Texture_CreateMemoryCursor_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureCursor);
 		while (!TextureMemCursor_IsOutofBound_3C(&l_presentTextureCursor))
 		{
@@ -50,14 +50,14 @@ void RenderV2_render(RenderV2* p_render)
 		}
 	}
 
-	RECTI l_presentTextureClip;
+	Recti l_presentTextureClip;
 	Texture_CuildClipRect_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureClip);
 
 	{
 		WireframeRendererInput l_wireFrameRendererInput;
 		l_wireFrameRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 		l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectsBuffer;
-		l_wireFrameRendererInput.GraphicsAPIToScreeMatrix = (MATRIX4F_PTR)&p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
+		l_wireFrameRendererInput.GraphicsAPIToScreeMatrix = (Matrix4f_PTR)&p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
 		WireframeRenderer_renderV2(&l_wireFrameRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory);
 	}
 	{

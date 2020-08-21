@@ -31,8 +31,8 @@ namespace _GameEngineEditor
 	/* The TransformGizmoPlane is used to project mouse delta position to world space. According to SelectedGizmoType, he is oriented and positioned to fit specific requirements. */
 	struct TransformGizmoPlane
 	{
-		TRANSFORM Transform;
-		BOXF Box;
+		Transform Transform;
+		BoxF Box;
 		_GameEngine::_Physics::BoxCollider Collider;
 	};
 

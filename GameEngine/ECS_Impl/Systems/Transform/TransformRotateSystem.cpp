@@ -91,8 +91,8 @@ namespace _GameEngine::_ECS
 		_Core::VectorIteratorT<TransformRotateOperation> l_operations = _Core::VectorT_buildIterator(&l_transformRotateSystem->TransformRotateOperations);
 		while (_Core::VectorIteratorT_moveNext(&l_operations))
 		{
-			QUATERNION4F tmp_quat_0;
-			QUATERNION4F l_newLocalRotation;
+			Quaternion4f tmp_quat_0;
+			Quaternion4f l_newLocalRotation;
 			Quat_RotateAround(&l_operations.Current->TransformRotate->Axis, l_operations.Current->TransformRotate->Speed * l_gameEngineInterface->Clock->DeltaTime, &tmp_quat_0);
 			Quat_Mul(&l_operations.Current->TransformComponent->Transform.LocalRotation, &tmp_quat_0, &l_newLocalRotation);
 			Transform_SetLocalRotation(&l_operations.Current->TransformComponent->Transform, &l_newLocalRotation);

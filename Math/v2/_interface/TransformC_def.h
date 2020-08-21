@@ -6,31 +6,31 @@
 #include "MatrixC_def.h"
 #include "DataStructures/ARRAY_def.h"
 
-typedef struct TRANSFORM_TYP* TRANSFORM_PTR;
+typedef struct Transform_TYP* Transform_PTR;
 
-typedef struct ARRAY_TRANSFORMHANDLE_TYP
+typedef struct Array_TransformHandle_TYP
 {
-	ARRAY_TYPE_DEFINITION(TRANSFORM_PTR)
-}  ARRAY_TRANSFORMHANDLE, * ARRAY_TRANSFORMHANDLE_PTR;
+	ARRAY_TYPE_DEFINITION(Transform_PTR)
+}  Array_TransformHandle, * Array_TransformHandle_PTR;
 
-typedef struct ARRAY_TRANSFORMHANDLE_ITERATOR_TYP
+typedef struct Array_TransformHandle_Iterator_TYP
 {
-	ARRAY_ITERATOR_DEFINITION(ARRAY_TRANSFORMHANDLE, TRANSFORM_PTR)
-} ARRAY_TRANSFORMHANDLE_ITERATOR, * ARRAY_TRANSFORMHANDLE_ITERATOR_PTR;
+	ARRAY_ITERATOR_DEFINITION(Array_TransformHandle, Transform_PTR)
+} Array_TransformHandle_Iterator, * Array_TransformHandle_Iterator_PTR;
 
-typedef struct TRANSFORM_TYP
+typedef struct Transform_TYP
 {
-	TRANSFORM_PTR Parent;
-	ARRAY_TRANSFORMHANDLE Childs;
+	Transform_PTR Parent;
+	Array_TransformHandle Childs;
 
 	bool MatricesMustBeRecalculated;
 	bool UserFlag_HasChanged;
 
-	VECTOR3F LocalPosition;
-	QUATERNION4F LocalRotation;
-	VECTOR3F LocalScale;
+	Vector3f LocalPosition;
+	Quaternion4f LocalRotation;
+	Vector3f LocalScale;
 
 	/** This matrix will always be relative to the top level Transform (a Transform without parent). */
-	MATRIX4F LocalToWorldMatrix;
+	Matrix4f LocalToWorldMatrix;
 
-} TRANSFORM, * TRANSFORM_PTR;
+} Transform, * Transform_PTR;

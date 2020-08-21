@@ -6,32 +6,32 @@
 
 typedef size_t VertexIndex;
 
-typedef struct POLYGON_VERTEXINDEX_TYP
+typedef struct Polygon_VertexIndex_TYP
 {
 	POLYGON_TYPE_DEFINITION(VertexIndex)
-} POLYGON_VERTEXINDEX, * POLYGON_VERTEXINDEX_PTR;
+} Polygon_VertexIndex, * Polygon_VertexIndex_PTR;
 
-typedef struct ARRAY_POLYGON_VERTEXINDEX_TYP
+typedef struct Array_Polygon_VertexIndex_TYP
 {
-	ARRAY_TYPE_DEFINITION(POLYGON_VERTEXINDEX)
-}ARRAY_POLYGON_VERTEXINDEX, * ARRAY_POLYGON_VERTEXINDEX_PTR;
+	ARRAY_TYPE_DEFINITION(Polygon_VertexIndex)
+}Array_Polygon_VertexIndex, * Array_Polygon_VertexIndex_PTR;
 
-typedef struct MESH_TYP
+typedef struct Mesh_TYP
 {
-	ARRAY_VERTEX Vertices;
-	ARRAY_POLYGON_VERTEXINDEX Polygons;
-}MESH, *MESH_PTR;
+	Array_Vertex Vertices;
+	Array_Polygon_VertexIndex Polygons;
+}Mesh, *Mesh_PTR;
 
-typedef size_t MESHRESOURCE_KEY;
+typedef size_t MeshResource_KEY;
 
-typedef struct MESHRESOURCE_TYP
+typedef struct MeshResource_TYP
 {
-	MESHRESOURCE_KEY Key;
-	MESH Mesh;
+	MeshResource_KEY Key;
+	Mesh Mesh;
 	size_t UsageCount;
-}MESHRESOURCE, * MESHRESOURCE_HANDLE;
+}MeshResource, * MeshResource_HANDLE;
 
-typedef struct MESHRESOURCE_PROVIDER_TYP
+typedef struct MeshResource_Provider_TYP
 {
-	ARRAY_TYPE_DEFINITION(MESHRESOURCE_HANDLE)
-}MESHRESOURCE_PROVIDER, * MESHRESOURCE_PROVIDER_PTR;
+	ARRAY_TYPE_DEFINITION(MeshResource_HANDLE)
+}MeshResource_Provider, * MeshResource_Provider_PTR;

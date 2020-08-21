@@ -13,7 +13,7 @@
 
 typedef struct GizmoVertex_TYP
 {
-	VECTOR4F WorldPosition;
+	Vector4f WorldPosition;
 }GizmoVertex, * GizmoVertex_PTR;
 
 typedef size_t GizmoVertexIndex;
@@ -22,13 +22,13 @@ typedef struct GizmoLine_TYP
 {
 	GizmoVertexIndex v1;
 	GizmoVertexIndex v2;
-	VECTOR3C Color;
+	Vector3c Color;
 } GizmoLine;
 
-typedef struct ARRAY_GIZMOVERTEX_TYP
+typedef struct ARRAY_GIZMOVertex_TYP
 {
 	ARRAY_TYPE_DEFINITION(GizmoVertex)
-} ARRAY_GIZMOVERTEX, * ARRAY_GIZMOVERTEX_PTR;
+} ARRAY_GIZMOVertex, * ARRAY_GIZMOVertex_PTR;
 
 typedef struct ARRAY_GIZMOLINE_TYP
 {
@@ -37,7 +37,7 @@ typedef struct ARRAY_GIZMOLINE_TYP
 
 typedef struct GizmoBuffer_TYP
 {
-	ARRAY_GIZMOVERTEX Vertices;
+	ARRAY_GIZMOVertex Vertices;
 	ARRAY_GIZMOLINE Lines;
 } GizmoBuffer;
 
@@ -49,14 +49,14 @@ typedef struct GizmoRendererInput_TYP
 {
 	GizmoBuffer* Buffer;
 	CAMERABUFFER_PTR CameraBuffer;
-	MATRIX4F_PTR GraphicsAPIToScreeMatrix;
+	Matrix4f_PTR GraphicsAPIToScreeMatrix;
 } GizmoRendererInput;
 
-void Gizmo_Render(GizmoRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer);
-void Gizmo_DrawLine(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end);
-void Gizmo_DrawLine_Color(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_begin, const VECTOR3F_PTR p_end, const VECTOR3C_PTR p_color);
-void Gizmo_DrawPoint(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_point);
-void Gizmo_DrawPoint_Color(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_point, const VECTOR3C_PTR p_color);
-void Gizmo_DrawBox(GizmoBuffer* p_gizmo, const BOXF_PTR p_box, const MATRIX4F_PTR p_localToWorldMatrix, bool p_withCenter, const VECTOR3C_PTR p_color);
-void Gizmo_DrawTransform(GizmoBuffer* p_gizmo, TRANSFORM_PTR p_transform);
-void Gizmo_DrawTransform_Axis(GizmoBuffer* p_gizmo, const VECTOR3F_PTR p_center, const VECTOR3F_PTR p_right, const VECTOR3F_PTR p_up, const VECTOR3F_PTR p_forward);
+void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer);
+void Gizmo_DrawLine(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end);
+void Gizmo_DrawLine_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end, const Vector3c_PTR p_color);
+void Gizmo_DrawPoint(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point);
+void Gizmo_DrawPoint_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point, const Vector3c_PTR p_color);
+void Gizmo_DrawBox(GizmoBuffer* p_gizmo, const BoxF_PTR p_box, const Matrix4f_PTR p_localToWorldMatrix, bool p_withCenter, const Vector3c_PTR p_color);
+void Gizmo_DrawTransform(GizmoBuffer* p_gizmo, Transform_PTR p_transform);
+void Gizmo_DrawTransform_Axis(GizmoBuffer* p_gizmo, const Vector3f_PTR p_center, const Vector3f_PTR p_right, const Vector3f_PTR p_up, const Vector3f_PTR p_forward);

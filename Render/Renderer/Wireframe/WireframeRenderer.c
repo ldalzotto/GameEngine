@@ -13,32 +13,32 @@
 
 inline void Arr_PushBackRealloc_PolygonPipelineV2(ARRAY_PolygonPipelineV2_PTR p_arr, PolygonPipelineV2* p_polygon)
 {
-	Arr_PushBackRealloc((ARRAY_PTR)p_arr, sizeof(PolygonPipelineV2), (char*)p_polygon);
+	Arr_PushBackRealloc((Array_PTR)p_arr, sizeof(PolygonPipelineV2), (char*)p_polygon);
 };
 
-void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, TEXTURE3C_PTR p_to, RECTI_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
+void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
 {
 	TimeClockPrecision l_before = Clock_currentTime_mics();
 
 	WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
-	VECTOR3C l_wireframeColor = { 255,0,0 };
-	POLYGON4F tmp_poly_4f_0, tmp_poly_4f_1;
+	Vector3c l_wireframeColor = { 255,0,0 };
+	Polygon4f tmp_poly_4f_0, tmp_poly_4f_1;
 
 	{
 		for (size_t i = 0; i < p_input->RenderableObjectsBuffer->RenderedObjects.Size; i++)
 		{
-			RENDEREDOBJECT_PTR l_renderableObject = p_input->RenderableObjectsBuffer->RenderedObjects.Memory[i];
+			RenderedObject_PTR l_renderableObject = p_input->RenderableObjectsBuffer->RenderedObjects.Memory[i];
 
 			{
-				MATRIX4F l_object_to_camera;
-				Mat_Mul_M4F_M4F((MATRIX4F_PTR)p_input->CameraBuffer->ViewMatrix, &l_renderableObject->ModelMatrix, &l_object_to_camera);
+				Matrix4f l_object_to_camera;
+				Mat_Mul_M4F_M4F((Matrix4f_PTR)p_input->CameraBuffer->ViewMatrix, &l_renderableObject->ModelMatrix, &l_object_to_camera);
 
-				if (!ObjectCulled_Boxf(l_renderableObject->MeshBoundingBox, (MATRIX4F_PTR)&l_renderableObject->ModelMatrix, (MATRIX4F_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
+				if (!ObjectCulled_Boxf(l_renderableObject->MeshBoundingBox, (Matrix4f_PTR)&l_renderableObject->ModelMatrix, (Matrix4f_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 				{
 					// Push polygons
 					for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
 					{
-						POLYGON_VERTEXINDEX_PTR l_polygon = &l_renderableObject->Mesh->Polygons.Memory[j];
+						Polygon_VertexIndex_PTR l_polygon = &l_renderableObject->Mesh->Polygons.Memory[j];
 
 						PolygonPipelineV2 l_polygonPipeline = {0};
 						l_polygonPipeline.RenderedObject = l_renderableObject;
@@ -91,7 +91,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, TEXTURE3C
 				tmp_poly_4f_1 = l_polygonPipeline->TransformedPolygon;
 				tmp_poly_4f_1.v1.z = 1.0f; tmp_poly_4f_1.v2.z = 1.0f; tmp_poly_4f_1.v3.z = 1.0f;
 				Polygon_Mul_V4F_M4F(&tmp_poly_4f_1, p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0);
-				l_polygonPipeline->PixelPolygon = (POLYGON2F) { tmp_poly_4f_0.v1.Vec3.Vec2, tmp_poly_4f_0.v2.Vec3.Vec2 , tmp_poly_4f_0.v3.Vec3.Vec2 };
+				l_polygonPipeline->PixelPolygon = (Polygon2f) { tmp_poly_4f_0.v1.Vec3.Vec2, tmp_poly_4f_0.v2.Vec3.Vec2 , tmp_poly_4f_0.v3.Vec3.Vec2 };
 			}
 
 			// Rasterize
@@ -112,18 +112,18 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, TEXTURE3C
 
 void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 {
-	Arr_Alloc((ARRAY_PTR)&p_memory->PolygonPipelines, sizeof(PolygonPipelineV2), 0);
+	Arr_Alloc((Array_PTR)&p_memory->PolygonPipelines, sizeof(PolygonPipelineV2), 0);
 	Arr_Alloc_RasterisationStep(&p_memory->RasterizedPixelsBuffer, 0);
 };
 void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
 {
-	Arr_Clear((ARRAY_PTR)&p_memory->PolygonPipelines);
+	Arr_Clear((Array_PTR)&p_memory->PolygonPipelines);
 	Arr_Clear_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 	Arr_Resize_RasterisationStep(&p_memory->RasterizedPixelsBuffer, p_width > height ? p_width * 2 : height * 2);
 
 };
 void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 {
-	Arr_Free((ARRAY_PTR)&p_memory->PolygonPipelines);
+	Arr_Free((Array_PTR)&p_memory->PolygonPipelines);
 	Arr_Free_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 };

@@ -37,9 +37,9 @@ namespace _GameEngine::_ECS
 
 	};
 
-	MATRIX4F Camera_worldToClipMatrix(Camera* p_camera)
+	Matrix4f Camera_worldToClipMatrix(Camera* p_camera)
 	{
-		MATRIX4F l_return;
+		Matrix4f l_return;
 		Mat_Mul_M4F_M4F(&p_camera->ProjectionMatrix, &p_camera->ViewMatrix, &l_return);
 		return l_return;
 	};
@@ -48,25 +48,25 @@ namespace _GameEngine::_ECS
 	{
 		Mat_Perspective_M4F(45.0f * DEG_TO_RAD,
 			((float)p_camera->RenderInterface->SwapChain->PresentTexture.Width / (float)p_camera->RenderInterface->SwapChain->PresentTexture.Height), 0.1f, 50.0f, &p_camera->ProjectionMatrix);
-		Frustum_ExtractFromProjection((MATRIX4F_PTR)&p_camera->ProjectionMatrix, &p_camera->CameraFrustum);
+		Frustum_ExtractFromProjection((Matrix4f_PTR)&p_camera->ProjectionMatrix, &p_camera->CameraFrustum);
 	};
 
-	SEGMENT_VECTOR3F Camera_buildWorldSpaceRay(Camera* p_camera, VECTOR2F_PTR p_screenPoint)
+	Segment_Vector3f Camera_buildWorldSpaceRay(Camera* p_camera, Vector2f_PTR p_screenPoint)
 	{
-		VECTOR3F tmp_vec3_0, tmp_vec3_1; VECTOR4F tmp_vec4_0, tmp_vec4_1, tmp_vec4_2, tmp_vec4_3;
+		Vector3f tmp_vec3_0, tmp_vec3_1; Vector4f tmp_vec4_0, tmp_vec4_1, tmp_vec4_2, tmp_vec4_3;
 
 		tmp_vec3_0 = { p_screenPoint->x, p_screenPoint->y, 1.0f };
 		Mat_Mul_M3F_V3F(&p_camera->RenderInterface->AppWindow->WindowToGraphicsAPIPixelCoordinates,
 			&tmp_vec3_0,
 			&tmp_vec3_1);
-		VECTOR2F l_graphicsAPIPixelCoord = tmp_vec3_1.Vec2;
+		Vector2f l_graphicsAPIPixelCoord = tmp_vec3_1.Vec2;
 
-		MATRIX4F l_clipToWorldMatrix; Mat_Inv_M4F((MATRIX4F_PTR)&Camera_worldToClipMatrix(p_camera), &l_clipToWorldMatrix);
+		Matrix4f l_clipToWorldMatrix; Mat_Inv_M4F((Matrix4f_PTR)&Camera_worldToClipMatrix(p_camera), &l_clipToWorldMatrix);
 
 		tmp_vec4_0 = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, -1.0f, 1.0f };
 		tmp_vec4_1 = { l_graphicsAPIPixelCoord.x, l_graphicsAPIPixelCoord.y, 1.0f, 1.0f };
 
-		SEGMENT_VECTOR3F l_return;
+		Segment_Vector3f l_return;
 		Mat_Mul_M4F_V4F_Homogeneous(&l_clipToWorldMatrix, &tmp_vec4_0, &tmp_vec4_2);
 		Mat_Mul_M4F_V4F_Homogeneous(&l_clipToWorldMatrix, &tmp_vec4_1, &tmp_vec4_3);
 		l_return.Begin = tmp_vec4_2.Vec3;

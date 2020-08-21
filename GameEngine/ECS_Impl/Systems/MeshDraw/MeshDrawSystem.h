@@ -31,7 +31,7 @@ namespace _GameEngine::_ECS
 		Entity* Entity;
 		TransformComponent* TransformComponent;
 		MeshRenderer* MeshRenderer;
-		RENDEREDOBJECT_HANDLE RenderedObject;
+		RenderedObject_HANDLE RenderedObject;
 	};
 
 	struct MeshDrawSystem

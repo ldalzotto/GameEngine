@@ -9,9 +9,9 @@
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/FrustumC.h"
 
-bool Intersection_AABB_Ray(const BOXF_PTR p_AABB, const SEGMENT_VECTOR3F_PTR p_ray, VECTOR3F_PTR p_outIntersectionPoint)
+bool Intersection_AABB_Ray(const BoxF_PTR p_AABB, const Segment_Vector3f_PTR p_ray, Vector3f_PTR p_outIntersectionPoint)
 {
-	VECTOR3F l_boxMin, l_boxMax;
+	Vector3f l_boxMin, l_boxMax;
 	Box_ExtractMinMax_F(p_AABB, &l_boxMin, &l_boxMax);
 
 	/*
@@ -106,10 +106,10 @@ bool Intersection_AABB_Ray(const BOXF_PTR p_AABB, const SEGMENT_VECTOR3F_PTR p_r
 	return true;
 };
 
-bool Intersection_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere)
+bool Intersection_AABB_Sphere(const BoxF_PTR p_AABB, const Spheref_PTR p_sphere)
 {
 	// We get the nearest point on the box to the sphere center.
-	VECTOR3F l_nearestPoint;
+	Vector3f l_nearestPoint;
 	if (fabsf(p_sphere->Center.x - (p_AABB->Center.x + p_AABB->Extend.x)) >= fabsf(p_sphere->Center.x - (p_AABB->Center.x - p_AABB->Extend.x)))
 	{
 		l_nearestPoint.x = p_AABB->Center.x - p_AABB->Extend.x;
@@ -139,7 +139,7 @@ bool Intersection_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere)
 	return Vec_Distance_3f(&l_nearestPoint, &p_sphere->Center) <= p_sphere->Radius * p_sphere->Radius;
 };
 
-bool Contains_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere)
+bool Contains_AABB_Sphere(const BoxF_PTR p_AABB, const Spheref_PTR p_sphere)
 {
 	// If sphere center is in the box (the sphere may be entirely contained in the box)
 	return (Compare_float_float_value(p_sphere->Center.x, p_AABB->Center.x + p_AABB->Extend.x) <= 0 && Compare_float_float_value(p_sphere->Center.x, p_AABB->Center.x - p_AABB->Extend.x) >= 0
@@ -147,9 +147,9 @@ bool Contains_AABB_Sphere(const BOXF_PTR p_AABB, const SPHEREF_PTR p_sphere)
 		|| Compare_float_float_value(p_sphere->Center.z, p_AABB->Center.z + p_AABB->Extend.z) <= 0 && Compare_float_float_value(p_sphere->Center.z, p_AABB->Center.z - p_AABB->Extend.z) >= 0);
 };
 
-bool Intersection_Contains_Plane_Segment(const PLANE_PTR p_plane, const SEGMENT_VECTOR3F_PTR p_segment)
+bool Intersection_Contains_Plane_Segment(const Plane_PTR p_plane, const Segment_Vector3f_PTR p_segment)
 {
-	VECTOR3F tmp_vec3_0;
+	Vector3f tmp_vec3_0;
 	Vec_Min_3f_3f(&p_segment->Begin, &p_plane->Point, &tmp_vec3_0);
 	float l_beginDot = Vec_Dot_3f(&p_plane->Normal, &tmp_vec3_0);
 
@@ -160,27 +160,27 @@ bool Intersection_Contains_Plane_Segment(const PLANE_PTR p_plane, const SEGMENT_
 		|| (l_beginDot <= -FLOAT_TOLERANCE && l_endDot >= FLOAT_TOLERANCE));
 };
 
-bool Intersection_Contains_Frustum_Sphere(const FRUSTUM_PTR p_frustum, const SPHEREF_PTR p_frustumProjectedSphere)
+bool Intersection_Contains_Frustum_Sphere(const Frustum_PTR p_frustum, const Spheref_PTR p_frustumProjectedSphere)
 {
-	VECTOR3F l_boxDelta_axis;
-	SEGMENT_VECTOR3F l_sphereProjected_x;
-	l_boxDelta_axis = (VECTOR3F){ p_frustumProjectedSphere->Radius, 0.0f, 0.0f };
+	Vector3f l_boxDelta_axis;
+	Segment_Vector3f l_sphereProjected_x;
+	l_boxDelta_axis = (Vector3f){ p_frustumProjectedSphere->Radius, 0.0f, 0.0f };
 	Vec_Add_3f_3f(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, &l_sphereProjected_x.End);
-	l_boxDelta_axis = (VECTOR3F){ -p_frustumProjectedSphere->Radius, 0.0f, 0.0f };
+	l_boxDelta_axis = (Vector3f){ -p_frustumProjectedSphere->Radius, 0.0f, 0.0f };
 	Vec_Add_3f_3f(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, &l_sphereProjected_x.Begin);
 	if (Intersection_Contains_Plane_Segment(&p_frustum->Right, &l_sphereProjected_x) && Intersection_Contains_Plane_Segment(&p_frustum->Left, &l_sphereProjected_x))
 	{
-		SEGMENT_VECTOR3F l_sphereProjected_y;
-		l_boxDelta_axis = (VECTOR3F) { 0.0f, p_frustumProjectedSphere->Radius, 0.0f };
+		Segment_Vector3f l_sphereProjected_y;
+		l_boxDelta_axis = (Vector3f) { 0.0f, p_frustumProjectedSphere->Radius, 0.0f };
 		Vec_Add_3f_3f(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, &l_sphereProjected_y.End);
-		l_boxDelta_axis = (VECTOR3F) { 0.0f, -p_frustumProjectedSphere->Radius, 0.0f };
+		l_boxDelta_axis = (Vector3f) { 0.0f, -p_frustumProjectedSphere->Radius, 0.0f };
 		Vec_Add_3f_3f(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, &l_sphereProjected_y.Begin);
 		if (Intersection_Contains_Plane_Segment(&p_frustum->Up, &l_sphereProjected_y) && Intersection_Contains_Plane_Segment(&p_frustum->Bottom, &l_sphereProjected_y))
 		{
-			SEGMENT_VECTOR3F l_sphereProjected_z;
-			l_boxDelta_axis = (VECTOR3F){ 0.0f, 0.0f, p_frustumProjectedSphere->Radius };
+			Segment_Vector3f l_sphereProjected_z;
+			l_boxDelta_axis = (Vector3f){ 0.0f, 0.0f, p_frustumProjectedSphere->Radius };
 			Vec_Add_3f_3f(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, &l_sphereProjected_z.End);
-			l_boxDelta_axis = (VECTOR3F){ 0.0f, 0.0f, -p_frustumProjectedSphere->Radius };
+			l_boxDelta_axis = (Vector3f){ 0.0f, 0.0f, -p_frustumProjectedSphere->Radius };
 			Vec_Add_3f_3f(&p_frustumProjectedSphere->Center, &l_boxDelta_axis, &l_sphereProjected_z.Begin);
 			if (Intersection_Contains_Plane_Segment(&p_frustum->Near, &l_sphereProjected_z) && Intersection_Contains_Plane_Segment(&p_frustum->Far, &l_sphereProjected_z))
 			{

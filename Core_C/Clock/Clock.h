@@ -3,14 +3,14 @@
 #include <stdlib.h>
 
 
-typedef struct CLOCK_TYP
+typedef struct Clock_TYP
 {
 	size_t FrameCount;
 	float DeltaTime;
-}CLOCK, * CLOCK_PTR;
+}Clock, * Clock_PTR;
 
-void Clock_NewFrame(CLOCK_PTR p_clock);
-void Clock_NewUpdate(CLOCK_PTR p_clock, float p_delta);
+void Clock_NewFrame(Clock_PTR p_clock);
+void Clock_NewUpdate(Clock_PTR p_clock, float p_delta);
 
 
 typedef unsigned long long int TimeClockPrecision;

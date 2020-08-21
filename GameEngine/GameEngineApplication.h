@@ -39,7 +39,7 @@ namespace _GameEngine
 
 		GameLoop GameLoop;
 		::_Core::Log Log;
-		CLOCK Clock;
+		Clock Clock;
 		_Physics::Physics Physics;
 		RenderV2 Render;
 		_Input::Input Input;

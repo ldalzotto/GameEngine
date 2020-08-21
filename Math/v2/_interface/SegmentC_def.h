@@ -2,21 +2,21 @@
 
 #include "v2/_interface/VectorC_def.h"
 
-typedef struct SEGMENT_VECTOR2F_TYP
+typedef struct Segment_Vector2f_TYP
 {
-	VECTOR2F Begin;
-	VECTOR2F End;
-} SEGMENT_VECTOR2F, * SEGMENT_VECTOR2F_PTR;
+	Vector2f Begin;
+	Vector2f End;
+} Segment_Vector2f, * Segment_Vector2f_PTR;
 
-typedef struct SEGMENT_VECTOR3F_TYP
+typedef struct Segment_Vector3f_TYP
 {
-	VECTOR3F Begin;
-	VECTOR3F End;
-} SEGMENT_VECTOR3F, * SEGMENT_VECTOR3F_PTR;
+	Vector3f Begin;
+	Vector3f End;
+} Segment_Vector3f, * Segment_Vector3f_PTR;
 
-typedef struct SEGMENT_VECTOR4F_TYP
+typedef struct Segment_Vector4f_TYP
 {
-	VECTOR4F Begin;
-	VECTOR4F End;
-} SEGMENT_VECTOR4F, * SEGMENT_VECTOR4F_PTR;
+	Vector4f Begin;
+	Vector4f End;
+} Segment_Vector4f, * Segment_Vector4f_PTR;
 

@@ -2,8 +2,8 @@
 
 #include "VectorC_def.h"
 
-typedef struct BOXF_TYP
+typedef struct BoxF_TYP
 {
-	VECTOR3F Center;
-	VECTOR3F Extend;
-} BOXF, * BOXF_PTR;
+	Vector3f Center;
+	Vector3f Extend;
+} BoxF, * BoxF_PTR;

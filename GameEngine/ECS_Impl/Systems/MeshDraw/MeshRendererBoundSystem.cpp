@@ -56,7 +56,7 @@ namespace _GameEngine::_ECS
 		}
 
 		_ECS::TransformComponent* l_transformComponent = EntityT_getComponent<TransformComponent>(p_entity);
-		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_operation.MeshRenderer->MeshBoundingBox, (TRANSFORM_PTR)&l_transformComponent->Transform);
+		l_operation.Bound->Boxcollider = _Physics::BoxCollider_alloc(&l_operation.MeshRenderer->MeshBoundingBox, (Transform_PTR)&l_transformComponent->Transform);
 		_Physics::World_pushBoxCollider(l_meshrendererBoundSystem->PhysicsInterface->World, l_operation.Bound->Boxcollider);
 	};
 

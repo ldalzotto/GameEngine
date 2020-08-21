@@ -21,7 +21,7 @@ typedef struct GlobalBuffers_TYP
 
 typedef struct RenderResourceProvider_TYP
 {
-	MESHRESOURCE_PROVIDER MeshResourceProvider;
+	MeshResource_Provider MeshResourceProvider;
 }RenderResourceProvider, * RenderResourceProvider_PTR;
 
 typedef struct RenderV2_TYP

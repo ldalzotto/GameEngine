@@ -19,19 +19,19 @@ const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialize
 // void window_size_callback(GLFWwindow* window, int width, int height);
 void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
 {
-	VECTOR3F l_right, l_up, l_forward;
-	l_right = (VECTOR3F) { 2.0f / (float)p_window->WindowSize.Width , 0.0f, 0.0f };
-	l_up = (VECTOR3F){ 0.0f, 2.0f / (float)p_window->WindowSize.Height, 0.0f };
-	l_forward = (VECTOR3F){ -1.0f, -1.0f, 0.0f };
+	Vector3f l_right, l_up, l_forward;
+	l_right = (Vector3f) { 2.0f / (float)p_window->WindowSize.Width , 0.0f, 0.0f };
+	l_up = (Vector3f){ 0.0f, 2.0f / (float)p_window->WindowSize.Height, 0.0f };
+	l_forward = (Vector3f){ -1.0f, -1.0f, 0.0f };
 	p_window->WindowToGraphicsAPIPixelCoordinates.Right = l_right;
 	p_window->WindowToGraphicsAPIPixelCoordinates.Up = l_up;
 	p_window->WindowToGraphicsAPIPixelCoordinates.Forward = l_forward;
 
-	VECTOR4F l_col_1, l_col_2, l_col_3, l_col_4;
-	l_col_1 = (VECTOR4F) { (float)p_window->WindowSize.Width / 2.0f , 0.0f, 0.0f, 0.0f };
-	l_col_2 = (VECTOR4F) { 0.0f,(float)p_window->WindowSize.Height / 2.0f, 0.0f, 0.0f };
-	l_col_3 = (VECTOR4F) { (float)p_window->WindowSize.Width * 0.5f,0.0f, 0.0f, 0.0f };
-	l_col_4 = (VECTOR4F) { 0.0f,(float)p_window->WindowSize.Height * 0.5f, 0.0f, 0.0f };
+	Vector4f l_col_1, l_col_2, l_col_3, l_col_4;
+	l_col_1 = (Vector4f) { (float)p_window->WindowSize.Width / 2.0f , 0.0f, 0.0f, 0.0f };
+	l_col_2 = (Vector4f) { 0.0f,(float)p_window->WindowSize.Height / 2.0f, 0.0f, 0.0f };
+	l_col_3 = (Vector4f) { (float)p_window->WindowSize.Width * 0.5f,0.0f, 0.0f, 0.0f };
+	l_col_4 = (Vector4f) { 0.0f,(float)p_window->WindowSize.Height * 0.5f, 0.0f, 0.0f };
 	p_window->GraphicsAPIToWindowPixelCoordinates.Col0 = l_col_1;
 	p_window->GraphicsAPIToWindowPixelCoordinates.Col1 = l_col_2;
 	p_window->GraphicsAPIToWindowPixelCoordinates.Col2 = l_col_3;
@@ -117,7 +117,7 @@ void windowHookToGlobalEvents(Window* p_window)
 	AppEventObserver_Register(&EventDispatcher, (void(*)(void*, AppEvent_Header*))window_onGlobalEvent, p_window);
 };
 
-void Window_presentTexture(Window* p_window, TEXTURE3C_PTR p_texture)
+void Window_presentTexture(Window* p_window, Texture3c_PTR p_texture)
 {
 	p_window->WindowState.PendingPresentingTexture = p_texture;
 
@@ -158,7 +158,7 @@ void windowPlatformSpecific_paintTexture(Window* p_window)
 
 	if (p_window->WindowState.PendingPresentingTexture)
 	{
-		TEXTURE3C_PTR l_presentTexture = p_window->WindowState.PendingPresentingTexture;
+		Texture3c_PTR l_presentTexture = p_window->WindowState.PendingPresentingTexture;
 		//	p_window->WindowState.PendingPresentingTexture = false;
 
 		HDC l_map_hdc = CreateCompatibleDC(hdc);

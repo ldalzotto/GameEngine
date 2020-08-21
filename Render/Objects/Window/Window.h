@@ -15,4 +15,4 @@ bool Window_askedForClose(Window* p_window);
 bool Window_consumeSizeChangeEvent(Window* p_window);
 
 WindowSize Window_getSize(Window* p_window);
-void Window_presentTexture(Window* p_window, TEXTURE3C_PTR p_texture);
+void Window_presentTexture(Window* p_window, Texture3c_PTR p_texture);

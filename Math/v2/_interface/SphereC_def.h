@@ -2,8 +2,8 @@
 
 #include "v2/_interface/VectorC_def.h"
 
-typedef struct SPHEREF_TYP
+typedef struct Spheref_TYP
 {
-	VECTOR3F Center;
+	Vector3f Center;
 	float Radius;
-} SPHEREF, * SPHEREF_PTR;
+} Spheref, * Spheref_PTR;

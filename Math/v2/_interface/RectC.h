@@ -6,5 +6,5 @@
 #include "VectorC_def.h"
 
 /* Returns True if the clipped segment is inside the rect */
-bool Rect_ClipSegment_Int(const VECTOR2F_PTR in_clippedSegment_begin, const VECTOR2F_PTR in_clippedSegment_end,
-	const RECTI_PTR p_clippedRect, VECTOR2I_PTR out_clippedSegment_begin, VECTOR2I_PTR out_clippedSegment_end);
+bool Rect_ClipSegment_Int(const Vector2f_PTR in_clippedSegment_begin, const Vector2f_PTR in_clippedSegment_end,
+	const Recti_PTR p_clippedRect, Vector2i_PTR out_clippedSegment_begin, Vector2i_PTR out_clippedSegment_end);

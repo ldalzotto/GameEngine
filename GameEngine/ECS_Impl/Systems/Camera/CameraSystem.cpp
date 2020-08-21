@@ -52,8 +52,8 @@ namespace _GameEngine::_ECS
 		_Core::VectorT_pushBack(&l_cameraSystem->Operations, &l_operation);
 
 		CAMERABUFFER_PTR l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
-		l_cameraBuffer->ViewMatrix = (MATRIX4F_PTR)&l_operation.Camera->ViewMatrix;
-		l_cameraBuffer->ProjectionMatrix = (MATRIX4F_PTR)&l_operation.Camera->ProjectionMatrix;
+		l_cameraBuffer->ViewMatrix = (Matrix4f_PTR)&l_operation.Camera->ViewMatrix;
+		l_cameraBuffer->ProjectionMatrix = (Matrix4f_PTR)&l_operation.Camera->ProjectionMatrix;
 		l_cameraBuffer->CameraFrustum = &l_operation.Camera->CameraFrustum;
 	}
 
@@ -98,13 +98,13 @@ namespace _GameEngine::_ECS
 			CAMERABUFFER_PTR l_cameraBuffer = l_camera->RenderInterface->GlobalBuffer.CameraBuffer;
 
 			{
-				VECTOR3F tmp_vec3_0; MATRIX4F tmp_mat4_0; MATRIX3F tmp_mat3_0;
+				Vector3f tmp_vec3_0; Matrix4f tmp_mat4_0; Matrix3f tmp_mat3_0;
 
-				VECTOR3F l_worldPosition; Transform_GetWorldPosition(&l_transform->Transform, &l_worldPosition);
-				VECTOR3F l_target;
+				Vector3f l_worldPosition; Transform_GetWorldPosition(&l_transform->Transform, &l_worldPosition);
+				Vector3f l_target;
 				Transform_GetForward(&l_transform->Transform, &l_target);
 				Vec_Add_3f_3f(&l_worldPosition, &l_target, &l_target);
-				VECTOR3F l_up;
+				Vector3f l_up;
 				Transform_GetUp(&l_transform->Transform, &tmp_vec3_0);
 				Vec_Mul_3f_1f(&tmp_vec3_0, -1.0f, &l_up);
 

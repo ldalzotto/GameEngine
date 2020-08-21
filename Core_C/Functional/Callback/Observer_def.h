@@ -4,6 +4,6 @@
 
 typedef struct Observer_TYP
 {
-	ARRAY_CALLBACK Subjects;
+	Array_Callback Subjects;
 } Observer, * Observer_PTR;
 

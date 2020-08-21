@@ -2,8 +2,8 @@
 
 #include "VectorC_def.h"
 
-typedef struct RECTI_TYP
+typedef struct Recti_TYP
 {
-	VECTOR2I Min;
-	VECTOR2I Max;
-} RECTI, * RECTI_PTR;
+	Vector2i Min;
+	Vector2i Max;
+} Recti, * Recti_PTR;

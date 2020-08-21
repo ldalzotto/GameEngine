@@ -5,14 +5,14 @@
 #include "Objects/Texture/Texture.h"
 
 void Draw_LineClipped(
-	VECTOR2F_PTR p_begin, VECTOR2F_PTR p_end,
+	Vector2f_PTR p_begin, Vector2f_PTR p_end,
 	ARRAY_RASTERISATIONSTEP_PTR in_out_rasterizedPixelsBuffer,
-	TEXTURE3C_PTR p_to, RECTI_PTR p_clipRect,
-	VECTOR3C_PTR p_color)
+	Texture3c_PTR p_to, Recti_PTR p_clipRect,
+	Vector3c_PTR p_color)
 {
 	Arr_Clear_RasterisationStep(in_out_rasterizedPixelsBuffer);
 
-	VECTOR2I l_clippedBegin, l_clippedEnd;
+	Vector2i l_clippedBegin, l_clippedEnd;
 	if (Rasterize_LineClipped(p_begin, p_end, in_out_rasterizedPixelsBuffer, p_clipRect, &l_clippedBegin, &l_clippedEnd))
 	{
 
@@ -21,22 +21,22 @@ void Draw_LineClipped(
 		{
 			if (in_out_rasterizedPixelsBuffer->Memory[j].XDirection == RasterizationStepDirection_ADD)
 			{
-				l_to_memory_cursor -= sizeof(VECTOR3C);
+				l_to_memory_cursor -= sizeof(Vector3c);
 			}
 			else if (in_out_rasterizedPixelsBuffer->Memory[j].XDirection == RasterizationStepDirection_REMOVE)
 			{
-				l_to_memory_cursor += sizeof(VECTOR3C);
+				l_to_memory_cursor += sizeof(Vector3c);
 			}
 
 			if (in_out_rasterizedPixelsBuffer->Memory[j].YDirection == RasterizationStepDirection_ADD)
 			{
-				l_to_memory_cursor -= (sizeof(VECTOR3C) * p_to->Width);
+				l_to_memory_cursor -= (sizeof(Vector3c) * p_to->Width);
 			}
 			else if (in_out_rasterizedPixelsBuffer->Memory[j].YDirection == RasterizationStepDirection_REMOVE)
 			{
-				l_to_memory_cursor += (sizeof(VECTOR3C) * p_to->Width);
+				l_to_memory_cursor += (sizeof(Vector3c) * p_to->Width);
 			}
-			*(VECTOR3C_PTR)l_to_memory_cursor = *p_color;
+			*(Vector3c_PTR)l_to_memory_cursor = *p_color;
 		}
 	}
 };

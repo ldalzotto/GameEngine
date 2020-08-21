@@ -2,19 +2,19 @@
 
 #include "ARRAY_def.h"
 
-typedef struct STRING_TYP
+typedef struct String_TYP
 {
 	ARRAY_TYPE_DEFINITION(char)
-} STRING, *STRING_PTR;
+} String, *String_PTR;
 
-typedef struct STRINGSLICE_TYP
+typedef struct StringSLICE_TYP
 {
 	char* Memory;
 	size_t Begin;
 	size_t End;
-} STRINGSLICE, * STRINGSLICE_PTR;
+} StringSLICE, * StringSLICE_PTR;
 
-typedef struct ARRAY_STRING_TYP
+typedef struct Array_String_TYP
 {
-	ARRAY_TYPE_DEFINITION(STRING)
-}ARRAY_STRING, * ARRAY_STRING_PTR;
+	ARRAY_TYPE_DEFINITION(String)
+}Array_String, * Array_String_PTR;

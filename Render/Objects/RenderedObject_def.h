@@ -5,14 +5,14 @@
 #include "Objects/Resource/Mesh_def.h"
 #include "DataStructures/ARRAY_def.h"
 
-typedef struct RENDEREDOBJECT_TYP
+typedef struct RenderedObject_TYP
 {
-	MESH_PTR Mesh;
-	BOXF_PTR MeshBoundingBox;
-	MATRIX4F ModelMatrix;
-}RENDEREDOBJECT, * RENDEREDOBJECT_PTR, * RENDEREDOBJECT_HANDLE, ** RENDEREDOBJECT_HANDLE_PTR;
+	Mesh_PTR Mesh;
+	BoxF_PTR MeshBoundingBox;
+	Matrix4f ModelMatrix;
+}RenderedObject, * RenderedObject_PTR, * RenderedObject_HANDLE, ** RenderedObject_HANDLE_PTR;
 
-typedef struct ARRAY_REDEREDOBJECT_HANDLE_TYP
+typedef struct Array_RenderedObjectHandle_TYP
 {
-	ARRAY_TYPE_DEFINITION(RENDEREDOBJECT_HANDLE)
-}ARRAY_REDEREDOBJECT_HANDLE, * ARRAY_REDEREDOBJECT_HANDLE_PTR;
+	ARRAY_TYPE_DEFINITION(RenderedObject_HANDLE)
+}Array_RenderedObjectHandle, * Array_RenderedObjectHandle_PTR;

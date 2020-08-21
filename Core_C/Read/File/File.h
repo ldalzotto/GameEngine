@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "Include/PlatformInclude.h"
-#include "DataStructures/STRING_def.h"
+#include "DataStructures/String_def.h"
 
 
 
-void File_readFile_byte(char* p_absoluteFilePath, STRING_PTR out_file_byte);
-void File_readFile_string(char* p_absoluteFilePath, STRING_PTR out_file_string);
+void File_readFile_byte(char* p_absoluteFilePath, String_PTR out_file_byte);
+void File_readFile_string(char* p_absoluteFilePath, String_PTR out_file_string);
 
 
 struct FileStream;
@@ -25,7 +25,7 @@ typedef struct FileStream
 typedef struct FileLineIterator
 {
 	FileStream FileStream;
-	STRING Line;
+	String Line;
 	bool EndOfFile;
 } FileLineIterator;
 

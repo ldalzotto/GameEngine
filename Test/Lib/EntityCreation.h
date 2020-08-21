@@ -22,9 +22,9 @@ namespace _GameEngine::_Test
 
 	struct CubeCreationInfo
 	{
-		VECTOR3F LocalPosition;
-		QUATERNION4F LocalRotation;
-		VECTOR3F LocalScale;
+		Vector3f LocalPosition;
+		Quaternion4f LocalRotation;
+		Vector3f LocalScale;
 		bool WithMeshBound;
 		_ECS::MeshRendererInitInfo* MeshRendererInitInfo;
 	};

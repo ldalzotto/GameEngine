@@ -2,7 +2,7 @@
 
 #include "PlaneC_def.h"
 
-typedef struct FRUSTUM_TYP
+typedef struct Frustum_TYP
 {
-	PLANE Left, Right, Bottom, Up, Near, Far;
-}FRUSTUM, *FRUSTUM_PTR;
+	Plane Left, Right, Bottom, Up, Near, Far;
+}Frustum, *Frustum_PTR;

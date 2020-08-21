@@ -12,7 +12,7 @@
 //https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 // A possible performance improvement is to store pixel steps in out_rasterizedPixels instead of plain pixel coordinates.
 // The the consumer can create a cursor to final texture memory and move it to set appropriate color.
-char Rasterrize_Line(VECTOR2I_PTR p_begin, VECTOR2I_PTR p_end, ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels)
+char Rasterrize_Line(Vector2i_PTR p_begin, Vector2i_PTR p_end, ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels)
 {
 	int	l_dx = abs(p_end->x - p_begin->x); int l_sx = p_begin->x < p_end->x ? 1 : -1;
 	int	l_dy = -abs(p_end->y - p_begin->y); int l_sy = p_begin->y < p_end->y ? 1 : -1;
@@ -68,11 +68,11 @@ char Rasterrize_Line(VECTOR2I_PTR p_begin, VECTOR2I_PTR p_end, ARRAY_RASTERISATI
 };
 
 bool Rasterize_LineClipped(
-	const VECTOR2F_PTR p_begin, const VECTOR2F_PTR p_end,
+	const Vector2f_PTR p_begin, const Vector2f_PTR p_end,
 	ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels,
-	const RECTI_PTR p_clip_rect,
-	VECTOR2I_PTR out_clipped_begin,
-	VECTOR2I_PTR out_clipped_end)
+	const Recti_PTR p_clip_rect,
+	Vector2i_PTR out_clipped_begin,
+	Vector2i_PTR out_clipped_end)
 {
 	if (Rect_ClipSegment_Int(p_begin, p_end, p_clip_rect, out_clipped_begin, out_clipped_end))
 	{

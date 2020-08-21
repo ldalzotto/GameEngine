@@ -2,7 +2,7 @@
 
 #include <functional>
 
-typedef struct CLOCK_TYP CLOCK;
+typedef struct Clock_TYP Clock;
 
 namespace _GameEngine
 {
@@ -40,7 +40,7 @@ namespace _GameEngine
 
 		GameLoop* GameLoop;
 		::_Core::Log* Log;
-		CLOCK* Clock;
+		Clock* Clock;
 		_Physics::PhysicsInterface* PhysicsInterface;
 		RenderV2Interface* RenderInterface;
 		_Input::Input* Input;

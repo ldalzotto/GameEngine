@@ -22,7 +22,7 @@ namespace _GameEngine::_Physics
 {
 	struct RaycastHitDistanceComparatorObject
 	{
-		VECTOR3F RayBegin;
+		Vector3f RayBegin;
 		bool DistanceCalculated;
 		float CachedDistance;
 	};
@@ -50,19 +50,19 @@ namespace _GameEngine::_Physics
 namespace _GameEngine::_Physics
 {
 
-	void RayCastAll(World* p_world, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
+	void RayCastAll(World* p_world, Vector3f_PTR p_begin, Vector3f_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
 		RayCastAll_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, p_begin, p_end, out_intersectionPoints);
 	};
 
-	bool RayCast(World* p_world, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, RaycastHit* out_hit)
+	bool RayCast(World* p_world, Vector3f_PTR p_begin, Vector3f_PTR p_end, RaycastHit* out_hit)
 	{
 		return RayCast_against((_Core::ArrayT<BoxCollider*>*) & p_world->BoxColliders, p_begin, p_end, out_hit);
 	};
 
-	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
+	void RayCastAll_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, Vector3f_PTR p_begin, Vector3f_PTR p_end, _Core::VectorT<RaycastHit>* out_intersectionPoints)
 	{
-		SEGMENT_VECTOR4F l_segment;
+		Segment_Vector4f l_segment;
 		{
 			l_segment.Begin.Vec3 = *p_begin; l_segment.Begin.Vec3_w = 1.0f;
 			l_segment.End.Vec3 = *p_end; l_segment.End.Vec3_w = 1.0f;
@@ -71,21 +71,21 @@ namespace _GameEngine::_Physics
 		auto l_boxCollidersIt = _Core::ArrayT_buildIterator(p_comparedColliders);
 		while (_Core::VectorIteratorT_moveNext(&l_boxCollidersIt))
 		{
-			SEGMENT_VECTOR4F tmp_segment_4f; SEGMENT_VECTOR3F tmp_segment_3f; MATRIX4F tmp_mat4_0;
+			Segment_Vector4f tmp_segment_4f; Segment_Vector3f tmp_segment_3f; Matrix4f tmp_mat4_0;
 
 			BoxCollider* l_boxCollider = (*l_boxCollidersIt.Current);
 
 			// We project the ray to the box local space, to perform an AABB test.
-			VECTOR3F l_intersectionPointLocal;
+			Vector3f l_intersectionPointLocal;
 			Transform_GetWorldToLocalMatrix(l_boxCollider->Transform, &tmp_mat4_0);
 			Seg_Mul_V4F_M4F(&l_segment, &tmp_mat4_0, &tmp_segment_4f);
 			tmp_segment_3f.Begin = tmp_segment_4f.Begin.Vec3; tmp_segment_3f.End = tmp_segment_4f.End.Vec3;
-			if (Intersection_AABB_Ray((BOXF_PTR)l_boxCollider->Box, &tmp_segment_3f, & l_intersectionPointLocal))
+			if (Intersection_AABB_Ray((BoxF_PTR)l_boxCollider->Box, &tmp_segment_3f, & l_intersectionPointLocal))
 			{
 				RaycastHit hit{};
 
 				// The intersection point is then projected back to world space.
-				VECTOR4F tmp_vec4, tmp_vec4_1;
+				Vector4f tmp_vec4, tmp_vec4_1;
 				Transform_GetLocalToWorldMatrix(l_boxCollider->Transform, &tmp_mat4_0);
 				tmp_vec4.Vec3 = l_intersectionPointLocal; tmp_vec4.Vec3_w = 1.0f;
 				Mat_Mul_M4F_V4F(&tmp_mat4_0, &tmp_vec4, &tmp_vec4_1);
@@ -96,7 +96,7 @@ namespace _GameEngine::_Physics
 		}
 	};
 
-	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, VECTOR3F_PTR p_begin, VECTOR3F_PTR p_end, RaycastHit* out_hit)
+	bool RayCast_against(_Core::ArrayT<_Physics::BoxCollider*>* p_comparedColliders, Vector3f_PTR p_begin, Vector3f_PTR p_end, RaycastHit* out_hit)
 	{
 		bool l_return = false;
 		_Core::VectorT<RaycastHit> l_hits;
