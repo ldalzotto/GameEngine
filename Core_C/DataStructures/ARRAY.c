@@ -91,7 +91,6 @@ char Arr_PushBackNoRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 	return 0;
 };
 
-
 char Arr_InsertAtRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value, size_t p_elementNb, size_t p_index)
 {
 #ifndef NDEBUG

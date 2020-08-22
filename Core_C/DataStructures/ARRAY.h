@@ -8,6 +8,7 @@
 
 void Arr_Alloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_initialCapacity);
 void Arr_Free(Array_PTR p_array);
+
 void Arr_Zeroing(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE);
 void Arr_Clear(Array_PTR p_array);
 char Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_newCapacity);

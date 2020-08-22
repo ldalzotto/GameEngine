@@ -2,6 +2,7 @@
 extern "C"
 {
 #include "ECS.h"
+#include "DataStructures/HASHMAP.h"
 }
 
 ECS ecs;
@@ -25,8 +26,31 @@ void FunctionTest(ECS_ComponentHeader_HANDLE p_comp, void*)
 	}
 }
 
+size_t Hasgggg(size_t* p_key)
+{
+	return *p_key;
+}
+
+
 int main()
 {
+	/*
+	HashMap l_hashMapTest; HashMap_Alloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (HashMap_HashFn)Hasgggg);
+	size_t l_key = 8441511610;
+	int l_value = 65;
+	HashMap_PushKeyValueRealloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char*)&l_value);
+	l_key = 844151118;
+	l_value = 66;
+	HashMap_PushKeyValueRealloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char*)&l_value);
+	HashMap_PushKeyValueRealloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char*)&l_value);
+	l_key += 1;
+	int* l_val = NULL;
+	if (HashMap_GetValue(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char**)&l_val))
+	{
+		
+	};
+	*/
+
 	ECS_Build(&ecs, NULL);
 
 	ECS_OnComponentDestroyedStaticCallback l_callback = { ComponentTestType, FunctionTest , NULL };
