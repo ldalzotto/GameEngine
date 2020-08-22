@@ -12,5 +12,8 @@ extern char RETURN_CODE;
 FuncCall
 #endif // !NEDBUG
 
+#define ABORT_ERROR(Message) \
+printf(Message); abort();
+
 #define HANDLE_ERR_SILENT(FuncCall) \
 {RETURN_CODE = FuncCall; if(RETURN_CODE) {return RETURN_CODE;} }

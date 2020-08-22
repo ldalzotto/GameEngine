@@ -4,6 +4,8 @@ project(GameEngine_Physics VERSION 0.0.1)
 file(GLOB_RECURSE GAME_ENGINE_PHYSICS_PRIVATE 
 	"./World/*.cpp"
 	"./CollisionEngine/*.cpp"
+	"./World/*.c"
+	"./CollisionEngine/*.c"
 )
 
 SET(GAME_ENGINE_PHYSICS_PRIVATE 

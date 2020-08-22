@@ -8,6 +8,7 @@ add_compile_definitions(RENDER_V2=1)
 
 add_subdirectory(Core_c)
 add_subdirectory(Core_cpp)
+add_subdirectory(ECS_C)
 add_subdirectory(Math)
 add_subdirectory(Render)
 add_subdirectory(GameEngine)

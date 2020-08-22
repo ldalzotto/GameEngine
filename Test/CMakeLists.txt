@@ -25,3 +25,6 @@ target_link_libraries(CameraMatricesTest PUBLIC GameEngine)
 add_executable(MyRenderTest "src/MyRenderTest.cpp" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(MyRenderTest PUBLIC GameEngine)
 target_link_libraries(MyRenderTest PUBLIC MyRender)
+
+add_executable(ECSTest "src/ECSTest.cpp")
+target_link_libraries(ECSTest PUBLIC ECS_C)
