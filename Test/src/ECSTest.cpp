@@ -34,8 +34,7 @@ size_t Hasgggg(size_t* p_key)
 
 int main()
 {
-	/*
-	HashMap l_hashMapTest; HashMap_Alloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (HashMap_HashFn)Hasgggg);
+	HashMap l_hashMapTest; HashMap_Alloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (HashMap_HashFn)Hasgggg, 0);
 	size_t l_key = 8441511610;
 	int l_value = 65;
 	HashMap_PushKeyValueRealloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char*)&l_value);
@@ -43,13 +42,13 @@ int main()
 	l_value = 66;
 	HashMap_PushKeyValueRealloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char*)&l_value);
 	HashMap_PushKeyValueRealloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char*)&l_value);
-	l_key += 1;
+	// l_key += 1;
 	int* l_val = NULL;
 	if (HashMap_GetValue(&l_hashMapTest, sizeof(size_t), sizeof(int), (char*)&l_key, (char**)&l_val))
 	{
 		
 	};
-	*/
+
 
 	ECS_Build(&ecs, NULL);
 
