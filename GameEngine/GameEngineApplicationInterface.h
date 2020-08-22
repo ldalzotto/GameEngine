@@ -11,8 +11,6 @@ namespace _GameEngine
 
 namespace _Core
 {
-	struct Log;
-
 	template <typename INPUT_TYPE = _GameEngine::GameEngineApplicationInterface>
 	struct ObserverT;
 }
@@ -28,6 +26,7 @@ namespace _GameEngine
 }
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
+typedef struct Log_TYP Log;
 
 namespace _GameEngine
 {
@@ -39,7 +38,7 @@ namespace _GameEngine
 		std::function<void(float)>* SandboxUpdateHook;
 
 		GameLoop* GameLoop;
-		::_Core::Log* Log;
+		Log* Log;
 		Clock* Clock;
 		_Physics::PhysicsInterface* PhysicsInterface;
 		RenderV2Interface* RenderInterface;

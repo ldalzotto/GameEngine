@@ -9,14 +9,11 @@ extern "C"
 #include "v2/_interface/SegmentC_def.h"
 #include "v2/_interface/VectorC_def.h"
 #include "Objects/Window/Window_def.h"
+#include "Log/Log_def.h"
 }
 
 #include <queue>
 
-namespace _Core
-{
-	struct Log;
-}
 
 namespace _GameEngine::_Input
 {
@@ -47,7 +44,7 @@ namespace _GameEngine::_Input
 	struct Input
 	{
 		Window* Window;
-		::_Core::Log* Log;
+		Log_PTR Log;
 
 		std::vector<KeyStateFlag> InputState;
 		std::queue<InputGlobalEvent> InputEventsLastFrame;
@@ -56,7 +53,7 @@ namespace _GameEngine::_Input
 		InputMouse InputMouse;
 	};
 
-	void Input_build(Input* p_input, Window* p_window, ::_Core::Log* Log);
+	void Input_build(Input* p_input, Window* p_window, Log_PTR Log);
 	void Input_free(Input* p_input);
 
 	bool Input_getState(Input* p_input, InputKey p_key, KeyStateFlag p_keyStateFlag);

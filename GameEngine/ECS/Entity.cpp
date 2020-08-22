@@ -2,12 +2,13 @@
 
 #include <stdexcept>
 
-#include "Log/Log.hpp"
 #include "ECS/ECS.h"
 #include "Algorithm/Compare/CompareAlgorithmT.hpp"
 
 extern "C"
 {
+#include "Log/LogFormatting.h"
+#include "Log/Log.h"
 #include "DataStructures/String.h"
 }
 
@@ -39,9 +40,9 @@ namespace _GameEngine::_ECS
 		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_entity->Components), _Core::ComparatorT<ComponentHeader*, ComponentType, void>{Component_comparator, p_unlinkedComponent->ComponentType}))
 		{
 			String l_errorMessage; String_Alloc(&l_errorMessage, 100);
-			String_AppendRaw(&l_errorMessage, "Trying to add a component were it's type ( ");
-			String_AppendRaw(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType->c_str());
-			String_AppendRaw(&l_errorMessage, " ) is aleady present as a component.");
+			String_AppendRawRealloc(&l_errorMessage, "Trying to add a component were it's type ( ");
+			String_AppendRawRealloc(&l_errorMessage, (char*)p_unlinkedComponent->ComponentType->c_str());
+			String_AppendRawRealloc(&l_errorMessage, " ) is aleady present as a component.");
 			throw std::runtime_error(MYLOG_BUILD_ERRORMESSAGE_String(&l_errorMessage));
 		}
 #endif
@@ -118,7 +119,7 @@ namespace _GameEngine::_ECS
 #ifndef NDEBUG
 		if (_Core::CompareT_contains(_Core::VectorT_buildIterator(&p_ecs->EntityContainer.Entities), _Core::ComparatorT<Entity*, Entity*, void>{ Entity_comparator, p_entity }))
 		{
-			MYLOG_PUSH(p_ecs->MyLog, ::_Core::LogLevel::LOG_WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
+			MYLOG_PUSH(p_ecs->MyLog, LogLevel_WARN, "Potential wrong disposal of entity. When the Entity has been freed, is pointer is still present in the EntityContainer.");
 		}
 #endif
 

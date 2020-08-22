@@ -2,7 +2,10 @@
 
 #include <stdexcept>
 
-#include "Log/LogFormatting.hpp"
+extern "C"
+{
+#include "Log/LogFormatting.h"
+}
 
 namespace _GameEngine::_Utils
 {

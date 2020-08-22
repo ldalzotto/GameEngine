@@ -9,8 +9,8 @@ extern "C"
 {
 #include "Clock/Clock.h"
 #include "RenderV2.h"
+#include "Log/Log_def.h"
 }
-#include "Log/Log.hpp"
 
 #include "GameLoop/GameLoop.h"
 #include "EngineSequencers/EngineSequencers.h"
@@ -38,7 +38,7 @@ namespace _GameEngine
 		UpdateSequencer UpdateSequencer;
 
 		GameLoop GameLoop;
-		::_Core::Log Log;
+		Log Log;
 		Clock Clock;
 		_Physics::Physics Physics;
 		RenderV2 Render;

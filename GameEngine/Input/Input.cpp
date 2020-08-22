@@ -28,7 +28,7 @@ namespace _GameEngine::_Input
 		return l_segment;
 	};
 
-	void Input_build(Input* p_input, Window* p_window, ::_Core::Log* Log)
+	void Input_build(Input* p_input, Window* p_window, Log_PTR Log)
 	{
 		InputInstance = p_input;
 		p_input->Window = p_window;

@@ -30,12 +30,12 @@ TimeClockPrecision LastFrameTime = 0;
 int main(int argc, char* argv[])
 {
 	String l_str; String_Alloc(&l_str, 0);
-	String_AppendRaw(&l_str, "Ta mere");
-	String_AppendRaw(&l_str, " en slip.");
+	String_AppendRawRealloc(&l_str, "Ta mere");
+	String_AppendRawRealloc(&l_str, " en slip.");
 
 	const char* l_steez = "bonjour";
 	StringSLICE l_slice = { (char*)l_steez, 2, 5};
-	String_AppendSlice(&l_str, &l_slice);
+	String_AppendSliceRealloc(&l_str, &l_slice);
 
 	/*
 	MeshResource_Provider l_prov;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
 	while (!Window_askedForClose(&renderV2.AppWindow))
 	{
-		float l_deltaTime = Clock_currentTime_mics() - LastFrameTime;
+		float l_deltaTime = (float)(Clock_currentTime_mics() - LastFrameTime);
 		LastFrameTime = Clock_currentTime_mics();
 
 		AppEvent_pool();

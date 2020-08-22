@@ -3,6 +3,7 @@
 extern "C"
 {
 #include "AppEvent/AppEvent.h"
+#include "Log/Log.h"
 }
 #include "Input/InputGlobalEvent.hpp"
 
@@ -143,13 +144,13 @@ namespace _GameEngine
 		}
 		catch (const std::exception& e)
 		{
-			MyLog_pushLog(&p_app->Log, _Core::LogLevel::LOG_ERROR, __FILE__, __LINE__, (char*)e.what());
+			MyLog_pushLog(&p_app->Log, LogLevel_ERROR, __FILE__, __LINE__, (char*)e.what());
 			app_free(p_app);
 			return EXIT_FAILURE;
 		}
 		catch (...)
 		{
-			MyLog_pushLog(&p_app->Log, _Core::LogLevel::LOG_ERROR, __FILE__, __LINE__, "Unexpected Error");
+			MyLog_pushLog(&p_app->Log, LogLevel_ERROR, __FILE__, __LINE__, "Unexpected Error");
 			app_free(p_app);
 			return EXIT_FAILURE;
 		}

@@ -16,8 +16,8 @@
 		{
 			String l_errorMessage;
 			String_Alloc(&l_errorMessage, 100);
-			String_AppendRaw(&l_errorMessage, "Failed to open file : ");
-			String_AppendRaw(&l_errorMessage, p_absoluteFilePath);
+			String_AppendRawRealloc(&l_errorMessage, "Failed to open file : ");
+			String_AppendRawRealloc(&l_errorMessage, p_absoluteFilePath);
 			printf(l_errorMessage.Memory);
 			abort();
 		}
@@ -27,14 +27,14 @@
 		{
 			String l_errorMessage;
 			String_Alloc(&l_errorMessage, 100);
-			String_AppendRaw(&l_errorMessage, "Failed to get file size : ");
-			String_AppendRaw(&l_errorMessage, p_absoluteFilePath);
+			String_AppendRawRealloc(&l_errorMessage, "Failed to get file size : ");
+			String_AppendRawRealloc(&l_errorMessage, p_absoluteFilePath);
 			printf(l_errorMessage.Memory);
 			abort();
 		};
 
 		String_Alloc(out_file_byte, l_size.QuadPart);
-		ReadFile(l_file, out_file_byte->Memory, l_size.QuadPart, 0, NULL);
+		ReadFile(l_file, out_file_byte->Memory, (DWORD)l_size.QuadPart, 0, NULL);
 		out_file_byte->Size = l_size.QuadPart;
 		CloseHandle(l_file);
 	};
@@ -42,8 +42,8 @@
 	void File_readFile_string(char* p_absoluteFilePath, String_PTR out_file_string)
 	{
 		File_readFile_byte(p_absoluteFilePath, out_file_string);
-		char l_nullChar = NULL;
-		String_AppendRaw(out_file_string, &l_nullChar);
+		char l_nullChar = (char)NULL;
+		String_AppendRawRealloc(out_file_string, &l_nullChar);
 	};
 
 
@@ -74,7 +74,7 @@
 			return false;
 		}
 
-		String_Clear(&p_fileLineIterator->Line);
+		String_ClearRealloc(&p_fileLineIterator->Line);
 		int c = fgetc(p_fileLineIterator->FileStream.Stream);
 		while (true)
 		{
@@ -90,7 +90,7 @@
 			}
 			else
 			{
-				String_AppendRaw(&p_fileLineIterator->Line, (char*)&c);
+				String_AppendRawRealloc(&p_fileLineIterator->Line, (char*)&c);
 			}
 
 			c = fgetc(p_fileLineIterator->FileStream.Stream);

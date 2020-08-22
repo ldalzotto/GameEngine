@@ -4,17 +4,16 @@
 #include "Component.h"
 #include "System.h"
 #include "ECSEventQueue.h"
-
-namespace _Core
+extern "C"
 {
-	struct Log;
+#include "Log/Log_def.h"
 }
 
 namespace _GameEngine::_ECS
 {
 	struct ECS
 	{
-		::_Core::Log* MyLog;
+		Log_PTR MyLog;
 
 		ECSEventQueue EventQueue;
 		EntityContainer EntityContainer;
@@ -23,6 +22,6 @@ namespace _GameEngine::_ECS
 		SystemEvents SystemEvents;
 	};
 
-	void EntityComponent_build(ECS* p_ecs, ::_Core::Log* p_myLog);
+	void EntityComponent_build(ECS* p_ecs, Log_PTR p_myLog);
 	void EntityComponent_free(ECS* p_entityComponent);
 };

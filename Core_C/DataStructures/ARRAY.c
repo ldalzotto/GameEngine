@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Error/ErrorHandler.h"
+
 #define ARRAY_ELEMENTSIZE_PARAMETER_INPUT p_array, p_elementSize
 
 inline size_t Arr_GetCapacitySize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
@@ -78,6 +80,17 @@ char Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 	return 0;
 }
 
+char Arr_PushBackNoRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
+{
+	if (p_array->Size >= p_array->Capacity)
+	{
+		return 1;
+	}
+
+	HANDLE_ERR_SILENT(Arr_PushBackRealloc(p_array, p_elementSize, p_value));
+	return 0;
+};
+
 
 char Arr_InsertAtRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value, size_t p_elementNb, size_t p_index)
 {
@@ -106,6 +119,17 @@ char Arr_InsertAtRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value, s
 		p_array->Size += p_elementNb;
 	}
 
+	return 0;
+};
+
+char Arr_InsertAtNoRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value, size_t p_elementNb, size_t p_index)
+{
+	if ((p_array->Size + p_elementNb) >= p_array->Capacity)
+	{
+		return 1;
+	}
+
+	HANDLE_ERR_SILENT(Arr_InsertAtRealloc(p_array, p_elementSize, p_value, p_elementNb, p_index));
 	return 0;
 };
 
