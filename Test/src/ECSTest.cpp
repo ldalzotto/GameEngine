@@ -6,7 +6,7 @@ extern "C"
 
 ECS ecs;
 
-size_t ComponentTestType = 1262;
+#define ComponentTestType 1262
 
 typedef struct ComponentTest_TYP
 {
@@ -14,11 +14,24 @@ typedef struct ComponentTest_TYP
 
 }ComponentTest, * ComponentTest_Handle;
 
-ComponentTest_Handle ComponentTest_Alloc() { return (ComponentTest_Handle)ECS_Component_Alloc(&ComponentTestType, sizeof(ComponentTest)); };
+ComponentTest_Handle ComponentTest_Alloc() { return (ComponentTest_Handle)ECS_Component_Alloc(ComponentTestType, sizeof(ComponentTest)); };
+
+void FunctionTest(ECS_ComponentHeader_HANDLE p_comp, void*)
+{
+	switch (p_comp->ComponentType)
+	{
+	case ComponentTestType:
+		break;
+	}
+}
 
 int main()
 {
 	ECS_Build(&ecs, NULL);
+
+	ECS_OnComponentDestroyedStaticCallback l_callback = { ComponentTestType, FunctionTest , NULL };
+	ECS_RegisterGlobalComponentDestroyedEvent(&ecs, &l_callback);
+
 	ECS_Entity_HANDLE l_entity = ECS_AllocateEntity(&ecs);
 
 	ComponentTest_Handle l_compTest = ComponentTest_Alloc();

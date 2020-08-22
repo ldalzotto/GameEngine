@@ -21,10 +21,13 @@ typedef struct Array_ECSEventMessagePTR_TYP
 	ARRAY_TYPE_DEFINITION(ECS_EventMessage_PTR)
 }Array_ECSEventMessagePTR, * Array_ECSEventMessagePTR_PTR;
 
-
 typedef struct ECS_GlobalEvents_TYP
 {
+	
 	Array_ECSEventMessagePTR PendingEvents;
+
+	ECS_OnComponentDestroyedStaticCallback OnComponentDestroyedCallback;
+
 }ECS_GlobalEvents, * ECS_GlobalEvents_PTR;
 
 
@@ -52,3 +55,4 @@ typedef struct ECS_EventMessage_RemoveComponent_TYP
 	ECS_EventMessage Message;
 	ECS_ComponentHeader_HANDLE RemovedComponent;
 }ECS_EventMessage_RemoveComponent, * ECS_EventMessage_RemoveComponent_HANDLE;
+

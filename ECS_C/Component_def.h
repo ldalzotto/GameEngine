@@ -16,3 +16,12 @@ typedef struct Array_ComponentHeaderHandle_TYP
 {
 	ARRAY_TYPE_DEFINITION(ECS_ComponentHeader_HANDLE)
 }Array_ComponentHeaderHandle, * Array_ComponentHeaderHandle_PTR;
+
+typedef void(*ECS_OnComponentDestroyedFn)(ECS_ComponentHeader_HANDLE, void* p_closure);
+
+typedef struct ECS_OnComponentDestroyedStaticCallback_TYP
+{
+	ECS_ComponentType ComponentType;
+	ECS_OnComponentDestroyedFn Function;
+	void* Closure;
+}ECS_OnComponentDestroyedStaticCallback, * ECS_OnComponentDestroyedStaticCallback_PTR;

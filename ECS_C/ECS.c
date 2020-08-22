@@ -3,35 +3,6 @@
 // #include "Log/Log.h"
 #include "Error/ErrorHandler.h"
 
-/****************** COMPONENT *******************/
-
-#include "Component_def.h"
-
-inline void Arr_Alloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), p_initialCapacity); }
-inline void Arr_Free_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array) { Arr_Free((Array_PTR)p_array); }
-inline void Arr_PushBackRealloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, ECS_ComponentHeader_HANDLE p_componentHeader) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), (char*)&p_componentHeader); };
-inline void Arr_Erase_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, size_t p_index) { Arr_Erase((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), p_index); };
-inline char Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, ECS_ComponentType p_comparedComponentType, size_t* p_index)
-{
-	for (size_t i = 0; i < p_array->Size; i++)
-	{
-		if (p_array->Memory[i]->ComponentType == p_comparedComponentType)
-		{
-			if (p_index)
-			{
-				*p_index = i;
-			}
-			return 1;
-		}
-	}
-	return 0;
-};
-
-void ECS_Component_Free(const ECS_ComponentHeader_HANDLE p_component)
-{
-	free(p_component);
-};
-
 /****************** Global Events *******************/
 
 #include "ECSGlobalEvents_def.h"
@@ -83,6 +54,38 @@ ECS_EventMessage_RemoveComponent_HANDLE ECS_AllocRemoveComponentMessage(const EC
 	l_removeComponentMessage->RemovedComponent = p_attachedComponent;
 	return l_removeComponentMessage;
 };
+
+
+/****************** COMPONENT *******************/
+
+#include "Component_def.h"
+
+inline void Arr_Alloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), p_initialCapacity); }
+inline void Arr_Free_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array) { Arr_Free((Array_PTR)p_array); }
+inline void Arr_PushBackRealloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, ECS_ComponentHeader_HANDLE p_componentHeader) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), (char*)&p_componentHeader); };
+inline void Arr_Erase_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, size_t p_index) { Arr_Erase((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), p_index); };
+inline char Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, ECS_ComponentType p_comparedComponentType, size_t* p_index)
+{
+	for (size_t i = 0; i < p_array->Size; i++)
+	{
+		if (p_array->Memory[i]->ComponentType == p_comparedComponentType)
+		{
+			if (p_index)
+			{
+				*p_index = i;
+			}
+			return 1;
+		}
+	}
+	return 0;
+};
+ 
+void ECS_Component_Free(const ECS_ComponentHeader_HANDLE p_component, const ECS_GlobalEvents_PTR p_globalEvents)
+{
+	p_globalEvents->OnComponentDestroyedCallback.Function(p_component, p_globalEvents->OnComponentDestroyedCallback.Closure);	
+	free(p_component);
+};
+
 
 /****************** ENTITY *******************/
 
@@ -182,9 +185,9 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 				for (size_t i = 0; i < l_removedEntity->Components.Size; i++)
 				{
 					ECS_ComponentHeader_HANDLE l_component = l_removedEntity->Components.Memory[i];
-					ECS_Component_Free(l_component);
+					ECS_Component_Free(l_component, &p_ecs->GlobalEvents);
 					Arr_Erase_ComponentHeaderHandle(&l_removedEntity->Components, i);
-				}
+				} 
 
 				ECS_Entity_Free(l_removedEntity);
 				Arr_Erase_ECSEntityHANDLE(&p_ecs->EntityContainer, l_removeIndex);
@@ -198,7 +201,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 			{
 				if (l_addComponentMessage->AllocatedComponent->AttachedEntity == NULL)
 				{
-					ECS_Component_Free(l_addComponentMessage->AllocatedComponent);
+					ECS_Component_Free(l_addComponentMessage->AllocatedComponent, &p_ecs->GlobalEvents);
 				}
 				else
 				{
@@ -215,7 +218,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 				size_t l_index;
 				if (Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(&l_removeComponentMessage->RemovedComponent->AttachedEntity->Components, l_removeComponentMessage->RemovedComponent->ComponentType, &l_index))
 				{
-					ECS_Component_Free(l_removeComponentMessage->RemovedComponent);
+					ECS_Component_Free(l_removeComponentMessage->RemovedComponent, &p_ecs->GlobalEvents);
 					Arr_Erase_ComponentHeaderHandle(&l_removeComponentMessage->RemovedComponent->AttachedEntity->Components, l_index);
 				}
 			}
@@ -259,10 +262,10 @@ void ECS_FreeEntity(ECS* p_ecs, ECS_Entity_HANDLE p_entity)
 	Arr_PushBackRealloc_ECSEventMessagePTR(&p_ecs->GlobalEvents.PendingEvents, &l_removeEntityMessage->Message);
 };
 
-ECS_ComponentHeader_HANDLE ECS_Component_Alloc(const ECS_ComponentType* p_type, const size_t p_componentSize)
+ECS_ComponentHeader_HANDLE ECS_Component_Alloc(const ECS_ComponentType p_type, const size_t p_componentSize)
 {
 	ECS_ComponentHeader_HANDLE l_component = (ECS_ComponentHeader_HANDLE)calloc(1, p_componentSize);
-	l_component->ComponentType = *p_type;
+	l_component->ComponentType = p_type;
 	return l_component;
 };
 
@@ -270,4 +273,9 @@ void ECS_AddComponent(ECS* p_ecs, ECS_Entity_HANDLE p_entity, ECS_ComponentHeade
 {
 	ECS_EventMessage_AddComponent_HANDLE l_addComponentHandle = ECS_AllocAddComponentMessage(p_entity, p_component);
 	Arr_PushBackRealloc_ECSEventMessagePTR(&p_ecs->GlobalEvents.PendingEvents, &l_addComponentHandle->Message);
+};
+
+void ECS_RegisterGlobalComponentDestroyedEvent(ECS* p_ecs, ECS_OnComponentDestroyedStaticCallback_PTR p_callback)
+{
+	p_ecs->GlobalEvents.OnComponentDestroyedCallback = *p_callback;
 };
