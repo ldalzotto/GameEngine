@@ -1,11 +1,7 @@
 #include "HASHMAP.h"
 
 #include <string.h>
-
-typedef struct HashMapEntryHeader_TYP
-{
-	char IsOccupied;
-} HashMapEntryHeader, * HashMapEntryHeader_PTR;
+#include <stdlib.h>
 
 inline size_t HashMapEntry_GetMemorySize(size_t p_keySize, size_t p_valueSize)
 {
