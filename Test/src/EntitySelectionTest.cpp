@@ -57,7 +57,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			ECS_AddComponent(&l_app->ECS, l_cameraEntity, (ECS_ComponentHeader_HANDLE)l_component);
 		}
 	}
-
+	TransformComponent_PTR l_instranciatedTransform;
 	// Cubes
 	{
 		CubeCreationInfo l_cubeCreationInfo{};
@@ -65,25 +65,22 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_cubeCreationInfo.LocalRotation = Quaternion4f_IDENTITY;
 		l_cubeCreationInfo.WithMeshBound = true;
-		ECS_Entity_HANDLE l_instancaitedEntity; TransformComponent_PTR l_instranciatedTransform;
+		ECS_Entity_HANDLE l_instancaitedEntity;
 		EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_instancaitedEntity, &l_instranciatedTransform);
 	}
-#if 0
-		//Child
-		{
-			CubeCreationInfo l_cubeCreationInfo{};
-			l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
-			l_cubeCreationInfo.LocalPosition = { 0.0f, -3.0f, 2.0f };
-			l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
-			l_cubeCreationInfo.LocalRotation = Quaternion4f_IDENTITY;
-			l_cubeCreationInfo.WithMeshBound = true;
-			_ECS::Entity* l_childInstanciatedEntity; _ECS::TransformComponent* l_childInstranciatedTransform;
-			EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);
+	//Child
+	{
+		CubeCreationInfo l_cubeCreationInfo{};
+		l_cubeCreationInfo.MeshRendererInitInfo = &CubeMeshRendererInit;
+		l_cubeCreationInfo.LocalPosition = { 0.0f, -3.0f, 2.0f };
+		l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
+		l_cubeCreationInfo.LocalRotation = Quaternion4f_IDENTITY;
+		l_cubeCreationInfo.WithMeshBound = true;
+		ECS_Entity_HANDLE l_childInstanciatedEntity; TransformComponent_PTR l_childInstranciatedTransform;
+		EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_childInstanciatedEntity, &l_childInstranciatedTransform);
 
-			Transform_AddChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
-		}
+		Transform_AddChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
 	}
-#endif
 }
 
 int main()

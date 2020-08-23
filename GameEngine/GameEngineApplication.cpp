@@ -71,10 +71,6 @@ namespace _GameEngine
 	{
 		CameraRenderSystem_Alloc(&p_gameEngineApplication->Systems.CameraRenderSystem, &p_gameEngineApplication->ECS);
 		MeshDrawSystem_Alloc(&p_gameEngineApplication->Systems.MeshDrawSystem, &p_gameEngineApplication->ECS);
-		// _ECS::TransformRotateSystemV2_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
-		// _ECS::MeshDrawSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
-		// _ECS::CameraSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
-		// _ECS::MeshRendererBoundSystem_alloc(&p_gameEngineApplication->ECS, &p_gameEngineApplication->Physics.PhysicsInterface, &p_gameEngineApplication->UpdateSequencer);
 	};
 
 	void app_free(GameEngineApplication* p_app)
@@ -84,6 +80,7 @@ namespace _GameEngine
 		_GameEngineEditor::GameEngineEditor_free(&p_app->Editor, &p_app->GameEngineApplicationInterface);
 #endif
 
+		// We free the ecs before systems to push EntityFiltre events.
 		ECS_Free(&p_app->ECS);
 	
 		CameraRenderSystem_Free(&p_app->Systems.CameraRenderSystem, &p_app->ECS);
@@ -131,6 +128,9 @@ namespace _GameEngine
 		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
 
 		CameraRenderSystem_Update(&l_app->Systems.CameraRenderSystem);
+		//Rotate
+		//Bound
+		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
 		MeshDrawSystem_Update(&l_app->Systems.MeshDrawSystem, &l_app->Render.RenderInterface);
 
 		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
