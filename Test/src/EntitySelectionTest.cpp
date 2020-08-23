@@ -12,15 +12,15 @@ extern "C"
 #include "v2/_interface/TransformC.h"
 }
 
-#include "ECS/ComponentT.hpp"
-#include "ECS/ECSEventQueueT.hpp"
-#include "ECS/EntityT.hpp"
-
-#include "ECS_Impl/Components/Camera/Camera.h"
-#include "ECS_Impl/Systems/Camera/CameraSystem.h"
-#include "ECS_Impl/Components/Transform/TransformComponent.h"
-#include "ECS_Impl/Components/Transform/TransformRotate.h"
-#include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
+// #include "ECS/ComponentT.hpp"
+// #include "ECS/ECSEventQueueT.hpp"
+// #include "ECS/EntityT.hpp"
+// 
+// #include "ECS_Impl/Components/Camera/Camera.h"
+// #include "ECS_Impl/Systems/Camera/CameraSystem.h"
+// #include "ECS_Impl/Components/Transform/TransformComponent.h"
+// #include "ECS_Impl/Components/Transform/TransformRotate.h"
+// #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
@@ -31,19 +31,20 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 {
 	Vector3f tmp_vec3_0;
 
+#if 0
 	// Camera
 	{
 		_ECS::Entity* l_cameraEntity;
 		{
 			l_cameraEntity = _ECS::Entity_alloc();
 			_ECS::ECSEventMessage* l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
-			_ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
+			// _ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
 		}
 
 		{
 			_ECS::Camera* l_camera = _ECS::ComponentT_alloc<_ECS::Camera>();
 			_ECS::Camera_init(l_camera, &l_app->Render.RenderInterface);
-			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_camera, &l_app->ECS);
+			// _ECS::EntityT_addComponentDeferred(l_cameraEntity, l_camera, &l_app->ECS);
 		}
 
 		{
@@ -54,7 +55,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			Quat_FromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
 			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
+			// _ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
 		}
 	}
 	// Cubes
@@ -81,6 +82,7 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 			Transform_AddChild(&l_instranciatedTransform->Transform, &l_childInstranciatedTransform->Transform);
 		}
 	}
+#endif
 }
 
 int main()

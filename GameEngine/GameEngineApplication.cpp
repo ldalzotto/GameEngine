@@ -7,10 +7,10 @@ extern "C"
 }
 #include "Input/InputGlobalEvent.hpp"
 
-#include "ECS_Impl/Systems/Camera/CameraSystem.h"
-#include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
-#include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
-#include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
+// #include "ECS_Impl/Systems/Camera/CameraSystem.h"
+// #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
+// #include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
+// #include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
 
 namespace _GameEngine
 {
@@ -41,7 +41,7 @@ namespace _GameEngine
 		RenderV2_initialize(&l_gameEngineApplication->Render);
 		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.AppWindow, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
-		_ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
+		// _ECS::EntityComponent_build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
 
 #if GAMEENGINE_EDITOR
 		_GameEngineEditor::GameEngineEditor_alloc(&l_gameEngineApplication->Editor, &l_gameEngineApplication->GameEngineApplicationInterface);
@@ -59,10 +59,10 @@ namespace _GameEngine
 
 	void GameEngineApplication_initializeSystems(GameEngineApplication* p_gameEngineApplication)
 	{
-		_ECS::TransformRotateSystemV2_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
-		_ECS::MeshDrawSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
-		_ECS::CameraSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
-		_ECS::MeshRendererBoundSystem_alloc(&p_gameEngineApplication->ECS, &p_gameEngineApplication->Physics.PhysicsInterface, &p_gameEngineApplication->UpdateSequencer);
+		// _ECS::TransformRotateSystemV2_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
+		// _ECS::MeshDrawSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
+		// _ECS::CameraSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
+		// _ECS::MeshRendererBoundSystem_alloc(&p_gameEngineApplication->ECS, &p_gameEngineApplication->Physics.PhysicsInterface, &p_gameEngineApplication->UpdateSequencer);
 	};
 
 	void app_free(GameEngineApplication* p_app)
@@ -72,7 +72,7 @@ namespace _GameEngine
 		_GameEngineEditor::GameEngineEditor_free(&p_app->Editor, &p_app->GameEngineApplicationInterface);
 #endif
 
-		_ECS::EntityComponent_free(&p_app->ECS);
+		// _ECS::EntityComponent_free(&p_app->ECS);
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
 		RenderV2_free(&p_app->Render);
 		_Physics::Physics_free(&p_app->Physics);
@@ -113,7 +113,7 @@ namespace _GameEngine
 		GameEngineApplication* l_app = (GameEngineApplication*)p_closure;
 		Clock_NewUpdate(&l_app->Clock, p_delta);
 
-		_ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);
+		// _ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);
 		UpdateSequencer_execute(&l_app->UpdateSequencer, &l_app->GameEngineApplicationInterface);
 	};
 

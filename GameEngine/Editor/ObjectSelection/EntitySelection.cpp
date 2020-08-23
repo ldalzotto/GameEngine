@@ -27,13 +27,13 @@ extern "C"
 
 #include "Input/Input.h"
 
-#include "ECS/ECS.h"
-#include "ECS/EntityT.hpp"
-#include "ECS_Impl/Components/Transform/TransformComponent.h"
-#include "ECS_Impl/Components/Camera/Camera.h"
-#include "ECS_Impl/Systems/Camera/CameraSystem.h"
-#include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
-#include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
+// #include "ECS/ECS.h"
+// #include "ECS/EntityT.hpp"
+// #include "ECS_Impl/Components/Transform/TransformComponent.h"
+// #include "ECS_Impl/Components/Camera/Camera.h"
+// #include "ECS_Impl/Systems/Camera/CameraSystem.h"
+// #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
+// #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 
 #include "Physics/PhysicsInterface.h"
 #include "Physics/World/RayCast.h"
@@ -51,6 +51,7 @@ using namespace _GameEngine;
 
 namespace _GameEngineEditor
 {
+#if 0
 	inline bool EntitySelectionState_isCachedStructureInitialized(EntitySelectionState* p_entitySelectionState) { return p_entitySelectionState->CachedStructures.ActiveCamera; };
 	inline bool EntitySelectionState_isEntitySelected(EntitySelectionState* p_entitySelectionState) { return p_entitySelectionState->SelectedEntity; };
 
@@ -812,4 +813,5 @@ namespace _GameEngineEditor
 	{
 		return p_transformGizmoSelectionState->SelectedGizmo;
 	};
+#endif
 }

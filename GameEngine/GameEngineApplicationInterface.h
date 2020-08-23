@@ -43,7 +43,7 @@ namespace _GameEngine
 		_Physics::PhysicsInterface* PhysicsInterface;
 		RenderV2Interface* RenderInterface;
 		_Input::Input* Input;
-		_ECS::ECS* ECS;
+		// _ECS::ECS* ECS;
 	};
 
 	void GameEngineApplicationInterface_build(GameEngineApplicationInterface* p_interface, GameEngineApplication* p_gameEngineApplication);

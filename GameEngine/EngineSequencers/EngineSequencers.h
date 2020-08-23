@@ -18,7 +18,7 @@ namespace _GameEngine
 
 	struct UpdateSequencer
 	{
-		_ECS::ECS* ECS;
+		// _ECS::ECS* ECS;
 		::_Core::SortedSequencerT<GameEngineApplicationInterface> UpdateSequencer;
 	};
 

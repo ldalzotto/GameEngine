@@ -16,7 +16,7 @@ extern "C"
 #include "EngineSequencers/EngineSequencers.h"
 
 #include "Physics/Physics.h"
-#include "ECS/ECS.h"
+// #include "ECS/ECS.h"
 #include "Input/Input.h"
 
 #if GAMEENGINE_EDITOR
@@ -43,7 +43,7 @@ namespace _GameEngine
 		_Physics::Physics Physics;
 		RenderV2 Render;
 		_Input::Input Input;
-		_ECS::ECS ECS;
+		// _ECS::ECS ECS;
 
 #if GAMEENGINE_EDITOR
 		_GameEngineEditor::GameEngineEditor Editor;

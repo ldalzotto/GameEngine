@@ -1,7 +1,7 @@
 #include "EngineSequencers.h"
 
 #include "GameEngineApplicationInterface.h"
-#include "ECS/ECS.h"
+// #include "ECS/ECS.h"
 
 namespace _GameEngine
 {
@@ -12,7 +12,7 @@ namespace _GameEngine
 	void UpdateSequencer_alloc(UpdateSequencer* p_udpateSequencer, GameEngineApplicationInterface* p_gameEngineInterface)
 	{
 		::_Core::SortedSequencerT_alloc(&p_udpateSequencer->UpdateSequencer);
-		p_udpateSequencer->ECS = p_gameEngineInterface->ECS;
+		// p_udpateSequencer->ECS = p_gameEngineInterface->ECS;
 	};
 	
 	void UpdateSequencer_free(UpdateSequencer* p_udpateSequencer)
@@ -22,12 +22,12 @@ namespace _GameEngine
 
 	void updateSequencer_betweenEveryUpdates(_ECS::ECS* p_ecs, void* p_null)
 	{
-		_ECS::ECSEventQueue_processMessages(&p_ecs->EventQueue);
+		// _ECS::ECSEventQueue_processMessages(&p_ecs->EventQueue);
 	};
 
 	void UpdateSequencer_execute(UpdateSequencer* p_updateSequencer, GameEngineApplicationInterface* p_gameEngineInterface)
 	{
-		::_Core::CallbackT<_ECS::ECS, void> l_afterExecutioncalback = { updateSequencer_betweenEveryUpdates, p_gameEngineInterface->ECS };
-		::_Core::SortedSequencerT_execute_afterCallback(&p_updateSequencer->UpdateSequencer, p_gameEngineInterface, &l_afterExecutioncalback);
+		// ::_Core::CallbackT<_ECS::ECS, void> l_afterExecutioncalback = { updateSequencer_betweenEveryUpdates, p_gameEngineInterface->ECS };
+		// ::_Core::SortedSequencerT_execute_afterCallback(&p_updateSequencer->UpdateSequencer, p_gameEngineInterface, &l_afterExecutioncalback);
 	};
 }
