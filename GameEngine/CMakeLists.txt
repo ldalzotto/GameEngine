@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(GameEngine VERSION 0.0.1)
 
 file(GLOB_RECURSE GAME_ENGINE_PRIVATE 
-	"./ECS/*.cpp"
+	"./ECSEngine/*.c"
 	"./ECS_Impl/*.cpp"
 	"./GameLoop/*.cpp"
 	"./Input/*.cpp"
@@ -12,7 +12,7 @@ file(GLOB_RECURSE GAME_ENGINE_PRIVATE
 SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.cpp ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.cpp)
 
 file(GLOB_RECURSE GAME_ENGINE_PUBLIC 
-	"./ECS/*.h" "./ECS/*.hpp"
+	"./ECSEngine/*.h"
 	"./ECS_Impl/*.h"
 	"./GameLoop/*.h"
 	"./Input/*.h"

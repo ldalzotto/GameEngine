@@ -20,14 +20,8 @@ ARRAY_FREE_FUNCTION(EntityFilterPtr, Array_EntityFilterPtr_PTR)
 ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(EntityFilterPtr, Array_EntityFilterPtr_PTR, ECS_EntityFilter_PTR)
 ARRAY_ERASE_FUNCTION(EntityFilterPtr, Array_EntityFilterPtr_PTR, ECS_EntityFilter_PTR)
 
-const HashMapEntryLayout HashMapEntry_EntityFilterByFilteredComponentType_Layout = {
-	.KeyOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Key),
-	.ValueOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Value),
-	.TotalSize = sizeof(HashMapEntry_EntityFilterByFilteredComponentType),
-	.KeySize = sizeof(ECS_ComponentType),
-	.ValueSize = sizeof(Array_EntityFilterPtr)
-};
-const HashMapEntryLayout_PTR HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR = (const HashMapEntryLayout_PTR)&HashMapEntry_EntityFilterByFilteredComponentType_Layout;
+extern const HashMapEntryLayout HashMapEntry_EntityFilterByFilteredComponentType_Layout;
+extern const HashMapEntryLayout_PTR HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR;
 
 inline void HashMap_Alloc_EntityFilterEvents(HashMap_EntityFilterEvents_PTR p_hashMap, size_t(*HashFn)(ECS_ComponentType*), size_t p_initialCapacity) { HashMap_Alloc((HashMap_PTR)p_hashMap, HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR, (HashMap_HashFn)HashFn, p_initialCapacity); }
 inline void HashMap_Free_EntityFilterEvents(HashMap_EntityFilterEvents_PTR p_hashMap) { HashMap_Free((HashMap_PTR)p_hashMap); }

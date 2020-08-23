@@ -26,7 +26,6 @@ typedef void(*ECS_OnComponentDestroyedFn)(ECS_ComponentHeader_HANDLE, void* p_cl
 
 typedef struct ECS_OnComponentDestroyedStaticCallback_TYP
 {
-	ECS_ComponentType ComponentType;
 	ECS_OnComponentDestroyedFn Function;
 	void* Closure;
 }ECS_OnComponentDestroyedStaticCallback, * ECS_OnComponentDestroyedStaticCallback_PTR;

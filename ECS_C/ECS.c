@@ -171,6 +171,15 @@ void ECS_EntityContainer_Free(ECS_EntityContainer_PTR p_entityContainer)
 
 /****************** Entity Filter *******************/
 
+const HashMapEntryLayout HashMapEntry_EntityFilterByFilteredComponentType_Layout = {
+	.KeyOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Key),
+	.ValueOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Value),
+	.TotalSize = sizeof(HashMapEntry_EntityFilterByFilteredComponentType),
+	.KeySize = sizeof(ECS_ComponentType),
+	.ValueSize = sizeof(Array_EntityFilterPtr)
+};
+const HashMapEntryLayout_PTR HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR = (const HashMapEntryLayout_PTR)&HashMapEntry_EntityFilterByFilteredComponentType_Layout;
+
 void ECS_EntityFilter_Alloc_1c(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentType p_filteredComponent1)
 {
 	Arr_Alloc_ComponentType(&p_entityFilter->FilteredComponentTypes, 1);
@@ -334,7 +343,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 			{
 				ECS_Entity_HANDLE l_removedEntity = p_ecs->EntityContainer.Memory[l_removeIndex];
 
-				for (size_t i = 0; i < l_removedEntity->Components.Size; i++)
+				for (size_t i = l_removedEntity->Components.Size - 1; i < l_removedEntity->Components.Size; --i)
 				{
 					ECS_ComponentHeader_HANDLE l_component = l_removedEntity->Components.Memory[i];
 
@@ -412,6 +421,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 		break;
 		}
 
+		free(p_ecs->GlobalEvents.PendingEvents.Memory[0]);
 		Arr_Erase_ECSEventMessagePTR(&p_ecs->GlobalEvents.PendingEvents, 0);
 	}
 }
@@ -461,6 +471,17 @@ void ECS_AddComponent(ECS* p_ecs, ECS_Entity_HANDLE p_entity, ECS_ComponentHeade
 {
 	ECS_EventMessage_AddComponent_HANDLE l_addComponentHandle = ECS_AllocAddComponentMessage(p_entity, p_component);
 	Arr_PushBackRealloc_ECSEventMessagePTR(&p_ecs->GlobalEvents.PendingEvents, &l_addComponentHandle->Message);
+};
+
+char ECS_GetComponent(ECS_Entity_HANDLE p_entity, const ECS_ComponentType p_type, ECS_ComponentHeader_HANDLE* out_component)
+{
+	size_t l_index;
+	if (Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(&p_entity->Components, p_type, &l_index))
+	{
+		*out_component = p_entity->Components.Memory[l_index];
+		return 1;
+	}
+	return 0;
 };
 
 void ECS_RegisterGlobalComponentDestroyedEvent(ECS* p_ecs, ECS_OnComponentDestroyedStaticCallback_PTR p_callback)

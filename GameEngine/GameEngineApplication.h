@@ -10,13 +10,14 @@ extern "C"
 #include "Clock/Clock.h"
 #include "RenderV2.h"
 #include "Log/Log_def.h"
+#include "ECS_def.h"
+#include "ECSEngine/Systems/CameraRenderSystem_def.h"
 }
 
 #include "GameLoop/GameLoop.h"
-#include "EngineSequencers/EngineSequencers.h"
 
 #include "Physics/Physics.h"
-// #include "ECS/ECS.h"
+
 #include "Input/Input.h"
 
 #if GAMEENGINE_EDITOR
@@ -28,6 +29,11 @@ extern "C"
 namespace _GameEngine
 {
 
+	struct GameEngineApplicationSystems
+	{
+		CameraRenderSystem CameraRenderSystem;
+	};
+
 	struct GameEngineApplication
 	{
 		GameEngineApplicationInterface GameEngineApplicationInterface;
@@ -35,7 +41,6 @@ namespace _GameEngine
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> NewFrame;
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> PreRender;
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> EndOfUpdate;
-		UpdateSequencer UpdateSequencer;
 
 		GameLoop GameLoop;
 		Log Log;
@@ -43,7 +48,9 @@ namespace _GameEngine
 		_Physics::Physics Physics;
 		RenderV2 Render;
 		_Input::Input Input;
-		// _ECS::ECS ECS;
+		ECS ECS;
+
+		GameEngineApplicationSystems Systems;
 
 #if GAMEENGINE_EDITOR
 		_GameEngineEditor::GameEngineEditor Editor;

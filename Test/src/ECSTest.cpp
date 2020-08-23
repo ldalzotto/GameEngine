@@ -66,7 +66,7 @@ int main()
 
 	ECS_Build(&ecs, NULL);
 
-	ECS_OnComponentDestroyedStaticCallback l_callback = { ComponentTestType, FunctionTest , NULL };
+	ECS_OnComponentDestroyedStaticCallback l_callback = { FunctionTest , NULL };
 	ECS_RegisterGlobalComponentDestroyedEvent(&ecs, &l_callback);
 
 	ECS_EntityFilter l_filter;

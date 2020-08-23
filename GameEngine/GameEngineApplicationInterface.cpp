@@ -7,7 +7,6 @@ namespace _GameEngine
 	{
 		p_interface->NewFrame = &p_gameEngineApplication->NewFrame;
 		p_interface->PreRender = &p_gameEngineApplication->PreRender;
-		p_interface->UpdateSequencer = &p_gameEngineApplication->UpdateSequencer;
 
 		p_interface->GameLoop = &p_gameEngineApplication->GameLoop;
 		p_interface->Log = &p_gameEngineApplication->Log;

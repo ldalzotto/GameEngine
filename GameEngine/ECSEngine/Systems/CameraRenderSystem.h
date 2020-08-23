@@ -1,0 +1,15 @@
+#pragma once
+
+#include "CameraRenderSystem_def.h"
+#include "ECS_def.h"
+#include "DataStructures/ARRAY.h"
+
+ARRAY_ALLOC_FUNCTION(CameraRenderSystemOperation, Array_CameraRenderSystemOperation_PTR, CameraRenderSystemOperation)
+ARRAY_FREE_FUNCTION(CameraRenderSystemOperation, Array_CameraRenderSystemOperation_PTR)
+ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(CameraRenderSystemOperation, Array_CameraRenderSystemOperation_PTR, CameraRenderSystemOperation)
+ARRAY_ERASE_FUNCTION(CameraRenderSystemOperation, Array_CameraRenderSystemOperation_PTR, CameraRenderSystemOperation)
+
+void CameraRenderSystem_Alloc(CameraRenderSystem_PTR p_cameraRenderSystem, ECS* p_ecs);
+void CameraRenderSystem_Free(CameraRenderSystem_PTR p_cameraRenderSystem, ECS* p_ecs);
+void CameraRenderSystem_Update(CameraRenderSystem_PTR p_system);
+Camera* CameraSystem_getCurrentActiveCamera(CameraRenderSystem_PTR p_system);

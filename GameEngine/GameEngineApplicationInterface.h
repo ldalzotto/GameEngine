@@ -19,9 +19,7 @@ namespace _GameEngine
 {
 	struct GameEngineApplication;
 	struct GameLoop;
-	struct UpdateSequencer;
 	namespace _Input { struct Input; }
-	namespace _ECS { struct ECS; }
 	namespace _Physics { struct PhysicsInterface; }
 }
 
@@ -34,7 +32,6 @@ namespace _GameEngine
 	{
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface>* NewFrame;
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface>* PreRender;
-		UpdateSequencer* UpdateSequencer;
 		std::function<void(float)>* SandboxUpdateHook;
 
 		GameLoop* GameLoop;

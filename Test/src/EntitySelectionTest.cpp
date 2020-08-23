@@ -10,6 +10,10 @@ extern "C"
 #include "v2/Math.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/TransformC.h"
+#include "ECS.h"
+#include "ECSEngine/Components/Camera.h"
+#include "ECSEngine/Components/TransformComponent.h"
+#include "ECSEngine/Components/Types_def.h"
 }
 
 // #include "ECS/ComponentT.hpp"
@@ -22,6 +26,7 @@ extern "C"
 // #include "ECS_Impl/Components/Transform/TransformRotate.h"
 // #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 
+
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
 
@@ -31,33 +36,29 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 {
 	Vector3f tmp_vec3_0;
 
-#if 0
 	// Camera
 	{
-		_ECS::Entity* l_cameraEntity;
+		ECS_Entity_HANDLE l_cameraEntity = ECS_AllocateEntity(&l_app->ECS);
 		{
-			l_cameraEntity = _ECS::Entity_alloc();
-			_ECS::ECSEventMessage* l_addEntityMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_cameraEntity);
-			// _ECS::ECSEventQueue_pushMessage(&l_app->ECS.EventQueue, &l_addEntityMessage);
+			Camera_PTR l_camera = (Camera_PTR)ECS_Component_Alloc(CAMERA_TYPE, sizeof(Camera));
+			Camera_init(l_camera, &l_app->Render.RenderInterface);
+			ECS_AddComponent(&l_app->ECS, l_cameraEntity, (ECS_ComponentHeader_HANDLE)l_camera);
 		}
 
-		{
-			_ECS::Camera* l_camera = _ECS::ComponentT_alloc<_ECS::Camera>();
-			_ECS::Camera_init(l_camera, &l_app->Render.RenderInterface);
-			// _ECS::EntityT_addComponentDeferred(l_cameraEntity, l_camera, &l_app->ECS);
-		}
 
 		{
-			_ECS::TransformComponent* l_component = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-			_ECS::TransformInitInfo l_transformInitInfo{};
+			TransformComponent_PTR l_component = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+			TransformInitInfo l_transformInitInfo = TransformInitInfo_Default;
 			l_transformInitInfo.LocalPosition = { 9.0f, 9.0f, 9.0f };
 			tmp_vec3_0 = { (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f };
 			Quat_FromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = { 1.0f , 1.0f , 1.0f };
-			_ECS::TransformComponent_init(l_component, &l_transformInitInfo);
-			// _ECS::EntityT_addComponentDeferred(l_cameraEntity, l_component, &l_app->ECS);
+			TransformComponent_init(l_component, &l_transformInitInfo);
+			ECS_AddComponent(&l_app->ECS, l_cameraEntity, (ECS_ComponentHeader_HANDLE)l_component);
 		}
 	}
+
+#if 0
 	// Cubes
 	{
 		CubeCreationInfo l_cubeCreationInfo{};
