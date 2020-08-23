@@ -6,6 +6,18 @@ extern "C"
 #include "EntityFilter.h"
 }
 
+
+
+/*
+
+const HashMapEntryLayout l_d = {
+	.KeyOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Key),
+	.ValueOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Value),
+	.TotalSize = sizeof(HashMapEntry_EntityFilterByFilteredComponentType),
+	.KeySize = sizeof(ECS_ComponentType),
+	.ValueSize = sizeof(Array_EntityFilterPtr)
+};
+*/
 ECS ecs;
 
 #define ComponentTestType 1262
