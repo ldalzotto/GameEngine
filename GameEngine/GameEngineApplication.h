@@ -12,6 +12,7 @@ extern "C"
 #include "Log/Log_def.h"
 #include "ECS_def.h"
 #include "ECSEngine/Systems/CameraRenderSystem_def.h"
+#include "ECSEngine/Systems/MeshDrawSystem_def.h"
 }
 
 #include "GameLoop/GameLoop.h"
@@ -32,6 +33,7 @@ namespace _GameEngine
 	struct GameEngineApplicationSystems
 	{
 		CameraRenderSystem CameraRenderSystem;
+		MeshDrawSystem MeshDrawSystem;
 	};
 
 	struct GameEngineApplication

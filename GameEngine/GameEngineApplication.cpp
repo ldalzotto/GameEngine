@@ -6,6 +6,7 @@ extern "C"
 #include "Log/Log.h"
 #include "ECS.h"
 #include "ECSEngine/Systems/CameraRenderSystem.h"
+#include "ECSEngine/Systems/MeshDrawSystem.h"
 #include "ECSEngine/GlobalEvents/ECSEngineGlobalEvents.h"
 }
 #include "Input/InputGlobalEvent.hpp"
@@ -69,6 +70,7 @@ namespace _GameEngine
 	void GameEngineApplication_initializeSystems(GameEngineApplication* p_gameEngineApplication)
 	{
 		CameraRenderSystem_Alloc(&p_gameEngineApplication->Systems.CameraRenderSystem, &p_gameEngineApplication->ECS);
+		MeshDrawSystem_Alloc(&p_gameEngineApplication->Systems.MeshDrawSystem, &p_gameEngineApplication->ECS);
 		// _ECS::TransformRotateSystemV2_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
 		// _ECS::MeshDrawSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
 		// _ECS::CameraSystem_alloc(&p_gameEngineApplication->UpdateSequencer, &p_gameEngineApplication->ECS);
@@ -83,6 +85,9 @@ namespace _GameEngine
 #endif
 
 		ECS_Free(&p_app->ECS);
+	
+		CameraRenderSystem_Free(&p_app->Systems.CameraRenderSystem, &p_app->ECS);
+		MeshDrawSystem_Free(&p_app->Systems.MeshDrawSystem, &p_app->ECS, &p_app->Render.RenderInterface);
 
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
 		RenderV2_free(&p_app->Render);
@@ -126,6 +131,7 @@ namespace _GameEngine
 		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
 
 		CameraRenderSystem_Update(&l_app->Systems.CameraRenderSystem);
+		MeshDrawSystem_Update(&l_app->Systems.MeshDrawSystem, &l_app->Render.RenderInterface);
 
 		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
 		// _ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);

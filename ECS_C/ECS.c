@@ -287,6 +287,15 @@ void ECS_EntityFilter_Register(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter)
 		// Arr_PushbackRealloc_EntityFilterPtr(l_entityFilters, p_entityFilter);
 	}
 
+	/**
+		When initializing the @ref EntityFilter, we check the presence of the listened @ref ComponentType for all @ref Entity and push the
+		Entity to the Listener if successfull.
+		This is to be sure that all already present Entities are checked if the system initiation is done after the Entity creation.
+	*/
+	for (size_t i = 0; i < p_ecs->EntityContainer.Size; i++)
+	{
+		ECS_EntityFilter_PushEntityIfFilteredEntitiesMatches(p_entityFilter, p_ecs->EntityContainer.Memory[i]);
+	}
 
 };
 
@@ -307,16 +316,6 @@ void ECS_EntityFilter_UnRegister(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter
 				}
 			}
 		}
-	}
-
-	/**
-	When initializing the @ref EntityFilter, we check the presence of the listened @ref ComponentType for all @ref Entity and push the
-	Entity to the Listener if successfull.
-	This is to be sure that all already present Entities are checked if the system initiation is done after the Entity creation.
-	*/
-	for (size_t i = 0; i < p_ecs->EntityContainer.Size; i++)
-	{
-		ECS_EntityFilter_PushEntityIfFilteredEntitiesMatches(p_entityFilter, p_ecs->EntityContainer.Memory[i]);
 	}
 };
 
