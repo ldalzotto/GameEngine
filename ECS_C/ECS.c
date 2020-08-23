@@ -7,10 +7,10 @@
 
 #include "ECSGlobalEvents_def.h"
 
-inline void Arr_Alloc_ECSEventMessagePTR(Array_ECSEventMessagePTR_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_EventMessage_PTR), p_initialCapacity); };
-inline void Arr_Free_ECSEventMessagePTR(Array_ECSEventMessagePTR_PTR p_array) { Arr_Free((Array_PTR)p_array); };
-inline void Arr_Erase_ECSEventMessagePTR(Array_ECSEventMessagePTR_PTR p_array, size_t p_index) { Arr_Erase((Array_PTR)p_array, sizeof(ECS_EventMessage_PTR), p_index); };
-inline void Arr_PushBackRealloc_ECSEventMessagePTR(Array_ECSEventMessagePTR_PTR p_array, ECS_EventMessage_PTR p_item) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_EventMessage_PTR), (char*)(&p_item)); };
+ARRAY_ALLOC_FUNCTION(ECSEventMessagePTR, Array_ECSEventMessagePTR_PTR, ECS_EventMessage_PTR)
+ARRAY_FREE_FUNCTION(ECSEventMessagePTR, Array_ECSEventMessagePTR_PTR)
+ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(ECSEventMessagePTR, Array_ECSEventMessagePTR_PTR, ECS_EventMessage_PTR)
+ARRAY_ERASE_FUNCTION(ECSEventMessagePTR, Array_ECSEventMessagePTR_PTR, ECS_EventMessage_PTR)
 
 void ECS_GlboalEvents_Alloc(ECS_GlobalEvents_PTR p_globalEvents)
 {
@@ -60,14 +60,14 @@ ECS_EventMessage_RemoveComponent_HANDLE ECS_AllocRemoveComponentMessage(const EC
 
 #include "Component_def.h"
 
-inline void Arr_Alloc_ComponentType(Array_ComponentType_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_ComponentType), p_initialCapacity); }
-inline void Arr_Free_ComponentType(Array_ComponentType_PTR p_array) { Arr_Free((Array_PTR)p_array); }
-inline void Arr_PushBackRealloc_ComponentType(Array_ComponentType_PTR p_array, ECS_ComponentType p_componentType) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_ComponentType), (char*)&p_componentType); };
+ARRAY_ALLOC_FUNCTION(ComponentType, Array_ComponentType_PTR, ECS_ComponentType)
+ARRAY_FREE_FUNCTION(ComponentType, Array_ComponentType_PTR)
+ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(ComponentType, Array_ComponentType_PTR, ECS_ComponentType)
 
-inline void Arr_Alloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), p_initialCapacity); }
-inline void Arr_Free_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array) { Arr_Free((Array_PTR)p_array); }
-inline void Arr_PushBackRealloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, ECS_ComponentHeader_HANDLE p_componentHeader) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), (char*)&p_componentHeader); };
-inline void Arr_Erase_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, size_t p_index) { Arr_Erase((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), p_index); };
+ARRAY_ALLOC_FUNCTION(ComponentHeaderHandle, Array_ComponentHeaderHandle_PTR, ECS_ComponentHeader_HANDLE)
+ARRAY_FREE_FUNCTION(ComponentHeaderHandle, Array_ComponentHeaderHandle_PTR)
+ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(ComponentHeaderHandle, Array_ComponentHeaderHandle_PTR, ECS_ComponentHeader_HANDLE)
+ARRAY_ERASE_FUNCTION(ComponentHeaderHandle, Array_ComponentHeaderHandle_PTR, ECS_ComponentHeader_HANDLE)
 inline char Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, ECS_ComponentType p_comparedComponentType, size_t* p_index)
 {
 	for (size_t i = 0; i < p_array->Size; i++)
@@ -83,10 +83,10 @@ inline char Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(Array_ComponentHe
 	}
 	return 0;
 };
- 
+
 void ECS_Component_Free(const ECS_ComponentHeader_HANDLE p_component, const ECS_GlobalEvents_PTR p_globalEvents)
 {
-	p_globalEvents->OnComponentDestroyedCallback.Function(p_component, p_globalEvents->OnComponentDestroyedCallback.Closure);	
+	p_globalEvents->OnComponentDestroyedCallback.Function(p_component, p_globalEvents->OnComponentDestroyedCallback.Closure);
 	free(p_component);
 };
 
@@ -130,10 +130,10 @@ char ECS_Entity_AddComponent(ECS_Entity_HANDLE p_entity, ECS_ComponentHeader_HAN
 	}
 };
 
-inline void Arr_Alloc_ECSEntityHANDLE(Array_ECSEntityHANDLE_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_Entity_HANDLE), p_initialCapacity); };
-inline void Arr_Free_ECSEntityHANDLE(Array_ECSEntityHANDLE_PTR p_array) { Arr_Free((Array_PTR)p_array); };
-inline void Arr_PushBackRealloc_ECSEntityHANDLE(Array_ECSEntityHANDLE_PTR p_array, ECS_Entity_HANDLE p_item) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_Entity_HANDLE), (char*)(&p_item)); };
-inline void Arr_Erase_ECSEntityHANDLE(Array_ECSEntityHANDLE_PTR p_array, size_t p_index) { Arr_Erase((Array_PTR)p_array, sizeof(ECS_Entity_HANDLE), p_index); }
+ARRAY_ALLOC_FUNCTION(ECSEntityHANDLE, Array_ECSEntityHANDLE_PTR, ECS_Entity_HANDLE)
+ARRAY_FREE_FUNCTION(ECSEntityHANDLE, Array_ECSEntityHANDLE_PTR)
+ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(ECSEntityHANDLE, Array_ECSEntityHANDLE_PTR, ECS_Entity_HANDLE)
+ARRAY_ERASE_FUNCTION(ECSEntityHANDLE, Array_ECSEntityHANDLE_PTR, ECS_Entity_HANDLE)
 
 inline char Arr_Find_EqualsEntityHANDLE_ECSEntityHANDLE(Array_ECSEntityHANDLE_PTR p_array, const ECS_Entity_HANDLE p_comparedHandle, size_t* out_index)
 {
@@ -203,7 +203,7 @@ void ECS_EntityFilteredEvents_Free(HashMap_EntityFilterEvents_PTR p_entityFilter
 {
 	for (size_t i = 0; i < p_entityFilterEvents->Capacity; i++)
 	{
-		HashMapEntry_EntityFilterByFilteredComponentType_PTR l_entry =	&p_entityFilterEvents->Entries[i];
+		HashMapEntry_EntityFilterByFilteredComponentType_PTR l_entry = &p_entityFilterEvents->Entries[i];
 		if (l_entry->Header.IsOccupied)
 		{
 			Arr_Free_EntityFilterPtr(&l_entry->Value);
@@ -226,8 +226,8 @@ void ECS_EntityFilter_PushEntityIfFilteredEntitiesMatches(ECS_EntityFilter_PTR p
 
 	if (l_notify)
 	{
-		ECS_EntityFilterEvent l_event = (ECS_EntityFilterEvent){.Type = EntityFilterEventType_ConditionsJustMet, .Entity  = p_entity };
-		Arr_PushbackRealloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, &l_event);
+		ECS_EntityFilterEvent l_event = (ECS_EntityFilterEvent){ .Type = EntityFilterEventType_ConditionsJustMet, .Entity = p_entity };
+		Arr_PushBackRealloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, &l_event);
 	}
 };
 
@@ -247,7 +247,7 @@ void ECS_EntityFilter_PushEntityIfFilteredEntitiesDoesntMatches(ECS_EntityFilter
 	if (l_notify)
 	{
 		ECS_EntityFilterEvent l_event = (ECS_EntityFilterEvent){ .Type = EntityFilterEventType_ConditionsJustNotMet, .Entity = p_entity };
-		Arr_PushbackRealloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, &l_event);
+		Arr_PushBackRealloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, &l_event);
 	}
 };
 
@@ -274,7 +274,8 @@ void ECS_EntityFilter_Register(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter)
 			Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_entityFilters);
 		}
 
-		Arr_PushbackRealloc_EntityFilterPtr(l_entityFilters, p_entityFilter);
+		Arr_PushBackRealloc_EntityFilterPtr(l_entityFilters, p_entityFilter);
+		// Arr_PushbackRealloc_EntityFilterPtr(l_entityFilters, p_entityFilter);
 	}
 
 

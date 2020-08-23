@@ -11,15 +11,14 @@ void ECS_EntityFilter_Alloc_1c(ECS_EntityFilter_PTR p_entityFilter, ECS_Componen
 void ECS_EntityFilter_Alloc_2c(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentType p_filteredComponent1, ECS_ComponentType p_filteredComponent2);
 void ECS_EntityFilter_Free(ECS_EntityFilter_PTR p_entityFilter);
 
-inline void Arr_Alloc_EntityFilterEvent(Array_EntityFilterEvent_PTR p_array, size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_EntityFilterEvent), p_initialCapacity); };
-inline void Arr_Free_EntityFilterEvent(Array_EntityFilterEvent_PTR p_array) { Arr_Free((Array_PTR)p_array); };
-inline void Arr_PushbackRealloc_EntityFilterEvent(Array_EntityFilterEvent_PTR p_array, ECS_EntityFilterEvent_PTR p_entityFilter) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_EntityFilterEvent), (char*)p_entityFilter); }
+ARRAY_ALLOC_FUNCTION(EntityFilterEvent, Array_EntityFilterEvent_PTR, ECS_EntityFilterEvent)
+ARRAY_FREE_FUNCTION(EntityFilterEvent, Array_EntityFilterEvent_PTR)
+ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(EntityFilterEvent, Array_EntityFilterEvent_PTR, ECS_EntityFilterEvent)
 
-
-inline void Arr_Alloc_EntityFilterPtr(Array_EntityFilterPtr_PTR p_array, size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_EntityFilter_PTR), p_initialCapacity); };
-inline void Arr_Free_EntityFilterPtr(Array_EntityFilterPtr_PTR p_array) { Arr_Free((Array_PTR)p_array); };
-inline void Arr_PushbackRealloc_EntityFilterPtr(Array_EntityFilterPtr_PTR p_array, ECS_EntityFilter_PTR p_entityFilter) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_EntityFilter_PTR), (char*)&p_entityFilter); }
-inline void Arr_Erase_EntityFilterPtr(Array_EntityFilterPtr_PTR p_array, size_t p_index) { Arr_Erase((Array_PTR)p_array, sizeof(ECS_EntityFilter_PTR), p_index); };
+ARRAY_ALLOC_FUNCTION(EntityFilterPtr, Array_EntityFilterPtr_PTR, ECS_EntityFilter_PTR)
+ARRAY_FREE_FUNCTION(EntityFilterPtr, Array_EntityFilterPtr_PTR)
+ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(EntityFilterPtr, Array_EntityFilterPtr_PTR, ECS_EntityFilter_PTR)
+ARRAY_ERASE_FUNCTION(EntityFilterPtr, Array_EntityFilterPtr_PTR, ECS_EntityFilter_PTR)
 
 const HashMapEntryLayout HashMapEntry_EntityFilterByFilteredComponentType_Layout = {
 	.KeyOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Key),
