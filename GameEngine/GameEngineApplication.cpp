@@ -71,6 +71,7 @@ namespace _GameEngine
 	{
 		CameraRenderSystem_Alloc(&p_gameEngineApplication->Systems.CameraRenderSystem, &p_gameEngineApplication->ECS);
 		MeshDrawSystem_Alloc(&p_gameEngineApplication->Systems.MeshDrawSystem, &p_gameEngineApplication->ECS);
+		PhysicsSystem_Alloc(&p_gameEngineApplication->Systems.PhysicsSystem, &p_gameEngineApplication->ECS);
 	};
 
 	void app_free(GameEngineApplication* p_app)
@@ -85,6 +86,7 @@ namespace _GameEngine
 	
 		CameraRenderSystem_Free(&p_app->Systems.CameraRenderSystem, &p_app->ECS);
 		MeshDrawSystem_Free(&p_app->Systems.MeshDrawSystem, &p_app->ECS, &p_app->Render.RenderInterface);
+		PhysicsSystem_Free(&p_app->Systems.PhysicsSystem, &p_app->ECS, &p_app->Physics.PhysicsInterface);
 
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
 		RenderV2_free(&p_app->Render);
@@ -128,9 +130,12 @@ namespace _GameEngine
 		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
 
 		CameraRenderSystem_Update(&l_app->Systems.CameraRenderSystem);
-		//Rotate
-		//Bound
+		PhysicsSystem_Update(&l_app->Systems.PhysicsSystem, &l_app->Physics.PhysicsInterface);
 		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
+
+		_GameEngineEditor::GameEngineEditor_update(&l_app->Editor);
+		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
+
 		MeshDrawSystem_Update(&l_app->Systems.MeshDrawSystem, &l_app->Render.RenderInterface);
 
 		ECS_GlobalEvents_ProcessMessages(&l_app->ECS);

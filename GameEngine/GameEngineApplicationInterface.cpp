@@ -15,5 +15,9 @@ namespace _GameEngine
 		p_interface->RenderInterface = &p_gameEngineApplication->Render.RenderInterface;
 		p_interface->Input = &p_gameEngineApplication->Input;
 		p_interface->ECS = &p_gameEngineApplication->ECS;
+
+		p_interface->GameEngineApplicationSystems.CameraRenderSystem = &p_gameEngineApplication->Systems.CameraRenderSystem;
+		p_interface->GameEngineApplicationSystems.MeshDrawSystem = &p_gameEngineApplication->Systems.MeshDrawSystem;
+		p_interface->GameEngineApplicationSystems.PhysicsSystem = &p_gameEngineApplication->Systems.PhysicsSystem;
 	};
 }

@@ -7,7 +7,7 @@
 
 namespace _GameEngineEditor
 {
-	void GameEngineEditor_update(void* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
+	
 	void GameEngineEditor_draw(GameEngineEditor* p_gameEngineEditor, void* null);
 
 	void GameEngineEditor_alloc(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
@@ -17,6 +17,7 @@ namespace _GameEngineEditor
 		p_gameEngineEditor->OnPreRender = { GameEngineEditor_draw, p_gameEngineEditor };
 		_Core::ObserverT_register(p_gameEngineEditor->GameEngineApplicationInterface->PreRender, (_Core::CallbackT<void, GameEngineApplicationInterface>*) & p_gameEngineEditor->OnPreRender);
 
+		EntitySelection_build(&p_gameEngineEditor->EntitySelection, p_gameEngineEditor);
 	};
 
 	void GameEngineEditor_free(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
@@ -30,9 +31,8 @@ namespace _GameEngineEditor
 		DrawableWindows_draw(&p_gameEngineEditor->DrawableWindows);
 	};
 
-	void GameEngineEditor_update(void* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface)
+	void GameEngineEditor_update(GameEngineEditor* p_gameEngineEditor)
 	{
-		GameEngineEditor* l_gameEngineEditor = (GameEngineEditor*)p_gameEngineEditor;
-		// EntitySelection_update(&l_gameEngineEditor->EntitySelection);
+		EntitySelection_update(&p_gameEngineEditor->EntitySelection);
 	};
 }

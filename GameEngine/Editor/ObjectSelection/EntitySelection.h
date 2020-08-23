@@ -6,6 +6,11 @@ extern "C"
 {
 #include "v2/_interface/BoxC_def.h"
 #include "v2/_interface/TransformC_def.h"
+#include "ECSEngine/Components/TransformComponent_def.h"
+#include "ECSEngine/Components/Camera_def.h"
+#include "ECSEngine/Systems/CameraRenderSystem_def.h"
+#include "ECS_def.h"
+#include "Entity_def.h"
 }
 
 #include "Physics/World/Collider/BoxCollider.h"
@@ -45,7 +50,7 @@ namespace _GameEngineEditor
 		SelectedGizmoType SelectedGizmoType;
 
 		/* The selected gizmo refer to the single gizmo entity currently selected. This value can only be one of the trhee Gizmo transform in the TransformGizmo object. */
-		// _GameEngine::_ECS::TransformComponent* SelectedGizmo;
+		TransformComponent_PTR SelectedGizmo;
 
 		/* This is to handle the fact that on any transformations, the TransformGizmoMovementGuidePlane position and rotation is setted only once (at the start).
 		This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed. */
@@ -54,11 +59,11 @@ namespace _GameEngineEditor
 
 	struct TransformGizmo
 	{
-		// _GameEngine::_ECS::TransformComponent* TransformGizoEntity;
-		// 
-		// _GameEngine::_ECS::TransformComponent* RightGizmo;
-		// _GameEngine::_ECS::TransformComponent* UpGizmo;
-		// _GameEngine::_ECS::TransformComponent* ForwardGizmo;
+		TransformComponent_PTR TransformGizoEntity;
+		
+		TransformComponent_PTR RightGizmo;
+		TransformComponent_PTR UpGizmo;
+		TransformComponent_PTR ForwardGizmo;
 
 		TransformGizmoPlane TransformGizmoMovementGuidePlane;
 	};
@@ -66,14 +71,14 @@ namespace _GameEngineEditor
 
 	struct EntitySelection_CachedStructures
 	{
-		// _GameEngine::_ECS::CameraSystem* CameraSystem;
-		// _GameEngine::_ECS::Camera* ActiveCamera;
-		// _GameEngine::_ECS::TransformComponent* ActiveCameraTransform;
+		
+		Camera_PTR ActiveCamera;
+		TransformComponent_PTR ActiveCameraTransform;
 	};
 
 	struct EntitySelectionState
 	{
-		// _GameEngine::_ECS::Entity* SelectedEntity;
+		ECS_Entity_HANDLE SelectedEntity;
 		EntitySelection_CachedStructures CachedStructures;
 
 		TransformGizmoSelectionState TransformGizmoSelectionState;
@@ -81,10 +86,11 @@ namespace _GameEngineEditor
 
 	struct EntitySelection
 	{
-		// _GameEngine::_ECS::ECS* ECS;
+		ECS* ECS;
 		_GameEngine::_Input::Input* Input;
 		RenderV2Interface* RenderInterface;
 		_GameEngine::_Physics::PhysicsInterface* PhysicsInterface;
+		CameraRenderSystem_PTR CameraSystem;
 
 		TransformGizmo TransformGizmoV2;
 		EntitySelectionState EntitySelectionState;

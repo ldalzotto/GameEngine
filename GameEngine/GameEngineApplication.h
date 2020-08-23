@@ -15,6 +15,8 @@ extern "C"
 #include "ECSEngine/Systems/MeshDrawSystem_def.h"
 }
 
+#include "ECSEngine/Systems/PhysicsSystem.hpp"
+
 #include "GameLoop/GameLoop.h"
 
 #include "Physics/Physics.h"
@@ -34,6 +36,7 @@ namespace _GameEngine
 	{
 		CameraRenderSystem CameraRenderSystem;
 		MeshDrawSystem MeshDrawSystem;
+		PhysicsSystem PhysicsSystem;
 	};
 
 	struct GameEngineApplication

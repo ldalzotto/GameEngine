@@ -8,13 +8,8 @@ extern "C"
 #include "ECSEngine/Components/TransformComponent.h"
 #include "ECSEngine/Components/MeshRenderer.h"
 }
-// #include "ECS/Entity.h"
-// #include "ECS/ECSEventQueueT.hpp"
-// #include "ECS/ComponentT.hpp"
-// 
-// #include "ECS_Impl/Components/Transform/TransformComponent.h"
-// #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
-// #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
+
+#include "ECSEngine/Components/PhysicsBody.hpp"
 
 namespace _GameEngine::_Test
 {
@@ -44,13 +39,10 @@ namespace _GameEngine::_Test
 			ECS_AddComponent(p_sandboxApplication->ECS, *out_entity, &l_meshRenderer->Header);
 		}
 
-#if 0
 		if (p_sandboxCubeCreationInfo->WithMeshBound)
 		{
-			auto l_meshRendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
-			auto l_addComponentMessage = _ECS::ECSEventMessageT_AddComponent_alloc(out_entity, l_meshRendererBound);
-			// _ECS::ECSEventQueue_pushMessage(&p_sandboxApplication->ECS->EventQueue, &l_addComponentMessage);
+			PhysicsBody_PTR l_physicsBody = (PhysicsBody_PTR)ECS_Component_Alloc(PHYSICSBODY_COMPONENT_TYPE, sizeof(PhysicsBody));
+			ECS_AddComponent(p_sandboxApplication->ECS, *out_entity, &l_physicsBody->Header);
 		}
-#endif
 	};
 }

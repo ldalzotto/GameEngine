@@ -27,4 +27,5 @@ namespace _GameEngineEditor
 
 	void GameEngineEditor_alloc(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
 	void GameEngineEditor_free(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
+	void GameEngineEditor_update(GameEngineEditor* p_gameEngineEditor);
 }

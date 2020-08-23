@@ -27,8 +27,21 @@ typedef struct RenderV2Interface_TYP RenderV2Interface;
 typedef struct ECS_TYP ECS;
 typedef struct Log_TYP Log;
 
+typedef struct CameraRenderSystem_TYP CameraRenderSystem;
+typedef struct MeshDrawSystem_TYP MeshDrawSystem;
+typedef struct PhysicsSystem_TYP PhysicsSystem;
+
 namespace _GameEngine
 {
+	
+
+	struct GameEngineApplicationSystemsInterface
+	{
+		CameraRenderSystem* CameraRenderSystem;
+		MeshDrawSystem* MeshDrawSystem;
+		PhysicsSystem* PhysicsSystem;
+	};
+
 	struct GameEngineApplicationInterface
 	{
 		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface>* NewFrame;
@@ -42,6 +55,8 @@ namespace _GameEngine
 		RenderV2Interface* RenderInterface;
 		_Input::Input* Input;
 		ECS* ECS;
+
+		GameEngineApplicationSystemsInterface GameEngineApplicationSystems;
 	};
 
 	void GameEngineApplicationInterface_build(GameEngineApplicationInterface* p_interface, GameEngineApplication* p_gameEngineApplication);

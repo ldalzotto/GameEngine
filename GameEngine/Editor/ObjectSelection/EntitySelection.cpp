@@ -19,6 +19,14 @@ extern "C"
 #include "v2/_interface/VectorC.h"
 #include "Renderer/Gizmo/Gizmo.h"
 #include "RenderV2.h"
+
+
+#include "ECS.h"
+#include "ECSEngine/Components/Types_def.h"
+#include "ECSEngine/Components/TransformComponent.h"
+#include "ECSEngine/Components/Camera.h"
+#include "ECSEngine/Components/MeshRenderer.h"
+#include "ECSEngine/Systems/CameraRenderSystem.h"
 }
 
 #include <iostream>
@@ -27,7 +35,8 @@ extern "C"
 
 #include "Input/Input.h"
 
-// #include "ECS/ECS.h"
+#include "ECSEngine/Components/PhysicsBody.hpp"
+
 // #include "ECS/EntityT.hpp"
 // #include "ECS_Impl/Components/Transform/TransformComponent.h"
 // #include "ECS_Impl/Components/Camera/Camera.h"
@@ -35,6 +44,7 @@ extern "C"
 // #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
 // #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 
+#include "DataStructures/Specifications/ArrayT.hpp"
 #include "Physics/PhysicsInterface.h"
 #include "Physics/World/RayCast.h"
 #include "Physics/World/Collider/BoxCollider.h"
@@ -51,27 +61,24 @@ using namespace _GameEngine;
 
 namespace _GameEngineEditor
 {
-#if 0
 	inline bool EntitySelectionState_isCachedStructureInitialized(EntitySelectionState* p_entitySelectionState) { return p_entitySelectionState->CachedStructures.ActiveCamera; };
 	inline bool EntitySelectionState_isEntitySelected(EntitySelectionState* p_entitySelectionState) { return p_entitySelectionState->SelectedEntity; };
 
 
-	void EntitySelection_onCameraSystem_enabled(EntitySelection* p_entitySelection, _ECS::CameraSystem** p_cameraSystem);
-
-	void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_initialWorldPosition, _ECS::ECS* p_ecs);
-	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs);
+	void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_initialWorldPosition, ECS* p_ecs);
+	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, ECS* p_ecs);
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, Transform_PTR p_followedTransform);
 	void TransformGizmo_siwtchGizmoType(EntitySelection* p_entitySelection, SelectedGizmoType p_newGizmoType);
 	bool TransformGizmo_detemineGizmoTypeSwitch(EntitySelection* p_entitySelection, SelectedGizmoType* p_out);
-	_ECS::TransformComponent* TransformGizmo_determinedSelectedGizmoComponent(TransformGizmo* p_transformGizmo, Segment_Vector3f_PTR p_collisionRay);
-	void TransformGizmo_setSelectedGizmo(TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedGizmo);
+	TransformComponent_PTR TransformGizmo_determinedSelectedGizmoComponent(TransformGizmo* p_transformGizmo, Segment_Vector3f_PTR p_collisionRay);
+	void TransformGizmo_setSelectedGizmo(TransformGizmoSelectionState* p_selectionState, TransformComponent_PTR p_selectedGizmo);
 	void TransformGizmo_resetState(TransformGizmo* p_transformGizmo, TransformGizmoSelectionState* p_selectionState);
 	bool TransformGizmoSelectionState_anyGizmoSelected(TransformGizmoSelectionState* p_transformGizmoSelectionState);
 
 	void entitySelection_detectTheSelectedEntity(EntitySelection* p_entitySelection);
 	void entitySelection_detectTheSelectedGizmo(EntitySelection* p_entitySelection);
 
-	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity);
+	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, ECS_Entity_HANDLE p_selectedEntity);
 	void EntitySelection_executeGizmoTransformation(_GameEngineEditor::EntitySelection* p_entitySelection);
 	void EntitySelection_moveSelectedEntity_arrowTranslation(_GameEngineEditor::EntitySelection* p_entitySelection);
 	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection);
@@ -83,14 +90,7 @@ namespace _GameEngineEditor
 		p_entitySelection->Input = p_gameEngineEditor->GameEngineApplicationInterface->Input;
 		p_entitySelection->RenderInterface = p_gameEngineEditor->GameEngineApplicationInterface->RenderInterface;
 		p_entitySelection->PhysicsInterface = p_gameEngineEditor->GameEngineApplicationInterface->PhysicsInterface;
-
-		_Core::CallbackT < EntitySelection, _ECS::CameraSystem* > l_onCameraSystemEnabled = { EntitySelection_onCameraSystem_enabled , p_entitySelection };
-		_ECS::SystemEvents_registerOnSystemAdded(&p_gameEngineEditor->GameEngineApplicationInterface->ECS->SystemEvents, _ECS::CameraSystemKey, (_Core::CallbackT<void, _ECS::SystemHeader*>*) & l_onCameraSystemEnabled);
-	};
-
-	void EntitySelection_onCameraSystem_enabled(EntitySelection* p_entitySelection, _ECS::CameraSystem** p_cameraSystem)
-	{
-		p_entitySelection->EntitySelectionState.CachedStructures.CameraSystem = *p_cameraSystem;
+		p_entitySelection->CameraSystem = p_gameEngineEditor->GameEngineApplicationInterface->GameEngineApplicationSystems.CameraRenderSystem;
 	};
 
 	void EntitySelection_update(EntitySelection* p_entitySelection)
@@ -98,11 +98,12 @@ namespace _GameEngineEditor
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
 
 		// Set the active camera
-		_ECS::Camera* l_currentCamera = _ECS::CameraSystem_getCurrentActiveCamera(l_entitySelectionState->CachedStructures.CameraSystem);
+		
+		Camera* l_currentCamera = CameraSystem_getCurrentActiveCamera(p_entitySelection->CameraSystem);
 		if (l_currentCamera != l_entitySelectionState->CachedStructures.ActiveCamera)
 		{
-			l_entitySelectionState->CachedStructures.ActiveCamera = _ECS::CameraSystem_getCurrentActiveCamera(l_entitySelectionState->CachedStructures.CameraSystem);
-			l_entitySelectionState->CachedStructures.ActiveCameraTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->CachedStructures.ActiveCamera->ComponentHeader.AttachedEntity);
+			l_entitySelectionState->CachedStructures.ActiveCamera = l_currentCamera;
+			ECS_GetComponent(l_entitySelectionState->CachedStructures.ActiveCamera->Header.AttachedEntity, CAMERA_TYPE, (ECS_ComponentHeader_HANDLE*)&l_entitySelectionState->CachedStructures.ActiveCameraTransform);
 		}
 
 		// Trying to detect the selected Entity
@@ -159,7 +160,7 @@ namespace _GameEngineEditor
 		// Move the gizmo to follow the selected entity.
 		if (EntitySelectionState_isEntitySelected(l_entitySelectionState))
 		{
-			_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
+			TransformComponent_PTR l_selectedEntityTransform; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_selectedEntityTransform);
 			TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(p_entitySelection, &l_selectedEntityTransform->Transform);
 			EntitySelection_drawSelectedEntityBoundingBox(p_entitySelection, l_entitySelectionState->SelectedEntity);
 		}
@@ -170,7 +171,7 @@ namespace _GameEngineEditor
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
 		Vector2f tmp_vec2_0 = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y };
 		Segment_Vector3f l_ray =
-			_ECS::Camera_buildWorldSpaceRay(
+			Camera_buildWorldSpaceRay(
 				l_entitySelectionState->CachedStructures.ActiveCamera,
 				&tmp_vec2_0
 			);
@@ -179,11 +180,11 @@ namespace _GameEngineEditor
 		if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, & l_ray.Begin,  & l_ray.End, &l_hit))
 		{
 			Vector3f tmp_vec3;
-			_ECS::TransformComponent* l_transformComponent = _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
-			l_entitySelectionState->SelectedEntity = l_transformComponent->ComponentHeader.AttachedEntity;
+			TransformComponent_PTR l_transformComponent = TransformComponent_castFromTransform(l_hit.Collider->Transform);
+			l_entitySelectionState->SelectedEntity = l_transformComponent->Header.AttachedEntity;
 			Transform_GetWorldPosition(&l_transformComponent->Transform, &tmp_vec3);
 			TransformGizmoV2_alloc(p_entitySelection, & tmp_vec3, p_entitySelection->ECS);
-			_ECS::ECSEventQueue_processMessages(&p_entitySelection->ECS->EventQueue);
+			ECS_GlobalEvents_ProcessMessages(p_entitySelection->ECS);
 		}
 	};
 
@@ -192,7 +193,7 @@ namespace _GameEngineEditor
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
 		Vector2f tmp_vec2_0 = { (float)p_entitySelection->Input->InputMouse.ScreenPosition.x, (float)p_entitySelection->Input->InputMouse.ScreenPosition.y };
 		Segment_Vector3f l_ray =
-			_ECS::Camera_buildWorldSpaceRay(
+			Camera_buildWorldSpaceRay(
 				l_entitySelectionState->CachedStructures.ActiveCamera,
 				&tmp_vec2_0
 			);
@@ -207,12 +208,12 @@ namespace _GameEngineEditor
 
 
 		Segment_Vector3f l_mouseDelta_begin_ray =
-			_ECS::Camera_buildWorldSpaceRay(
+			Camera_buildWorldSpaceRay(
 				p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera,
 				&l_mouseDelta_screenPosition.Begin
 			);
 		Segment_Vector3f l_mouseDelta_end_ray =
-			_ECS::Camera_buildWorldSpaceRay(
+			Camera_buildWorldSpaceRay(
 				p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera,
 				&l_mouseDelta_screenPosition.End
 			);
@@ -273,8 +274,8 @@ namespace _GameEngineEditor
 		Vector3f tmp_vec3_1, tmp_vec3_0; Quaternion4f tmp_quat_1;
 
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
-		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
-		_ECS::TransformComponent* l_selectedArrow = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
+		TransformComponent_PTR l_transformComponent; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_transformComponent);
+		TransformComponent_PTR l_selectedArrow = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		// We position the world space place
@@ -311,8 +312,8 @@ namespace _GameEngineEditor
 	void EntitySelection_rotateSelectedEntity(_GameEngineEditor::EntitySelection* p_entitySelection)
 	{
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
-		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
-		_ECS::TransformComponent* l_selectedRotation = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
+		TransformComponent_PTR l_transformComponent; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_transformComponent);
+		TransformComponent_PTR l_selectedRotation = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		Vector3f l_guidePlane_worldPosition;
@@ -399,8 +400,8 @@ namespace _GameEngineEditor
 		Vector3f tmp_vec3_0, tmp_vec3_1; Quaternion4f tmp_quat_1;
 
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
-		_ECS::TransformComponent* l_transformComponent = _ECS::EntityT_getComponent<_ECS::TransformComponent>(l_entitySelectionState->SelectedEntity);
-		_ECS::TransformComponent* l_selectedScale = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
+		TransformComponent_PTR l_transformComponent; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_transformComponent);
+		TransformComponent_PTR l_selectedScale = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
 		TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
 		// We position the world space place
@@ -456,125 +457,120 @@ namespace _GameEngineEditor
 		Transform_SetLocalScale(&l_transformComponent->Transform, &tmp_vec3_1);
 	}
 
-	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, _ECS::Entity* p_selectedEntity)
+	void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, ECS_Entity_HANDLE p_selectedEntity)
 	{
 		Matrix4f tmp_mat_0; Vector3c tmp_vec3_0;
 
-		_ECS::TransformComponent* l_selectedEntityTransform = _ECS::EntityT_getComponent<_ECS::TransformComponent>(p_selectedEntity);
-		_ECS::MeshRendererBound* l_meshRendererBound = _ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_selectedEntity);
+		TransformComponent_PTR l_selectedEntityTransform; ECS_GetComponent(p_selectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_selectedEntityTransform);
+		PhysicsBody_PTR l_physicsBody; ECS_GetComponent(p_selectedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_physicsBody);
+
 		tmp_vec3_0 = { (char)255, (char)255, (char)255 };
 		Transform_GetLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0);
 
-		Gizmo_DrawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_meshRendererBound->Boxcollider->Box,
+		Gizmo_DrawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_physicsBody->Boxcollider->Box,
 			&tmp_mat_0, true, &tmp_vec3_0);
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocArrow(_ECS::ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
+	TransformComponent_PTR transformGizmoV2_allocArrow(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
 	{
-		_ECS::Entity* l_arrowEntity;
-		_ECS::TransformComponent* l_transform;
+		ECS_Entity_HANDLE l_arrowEntity;
+		TransformComponent_PTR l_transform;
 		{
-			l_arrowEntity = _ECS::Entity_alloc();
-			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_arrowEntity);
-			_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_entityCreationMessage);
+			l_arrowEntity = ECS_AllocateEntity(p_ecs);
 		}
 		{
-			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transform = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+			TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
-			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_transform, p_ecs);
+			TransformComponent_init(l_transform, &l_transformInitInfo);
+			ECS_AddComponent(p_ecs, l_arrowEntity, &l_transform->Header);
 		}
 		{
-			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
-			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
+			MeshRenderer_PTR l_meshRenderer = (MeshRenderer_PTR)ECS_Component_Alloc(MESHRENDERER_COMPONENT_TYPE, sizeof(MeshRenderer));
+			MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj";
 
-			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshRenderer, p_ecs);
+			MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
+			ECS_AddComponent(p_ecs, l_arrowEntity, &l_meshRenderer->Header);
 		}
 		{
-			_ECS::MeshRendererBound* l_meshrendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
-			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshrendererBound, p_ecs);
+			PhysicsBody_PTR l_physicsBody = (PhysicsBody_PTR)ECS_Component_Alloc(PHYSICSBODY_COMPONENT_TYPE, sizeof(PhysicsBody));
+			ECS_AddComponent(p_ecs, l_arrowEntity, &l_physicsBody->Header);
 		}
 
 		return l_transform;
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocRotation(_ECS::ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
+	TransformComponent_PTR transformGizmoV2_allocRotation(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
 	{
-		_ECS::Entity* l_rotationEntity;
-		_ECS::TransformComponent* l_transform;
+		ECS_Entity_HANDLE l_rotationEntity;
+		TransformComponent_PTR l_transform;
 		{
-			l_rotationEntity = _ECS::Entity_alloc();
-			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_rotationEntity);
-			_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_entityCreationMessage);
+			l_rotationEntity = ECS_AllocateEntity(p_ecs);
 		}
 		{
-			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transform = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+			TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
-			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_rotationEntity, l_transform, p_ecs);
+			TransformComponent_init(l_transform, &l_transformInitInfo);
+			ECS_AddComponent(p_ecs, l_rotationEntity, &l_transform->Header);
 		}
 		{
-			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
-			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
+			MeshRenderer_PTR l_meshRenderer = (MeshRenderer_PTR)ECS_Component_Alloc(MESHRENDERER_COMPONENT_TYPE, sizeof(MeshRenderer));
+			MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/RotationGizmo.obj";
 
-			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_rotationEntity, l_meshRenderer, p_ecs);
+			MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
+			ECS_AddComponent(p_ecs, l_rotationEntity, &l_meshRenderer->Header);
 		}
 		{
-			_ECS::MeshRendererBound* l_meshrendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
-			_ECS::EntityT_addComponentDeferred(l_rotationEntity, l_meshrendererBound, p_ecs);
+			PhysicsBody_PTR l_physicsBody = (PhysicsBody_PTR)ECS_Component_Alloc(PHYSICSBODY_COMPONENT_TYPE, sizeof(PhysicsBody));
+			ECS_AddComponent(p_ecs, l_rotationEntity, &l_physicsBody->Header);
 		}
 
 		return l_transform;
 	}
 
-	_ECS::TransformComponent* transformGizmoV2_allocScale(_ECS::ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
+	TransformComponent_PTR transformGizmoV2_allocScale(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
 	{
-		_ECS::Entity* l_arrowEntity;
-		_ECS::TransformComponent* l_transform;
+		ECS_Entity_HANDLE l_arrowEntity;
+		TransformComponent_PTR l_transform;
 		{
-			l_arrowEntity = _ECS::Entity_alloc();
-			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_arrowEntity);
-			_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_entityCreationMessage);
+			l_arrowEntity = ECS_AllocateEntity(p_ecs);
 		}
 		{
-			l_transform = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-			_ECS::TransformInitInfo l_transformInitInfo{};
+			l_transform = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+			TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = { 0.0f, 0.0f, 0.0f };
 			l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
-			_ECS::TransformComponent_init(l_transform, &l_transformInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_transform, p_ecs);
+			TransformComponent_init(l_transform, &l_transformInitInfo);
+			ECS_AddComponent(p_ecs, l_arrowEntity, &l_transform->Header);
 		}
 		{
-			_ECS::MeshRenderer* l_meshRenderer = _ECS::ComponentT_alloc<_ECS::MeshRenderer>();
-			_ECS::MeshRendererInitInfo l_meshRendererInitInfo{};
+			MeshRenderer_PTR l_meshRenderer = (MeshRenderer_PTR)ECS_Component_Alloc(MESHRENDERER_COMPONENT_TYPE, sizeof(MeshRenderer));
+			MeshRendererInitInfo l_meshRendererInitInfo{};
 			l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ScaleGizmo.obj";
 
-			_ECS::MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshRenderer, p_ecs);
+			MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
+			ECS_AddComponent(p_ecs, l_arrowEntity, &l_meshRenderer->Header);
 		}
 		{
-			_ECS::MeshRendererBound* l_meshrendererBound = _ECS::ComponentT_alloc<_ECS::MeshRendererBound>();
-			_ECS::EntityT_addComponentDeferred(l_arrowEntity, l_meshrendererBound, p_ecs);
+			PhysicsBody_PTR l_physicsBody = (PhysicsBody_PTR)ECS_Component_Alloc(PHYSICSBODY_COMPONENT_TYPE, sizeof(PhysicsBody));
+			ECS_AddComponent(p_ecs, l_arrowEntity, &l_physicsBody->Header);
 		}
 
 		return l_transform;
 	}
 
-	void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_initialWorldPosition, _ECS::ECS* p_ecs)
+	void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_initialWorldPosition, ECS* p_ecs)
 	{
 		TransformGizmo* p_transformGizmo = &p_entitySelection->TransformGizmoV2;
 
@@ -584,20 +580,17 @@ namespace _GameEngineEditor
 		}
 
 		Vector3f tmp_vec3_0; Quaternion4f tmp_quat_0;
-		_ECS::Entity* l_transformGizmo = _ECS::Entity_alloc();
+		ECS_Entity_HANDLE l_transformGizmo = ECS_AllocateEntity(p_ecs);
+
 		{
-			_ECS::ECSEventMessage* l_entityCreationMessage = _ECS::ECSEventMessage_addEntity_alloc(&l_transformGizmo);
-			_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_entityCreationMessage);
-		}
-		{
-			p_transformGizmo->TransformGizoEntity = _ECS::ComponentT_alloc<_ECS::TransformComponent>();
-			_ECS::TransformInitInfo l_transformInitInfo{};
+			p_transformGizmo->TransformGizoEntity = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+			TransformInitInfo l_transformInitInfo{};
 			l_transformInitInfo.LocalPosition = *p_initialWorldPosition;
 			l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 			l_transformInitInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 
-			_ECS::TransformComponent_init(p_transformGizmo->TransformGizoEntity, &l_transformInitInfo);
-			_ECS::EntityT_addComponentDeferred(l_transformGizmo, p_transformGizmo->TransformGizoEntity, p_ecs);
+			TransformComponent_init(p_transformGizmo->TransformGizoEntity, &l_transformInitInfo);
+			ECS_AddComponent(p_ecs, l_transformGizmo, &p_transformGizmo->TransformGizoEntity->Header);
 		}
 
 		switch (p_entitySelection->EntitySelectionState.TransformGizmoSelectionState.SelectedGizmoType)
@@ -699,12 +692,11 @@ namespace _GameEngineEditor
 		}
 	}
 
-	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, _ECS::ECS* p_ecs)
+	void TransformGizmoV2_free(TransformGizmo* p_transformGizmo, ECS* p_ecs)
 	{
-		_ECS::ECSEventMessage* l_eraseEntitymessage = _ECS::ECSEventMessage_removeEntity_alloc(&p_transformGizmo->TransformGizoEntity->ComponentHeader.AttachedEntity);
-		_ECS::ECSEventQueue_pushMessage(&p_ecs->EventQueue, &l_eraseEntitymessage);
+		ECS_FreeEntity(p_ecs, p_transformGizmo->TransformGizoEntity->Header.AttachedEntity);
 		*p_transformGizmo = {};
-		_ECS::ECSEventQueue_processMessages(&p_ecs->EventQueue);
+		ECS_GlobalEvents_ProcessMessages(p_ecs);
 	};
 
 	void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(_GameEngineEditor::EntitySelection* p_entitySelection, Transform_PTR p_followedTransform)
@@ -712,7 +704,7 @@ namespace _GameEngineEditor
 		Vector4f tmp_vec4_0;
 		// In order for the transform gimo to always have the same visible size, we fix it's z clip space position.
 		{
-			_ECS::TransformComponent* l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
+			TransformComponent_PTR l_transformGizmotransform = p_entitySelection->TransformGizmoV2.TransformGizoEntity;
 			if (l_transformGizmotransform)
 			{
 				Vector3f l_followedWorldPosition; Transform_GetWorldPosition(p_followedTransform, &l_followedWorldPosition);
@@ -720,7 +712,7 @@ namespace _GameEngineEditor
 
 				Vector3f l_transformGizmoWorldPosition;
 				{
-					Matrix4f l_worldToClipMatrix = _ECS::Camera_worldToClipMatrix(p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera);
+					Matrix4f l_worldToClipMatrix = Camera_worldToClipMatrix(p_entitySelection->EntitySelectionState.CachedStructures.ActiveCamera);
 					Matrix4f l_clipToWorldMatrix; Mat_Inv_M4F(&l_worldToClipMatrix, &l_clipToWorldMatrix);
 
 					Vector4f l_selectedEntityTransformClip;
@@ -768,26 +760,30 @@ namespace _GameEngineEditor
 		};
 	};
 
-	_ECS::TransformComponent* TransformGizmo_determinedSelectedGizmoComponent(TransformGizmo* p_transformGizmo, Segment_Vector3f_PTR p_collisionRay)
+	TransformComponent_PTR TransformGizmo_determinedSelectedGizmoComponent(TransformGizmo* p_transformGizmo, Segment_Vector3f_PTR p_collisionRay)
 	{
 		_Physics::BoxCollider* l_transformArrowCollidersPtr[3];
 		_Core::ArrayT<_Physics::BoxCollider*> l_transformArrowColliders = _Core::ArrayT_fromCStyleArray(l_transformArrowCollidersPtr, 3);
 		l_transformArrowColliders.Size = 0;
 		{
-			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->RightGizmo->ComponentHeader.AttachedEntity)->Boxcollider);
-			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->UpGizmo->ComponentHeader.AttachedEntity)->Boxcollider);
-			_Core::ArrayT_pushBack(&l_transformArrowColliders, &_ECS::EntityT_getComponent<_ECS::MeshRendererBound>(p_transformGizmo->ForwardGizmo->ComponentHeader.AttachedEntity)->Boxcollider);
+			PhysicsBody_PTR tmp_physicsBody;
+			ECS_GetComponent(p_transformGizmo->RightGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &tmp_physicsBody->Boxcollider);
+			ECS_GetComponent(p_transformGizmo->UpGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &tmp_physicsBody->Boxcollider);
+			ECS_GetComponent(p_transformGizmo->ForwardGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
+			_Core::ArrayT_pushBack(&l_transformArrowColliders, &tmp_physicsBody->Boxcollider);
 		}
 		_Physics::RaycastHit l_hit;
 		if (_Physics::RayCast_against(&l_transformArrowColliders,  & p_collisionRay->Begin, & p_collisionRay->End, &l_hit))
 		{
-			return _ECS::TransformComponent_castFromTransform(l_hit.Collider->Transform);
+			return TransformComponent_castFromTransform(l_hit.Collider->Transform);
 		}
 
 		return nullptr;
 	}
 
-	void TransformGizmo_setSelectedGizmo(TransformGizmoSelectionState* p_selectionState, _ECS::TransformComponent* p_selectedGizmo)
+	void TransformGizmo_setSelectedGizmo(TransformGizmoSelectionState* p_selectionState, TransformComponent_PTR p_selectedGizmo)
 	{
 		Vector3f tmp_vec;
 		if (p_selectionState->SelectedGizmo)
@@ -813,5 +809,4 @@ namespace _GameEngineEditor
 	{
 		return p_transformGizmoSelectionState->SelectedGizmo;
 	};
-#endif
 }

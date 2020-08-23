@@ -37,7 +37,6 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 
 				//TODO -> Adding a unique ID the the rendered object list
 				// _Render::MaterialInstanceContainer_removeMaterialInstance(l_mesRenderer->RenderInterface->MaterialInstanceContainer, l_mesRenderer->MaterialInstance->SourceMaterial, l_mesRenderer->MaterialInstance);
-				free(l_meshDrawSystemOperation->RenderedObject);
 
 				if (l_meshDrawSystemOperation->Entity == l_event->Entity)
 				{
@@ -46,7 +45,8 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 						RenderedObject_HANDLE l_renderedObject = p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Memory[k];
 						if (l_renderedObject == l_meshDrawSystemOperation->RenderedObject)
 						{
-							Arr_Erase_RenderedObjectHandle(&p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, i);
+							free(l_renderedObject);
+							Arr_Erase_RenderedObjectHandle(&p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, k);
 							break;
 						}
 					}
