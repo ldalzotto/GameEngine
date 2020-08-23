@@ -7,11 +7,14 @@
 #define myoffsetof(st, m) \
     ((size_t)((char *)&((st *)0)->m - (char *)0))
 
-
-
 void ECS_EntityFilter_Alloc_1c(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentType p_filteredComponent1);
 void ECS_EntityFilter_Alloc_2c(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentType p_filteredComponent1, ECS_ComponentType p_filteredComponent2);
 void ECS_EntityFilter_Free(ECS_EntityFilter_PTR p_entityFilter);
+
+inline void Arr_Alloc_EntityFilterEvent(Array_EntityFilterEvent_PTR p_array, size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_EntityFilterEvent), p_initialCapacity); };
+inline void Arr_Free_EntityFilterEvent(Array_EntityFilterEvent_PTR p_array) { Arr_Free((Array_PTR)p_array); };
+inline void Arr_PushbackRealloc_EntityFilterEvent(Array_EntityFilterEvent_PTR p_array, ECS_EntityFilterEvent_PTR p_entityFilter) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_EntityFilterEvent), (char*)p_entityFilter); }
+
 
 inline void Arr_Alloc_EntityFilterPtr(Array_EntityFilterPtr_PTR p_array, size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_EntityFilter_PTR), p_initialCapacity); };
 inline void Arr_Free_EntityFilterPtr(Array_EntityFilterPtr_PTR p_array) { Arr_Free((Array_PTR)p_array); };

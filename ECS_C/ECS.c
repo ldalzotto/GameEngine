@@ -176,9 +176,7 @@ void ECS_EntityFilter_Alloc_1c(ECS_EntityFilter_PTR p_entityFilter, ECS_Componen
 	Arr_Alloc_ComponentType(&p_entityFilter->FilteredComponentTypes, 1);
 	p_entityFilter->FilteredComponentTypes.Memory[0] = p_filteredComponent1;
 	p_entityFilter->FilteredComponentTypes.Size = 1;
-	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities, 0);
-	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities, 0);
-	
+	Arr_Alloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, 0);
 };
 
 void ECS_EntityFilter_Alloc_2c(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentType p_filteredComponent1, ECS_ComponentType p_filteredComponent2)
@@ -187,15 +185,13 @@ void ECS_EntityFilter_Alloc_2c(ECS_EntityFilter_PTR p_entityFilter, ECS_Componen
 	p_entityFilter->FilteredComponentTypes.Memory[0] = p_filteredComponent1;
 	p_entityFilter->FilteredComponentTypes.Memory[1] = p_filteredComponent2;
 	p_entityFilter->FilteredComponentTypes.Size = 2;
-	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities, 0);
-	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities, 0);
+	Arr_Alloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, 0);
 };
 
 void ECS_EntityFilter_Free(ECS_EntityFilter_PTR p_entityFilter)
 {
 	Arr_Free_ComponentType(&p_entityFilter->FilteredComponentTypes);
-	Arr_Free_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities);
-	Arr_Free_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities);
+	Arr_Free_EntityFilterEvent(&p_entityFilter->EntityFilterEvents);
 };
 
 void ECS_EntityFilterEvents_Alloc(HashMap_EntityFilterEvents_PTR p_entityFilterEvents)
@@ -230,7 +226,8 @@ void ECS_EntityFilter_PushEntityIfFilteredEntitiesMatches(ECS_EntityFilter_PTR p
 
 	if (l_notify)
 	{
-		Arr_PushBackRealloc_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities, p_entity);
+		ECS_EntityFilterEvent l_event = (ECS_EntityFilterEvent){.Type = EntityFilterEventType_ConditionsJustMet, .Entity  = p_entity };
+		Arr_PushbackRealloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, &l_event);
 	}
 };
 
@@ -249,7 +246,8 @@ void ECS_EntityFilter_PushEntityIfFilteredEntitiesDoesntMatches(ECS_EntityFilter
 
 	if (l_notify)
 	{
-		Arr_PushBackRealloc_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities, p_entity);
+		ECS_EntityFilterEvent l_event = (ECS_EntityFilterEvent){ .Type = EntityFilterEventType_ConditionsJustNotMet, .Entity = p_entity };
+		Arr_PushbackRealloc_EntityFilterEvent(&p_entityFilter->EntityFilterEvents, &l_event);
 	}
 };
 

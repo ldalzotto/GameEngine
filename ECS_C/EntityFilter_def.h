@@ -5,11 +5,25 @@
 #include "DataStructures/ARRAY_def.h"
 #include "DataStructures/HASHMAP_def.h"
 
+typedef char ECS_EntityFilterEventType;
+#define EntityFilterEventType_ConditionsJustMet 0
+#define EntityFilterEventType_ConditionsJustNotMet 1
+
+typedef struct ECS_EntityFilterEvent_TYP
+{
+	ECS_EntityFilterEventType Type;
+	ECS_Entity_HANDLE Entity;
+}ECS_EntityFilterEvent, * ECS_EntityFilterEvent_PTR;
+
+typedef struct Array_EntityFilterEvent_TYP
+{
+	ARRAY_TYPE_DEFINITION(ECS_EntityFilterEvent)
+}Array_EntityFilterEvent, * Array_EntityFilterEvent_PTR;
+
 typedef struct ECS_EntityFilter_TYP
 {
 	Array_ComponentType FilteredComponentTypes;
-	Array_ECSEntityHANDLE JustMatchedEntities;
-	Array_ECSEntityHANDLE JustUnMatchedEntities;
+	Array_EntityFilterEvent EntityFilterEvents;
 }ECS_EntityFilter, * ECS_EntityFilter_PTR;
 
 typedef struct Array_EntityFilterPtr_TYP

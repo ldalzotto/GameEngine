@@ -84,6 +84,7 @@ int main()
 
 	ECS_FreeEntity(&ecs, l_entity);
 	
+	ECS_GlobalEvents_ProcessMessages(&ecs);
 
 	ECS_Free(&ecs);
 }
