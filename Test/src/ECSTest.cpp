@@ -3,6 +3,7 @@ extern "C"
 {
 #include "ECS.h"
 #include "DataStructures/HASHMAP.h"
+#include "EntityFilter.h"
 }
 
 ECS ecs;
@@ -34,6 +35,7 @@ size_t Hasgggg(size_t* p_key)
 
 int main()
 {
+	/*
 	HashMap l_hashMapTest; HashMap_Alloc(&l_hashMapTest, sizeof(size_t), sizeof(int), (HashMap_HashFn)Hasgggg, 0);
 	size_t l_key = 8441511610;
 	int l_value = 65;
@@ -48,20 +50,28 @@ int main()
 	{
 		
 	};
-
+	*/
 
 	ECS_Build(&ecs, NULL);
 
 	ECS_OnComponentDestroyedStaticCallback l_callback = { ComponentTestType, FunctionTest , NULL };
 	ECS_RegisterGlobalComponentDestroyedEvent(&ecs, &l_callback);
 
-	ECS_Entity_HANDLE l_entity = ECS_AllocateEntity(&ecs);
+	ECS_EntityFilter l_filter;
+	ECS_EntityFilter_Alloc_1c(&l_filter, ComponentTestType);
+	ECS_EntityFilter_Register(&ecs, &l_filter);
+	// ECS_EntityFilter_UnRegister(&ecs.EntityFilterEvents, &l_filter);
 
+	ECS_Entity_HANDLE l_entity = ECS_AllocateEntity(&ecs);
 	ComponentTest_Handle l_compTest = ComponentTest_Alloc();
 	ECS_AddComponent(&ecs, l_entity, &l_compTest->Header);
 	// ECS_AddComponent(&ecs, l_entity, &l_compTest->Header);
 	//	ECS_Component_Alloc(&ComponentTestType, sizeof(ComponentTest));
 
+	ECS_GlobalEvents_ProcessMessages(&ecs);
+
 	ECS_FreeEntity(&ecs, l_entity);
+	
+
 	ECS_Free(&ecs);
 }

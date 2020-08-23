@@ -1,6 +1,6 @@
 #include "ECS.h"
+#include "EntityFilter.h"
 #include "DataStructures/ARRAY.h"
-// #include "Log/Log.h"
 #include "Error/ErrorHandler.h"
 
 /****************** Global Events *******************/
@@ -60,6 +60,10 @@ ECS_EventMessage_RemoveComponent_HANDLE ECS_AllocRemoveComponentMessage(const EC
 
 #include "Component_def.h"
 
+inline void Arr_Alloc_ComponentType(Array_ComponentType_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_ComponentType), p_initialCapacity); }
+inline void Arr_Free_ComponentType(Array_ComponentType_PTR p_array) { Arr_Free((Array_PTR)p_array); }
+inline void Arr_PushBackRealloc_ComponentType(Array_ComponentType_PTR p_array, ECS_ComponentType p_componentType) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_ComponentType), (char*)&p_componentType); };
+
 inline void Arr_Alloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, const size_t p_initialCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), p_initialCapacity); }
 inline void Arr_Free_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array) { Arr_Free((Array_PTR)p_array); }
 inline void Arr_PushBackRealloc_ComponentHeaderHandle(Array_ComponentHeaderHandle_PTR p_array, ECS_ComponentHeader_HANDLE p_componentHeader) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(ECS_ComponentHeader_HANDLE), (char*)&p_componentHeader); };
@@ -84,6 +88,11 @@ void ECS_Component_Free(const ECS_ComponentHeader_HANDLE p_component, const ECS_
 {
 	p_globalEvents->OnComponentDestroyedCallback.Function(p_component, p_globalEvents->OnComponentDestroyedCallback.Closure);	
 	free(p_component);
+};
+
+size_t ECS_ComponentType_Hash(ECS_ComponentType* p_componentType)
+{
+	return *p_componentType;
 };
 
 
@@ -159,6 +168,150 @@ void ECS_EntityContainer_Free(ECS_EntityContainer_PTR p_entityContainer)
 	Arr_Free_ECSEntityHANDLE(p_entityContainer);
 };
 
+
+/****************** Entity Filter *******************/
+
+void ECS_EntityFilter_Alloc_1c(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentType p_filteredComponent1)
+{
+	Arr_Alloc_ComponentType(&p_entityFilter->FilteredComponentTypes, 1);
+	p_entityFilter->FilteredComponentTypes.Memory[0] = p_filteredComponent1;
+	p_entityFilter->FilteredComponentTypes.Size = 1;
+	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities, 0);
+	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities, 0);
+	
+};
+
+void ECS_EntityFilter_Alloc_2c(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentType p_filteredComponent1, ECS_ComponentType p_filteredComponent2)
+{
+	Arr_Alloc_ComponentType(&p_entityFilter->FilteredComponentTypes, 2);
+	p_entityFilter->FilteredComponentTypes.Memory[0] = p_filteredComponent1;
+	p_entityFilter->FilteredComponentTypes.Memory[1] = p_filteredComponent2;
+	p_entityFilter->FilteredComponentTypes.Size = 2;
+	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities, 0);
+	Arr_Alloc_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities, 0);
+};
+
+void ECS_EntityFilter_Free(ECS_EntityFilter_PTR p_entityFilter)
+{
+	Arr_Free_ComponentType(&p_entityFilter->FilteredComponentTypes);
+	Arr_Free_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities);
+	Arr_Free_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities);
+};
+
+void ECS_EntityFilterEvents_Alloc(HashMap_EntityFilterEvents_PTR p_entityFilterEvents)
+{
+	HashMap_Alloc_EntityFilterEvents(p_entityFilterEvents, ECS_ComponentType_Hash, 8);
+};
+
+void ECS_EntityFilteredEvents_Free(HashMap_EntityFilterEvents_PTR p_entityFilterEvents)
+{
+	for (size_t i = 0; i < p_entityFilterEvents->Capacity; i++)
+	{
+		HashMapEntry_EntityFilterByFilteredComponentType_PTR l_entry =	&p_entityFilterEvents->Entries[i];
+		if (l_entry->Header.IsOccupied)
+		{
+			Arr_Free_EntityFilterPtr(&l_entry->Value);
+		}
+	}
+};
+
+void ECS_EntityFilter_PushEntityIfFilteredEntitiesMatches(ECS_EntityFilter_PTR p_entityFilter, ECS_Entity_HANDLE p_entity)
+{
+	char l_notify = 1;
+
+	for (size_t i = 0; i < p_entityFilter->FilteredComponentTypes.Size; i++)
+	{
+		if (!Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(&p_entity->Components, p_entityFilter->FilteredComponentTypes.Memory[i], NULL))
+		{
+			l_notify = 0;
+			break;
+		}
+	}
+
+	if (l_notify)
+	{
+		Arr_PushBackRealloc_ECSEntityHANDLE(&p_entityFilter->JustMatchedEntities, p_entity);
+	}
+};
+
+void ECS_EntityFilter_PushEntityIfFilteredEntitiesDoesntMatches(ECS_EntityFilter_PTR p_entityFilter, ECS_Entity_HANDLE p_entity)
+{
+	char l_notify = 1;
+
+	for (size_t i = 0; i < p_entityFilter->FilteredComponentTypes.Size; i++)
+	{
+		if (!Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(&p_entity->Components, p_entityFilter->FilteredComponentTypes.Memory[i], NULL))
+		{
+			l_notify = 0;
+			break;
+		}
+	}
+
+	if (l_notify)
+	{
+		Arr_PushBackRealloc_ECSEntityHANDLE(&p_entityFilter->JustUnMatchedEntities, p_entity);
+	}
+};
+
+void ECS_EntityFilter_OnComponentAttached(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentHeader_HANDLE p_component)
+{
+	ECS_EntityFilter_PushEntityIfFilteredEntitiesMatches(p_entityFilter, p_component->AttachedEntity);
+};
+
+void ECS_EntityFilter_BeforeComponentDetached(ECS_EntityFilter_PTR p_entityFilter, ECS_ComponentHeader_HANDLE p_component)
+{
+	ECS_EntityFilter_PushEntityIfFilteredEntitiesDoesntMatches(p_entityFilter, p_component->AttachedEntity);
+};
+
+void ECS_EntityFilter_Register(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter)
+{
+	for (size_t i = 0; i < p_entityFilter->FilteredComponentTypes.Size; i++)
+	{
+		ECS_ComponentType l_componentType = p_entityFilter->FilteredComponentTypes.Memory[i];
+		Array_EntityFilterPtr_PTR l_entityFilters = NULL;
+		if (!Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_entityFilters))
+		{
+			Array_EntityFilterPtr l_insertedEntityFilters; Arr_Alloc_EntityFilterPtr(&l_insertedEntityFilters, 0);
+			HashMap_PushKeyValueRealloc_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_insertedEntityFilters);
+			Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_entityFilters);
+		}
+
+		Arr_PushbackRealloc_EntityFilterPtr(l_entityFilters, p_entityFilter);
+	}
+
+
+};
+
+void ECS_EntityFilter_UnRegister(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter)
+{
+	for (size_t i = 0; i < p_entityFilter->FilteredComponentTypes.Size; i++)
+	{
+		ECS_ComponentType l_componentType = p_entityFilter->FilteredComponentTypes.Memory[i];
+		Array_EntityFilterPtr_PTR l_entityFilters = NULL;
+		if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_entityFilters))
+		{
+			for (size_t j = 0; j < l_entityFilters->Size; j++)
+			{
+				if (l_entityFilters->Memory[j] == p_entityFilter)
+				{
+					Arr_Erase_EntityFilterPtr(l_entityFilters, j);
+					return;
+				}
+			}
+		}
+	}
+
+	/**
+	When initializing the @ref EntityFilter, we check the presence of the listened @ref ComponentType for all @ref Entity and push the
+	Entity to the Listener if successfull.
+	This is to be sure that all already present Entities are checked if the system initiation is done after the Entity creation.
+	*/
+	for (size_t i = 0; i < p_ecs->EntityContainer.Size; i++)
+	{
+		ECS_EntityFilter_PushEntityIfFilteredEntitiesMatches(p_entityFilter, p_ecs->EntityContainer.Memory[i]);
+	}
+};
+
 /****************** Global Events Processing *******************/
 
 void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
@@ -185,9 +338,20 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 				for (size_t i = 0; i < l_removedEntity->Components.Size; i++)
 				{
 					ECS_ComponentHeader_HANDLE l_component = l_removedEntity->Components.Memory[i];
+
+					//We update EntityFilter states
+					Array_EntityFilterPtr_PTR l_entityFilters;
+					if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_component->ComponentType, &l_entityFilters))
+					{
+						for (size_t i = 0; i < l_entityFilters->Size; i++)
+						{
+							ECS_EntityFilter_BeforeComponentDetached(l_entityFilters->Memory[i], l_component);
+						}
+					}
+
 					ECS_Component_Free(l_component, &p_ecs->GlobalEvents);
 					Arr_Erase_ComponentHeaderHandle(&l_removedEntity->Components, i);
-				} 
+				}
 
 				ECS_Entity_Free(l_removedEntity);
 				Arr_Erase_ECSEntityHANDLE(&p_ecs->EntityContainer, l_removeIndex);
@@ -197,7 +361,19 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 		case ECSEventMessageType_ADD_COMPONENT:
 		{
 			ECS_EventMessage_AddComponent_HANDLE l_addComponentMessage = (ECS_EventMessage_AddComponent_HANDLE)l_eventMessage;
-			if (!ECS_Entity_AddComponent(l_addComponentMessage->Entity, l_addComponentMessage->AllocatedComponent))
+			if (ECS_Entity_AddComponent(l_addComponentMessage->Entity, l_addComponentMessage->AllocatedComponent))
+			{
+				//We update EntityFilter states
+				Array_EntityFilterPtr_PTR l_entityFilters;
+				if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_addComponentMessage->AllocatedComponent->ComponentType, &l_entityFilters))
+				{
+					for (size_t i = 0; i < l_entityFilters->Size; i++)
+					{
+						ECS_EntityFilter_OnComponentAttached(l_entityFilters->Memory[i], l_addComponentMessage->AllocatedComponent);
+					}
+				}
+			}
+			else
 			{
 				if (l_addComponentMessage->AllocatedComponent->AttachedEntity == NULL)
 				{
@@ -218,6 +394,17 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 				size_t l_index;
 				if (Arr_Find_ComponentTypeEquals_ComponentHeaderHandle(&l_removeComponentMessage->RemovedComponent->AttachedEntity->Components, l_removeComponentMessage->RemovedComponent->ComponentType, &l_index))
 				{
+					//We update EntityFilter states
+					Array_EntityFilterPtr_PTR l_entityFilters;
+					if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_removeComponentMessage->RemovedComponent->ComponentType, &l_entityFilters))
+					{
+						for (size_t i = 0; i < l_entityFilters->Size; i++)
+						{
+							ECS_EntityFilter_BeforeComponentDetached(l_entityFilters->Memory[i], l_removeComponentMessage->RemovedComponent);
+						}
+					}
+
+
 					ECS_Component_Free(l_removeComponentMessage->RemovedComponent, &p_ecs->GlobalEvents);
 					Arr_Erase_ComponentHeaderHandle(&l_removeComponentMessage->RemovedComponent->AttachedEntity->Components, l_index);
 				}
@@ -230,13 +417,13 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 	}
 }
 
-
 /****************** ECS *******************/
 
 void ECS_Build(ECS* p_ecs, Log_PTR p_myLog)
 {
 	p_ecs->Log = p_myLog;
 	ECS_GlboalEvents_Alloc(&p_ecs->GlobalEvents);
+	ECS_EntityFilterEvents_Alloc(&p_ecs->EntityFilterEvents);
 };
 
 void ECS_Free(ECS* p_entityComponent)
@@ -246,6 +433,8 @@ void ECS_Free(ECS* p_entityComponent)
 	ECS_GlobalEvents_ProcessMessages(p_entityComponent);
 
 	ECS_GlobalEvents_Free(&p_entityComponent->GlobalEvents);
+
+	ECS_EntityFilteredEvents_Free(&p_entityComponent->EntityFilterEvents);
 };
 
 ECS_Entity_HANDLE ECS_AllocateEntity(ECS* p_ecs)

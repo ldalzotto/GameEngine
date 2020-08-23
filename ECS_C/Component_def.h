@@ -6,6 +6,11 @@ typedef struct ECS_Entity_TYP ECS_Entity, * ECS_Entity_HANDLE;
 
 typedef size_t ECS_ComponentType;
 
+typedef struct Array_ComponentType_TYP
+{
+	ARRAY_TYPE_DEFINITION(ECS_ComponentType)
+}Array_ComponentType, * Array_ComponentType_PTR;
+
 typedef struct ECS_ComponentHeader_TYP
 {
 	ECS_Entity_HANDLE AttachedEntity;
