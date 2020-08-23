@@ -2,9 +2,9 @@
 
 
 char* CubeMeshRendererMaterialKey = "E:/GameProjects/GameEngine/Assets/Models/Cube.obj";
-// _ECS::MeshRendererInitInfo CubeMeshRendererInit = {};
+MeshRendererInitInfo CubeMeshRendererInit = {};
 
 void EntityConfiguration_init()
 {
-//	CubeMeshRendererInit.MeshResourcePath = CubeMeshRendererMaterialKey;
+	CubeMeshRendererInit.MeshResourcePath = CubeMeshRendererMaterialKey;
 };

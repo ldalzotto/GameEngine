@@ -15,6 +15,8 @@ extern "C"
 // #include "ECS_Impl/Systems/MeshDraw/MeshRendererBoundSystem.h"
 // #include "ECS_Impl/Systems/Transform/TransformRotateSystem.h"
 
+ECSEngineGlobal_OnComponentDestroyed_Closure_TMP TMPClosure;
+
 namespace _GameEngine
 {
 	/// Game loop callback forward declaration
@@ -45,7 +47,9 @@ namespace _GameEngine
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 
 		ECS_Build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
-		ECS_OnComponentDestroyedStaticCallback l_onComponentDestroyedCallback = { ECSEngineGlobal_OnComponentDestroyed, &l_gameEngineApplication->ECS };
+		TMPClosure.ECS = &l_gameEngineApplication->ECS;
+		TMPClosure.RenderInterface = &l_gameEngineApplication->Render.RenderInterface;
+		ECS_OnComponentDestroyedStaticCallback l_onComponentDestroyedCallback = { ECSEngineGlobal_OnComponentDestroyed, &TMPClosure };
 		ECS_RegisterGlobalComponentDestroyedEvent(&l_gameEngineApplication->ECS, &l_onComponentDestroyedCallback);
 
 #if GAMEENGINE_EDITOR

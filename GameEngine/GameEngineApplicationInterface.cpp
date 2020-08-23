@@ -14,6 +14,6 @@ namespace _GameEngine
 		p_interface->PhysicsInterface = &p_gameEngineApplication->Physics.PhysicsInterface;
 		p_interface->RenderInterface = &p_gameEngineApplication->Render.RenderInterface;
 		p_interface->Input = &p_gameEngineApplication->Input;
-		// p_interface->ECS = &p_gameEngineApplication->ECS;
+		p_interface->ECS = &p_gameEngineApplication->ECS;
 	};
 }

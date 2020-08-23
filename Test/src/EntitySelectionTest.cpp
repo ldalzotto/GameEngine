@@ -58,7 +58,6 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		}
 	}
 
-#if 0
 	// Cubes
 	{
 		CubeCreationInfo l_cubeCreationInfo{};
@@ -66,9 +65,10 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 		l_cubeCreationInfo.LocalScale = { 1.0f, 1.0f, 1.0f };
 		l_cubeCreationInfo.LocalRotation = Quaternion4f_IDENTITY;
 		l_cubeCreationInfo.WithMeshBound = true;
-		_ECS::Entity* l_instancaitedEntity; _ECS::TransformComponent* l_instranciatedTransform;
+		ECS_Entity_HANDLE l_instancaitedEntity; TransformComponent_PTR l_instranciatedTransform;
 		EntityCreation_createEntity(&l_app->GameEngineApplicationInterface, &l_cubeCreationInfo, &l_instancaitedEntity, &l_instranciatedTransform);
-
+	}
+#if 0
 		//Child
 		{
 			CubeCreationInfo l_cubeCreationInfo{};

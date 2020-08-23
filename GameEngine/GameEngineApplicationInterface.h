@@ -24,6 +24,7 @@ namespace _GameEngine
 }
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
+typedef struct ECS_TYP ECS;
 typedef struct Log_TYP Log;
 
 namespace _GameEngine
@@ -40,7 +41,7 @@ namespace _GameEngine
 		_Physics::PhysicsInterface* PhysicsInterface;
 		RenderV2Interface* RenderInterface;
 		_Input::Input* Input;
-		// _ECS::ECS* ECS;
+		ECS* ECS;
 	};
 
 	void GameEngineApplicationInterface_build(GameEngineApplicationInterface* p_interface, GameEngineApplication* p_gameEngineApplication);
