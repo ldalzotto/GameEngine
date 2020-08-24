@@ -38,6 +38,7 @@ add_subdirectory(Common)
 add_subdirectory(Physics)
 
 target_link_libraries(GameEngine PUBLIC GameEngine_Common)
+target_link_libraries(GameEngine PUBLIC Math)
 target_link_libraries(GameEngine PUBLIC ECS_C)
 target_link_libraries(GameEngine PUBLIC MyRender)
 target_link_libraries(GameEngine PUBLIC GameEngine_Physics)

@@ -2,20 +2,10 @@ cmake_minimum_required(VERSION 3.12)
 project(GameEngine_Common VERSION 0.0.1)
 
 file(GLOB_RECURSE GAME_ENGINE_COMMON_PRIVATE 
-	"./Math/*.cpp"
-	"./Colors/*.cpp"
-	"./DataStructures/*.cpp"
-	"./MyLog/*.cpp"
-	"./Clock/*.cpp"
-	"./Utils/*.cpp"
+	"./Colors/*.c"
 )
 file(GLOB_RECURSE GAME_ENGINE_COMMON_PUBLIC 
-	"./Math/*.h"
 	"./Colors/*.h"
-	"./DataStructures/*.h"
-	"./MyLog/*.h"
-	"./Clock/*.h"
-	"./Utils/*.h"
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

@@ -26,4 +26,4 @@ add_library(GameEngine_Physics STATIC ${GAME_ENGINE_PHYSICS_PUBLIC} ${GAME_ENGIN
 
 target_include_directories(GameEngine_Physics PUBLIC "./")
 
-target_link_libraries(GameEngine_Physics PUBLIC GameEngine_Common)
+target_link_libraries(GameEngine_Physics PUBLIC Math)

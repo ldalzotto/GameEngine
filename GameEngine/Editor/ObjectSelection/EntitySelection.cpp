@@ -2,9 +2,8 @@
 
 #include <float.h>
 
-#include "Editor/GameEngineEditor.h"
 #include "GameEngineApplicationInterface.h"
-
+#include "Editor/GameEngineEditor.h"
 
 extern "C"
 {
@@ -32,25 +31,11 @@ extern "C"
 #include "ECSEngine/Components/PhysicsBody.h"
 #include "ECSEngine/Systems/CameraRenderSystem.h"
 
+
 #include "Input/InputV2.h"
+
+#include "Common/Colors/Colors.h"
 }
-
-#include <iostream>
-
-#include "Colors/Colors.h"
-
-
-
-// #include "ECS/EntityT.hpp"
-// #include "ECS_Impl/Components/Transform/TransformComponent.h"
-// #include "ECS_Impl/Components/Camera/Camera.h"
-// #include "ECS_Impl/Systems/Camera/CameraSystem.h"
-// #include "ECS_Impl/Components/MeshRenderer/MeshRendererBound.h"
-// #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
-
-#include "DataStructures/Specifications/ArrayT.hpp"
-#include "Physics/PhysicsInterface.h"
-
 
 using namespace _GameEngine;
 
@@ -602,13 +587,13 @@ namespace _GameEngineEditor
 			//Arrow transform gizmo
 		{
 			{
-				p_transformGizmo->RightGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::RED);
+				p_transformGizmo->RightGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_RED);
 			}
 			{
-				p_transformGizmo->UpGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::GREEN);
+				p_transformGizmo->UpGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_GREEN);
 			}
 			{
-				p_transformGizmo->ForwardGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::BLUE);
+				p_transformGizmo->ForwardGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_BLUE);
 			}
 
 			Transform_AddChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->ForwardGizmo->Transform);
@@ -627,9 +612,9 @@ namespace _GameEngineEditor
 		case SelectedGizmoType::ROTATION:
 			// Rotation gizmo
 		{
-			p_transformGizmo->RightGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::RED);
-			p_transformGizmo->UpGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::GREEN);
-			p_transformGizmo->ForwardGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::BLUE);
+			p_transformGizmo->RightGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_RED);
+			p_transformGizmo->UpGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_GREEN);
+			p_transformGizmo->ForwardGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_BLUE);
 
 			tmp_vec3_0 = { 0.0f, M_PI * 0.5f, 0.0f };
 			Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
@@ -648,13 +633,13 @@ namespace _GameEngineEditor
 			// Scale gizmo
 		{
 			{
-				p_transformGizmo->RightGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::RED);
+				p_transformGizmo->RightGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_RED);
 			}
 			{
-				p_transformGizmo->UpGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::GREEN);
+				p_transformGizmo->UpGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_GREEN);
 			}
 			{
-				p_transformGizmo->ForwardGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&_Color::BLUE);
+				p_transformGizmo->ForwardGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_BLUE);
 			}
 
 			Transform_AddChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->RightGizmo->Transform);

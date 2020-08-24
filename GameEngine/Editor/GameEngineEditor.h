@@ -1,11 +1,8 @@
 #pragma once
 
-#include "IMGuiRender/IMGuiRender.h"
 
 #include "Functional/Callback/CallbackT.hpp"
 
-#include "DebugConsole/DebugConsole.h"
-#include "IMGuiRender/DrawableWindow.h"
 #include "ObjectSelection/EntitySelection.h"
 
 namespace _GameEngine
@@ -20,8 +17,6 @@ namespace _GameEngineEditor
 	struct GameEngineEditor
 	{
 		GameEngineApplicationInterface* GameEngineApplicationInterface;
-		_Core::CallbackT<GameEngineEditor, void> OnPreRender;
-		DrawableWindows DrawableWindows;
 		EntitySelection EntitySelection;
 	};
 
