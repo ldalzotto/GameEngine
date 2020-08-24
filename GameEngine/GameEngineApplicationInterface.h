@@ -18,7 +18,6 @@ namespace _Core
 namespace _GameEngine
 {
 	struct GameEngineApplication;
-	struct GameLoop;
 }
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
@@ -26,6 +25,7 @@ typedef struct ECS_TYP ECS;
 typedef struct Log_TYP Log;
 typedef struct PhysicsInterface_TYP PhysicsInterface;
 
+typedef struct GameLoop_TYP GameLoop;
 typedef struct CameraRenderSystem_TYP CameraRenderSystem;
 typedef struct MeshDrawSystem_TYP MeshDrawSystem;
 typedef struct PhysicsSystem_TYP PhysicsSystem;

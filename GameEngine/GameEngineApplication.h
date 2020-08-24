@@ -16,11 +16,8 @@ extern "C"
 #include "Physics/Physics.h"
 #include "ECSEngine/Systems/PhysicsSystem.h"
 #include "Input/InputV2.h"
-}
-
-
 #include "GameLoop/GameLoop.h"
-
+}
 
 
 #if GAMEENGINE_EDITOR

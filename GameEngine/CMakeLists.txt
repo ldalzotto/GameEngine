@@ -4,7 +4,7 @@ project(GameEngine VERSION 0.0.1)
 file(GLOB_RECURSE GAME_ENGINE_PRIVATE 
 	"./ECSEngine/*.c"
 	"./ECS_Impl/*.cpp"
-	"./GameLoop/*.cpp"
+	"./GameLoop/*.c"
 	"./Input/*.c"
 	"./EngineSequencers/*.cpp"
 	"./Editor/*cpp"

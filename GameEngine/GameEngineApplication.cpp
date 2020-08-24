@@ -45,7 +45,7 @@ namespace _GameEngine
 		Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
 		RenderV2_initialize(&l_gameEngineApplication->Render);
 		Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.AppWindow, &l_gameEngineApplication->Log);
-		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
+		GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 
 		ECS_Build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
 		TMPClosure.ECS = &l_gameEngineApplication->ECS;
@@ -57,11 +57,11 @@ namespace _GameEngine
 		_GameEngineEditor::GameEngineEditor_alloc(&l_gameEngineApplication->Editor, &l_gameEngineApplication->GameEngineApplicationInterface);
 #endif
 
-		_GameLoop::set_newFrameCallback(&l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
-		_GameLoop::set_updateCallback(&l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
-		_GameLoop::set_endOfUpdateCallback(&l_gameEngineApplication->GameLoop, app_endOfUpdate, l_gameEngineApplication);
-		_GameLoop::set_renderCallback(&l_gameEngineApplication->GameLoop, app_render, l_gameEngineApplication);
-		_GameLoop::set_endOfFrameCallback(&l_gameEngineApplication->GameLoop, app_endOfFrame, l_gameEngineApplication);
+		GameLoop_SetnewFrameCallback(&l_gameEngineApplication->GameLoop, app_newFrame, l_gameEngineApplication);
+		GameLoop_SetupdateCallback(&l_gameEngineApplication->GameLoop, app_update, l_gameEngineApplication);
+		GameLoop_SetendOfUpdateCallback(&l_gameEngineApplication->GameLoop, app_endOfUpdate, l_gameEngineApplication);
+		GameLoop_SetrenderCallback(&l_gameEngineApplication->GameLoop, app_render, l_gameEngineApplication);
+		GameLoop_SetendOfFrameCallback(&l_gameEngineApplication->GameLoop, app_endOfFrame, l_gameEngineApplication);
 
 		GameEngineApplication_initializeSystems(l_gameEngineApplication);
 		return l_gameEngineApplication;
@@ -88,7 +88,7 @@ namespace _GameEngine
 		MeshDrawSystem_Free(&p_app->Systems.MeshDrawSystem, &p_app->ECS, &p_app->Render.RenderInterface);
 		PhysicsSystem_Free(&p_app->Systems.PhysicsSystem, &p_app->ECS, &p_app->Physics.PhysicsInterface);
 
-		_GameLoop::GameLoop_free(&p_app->GameLoop);
+		GameLoop_free(&p_app->GameLoop);
 		RenderV2_free(&p_app->Render);
 		Physics_free(&p_app->Physics);
 		Input_free(&p_app->Input);
@@ -110,7 +110,7 @@ namespace _GameEngine
 		while (!Window_askedForClose(&p_app->Render.AppWindow))
 		{
 			AppEvent_pool();
-			_GameLoop::update(&p_app->GameLoop);
+			GameLoop_Update(&p_app->GameLoop);
 		}
 	};
 
