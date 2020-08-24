@@ -3,10 +3,9 @@
 #include "Lib/EntityCreation.h"
 #include "Lib/EntityConfigurations.h"
 
-#include "GameEngineApplication.h"
-
 extern "C"
 {
+#include "GameEngineApplication.h"
 #include "v2/Math.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/TransformC.h"
@@ -14,6 +13,8 @@ extern "C"
 #include "ECSEngine/Components/Camera.h"
 #include "ECSEngine/Components/TransformComponent.h"
 #include "ECSEngine/Components/Types_def.h"
+#include "Physics/World/RayCast.h"
+#include "Physics/World/Collider/BoxCollider.h"
 }
 
 // #include "ECS/ComponentT.hpp"
@@ -27,12 +28,11 @@ extern "C"
 // #include "ECS_Impl/Components/MeshRenderer/MeshRenderer.h"
 
 
-#include "Physics/World/RayCast.h"
-#include "Physics/World/Collider/BoxCollider.h"
+
 
 using namespace _GameEngine::_Test;
 
-void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
+void EntitySelectionTest_Init(GameEngineApplication* l_app)
 {
 	Vector3f tmp_vec3_0;
 
@@ -86,11 +86,11 @@ void EntitySelectionTest_Init(_GameEngine::GameEngineApplication* l_app)
 int main()
 {
 	{
-		_GameEngine::GameEngineApplication* l_app = IntegrationTest_begin();
+		GameEngineApplication* l_app = IntegrationTest_begin();
 		EntityConfiguration_init();
 		EntitySelectionTest_Init(l_app);
 		// bool l_exit = false;
-		_GameEngine::app_mainLoop(l_app);
+		app_mainLoop(l_app);
 		IntegrationTest_end(l_app);
 	}
 	return 0;

@@ -1,24 +1,9 @@
 #pragma once
 
-#include <functional>
-
 typedef struct Clock_TYP Clock;
 
-namespace _GameEngine
-{
-	struct GameEngineApplicationInterface;
-}
-
-namespace _Core
-{
-	template <typename INPUT_TYPE = _GameEngine::GameEngineApplicationInterface>
-	struct ObserverT;
-}
-
-namespace _GameEngine
-{
-	struct GameEngineApplication;
-}
+typedef struct GameEngineApplicationInterface_TYP GameEngineApplicationInterface;
+typedef struct GameEngineApplication_TYP GameEngineApplication;
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
 typedef struct ECS_TYP ECS;
@@ -31,33 +16,24 @@ typedef struct MeshDrawSystem_TYP MeshDrawSystem;
 typedef struct PhysicsSystem_TYP PhysicsSystem;
 typedef struct Input_TYP Input;
 
-namespace _GameEngine
+typedef struct GameEngineApplicationSystemsInterface_TYP
 {
-	
+	CameraRenderSystem* CameraRenderSystem;
+	MeshDrawSystem* MeshDrawSystem;
+	PhysicsSystem* PhysicsSystem;
+}GameEngineApplicationSystemsInterface, * GameEngineApplicationSystemsInterface_PTR;
 
-	struct GameEngineApplicationSystemsInterface
-	{
-		CameraRenderSystem* CameraRenderSystem;
-		MeshDrawSystem* MeshDrawSystem;
-		PhysicsSystem* PhysicsSystem;
-	};
+typedef struct GameEngineApplicationInterface_TYP
+{
+	GameLoop* GameLoop;
+	Log* Log;
+	Clock* Clock;
+	PhysicsInterface* PhysicsInterface;
+	RenderV2Interface* RenderInterface;
+	Input* Input;
+	ECS* ECS;
 
-	struct GameEngineApplicationInterface
-	{
-		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface>* NewFrame;
-		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface>* PreRender;
-		std::function<void(float)>* SandboxUpdateHook;
+	GameEngineApplicationSystemsInterface GameEngineApplicationSystems;
+}GameEngineApplicationInterface, * GameEngineApplicationInterface_PTR;
 
-		GameLoop* GameLoop;
-		Log* Log;
-		Clock* Clock;
-		PhysicsInterface* PhysicsInterface;
-		RenderV2Interface* RenderInterface;
-		Input* Input;
-		ECS* ECS;
-
-		GameEngineApplicationSystemsInterface GameEngineApplicationSystems;
-	};
-
-	void GameEngineApplicationInterface_build(GameEngineApplicationInterface* p_interface, GameEngineApplication* p_gameEngineApplication);
-}
+void GameEngineApplicationInterface_build(GameEngineApplicationInterface* p_interface, GameEngineApplication* p_gameEngineApplication);

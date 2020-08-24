@@ -1,12 +1,9 @@
 #pragma once
 
-namespace _GameEngine
-{
-	struct GameEngineApplication;
-}
+typedef struct GameEngineApplication_TYP GameEngineApplication;
 
 namespace _GameEngine::_Test
 {
-	_GameEngine::GameEngineApplication* IntegrationTest_begin();
-	void IntegrationTest_end(_GameEngine::GameEngineApplication* p_gameEngineApplication);
+	GameEngineApplication* IntegrationTest_begin();
+	void IntegrationTest_end(GameEngineApplication* p_gameEngineApplication);
 }

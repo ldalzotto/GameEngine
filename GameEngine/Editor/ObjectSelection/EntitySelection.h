@@ -2,8 +2,7 @@
 
 #include <stdint.h>
 
-extern "C"
-{
+
 #include "v2/_interface/BoxC_def.h"
 #include "v2/_interface/TransformC_def.h"
 #include "ECSEngine/Components/TransformComponent_def.h"
@@ -14,84 +13,74 @@ extern "C"
 #include "Physics/World/Collider/BoxCollider.h"
 #include "Physics/PhysicsInterface.h"
 #include "Input/InputV2.h"
-}
 
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
+typedef struct GameEngineEditor_TYP GameEngineEditor;
 
-namespace _GameEngineEditor
+/* The TransformGizmoPlane is used to project mouse delta position to world space. According to SelectedGizmoType, he is oriented and positioned to fit specific requirements. */
+typedef struct TransformGizmoPlane_TYP
 {
-	struct GameEngineEditor;
-}
+	Transform Transform;
+	BoxF Box;
+	BoxCollider Collider;
+}TransformGizmoPlane, * TransformGizmoPlane_PTR;
 
-namespace _GameEngineEditor
+typedef short int SelectedGizmoType;
+#define SelectedGizmoType_ARROW 0
+#define SelectedGizmoType_ROTATION 1
+#define SelectedGizmoType_SCALE 2
+
+typedef struct TransformGizmoSelectionState_TYP
 {
-	/* The TransformGizmoPlane is used to project mouse delta position to world space. According to SelectedGizmoType, he is oriented and positioned to fit specific requirements. */
-	struct TransformGizmoPlane
-	{
-		Transform Transform;
-		BoxF Box;
-		BoxCollider Collider;
-	};
+	SelectedGizmoType SelectedGizmoType;
 
-	enum SelectedGizmoType : short int
-	{
-		ARROW,
-		ROTATION,
-		SCALE
-	};
+	/* The selected gizmo refer to the single gizmo entity currently selected. This value can only be one of the trhee Gizmo transform in the TransformGizmo object. */
+	TransformComponent_PTR SelectedGizmo;
 
-	struct TransformGizmoSelectionState
-	{
-		SelectedGizmoType SelectedGizmoType;
+	/* This is to handle the fact that on any transformations, the TransformGizmoMovementGuidePlane position and rotation is setted only once (at the start).
+	This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed. */
+	bool GuidePlaneRotationSet;
+}TransformGizmoSelectionState, * TransformGizmoSelectionState_PTR;
 
-		/* The selected gizmo refer to the single gizmo entity currently selected. This value can only be one of the trhee Gizmo transform in the TransformGizmo object. */
-		TransformComponent_PTR SelectedGizmo;
+typedef struct TransformGizmo_TYP
+{
+	TransformComponent_PTR TransformGizoEntity;
 
-		/* This is to handle the fact that on any transformations, the TransformGizmoMovementGuidePlane position and rotation is setted only once (at the start).
-		This is to avoid chaotic behavior if the entity is moving from another source, or rotation when skewed. */
-		bool GuidePlaneRotationSet;
-	};
+	TransformComponent_PTR RightGizmo;
+	TransformComponent_PTR UpGizmo;
+	TransformComponent_PTR ForwardGizmo;
 
-	struct TransformGizmo
-	{
-		TransformComponent_PTR TransformGizoEntity;
-		
-		TransformComponent_PTR RightGizmo;
-		TransformComponent_PTR UpGizmo;
-		TransformComponent_PTR ForwardGizmo;
-
-		TransformGizmoPlane TransformGizmoMovementGuidePlane;
-	};
+	TransformGizmoPlane TransformGizmoMovementGuidePlane;
+}TransformGizmo, * TransformGizmo_PTR;
 
 
-	struct EntitySelection_CachedStructures
-	{
-		
-		Camera_PTR ActiveCamera;
-		TransformComponent_PTR ActiveCameraTransform;
-	};
+typedef struct EntitySelection_CachedStructures_TYP
+{
 
-	struct EntitySelectionState
-	{
-		ECS_Entity_HANDLE SelectedEntity;
-		EntitySelection_CachedStructures CachedStructures;
+	Camera_PTR ActiveCamera;
+	TransformComponent_PTR ActiveCameraTransform;
+}EntitySelection_CachedStructures, * EntitySelection_CachedStructures_PTR;
 
-		TransformGizmoSelectionState TransformGizmoSelectionState;
-	};
+typedef struct EntitySelectionState_TYP
+{
+	ECS_Entity_HANDLE SelectedEntity;
+	EntitySelection_CachedStructures CachedStructures;
 
-	struct EntitySelection
-	{
-		ECS* ECS;
-		Input* Input;
-		RenderV2Interface* RenderInterface;
-		PhysicsInterface_PTR PhysicsInterface;
-		CameraRenderSystem_PTR CameraSystem;
+	TransformGizmoSelectionState TransformGizmoSelectionState;
+}EntitySelectionState, * EntitySelectionState_PTR;
 
-		TransformGizmo TransformGizmoV2;
-		EntitySelectionState EntitySelectionState;
-	};
+typedef struct EntitySelection_TYP
+{
+	ECS* ECS;
+	Input* Input;
+	RenderV2Interface* RenderInterface;
+	PhysicsInterface_PTR PhysicsInterface;
+	CameraRenderSystem_PTR CameraSystem;
 
-	void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor);
-	void EntitySelection_update(EntitySelection* p_entitySelection);
-}
+	TransformGizmo TransformGizmoV2;
+	EntitySelectionState EntitySelectionState;
+}EntitySelection, * EntitySelection_PTR;
+
+void EntitySelection_build(EntitySelection* p_entitySelection, GameEngineEditor* p_gameEngineEditor);
+void EntitySelection_update(EntitySelection* p_entitySelection);

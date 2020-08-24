@@ -10,10 +10,7 @@ extern "C"
 #include "ECSEngine/Components/TransformComponent_def.h"
 }
 
-namespace _GameEngine
-{
-	struct GameEngineApplicationInterface;
-}
+typedef struct GameEngineApplicationInterface_TYP GameEngineApplicationInterface;
 
 namespace _GameEngine::_Test
 {

@@ -1,4 +1,7 @@
 ﻿#include "v2/Math.h"
+
+#include "Functional/Equals/Equals.h"
+
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/MatrixC.h"
@@ -14,8 +17,6 @@
 #include <math.h> 
 #include <stdlib.h>
 #include <string.h>
-
-#include "Functional/Equals/Equals.h"
 
 /* MATH - Functions */
 

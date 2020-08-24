@@ -13,4 +13,3 @@ add_library(Math ${MATH_HEADER} ${MATH_SOURCE})
 target_include_directories(Math PUBLIC "./")
 
 target_link_libraries(Math PUBLIC Core_c)
-target_link_libraries(Math PUBLIC Core_cpp)

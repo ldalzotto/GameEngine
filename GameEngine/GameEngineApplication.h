@@ -1,12 +1,7 @@
 #pragma once
 
-#include "GameEngineApplicationConfiguration.hpp"
-#include <functional>
+#include "GameEngineApplicationConfiguration.h"
 
-#include "Functional/Callback/ObserverT.hpp"
-
-extern "C"
-{
 #include "Clock/Clock.h"
 #include "RenderV2.h"
 #include "Log/Log_def.h"
@@ -17,7 +12,6 @@ extern "C"
 #include "ECSEngine/Systems/PhysicsSystem.h"
 #include "Input/InputV2.h"
 #include "GameLoop/GameLoop.h"
-}
 
 
 #if GAMEENGINE_EDITOR
@@ -26,41 +20,35 @@ extern "C"
 
 #include "GameEngineApplicationInterface.h"
 
-namespace _GameEngine
+
+
+typedef struct GameEngineApplicationSystems_TYP
 {
+	CameraRenderSystem CameraRenderSystem;
+	MeshDrawSystem MeshDrawSystem;
+	PhysicsSystem PhysicsSystem;
+}GameEngineApplicationSystems, * GameEngineApplicationSystems_PTR;
 
-	struct GameEngineApplicationSystems
-	{
-		CameraRenderSystem CameraRenderSystem;
-		MeshDrawSystem MeshDrawSystem;
-		PhysicsSystem PhysicsSystem;
-	};
+typedef struct GameEngineApplication_TYP
+{
+	GameEngineApplicationInterface GameEngineApplicationInterface;
 
-	struct GameEngineApplication
-	{
-		GameEngineApplicationInterface GameEngineApplicationInterface;
+	GameLoop GameLoop;
+	Log Log;
+	Clock Clock;
+	Physics Physics;
+	RenderV2 Render;
+	Input Input;
+	ECS ECS;
 
-		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> NewFrame;
-		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> PreRender;
-		_Core::ObserverT<_GameEngine::GameEngineApplicationInterface> EndOfUpdate;
-
-		GameLoop GameLoop;
-		Log Log;
-		Clock Clock;
-		Physics Physics;
-		RenderV2 Render;
-		Input Input;
-		ECS ECS;
-
-		GameEngineApplicationSystems Systems;
+	GameEngineApplicationSystems Systems;
 
 #if GAMEENGINE_EDITOR
-		_GameEngineEditor::GameEngineEditor Editor;
+	GameEngineEditor Editor;
 #endif
-	};
+}GameEngineApplication, * GameEngineApplication_PTR;
 
-	GameEngineApplication* app_alloc();
-	void app_free(GameEngineApplication* p_app);
-	void app_mainLoop(GameEngineApplication* p_app);
-	int app_run(GameEngineApplication* p_app);
-} // namespace _GameEngine
+GameEngineApplication* app_alloc();
+void app_free(GameEngineApplication* p_app);
+void app_mainLoop(GameEngineApplication* p_app);
+int app_run(GameEngineApplication* p_app);

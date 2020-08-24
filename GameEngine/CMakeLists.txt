@@ -3,30 +3,26 @@ project(GameEngine VERSION 0.0.1)
 
 file(GLOB_RECURSE GAME_ENGINE_PRIVATE 
 	"./ECSEngine/*.c"
-	"./ECS_Impl/*.cpp"
 	"./GameLoop/*.c"
 	"./Input/*.c"
-	"./EngineSequencers/*.cpp"
-	"./Editor/*cpp"
+	"./Editor/*cpp" "./Editor/*c"
 )
-SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.cpp ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.cpp)
+SET(GAME_ENGINE_PRIVATE ${GAME_ENGINE_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.c ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.c)
 
 file(GLOB_RECURSE GAME_ENGINE_PUBLIC 
-	"./ECSEngine/*.h" "./ECSEngine/*.hpp"
-	"./ECS_Impl/*.h"
+	"./ECSEngine/*.h"
 	"./GameLoop/*.h"
 	"./Input/*.h"
 	"./EngineSequencers/*.h"
 	"./Editor/*h"
 )
-SET(GAME_ENGINE_PUBLIC ${GAME_ENGINE_PUBLIC} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationConfiguration.hpp ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.h)
+SET(GAME_ENGINE_PUBLIC ${GAME_ENGINE_PUBLIC} ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationConfiguration.h ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplication.h ${CMAKE_CURRENT_SOURCE_DIR}/GameEngineApplicationInterface.h)
 
 include_directories(
 	"./ECS"
 	"./ECS_Impl"
 	"./GameLoop"
 	"./Input"
-	"./EngineSequencers"
 )
 
 add_library(GameEngine STATIC ${GAME_ENGINE_PUBLIC} ${GAME_ENGINE_PRIVATE})

@@ -1,26 +1,17 @@
 #pragma once
 
 
-#include "Functional/Callback/CallbackT.hpp"
-
 #include "ObjectSelection/EntitySelection.h"
 
-namespace _GameEngine
+typedef struct GameEngineApplicationInterface_TYP GameEngineApplicationInterface;
+
+
+typedef struct GameEngineEditor_TYP
 {
-	struct GameEngineApplicationInterface;
-}
+	GameEngineApplicationInterface* GameEngineApplicationInterface;
+	EntitySelection EntitySelection;
+}GameEngineEditor, * GameEngineEditor_PTR;
 
-using namespace _GameEngine;
-
-namespace _GameEngineEditor
-{
-	struct GameEngineEditor
-	{
-		GameEngineApplicationInterface* GameEngineApplicationInterface;
-		EntitySelection EntitySelection;
-	};
-
-	void GameEngineEditor_alloc(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
-	void GameEngineEditor_free(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
-	void GameEngineEditor_update(GameEngineEditor* p_gameEngineEditor);
-}
+void GameEngineEditor_alloc(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
+void GameEngineEditor_free(GameEngineEditor* p_gameEngineEditor, GameEngineApplicationInterface* p_gameEngineApplicationInterface);
+void GameEngineEditor_update(GameEngineEditor* p_gameEngineEditor);
