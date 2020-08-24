@@ -15,13 +15,13 @@ extern "C"
 #include "ECSEngine/Systems/MeshDrawSystem_def.h"
 #include "Physics/Physics.h"
 #include "ECSEngine/Systems/PhysicsSystem.h"
+#include "Input/InputV2.h"
 }
 
 
 #include "GameLoop/GameLoop.h"
 
 
-#include "Input/Input.h"
 
 #if GAMEENGINE_EDITOR
 #include "Editor/GameEngineEditor.h"
@@ -52,7 +52,7 @@ namespace _GameEngine
 		Clock Clock;
 		Physics Physics;
 		RenderV2 Render;
-		_Input::Input Input;
+		Input Input;
 		ECS ECS;
 
 		GameEngineApplicationSystems Systems;

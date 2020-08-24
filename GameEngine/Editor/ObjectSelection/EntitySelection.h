@@ -13,13 +13,9 @@ extern "C"
 #include "Entity_def.h"
 #include "Physics/World/Collider/BoxCollider.h"
 #include "Physics/PhysicsInterface.h"
+#include "Input/InputV2.h"
 }
 
-
-namespace _GameEngine
-{
-	namespace _Input { struct Input; }
-}
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
 
@@ -87,7 +83,7 @@ namespace _GameEngineEditor
 	struct EntitySelection
 	{
 		ECS* ECS;
-		_GameEngine::_Input::Input* Input;
+		Input* Input;
 		RenderV2Interface* RenderInterface;
 		PhysicsInterface_PTR PhysicsInterface;
 		CameraRenderSystem_PTR CameraSystem;

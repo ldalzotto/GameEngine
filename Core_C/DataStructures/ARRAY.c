@@ -173,6 +173,21 @@ char Arr_Swap(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_left, size_t p_rig
 	return 0;
 };
 
+void Arr_CopyToRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, Array_PTR p_target)
+{
+	size_t l_sizeToCopy = Arr_GetCapacitySize(p_array, p_elementSize);
+	if (l_sizeToCopy > 0)
+	{
+		if (Arr_GetCapacitySize(p_array, p_elementSize) > Arr_GetCapacitySize(p_target, p_elementSize))
+		{
+			Arr_Resize(p_target, p_elementSize, Arr_GetCapacitySize(p_array, p_elementSize));
+		}
+	
+		memcpy(p_target->Memory, p_array->Memory, l_sizeToCopy);
+		p_target->Size = p_array->Size;
+	}
+};
+
 void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ArrayIterator_PTR p_iter)
 {
 	p_iter->Array = p_array;

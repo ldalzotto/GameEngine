@@ -8,12 +8,12 @@
 #include "IMGuiRender/DrawableWindow.h"
 #include "ObjectSelection/EntitySelection.h"
 
-using namespace _GameEngine;
-
 namespace _GameEngine
 {
 	struct GameEngineApplicationInterface;
 }
+
+using namespace _GameEngine;
 
 namespace _GameEngineEditor
 {

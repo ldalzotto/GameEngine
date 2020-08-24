@@ -31,13 +31,14 @@ extern "C"
 #include "ECSEngine/Components/MeshRenderer.h"
 #include "ECSEngine/Components/PhysicsBody.h"
 #include "ECSEngine/Systems/CameraRenderSystem.h"
+
+#include "Input/InputV2.h"
 }
 
 #include <iostream>
 
 #include "Colors/Colors.h"
 
-#include "Input/Input.h"
 
 
 // #include "ECS/EntityT.hpp"
@@ -110,14 +111,14 @@ namespace _GameEngineEditor
 		// Trying to detect the selected Entity
 		if (!EntitySelectionState_isEntitySelected(l_entitySelectionState))
 		{
-			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
+			if (Input_getState(p_entitySelection->Input, InputKey_MOUSE_BUTTON_1, KeyStateFlag_PRESSED_THIS_FRAME))
 			{
 				entitySelection_detectTheSelectedEntity(p_entitySelection);
 			}
 		}
 		else
 		{
-			if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
+			if (Input_getState(p_entitySelection->Input, InputKey_MOUSE_BUTTON_1, KeyStateFlag_PRESSED_THIS_FRAME))
 			{
 				entitySelection_detectTheSelectedGizmo(p_entitySelection);
 
@@ -129,7 +130,7 @@ namespace _GameEngineEditor
 				}
 
 			}
-			else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::RELEASED_THIS_FRAME))
+			else if (Input_getState(p_entitySelection->Input, InputKey_MOUSE_BUTTON_1, KeyStateFlag_RELEASED_THIS_FRAME))
 			{
 				TransformGizmo_resetState(&p_entitySelection->TransformGizmoV2, &l_entitySelectionState->TransformGizmoSelectionState);
 			}
@@ -146,7 +147,7 @@ namespace _GameEngineEditor
 			else
 			{
 				// Execute gizmo transformation
-				if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::MOUSE_BUTTON_1, _Input::KeyStateFlag::PRESSED))
+				if (Input_getState(p_entitySelection->Input, InputKey_MOUSE_BUTTON_1, KeyStateFlag_PRESSED))
 				{
 					Vector2d tmp_vec2 = { 0.0, 0.0 };
 					if (!Vec_Equals_2d(&p_entitySelection->Input->InputMouse.MouseDelta, &tmp_vec2))
@@ -205,7 +206,7 @@ namespace _GameEngineEditor
 	Segment_Vector3f entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, BoxCollider_PTR p_testedCollider)
 	{
 		Segment_Vector3f l_mouseDelta_worldPosition{};
-		Segment_Vector2f l_mouseDelta_screenPosition = _Input::InputMouse_getMouseDeltaScreenPosition(&p_entitySelection->Input->InputMouse);
+		Segment_Vector2f l_mouseDelta_screenPosition = InputMouse_getMouseDeltaScreenPosition(&p_entitySelection->Input->InputMouse);
 
 
 		Segment_Vector3f l_mouseDelta_begin_ray =
@@ -733,17 +734,17 @@ namespace _GameEngineEditor
 
 	bool TransformGizmo_detemineGizmoTypeSwitch(EntitySelection* p_entitySelection, SelectedGizmoType* p_out)
 	{
-		if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::T, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
+		if (Input_getState(p_entitySelection->Input, InputKey_T, KeyStateFlag_PRESSED_THIS_FRAME))
 		{
 			*p_out = SelectedGizmoType::ARROW;
 			return true;
 		}
-		else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::R, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
+		else if (Input_getState(p_entitySelection->Input, InputKey_R, KeyStateFlag_PRESSED_THIS_FRAME))
 		{
 			*p_out = SelectedGizmoType::ROTATION;
 			return true;
 		}
-		else if (_Input::Input_getState(p_entitySelection->Input, _Input::InputKey::S, _Input::KeyStateFlag::PRESSED_THIS_FRAME))
+		else if (Input_getState(p_entitySelection->Input, InputKey_S, KeyStateFlag_PRESSED_THIS_FRAME))
 		{
 			*p_out = SelectedGizmoType::SCALE;
 			return true;

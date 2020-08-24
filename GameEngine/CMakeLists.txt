@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.12)
 project(GameEngine VERSION 0.0.1)
 
 file(GLOB_RECURSE GAME_ENGINE_PRIVATE 
-	"./ECSEngine/*.c" "./ECSEngine/*.cpp"
+	"./ECSEngine/*.c"
 	"./ECS_Impl/*.cpp"
 	"./GameLoop/*.cpp"
-	"./Input/*.cpp"
+	"./Input/*.c"
 	"./EngineSequencers/*.cpp"
 	"./Editor/*cpp"
 )

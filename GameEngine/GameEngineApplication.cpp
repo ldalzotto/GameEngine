@@ -8,8 +8,8 @@ extern "C"
 #include "ECSEngine/Systems/CameraRenderSystem.h"
 #include "ECSEngine/Systems/MeshDrawSystem.h"
 #include "ECSEngine/GlobalEvents/ECSEngineGlobalEvents.h"
+#include "Input/InputGlobalEvent.h"
 }
-#include "Input/InputGlobalEvent.hpp"
 
 // #include "ECS_Impl/Systems/Camera/CameraSystem.h"
 // #include "ECS_Impl/Systems/MeshDraw/MeshDrawSystem.h"
@@ -34,7 +34,7 @@ namespace _GameEngine
 		GameEngineApplication* l_gameEngineApplication = new GameEngineApplication();
 
 		AppEvent_initialize();
-		_Input::InputGlobalEvent_initialize();
+		InputGlobalEvent_Initialize();
 
 		_Core::ObserverT_alloc(&l_gameEngineApplication->NewFrame);
 		_Core::ObserverT_alloc(&l_gameEngineApplication->PreRender);
@@ -44,7 +44,7 @@ namespace _GameEngine
 		MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
 		Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
 		RenderV2_initialize(&l_gameEngineApplication->Render);
-		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.AppWindow, &l_gameEngineApplication->Log);
+		Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.AppWindow, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
 
 		ECS_Build(&l_gameEngineApplication->ECS, &l_gameEngineApplication->Log);
@@ -91,7 +91,7 @@ namespace _GameEngine
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
 		RenderV2_free(&p_app->Render);
 		Physics_free(&p_app->Physics);
-		_Input::Input_free(&p_app->Input);
+		Input_free(&p_app->Input);
 
 		_Core::ObserverT_free(&p_app->NewFrame);
 		_Core::ObserverT_free(&p_app->PreRender);
@@ -99,7 +99,7 @@ namespace _GameEngine
 
 		MyLog_free(&p_app->Log);
 
-		_Input::InputGlobalEvent_free();
+		InputGlobalEvent_Free();
 		AppEvent_free();
 
 		delete p_app;
@@ -118,7 +118,7 @@ namespace _GameEngine
 	{
 		GameEngineApplication* l_app = (GameEngineApplication*)p_gameEngineApplication;
 		Clock_NewFrame(&l_app->Clock);
-		_Input::Input_newFrame(&l_app->Input);
+		Input_newFrame(&l_app->Input);
 		_Core::ObserverT_broadcast(&l_app->NewFrame, &l_app->GameEngineApplicationInterface);
 	};
 
