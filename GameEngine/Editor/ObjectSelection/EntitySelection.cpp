@@ -104,7 +104,7 @@ namespace _GameEngineEditor
 		if (l_currentCamera != l_entitySelectionState->CachedStructures.ActiveCamera)
 		{
 			l_entitySelectionState->CachedStructures.ActiveCamera = l_currentCamera;
-			ECS_GetComponent(l_entitySelectionState->CachedStructures.ActiveCamera->Header.AttachedEntity, CAMERA_TYPE, (ECS_ComponentHeader_HANDLE*)&l_entitySelectionState->CachedStructures.ActiveCameraTransform);
+			ECS_GetComponent(l_entitySelectionState->CachedStructures.ActiveCamera->Header.AttachedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_entitySelectionState->CachedStructures.ActiveCameraTransform);
 		}
 
 		// Trying to detect the selected Entity
