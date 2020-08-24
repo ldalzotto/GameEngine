@@ -152,6 +152,26 @@ char Arr_Erase(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_index)
 	return 0;
 }
 
+char Arr_Swap(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_left, size_t p_right)
+{
+#ifndef NDEBUG
+	if (p_left >= p_array->Size || p_right >= p_array->Size) { printf("Core_GenericArray_swap : out_of_range"); return 1; }
+	if (p_left > p_right) { printf("Core_GenericArray_swap : invalid indices."); return 1; }
+#endif
+	if (p_left == p_right) { return 0; }
+
+	char* l_leftMemoryTarget = p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_left);
+	char* l_rightMemoryTarget = p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_right);
+
+	for (size_t i = 0; i < p_elementSize; i++)
+	{
+		char l_rightTmp = l_rightMemoryTarget[i];
+		l_rightMemoryTarget[i] = l_leftMemoryTarget[i];
+		l_leftMemoryTarget[i] = l_rightTmp;
+	}
+
+	return 0;
+};
 
 void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ArrayIterator_PTR p_iter)
 {
@@ -171,5 +191,48 @@ bool Iter_MoveNext(ArrayIterator_PTR p_iterator, size_t p_elementSize)
 	else
 	{
 		return false;
+	}
+};
+
+
+
+
+#include "Algorithm/Sort.h"
+
+
+size_t Sort_Min(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_startIndex, SortFunction p_sortFunction, void* p_closure)
+{
+	size_t l_sortIteratrionIndex = p_startIndex;
+	size_t l_minIndex = p_startIndex;
+	void* l_minValue = NULL;
+
+	if (p_array->Size > 0)
+	{
+		l_minValue = p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, l_minIndex);
+	}
+
+	for (; l_sortIteratrionIndex < p_array->Size; l_sortIteratrionIndex++)
+	{
+		void* l_comparedValue = p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, l_sortIteratrionIndex);
+		short int l_compareValue = p_sortFunction(l_minValue, l_comparedValue, p_closure);
+		if (l_compareValue >= 0)
+		{
+			l_minIndex = l_sortIteratrionIndex;
+			l_minValue = l_comparedValue;
+		}
+	}
+
+	return l_minIndex;
+};
+
+void Sort_SelectionSort(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, SortFunction p_sortFunction, void* p_closure)
+{
+	for (size_t i = 0; i < p_array->Size; i++)
+	{
+		size_t l_minIndex = Sort_Min(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, i, p_sortFunction, p_closure);
+		if (l_minIndex != i)
+		{
+			Arr_Swap(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, l_minIndex, i);
+		}
 	}
 };

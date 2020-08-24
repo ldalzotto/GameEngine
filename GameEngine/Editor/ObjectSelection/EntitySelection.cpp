@@ -20,12 +20,16 @@ extern "C"
 #include "Renderer/Gizmo/Gizmo.h"
 #include "RenderV2.h"
 
+#include "Physics/World/Collider/BoxCollider.h"
+#include "Physics/World/RayCast.h"
+#include "Physics/World/Collider/BoxCollider.h"
 
 #include "ECS.h"
 #include "ECSEngine/Components/Types_def.h"
 #include "ECSEngine/Components/TransformComponent.h"
 #include "ECSEngine/Components/Camera.h"
 #include "ECSEngine/Components/MeshRenderer.h"
+#include "ECSEngine/Components/PhysicsBody.h"
 #include "ECSEngine/Systems/CameraRenderSystem.h"
 }
 
@@ -35,7 +39,6 @@ extern "C"
 
 #include "Input/Input.h"
 
-#include "ECSEngine/Components/PhysicsBody.hpp"
 
 // #include "ECS/EntityT.hpp"
 // #include "ECS_Impl/Components/Transform/TransformComponent.h"
@@ -46,8 +49,6 @@ extern "C"
 
 #include "DataStructures/Specifications/ArrayT.hpp"
 #include "Physics/PhysicsInterface.h"
-#include "Physics/World/RayCast.h"
-#include "Physics/World/Collider/BoxCollider.h"
 
 
 using namespace _GameEngine;
@@ -98,7 +99,7 @@ namespace _GameEngineEditor
 		EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
 
 		// Set the active camera
-		
+
 		Camera* l_currentCamera = CameraSystem_getCurrentActiveCamera(p_entitySelection->CameraSystem);
 		if (l_currentCamera != l_entitySelectionState->CachedStructures.ActiveCamera)
 		{
@@ -176,14 +177,14 @@ namespace _GameEngineEditor
 				&tmp_vec2_0
 			);
 
-		_Physics::RaycastHit l_hit;
-		if (_Physics::RayCast(p_entitySelection->PhysicsInterface->World, & l_ray.Begin,  & l_ray.End, &l_hit))
+		RaycastHit l_hit;
+		if (RayCast(p_entitySelection->PhysicsInterface->World, &l_ray.Begin, &l_ray.End, &l_hit))
 		{
 			Vector3f tmp_vec3;
 			TransformComponent_PTR l_transformComponent = TransformComponent_castFromTransform(l_hit.Collider->Transform);
 			l_entitySelectionState->SelectedEntity = l_transformComponent->Header.AttachedEntity;
 			Transform_GetWorldPosition(&l_transformComponent->Transform, &tmp_vec3);
-			TransformGizmoV2_alloc(p_entitySelection, & tmp_vec3, p_entitySelection->ECS);
+			TransformGizmoV2_alloc(p_entitySelection, &tmp_vec3, p_entitySelection->ECS);
 			ECS_GlobalEvents_ProcessMessages(p_entitySelection->ECS);
 		}
 	};
@@ -201,7 +202,7 @@ namespace _GameEngineEditor
 		TransformGizmo_setSelectedGizmo(&l_entitySelectionState->TransformGizmoSelectionState, TransformGizmo_determinedSelectedGizmoComponent(&p_entitySelection->TransformGizmoV2, &l_ray));
 	};
 
-	Segment_Vector3f entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, _Physics::BoxCollider* p_testedCollider)
+	Segment_Vector3f entitySelection_rayCastMouseDeltaPosition_againstPlane(_GameEngineEditor::EntitySelection* p_entitySelection, BoxCollider_PTR p_testedCollider)
 	{
 		Segment_Vector3f l_mouseDelta_worldPosition{};
 		Segment_Vector2f l_mouseDelta_screenPosition = _Input::InputMouse_getMouseDeltaScreenPosition(&p_entitySelection->Input->InputMouse);
@@ -218,10 +219,11 @@ namespace _GameEngineEditor
 				&l_mouseDelta_screenPosition.End
 			);
 
-		_Physics::BoxCollider* l_raycastedPlane_ptr[1] = { p_testedCollider };
-		_Core::ArrayT<_Physics::BoxCollider*> l_raycastedPlane = _Core::ArrayT_fromCStyleArray(l_raycastedPlane_ptr, 1);
-		_Physics::RaycastHit l_endHit;
-		if (_Physics::RayCast_against(&l_raycastedPlane, & l_mouseDelta_end_ray.Begin, & l_mouseDelta_end_ray.End, &l_endHit))
+
+		BoxCollider_PTR l_raycastedPlane_ptr[1] = { p_testedCollider };
+		Array_BoxColliderPTR l_raycastedPlane = { l_raycastedPlane_ptr, 1, 1 };
+		RaycastHit l_endHit;
+		if (RayCast_Against(&l_raycastedPlane, &l_mouseDelta_end_ray.Begin, &l_mouseDelta_end_ray.End, &l_endHit))
 		{
 			// _RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_endHit.HitPoint);
 			l_mouseDelta_worldPosition.End = *(Vector3f_PTR)&l_endHit.HitPoint;
@@ -230,8 +232,8 @@ namespace _GameEngineEditor
 		{
 			return Segment_Vector3f{ .Begin = Vector3f_ZERO,.End = Vector3f_ZERO };
 		}
-		_Physics::RaycastHit l_beginHit;
-		if (_Physics::RayCast_against(&l_raycastedPlane, & l_mouseDelta_begin_ray.Begin, & l_mouseDelta_begin_ray.End, &l_beginHit))
+		RaycastHit l_beginHit;
+		if (RayCast_Against(&l_raycastedPlane, &l_mouseDelta_begin_ray.Begin, &l_mouseDelta_begin_ray.End, &l_beginHit))
 		{
 			// _RenderV2::Gizmo::drawPoint(p_entitySelection->RenderInterface->GizmoBuffer, &l_beginHit.HitPoint);
 			l_mouseDelta_worldPosition.Begin = *(Vector3f_PTR)&l_beginHit.HitPoint;
@@ -449,7 +451,7 @@ namespace _GameEngineEditor
 		if (l_dot >= 0.000f) { l_scaleSign = 1.0f; }
 		else { l_scaleSign = -1.0f; }
 
-		float l_scaleLength = Vec_Length_3f(&l_deltaScale3D) * Vec_Length_3f(& l_transformComponent->Transform.LocalScale);
+		float l_scaleLength = Vec_Length_3f(&l_deltaScale3D) * Vec_Length_3f(&l_transformComponent->Transform.LocalScale);
 		Vec_Mul_3f_1f(&l_selectedScaleForward_localSpace, l_scaleLength, &l_deltaScale3D);
 		Vec_Mul_3f_1f(&l_deltaScale3D, l_scaleSign, &l_deltaScale3D);
 
@@ -762,20 +764,19 @@ namespace _GameEngineEditor
 
 	TransformComponent_PTR TransformGizmo_determinedSelectedGizmoComponent(TransformGizmo* p_transformGizmo, Segment_Vector3f_PTR p_collisionRay)
 	{
-		_Physics::BoxCollider* l_transformArrowCollidersPtr[3];
-		_Core::ArrayT<_Physics::BoxCollider*> l_transformArrowColliders = _Core::ArrayT_fromCStyleArray(l_transformArrowCollidersPtr, 3);
-		l_transformArrowColliders.Size = 0;
+		BoxCollider_PTR l_transformArrowCollidersPtr[3];
+		Array_BoxColliderPTR l_transformArrowColliders = { l_transformArrowCollidersPtr , 3, 3 };
 		{
 			PhysicsBody_PTR tmp_physicsBody;
-			ECS_GetComponent(p_transformGizmo->RightGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
-			_Core::ArrayT_pushBack(&l_transformArrowColliders, &tmp_physicsBody->Boxcollider);
+			ECS_GetComponent(p_transformGizmo->RightGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody );
+			l_transformArrowCollidersPtr[0] = tmp_physicsBody->Boxcollider;
 			ECS_GetComponent(p_transformGizmo->UpGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
-			_Core::ArrayT_pushBack(&l_transformArrowColliders, &tmp_physicsBody->Boxcollider);
+			l_transformArrowCollidersPtr[1] = tmp_physicsBody->Boxcollider;
 			ECS_GetComponent(p_transformGizmo->ForwardGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
-			_Core::ArrayT_pushBack(&l_transformArrowColliders, &tmp_physicsBody->Boxcollider);
+			l_transformArrowCollidersPtr[2] = tmp_physicsBody->Boxcollider;
 		}
-		_Physics::RaycastHit l_hit;
-		if (_Physics::RayCast_against(&l_transformArrowColliders,  & p_collisionRay->Begin, & p_collisionRay->End, &l_hit))
+		RaycastHit l_hit;
+		if (RayCast_Against(&l_transformArrowColliders, &p_collisionRay->Begin, &p_collisionRay->End, &l_hit))
 		{
 			return TransformComponent_castFromTransform(l_hit.Collider->Transform);
 		}

@@ -42,7 +42,7 @@ namespace _GameEngine
 		GameEngineApplicationInterface_build(&l_gameEngineApplication->GameEngineApplicationInterface, l_gameEngineApplication);
 
 		MyLog_build(&l_gameEngineApplication->Log, &l_gameEngineApplication->Clock);
-		_Physics::Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
+		Physics_alloc(&l_gameEngineApplication->Physics, &l_gameEngineApplication->Log);
 		RenderV2_initialize(&l_gameEngineApplication->Render);
 		_Input::Input_build(&l_gameEngineApplication->Input, &l_gameEngineApplication->Render.AppWindow, &l_gameEngineApplication->Log);
 		_GameLoop::GameLoop_build(&l_gameEngineApplication->GameLoop, 16000);
@@ -90,7 +90,7 @@ namespace _GameEngine
 
 		_GameLoop::GameLoop_free(&p_app->GameLoop);
 		RenderV2_free(&p_app->Render);
-		_Physics::Physics_free(&p_app->Physics);
+		Physics_free(&p_app->Physics);
 		_Input::Input_free(&p_app->Input);
 
 		_Core::ObserverT_free(&p_app->NewFrame);

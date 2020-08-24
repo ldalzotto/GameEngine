@@ -13,13 +13,13 @@ extern "C"
 #include "ECS_def.h"
 #include "ECSEngine/Systems/CameraRenderSystem_def.h"
 #include "ECSEngine/Systems/MeshDrawSystem_def.h"
+#include "Physics/Physics.h"
+#include "ECSEngine/Systems/PhysicsSystem.h"
 }
 
-#include "ECSEngine/Systems/PhysicsSystem.hpp"
 
 #include "GameLoop/GameLoop.h"
 
-#include "Physics/Physics.h"
 
 #include "Input/Input.h"
 
@@ -50,7 +50,7 @@ namespace _GameEngine
 		GameLoop GameLoop;
 		Log Log;
 		Clock Clock;
-		_Physics::Physics Physics;
+		Physics Physics;
 		RenderV2 Render;
 		_Input::Input Input;
 		ECS ECS;

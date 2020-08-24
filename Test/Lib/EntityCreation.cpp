@@ -7,9 +7,9 @@ extern "C"
 #include "ECSEngine/Components/Types_def.h"
 #include "ECSEngine/Components/TransformComponent.h"
 #include "ECSEngine/Components/MeshRenderer.h"
+#include "ECSEngine/Components/PhysicsBody.h"
 }
 
-#include "ECSEngine/Components/PhysicsBody.hpp"
 
 namespace _GameEngine::_Test
 {

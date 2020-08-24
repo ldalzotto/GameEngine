@@ -1,18 +1,15 @@
 #pragma once
 
 #include "PhysicsInterface.h"
-#include "World/World.h"
+#include "World/World_def.h"
 
 typedef struct Log_TYP Log;
 
-namespace _GameEngine::_Physics
+typedef	struct Physics_TYP
 {
-	struct Physics
-	{
-		PhysicsInterface PhysicsInterface;
-		World World;
-	};
+	PhysicsInterface PhysicsInterface;
+	World World;
+}Physics, * Physics_PTR;
 
-	void Physics_alloc(Physics* p_physics, Log* p_myLog);
-	void Physics_free(Physics* p_physics);
-}
+void Physics_alloc(Physics* p_physics, Log* p_myLog);
+void Physics_free(Physics* p_physics);

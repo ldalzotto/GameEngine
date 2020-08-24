@@ -2,14 +2,12 @@ cmake_minimum_required(VERSION 3.12)
 project(GameEngine_Physics VERSION 0.0.1)
 
 file(GLOB_RECURSE GAME_ENGINE_PHYSICS_PRIVATE 
-	"./World/*.cpp"
-	"./CollisionEngine/*.cpp"
 	"./World/*.c"
 	"./CollisionEngine/*.c"
 )
 
 SET(GAME_ENGINE_PHYSICS_PRIVATE 
-	${GAME_ENGINE_PHYSICS_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/Physics.cpp ${CMAKE_CURRENT_SOURCE_DIR}/PhysicsInterface.cpp 
+	${GAME_ENGINE_PHYSICS_PRIVATE} ${CMAKE_CURRENT_SOURCE_DIR}/Physics.c ${CMAKE_CURRENT_SOURCE_DIR}/PhysicsInterface.c 
 )
 
 file(GLOB_RECURSE GAME_ENGINE_PHYSICS_PUBLIC 

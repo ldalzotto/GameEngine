@@ -1,17 +1,11 @@
 #pragma once
 
-namespace _GameEngine::_Physics
-{
-	struct Physics;
-	struct World;
-}
+typedef struct World_TYP World;
+typedef struct Physics_TYP Physics;
 
-namespace _GameEngine::_Physics
+typedef struct PhysicsInterface_TYP
 {
-	struct PhysicsInterface
-	{
-		World* World;
-	};
+	World* World;
+}PhysicsInterface, * PhysicsInterface_PTR;
 
-	void PhysicsInterface_build(PhysicsInterface* p_physicsInterface, Physics* p_physics);
-}
+void PhysicsInterface_build(PhysicsInterface* p_physicsInterface, Physics* p_physics);

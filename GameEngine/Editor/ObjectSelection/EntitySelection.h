@@ -11,14 +11,14 @@ extern "C"
 #include "ECSEngine/Systems/CameraRenderSystem_def.h"
 #include "ECS_def.h"
 #include "Entity_def.h"
+#include "Physics/World/Collider/BoxCollider.h"
+#include "Physics/PhysicsInterface.h"
 }
 
-#include "Physics/World/Collider/BoxCollider.h"
 
 namespace _GameEngine
 {
 	namespace _Input { struct Input; }
-	namespace _Physics { struct PhysicsInterface; }
 }
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
@@ -35,7 +35,7 @@ namespace _GameEngineEditor
 	{
 		Transform Transform;
 		BoxF Box;
-		_GameEngine::_Physics::BoxCollider Collider;
+		BoxCollider Collider;
 	};
 
 	enum SelectedGizmoType : short int
@@ -89,7 +89,7 @@ namespace _GameEngineEditor
 		ECS* ECS;
 		_GameEngine::_Input::Input* Input;
 		RenderV2Interface* RenderInterface;
-		_GameEngine::_Physics::PhysicsInterface* PhysicsInterface;
+		PhysicsInterface_PTR PhysicsInterface;
 		CameraRenderSystem_PTR CameraSystem;
 
 		TransformGizmo TransformGizmoV2;

@@ -20,12 +20,12 @@ namespace _GameEngine
 	struct GameEngineApplication;
 	struct GameLoop;
 	namespace _Input { struct Input; }
-	namespace _Physics { struct PhysicsInterface; }
 }
 
 typedef struct RenderV2Interface_TYP RenderV2Interface;
 typedef struct ECS_TYP ECS;
 typedef struct Log_TYP Log;
+typedef struct PhysicsInterface_TYP PhysicsInterface;
 
 typedef struct CameraRenderSystem_TYP CameraRenderSystem;
 typedef struct MeshDrawSystem_TYP MeshDrawSystem;
@@ -51,7 +51,7 @@ namespace _GameEngine
 		GameLoop* GameLoop;
 		Log* Log;
 		Clock* Clock;
-		_Physics::PhysicsInterface* PhysicsInterface;
+		PhysicsInterface* PhysicsInterface;
 		RenderV2Interface* RenderInterface;
 		_Input::Input* Input;
 		ECS* ECS;

@@ -5,7 +5,11 @@
 
 #include "GameEngineApplication.h"
 
-#include "AppEvent/AppEvent.hpp"
+extern "C"
+{
+#include "AppEvent/AppEvent.h"
+
+}
 
 #include "v2/Math.h"
 #include "v2/Transform/TransformM.hpp"
