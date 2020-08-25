@@ -16,4 +16,5 @@ char ECS_GetComponent(ECS_Entity_HANDLE p_entity, const ECS_ComponentType p_type
 
 void ECS_RegisterGlobalComponentDestroyedEvent(ECS* p_ecs, ECS_OnComponentDestroyedStaticCallback_PTR p_callback);
 
+#define ECS_ALLOCCOMPONENT_FUNCTION(MethodPrefix, ComponentTypeConstant, ComponentType, ComponentTypeHandle) inline ComponentTypeHandle ECS_Component_Alloc_##MethodPrefix##() { return (ComponentTypeHandle)ECS_Component_Alloc(ComponentTypeConstant, sizeof(ComponentType)); };
 #define ECS_GETCOMPONENT_FUNCTION(MethodPrefix, ComponentTypeConstant, ComponentTypeHandle) inline char ECS_GetComponent_##MethodPrefix##(ECS_Entity_HANDLE p_entity, ComponentTypeHandle* out_component) { return ECS_GetComponent(p_entity, ComponentTypeConstant, (ECS_ComponentHeader_HANDLE*) out_component); };

@@ -7,6 +7,7 @@
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 #include "v2/_interface/TransformC.h"
 #include "ECSEngine/Components/TransformComponent.h"
+#include "ECSEngine/Components/MeshRenderer.h"
 
 void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, RenderV2Interface_PTR p_renderInterface)
 {

@@ -1,11 +1,6 @@
 
-#include <cstdlib>
 #include <stdlib.h> 
 
-#include "DataStructures/Specifications/VectorT.hpp"
-
-extern "C"
-{
 #include "RenderV2.h"
 #include "AppEvent/AppEvent.h"
 #include "v2/Math.h"
@@ -18,8 +13,6 @@ extern "C"
 #include "DataStructures/String.h"
 #include "Objects/RenderedObject.h"
 #include "Clock/Clock.h"
-}
-
 
 
 #include "File/ObjReader.h"
@@ -29,24 +22,6 @@ TimeClockPrecision LastFrameTime = 0;
 
 int main(int argc, char* argv[])
 {
-	String l_str; String_Alloc(&l_str, 0);
-	String_AppendRawRealloc(&l_str, "Ta mere");
-	String_AppendRawRealloc(&l_str, " en slip.");
-
-	const char* l_steez = "bonjour";
-	StringSLICE l_slice = { (char*)l_steez, 2, 5};
-	String_AppendSliceRealloc(&l_str, &l_slice);
-
-	/*
-	MeshResource_Provider l_prov;
-	MeshResourceProvider_Alloc(&l_prov);
-	MeshResource_KEY l_k;
-	MeshResource_PTR l_ins;
-	MeshResourceProvider_UseResource(&l_prov, &l_k, &l_ins);
-	MeshResourceProvider_Free(&l_prov);
-	*/
-
-
 	AppEvent_initialize();
 
 	LastFrameTime = Clock_currentTime_mics();
@@ -60,11 +35,11 @@ int main(int argc, char* argv[])
 	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);
 	RenderedObject l_renderableObject;
 	RenderedObject_PTR l_renderableObject_ptr = &l_renderableObject;
-	BoxF l_meshBoundingBox{};
+	BoxF l_meshBoundingBox = {0};
 	{
 		Array_Vector3f l_vertices = { .Memory = (Vector3f_PTR)l_mesh->Mesh.Vertices.Memory, .Size = l_mesh->Mesh.Vertices.Size, .Capacity = l_mesh->Mesh.Vertices.Capacity };
 		Box_Build_F(&l_meshBoundingBox, &l_vertices);
-		l_renderableObject = { &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
+		l_renderableObject = (RenderedObject) { &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
 		Arr_PushBackRealloc_RenderedObjectHandle(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
 	}
 

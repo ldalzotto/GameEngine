@@ -15,6 +15,7 @@ typedef struct TransformInitInfo_TYP
 
 extern const TransformInitInfo TransformInitInfo_Default;
 
+ECS_ALLOCCOMPONENT_FUNCTION(TransformComponent, TRANSFORM_COMPONENT_TYPE, TransformComponent, TransformComponent_PTR);
 ECS_GETCOMPONENT_FUNCTION(TransformComponent, TRANSFORM_COMPONENT_TYPE, TransformComponent_PTR);
 
 void TransformComponent_init(TransformComponent* p_component, TransformInitInfo* p_transformInitInfo);

@@ -12,4 +12,5 @@ Matrix4f Camera_worldToClipMatrix(Camera_PTR p_camera);
 
 Segment_Vector3f Camera_buildWorldSpaceRay(Camera_PTR p_camera, Vector2f_PTR p_screenPoint);
 
+ECS_ALLOCCOMPONENT_FUNCTION(Camera, CAMERA_TYPE, Camera, Camera_PTR);
 ECS_GETCOMPONENT_FUNCTION(Camera, CAMERA_TYPE, Camera_PTR);
