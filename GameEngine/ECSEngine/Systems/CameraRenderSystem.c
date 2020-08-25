@@ -7,6 +7,8 @@
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/TransformC.h"
+#include "ECSEngine/Components/TransformComponent.h"
+#include "ECSEngine/Components/Camera.h"
 
 void CameraRenderSystem_Alloc(CameraRenderSystem_PTR p_cameraRenderSystem, ECS* p_ecs)
 {
@@ -36,8 +38,8 @@ void CameraRenderSystem_ConsumeECSEvents(CameraRenderSystem_PTR p_cameraRenderSy
 			l_operation.Entity = l_event->Entity;
 			// ECS_EventMessage_AddComponent_TYP
 
-			ECS_GetComponent(l_operation.Entity, CAMERA_TYPE, (ECS_ComponentHeader_HANDLE*)&l_operation.Camera);
-			ECS_GetComponent(l_operation.Entity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_operation.TransformComponent);
+			ECS_GetComponent_Camera(l_operation.Entity, &l_operation.Camera);
+			ECS_GetComponent_TransformComponent(l_operation.Entity, &l_operation.TransformComponent);
 			Arr_PushBackRealloc_CameraRenderSystemOperation(&p_cameraRenderSystem->Operations, &l_operation);
 
 			CAMERABUFFER_PTR l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;

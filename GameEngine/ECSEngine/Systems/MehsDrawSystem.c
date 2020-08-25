@@ -6,7 +6,7 @@
 #include "RenderV2Interface.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 #include "v2/_interface/TransformC.h"
-
+#include "ECSEngine/Components/TransformComponent.h"
 
 void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, RenderV2Interface_PTR p_renderInterface)
 {
@@ -19,8 +19,9 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 		{
 			MeshDrawSystemOperation l_meshDrawOperation;
 			l_meshDrawOperation.Entity = l_event->Entity;
-			ECS_GetComponent(l_event->Entity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_meshDrawOperation.TransformComponent);
-			ECS_GetComponent(l_event->Entity, MESHRENDERER_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_meshDrawOperation.MeshRenderer);
+			
+			ECS_GetComponent_TransformComponent(l_event->Entity, &l_meshDrawOperation.TransformComponent);
+			ECS_GetComponent_MeshRenderer(l_event->Entity, &l_meshDrawOperation.MeshRenderer);
 			l_meshDrawOperation.RenderedObject = (RenderedObject_PTR)malloc(sizeof(RenderedObject));
 			l_meshDrawOperation.RenderedObject->Mesh = &l_meshDrawOperation.MeshRenderer->MeshResource->Mesh;
 			l_meshDrawOperation.RenderedObject->MeshBoundingBox = &l_meshDrawOperation.MeshRenderer->MeshBoundingBox;

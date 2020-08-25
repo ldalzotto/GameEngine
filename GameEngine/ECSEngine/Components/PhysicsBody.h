@@ -1,12 +1,8 @@
 #pragma once
 
-#include "Component_def.h"
-#include "World/Collider/BoxCollider_def.h"
+#include "PhysicsBody_def.h"
 
-typedef struct RenderV2Interface_TYP RenderV2Interface;
+#include "ECS.h"
+#include "Types_def.h"
 
-typedef struct PhysicsBody_TYP
-{
-	ECS_ComponentHeader Header;
-	BoxCollider_PTR Boxcollider;
-}PhysicsBody, * PhysicsBody_PTR;
+ECS_GETCOMPONENT_FUNCTION(PhysicsBody, PHYSICSBODY_COMPONENT_TYPE, PhysicsBody_PTR);

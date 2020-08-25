@@ -85,7 +85,7 @@ void EntitySelection_update(EntitySelection* p_entitySelection)
 	if (l_currentCamera != l_entitySelectionState->CachedStructures.ActiveCamera)
 	{
 		l_entitySelectionState->CachedStructures.ActiveCamera = l_currentCamera;
-		ECS_GetComponent(l_entitySelectionState->CachedStructures.ActiveCamera->Header.AttachedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_entitySelectionState->CachedStructures.ActiveCameraTransform);
+		ECS_GetComponent_TransformComponent(l_entitySelectionState->CachedStructures.ActiveCamera->Header.AttachedEntity, &l_entitySelectionState->CachedStructures.ActiveCameraTransform);
 	}
 
 	// Trying to detect the selected Entity
@@ -142,7 +142,8 @@ void EntitySelection_update(EntitySelection* p_entitySelection)
 	// Move the gizmo to follow the selected entity.
 	if (EntitySelectionState_isEntitySelected(l_entitySelectionState))
 	{
-		TransformComponent_PTR l_selectedEntityTransform; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_selectedEntityTransform);
+		TransformComponent_PTR l_selectedEntityTransform; 
+		ECS_GetComponent_TransformComponent(l_entitySelectionState->SelectedEntity, &l_selectedEntityTransform);
 		TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(p_entitySelection, &l_selectedEntityTransform->Transform);
 		EntitySelection_drawSelectedEntityBoundingBox(p_entitySelection, l_entitySelectionState->SelectedEntity);
 	}
@@ -257,7 +258,8 @@ void EntitySelection_moveSelectedEntity_arrowTranslation(EntitySelection* p_enti
 	Vector3f tmp_vec3_1, tmp_vec3_0; Quaternion4f tmp_quat_1;
 
 	EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
-	TransformComponent_PTR l_transformComponent; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_transformComponent);
+	TransformComponent_PTR l_transformComponent; 
+	ECS_GetComponent_TransformComponent(l_entitySelectionState->SelectedEntity, &l_transformComponent);
 	TransformComponent_PTR l_selectedArrow = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
 	TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
@@ -296,7 +298,8 @@ void EntitySelection_moveSelectedEntity_arrowTranslation(EntitySelection* p_enti
 void EntitySelection_rotateSelectedEntity(EntitySelection* p_entitySelection)
 {
 	EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
-	TransformComponent_PTR l_transformComponent; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_transformComponent);
+	TransformComponent_PTR l_transformComponent; 
+	ECS_GetComponent_TransformComponent(l_entitySelectionState->SelectedEntity, &l_transformComponent);
 	TransformComponent_PTR l_selectedRotation = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
 	TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
@@ -384,7 +387,8 @@ void EntitySelection_scaleSelectedEntity(EntitySelection* p_entitySelection)
 	Vector3f tmp_vec3_0, tmp_vec3_1; Quaternion4f tmp_quat_1;
 
 	EntitySelectionState* l_entitySelectionState = &p_entitySelection->EntitySelectionState;
-	TransformComponent_PTR l_transformComponent; ECS_GetComponent(l_entitySelectionState->SelectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_transformComponent);
+	TransformComponent_PTR l_transformComponent;
+	ECS_GetComponent_TransformComponent(l_entitySelectionState->SelectedEntity, &l_transformComponent);
 	TransformComponent_PTR l_selectedScale = l_entitySelectionState->TransformGizmoSelectionState.SelectedGizmo;
 	TransformGizmoPlane* l_transformGizmoPlane = &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane;
 
@@ -448,8 +452,10 @@ void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySele
 {
 	Matrix4f tmp_mat_0; Vector3c tmp_vec3_0;
 
-	TransformComponent_PTR l_selectedEntityTransform; ECS_GetComponent(p_selectedEntity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_selectedEntityTransform);
-	PhysicsBody_PTR l_physicsBody; ECS_GetComponent(p_selectedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_physicsBody);
+	TransformComponent_PTR l_selectedEntityTransform;
+	ECS_GetComponent_TransformComponent(p_selectedEntity, &l_selectedEntityTransform);
+	PhysicsBody_PTR l_physicsBody; 
+	ECS_GetComponent_PhysicsBody(p_selectedEntity, &l_physicsBody);
 
 	tmp_vec3_0 = (Vector3c) { (char)255, (char)255, (char)255 };
 	Transform_GetLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0);
@@ -753,11 +759,11 @@ TransformComponent_PTR TransformGizmo_determinedSelectedGizmoComponent(Transform
 	Array_BoxColliderPTR l_transformArrowColliders = { l_transformArrowCollidersPtr , 3, 3 };
 	{
 		PhysicsBody_PTR tmp_physicsBody;
-		ECS_GetComponent(p_transformGizmo->RightGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
+		ECS_GetComponent_PhysicsBody(p_transformGizmo->RightGizmo->Header.AttachedEntity, &tmp_physicsBody);
 		l_transformArrowCollidersPtr[0] = tmp_physicsBody->Boxcollider;
-		ECS_GetComponent(p_transformGizmo->UpGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
+		ECS_GetComponent_PhysicsBody(p_transformGizmo->UpGizmo->Header.AttachedEntity, &tmp_physicsBody);
 		l_transformArrowCollidersPtr[1] = tmp_physicsBody->Boxcollider;
-		ECS_GetComponent(p_transformGizmo->ForwardGizmo->Header.AttachedEntity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&tmp_physicsBody);
+		ECS_GetComponent_PhysicsBody(p_transformGizmo->ForwardGizmo->Header.AttachedEntity, &tmp_physicsBody);
 		l_transformArrowCollidersPtr[2] = tmp_physicsBody->Boxcollider;
 	}
 	RaycastHit l_hit;

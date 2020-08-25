@@ -32,10 +32,10 @@ void PhysicsSystem_ConsumeECSEvents(PhysicsSystem_PTR p_physicsSystem, PhysicsIn
 		{
 		case EntityFilterEventType_ConditionsJustMet:
 		{
-
-			PhysicsBody_PTR l_physicsBody; ECS_GetComponent(l_event->Entity, PHYSICSBODY_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_physicsBody);
-			TransformComponent_PTR l_transformComponent; ECS_GetComponent(l_event->Entity, TRANSFORM_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_transformComponent);
-			MeshRenderer_PTR l_meshRenderer; ECS_GetComponent(l_event->Entity, MESHRENDERER_COMPONENT_TYPE, (ECS_ComponentHeader_HANDLE*)&l_meshRenderer);
+			PhysicsBody_PTR l_physicsBody; TransformComponent_PTR l_transformComponent; MeshRenderer_PTR l_meshRenderer;
+			ECS_GetComponent_PhysicsBody(l_event->Entity, &l_physicsBody);
+			ECS_GetComponent_TransformComponent(l_event->Entity, &l_transformComponent);
+			ECS_GetComponent_MeshRenderer(l_event->Entity, &l_meshRenderer);
 
 			PhysicsSystemOperation l_operation = {0};
 			l_operation.Entity = l_event->Entity;
