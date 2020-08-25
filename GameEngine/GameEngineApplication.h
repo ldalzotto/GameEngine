@@ -20,14 +20,18 @@
 
 #include "GameEngineApplicationInterface.h"
 
-
-
 typedef struct GameEngineApplicationSystems_TYP
 {
 	CameraRenderSystem CameraRenderSystem;
 	MeshDrawSystem MeshDrawSystem;
 	PhysicsSystem PhysicsSystem;
 }GameEngineApplicationSystems, * GameEngineApplicationSystems_PTR;
+
+typedef struct GameEngineApplicationHooks_TYP
+{
+	void(*UpdateAfter)(GameEngineApplicationInterface* p_gameEngineApplication, void*);
+	void* UpdateAfterClosure;
+}GameEngineApplicationHooks, * GameEngineApplicationHooks_PTR;
 
 typedef struct GameEngineApplication_TYP
 {
@@ -42,6 +46,7 @@ typedef struct GameEngineApplication_TYP
 	ECS ECS;
 
 	GameEngineApplicationSystems Systems;
+	GameEngineApplicationHooks Hooks;
 
 #if GAMEENGINE_EDITOR
 	GameEngineEditor Editor;

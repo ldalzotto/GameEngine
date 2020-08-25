@@ -27,8 +27,6 @@ typedef struct TestIntTest_TYP
 	TransformComponent_PTR PhysicsRayEnd;
 }TestIntTest, * TestIntTest_PTR;
 
-void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_gameEngine);
-
 typedef struct CubeCrossCreationInfo_TYP
 {
 	Vector3f LocalPosition;
@@ -306,7 +304,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 
 }
 
-void TestInt_udpate(TestIntTest* p_test, GameEngineApplicationInterface* l_interface)
+void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_test)
 {
 #ifndef comment
 	{
@@ -362,6 +360,9 @@ int main()
 	{
 		TestIntTest l_test = {0};
 		GameEngineApplication* l_app = IntegrationTest_begin();
+		l_app->Hooks.UpdateAfter = TestInt_udpate;
+		l_app->Hooks.UpdateAfterClosure = &l_test;
+
 		TestInt_init(l_app, &l_test);
 		// bool l_exit = false;
 		app_mainLoop(l_app);

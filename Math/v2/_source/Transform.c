@@ -37,6 +37,7 @@ void Transform_Alloc(Transform_PTR p_transform)
 
 void Transform_Free(Transform_PTR p_transform)
 {
+	p_transform->Parent = NULL;
 	Arr_Free_TransformPtr(&p_transform->Childs);
 };
 
