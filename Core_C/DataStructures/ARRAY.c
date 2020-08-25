@@ -156,7 +156,6 @@ char Arr_Swap(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_left, size_t p_rig
 {
 #ifndef NDEBUG
 	if (p_left >= p_array->Size || p_right >= p_array->Size) { printf("Core_GenericArray_swap : out_of_range"); return 1; }
-	if (p_left > p_right) { printf("Core_GenericArray_swap : invalid indices."); return 1; }
 #endif
 	if (p_left == p_right) { return 0; }
 

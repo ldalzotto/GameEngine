@@ -36,7 +36,7 @@ short RaycastHit_distanceMinComparator(RaycastHit* p_left, RaycastHit* p_right, 
 	float l_rightDistance = Vec_Distance_3f(&p_comparatorObject->RayBegin, &p_right->HitPoint);
 	short l_comparisonResult = Compare_float_float(&l_leftDistance, &l_rightDistance);
 
-	if (l_comparisonResult >= 0) { p_comparatorObject->CachedDistance = l_leftDistance; p_comparatorObject->DistanceCalculated = true; }
+	if (l_comparisonResult >= 0) { p_comparatorObject->CachedDistance = l_rightDistance; p_comparatorObject->DistanceCalculated = true; }
 	return l_comparisonResult;
 };
 

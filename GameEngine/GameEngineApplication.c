@@ -119,14 +119,14 @@ void app_update(void* p_closure, float p_delta)
 	GameEngineEditor_update(&l_app->Editor);
 	ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
 
-	MeshDrawSystem_Update(&l_app->Systems.MeshDrawSystem, &l_app->Render.RenderInterface);
-
-	ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
-	
 	if (l_app->Hooks.UpdateAfter)
 	{
 		l_app->Hooks.UpdateAfter(&l_app->GameEngineApplicationInterface, l_app->Hooks.UpdateAfterClosure);
 	}
+
+	MeshDrawSystem_Update(&l_app->Systems.MeshDrawSystem, &l_app->Render.RenderInterface);
+
+	ECS_GlobalEvents_ProcessMessages(&l_app->ECS);
 
 	// _ECS::ECSEventQueue_processMessages(&l_app->ECS.EventQueue);
 };

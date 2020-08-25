@@ -25,6 +25,9 @@ typedef struct TestIntTest_TYP
 {
 	TransformComponent_PTR PhysicsRayBegin;
 	TransformComponent_PTR PhysicsRayEnd;
+
+	TransformComponent_PTR CubeCross1;
+	TransformComponent_PTR CubeCross2;
 }TestIntTest, * TestIntTest_PTR;
 
 typedef struct CubeCrossCreationInfo_TYP
@@ -36,7 +39,7 @@ typedef struct CubeCrossCreationInfo_TYP
 	Vector3f* GuidePlaneNormalAxis;
 }CubeCrossCreationInfo, * CubeCrossCreationInfo_PTR;
 
-void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeCrossCreationInfo* p_cubeCrossCreationInfo)
+TransformComponent_PTR TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeCrossCreationInfo* p_cubeCrossCreationInfo)
 {
 	ECS_Entity_HANDLE l_parentEntity;
 	TransformComponent_PTR l_parentEntityTransform;
@@ -139,6 +142,8 @@ void TestInt_createCubeCross(GameEngineApplicationInterface* l_gameEngine, CubeC
 		_ECS::EntityT_addComponentDeferred(l_parentEntity, l_transformRotate, l_gameEngine->ECS);
 		*/
 	}
+
+	return l_parentEntityTransform;
 };
 
 
@@ -282,7 +287,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 			l_cubeCrossCreationInfo.LocalRotation = Quaternion4f_IDENTITY;
 			l_cubeCrossCreationInfo.LocalScale = (Vector3f){ 1.0f, 1.0f, 1.0f };
 			l_cubeCrossCreationInfo.GuidePlaneNormalAxis = &l_rotation;
-			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
+			p_test->CubeCross1 = TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
 		}
 
 		{
@@ -294,7 +299,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 			Quat_FromEulerAngle(&tmp_vec3_0, &l_cubeCrossCreationInfo.LocalRotation);
 			l_cubeCrossCreationInfo.LocalScale = (Vector3f){ 2.0f, 1.0f, 1.0f };
 			l_cubeCrossCreationInfo.GuidePlaneNormalAxis = &l_rotation;
-			TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
+			p_test->CubeCross2 = TestInt_createCubeCross(&l_app->GameEngineApplicationInterface, &l_cubeCrossCreationInfo);
 		}
 	}
 
@@ -312,6 +317,20 @@ void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_
 		Gizmo_DrawTransform_Axis(l_interface->RenderInterface->GizmoBuffer, &l_rootCenter, &Vector3f_RIGHT, &Vector3f_UP, &Vector3f_FORWARD);
 	}
 #endif
+
+	{
+		Vector3f l_axis = { 1.0f, 1.0f, 1.0f };
+		Quaternion4f tmp_quat4_0, tmp_quat4_1;
+		Quat_RotateAround(&l_axis, l_interface->Clock->DeltaTime * 0.5f,  &tmp_quat4_0);
+		Quat_Mul(&p_test->CubeCross1->Transform.LocalRotation, &tmp_quat4_0, &tmp_quat4_1);
+		Transform_SetLocalRotation(&p_test->CubeCross1->Transform, &tmp_quat4_1);
+
+		l_axis = (Vector3f) { 1.0f, 0.0f, 1.0f };
+		Quat_RotateAround(&l_axis, l_interface->Clock->DeltaTime * 0.5f, &tmp_quat4_0);
+		Quat_Mul(&p_test->CubeCross2->Transform.LocalRotation, &tmp_quat4_0, &tmp_quat4_1);
+		Transform_SetLocalRotation(&p_test->CubeCross2->Transform, &tmp_quat4_1);
+	}
+
 
 
 	Matrix4f tmp_mat_0;
