@@ -18,3 +18,11 @@ target_link_libraries(CameraMatricesTest PUBLIC GameEngine)
 add_executable(MyRenderTest "src/MyRenderTest.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(MyRenderTest PUBLIC GameEngine)
 target_link_libraries(MyRenderTest PUBLIC MyRender)
+
+add_executable(GizmoTest "src/GizmoTest.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+target_link_libraries(GizmoTest PUBLIC GameEngine)
+target_link_libraries(GizmoTest PUBLIC MyRender)
+
+add_executable(MathTest "src/MathTest.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+target_link_libraries(MathTest PUBLIC GameEngine)
+target_link_libraries(MathTest PUBLIC Math)

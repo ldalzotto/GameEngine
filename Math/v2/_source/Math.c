@@ -415,12 +415,12 @@ void Quat_ExtractAxis(const Quaternion4f_PTR quat, Matrix3f_PTR out_axis)
 	out_axis->_00 = 1 - (2 * l_qyy) - (2 * l_qzz);
 	out_axis->_01 = (2 * l_qxy) + (2 * l_qzw);
 	out_axis->_02 = (2 * l_qxz) - (2 * l_qyw);
-			
+
 	//UP	
 	out_axis->_10 = (2 * l_qxy) - (2 * l_qzw);
 	out_axis->_11 = 1 - (2 * l_qxx) - (2 * l_qzz);
 	out_axis->_12 = (2 * l_qyz) + (2 * l_qxw);
-			
+
 	//Forwar
 	out_axis->_20 = (2 * l_qxz) + (2 * l_qyw);
 	out_axis->_21 = (2 * l_qyz) - (2 * l_qxw);
@@ -610,7 +610,7 @@ inline void Mat_Mul_MXxXf_MXxXf(const char* p_left, const char* p_right,
 
 inline void Mat_Mul_MXxXf_f(const float* p_mat, const float p_value, float* p_out, short int p_matrix_elementCount)
 {
-	char* l_mat_cursor =(char*) p_mat;
+	char* l_mat_cursor = (char*)p_mat;
 
 	for (short int i = 0; i < p_matrix_elementCount; i++)
 	{
@@ -681,6 +681,11 @@ void Mat_Mul_M3F_M3F(const Matrix3f_PTR p_left, const Matrix3f_PTR p_right, Matr
 void Mat_Mul_M3F_V3F(const Matrix3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
 	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 3, 1, sizeof(Vector3f), sizeof(Vector3f), (char*)p_out);
+};
+
+void Mat_Mul_M3F_1F(const Matrix3f_PTR p_left, const float p_right, Matrix3f_PTR p_out)
+{
+	Mat_Mul_MXxXf_f((const float*)p_left, p_right, (float*)p_out, 9);
 };
 
 void Mat_Inv_M4F(const Matrix4f_PTR p_matrix, Matrix4f_PTR p_out)
@@ -770,6 +775,8 @@ void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_
 {
 	float l_halfTan = tanf(p_fov / 2.0f);
 
+
+#if 1
 	p_out->_00 = 1.0f / (p_aspect * l_halfTan);
 	p_out->_01 = 0.0f;
 	p_out->_02 = 0.0f;
@@ -782,13 +789,36 @@ void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_
 
 	p_out->_20 = 0.0f;
 	p_out->_21 = 0.0f;
-	p_out->_22 = -(p_far + p_near) / (p_far - p_near);
-	p_out->_23 = -1.0f;
+	p_out->_22 = (p_far + p_near) / (p_far - p_near);
+	p_out->_23 = 1.0f;
 
 	p_out->_30 = 0.0f;
 	p_out->_31 = 0.0f;
 	p_out->_32 = (-2.0f * p_far * p_near) / (p_far - p_near);
 	p_out->_33 = 0.0f;
+#endif
+
+#if 0
+	p_out->_00 = 1.0f / (p_aspect * l_halfTan);
+	p_out->_01 = 0.0f;
+	p_out->_02 = 0.0f;
+	p_out->_03 = 0.0f;
+
+	p_out->_10 = 0.0f;
+	p_out->_11 = 1.0f / l_halfTan;
+	p_out->_12 = 0.0f;
+	p_out->_13 = 0.0f;
+
+	p_out->_20 = 0.0f;
+	p_out->_21 = 0.0f;
+	p_out->_22 = (p_far + p_near) / (p_far - p_near);
+	p_out->_23 = 1.0f;
+
+	p_out->_30 = 0.0f;
+	p_out->_31 = 0.0f;
+	p_out->_32 = (-2.0f * p_far * p_near) / (p_far - p_near);
+	p_out->_33 = 0.0f;
+#endif
 }
 
 void Mat_LookAtRotation_F(const Vector3f_PTR p_origin, const Vector3f_PTR p_target, const Vector3f_PTR p_up, Matrix3f_PTR out_rotationMatrix)
@@ -798,7 +828,7 @@ void Mat_LookAtRotation_F(const Vector3f_PTR p_origin, const Vector3f_PTR p_targ
 		Vec_Min_3f_3f(p_target, p_origin, &l_forward);
 		Vec_Normalize_3f(&l_forward, &l_forward);
 		//TODO - WARNING : this is true only for view matrices (camera).
-		Vec_Mul_3f_1f(&l_forward, -1.0f, &l_forward);
+		// Vec_Mul_3f_1f(&l_forward, -1.0f, &l_forward);
 	}
 	Vector3f l_right;
 	{
@@ -1042,6 +1072,7 @@ void  Plane_Build_3Points(const Vector3f_PTR p_0, const  Vector3f_PTR p_1, const
 {
 	Vector3f l_01; Vec_Min_3f_3f(p_1, p_0, &l_01);
 	Vector3f l_02; Vec_Min_3f_3f(p_2, p_0, &l_02);
+
 	Vec_Cross_3f(&l_01, &l_02, &p_out->Normal);
 	Vec_Normalize_3f(&p_out->Normal, &p_out->Normal);
 	p_out->Point = *p_0;
@@ -1080,48 +1111,40 @@ void Frustum_ExtractFromProjection(const Matrix4f_PTR p_projection, Frustum_PTR 
 	Vector4f l_right_up_far, l_right_up_near, l_right_bottom_far, l_right_bottom_near;
 	Vector4f l_left_up_far, l_left_up_near, l_left_bottom_far, l_left_bottom_near;
 
-	Vector4f tmp_vec4_0 = { 1.0f, 1.0f, -1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_up_far);
-	Vec_Mul_4f_1f(&l_right_up_far, 1.0f / l_right_up_far.w, &l_right_up_far);
+	Vector4f tmp_vec4_0 = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_right_up_far);
 
-	tmp_vec4_0 = (Vector4f){ 1.0f, 1.0f, 1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_up_near);
-	Vec_Mul_4f_1f(&l_right_up_near, 1.0f / l_right_up_near.w, &l_right_up_near);
+	tmp_vec4_0 = (Vector4f){ 1.0f, 1.0f, -1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_right_up_near);
 
-	tmp_vec4_0 = (Vector4f){ 1.0f, -1.0f, -1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_far);
-	Vec_Mul_4f_1f(&l_right_bottom_far, 1.0f / l_right_bottom_far.w, &l_right_bottom_far);
+	tmp_vec4_0 = (Vector4f){ 1.0f, -1.0f, 1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_far);
 
-	tmp_vec4_0 = (Vector4f){ 1.0f, -1.0f, 1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_near);
-	Vec_Mul_4f_1f(&l_right_bottom_near, 1.0f / l_right_bottom_near.w, &l_right_bottom_near);
+	tmp_vec4_0 = (Vector4f){ 1.0f, -1.0f, -1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_right_bottom_near);
 
 
-	tmp_vec4_0 = (Vector4f){ -1.0f, 1.0f, -1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_up_far);
-	Vec_Mul_4f_1f(&l_left_up_far, 1.0f / l_left_up_far.w, &l_left_up_far);
+	tmp_vec4_0 = (Vector4f){ -1.0f, 1.0f, 1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_left_up_far);
 
-	tmp_vec4_0 = (Vector4f){ -1.0f, 1.0f, 1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_up_near);
-	Vec_Mul_4f_1f(&l_left_up_near, 1.0f / l_left_up_near.w, &l_left_up_near);
+	tmp_vec4_0 = (Vector4f){ -1.0f, 1.0f, -1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_left_up_near);
 
-	tmp_vec4_0 = (Vector4f){ -1.0f, -1.0f, -1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_far);
-	Vec_Mul_4f_1f(&l_left_bottom_far, 1.0f / l_left_bottom_far.w, &l_left_bottom_far);
+	tmp_vec4_0 = (Vector4f){ -1.0f, -1.0f, 1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_far);
 
-	tmp_vec4_0 = (Vector4f){ -1.0f, -1.0f, 1.0f, -1.0f };
-	Mat_Mul_M4F_V4F(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_near);
-	Vec_Mul_4f_1f(&l_left_bottom_near, 1.0f / l_left_bottom_near.w, &l_left_bottom_near);
+	tmp_vec4_0 = (Vector4f){ -1.0f, -1.0f, -1.0f, 1.0f };
+	Mat_Mul_M4F_V4F_Homogeneous(&l_projection_inverted, &tmp_vec4_0, &l_left_bottom_near);
 
+	// /!\ Order of point matters to make sure that normals are pointing inward
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_left_up_near, (Vector3f_PTR)&l_left_bottom_far, &out_frustum->Left);
+	Plane_Build_3Points((Vector3f_PTR)&l_right_bottom_near, (Vector3f_PTR)&l_right_bottom_far, (Vector3f_PTR)&l_right_up_near, &out_frustum->Right);
 
-	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_left_bottom_far, (Vector3f_PTR)&l_left_up_near, &out_frustum->Left);
-	Plane_Build_3Points((Vector3f_PTR)&l_right_bottom_near, (Vector3f_PTR)&l_right_up_near, (Vector3f_PTR)&l_right_bottom_far, &out_frustum->Right);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_left_bottom_far, (Vector3f_PTR)&l_right_bottom_near, &out_frustum->Bottom);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_up_near, (Vector3f_PTR)&l_right_up_near, (Vector3f_PTR)&l_left_up_far, &out_frustum->Up);
 
-	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_right_bottom_near, (Vector3f_PTR)&l_left_bottom_far, &out_frustum->Bottom);
-	Plane_Build_3Points((Vector3f_PTR)&l_left_up_near, (Vector3f_PTR)&l_left_up_far, (Vector3f_PTR)&l_right_up_near, &out_frustum->Up);
-
-	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_left_up_near, (Vector3f_PTR)&l_right_bottom_near, &out_frustum->Near);
-	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_far, (Vector3f_PTR)&l_right_bottom_far, (Vector3f_PTR)&l_left_up_far, &out_frustum->Far);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_near, (Vector3f_PTR)&l_right_bottom_near, (Vector3f_PTR)&l_left_up_near, &out_frustum->Near);
+	Plane_Build_3Points((Vector3f_PTR)&l_left_bottom_far, (Vector3f_PTR)&l_left_up_far, (Vector3f_PTR)&l_right_bottom_far, &out_frustum->Far);
 };
 
 #endif

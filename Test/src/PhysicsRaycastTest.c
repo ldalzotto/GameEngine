@@ -11,6 +11,7 @@
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/TransformC.h"
+#include "v2/_interface/MatrixC.h"
 
 #include "ECSEngine/Components/TransformComponent.h"
 #include "ECSEngine/Components/Camera.h"
@@ -155,6 +156,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 	EntityConfiguration_init();
 
 	ECS_Entity_HANDLE l_cameraEntity;
+	TransformComponent_PTR l_cameraTransform;
 	TransformComponent_PTR l_rayTransform;
 	TransformComponent_PTR l_sceneModelsRootTransform;
 
@@ -171,14 +173,20 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 		}
 
 		{
-			TransformComponent_PTR l_component = ECS_Component_Alloc_TransformComponent();
+			l_cameraTransform = ECS_Component_Alloc_TransformComponent();
 			TransformInitInfo l_transformInitInfo = TransformInitInfo_Default;
 			l_transformInitInfo.LocalPosition = (Vector3f){ 9.0f, 9.0f, 9.0f };
 			tmp_vec3_0 = (Vector3f){ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f };
+
+			Vector3f l_target = (Vector3f){0.0f, 0.0f,0.0f};
+			Matrix3f l_axis;
+			Mat_LookAtRotation_F(&l_transformInitInfo.LocalPosition, &l_target, &Vector3f_UP, &l_axis);
+			Quat_FromAxis(l_axis.Points, &l_transformInitInfo.LocalRotation);
 			Quat_FromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
+
 			l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
-			TransformComponent_init(l_component, &l_transformInitInfo);
-			ECS_AddComponent(&l_app->ECS, l_cameraEntity, &l_component->Header);
+			TransformComponent_init(l_cameraTransform, &l_transformInitInfo);
+			ECS_AddComponent(&l_app->ECS, l_cameraEntity, &l_cameraTransform->Header);
 		}
 	}
 	// Ray
@@ -304,6 +312,11 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 	}
 
 
+
+	Vector3f l_forward_test;
+	Transform_GetForward(&l_cameraTransform->Transform, &l_forward_test);
+
+	int zd = 0;
 	// _Core::CallbackT<TestIntTest, _GameEngine::GameEngineApplicationInterface> l_testUpdate = { TestInt_udpate, p_test };
 	// _Core::ObserverT_register(&l_app->EndOfUpdate, (_Core::CallbackT<void, _GameEngine::GameEngineApplicationInterface>*)&l_testUpdate);
 

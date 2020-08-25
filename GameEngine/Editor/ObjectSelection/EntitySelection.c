@@ -717,7 +717,7 @@ void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(EntitySele
 				Vector4f l_selectedEntityTransformClip;
 				tmp_vec4_0.Vec3 = l_followedWorldPosition; tmp_vec4_0.Vec3_w = 1.0f;
 				Mat_Mul_M4F_V4F_Homogeneous(&l_worldToClipMatrix, &tmp_vec4_0, &l_selectedEntityTransformClip);
-				l_selectedEntityTransformClip.z = 0.99f; //Fixed distance in clip space from near plane.
+				l_selectedEntityTransformClip.z = 0.98f; //Fixed distance in clip space from near plane.
 				Mat_Mul_M4F_V4F_Homogeneous(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &tmp_vec4_0);
 				l_transformGizmoWorldPosition = tmp_vec4_0.Vec3;
 			}

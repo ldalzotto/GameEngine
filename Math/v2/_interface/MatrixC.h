@@ -10,6 +10,7 @@ void Mat_Mul_M4F_V4F(const Matrix4f_PTR p_left, const Vector4f_PTR p_right, Vect
 void Mat_Mul_M4F_V4F_Homogeneous(const Matrix4f_PTR p_projectionmatrix, const Vector4f_PTR p_pos, Vector4f_PTR out_pos);
 void Mat_Mul_M3F_M3F(const Matrix3f_PTR p_left, const Matrix3f_PTR p_right, Matrix3f_PTR p_out);
 void Mat_Mul_M3F_V3F(const Matrix3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out);
+void Mat_Mul_M3F_1F(const Matrix3f_PTR p_left, const float p_right, Matrix3f_PTR p_out);
 
 void Mat_Inv_M4F(const Matrix4f_PTR p_matrix, Matrix4f_PTR p_out);
 
