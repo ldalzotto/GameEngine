@@ -228,8 +228,8 @@ Segment_Vector3f entitySelection_rayCastMouseDeltaPosition_againstPlane(EntitySe
 
 	// Matrix4f tmp_mat4_0;
 	// Transform_GetLocalToWorldMatrix(&p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Transform, &tmp_mat4_0);
-	//  _RenderV2::Gizmo::drawBox(p_entitySelection->RenderInterface->GizmoBuffer, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box,
-	//  	(_MathV2::Matrix4x4<float>*)&tmp_mat4_0, true);
+	// Vector3c l_color = { 255, 255, 255 };
+	// Gizmo_DrawBox(p_entitySelection->RenderInterface->GizmoBuffer, &p_entitySelection->TransformGizmoV2.TransformGizmoMovementGuidePlane.Box, &tmp_mat4_0, true, &l_color);
 
 	return l_mouseDelta_worldPosition;
 }
@@ -679,7 +679,7 @@ void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_i
 		BoxF l_planeBox;
 		l_planeBox.Center = (Vector3f){ 0.0f, 0.0f, 0.0f };
 		l_planeBox.Extend = (Vector3f){ FLT_MAX, 0.0f, FLT_MAX };
-		// l_planeBox.Extend = { 2.0f, 0.0f, 2.0f };
+		// l_planeBox.Extend = (Vector3f){ 2.0f, 0.0f, 2.0f };
 
 		p_transformGizmo->TransformGizmoMovementGuidePlane.Box = l_planeBox;
 
@@ -717,7 +717,7 @@ void TransformGizmo_followTransform_byKeepingAfixedDistanceFromCamera(EntitySele
 				Vector4f l_selectedEntityTransformClip;
 				tmp_vec4_0.Vec3 = l_followedWorldPosition; tmp_vec4_0.Vec3_w = 1.0f;
 				Mat_Mul_M4F_V4F_Homogeneous(&l_worldToClipMatrix, &tmp_vec4_0, &l_selectedEntityTransformClip);
-				l_selectedEntityTransformClip.z = 0.98f; //Fixed distance in clip space from near plane.
+				l_selectedEntityTransformClip.z = 0.985f; //Fixed distance in clip space from near plane.
 				Mat_Mul_M4F_V4F_Homogeneous(&l_clipToWorldMatrix, &l_selectedEntityTransformClip, &tmp_vec4_0);
 				l_transformGizmoWorldPosition = tmp_vec4_0.Vec3;
 			}

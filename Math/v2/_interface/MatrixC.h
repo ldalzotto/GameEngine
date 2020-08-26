@@ -26,4 +26,6 @@ void Mat_GetTranslation_M4F(const Matrix4f_PTR p_mat, Vector4f_PTR out_translati
 void Mat_GetScale_M4F(const Matrix4f_PTR p_trs, Vector4f_PTR out_scale);
 
 void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_near, const float p_far, Matrix4f_PTR p_out);
+void Mat_ViewMatrix_M4F(const Vector3f_PTR p_worldPosition, const Vector3f_PTR p_forward, const Vector3f_PTR p_up, Matrix4f_PTR out_viewMatrix);
+void Mat_LookAtRotation_ViewMatrix_F(const Vector3f_PTR p_origin, const Vector3f_PTR p_target, const Vector3f_PTR p_up, Matrix3f_PTR out_rotationMatrix);
 void Mat_LookAtRotation_F(const Vector3f_PTR p_origin, const Vector3f_PTR p_target, const Vector3f_PTR p_up, Matrix3f_PTR out_rotationMatrix);

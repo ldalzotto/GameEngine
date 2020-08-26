@@ -7,6 +7,7 @@
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/TransformC.h"
+#include "v2/Math.h"
 #include "ECSEngine/Components/TransformComponent.h"
 #include "ECSEngine/Components/Camera.h"
 
@@ -34,7 +35,7 @@ void CameraRenderSystem_ConsumeECSEvents(CameraRenderSystem_PTR p_cameraRenderSy
 		case EntityFilterEventType_ConditionsJustMet:
 		{
 
-			CameraRenderSystemOperation l_operation = {0};
+			CameraRenderSystemOperation l_operation = { 0 };
 			l_operation.Entity = l_event->Entity;
 			// ECS_EventMessage_AddComponent_TYP
 
@@ -79,32 +80,18 @@ void CameraRenderSystem_Update(CameraRenderSystem_PTR p_system)
 		Camera* l_camera = l_operation->Camera;
 		CAMERABUFFER_PTR l_cameraBuffer = l_camera->RenderInterface->GlobalBuffer.CameraBuffer;
 
+		if (l_transform->Transform.UserFlag_HasChanged)
 		{
-			Vector3f tmp_vec3_0; Matrix4f tmp_mat4_0; Matrix3f tmp_mat3_0;
 			Vector3f l_worldPosition; Transform_GetWorldPosition(&l_transform->Transform, &l_worldPosition);
-		
-			Vector3f l_target;
-			Transform_GetForward(&l_transform->Transform, &l_target);
-			Vec_Add_3f_3f(&l_worldPosition, &l_target, &l_target);
-			// Vec_Mul_3f_1f(&l_target, -1.0f, &l_target);
+			Vector3f l_forward; Transform_GetForward(&l_transform->Transform, &l_forward);
+			Vector3f l_up; Transform_GetUp(&l_transform->Transform, &l_up);
 
-			Vector3f l_up;
-			Transform_GetUp(&l_transform->Transform, &tmp_vec3_0);
-			Vec_Mul_3f_1f(&tmp_vec3_0, -1.0f, &l_up);
-
-			tmp_vec3_0 = (Vector3f) { 1.0f, 1.0f, 1.0f };
-			Mat_LookAtRotation_F(&l_worldPosition, &l_target, &l_up, &tmp_mat3_0);
-
-			// Mat_Mul_M3F_1F(&tmp_mat3_0, -1.0f, &tmp_mat3_0);
-
-			Mat_TRS_Axis_M4F(&l_worldPosition, &tmp_mat3_0, &tmp_vec3_0, &tmp_mat4_0);
-		
-			// Transform_GetLocalToWorldMatrix(&l_transform->Transform, &tmp_mat4_0);
-			// Vector3f l_down = { 0.0f, -1.0f, 0.0f };
-			Mat_Inv_M4F(&tmp_mat4_0, &l_camera->ViewMatrix);
-
+			Mat_ViewMatrix_M4F(&l_worldPosition, &l_forward, &l_up, &l_camera->ViewMatrix);
 			l_cameraBuffer->WorldPosition.Vec3 = l_worldPosition; l_cameraBuffer->WorldPosition.Vec3_w = 1.0f;
+
+			l_transform->Transform.UserFlag_HasChanged = false;
 		}
+
 	}
 };
 

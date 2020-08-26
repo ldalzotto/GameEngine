@@ -821,14 +821,58 @@ void Mat_Perspective_M4F(const float p_fov, const float p_aspect, const float p_
 #endif
 }
 
+void Mat_ViewMatrix_M4F(const Vector3f_PTR p_worldPosition, const Vector3f_PTR p_forward, const Vector3f_PTR p_up, Matrix4f_PTR out_viewMatrix)
+{
+	Vector3f tmp_vec3_0; Matrix4f tmp_mat4_0; Matrix3f tmp_mat3_0;
+	Vector3f l_target = *p_forward;
+
+	Vec_Add_3f_3f(p_worldPosition, &l_target, &l_target);
+
+	Vector3f l_up = *p_up;
+	Vec_Mul_3f_1f(&tmp_vec3_0, -1.0f, &l_up);
+
+	tmp_vec3_0 = (Vector3f){ 1.0f, 1.0f, 1.0f };
+	Mat_LookAtRotation_ViewMatrix_F(p_worldPosition, &l_target, &l_up, &tmp_mat3_0);
+	Mat_TRS_Axis_M4F(p_worldPosition, &tmp_mat3_0, &tmp_vec3_0, &tmp_mat4_0);
+
+	Mat_Inv_M4F(&tmp_mat4_0, out_viewMatrix);
+};
+
+void Mat_LookAtRotation_ViewMatrix_F(const Vector3f_PTR p_origin, const Vector3f_PTR p_target, const Vector3f_PTR p_up, Matrix3f_PTR out_rotationMatrix)
+{
+	Vector3f l_forward;
+	{
+		Vec_Min_3f_3f(p_target, p_origin, &l_forward);
+		Vec_Normalize_3f(&l_forward, &l_forward);
+	}
+	Vector3f l_right;
+	{
+		Vec_Cross_3f(&l_forward, p_up, &l_right);
+		Vec_Normalize_3f(&l_right, &l_right);
+
+		//WARNING : this is true only for view matrices (camera).
+		Vec_Mul_3f_1f(&l_right, -1.0f, &l_right);
+	}
+	Vector3f l_up;
+	{
+		Vec_Cross_3f(&l_right, &l_forward, &l_up);
+		Vec_Normalize_3f(&l_up, &l_up);
+
+		//WARNING : this is true only for view matrices (camera).
+		Vec_Mul_3f_1f(&l_up, -1.0f, &l_up);
+	}
+
+	out_rotationMatrix->Col0 = l_right;
+	out_rotationMatrix->Col1 = l_up;
+	out_rotationMatrix->Col2 = l_forward;
+};
+
 void Mat_LookAtRotation_F(const Vector3f_PTR p_origin, const Vector3f_PTR p_target, const Vector3f_PTR p_up, Matrix3f_PTR out_rotationMatrix)
 {
 	Vector3f l_forward;
 	{
 		Vec_Min_3f_3f(p_target, p_origin, &l_forward);
 		Vec_Normalize_3f(&l_forward, &l_forward);
-		//TODO - WARNING : this is true only for view matrices (camera).
-		// Vec_Mul_3f_1f(&l_forward, -1.0f, &l_forward);
 	}
 	Vector3f l_right;
 	{
