@@ -169,7 +169,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 		{
 			Camera_PTR l_camera = ECS_Component_Alloc_Camera();
 			Camera_init(l_camera, &l_app->Render.RenderInterface);
-			ECS_AddComponent(&l_app->ECS, l_cameraEntity, &l_camera->Header);
+			ECS_AddComponent_Camera(&l_app->ECS, l_cameraEntity, l_camera);
 		}
 
 		{
@@ -178,7 +178,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 			l_transformInitInfo.LocalPosition = (Vector3f){ 9.0f, 9.0f, 9.0f };
 			tmp_vec3_0 = (Vector3f){ (M_PI * 0.20f), M_PI + (M_PI * 0.25f), 0.0f };
 
-			Vector3f l_target = (Vector3f){0.0f, 0.0f,0.0f};
+			Vector3f l_target = (Vector3f){ 0.0f, 0.0f,0.0f };
 			Matrix3f l_axis;
 			Mat_LookAtRotation_F(&l_transformInitInfo.LocalPosition, &l_target, &Vector3f_UP, &l_axis);
 			Quat_FromAxis(l_axis.Points, &l_transformInitInfo.LocalRotation);
@@ -186,7 +186,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 
 			l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
 			TransformComponent_init(l_cameraTransform, &l_transformInitInfo);
-			ECS_AddComponent(&l_app->ECS, l_cameraEntity, &l_cameraTransform->Header);
+			ECS_AddComponent_TransformComponent(&l_app->ECS, l_cameraEntity, l_cameraTransform);
 		}
 	}
 	// Ray
@@ -205,7 +205,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 			Quat_FromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
 			TransformComponent_init(l_transformComponent, &l_transformInitInfo);
-			ECS_AddComponent(&l_app->ECS, l_rayEntity, &l_transformComponent->Header);
+			ECS_AddComponent_TransformComponent(&l_app->ECS, l_rayEntity, l_transformComponent);
 		}
 
 		ECS_Entity_HANDLE l_rayBeginEntity;
@@ -228,7 +228,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 				l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
 				TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
-				ECS_AddComponent(&l_app->ECS, l_rayBeginEntity, &l_transformComponent->Header);
+				ECS_AddComponent_TransformComponent(&l_app->ECS, l_rayBeginEntity, l_transformComponent);
 
 			}
 		}
@@ -250,7 +250,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 				l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
 				TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
-				ECS_AddComponent(&l_app->ECS, l_rayEndEntity, &l_transformComponent->Header);
+				ECS_AddComponent_TransformComponent(&l_app->ECS, l_rayEndEntity, l_transformComponent);
 			}
 		}
 
@@ -276,7 +276,7 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 			l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
 			TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 
-			ECS_AddComponent(&l_app->ECS, l_sceneModelsRootEntity, &l_transformComponent->Header);
+			ECS_AddComponent_TransformComponent(&l_app->ECS, l_sceneModelsRootEntity, l_transformComponent);
 		}
 	}
 	Transform_AddChild(
@@ -334,11 +334,11 @@ void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_
 	{
 		Vector3f l_axis = { 1.0f, 1.0f, 1.0f };
 		Quaternion4f tmp_quat4_0, tmp_quat4_1;
-		Quat_RotateAround(&l_axis, l_interface->Clock->DeltaTime * 0.5f,  &tmp_quat4_0);
+		Quat_RotateAround(&l_axis, l_interface->Clock->DeltaTime * 0.5f, &tmp_quat4_0);
 		Quat_Mul(&p_test->CubeCross1->Transform.LocalRotation, &tmp_quat4_0, &tmp_quat4_1);
 		Transform_SetLocalRotation(&p_test->CubeCross1->Transform, &tmp_quat4_1);
 
-		l_axis = (Vector3f) { 1.0f, 0.0f, 1.0f };
+		l_axis = (Vector3f){ 1.0f, 0.0f, 1.0f };
 		Quat_RotateAround(&l_axis, l_interface->Clock->DeltaTime * 0.5f, &tmp_quat4_0);
 		Quat_Mul(&p_test->CubeCross2->Transform.LocalRotation, &tmp_quat4_0, &tmp_quat4_1);
 		Transform_SetLocalRotation(&p_test->CubeCross2->Transform, &tmp_quat4_1);
@@ -390,7 +390,7 @@ void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_
 int main()
 {
 	{
-		TestIntTest l_test = {0};
+		TestIntTest l_test = { 0 };
 		GameEngineApplication* l_app = IntegrationTest_begin();
 		l_app->Hooks.UpdateAfter = TestInt_udpate;
 		l_app->Hooks.UpdateAfterClosure = &l_test;

@@ -203,7 +203,7 @@ Segment_Vector3f entitySelection_rayCastMouseDeltaPosition_againstPlane(EntitySe
 
 
 	BoxCollider_PTR l_raycastedPlane_ptr[1] = { p_testedCollider };
-	Array_BoxColliderPTR l_raycastedPlane = { l_raycastedPlane_ptr, 1, 1 };
+	Array_BoxColliderPTR l_raycastedPlane = { .Memory = l_raycastedPlane_ptr, .Size = 1, .Capacity = 1 };
 	RaycastHit l_endHit;
 	if (RayCast_Against(&l_raycastedPlane, &l_mouseDelta_end_ray.Begin, &l_mouseDelta_end_ray.End, &l_endHit))
 	{
@@ -472,22 +472,22 @@ TransformComponent_PTR transformGizmoV2_allocArrow(ECS* p_ecs, RenderV2Interface
 		l_arrowEntity = ECS_AllocateEntity(p_ecs);
 	}
 	{
-		l_transform = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+		l_transform = ECS_Component_Alloc_TransformComponent();
 		TransformInitInfo l_transformInitInfo = { 0 };
 		l_transformInitInfo.LocalPosition = (Vector3f){ 0.0f, 0.0f, 0.0f };
 		l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 		l_transformInitInfo.LocalScale = (Vector3f){ 1.0f, 1.0f, 1.0f };
 
 		TransformComponent_init(l_transform, &l_transformInitInfo);
-		ECS_AddComponent(p_ecs, l_arrowEntity, &l_transform->Header);
+		ECS_AddComponent_TransformComponent(p_ecs, l_arrowEntity, l_transform);
 	}
 	{
-		MeshRenderer_PTR l_meshRenderer = (MeshRenderer_PTR)ECS_Component_Alloc(MESHRENDERER_COMPONENT_TYPE, sizeof(MeshRenderer));
+		MeshRenderer_PTR l_meshRenderer = ECS_Component_Alloc_MeshRenderer();
 		MeshRendererInitInfo l_meshRendererInitInfo = { 0 };
 		l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj";
 
 		MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
-		ECS_AddComponent(p_ecs, l_arrowEntity, &l_meshRenderer->Header);
+		ECS_AddComponent_MeshRenderer(p_ecs, l_arrowEntity, l_meshRenderer);
 	}
 	/*
 	{
@@ -507,22 +507,22 @@ TransformComponent_PTR transformGizmoV2_allocRotation(ECS* p_ecs, RenderV2Interf
 		l_rotationEntity = ECS_AllocateEntity(p_ecs);
 	}
 	{
-		l_transform = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+		l_transform = ECS_Component_Alloc_TransformComponent();
 		TransformInitInfo l_transformInitInfo = { 0 };
 		l_transformInitInfo.LocalPosition = (Vector3f){ 0.0f, 0.0f, 0.0f };
 		l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 		l_transformInitInfo.LocalScale = (Vector3f){ 1.0f, 1.0f, 1.0f };
 
 		TransformComponent_init(l_transform, &l_transformInitInfo);
-		ECS_AddComponent(p_ecs, l_rotationEntity, &l_transform->Header);
+		ECS_AddComponent_TransformComponent(p_ecs, l_rotationEntity, l_transform);
 	}
 	{
-		MeshRenderer_PTR l_meshRenderer = (MeshRenderer_PTR)ECS_Component_Alloc(MESHRENDERER_COMPONENT_TYPE, sizeof(MeshRenderer));
+		MeshRenderer_PTR l_meshRenderer = ECS_Component_Alloc_MeshRenderer();
 		MeshRendererInitInfo l_meshRendererInitInfo = { 0 };
 		l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/RotationGizmo.obj";
 
 		MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
-		ECS_AddComponent(p_ecs, l_rotationEntity, &l_meshRenderer->Header);
+		ECS_AddComponent_MeshRenderer(p_ecs, l_rotationEntity, l_meshRenderer);
 	}
 	/*
 	{
@@ -542,22 +542,22 @@ TransformComponent_PTR transformGizmoV2_allocScale(ECS* p_ecs, RenderV2Interface
 		l_arrowEntity = ECS_AllocateEntity(p_ecs);
 	}
 	{
-		l_transform = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+		l_transform = ECS_Component_Alloc_TransformComponent();
 		TransformInitInfo l_transformInitInfo = { 0 };
 		l_transformInitInfo.LocalPosition = (Vector3f){ 0.0f, 0.0f, 0.0f };
 		l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 		l_transformInitInfo.LocalScale = (Vector3f){ 1.0f, 1.0f, 1.0f };
 
 		TransformComponent_init(l_transform, &l_transformInitInfo);
-		ECS_AddComponent(p_ecs, l_arrowEntity, &l_transform->Header);
+		ECS_AddComponent_TransformComponent(p_ecs, l_arrowEntity, l_transform);
 	}
 	{
-		MeshRenderer_PTR l_meshRenderer = (MeshRenderer_PTR)ECS_Component_Alloc(MESHRENDERER_COMPONENT_TYPE, sizeof(MeshRenderer));
+		MeshRenderer_PTR l_meshRenderer = ECS_Component_Alloc_MeshRenderer();
 		MeshRendererInitInfo l_meshRendererInitInfo = { 0 };
 		l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ScaleGizmo.obj";
 
 		MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
-		ECS_AddComponent(p_ecs, l_arrowEntity, &l_meshRenderer->Header);
+		ECS_AddComponent_MeshRenderer(p_ecs, l_arrowEntity, l_meshRenderer);
 	}
 	/*
 	{
@@ -582,14 +582,14 @@ void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_i
 	ECS_Entity_HANDLE l_transformGizmo = ECS_AllocateEntity(p_ecs);
 
 	{
-		p_transformGizmo->TransformGizoEntity = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+		p_transformGizmo->TransformGizoEntity = ECS_Component_Alloc_TransformComponent();
 		TransformInitInfo l_transformInitInfo = { 0 };
 		l_transformInitInfo.LocalPosition = *p_initialWorldPosition;
 		l_transformInitInfo.LocalRotation = Quaternion4f_IDENTITY;
 		l_transformInitInfo.LocalScale = (Vector3f){ 1.0f, 1.0f, 1.0f };
 
 		TransformComponent_init(p_transformGizmo->TransformGizoEntity, &l_transformInitInfo);
-		ECS_AddComponent(p_ecs, l_transformGizmo, &p_transformGizmo->TransformGizoEntity->Header);
+		ECS_AddComponent_TransformComponent(p_ecs, l_transformGizmo, p_transformGizmo->TransformGizoEntity);
 	}
 
 	switch (p_entitySelection->EntitySelectionState.TransformGizmoSelectionState.SelectedGizmoType)
@@ -763,7 +763,7 @@ TransformComponent_PTR TransformGizmo_determinedSelectedGizmoComponent(Transform
 {
 	BoxCollider l_arrowBoxColliders[3];
 	BoxCollider_PTR l_transformArrowCollidersPtr[3];
-	Array_BoxColliderPTR l_transformArrowColliders = { l_transformArrowCollidersPtr , 3, 3 };
+	Array_BoxColliderPTR l_transformArrowColliders = { .Memory = l_transformArrowCollidersPtr , .Size = 3, .Capacity = 3 };
 	{
 		MeshRenderer_PTR tmp_meshRenderer;
 		ECS_GetComponent_MeshRenderer(p_transformGizmo->RightGizmo->Header.AttachedEntity, &tmp_meshRenderer);

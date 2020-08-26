@@ -26,7 +26,7 @@ void EntitySelectionTest_Init(GameEngineApplication* l_app)
 		{
 			Camera_PTR l_camera = ECS_Component_Alloc_Camera();
 			Camera_init(l_camera, &l_app->Render.RenderInterface);
-			ECS_AddComponent(&l_app->ECS, l_cameraEntity, (ECS_ComponentHeader_HANDLE)l_camera);
+			ECS_AddComponent_Camera(&l_app->ECS, l_cameraEntity, l_camera);
 		}
 
 
@@ -38,7 +38,7 @@ void EntitySelectionTest_Init(GameEngineApplication* l_app)
 			Quat_FromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 			l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
 			TransformComponent_init(l_component, &l_transformInitInfo);
-			ECS_AddComponent(&l_app->ECS, l_cameraEntity, (ECS_ComponentHeader_HANDLE)l_component);
+			ECS_AddComponent_TransformComponent(&l_app->ECS, l_cameraEntity, l_component);
 		}
 	}
 	TransformComponent_PTR l_instranciatedTransform;

@@ -16,4 +16,5 @@ void MeshRenderer_init(MeshRenderer_PTR p_meshRenderer, RenderV2Interface*p_rend
 void MeshRenderer_OnComponentDetached(MeshRenderer* p_meshRenderer, RenderV2Interface* p_renderInterface);
 
 ECS_ALLOCCOMPONENT_FUNCTION(MeshRenderer, MESHRENDERER_COMPONENT_TYPE, MeshRenderer, MeshRenderer_PTR);
+ECS_ADDCOMPONENT_FUNCTION(MeshRenderer, MeshRenderer_PTR);
 ECS_GETCOMPONENT_FUNCTION(MeshRenderer, MESHRENDERER_COMPONENT_TYPE, MeshRenderer_PTR);

@@ -16,7 +16,7 @@ void EntityCreation_createEntity(GameEngineApplicationInterface* p_sandboxApplic
 	}
 
 	{
-		TransformComponent_PTR l_transformComponent = (TransformComponent_PTR)ECS_Component_Alloc(TRANSFORM_COMPONENT_TYPE, sizeof(TransformComponent));
+		TransformComponent_PTR l_transformComponent = ECS_Component_Alloc_TransformComponent();
 
 		TransformInitInfo l_transformInitInfo = TransformInitInfo_Default;
 		l_transformInitInfo.LocalPosition = p_sandboxCubeCreationInfo->LocalPosition;
@@ -25,19 +25,19 @@ void EntityCreation_createEntity(GameEngineApplicationInterface* p_sandboxApplic
 		TransformComponent_init(l_transformComponent, &l_transformInitInfo);
 		*out_entitytransform = l_transformComponent;
 
-		ECS_AddComponent(p_sandboxApplication->ECS, *out_entity, &l_transformComponent->Header);
+		ECS_AddComponent_TransformComponent(p_sandboxApplication->ECS, *out_entity, l_transformComponent);
 	}
 
 	if (p_sandboxCubeCreationInfo->MeshRendererInitInfo)
 	{
-		MeshRenderer_PTR l_meshRenderer = (MeshRenderer_PTR)ECS_Component_Alloc(MESHRENDERER_COMPONENT_TYPE, sizeof(MeshRenderer));
+		MeshRenderer_PTR l_meshRenderer = ECS_Component_Alloc_MeshRenderer();
 		MeshRenderer_init(l_meshRenderer, p_sandboxApplication->RenderInterface, p_sandboxCubeCreationInfo->MeshRendererInitInfo);
-		ECS_AddComponent(p_sandboxApplication->ECS, *out_entity, &l_meshRenderer->Header);
+		ECS_AddComponent_MeshRenderer(p_sandboxApplication->ECS, *out_entity, l_meshRenderer);
 	}
 
 	if (p_sandboxCubeCreationInfo->WithMeshBound)
 	{
-		PhysicsBody_PTR l_physicsBody = (PhysicsBody_PTR)ECS_Component_Alloc(PHYSICSBODY_COMPONENT_TYPE, sizeof(PhysicsBody));
-		ECS_AddComponent(p_sandboxApplication->ECS, *out_entity, &l_physicsBody->Header);
+		PhysicsBody_PTR l_physicsBody = ECS_Component_Alloc_PhysicsBody();
+		ECS_AddComponent_PhysicsBody(p_sandboxApplication->ECS, *out_entity, l_physicsBody);
 	}
 };
