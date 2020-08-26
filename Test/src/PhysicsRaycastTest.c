@@ -180,8 +180,8 @@ void TestInt_init(GameEngineApplication* l_app, TestIntTest* p_test)
 
 			Vector3f l_target = (Vector3f){ 0.0f, 0.0f,0.0f };
 			Matrix3f l_axis;
-			Mat_LookAtRotation_F(&l_transformInitInfo.LocalPosition, &l_target, &Vector3f_UP, &l_axis);
-			Quat_FromAxis(l_axis.Points, &l_transformInitInfo.LocalRotation);
+			Mat_LookAtRotation_F(&l_transformInitInfo.LocalPosition, &l_target, (const Vector3f_PTR)&Vector3f_UP, &l_axis);
+			Quat_FromAxis(&l_axis, &l_transformInitInfo.LocalRotation);
 			Quat_FromEulerAngle(&tmp_vec3_0, &l_transformInitInfo.LocalRotation);
 
 			l_transformInitInfo.LocalScale = (Vector3f){ 1.0f , 1.0f , 1.0f };
@@ -327,7 +327,7 @@ void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_
 #ifndef comment
 	{
 		Vector3f l_rootCenter = { 0.0f, 0.0f, 0.0f };
-		Gizmo_DrawTransform_Axis(l_interface->RenderInterface->GizmoBuffer, &l_rootCenter, &Vector3f_RIGHT, &Vector3f_UP, &Vector3f_FORWARD);
+		Gizmo_DrawTransform_Axis(l_interface->RenderInterface->GizmoBuffer, &l_rootCenter, (const Vector3f_PTR) &Vector3f_RIGHT, (const Vector3f_PTR)&Vector3f_UP, (const Vector3f_PTR)&Vector3f_FORWARD);
 	}
 #endif
 

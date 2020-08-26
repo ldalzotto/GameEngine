@@ -105,13 +105,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif // RENDER_V2
 	case WM_KEYDOWN:
 	{
-		InputKeyEvent l_inputKeyEvent = { .Header = AppEventType_INPUT_KEY_EVENT, .Key = wParam , .Type = InputKeyEventType_DOWN };
+		InputKeyEvent l_inputKeyEvent = { .Header = AppEventType_INPUT_KEY_EVENT, .Key = (int)wParam , .Type = InputKeyEventType_DOWN };
 		AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
 		return 0;
 	}
 	case WM_KEYUP:
 	{
-		InputKeyEvent l_inputKeyEvent = { .Header = AppEventType_INPUT_KEY_EVENT, .Key = wParam , .Type = InputKeyEventType_UP };
+		InputKeyEvent l_inputKeyEvent = { .Header = AppEventType_INPUT_KEY_EVENT, .Key = (int)wParam , .Type = InputKeyEventType_UP };
 		AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_inputKeyEvent);
 		return 0;
 	}

@@ -19,7 +19,7 @@ void Quat_Build_3f_1f(const Vector3f_PTR p_vec, float p_scal, Quaternion4f_PTR p
 void Quat_FromDirection(const Vector3f_PTR p_vec, Quaternion4f_PTR p_out);
 void Quat_RotateAround(const Vector3f_PTR p_axis, const  float p_angle, Quaternion4f_PTR out_quat);
 void Quat_ExtractAxis(const Quaternion4f_PTR quat, Matrix3f_PTR out_axis);
-void Quat_FromAxis(const float p_axis[3][3], Quaternion4f_PTR p_out);
+void Quat_FromAxis(const Matrix3f_PTR p_axis, Quaternion4f_PTR p_out);
 void Quat_FromEulerAngle(const Vector3f_PTR p_eulerAngle, Quaternion4f_PTR p_out);
 void Quat_FromTo(const Vector3f_PTR p_from, const  Vector3f_PTR p_to, Quaternion4f_PTR p_out);
 void Quat_conjugate(const Quaternion4f_PTR p_quat, Quaternion4f_PTR p_out);

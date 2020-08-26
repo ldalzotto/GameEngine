@@ -441,17 +441,18 @@ void Quat_FromDirection(const Vector3f_PTR p_vec, Quaternion4f_PTR p_out)
 	p_out->w = cosf(l_angle * 0.5f);
 };
 
-void Quat_FromAxis(const float p_axis[3][3], Quaternion4f_PTR p_out)
+void Quat_FromAxis(const Matrix3f_PTR p_axis, Quaternion4f_PTR p_out)
 {
-	const float* l_right = p_axis[0];
-	const float* l_up = p_axis[1];
-	const float* l_forward = p_axis[2];
+	const Vector3f_PTR l_right = &p_axis->Right;
+	const Vector3f_PTR l_up = &p_axis->Up;
+	const Vector3f_PTR l_forward = &p_axis->Forward;
+	
 
 	// We calculate the four square roots and get the higher one.
-	float qxDiag = fmaxf(1 + l_right[0] - l_up[1] - l_forward[2], 0.0f);
-	float qyDiag = fmaxf(1 + l_up[1] - l_right[0] - l_forward[2], 0.0f);
-	float qzDiag = fmaxf(1 + l_forward[2] - l_right[0] - l_up[1], 0.0f);
-	float qwDiag = fmaxf(1 + l_right[0] + l_up[1] + l_forward[2], 0.0f);
+	float qxDiag = fmaxf(1 + l_right->x - l_up->y - l_forward->z, 0.0f);
+	float qyDiag = fmaxf(1 + l_up->y - l_right->x - l_forward->z, 0.0f);
+	float qzDiag = fmaxf(1 + l_forward->z -l_right->x - l_up->y, 0.0f);
+	float qwDiag = fmaxf(1 +l_right->x + l_up->y + l_forward->z, 0.0f);
 
 	int l_diagonalIndex = 0;
 	float l_biggestDiagonalValue = qxDiag;
@@ -479,32 +480,32 @@ void Quat_FromAxis(const float p_axis[3][3], Quaternion4f_PTR p_out)
 	case 0:
 	{
 		p_out->x = l_biggestDiagonalValue;
-		p_out->y = (l_right[1] + l_up[0]) * mult;
-		p_out->z = (l_forward[0] + l_right[2]) * mult;
-		p_out->w = (l_up[2] - l_forward[1]) * mult;
+		p_out->y = (l_right->y + l_up->x) * mult;
+		p_out->z = (l_forward->x + l_right->z) * mult;
+		p_out->w = (l_up->z - l_forward->y) * mult;
 	}
 	break;
 	case 1:
 	{
-		p_out->x = (l_right[1] + l_up[0]) * mult;
+		p_out->x = (l_right->y + l_up->x) * mult;
 		p_out->y = l_biggestDiagonalValue;
-		p_out->z = (l_up[2] + l_forward[1]) * mult;
-		p_out->w = (l_forward[0] - l_right[2]) * mult;
+		p_out->z = (l_up->z + l_forward->y) * mult;
+		p_out->w = (l_forward->x - l_right->z) * mult;
 	}
 	break;
 	case 2:
 	{
-		p_out->x = (l_forward[0] + l_right[2]) * mult;
-		p_out->y = (l_up[2] + l_forward[1]) * mult;
+		p_out->x = (l_forward->x + l_right->z) * mult;
+		p_out->y = (l_up->z + l_forward->y) * mult;
 		p_out->z = l_biggestDiagonalValue;
-		p_out->w = (l_right[1] - l_up[0]) * mult;
+		p_out->w = (l_right->y - l_up->x) * mult;
 	}
 	break;
 	case 3:
 	{
-		p_out->x = (l_up[2] - l_forward[1]) * mult;
-		p_out->y = (l_forward[0] - l_right[2]) * mult;
-		p_out->z = (l_right[1] - l_up[0]) * mult;
+		p_out->x = (l_up->z - l_forward->y) * mult;
+		p_out->y = (l_forward->x - l_right->z) * mult;
+		p_out->z = (l_right->y - l_up->x) * mult;
 		p_out->w = l_biggestDiagonalValue;
 	}
 	break;

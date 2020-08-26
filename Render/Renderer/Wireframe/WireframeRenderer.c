@@ -8,7 +8,6 @@
 #include "Raster/Rasterizer.h"
 #include "Renderer/Draw/DrawFunctions.h"
 #include "DataStructures/ARRAY.h"
-#include "Clock/Clock.h"
 
 
 inline void Arr_PushBackRealloc_PolygonPipelineV2(ARRAY_PolygonPipelineV2_PTR p_arr, PolygonPipelineV2* p_polygon)
@@ -18,8 +17,6 @@ inline void Arr_PushBackRealloc_PolygonPipelineV2(ARRAY_PolygonPipelineV2_PTR p_
 
 void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
 {
-	TimeClockPrecision l_before = Clock_currentTime_mics();
-
 	WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 	Vector3c l_wireframeColor = { 255,0,0 };
 	Polygon4f tmp_poly_4f_0, tmp_poly_4f_1;
@@ -40,7 +37,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 					{
 						Polygon_VertexIndex_PTR l_polygon = &l_renderableObject->Mesh->Polygons.Memory[j];
 
-						PolygonPipelineV2 l_polygonPipeline = {0};
+						PolygonPipelineV2 l_polygonPipeline = { 0 };
 						l_polygonPipeline.RenderedObject = l_renderableObject;
 						l_polygonPipeline.PolygonIndex = j;
 
@@ -91,7 +88,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 				tmp_poly_4f_1 = l_polygonPipeline->TransformedPolygon;
 				tmp_poly_4f_1.v1.z = 1.0f; tmp_poly_4f_1.v2.z = 1.0f; tmp_poly_4f_1.v3.z = 1.0f;
 				Polygon_Mul_V4F_M4F(&tmp_poly_4f_1, p_input->GraphicsAPIToScreeMatrix, &tmp_poly_4f_0);
-				l_polygonPipeline->PixelPolygon = (Polygon2f) { tmp_poly_4f_0.v1.Vec3.Vec2, tmp_poly_4f_0.v2.Vec3.Vec2 , tmp_poly_4f_0.v3.Vec3.Vec2 };
+				l_polygonPipeline->PixelPolygon = (Polygon2f){ tmp_poly_4f_0.v1.Vec3.Vec2, tmp_poly_4f_0.v2.Vec3.Vec2 , tmp_poly_4f_0.v3.Vec3.Vec2 };
 			}
 
 			// Rasterize
@@ -105,8 +102,6 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 
 	}
 
-	TimeClockPrecision l_after = Clock_currentTime_mics();
-	printf("%d \n", l_after - l_before);
 };
 
 

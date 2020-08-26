@@ -323,9 +323,9 @@ void ECS_EntityFilter_UnRegister(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter
 
 void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 {
-	while (p_ecs->GlobalEvents.PendingEvents.Size > 0)
+	for (size_t l_eventIndex = 0; l_eventIndex < p_ecs->GlobalEvents.PendingEvents.Size; l_eventIndex++)
 	{
-		ECS_EventMessage_PTR l_eventMessage = p_ecs->GlobalEvents.PendingEvents.Memory[0];
+		ECS_EventMessage_PTR l_eventMessage = p_ecs->GlobalEvents.PendingEvents.Memory[l_eventIndex];
 		switch (l_eventMessage->MessageType)
 		{
 		case ECSEventMessageType_ADD_ENTITY:
@@ -341,7 +341,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 			if (Arr_Find_EqualsEntityHANDLE_ECSEntityHANDLE(&p_ecs->EntityContainer, l_removeEntityMessage->Entity, &l_removeIndex))
 			{
 				ECS_Entity_HANDLE l_removedEntity = p_ecs->EntityContainer.Memory[l_removeIndex];
-
+				 
 				for (size_t i = l_removedEntity->Components.Size - 1; i < l_removedEntity->Components.Size; --i)
 				{
 					ECS_ComponentHeader_HANDLE l_component = l_removedEntity->Components.Memory[i];
@@ -420,9 +420,10 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 		break;
 		}
 
-		free(p_ecs->GlobalEvents.PendingEvents.Memory[0]);
-		Arr_Erase_ECSEventMessagePTR(&p_ecs->GlobalEvents.PendingEvents, 0);
+		free(l_eventMessage);
 	}
+
+	Arr_Clear(&p_ecs->GlobalEvents.PendingEvents.array);
 }
 
 /****************** ECS *******************/

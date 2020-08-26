@@ -31,7 +31,7 @@ void MyLog_pushLog(Log* p_myLog, LogLevel p_logLevel, char* p_filePath, int p_li
 	l_logMessage.FileLine = p_line;
 
 	{
-		strcpy((char*)l_logMessage.Message, p_message);
+		strcpy_s((char*)l_logMessage.Message, sizeof(l_logMessage.Message), p_message);
 	}
 
 	{
@@ -78,7 +78,7 @@ void MyLog_processLogs(Log* p_myLog)
 		}
 
 		char  l_frameCountStr[256] = "";
-		ultoa(l_message->FrameNb, l_frameCountStr, 10);
+		ultoa((unsigned long)l_message->FrameNb, l_frameCountStr, 10);
 
 		char l_lineCountStr[256] = "";
 		itoa(l_message->FileLine, l_lineCountStr, 10);
