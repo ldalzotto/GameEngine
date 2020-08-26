@@ -23,10 +23,10 @@ ARRAY_ERASE_FUNCTION(EntityFilterPtr, Array_EntityFilterPtr_PTR, ECS_EntityFilte
 extern const HashMapEntryLayout HashMapEntry_EntityFilterByFilteredComponentType_Layout;
 extern const HashMapEntryLayout_PTR HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR;
 
-inline void HashMap_Alloc_EntityFilterEvents(HashMap_EntityFilterEvents_PTR p_hashMap, size_t(*HashFn)(ECS_ComponentType*), size_t p_initialCapacity) { HashMap_Alloc((HashMap_PTR)p_hashMap, HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR, (HashMap_HashFn)HashFn, p_initialCapacity); }
-inline void HashMap_Free_EntityFilterEvents(HashMap_EntityFilterEvents_PTR p_hashMap) { HashMap_Free((HashMap_PTR)p_hashMap); }
-inline char HashMap_PushKeyValueRealloc_EntityFilterEvents(HashMap_EntityFilterEvents_PTR p_hashMap, ECS_ComponentType p_key, Array_EntityFilterPtr_PTR p_value) { return HashMap_PushKeyValueRealloc((HashMap_PTR)p_hashMap, HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR, (char*)&p_key, (char*)p_value); };
-inline char Hashmap_GetValue_EntityFilterEvents(HashMap_EntityFilterEvents_PTR p_hashMap, ECS_ComponentType p_key, Array_EntityFilterPtr_PTR* out_value) { return HashMap_GetValue((HashMap_PTR)p_hashMap, HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR, (char*)&p_key, (char**)out_value); }
+HASHMAP_ALLOC_FUNCTION(EntityFilterEvents, HashMap_EntityFilterEvents_PTR, ECS_ComponentType*, HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR);
+HASHMAP_FREE_FUNCTION(EntityFilterEvents, HashMap_EntityFilterEvents_PTR);
+HASHMAP_PUSH_KEYVALUE_REALLOC_FUNCTION(EntityFilterEvents, HashMap_EntityFilterEvents_PTR, ECS_ComponentType*, Array_EntityFilterPtr_PTR, HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR);
+HASHMAP_GETVALUE_FUNCTION(EntityFilterEvents, HashMap_EntityFilterEvents_PTR, ECS_ComponentType*, Array_EntityFilterPtr_PTR, HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR);
 
 void ECS_EntityFilter_Register(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter);
 void ECS_EntityFilter_UnRegister(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter);

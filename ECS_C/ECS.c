@@ -276,11 +276,11 @@ void ECS_EntityFilter_Register(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter)
 	{
 		ECS_ComponentType l_componentType = p_entityFilter->FilteredComponentTypes.Memory[i];
 		Array_EntityFilterPtr_PTR l_entityFilters = NULL;
-		if (!Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_entityFilters))
+		if (!Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, &l_componentType, &l_entityFilters))
 		{
 			Array_EntityFilterPtr l_insertedEntityFilters; Arr_Alloc_EntityFilterPtr(&l_insertedEntityFilters, 0);
-			HashMap_PushKeyValueRealloc_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_insertedEntityFilters);
-			Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_entityFilters);
+			HashMap_PushKeyValueRealloc_EntityFilterEvents(&p_ecs->EntityFilterEvents, &l_componentType, &l_insertedEntityFilters);
+			Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, &l_componentType, &l_entityFilters);
 		}
 
 		Arr_PushBackRealloc_EntityFilterPtr(l_entityFilters, p_entityFilter);
@@ -305,7 +305,7 @@ void ECS_EntityFilter_UnRegister(ECS* p_ecs, ECS_EntityFilter_PTR p_entityFilter
 	{
 		ECS_ComponentType l_componentType = p_entityFilter->FilteredComponentTypes.Memory[i];
 		Array_EntityFilterPtr_PTR l_entityFilters = NULL;
-		if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_componentType, &l_entityFilters))
+		if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, &l_componentType, &l_entityFilters))
 		{
 			for (size_t j = 0; j < l_entityFilters->Size; j++)
 			{
@@ -348,7 +348,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 
 					//We update EntityFilter states
 					Array_EntityFilterPtr_PTR l_entityFilters;
-					if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_component->ComponentType, &l_entityFilters))
+					if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, &l_component->ComponentType, &l_entityFilters))
 					{
 						for (size_t i = 0; i < l_entityFilters->Size; i++)
 						{
@@ -372,7 +372,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 			{
 				//We update EntityFilter states
 				Array_EntityFilterPtr_PTR l_entityFilters;
-				if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_addComponentMessage->AllocatedComponent->ComponentType, &l_entityFilters))
+				if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, &l_addComponentMessage->AllocatedComponent->ComponentType, &l_entityFilters))
 				{
 					for (size_t i = 0; i < l_entityFilters->Size; i++)
 					{
@@ -403,7 +403,7 @@ void ECS_GlobalEvents_ProcessMessages(ECS* p_ecs)
 				{
 					//We update EntityFilter states
 					Array_EntityFilterPtr_PTR l_entityFilters;
-					if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, l_removeComponentMessage->RemovedComponent->ComponentType, &l_entityFilters))
+					if (Hashmap_GetValue_EntityFilterEvents(&p_ecs->EntityFilterEvents, &l_removeComponentMessage->RemovedComponent->ComponentType, &l_entityFilters))
 					{
 						for (size_t i = 0; i < l_entityFilters->Size; i++)
 						{
