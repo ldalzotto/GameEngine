@@ -65,7 +65,7 @@ void CameraRenderSystem_ConsumeECSEvents(CameraRenderSystem_PTR p_cameraRenderSy
 		}
 	}
 
-	Arr_Clear((Array_PTR)&p_cameraRenderSystem->EntityFilter.EntityFilterEvents);
+	Arr_Clear(&p_cameraRenderSystem->EntityFilter.EntityFilterEvents.array);
 };
 
 void CameraRenderSystem_Update(CameraRenderSystem_PTR p_system)

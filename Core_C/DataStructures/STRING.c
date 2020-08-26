@@ -7,7 +7,7 @@
 
 void String_Alloc(String_PTR p_string, size_t p_initialCapacity)
 {
-	Arr_Alloc((Array_PTR)p_string, sizeof(char), p_initialCapacity);
+	Arr_Alloc(&p_string->array, sizeof(char), p_initialCapacity);
 
 	if (p_string->Size > 0)
 	{
@@ -15,12 +15,12 @@ void String_Alloc(String_PTR p_string, size_t p_initialCapacity)
 	}
 	char l_nulChar = (char)NULL;
 
-	Arr_PushBackRealloc((Array_PTR)p_string, sizeof(char), &l_nulChar);
+	Arr_PushBackRealloc(&p_string->array, sizeof(char), &l_nulChar);
 };
 
 void String_Free(String_PTR p_string)
 {
-	Arr_Free((Array_PTR)p_string);
+	Arr_Free(&p_string->array);
 };
 
 void String_AppendRawRealloc(String_PTR p_string, char* p_appended)
@@ -28,11 +28,11 @@ void String_AppendRawRealloc(String_PTR p_string, char* p_appended)
 	size_t l_insertedStringLength = strlen(p_appended);
 	if (p_string->Size >= 2)
 	{
-		HANDLE_ERR(Arr_InsertAtRealloc((Array_PTR)p_string, sizeof(char), p_appended, l_insertedStringLength, p_string->Size - 1));
+		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), p_appended, l_insertedStringLength, p_string->Size - 1));
 	}
 	else
 	{
-		HANDLE_ERR(Arr_InsertAtRealloc((Array_PTR)p_string, sizeof(char), p_appended, l_insertedStringLength, 0));
+		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), p_appended, l_insertedStringLength, 0));
 	}
 };
 
@@ -41,11 +41,11 @@ void String_AppendRawNoRealloc(String_PTR p_string, char* p_appended)
 	size_t l_insertedStringLength = strlen(p_appended);
 	if (p_string->Size >= 2)
 	{
-		HANDLE_ERR(Arr_InsertAtNoRealloc((Array_PTR)p_string, sizeof(char), p_appended, l_insertedStringLength, p_string->Size - 1));
+		HANDLE_ERR(Arr_InsertAtNoRealloc(&p_string->array, sizeof(char), p_appended, l_insertedStringLength, p_string->Size - 1));
 	}
 	else
 	{
-		HANDLE_ERR(Arr_InsertAtNoRealloc((Array_PTR)p_string, sizeof(char), p_appended, l_insertedStringLength, 0));
+		HANDLE_ERR(Arr_InsertAtNoRealloc(&p_string->array, sizeof(char), p_appended, l_insertedStringLength, 0));
 	}
 };
 
@@ -56,11 +56,11 @@ void String_AppendSliceRealloc(String_PTR p_string, StringSLICE_PTR p_appended)
 
 	if (p_string->Size >= 2)
 	{
-		HANDLE_ERR(Arr_InsertAtRealloc((Array_PTR)p_string, sizeof(char), l_appendedString, l_charactersInserted, p_string->Size - 1));
+		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), l_appendedString, l_charactersInserted, p_string->Size - 1));
 	}
 	else
 	{
-		HANDLE_ERR(Arr_InsertAtRealloc((Array_PTR)p_string, sizeof(char), l_appendedString, l_charactersInserted, 0));
+		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), l_appendedString, l_charactersInserted, 0));
 	}
 };
 
@@ -68,14 +68,14 @@ void String_ClearRealloc(String_PTR p_string)
 {
 	p_string->Size = 0;
 	char l_nulChar = (char)NULL;
-	HANDLE_ERR(Arr_PushBackRealloc((Array_PTR)p_string, sizeof(char), &l_nulChar));
+	HANDLE_ERR(Arr_PushBackRealloc(&p_string->array, sizeof(char), &l_nulChar));
 };
 
 void String_ClearNoRealloc(String_PTR p_string)
 {
 	p_string->Size = 0;
 	char l_nulChar = (char)NULL;
-	HANDLE_ERR(Arr_PushBackNoRealloc((Array_PTR)p_string, sizeof(char), &l_nulChar));
+	HANDLE_ERR(Arr_PushBackNoRealloc(&p_string->array, sizeof(char), &l_nulChar));
 };
 
 bool String_Find(StringSLICE_PTR p_stringSlice, StringSLICE_PTR p_comparedStr, size_t* p_outfoundIndex)

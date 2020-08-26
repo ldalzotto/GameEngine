@@ -12,8 +12,8 @@ bool Rasterize_LineClipped(
 	Vector2i_PTR out_clipped_begin,
 	Vector2i_PTR out_clipped_end);
 
-inline void Arr_Alloc_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array, size_t p_initialSize) { Arr_Alloc((Array_PTR)p_array, sizeof(RASTERIZATIONSTEP), p_initialSize); }
-inline void Arr_Free_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array) { Arr_Free((Array_PTR)p_array); }
+inline void Arr_Alloc_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array, size_t p_initialSize) { Arr_Alloc(&p_array->array, sizeof(RASTERIZATIONSTEP), p_initialSize); }
+inline void Arr_Free_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array) { Arr_Free(&p_array->array); }
 
-inline void Arr_Clear_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array) { Arr_Clear((Array_PTR)p_array); };
-inline void Arr_Resize_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array, size_t p_newCapacity) { HANDLE_ERR(Arr_Resize((Array_PTR)p_array, sizeof(RASTERIZATIONSTEP), p_newCapacity)); };
+inline void Arr_Clear_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array) { Arr_Clear(&p_array->array); };
+inline void Arr_Resize_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array, size_t p_newCapacity) { HANDLE_ERR(Arr_Resize(&p_array->array, sizeof(RASTERIZATIONSTEP), p_newCapacity)); };

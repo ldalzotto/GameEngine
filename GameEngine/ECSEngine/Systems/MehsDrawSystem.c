@@ -62,7 +62,7 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 		}
 	}
 
-	Arr_Clear((Array_PTR)&p_meshDrawSystem->EntityFilter.EntityFilterEvents);
+	Arr_Clear(&p_meshDrawSystem->EntityFilter.EntityFilterEvents.array);
 };
 
 

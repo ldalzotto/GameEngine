@@ -11,20 +11,20 @@
 
 void GizmoBuffer_alloc(GizmoBuffer* p_buffer)
 {
-	Arr_Alloc((Array_PTR)&p_buffer->Lines, sizeof(GizmoLine), 0);
-	Arr_Alloc((Array_PTR)&p_buffer->Vertices, sizeof(GizmoVertex), 0);
+	Arr_Alloc(&p_buffer->Lines.array, sizeof(GizmoLine), 0);
+	Arr_Alloc(&p_buffer->Vertices.array, sizeof(GizmoVertex), 0);
 };
 
 void GizmoBuffer_clear(GizmoBuffer* p_buffer)
 {
-	Arr_Clear((Array_PTR)&p_buffer->Lines);
-	Arr_Clear((Array_PTR)&p_buffer->Vertices);
+	Arr_Clear(&p_buffer->Lines.array);
+	Arr_Clear(&p_buffer->Vertices.array);
 };
 
 void GizmoBuffer_free(GizmoBuffer* p_buffer)
 {
-	Arr_Free((Array_PTR)&p_buffer->Lines);
-	Arr_Free((Array_PTR)&p_buffer->Vertices);
+	Arr_Free(&p_buffer->Lines.array);
+	Arr_Free(&p_buffer->Vertices.array);
 };
 
 void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer)
@@ -69,14 +69,14 @@ void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_t
 void Gizmo_drawLine_indices(GizmoBuffer* p_gizmo, GizmoVertexIndex* p_begin, GizmoVertexIndex* p_end, const Vector3c* p_color)
 {
 	GizmoLine l_line = { *p_begin , *p_end, *p_color };
-	Arr_PushBackRealloc((Array_PTR)&p_gizmo->Lines, sizeof(l_line), (char*)&l_line);
+	Arr_PushBackRealloc(&p_gizmo->Lines.array, sizeof(l_line), (char*)&l_line);
 }
 
 void Gizmo_pushVertex(GizmoBuffer* p_gizmo, const Vector3f_PTR p_position, GizmoVertexIndex* p_out_index)
 {
 	GizmoVertex l_gizmoVertex = {0};
 	l_gizmoVertex.WorldPosition.Vec3 = *p_position; l_gizmoVertex.WorldPosition.Vec3_w = 1.0f;
-	Arr_PushBackRealloc((Array_PTR)&p_gizmo->Vertices, sizeof(l_gizmoVertex), (char*)&l_gizmoVertex);
+	Arr_PushBackRealloc(&p_gizmo->Vertices.array, sizeof(l_gizmoVertex), (char*)&l_gizmoVertex);
 	*p_out_index = p_gizmo->Vertices.Size - 1;
 };
 

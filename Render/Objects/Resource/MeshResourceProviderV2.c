@@ -7,10 +7,10 @@
 #include "Functional/Hash.h"
 #include "Mesh.h"
 
-inline void Arr_Alloc_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider) { Arr_Alloc((Array_PTR)p_resourceProvider, sizeof(MeshResource_HANDLE), 0); };
-inline void Arr_Free_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider) { Arr_Free((Array_PTR)p_resourceProvider); };
-inline void Arr_PushBackRealloc_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider, MeshResource_HANDLE* p_value) { HANDLE_ERR(Arr_PushBackRealloc((Array_PTR)p_resourceProvider, sizeof(MeshResource_HANDLE), (char*)p_value)); };
-inline void Arr_Erase_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider, size_t p_index) { HANDLE_ERR(Arr_Erase((Array_PTR)p_resourceProvider, sizeof(MeshResource_HANDLE), p_index)); };
+inline void Arr_Alloc_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider) { Arr_Alloc(&p_resourceProvider->array, sizeof(MeshResource_HANDLE), 0); };
+inline void Arr_Free_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider) { Arr_Free(&p_resourceProvider->array); };
+inline void Arr_PushBackRealloc_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider, MeshResource_HANDLE* p_value) { HANDLE_ERR(Arr_PushBackRealloc(&p_resourceProvider->array, sizeof(MeshResource_HANDLE), (char*)p_value)); };
+inline void Arr_Erase_MeshResourceProvider(MeshResource_Provider_PTR p_resourceProvider, size_t p_index) { HANDLE_ERR(Arr_Erase(&p_resourceProvider->array, sizeof(MeshResource_HANDLE), p_index)); };
 
 void MeshResourceProvider_Alloc(MeshResource_Provider_PTR p_provider)
 {

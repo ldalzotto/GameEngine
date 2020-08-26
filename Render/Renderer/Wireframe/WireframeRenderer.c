@@ -13,7 +13,7 @@
 
 inline void Arr_PushBackRealloc_PolygonPipelineV2(ARRAY_PolygonPipelineV2_PTR p_arr, PolygonPipelineV2* p_polygon)
 {
-	Arr_PushBackRealloc((Array_PTR)p_arr, sizeof(PolygonPipelineV2), (char*)p_polygon);
+	Arr_PushBackRealloc(&p_arr->array, sizeof(PolygonPipelineV2), (char*)p_polygon);
 };
 
 void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
@@ -112,18 +112,18 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 
 void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 {
-	Arr_Alloc((Array_PTR)&p_memory->PolygonPipelines, sizeof(PolygonPipelineV2), 0);
+	Arr_Alloc(&p_memory->PolygonPipelines.array, sizeof(PolygonPipelineV2), 0);
 	Arr_Alloc_RasterisationStep(&p_memory->RasterizedPixelsBuffer, 0);
 };
 void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
 {
-	Arr_Clear((Array_PTR)&p_memory->PolygonPipelines);
+	Arr_Clear(&p_memory->PolygonPipelines.array);
 	Arr_Clear_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 	Arr_Resize_RasterisationStep(&p_memory->RasterizedPixelsBuffer, p_width > height ? p_width * 2 : height * 2);
 
 };
 void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 {
-	Arr_Free((Array_PTR)&p_memory->PolygonPipelines);
+	Arr_Free(&p_memory->PolygonPipelines.array);
 	Arr_Free_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 };

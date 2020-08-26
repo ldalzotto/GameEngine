@@ -7,9 +7,9 @@
 #include "DataStructures/String.h"
 
 
-inline void Arr_Alloc_LogMessage(Array_LogMessage_PTR p_array, size_t p_initlaCapacity) { Arr_Alloc((Array_PTR)p_array, sizeof(LogMessage), p_initlaCapacity); };
-inline void Arr_Free_LogMessage(Array_LogMessage_PTR p_array) { Arr_Free((Array_PTR)p_array); };
-inline void Arr_PushBackRealloc_LogMessage(Array_LogMessage_PTR p_array, LogMessage_PTR p_message) { Arr_PushBackRealloc((Array_PTR)p_array, sizeof(LogMessage), (char*)p_message); };
+inline void Arr_Alloc_LogMessage(Array_LogMessage_PTR p_array, size_t p_initlaCapacity) { Arr_Alloc(&p_array->array, sizeof(LogMessage), p_initlaCapacity); };
+inline void Arr_Free_LogMessage(Array_LogMessage_PTR p_array) { Arr_Free(&p_array->array); };
+inline void Arr_PushBackRealloc_LogMessage(Array_LogMessage_PTR p_array, LogMessage_PTR p_message) { Arr_PushBackRealloc(&p_array->array, sizeof(LogMessage), (char*)p_message); };
 
 void MyLog_build(Log* p_myLog, Clock_PTR p_clock)
 {
@@ -96,6 +96,6 @@ void MyLog_processLogs(Log* p_myLog)
 		printf("\033[0m");
 	}
 
-	Arr_Clear((Array_PTR)&p_myLog->LogMessages);
+	Arr_Clear(&p_myLog->LogMessages.array);
 };
 

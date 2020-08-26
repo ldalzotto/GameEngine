@@ -10,9 +10,16 @@ typedef struct Array_TYP
 } Array, *Array_PTR;
 
 #define ARRAY_TYPE_DEFINITION(ArrayElement) \
-ArrayElement* Memory; \
-size_t Size; \
-size_t Capacity;
+union \
+{ \
+	struct { Array array; }; \
+	struct \
+	{ \
+		ArrayElement* Memory; \
+		size_t Size; \
+		size_t Capacity; \
+	}; \
+};
 
 typedef struct ArrayIterator_TYP
 {

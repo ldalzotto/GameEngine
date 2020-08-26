@@ -29,7 +29,7 @@ void InputGlobalEvent_Initialize()
 
 void InputGLobalEvent_ConsumeEvents()
 {
-	Arr_Clear((Array_PTR)&GInputGlobalEvents);
+	Arr_Clear(&GInputGlobalEvents.array);
 	GInputMouseGlobalEvent_UpdatedThisFrame = 0;
 };
 
@@ -239,7 +239,7 @@ void Input_build(Input* p_input, Window* p_window, Log_PTR Log)
 
 	Arr_Alloc_KeyStateFlag(&p_input->InputState, (size_t)InputKey_LAST);
 	Arr_Zeroing_KeyStateFlag(&p_input->InputState);
-	Arr_Clear((Array_PTR)&p_input->InputState);
+	Arr_Clear(&p_input->InputState.array);
 
 	Arr_Alloc_InputKey(&p_input->InputKeysJustPressedThisFrame, 0);
 	Arr_Alloc_InputKey(&p_input->InputKeysReleasedThisFrame, 0);
@@ -278,7 +278,7 @@ void Input_consumeInputEvents(Input_PTR p_input)
 		Input_handleEvent(p_input, &p_input->InputEventsLastFrame.Memory[i]);
 	}
 
-	Arr_Clear((Array_PTR)&p_input->InputEventsLastFrame);
+	Arr_Clear(&p_input->InputEventsLastFrame.array);
 };
 
 void Input_free(Input* p_input)
@@ -303,7 +303,7 @@ void Input_newFrame(Input* p_input)
 			p_input->InputState.Memory[p_input->InputKeysReleasedThisFrame.Memory[i]] = KeyStateFlag_NONE;
 		}
 
-		Arr_Clear((Array_PTR)&p_input->InputKeysReleasedThisFrame);
+		Arr_Clear(&p_input->InputKeysReleasedThisFrame.array);
 	}
 
 	for (size_t i = 0; i < p_input->InputKeysJustPressedThisFrame.Size; i++)
@@ -313,7 +313,7 @@ void Input_newFrame(Input* p_input)
 		InputGlobalEvent l_event = (InputGlobalEvent){.Key = l_inputKeyCode , .Type = InputGlobalEventType_REPEAT};
 		Arr_PushBackRealloc_InputGlobalEvent(&p_input->InputEventsLastFrame, &l_event);
 	}
-	Arr_Clear((Array_PTR)&p_input->InputKeysJustPressedThisFrame);
+	Arr_Clear(&p_input->InputKeysJustPressedThisFrame.array);
 
 	Input_consumeInputEvents(p_input);
 

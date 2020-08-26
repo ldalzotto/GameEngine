@@ -64,7 +64,7 @@ void PhysicsSystem_ConsumeECSEvents(PhysicsSystem_PTR p_physicsSystem, PhysicsIn
 		}
 	}
 
-	Arr_Clear((Array_PTR)&p_physicsSystem->PhysicsAwareFilter.EntityFilterEvents);
+	Arr_Clear(&p_physicsSystem->PhysicsAwareFilter.EntityFilterEvents.array);
 };
 
 void PhysicsSystem_Update(PhysicsSystem_PTR p_physicsSystem, PhysicsInterface_PTR p_physicsInterface)
@@ -80,5 +80,5 @@ void PhysicsSystem_Free(PhysicsSystem_PTR p_physicsSystem, ECS* p_ecs, PhysicsIn
 
 	ECS_EntityFilter_Free(&p_physicsSystem->PhysicsAwareFilter);
 
-	Arr_Free((Array_PTR)&p_physicsSystem->PhysicsOperations);
+	Arr_Free(&p_physicsSystem->PhysicsOperations.array);
 };

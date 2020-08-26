@@ -365,7 +365,7 @@ void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_
 				Gizmo_DrawBox(l_interface->RenderInterface->GizmoBuffer, l_hits.Memory[i].Collider->Box, &tmp_mat_0, false, &l_color);
 			}
 		}
-		Arr_Free((Array_PTR)&l_hits);
+		Arr_Free(&l_hits.array);
 	}
 
 	// Mouse raycast

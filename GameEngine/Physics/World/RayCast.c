@@ -106,6 +106,6 @@ bool RayCast_Against(Array_BoxColliderPTR_PTR p_comparedColliders, Vector3f_PTR 
 		}
 
 	}
-	Arr_Free((Array_PTR)&l_hits);
+	Arr_Free(&l_hits.array);
 	return l_return;
 };
