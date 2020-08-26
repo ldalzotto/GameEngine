@@ -110,6 +110,7 @@ ECS_Entity_HANDLE ECS_Entity_Alloc()
 void ECS_Entity_Free(ECS_Entity_HANDLE p_entity)
 {
 	Arr_Free_ComponentHeaderHandle(&p_entity->Components);
+	free(p_entity);
 }
 
 char ECS_Entity_AddComponent(ECS_Entity_HANDLE p_entity, ECS_ComponentHeader_HANDLE p_component)

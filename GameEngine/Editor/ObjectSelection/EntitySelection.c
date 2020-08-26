@@ -115,24 +115,30 @@ void EntitySelection_update(EntitySelection* p_entitySelection)
 			TransformGizmo_resetState(&p_entitySelection->TransformGizmoV2, &l_entitySelectionState->TransformGizmoSelectionState);
 		}
 
-		if (!TransformGizmoSelectionState_anyGizmoSelected(&p_entitySelection->EntitySelectionState.TransformGizmoSelectionState))
 		{
-			// Switch gizmo
-			SelectedGizmoType l_newSelectedGizmoType;
-			if (TransformGizmo_detemineGizmoTypeSwitch(p_entitySelection, &l_newSelectedGizmoType))
+			// The selected entity can potentially be unselected (if click and not on gizmo)
+			if (l_entitySelectionState->SelectedEntity)
 			{
-				TransformGizmo_siwtchGizmoType(p_entitySelection, l_newSelectedGizmoType);
-			}
-		}
-		else
-		{
-			// Execute gizmo transformation
-			if (Input_getState(p_entitySelection->Input, InputKey_MOUSE_BUTTON_1, KeyStateFlag_PRESSED))
-			{
-				Vector2d tmp_vec2 = { 0.0, 0.0 };
-				if (!Vec_Equals_2d(&p_entitySelection->Input->InputMouse.MouseDelta, &tmp_vec2))
+				if (!TransformGizmoSelectionState_anyGizmoSelected(&p_entitySelection->EntitySelectionState.TransformGizmoSelectionState))
 				{
-					EntitySelection_executeGizmoTransformation(p_entitySelection);
+					// Switch gizmo
+					SelectedGizmoType l_newSelectedGizmoType;
+					if (TransformGizmo_detemineGizmoTypeSwitch(p_entitySelection, &l_newSelectedGizmoType))
+					{
+						TransformGizmo_siwtchGizmoType(p_entitySelection, l_newSelectedGizmoType);
+					}
+				}
+				else
+				{
+					// Execute gizmo transformation
+					if (Input_getState(p_entitySelection->Input, InputKey_MOUSE_BUTTON_1, KeyStateFlag_PRESSED))
+					{
+						Vector2d tmp_vec2 = { 0.0, 0.0 };
+						if (!Vec_Equals_2d(&p_entitySelection->Input->InputMouse.MouseDelta, &tmp_vec2))
+						{
+							EntitySelection_executeGizmoTransformation(p_entitySelection);
+						}
+					}
 				}
 			}
 		}
