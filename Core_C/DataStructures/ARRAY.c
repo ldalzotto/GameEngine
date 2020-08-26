@@ -4,6 +4,30 @@
 
 #include "Error/ErrorHandler.h"
 
+inline void memcpy_arraysafe_dist(char* p_dist, const char* p_source, const size_t p_size, const Array_PTR p_distArray, const size_t p_distArrayElementSize)
+{
+#if BUFFER_OVERFLOW_INTERNAL_CONDITION
+	HandleBufferOverflowMemoryWrite(p_dist, p_size, p_distArray->Memory, p_distArray->Capacity * p_distArrayElementSize);
+#endif
+	memcpy(p_dist, p_source, p_size);
+};
+
+inline void memmove_arraysafe_dist(char* p_dist, const char* p_source, const size_t p_size, const Array_PTR p_distArray, const size_t p_distArrayElementSize)
+{
+#if BUFFER_OVERFLOW_INTERNAL_CONDITION
+	HandleBufferOverflowMemoryWrite(p_dist, p_size, p_distArray->Memory, p_distArray->Capacity * p_distArrayElementSize);
+#endif
+	memmove(p_dist, p_source, p_size);
+};
+
+inline void memset_arraysafe_dist(char* p_dist, int p_val, const size_t p_size, const Array_PTR p_distArray, const size_t p_distArrayElementSize)
+{
+#if BUFFER_OVERFLOW_INTERNAL_CONDITION
+	HandleBufferOverflowMemoryWrite(p_dist, p_size, p_distArray->Memory, p_distArray->Capacity * p_distArrayElementSize);
+#endif
+	memset(p_dist, p_val, p_size);
+};
+
 #define ARRAY_ELEMENTSIZE_PARAMETER_INPUT p_array, p_elementSize
 
 inline size_t Arr_GetCapacitySize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
@@ -33,7 +57,7 @@ void Arr_Free(Array_PTR p_array)
 
 void Arr_Zeroing(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
 {
-	memset(p_array->Memory, 0, Arr_GetCapacitySize(p_array, p_elementSize));
+	memset_arraysafe_dist(p_array->Memory, 0, Arr_GetCapacitySize(p_array, p_elementSize), p_array, p_elementSize);
 };
 
 void Arr_Clear(Array_PTR p_array)
@@ -73,7 +97,7 @@ char Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 	else
 	{
 		void* p_targetMemory = (char*)p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Size);
-		memcpy(p_targetMemory, p_value, p_elementSize);
+		memcpy_arraysafe_dist(p_targetMemory, p_value, p_elementSize, p_array, p_elementSize);
 		p_array->Size += 1;
 	}
 
@@ -112,9 +136,9 @@ char Arr_InsertAtRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value, s
 		if (p_array->Size - p_index > 0)
 		{
 			void* l_targetElement = (char*)p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_index + p_elementNb);
-			memmove(l_targetElement, l_initialElement, p_elementSize * (p_array->Size - p_index));
+			memmove_arraysafe_dist(l_targetElement, l_initialElement, p_elementSize * (p_array->Size - p_index), p_array, p_elementSize);
 		}
-		memcpy(l_initialElement, p_value, p_elementSize * p_elementNb);
+		memcpy_arraysafe_dist(l_initialElement, p_value, p_elementSize * p_elementNb, p_array, p_elementSize);
 		p_array->Size += p_elementNb;
 	}
 
@@ -145,7 +169,7 @@ char Arr_Erase(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_index)
 	if (p_index + 1 != p_array->Size)
 	{
 		void* p_targetMemory = (char*)p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_index);
-		memmove(p_targetMemory, (char*)p_targetMemory + p_elementSize, (p_array->Size - p_index - 1) * p_elementSize);
+		memmove_arraysafe_dist(p_targetMemory, (char*)p_targetMemory + p_elementSize, (p_array->Size - p_index - 1) * p_elementSize, p_array, p_elementSize);
 	}
 
 	p_array->Size -= 1;
@@ -182,7 +206,7 @@ void Arr_CopyToRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, Array_PTR p_target
 			Arr_Resize(p_target, p_elementSize, Arr_GetCapacitySize(p_array, p_elementSize));
 		}
 	
-		memcpy(p_target->Memory, p_array->Memory, l_sizeToCopy);
+		memcpy_arraysafe_dist(p_target->Memory, p_array->Memory, l_sizeToCopy, p_target, p_elementSize);
 		p_target->Size = p_array->Size;
 	}
 };

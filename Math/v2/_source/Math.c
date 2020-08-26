@@ -1060,9 +1060,8 @@ void Box_Build_F(BoxF_PTR p_box, Array_Vector3f_PTR p_points)
 void Box_ExtractPoints_F(const BoxF_PTR p_box, BoxFPoints_PTR p_out)
 {
 
+	p_out->Center = p_box->Center;
 	Vector3f tmp_vec3;
-
-	// Set gizmo positions
 	tmp_vec3 = (Vector3f){ p_box->Extend.x, p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_F);
 	tmp_vec3 = (Vector3f){ p_box->Extend.x, -p_box->Extend.y, p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_D_F);
 	tmp_vec3 = (Vector3f){ p_box->Extend.x, p_box->Extend.y, -p_box->Extend.z }; Vec_Add_3f_3f(&p_box->Center, &tmp_vec3, &p_out->R_U_B);
@@ -1083,7 +1082,7 @@ void Box_ExtractMinMax_F(const BoxF_PTR p_box, Vector3f_PTR out_min, Vector3f_PT
 void BoxPoints_Mul_F_M4F(const BoxFPoints_PTR p_boxPoints, const Matrix4f_PTR p_matrix, BoxFPoints_PTR p_out)
 {
 	Vector4f tmp_vec4_0, tmp_vec4_1;
-	for (short int i = 0; i < 8; i++)
+	for (short int i = 0; i < 9; i++)
 	{
 		tmp_vec4_0 = (Vector4f){ .Vec3 = p_boxPoints->Points[i], .Vec3_w = 1.0f };
 		Mat_Mul_M4F_V4F(p_matrix, &tmp_vec4_0, &tmp_vec4_1);

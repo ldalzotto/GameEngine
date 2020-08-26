@@ -1,7 +1,18 @@
 #include "HASHMAP.h"
 
+#include "Error/ErrorHandler.h"
+
 #include <string.h>
 #include <stdlib.h>
+
+inline void memcpy_hashmapsafe_dist(char* p_dist, const char* p_source, const size_t p_size, const HashMap_PTR p_distMap, const size_t p_distMapEntrySize)
+{
+#if BUFFER_OVERFLOW_INTERNAL_CONDITION
+	HandleBufferOverflowMemoryWrite(p_dist, p_size, p_distMap->Entries, p_distMap->Capacity * p_distMapEntrySize);
+#endif
+	memcpy(p_dist, p_source, p_size);
+};
+
 
 inline char* HashMapEntry_GetKey(HashMapEntryHeader_PTR p_header, const  HashMapEntryLayout_PTR p_entryLayout)
 {
@@ -57,7 +68,8 @@ void HashMap_ReallocateEntries(HashMap_PTR p_hashMap, const  HashMapEntryLayout_
 			{
 				char* l_key = HashMapEntry_GetKey(l_hashMapEntryCursor, p_entryLayout);
 				size_t l_index = HashMap_CalculateKeyIndex_FromKey(p_hashMap, l_key, p_newCapacity);
-				memcpy(HashMap_GetEntryMemory(l_newEntries, p_entryLayout, l_index), (char*)l_hashMapEntryCursor, p_entryLayout->TotalSize);
+				// memcpy(HashMap_GetEntryMemory(l_newEntries, p_entryLayout, l_index), (char*)l_hashMapEntryCursor, p_entryLayout->TotalSize);
+				memcpy_hashmapsafe_dist(HashMap_GetEntryMemory(l_newEntries, p_entryLayout, l_index), (char*)l_hashMapEntryCursor, p_entryLayout->TotalSize, p_hashMap, p_entryLayout->TotalSize);
 			}
 		}
 
@@ -99,9 +111,9 @@ char HashMap_PushKeyValueRealloc(HashMap_PTR p_hashMap, const  HashMapEntryLayou
 			char* l_hashMapEntryHeaderCursor = (char*)l_hashMapEntryHeader;
 			*l_hashMapEntryHeaderCursor = 1;
 			l_hashMapEntryHeaderCursor  = (char*)l_hashMapEntryHeader + p_entryLayout->KeyOffset;
-			memcpy(l_hashMapEntryHeaderCursor, p_key, p_entryLayout->KeySize);
+			memcpy_hashmapsafe_dist(l_hashMapEntryHeaderCursor, p_key, p_entryLayout->KeySize, p_hashMap, p_entryLayout->TotalSize);
 			l_hashMapEntryHeaderCursor = (char*)l_hashMapEntryHeader + p_entryLayout->ValueOffset;
-			memcpy(l_hashMapEntryHeaderCursor, p_value, p_entryLayout->ValueSize);
+			memcpy_hashmapsafe_dist(l_hashMapEntryHeaderCursor, p_value, p_entryLayout->ValueSize, p_hashMap, p_entryLayout->TotalSize);
 		}
 	}
 

@@ -94,15 +94,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_windowResizeEvent);
 		return 0;
 	}
-	//TODO remove when renderV2 is ok
-#if RENDER_V2
 	case WM_PAINT:
 	{
 		AppEvent_Header l_paintEvent = AppEventType_WINDOW_PAINT;
 		AppEventObserver_Broadcast(&EventDispatcher, (AppEvent_Header*)&l_paintEvent);
 		return 0;
 	}
-#endif // RENDER_V2
 	case WM_KEYDOWN:
 	{
 		InputKeyEvent l_inputKeyEvent = { .Header = AppEventType_INPUT_KEY_EVENT, .Key = (int)wParam , .Type = InputKeyEventType_DOWN };

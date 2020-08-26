@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(Math VERSION 0.0.1)
 
-enable_language(C)
-
 file(GLOB_RECURSE MATH_SOURCE "./*.c")
 file(GLOB_RECURSE MATH_HEADER "./*.h")
 
