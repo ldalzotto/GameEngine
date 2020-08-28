@@ -22,6 +22,10 @@ typedef struct FileStream
 
 #endif
 
+typedef char FILESTREAM_MODE;
+#define FILESTREAM_MODE_READ 0
+#define FILESTREAM_MODE_WRITE 1
+
 typedef struct FileLineIterator
 {
 	FileStream FileStream;
@@ -29,9 +33,10 @@ typedef struct FileLineIterator
 	bool EndOfFile;
 } FileLineIterator;
 
-FileStream FileStream_open(const char* p_absoluteFilePath);
+FileStream FileStream_open(const char* p_absoluteFilePath, const FILESTREAM_MODE p_mode);
 void FileStream_close(FileStream* p_fs);
 FileLineIterator FileStream_allocLineIterator(FileStream* p_fs);
+void FileStream_writeSyncRaw(FileStream* p_fs, const char* p_buffer, size_t p_bufferSize);
 bool FileLineIterator_moveNext(FileLineIterator* p_fileLineIterator);
 void FileLineIterator_free(FileLineIterator* p_fileLineIterator);
 

@@ -19,7 +19,7 @@ void ToString_int(String_PTR p_string, int* p_element)
 	String_AppendRawNoRealloc(p_string, l_str);
 };
 
-void ToString_intv(char p_string[50], int* p_element)
+void ToString_intv(char p_string[20], int* p_element)
 {
 	String l_arr = (String){ p_string, strlen(p_string), strlen(p_string) };
 	String_ClearNoRealloc(&l_arr);

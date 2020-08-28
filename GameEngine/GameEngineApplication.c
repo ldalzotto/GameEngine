@@ -8,6 +8,7 @@
 #include "ECSEngine/Systems/MeshDrawSystem.h"
 #include "ECSEngine/GlobalEvents/ECSEngineGlobalEvents.h"
 #include "Input/InputGlobalEvent.h"
+#include "Memory/AllocationDebug.h"
 
 ECSEngineGlobal_OnComponentDestroyed_Closure_TMP TMPClosure;
 
@@ -22,7 +23,11 @@ void app_endOfFrame(void* p_closure);
 
 GameEngineApplication* app_alloc()
 {
+	AllocationDebug_Alloc();
+	
 	GameEngineApplication* l_gameEngineApplication = (GameEngineApplication*)calloc(1, sizeof(GameEngineApplication));
+
+	AllocationDebug_Write(l_gameEngineApplication, ALLOCATIONDEBUG_TYPE_ALLOC, __FILE__, __LINE__);
 
 	AppEvent_initialize();
 	InputGlobalEvent_Initialize();
@@ -87,6 +92,8 @@ void app_free(GameEngineApplication* p_app)
 	AppEvent_free();
 
 	free(p_app);
+
+	AllocationDebug_Free();
 }
 
 void app_mainLoop(GameEngineApplication* p_app)
