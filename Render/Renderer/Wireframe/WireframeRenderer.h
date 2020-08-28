@@ -6,6 +6,7 @@
 #include "Objects/Resource/Polygon_def.h"
 #include "v2/_interface/MatrixC_def.h"
 #include "v2/_interface/VectorC_def.h"
+#include "v2/_interface/WindowSize_def.h"
 #include "Objects/Texture/Texture_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
@@ -15,7 +16,7 @@ typedef struct WireframeRendererInput_TYP
 {
 	RENDEREDOBJECT_BUFFER_PTR RenderableObjectsBuffer;
 	CAMERABUFFER_PTR CameraBuffer;
-	Matrix4f_PTR GraphicsAPIToScreeMatrix;
+	WindowSize WindowSize;
 } WireframeRendererInput, * WireframeRendererInput_PTR;
 
 

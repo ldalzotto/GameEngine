@@ -5,6 +5,7 @@
 #include "Cull/ObjectCulling.h"
 #include "Cull/BackfaceCulling.h"
 #include "Objects/Resource/Polygon.h"
+#include "v2/_interface/WindowSize.h"
 #include "v2/_interface/MatrixC.h"
 #include "Raster/Rasterizer.h"
 #include "Renderer/Draw/DrawFunctions.h"
@@ -30,12 +31,8 @@ inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPip
 		Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &p_vertex->CameraSpacePosition, &p_vertex->TransformedPosition);
 		
 		// To pixel
-		Vector4f tmp_vec4_0;
-		p_vertex->TransformedPosition.z = 1.0f;
-		Mat_Mul_M4F_V4F(p_input->GraphicsAPIToScreeMatrix, &p_vertex->TransformedPosition, &tmp_vec4_0);
+		WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, p_vertex->TransformedPosition.x, p_vertex->TransformedPosition.y, &p_vertex->PixelPosition.x, &p_vertex->PixelPosition.y);
 
-		//TODO -> Disable rounding ?
-		p_vertex->PixelPosition = (Vector2i){ (int)roundf(tmp_vec4_0.x) , (int)roundf(tmp_vec4_0.y) };
 		p_vertex->PixelPositionCalculated = 1;
 	}
 };

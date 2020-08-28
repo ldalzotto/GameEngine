@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <math.h>
 #include "AppEvent/AppEvent.h"
 #include "Objects/Texture/Texture.h"
 #include "Functional/Callback/Observer.h"
@@ -26,17 +27,6 @@ void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
 	p_window->WindowToGraphicsAPIPixelCoordinates.Right = l_right;
 	p_window->WindowToGraphicsAPIPixelCoordinates.Up = l_up;
 	p_window->WindowToGraphicsAPIPixelCoordinates.Forward = l_forward;
-
-	Vector4f l_col_1, l_col_2, l_col_3, l_col_4;
-	l_col_1 = (Vector4f){ (float)p_window->WindowSize.Width / 2.0f , 0.0f, 0.0f, 0.0f };
-	l_col_2 = (Vector4f){ 0.0f,(float)p_window->WindowSize.Height / 2.0f, 0.0f, 0.0f };
-	l_col_3 = (Vector4f){ (float)p_window->WindowSize.Width * 0.5f,0.0f, 0.0f, 0.0f };
-	l_col_4 = (Vector4f){ 0.0f,(float)p_window->WindowSize.Height * 0.5f, 0.0f, 0.0f };
-	p_window->GraphicsAPIToWindowPixelCoordinates.Col0 = l_col_1;
-	p_window->GraphicsAPIToWindowPixelCoordinates.Col1 = l_col_2;
-	p_window->GraphicsAPIToWindowPixelCoordinates.Col2 = l_col_3;
-	p_window->GraphicsAPIToWindowPixelCoordinates.Col3 = l_col_4;
-
 };
 
 void Window_init(Window* p_window)
@@ -44,7 +34,9 @@ void Window_init(Window* p_window)
 	Observer_Alloc(&p_window->OnWindowSizeChanged);
 
 	p_window->WindowSize.Width = WINDOW_WIDTH;
+	p_window->WindowSize.HalfWidth = p_window->WindowSize.Width / 2;
 	p_window->WindowSize.Height = WINDOW_HEIGHT;
+	p_window->WindowSize.HalfHeight = p_window->WindowSize.Height / 2;
 	Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
 	windowHookToGlobalEvents(p_window);
 	windowPlatforwSpecific_open(p_window);
@@ -72,6 +64,9 @@ bool Window_consumeSizeChangeEvent(Window* p_window)
 	if (p_window->WindowState.HasResizedThisFrame)
 	{
 		windowPlatforwSpecific_getClientRect(p_window, (int*)&p_window->WindowSize.Width, (int*)&p_window->WindowSize.Height);
+		p_window->WindowSize.HalfWidth = p_window->WindowSize.Width / 2;
+		p_window->WindowSize.HalfHeight = p_window->WindowSize.Height / 2;
+
 		Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
 		Observer_Broadcast(&p_window->OnWindowSizeChanged, NULL);
 

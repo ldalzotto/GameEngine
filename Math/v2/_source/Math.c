@@ -11,6 +11,7 @@
 #include "v2/_interface/PlaneC.h"
 #include "v2/_interface/FrustumC.h"
 #include "v2/_interface/RectC.h"
+#include "v2/_interface/WindowSize.h"
 
 #include "Constants.h"
 
@@ -1320,5 +1321,20 @@ bool Rect_ClipSegment_Int(const Vector2i_PTR in_clippedSegment_begin, const Vect
 
 	return true;
 };
+
+#endif
+
+
+/************************ WINDOW SIZE *************************/
+
+#if 1
+
+void WindowSize_GraphicsAPIToPixel(const WindowSize* p_windowSize, float p_x, float p_y, int* out_x, int* out_y)
+{
+	//TODO -> Disable rounding ?
+	*out_x = (int)roundf(((p_x * p_windowSize->HalfWidth) + p_windowSize->HalfWidth));
+	*out_y = (int)roundf(((p_y * p_windowSize->HalfHeight) + p_windowSize->HalfHeight));
+};
+
 
 #endif

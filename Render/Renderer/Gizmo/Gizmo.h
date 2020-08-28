@@ -5,6 +5,7 @@
 #include "v2/_interface/BoxC_def.h"
 #include "v2/_interface/RectC_def.h"
 #include "v2/_interface/VectorC_def.h"
+#include "v2/_interface/WindowSize_def.h"
 #include "Objects/Texture/Texture_def.h"
 #include "Raster/Rasterizer_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
@@ -49,7 +50,7 @@ typedef struct GizmoRendererInput_TYP
 {
 	GizmoBuffer* Buffer;
 	CAMERABUFFER_PTR CameraBuffer;
-	Matrix4f_PTR GraphicsAPIToScreeMatrix;
+	WindowSize WindowSize;
 } GizmoRendererInput;
 
 void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer);

@@ -2,6 +2,7 @@
 
 #include "Functional/Callback/Observer_def.h"
 #include "v2/_interface/MatrixC_def.h"
+#include "v2/_interface/WindowSize_def.h"
 #include "Objects/Texture/Texture_def.h"
 
 #ifdef _WIN32
@@ -13,12 +14,6 @@ typedef struct WindowHandle_TYP
 } WindowHandle;
 
 #endif
-
-typedef struct WindowSize_TYP
-{
-	uint32_t Width;
-	uint32_t Height;
-} WindowSize, * WindowSize_PTR;
 
 typedef struct WindowState_TYP
 {
@@ -38,7 +33,6 @@ typedef struct Window_TYP
 	WindowState WindowState;
 
 	Matrix3f WindowToGraphicsAPIPixelCoordinates;
-	Matrix4f GraphicsAPIToWindowPixelCoordinates;
 
 	OnWindowSizeChangedObserver OnWindowSizeChanged;
 }Window, * Window_PTR;

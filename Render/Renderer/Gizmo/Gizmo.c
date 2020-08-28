@@ -4,6 +4,7 @@
 #include "v2/_interface/TransformC.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorC.h"
+#include "v2/_interface/WindowSize.h"
 #include "Renderer/Draw/DrawFunctions.h"
 #include "DataStructures/ARRAY.h"
 
@@ -48,19 +49,16 @@ void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_t
 		l_lineEnd = tmp_vec4_0;
 
 		// To pixel
+
+		Vector2i l_lineBegin_pixel;
+		Vector2i l_lineEnd_pixel;
 		{
-			l_lineBegin.z = 1.0f;
-			Mat_Mul_M4F_V4F(p_input->GraphicsAPIToScreeMatrix, &l_lineBegin, &tmp_vec4_0);
-			l_lineBegin = tmp_vec4_0;
-			l_lineEnd.z = 1.0f;
-			Mat_Mul_M4F_V4F(p_input->GraphicsAPIToScreeMatrix, &l_lineEnd, &tmp_vec4_0);
-			l_lineEnd = tmp_vec4_0;
+			WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, l_lineBegin.x, l_lineBegin.y, &l_lineBegin_pixel.x, &l_lineBegin_pixel.y);
+			WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, l_lineEnd.x, l_lineEnd.y, &l_lineEnd_pixel.x, &l_lineEnd_pixel.y);
 		}
 
 		// Rasterize
 		{
-			Vector2i l_lineBegin_pixel = {(int)l_lineBegin.Vec3.Vec2 .x, (int)l_lineBegin.Vec3.Vec2.y };
-			Vector2i l_lineEnd_pixel = { (int)l_lineEnd.Vec3.Vec2.x, (int)l_lineEnd.Vec3.Vec2.y };
 			Draw_LineClipped(&l_lineBegin_pixel, &l_lineEnd_pixel, RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_line->Color);
 		}
 	}

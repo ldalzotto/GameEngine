@@ -57,14 +57,14 @@ void RenderV2_render(RenderV2* p_render)
 		WireframeRendererInput l_wireFrameRendererInput;
 		l_wireFrameRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 		l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectsBuffer;
-		l_wireFrameRendererInput.GraphicsAPIToScreeMatrix = (Matrix4f_PTR)&p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
+		l_wireFrameRendererInput.WindowSize = p_render->AppWindow.WindowSize;
 		WireframeRenderer_renderV2(&l_wireFrameRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory);
 	}
 	{
 		GizmoRendererInput l_gizmoRendererInput;
 		l_gizmoRendererInput.Buffer = &p_render->GizmoBuffer;
-		l_gizmoRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
-		l_gizmoRendererInput.GraphicsAPIToScreeMatrix = &p_render->AppWindow.GraphicsAPIToWindowPixelCoordinates;
+		l_gizmoRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;		
+		l_gizmoRendererInput.WindowSize = p_render->AppWindow.WindowSize;
 		Gizmo_Render(&l_gizmoRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory.RasterizedPixelsBuffer);
 	}
 	Window_presentTexture(&p_render->AppWindow, &p_render->SwapChain.PresentTexture);
