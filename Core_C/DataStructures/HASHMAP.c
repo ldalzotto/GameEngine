@@ -24,11 +24,10 @@ inline char* HashMapEntry_GetValue(HashMapEntryHeader_PTR p_header, const HashMa
 	return ((char*)&p_header->IsOccupied) + p_entryLayout->ValueOffset;
 };
 
-void HashMap_Alloc(HashMap_PTR p_hashMap, const HashMapEntryLayout_PTR p_entryLayout, HashMap_HashFn p_hashFunc, size_t p_initalCapacity)
+void HashMap_Alloc(HashMap_PTR p_hashMap, const HashMapEntryLayout_PTR p_entryLayout, size_t p_initalCapacity)
 {
 	p_hashMap->Entries = calloc(1, p_initalCapacity * p_entryLayout->TotalSize);
 	p_hashMap->Capacity = p_initalCapacity;
-	p_hashMap->HashFn = p_hashFunc;
 };
 
 void HashMap_Free(HashMap_PTR p_hashMap)
@@ -37,9 +36,9 @@ void HashMap_Free(HashMap_PTR p_hashMap)
 	*p_hashMap = (HashMap) { 0 };
 };
 
-inline size_t HashMap_CalculateKeyIndex_FromKey(HashMap_PTR p_hashMap, char* p_key, size_t p_maxValueExcluded)
+inline size_t HashMap_CalculateKeyIndex_FromKey(const  HashMapEntryLayout_PTR p_entryLayout, char* p_key, size_t p_maxValueExcluded)
 {
-	return p_hashMap->HashFn(p_key) % p_maxValueExcluded;
+	return p_entryLayout->HashFn(p_key) % p_maxValueExcluded;
 };
 
 inline size_t HashMap_CalculateKeyIndex_FromHash(size_t p_hash, size_t p_maxValueExcluded)
@@ -67,7 +66,7 @@ void HashMap_ReallocateEntries(HashMap_PTR p_hashMap, const  HashMapEntryLayout_
 			if (l_hashMapEntryCursor->IsOccupied)
 			{
 				char* l_key = HashMapEntry_GetKey(l_hashMapEntryCursor, p_entryLayout);
-				size_t l_index = HashMap_CalculateKeyIndex_FromKey(p_hashMap, l_key, p_newCapacity);
+				size_t l_index = HashMap_CalculateKeyIndex_FromKey(p_entryLayout, l_key, p_newCapacity);
 				// memcpy(HashMap_GetEntryMemory(l_newEntries, p_entryLayout, l_index), (char*)l_hashMapEntryCursor, p_entryLayout->TotalSize);
 				memcpy_hashmapsafe_dist(HashMap_GetEntryMemory(l_newEntries, p_entryLayout, l_index), (char*)l_hashMapEntryCursor, p_entryLayout->TotalSize, p_hashMap, p_entryLayout->TotalSize);
 			}
@@ -88,14 +87,14 @@ char HashMap_PushKeyValueRealloc(HashMap_PTR p_hashMap, const  HashMapEntryLayou
 	}
 	else
 	{
-		size_t l_keyHash = p_hashMap->HashFn(p_key);
+		size_t l_keyHash = p_entryLayout->HashFn(p_key);
 		size_t l_keyIndex = HashMap_CalculateKeyIndex_FromHash(l_keyHash, p_hashMap->Capacity);
 
 		HashMapEntryHeader* l_hashMapEntryHeader = (HashMapEntryHeader*)HashMap_GetEntryMemory(p_hashMap->Entries, p_entryLayout, l_keyIndex);
 		if (l_hashMapEntryHeader->IsOccupied)
 		{
 			char* l_existingKey = HashMapEntry_GetKey(l_hashMapEntryHeader, p_entryLayout);
-			if (p_hashMap->HashFn(l_existingKey) == l_keyHash)
+			if (p_entryLayout->HashFn(l_existingKey) == l_keyHash)
 			{
 				//TODO -> ERROR we are trying to insert the same key
 				return 0;
@@ -122,13 +121,13 @@ char HashMap_PushKeyValueRealloc(HashMap_PTR p_hashMap, const  HashMapEntryLayou
 
 char HashMap_GetValue(HashMap_PTR p_hashMap, const  HashMapEntryLayout_PTR p_entryLayout, char* p_key, char** out_value)
 {
-	size_t l_keyHash = p_hashMap->HashFn(p_key);
+	size_t l_keyHash = p_entryLayout->HashFn(p_key);
 	size_t l_keyIndex = HashMap_CalculateKeyIndex_FromHash(l_keyHash, p_hashMap->Capacity);
 	HashMapEntryHeader* l_hashMapEntryHeader = (HashMapEntryHeader*)HashMap_GetEntryMemory(p_hashMap->Entries, p_entryLayout, l_keyIndex);
 	if (l_hashMapEntryHeader->IsOccupied)
 	{
 		char* l_existingKey = HashMapEntry_GetKey(l_hashMapEntryHeader, p_entryLayout);
-		if (p_hashMap->HashFn(l_existingKey) == l_keyHash)
+		if (p_entryLayout->HashFn(l_existingKey) == l_keyHash)
 		{
 			*out_value = HashMapEntry_GetValue(l_hashMapEntryHeader, p_entryLayout);
 			return 1;

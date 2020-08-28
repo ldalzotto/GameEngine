@@ -177,7 +177,8 @@ const HashMapEntryLayout HashMapEntry_EntityFilterByFilteredComponentType_Layout
 	.ValueOffset = myoffsetof(HashMapEntry_EntityFilterByFilteredComponentType, Value),
 	.TotalSize = sizeof(HashMapEntry_EntityFilterByFilteredComponentType),
 	.KeySize = sizeof(ECS_ComponentType),
-	.ValueSize = sizeof(Array_EntityFilterPtr)
+	.ValueSize = sizeof(Array_EntityFilterPtr),
+	.HashFn = (HashMap_HashFn)ECS_ComponentType_Hash
 };
 const HashMapEntryLayout_PTR HashMapEntry_EntityFilterByFilteredComponentType_Layout_PTR = (const HashMapEntryLayout_PTR)&HashMapEntry_EntityFilterByFilteredComponentType_Layout;
 
@@ -206,7 +207,7 @@ void ECS_EntityFilter_Free(ECS_EntityFilter_PTR p_entityFilter)
 
 void ECS_EntityFilterEvents_Alloc(HashMap_EntityFilterEvents_PTR p_entityFilterEvents)
 {
-	HashMap_Alloc_EntityFilterEvents(p_entityFilterEvents, ECS_ComponentType_Hash, 8);
+	HashMap_Alloc_EntityFilterEvents(p_entityFilterEvents, 8);
 };
 
 void ECS_EntityFilteredEvents_Free(HashMap_EntityFilterEvents_PTR p_entityFilterEvents)
