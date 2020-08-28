@@ -25,6 +25,22 @@ bool BackFaceCulled_Poly4F(const Polygon4f_PTR p_polygon, const Vector4f_PTR p_c
 	return Vec_Dot_3f(&l_cameraToPolygon, &l_n) > FLOAT_TOLERANCE;
 };
 
+bool BackFaceCulled_Poly4FPTR(const Polygon4fPTR_PTR p_polygon, const Vector4f_PTR p_cameraWorldPosition)
+{
+	Vector4f tmp_vec4_0;
+
+	Vec_Min_4f_4f(p_polygon->v1, p_cameraWorldPosition, &tmp_vec4_0);
+	Vector3f l_cameraToPolygon = tmp_vec4_0.Vec3;
+	Vec_Min_4f_4f(p_polygon->v1, p_polygon->v2, &tmp_vec4_0);
+	Vector3f l_u = tmp_vec4_0.Vec3;
+	Vec_Min_4f_4f(p_polygon->v1, p_polygon->v3, &tmp_vec4_0);
+	Vector3f l_v = tmp_vec4_0.Vec3;
+	Vector3f l_n;
+	Vec_Cross_3f(&l_u, &l_v, &l_n);
+
+	return Vec_Dot_3f(&l_cameraToPolygon, &l_n) > FLOAT_TOLERANCE;
+};
+
 bool ObjectCulled_Boxf(const BoxF_PTR p_objectBoundingBox_localSpace, const Matrix4f_PTR p_modelMatrix,
 	const Matrix4f_PTR p_objectToCamera_matrix, const Frustum_PTR p_cameraFrustum)
 {

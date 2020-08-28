@@ -659,7 +659,7 @@ inline float Mat_Det_M4F(const Matrix4f_PTR p_mat, const short int p_colIndex, c
 
 
 void Mat_Mul_M4F_M4F(const Matrix4f_PTR p_left, const Matrix4f_PTR p_right, Matrix4f_PTR p_out)
-{
+{	
 	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 4, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
 };
 

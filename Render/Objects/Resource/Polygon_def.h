@@ -16,6 +16,13 @@ typedef struct Polygon4f_TYP
 	Vector4f v3;
 }Polygon4f, * Polygon4f_PTR;
 
+typedef struct Polygon4fPTR_TYP
+{
+	Vector4f_PTR v1;
+	Vector4f_PTR v2;
+	Vector4f_PTR v3;
+}Polygon4fPTR, * Polygon4fPTR_PTR;
+
 #define POLYGON_TYPE_DEFINITION(ElementType) \
 ElementType v1; \
 ElementType v2; \

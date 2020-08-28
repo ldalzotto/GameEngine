@@ -22,18 +22,24 @@ typedef struct WireframeRendererInput_TYP
 
 typedef struct RenderableObjectPipeline_TYP
 {
-	bool IsCulled;
-	RenderedObject_PTR RenderableObject;
+	RenderedObject_PTR RenderedObject;
+
+	size_t PolygonPipelineIndexBeginIncluded;
+	size_t PolygonPipelineIndexEndExcluded;
+
+	size_t VertexPipelineIndexBeginIncluded;
+	size_t VertexPipelineIndexEndExcluded;
 } RenderableObjectPipeline, * RenderableObjectPipeline_PTR;
+
+typedef struct Array_RenderableObjectPipeline_TYP
+{
+	ARRAY_TYPE_DEFINITION(RenderableObjectPipeline)
+}Array_RenderableObjectPipeline, * Array_RenderableObjectPipeline_PTR;
 
 typedef struct PolygonPipelineV2_TYP
 {
-	RenderedObject_PTR RenderedObject;
-	size_t PolygonIndex;
-
-	Polygon4f CameraSpacePolygon;
-	Polygon4f TransformedPolygon;
-	Polygon2f PixelPolygon;
+	char IsCulled;
+	Polygon_VertexIndex VerticesIndex;
 }PolygonPipelineV2, * PolygonPipelineV2_PTR;
 
 typedef struct ARRAY_PolygonPipelineV2_TYP
@@ -41,9 +47,24 @@ typedef struct ARRAY_PolygonPipelineV2_TYP
 	ARRAY_TYPE_DEFINITION(PolygonPipelineV2)
 } ARRAY_PolygonPipelineV2, * ARRAY_PolygonPipelineV2_PTR;
 
+typedef struct VertexPipeline_TYP
+{
+	Vector4f CameraSpacePosition;
+	Vector4f TransformedPosition;
+	Vector2f PixelPosition;
+	char PixelPositionCalculated;
+}VertexPipeline, * VertexPipeline_PTR;
+
+typedef struct Array_VertexPipeline_TYP
+{
+	ARRAY_TYPE_DEFINITION(VertexPipeline)
+}Array_VertexPipeline, * Array_VertexPipeline_PTR;
+
 typedef struct WireframeRenderer_Memory_TYP
 {
+	Array_RenderableObjectPipeline RederableObjectsPipeline;
 	ARRAY_PolygonPipelineV2 PolygonPipelines;
+	Array_VertexPipeline VertexPipeline;
 	ARRAY_RASTERISATIONSTEP RasterizedPixelsBuffer;
 } WireframeRenderer_Memory, * WireframeRenderer_Memory_PTR;
 
