@@ -1,5 +1,7 @@
 #include "WireframeRenderer.h"
 
+#include <math.h>
+
 #include "Cull/ObjectCulling.h"
 #include "Cull/BackfaceCulling.h"
 #include "Objects/Resource/Polygon.h"
@@ -17,7 +19,7 @@ ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PT
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 
-void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const WireframeRendererInput* p_input)
+inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const WireframeRendererInput* p_input)
 {
 	if (!p_vertex->PixelPositionCalculated)
 	{
@@ -31,8 +33,9 @@ void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_P
 		Vector4f tmp_vec4_0;
 		p_vertex->TransformedPosition.z = 1.0f;
 		Mat_Mul_M4F_V4F(p_input->GraphicsAPIToScreeMatrix, &p_vertex->TransformedPosition, &tmp_vec4_0);
-		p_vertex->PixelPosition = (Vector2f){ tmp_vec4_0.x, tmp_vec4_0.y };
 
+		//TODO -> Disable rounding ?
+		p_vertex->PixelPosition = (Vector2i){ (int)roundf(tmp_vec4_0.x) , (int)roundf(tmp_vec4_0.y) };
 		p_vertex->PixelPositionCalculated = 1;
 	}
 };

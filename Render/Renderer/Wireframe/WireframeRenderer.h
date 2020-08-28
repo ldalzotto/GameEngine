@@ -5,7 +5,6 @@
 #include "Objects/RenderedObject.h"
 #include "Objects/Resource/Polygon_def.h"
 #include "v2/_interface/MatrixC_def.h"
-#include "v2/_interface/RectC_def.h"
 #include "v2/_interface/VectorC_def.h"
 #include "Objects/Texture/Texture_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
@@ -51,7 +50,7 @@ typedef struct VertexPipeline_TYP
 {
 	Vector4f CameraSpacePosition;
 	Vector4f TransformedPosition;
-	Vector2f PixelPosition;
+	Vector2i PixelPosition;
 	char PixelPositionCalculated;
 }VertexPipeline, * VertexPipeline_PTR;
 

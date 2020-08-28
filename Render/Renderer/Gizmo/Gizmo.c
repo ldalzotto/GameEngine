@@ -59,7 +59,9 @@ void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_t
 
 		// Rasterize
 		{
-			Draw_LineClipped(&l_lineBegin.Vec3.Vec2, &l_lineEnd.Vec3.Vec2, RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_line->Color);
+			Vector2i l_lineBegin_pixel = {(int)l_lineBegin.Vec3.Vec2 .x, (int)l_lineBegin.Vec3.Vec2.y };
+			Vector2i l_lineEnd_pixel = { (int)l_lineEnd.Vec3.Vec2.x, (int)l_lineEnd.Vec3.Vec2.y };
+			Draw_LineClipped(&l_lineBegin_pixel, &l_lineEnd_pixel, RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_line->Color);
 		}
 	}
 

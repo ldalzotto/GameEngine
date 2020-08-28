@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	Matrix4f l_modelMatrix = Matrix4f_IDENTITYF;
-	// l_modelMatrix.Col3.x = 12.0f;
+	l_modelMatrix.Col3.z = 5.0f;
 
 	MeshResource_HANDLE l_mesh;
 	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);

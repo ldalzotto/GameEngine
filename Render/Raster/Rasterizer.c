@@ -68,7 +68,7 @@ char Rasterrize_Line(Vector2i_PTR p_begin, Vector2i_PTR p_end, ARRAY_RASTERISATI
 };
 
 bool Rasterize_LineClipped(
-	const Vector2f_PTR p_begin, const Vector2f_PTR p_end,
+	const Vector2i_PTR p_begin, const Vector2i_PTR p_end,
 	ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels,
 	const Recti_PTR p_clip_rect,
 	Vector2i_PTR out_clipped_begin,
