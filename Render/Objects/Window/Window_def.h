@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Functional/Callback/Observer_def.h"
-#include "v2/_interface/MatrixC_def.h"
 #include "v2/_interface/WindowSize_def.h"
 #include "Objects/Texture/Texture_def.h"
 
@@ -31,8 +30,6 @@ typedef struct Window_TYP
 	WindowSize WindowSize;
 
 	WindowState WindowState;
-
-	Matrix3f WindowToGraphicsAPIPixelCoordinates;
 
 	OnWindowSizeChangedObserver OnWindowSizeChanged;
 }Window, * Window_PTR;

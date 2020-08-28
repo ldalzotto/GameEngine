@@ -3,6 +3,7 @@
 #include "v2/Math.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/FrustumC.h"
+#include "v2/_interface/WindowSize.h"
 #include "Objects/Window/Window.h"
 #include "Objects/SwapChain/SwapChain.h"
 #include "RenderV2Interface.h"
@@ -46,11 +47,10 @@ Segment_Vector3f Camera_buildWorldSpaceRay(Camera_PTR p_camera, Vector2f_PTR p_s
 {
 	Vector3f tmp_vec3_0, tmp_vec3_1; Vector4f tmp_vec4_0, tmp_vec4_1, tmp_vec4_2, tmp_vec4_3;
 
-	tmp_vec3_0 = (Vector3f){ p_screenPoint->x, p_screenPoint->y, 1.0f };
-	Mat_Mul_M3F_V3F(&p_camera->RenderInterface->AppWindow->WindowToGraphicsAPIPixelCoordinates,
-		&tmp_vec3_0,
-		&tmp_vec3_1);
-	Vector2f l_graphicsAPIPixelCoord = tmp_vec3_1.Vec2;
+
+	Vector2f l_graphicsAPIPixelCoord;
+	WindowSize_PixelToGraphicsAPI(&p_camera->RenderInterface->AppWindow->WindowSize, (int)p_screenPoint->x, (int)p_screenPoint->y, &l_graphicsAPIPixelCoord.x, &l_graphicsAPIPixelCoord.y);
+
 
 	Matrix4f l_worldToClipMatrix = Camera_worldToClipMatrix(p_camera);
 	Matrix4f l_clipToWorldMatrix; Mat_Inv_M4F(&l_worldToClipMatrix, &l_clipToWorldMatrix);

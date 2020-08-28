@@ -17,27 +17,22 @@ const uint32_t WINDOW_HEIGHT = 600;
 
 const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
-// void window_size_callback(GLFWwindow* window, int width, int height);
-void Window_updateScreeToGraphicsAPIPixelCoordinates(Window* p_window)
+void WindowSize_UpdateDependentValues(WindowSize* p_windowSize)
 {
-	Vector3f l_right, l_up, l_forward;
-	l_right = (Vector3f){ 2.0f / (float)p_window->WindowSize.Width , 0.0f, 0.0f };
-	l_up = (Vector3f){ 0.0f, 2.0f / (float)p_window->WindowSize.Height, 0.0f };
-	l_forward = (Vector3f){ -1.0f, -1.0f, 0.0f };
-	p_window->WindowToGraphicsAPIPixelCoordinates.Right = l_right;
-	p_window->WindowToGraphicsAPIPixelCoordinates.Up = l_up;
-	p_window->WindowToGraphicsAPIPixelCoordinates.Forward = l_forward;
-};
+	p_windowSize->HalfWidth = p_windowSize->Width / 2;
+	p_windowSize->HalfHeight = p_windowSize->Height / 2;
+	p_windowSize->TwoOnHeight = 2.0f / p_windowSize->Height;
+	p_windowSize->TwoOnWidth = 2.0f / p_windowSize->Width;
+}
 
 void Window_init(Window* p_window)
 {
 	Observer_Alloc(&p_window->OnWindowSizeChanged);
 
 	p_window->WindowSize.Width = WINDOW_WIDTH;
-	p_window->WindowSize.HalfWidth = p_window->WindowSize.Width / 2;
 	p_window->WindowSize.Height = WINDOW_HEIGHT;
-	p_window->WindowSize.HalfHeight = p_window->WindowSize.Height / 2;
-	Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
+	WindowSize_UpdateDependentValues(&p_window->WindowSize);
+
 	windowHookToGlobalEvents(p_window);
 	windowPlatforwSpecific_open(p_window);
 }
@@ -64,10 +59,8 @@ bool Window_consumeSizeChangeEvent(Window* p_window)
 	if (p_window->WindowState.HasResizedThisFrame)
 	{
 		windowPlatforwSpecific_getClientRect(p_window, (int*)&p_window->WindowSize.Width, (int*)&p_window->WindowSize.Height);
-		p_window->WindowSize.HalfWidth = p_window->WindowSize.Width / 2;
-		p_window->WindowSize.HalfHeight = p_window->WindowSize.Height / 2;
-
-		Window_updateScreeToGraphicsAPIPixelCoordinates(p_window);
+		WindowSize_UpdateDependentValues(&p_window->WindowSize);
+		
 		Observer_Broadcast(&p_window->OnWindowSizeChanged, NULL);
 
 		p_window->WindowState.HasResizedThisFrame = false;

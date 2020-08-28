@@ -128,7 +128,10 @@ void Vec_Min_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector
 
 void Vec_Min_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
 {
-	Vec_Min_Xf_Xf((const char*)p_left, (const char*)p_right, 4, (char*)p_out);
+	p_out->x = p_left->x - p_right->x;
+	p_out->y = p_left->y - p_right->y;
+	p_out->z = p_left->z - p_right->z;
+	p_out->w = p_left->w - p_right->w;
 };
 
 /* VECTOR - ADDITION */
@@ -1336,5 +1339,10 @@ void WindowSize_GraphicsAPIToPixel(const WindowSize* p_windowSize, float p_x, fl
 	*out_y = (int)roundf(((p_y * p_windowSize->HalfHeight) + p_windowSize->HalfHeight));
 };
 
+void WindowSize_PixelToGraphicsAPI(const WindowSize* p_windowSize, int p_x, int p_y, float* out_x, float* out_y)
+{
+	*out_x = (p_windowSize->TwoOnWidth * p_x) - 1.0f;
+	*out_y = (p_windowSize->TwoOnHeight * p_y) - 1.0f;
+};
 
 #endif

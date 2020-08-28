@@ -2,9 +2,6 @@
 
 #include "Window_def.h"
 
-
-
-
 extern const uint32_t WINDOW_WIDTH;
 extern const uint32_t WINDOW_HEIGHT;
 
