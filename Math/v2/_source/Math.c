@@ -834,7 +834,7 @@ void Mat_ViewMatrix_M4F(const Vector3f_PTR p_worldPosition, const Vector3f_PTR p
 	Vec_Add_3f_3f(p_worldPosition, &l_target, &l_target);
 
 	Vector3f l_up = *p_up;
-	Vec_Mul_3f_1f(&tmp_vec3_0, -1.0f, &l_up);
+	Vec_Mul_3f_1f(&l_up, -1.0f, &l_up);
 
 	tmp_vec3_0 = (Vector3f){ 1.0f, 1.0f, 1.0f };
 	Mat_LookAtRotation_ViewMatrix_F(p_worldPosition, &l_target, &l_up, &tmp_mat3_0);
