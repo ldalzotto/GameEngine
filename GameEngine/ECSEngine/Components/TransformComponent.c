@@ -26,10 +26,9 @@ void TransformComponent_Free(TransformComponent* p_transformComponent, ECS* p_ec
 {
 	if (p_transformComponent->Transform.Childs.Size > 0)
 	{
-		Array_TransformHandle_Iterator l_childs; Arr_BuildIterator_TransformPtr(&p_transformComponent->Transform.Childs, &l_childs);
-		while (Iter_MoveNext_TransformPtr(&l_childs))
-		{
-			TransformComponent_PTR l_childComponent = TransformComponent_castFromTransform((*l_childs.Current));
+		for(size_t i=0;i< p_transformComponent->Transform.Childs.Size;i++)
+		{ 
+			TransformComponent_PTR l_childComponent = TransformComponent_castFromTransform(p_transformComponent->Transform.Childs.Memory[i]);
 			ECS_FreeEntity(p_ecs, l_childComponent->Header.AttachedEntity);
 		}
 	}

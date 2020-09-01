@@ -6,12 +6,12 @@
 
 void Arr_EraseCompare_TransformPtr_EqualsTransformPtr(Array_TransformHandle_PTR p_array, const Transform_PTR p_comparedTransform)
 {
-	Array_TransformHandle_Iterator l_it; Arr_BuildIterator_TransformPtr(p_array, &l_it);
-	while (Iter_MoveNext_TransformPtr(&l_it))
+	for (size_t i = 0; i < p_array->Size; i++)
 	{
-		if (p_comparedTransform == *l_it.Current)
+		Transform_PTR l_transform = p_array->Memory[i];
+		if (p_comparedTransform == l_transform)
 		{
-			Arr_Erase_TransformPtr(p_array, l_it.CurrentIndex);
+			Arr_Erase_TransformPtr(p_array, i);
 			return;
 		}
 	}

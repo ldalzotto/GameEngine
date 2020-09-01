@@ -31,6 +31,3 @@ inline void Arr_Alloc_TransformPtr(Array_TransformHandle_PTR p_arr, size_t p_ini
 inline void Arr_Free_TransformPtr(Array_TransformHandle_PTR p_arr) { Arr_Free(&p_arr->array); };
 inline char Arr_PushBackRealloc_TransformPtr(Array_TransformHandle_PTR p_arr, Transform_PTR* p_value) { return Arr_PushBackRealloc(&p_arr->array, sizeof(Transform_PTR), (char*)p_value); };
 inline char Arr_Erase_TransformPtr(Array_TransformHandle_PTR p_arr, size_t p_index) { return Arr_Erase(&p_arr->array, sizeof(Transform_PTR), p_index); };
-
-inline void Arr_BuildIterator_TransformPtr(Array_TransformHandle_PTR p_arr, Array_TransformHandle_Iterator_PTR p_iter) { Arr_BuildIterator(&p_arr->array, sizeof(Transform_PTR), (ArrayIterator_PTR)p_iter); }
-inline bool Iter_MoveNext_TransformPtr(Array_TransformHandle_Iterator_PTR p_iter) { return Iter_MoveNext((ArrayIterator_PTR)p_iter, sizeof(Transform_PTR)); }

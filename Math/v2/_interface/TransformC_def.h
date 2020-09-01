@@ -13,11 +13,6 @@ typedef struct Array_TransformHandle_TYP
 	ARRAY_TYPE_DEFINITION(Transform_PTR)
 }  Array_TransformHandle, * Array_TransformHandle_PTR;
 
-typedef struct Array_TransformHandle_Iterator_TYP
-{
-	ARRAY_ITERATOR_DEFINITION(Array_TransformHandle, Transform_PTR)
-} Array_TransformHandle_Iterator, * Array_TransformHandle_Iterator_PTR;
-
 typedef struct Transform_TYP
 {
 	Transform_PTR Parent;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ARRAY_def.h"
-
 #include <stdbool.h>
 
 #define ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE Array_PTR p_array, size_t p_elementSize
@@ -24,9 +23,6 @@ char Arr_Swap(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_left, size_t p_rig
 
 void Arr_CopyToRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, Array_PTR p_target);
 
-void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ArrayIterator_PTR p_iter);
-
-bool Iter_MoveNext(ArrayIterator_PTR p_iterator, size_t p_elementSize);
 
 #define ARRAY_ALLOC_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Alloc_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_initialCapacity) { Arr_Alloc(&p_array->array, sizeof(ArrayElementType), p_initialCapacity); };
 #define ARRAY_FREE_FUNCTION(MethodNamePrefix, ArrayTypePTR) inline void Arr_Free_##MethodNamePrefix##(ArrayTypePTR p_array) { Arr_Free(&p_array->array); };
