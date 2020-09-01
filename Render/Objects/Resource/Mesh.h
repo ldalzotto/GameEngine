@@ -6,6 +6,7 @@
 #include "DataStructures/ARRAY.h"
 
 void Mesh_Alloc(Mesh_PTR p_mesh);
+void Mesh_AllocVertex(Mesh_PTR p_mesh, Vertex_HANDLE_PTR out_vertexHandle);
 void Mesh_Free(Mesh_PTR p_mesh);
 
 inline void Arr_Alloc_Polygon_VertexIndex(Array_Polygon_VertexIndex_PTR p_arr, size_t p_initialCapacity) { Arr_Alloc(&p_arr->array, sizeof(Polygon_VertexIndex), p_initialCapacity); };

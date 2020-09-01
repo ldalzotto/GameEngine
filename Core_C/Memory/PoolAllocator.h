@@ -13,6 +13,7 @@ void PoolAllocator_Free(PoolAllocator_PTR p_poolAllocator);
 
 void PoolAllocator_AllocElement(PoolAllocator_PTR p_poolAllocator, const size_t p_elementSize, size_t* out_handle);
 void PoolAllocator_FreeElement(PoolAllocator_PTR p_poolAllocator, const size_t p_handle);
+void PoolAllocator_FreeElements(PoolAllocator_PTR p_poolAllocator, const Array_PoolAllocatorFreeItemHeader_PTR p_handles);
 
 #define POOLALLOCATOR_ALLOC_FUNCTION(MethodNamePrefix, PoolAllocatorTypePtr, ArrayElementType) inline PoolAllocator_Alloc_##MethodNamePrefix##(PoolAllocatorTypePtr p_poolAllocator, size_t p_initialCapacity) { PoolAllocator_Alloc(&p_poolAllocator->allocator, sizeof(ArrayElementType), p_initialCapacity); };
 #define POOLALLOCATOR_ALLOCELEMENT_FUNCTION(MethodNamePrefix, PoolAllocatorTypePtr, ArrayElementType, HandleTypePTR) inline PoolAllocator_AllocElement_##MethodNamePrefix##(PoolAllocatorTypePtr p_poolAllocator, HandleTypePTR out_handle){ PoolAllocator_AllocElement(&p_poolAllocator->allocator, sizeof(ArrayElementType), (size_t*)out_handle); };

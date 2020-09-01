@@ -1023,10 +1023,10 @@ void Box_Build_F(BoxF_PTR p_box, Array_Vector3f_PTR p_points)
 	//Calculate approximate center
 	Vector3f l_approximateCenter = Vector3f_ZERO;
 	{
-		Array_Vector3f_Iterator l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
-		while (Iter_MoveNext_Vector3F(&l_pointsIt))
+		for (size_t i = 0; i < p_points->Size; i++)
 		{
-			Vec_Add_3f_3f(&l_approximateCenter, l_pointsIt.Current, &l_approximateCenter);
+			Vector3f_PTR l_point = &p_points->Memory[i];
+			Vec_Add_3f_3f(&l_approximateCenter, l_point, &l_approximateCenter);
 		}
 		Vec_Mul_3f_1f(&l_approximateCenter, 1.0f / p_points->Size, &l_approximateCenter);
 	}
@@ -1034,18 +1034,19 @@ void Box_Build_F(BoxF_PTR p_box, Array_Vector3f_PTR p_points)
 	//Calculate min-max
 	Vector3f l_min = l_approximateCenter, l_max = l_approximateCenter;
 	{
-		Array_Vector3f_Iterator l_pointsIt;	Arr_BuildIterator_Vector3F(p_points, &l_pointsIt);
-		while (Iter_MoveNext_Vector3F(&l_pointsIt))
+		for (size_t i = 0; i < p_points->Size; i++)
 		{
-			if (l_pointsIt.Current->x <= l_min.x) { l_min.x = l_pointsIt.Current->x; }
-			if (l_pointsIt.Current->y <= l_min.y) { l_min.y = l_pointsIt.Current->y; }
-			if (l_pointsIt.Current->z <= l_min.z) { l_min.z = l_pointsIt.Current->z; }
+			Vector3f_PTR l_point = &p_points->Memory[i];
 
+			if (l_point->x <= l_min.x) { l_min.x = l_point->x; }
+			if (l_point->y <= l_min.y) { l_min.y = l_point->y; }
+			if (l_point->z <= l_min.z) { l_min.z = l_point->z; }
 
-			if (l_pointsIt.Current->x >= l_max.x) { l_max.x = l_pointsIt.Current->x; }
-			if (l_pointsIt.Current->y >= l_max.y) { l_max.y = l_pointsIt.Current->y; }
-			if (l_pointsIt.Current->z >= l_max.z) { l_max.z = l_pointsIt.Current->z; }
+			if (l_point->x >= l_max.x) { l_max.x = l_point->x; }
+			if (l_point->y >= l_max.y) { l_max.y = l_point->y; }
+			if (l_point->z >= l_max.z) { l_max.z = l_point->z; }
 		}
+	
 	}
 
 	//calculate accurate center

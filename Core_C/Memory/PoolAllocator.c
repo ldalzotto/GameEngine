@@ -33,3 +33,11 @@ void PoolAllocator_FreeElement(PoolAllocator_PTR p_poolAllocator, const size_t p
 	PoolAllocatorFreeItemHeader l_header = {p_handle};
 	Arr_PushBackRealloc_PoolAllocatorFreeItemHeader(&p_poolAllocator->FreeBlocks, &l_header);
 };
+
+void PoolAllocator_FreeElements(PoolAllocator_PTR p_poolAllocator, const Array_PoolAllocatorFreeItemHeader_PTR p_handles)
+{
+	for (size_t i = 0; i < p_handles->Size; i++)
+	{
+		PoolAllocator_FreeElement(p_poolAllocator, p_handles->Memory[i].FreeMemoryIndex);
+	}
+};

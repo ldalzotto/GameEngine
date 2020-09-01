@@ -26,9 +26,11 @@ typedef struct ArrayIterator_TYP
 	Array_PTR Array;
 	char* Current;
 	size_t CurrentIndex;
+	size_t ElementOffset;
 } ArrayIterator, * ArrayIterator_PTR;
 
 #define ARRAY_ITERATOR_DEFINITION(ArrayType, ArrayElement) \
 ArrayType* Array; \
 ArrayElement* Current; \
-size_t CurrentIndex;
+size_t CurrentIndex; \
+size_t ElementOffset;

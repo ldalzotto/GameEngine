@@ -216,6 +216,7 @@ void Arr_BuildIterator(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, ArrayIterator_PTR 
 	p_iter->Array = p_array;
 	p_iter->Current = p_array->Memory - p_elementSize;
 	p_iter->CurrentIndex = -1;
+	p_iter->ElementOffset = 0;
 };
 
 bool Iter_MoveNext(ArrayIterator_PTR p_iterator, size_t p_elementSize)
@@ -223,7 +224,7 @@ bool Iter_MoveNext(ArrayIterator_PTR p_iterator, size_t p_elementSize)
 	p_iterator->CurrentIndex += 1;
 	if (p_iterator->CurrentIndex < p_iterator->Array->Size)
 	{
-		p_iterator->Current += p_elementSize;
+		p_iterator->Current += (p_elementSize + p_iterator->ElementOffset);
 		return true;
 	}
 	else

@@ -1,5 +1,6 @@
 #include "RenderV2.h"
 
+#include "Heap/RenderHeap.h"
 #include "Renderer/Wireframe/WireframeRenderer.h"
 #include "Objects/SwapChain/SwapChain.h"
 #include "Objects/Texture/Texture.h"
@@ -18,6 +19,7 @@ void GlobalBuffers_free(GlobalBuffers* p_buffer)
 
 void RenderV2_initialize(RenderV2* p_render)
 {
+	RenderHeap_Alloc(&RRenderHeap);
 	MeshResourceProvider_Alloc(&p_render->Resources.MeshResourceProvider);
 
 
@@ -77,4 +79,5 @@ void RenderV2_free(RenderV2* p_render)
 	SwapChain_Free(&p_render->SwapChain);
 	WireframeRenderer_Memory_free(&p_render->WireframeRenderMemory);
 	MeshResourceProvider_Free(&p_render->Resources.MeshResourceProvider);
+	RenderHeap_Free(&RRenderHeap);
 }

@@ -18,7 +18,7 @@ typedef struct Array_Polygon_VertexIndex_TYP
 
 typedef struct Mesh_TYP
 {
-	Array_Vertex Vertices;
+	Array_VertexHANDLE Vertices;
 	Array_Polygon_VertexIndex Polygons;
 }Mesh, *Mesh_PTR;
 

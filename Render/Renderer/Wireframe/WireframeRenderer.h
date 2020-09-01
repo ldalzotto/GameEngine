@@ -49,6 +49,7 @@ typedef struct ARRAY_PolygonPipelineV2_TYP
 
 typedef struct VertexPipeline_TYP
 {
+	Vertex_HANDLE Vertex;
 	Vector4f CameraSpacePosition;
 	Vector4f TransformedPosition;
 	Vector2i PixelPosition;

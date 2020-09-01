@@ -5,6 +5,8 @@
 #include "Objects/Resource/Vertex.h"
 #include "Objects/Resource/Mesh.h"
 
+#include "Heap/RenderHeap.h"
+
 void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 {
 	FileStream l_fs = FileStream_open(p_fileAbsolutePath);
@@ -50,12 +52,10 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 						String_Split(&l_lineWithoutHeader, &l_spaceSlice, &l_verticesPositions);
 						if (l_verticesPositions.Size > 0)
 						{
-							Vertex l_insertedVertex = {0};
-							Arr_PushBackRealloc_Vertex(&out_mesh->Vertices, &l_insertedVertex);
-							Vertex_PTR l_vertex = &out_mesh->Vertices.Memory[out_mesh->Vertices.Size - 1];
-							l_vertex->LocalPosition.x = (float)atof(l_verticesPositions.Memory[0].Memory);
-							l_vertex->LocalPosition.y = (float)atof(l_verticesPositions.Memory[1].Memory);
-							l_vertex->LocalPosition.z = (float)atof(l_verticesPositions.Memory[2].Memory);
+							Vertex_HANDLE l_insertedVertex;
+							Mesh_AllocVertex(out_mesh, &l_insertedVertex);
+							Vertex_PTR l_vertex = &RRenderHeap.VertexAllocator.array.Memory[l_insertedVertex.Handle];
+							l_vertex->LocalPosition = (Vector4f){ (float)atof(l_verticesPositions.Memory[0].Memory), (float)atof(l_verticesPositions.Memory[1].Memory) , (float)atof(l_verticesPositions.Memory[2].Memory), 1.0f };
 						}
 
 					}
@@ -75,7 +75,7 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 						String_Split(&l_lineWithoutHeader, &l_spaceSlice, &l_polyFaces);
 						if (l_polyFaces.Size > 0)
 						{
-							Polygon_VertexIndex l_insertedPoly = {0};
+							Polygon_VertexIndex l_insertedPoly = { 0 };
 							Arr_PushBackRealloc_Polygon_VertexIndex(&out_mesh->Polygons, &l_insertedPoly);
 							Polygon_VertexIndex_PTR l_polygon = &out_mesh->Polygons.Memory[out_mesh->Polygons.Size - 1];
 
@@ -83,7 +83,7 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 
 							for (size_t i = 0; i < l_polyFaces.Size; i++)
 							{
-								
+
 								Arr_Clear_String(&l_polygVertexIndices);
 								String* l_polyFaceString = &l_polyFaces.Memory[i];
 								StringSLICE l_polyFaceSlice = { l_polyFaceString->Memory, 0, strlen(l_polyFaceString->Memory) };

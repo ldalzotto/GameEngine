@@ -2,6 +2,7 @@
 
 #include <math.h>
 
+#include "Heap/RenderHeap.h"
 #include "Cull/ObjectCulling.h"
 #include "Cull/BackfaceCulling.h"
 #include "Objects/Resource/Polygon.h"
@@ -55,9 +56,8 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 			size_t l_vertexIndexOffset = p_memory->VertexPipeline.Size;
 			for (size_t j = 0; j < l_renderableObject->Mesh->Vertices.Size; j++)
 			{
-				Vertex_PTR l_vertex = &l_renderableObject->Mesh->Vertices.Memory[j];
 				l_vertexPipeline = (VertexPipeline){
-					.TransformedPosition = {l_vertex->LocalPosition.x, l_vertex->LocalPosition.y, l_vertex->LocalPosition.z, 1.0f},
+					.Vertex = l_renderableObject->Mesh->Vertices.Memory[j],
 					.PixelPositionCalculated = 0
 				};
 				Arr_PushBackRealloc_VertexPipeline(&p_memory->VertexPipeline, &l_vertexPipeline);
@@ -102,9 +102,10 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 
 		for (size_t j = l_renderableObject->VertexPipelineIndexBeginIncluded; j < l_renderableObject->VertexPipelineIndexEndExcluded; j++)
 		{
-			VertexPipeline_PTR l_vertex = &p_memory->VertexPipeline.Memory[j];
-			Mat_Mul_M4F_V4F(&l_renderableObject->RenderedObject->ModelMatrix, &l_vertex->TransformedPosition, &tmp_vec4_0);
-			l_vertex->TransformedPosition = tmp_vec4_0;
+			VertexPipeline_PTR l_vertexPipeline = &p_memory->VertexPipeline.Memory[j];
+			Vertex_PTR l_vertex = &RRenderHeap.VertexAllocator.array.Memory[l_vertexPipeline->Vertex.Handle];
+			Mat_Mul_M4F_V4F(&l_renderableObject->RenderedObject->ModelMatrix, &l_vertex->LocalPosition, &tmp_vec4_0);
+			l_vertexPipeline->TransformedPosition = tmp_vec4_0;
 		}
 	}
 
