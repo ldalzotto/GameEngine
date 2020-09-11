@@ -4,14 +4,17 @@
 #include "RenderV2.h"
 #include "AppEvent/AppEvent.h"
 #include "v2/Math.h"
+#include "v2/_interface/VectorStructuresC.h"
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/QuaternionC.h"
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/FrustumC.h"
 #include "v2/_interface/MatrixC.h"
 
+
 #include "Heap/RenderHeap.h"
 #include "DataStructures/String.h"
+#include "Objects/Resource/Mesh.h"
 #include "Objects/RenderedObject.h"
 #include "Clock/Clock.h"
 
@@ -38,18 +41,10 @@ int main(int argc, char* argv[])
 	RenderedObject_PTR l_renderableObject_ptr = &l_renderableObject;
 	BoxF l_meshBoundingBox = {0};
 	{
-		Array_Vector3f l_vertices;
-		Arr_Alloc_Vector3F(&l_vertices, l_mesh->Mesh.Vertices.Size);
-		for (size_t i = 0; i < l_mesh->Mesh.Vertices.Size; i++)
-		{
-			Arr_PushBackNoRealloc_Vector3F(&l_vertices, (Vector3f_PTR)&RRenderHeap.VertexAllocator.array.Memory[l_mesh->Mesh.Vertices.Memory[i].Handle].LocalPosition);
-		}
-		Box_Build_F(&l_meshBoundingBox, &l_vertices);
-		Arr_Free_Vector3F(&l_vertices);
-
-		l_renderableObject = (RenderedObject) { &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
-		Arr_PushBackRealloc_RenderedObjectHandle(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
+		Mesh_BuildBoundingBox(&l_mesh->Mesh, &l_meshBoundingBox);
 	}
+	l_renderableObject = (RenderedObject){ &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
+	Arr_PushBackRealloc_RenderedObjectHandle(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
 
 	Matrix4f l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };
 	{

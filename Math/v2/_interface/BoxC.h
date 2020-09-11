@@ -30,8 +30,7 @@ typedef struct BoxFPoints_TYP
 	
 }BoxFPoints, * BoxFPoints_PTR;
 
-//TODO using an iterator to avoid copying data
-void Box_Build_F(BoxF_PTR p_box, Array_Vector3f_PTR p_points);
+void Box_Build_F_ArrVec3F(BoxF_PTR p_box, Array_Vector3f_PTR p_points);
 void Box_ExtractPoints_F(const BoxF_PTR p_box, BoxFPoints_PTR p_out);
 void Box_ExtractMinMax_F(const BoxF_PTR p_box, Vector3f_PTR out_min, Vector3f_PTR out_max);
 void BoxPoints_Mul_F_M4F(const BoxFPoints_PTR p_boxPoints, const Matrix4f_PTR p_matrix, BoxFPoints_PTR p_out);

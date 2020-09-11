@@ -7,6 +7,7 @@
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/BoxC.h"
+#include "v2/_interface/BoxC_alg.h"
 #include "v2/_interface/VectorStructuresC.h"
 #include "v2/_interface/PlaneC.h"
 #include "v2/_interface/FrustumC.h"
@@ -450,13 +451,13 @@ void Quat_FromAxis(const Matrix3f_PTR p_axis, Quaternion4f_PTR p_out)
 	const Vector3f_PTR l_right = &p_axis->Right;
 	const Vector3f_PTR l_up = &p_axis->Up;
 	const Vector3f_PTR l_forward = &p_axis->Forward;
-	
+
 
 	// We calculate the four square roots and get the higher one.
 	float qxDiag = fmaxf(1 + l_right->x - l_up->y - l_forward->z, 0.0f);
 	float qyDiag = fmaxf(1 + l_up->y - l_right->x - l_forward->z, 0.0f);
-	float qzDiag = fmaxf(1 + l_forward->z -l_right->x - l_up->y, 0.0f);
-	float qwDiag = fmaxf(1 +l_right->x + l_up->y + l_forward->z, 0.0f);
+	float qzDiag = fmaxf(1 + l_forward->z - l_right->x - l_up->y, 0.0f);
+	float qwDiag = fmaxf(1 + l_right->x + l_up->y + l_forward->z, 0.0f);
 
 	int l_diagonalIndex = 0;
 	float l_biggestDiagonalValue = qxDiag;
@@ -663,7 +664,7 @@ inline float Mat_Det_M4F(const Matrix4f_PTR p_mat, const short int p_colIndex, c
 
 
 void Mat_Mul_M4F_M4F(const Matrix4f_PTR p_left, const Matrix4f_PTR p_right, Matrix4f_PTR p_out)
-{	
+{
 	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 4, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
 };
 
@@ -999,28 +1000,10 @@ void Seg_Mul_V4F_M4F(const Segment_Vector4f_PTR p_segment, const Matrix4f_PTR p_
 /************************ BOX *************************/
 
 #if 1
-
-void Box_Grow_F(BoxF_PTR p_box, const Vector3f_PTR p_growingPoint)
+void Box_Build_F_ArrVec3F(BoxF_PTR p_box, Array_Vector3f_PTR p_points)
 {
-	Vector3f l_delta; Vec_Min_3f_3f(p_growingPoint, &p_box->Center, &l_delta);
+	// #GEN BOX_BUILD_ALROGITHM(for (size_t i = 0; i < p_points->Size; i++) { Vector3f_PTR l_point = &p_points->Memory[i];, }, p_points->Size);
 
-	if (fabs(l_delta.x) > p_box->Extend.x)
-	{
-		p_box->Extend.x = fabsf(l_delta.x);
-	}
-	if (fabs(l_delta.y) > p_box->Extend.y)
-	{
-		p_box->Extend.y = fabsf(l_delta.y);
-	}
-	if (fabs(l_delta.z) > p_box->Extend.z)
-	{
-		p_box->Extend.z = fabsf(l_delta.z);
-	}
-};
-
-void Box_Build_F(BoxF_PTR p_box, Array_Vector3f_PTR p_points)
-{
-	//Calculate approximate center
 	Vector3f l_approximateCenter = Vector3f_ZERO;
 	{
 		for (size_t i = 0; i < p_points->Size; i++)
@@ -1030,36 +1013,46 @@ void Box_Build_F(BoxF_PTR p_box, Array_Vector3f_PTR p_points)
 		}
 		Vec_Mul_3f_1f(&l_approximateCenter, 1.0f / p_points->Size, &l_approximateCenter);
 	}
-
-	//Calculate min-max
 	Vector3f l_min = l_approximateCenter, l_max = l_approximateCenter;
 	{
 		for (size_t i = 0; i < p_points->Size; i++)
 		{
 			Vector3f_PTR l_point = &p_points->Memory[i];
-
-			if (l_point->x <= l_min.x) { l_min.x = l_point->x; }
-			if (l_point->y <= l_min.y) { l_min.y = l_point->y; }
-			if (l_point->z <= l_min.z) { l_min.z = l_point->z; }
-
-			if (l_point->x >= l_max.x) { l_max.x = l_point->x; }
-			if (l_point->y >= l_max.y) { l_max.y = l_point->y; }
-			if (l_point->z >= l_max.z) { l_max.z = l_point->z; }
+			if (l_point->x <= l_min.x)
+			{
+				l_min.x = l_point->x;
+			}
+			if (l_point->y <= l_min.y)
+			{
+				l_min.y = l_point->y;
+			}
+			if (l_point->z <= l_min.z)
+			{
+				l_min.z = l_point->z;
+			}
+			if (l_point->x >= l_max.x)
+			{
+				l_max.x = l_point->x;
+			}
+			if (l_point->y >= l_max.y)
+			{
+				l_max.y = l_point->y;
+			}
+			if (l_point->z >= l_max.z)
+			{
+				l_max.z = l_point->z;
+			}
 		}
-	
 	}
-
-	//calculate accurate center
 	{
 		p_box->Center = Vector3f_ZERO;
-
 		Vec_Add_3f_3f(&p_box->Center, &l_min, &p_box->Center);
 		Vec_Add_3f_3f(&p_box->Center, &l_max, &p_box->Center);
 		Vec_Mul_3f_1f(&p_box->Center, 0.5f, &p_box->Center);
 	}
-
 	Box_Grow_F(p_box, &l_min);
 	Box_Grow_F(p_box, &l_max);
+
 };
 
 void Box_ExtractPoints_F(const BoxF_PTR p_box, BoxFPoints_PTR p_out)

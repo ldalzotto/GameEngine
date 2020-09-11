@@ -4,10 +4,12 @@
 
 #include "Error/ErrorHandler.h"
 #include "DataStructures/ARRAY.h"
+#include "v2/_interface/BoxC_def.h"
 
 void Mesh_Alloc(Mesh_PTR p_mesh);
 void Mesh_AllocVertex(Mesh_PTR p_mesh, Vertex_HANDLE_PTR out_vertexHandle);
 void Mesh_Free(Mesh_PTR p_mesh);
+void Mesh_BuildBoundingBox(const Mesh_PTR p_mesh, BoxF_PTR out_box);
 
 inline void Arr_Alloc_Polygon_VertexIndex(Array_Polygon_VertexIndex_PTR p_arr, size_t p_initialCapacity) { Arr_Alloc(&p_arr->array, sizeof(Polygon_VertexIndex), p_initialCapacity); };
 inline void Arr_Free_Polygon_VertexIndex(Array_Polygon_VertexIndex_PTR p_arr) { Arr_Free(&p_arr->array); };
