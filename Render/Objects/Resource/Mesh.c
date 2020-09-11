@@ -18,7 +18,7 @@ void Mesh_AllocVertex(Mesh_PTR p_mesh, Vertex_HANDLE_PTR out_vertexHandle)
 
 void Mesh_Free(Mesh_PTR p_mesh)
 {
-	PoolAllocator_FreeElements(&RRenderHeap.VertexAllocator.allocator, &p_mesh->Vertices);
+	PoolAllocator_FreeElements_Vertex(&RRenderHeap.VertexAllocator, &p_mesh->Vertices);
 	Arr_Free(&p_mesh->Vertices.array);
 	Arr_Free_Polygon_VertexIndex(&p_mesh->Polygons);
 };
