@@ -53,7 +53,7 @@ void RenderV2_render(RenderV2* p_render)
 	}
 
 	Recti l_presentTextureClip;
-	Texture_CuildClipRect_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureClip);
+	Texture_BuildClipRect_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureClip);
 
 	{
 		WireframeRendererInput l_wireFrameRendererInput;

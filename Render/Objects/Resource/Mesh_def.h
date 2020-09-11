@@ -11,6 +11,16 @@ typedef struct Polygon_VertexIndex_TYP
 	POLYGON_TYPE_DEFINITION(VertexIndex)
 } Polygon_VertexIndex, * Polygon_VertexIndex_PTR;
 
+typedef struct Polygon_VertexIndex_HANDLE_TYP
+{
+	size_t Handle;
+}Polygon_VertexIndex_HANDLE, * Polygon_VertexIndex_HANDLE_PTR;
+
+typedef struct Array_Polygon_VertexIndex_HANDLE_TYP
+{
+	ARRAY_TYPE_DEFINITION(Polygon_VertexIndex_HANDLE)
+}Array_Polygon_VertexIndex_HANDLE, * Array_Polygon_VertexIndex_HANDLE_PTR;
+
 typedef struct Array_Polygon_VertexIndex_TYP
 {
 	ARRAY_TYPE_DEFINITION(Polygon_VertexIndex)
@@ -19,7 +29,7 @@ typedef struct Array_Polygon_VertexIndex_TYP
 typedef struct Mesh_TYP
 {
 	Array_VertexHANDLE Vertices;
-	Array_Polygon_VertexIndex Polygons;
+	Array_Polygon_VertexIndex_HANDLE Polygons;
 }Mesh, *Mesh_PTR;
 
 typedef size_t MeshResource_KEY;

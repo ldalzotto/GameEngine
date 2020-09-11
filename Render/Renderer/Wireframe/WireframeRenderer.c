@@ -67,7 +67,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 			size_t l_polygonPipelineIndexOffset = p_memory->PolygonPipelines.Size;
 			for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
 			{
-				Polygon_VertexIndex_PTR l_polygon = &l_renderableObject->Mesh->Polygons.Memory[j];
+				Polygon_VertexIndex_PTR l_polygon = &RRenderHeap.PolygonAllocator.array.Memory[l_renderableObject->Mesh->Polygons.Memory[j].Handle];
 
 				l_polygonPipeline = (PolygonPipelineV2){
 					.IsCulled = 0,

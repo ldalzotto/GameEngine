@@ -75,9 +75,10 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 						String_Split(&l_lineWithoutHeader, &l_spaceSlice, &l_polyFaces);
 						if (l_polyFaces.Size > 0)
 						{
-							Polygon_VertexIndex l_insertedPoly = { 0 };
-							Arr_PushBackRealloc_Polygon_VertexIndex(&out_mesh->Polygons, &l_insertedPoly);
-							Polygon_VertexIndex_PTR l_polygon = &out_mesh->Polygons.Memory[out_mesh->Polygons.Size - 1];
+							Polygon_VertexIndex_HANDLE l_insertedPolyHandle;
+							PoolAllocator_AllocElement_Polygon(&RRenderHeap.PolygonAllocator, &l_insertedPolyHandle);
+							Arr_PushBackRealloc_Polygon_VertexIndex_HANDLE(&out_mesh->Polygons, &l_insertedPolyHandle);
+							Polygon_VertexIndex_PTR l_polygon = &RRenderHeap.PolygonAllocator.array.Memory[l_insertedPolyHandle.Handle];
 
 							Array_String l_polygVertexIndices; Arr_Alloc_String(&l_polygVertexIndices, 3);
 

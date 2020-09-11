@@ -7,7 +7,7 @@
 void Mesh_Alloc(Mesh_PTR p_mesh)
 {
 	Arr_Alloc_VertexHANDLE(&p_mesh->Vertices, 0);
-	Arr_Alloc_Polygon_VertexIndex(&p_mesh->Polygons, 0);
+	Arr_Alloc_Polygon_VertexIndex_HANDLE(&p_mesh->Polygons, 0);
 };
 
 void Mesh_AllocVertex(Mesh_PTR p_mesh, Vertex_HANDLE_PTR out_vertexHandle)
@@ -20,19 +20,21 @@ void Mesh_Free(Mesh_PTR p_mesh)
 {
 	PoolAllocator_FreeElements_Vertex(&RRenderHeap.VertexAllocator, &p_mesh->Vertices);
 	Arr_Free(&p_mesh->Vertices.array);
-	Arr_Free_Polygon_VertexIndex(&p_mesh->Polygons);
+	PoolAllocator_FreeElements_Polygon(&RRenderHeap.PolygonAllocator, &p_mesh->Polygons);
+	Arr_Free(&p_mesh->Polygons.array);
 };
 
 void Mesh_BuildBoundingBox(const Mesh_PTR p_mesh, BoxF_PTR p_box)
 {
-	/*
+
+#if 0
 	#GEN BOX_BUILD_ALROGITHM(
 		for (size_t i = 0; i < p_mesh->Vertices.Size; i++) {
 			Vector3f_PTR l_point = &RRenderHeap.VertexAllocator.array.Memory[p_mesh->Vertices.Memory[i].Handle].LocalPosition.Vec3; ,
 		},
 		p_mesh->Vertices.Size
 	);
-	*/
+#endif
 
 	Vector3f l_approximateCenter = Vector3f_ZERO;
 	{
