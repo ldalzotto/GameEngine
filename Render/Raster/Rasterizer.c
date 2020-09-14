@@ -143,7 +143,7 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 	{
 	case POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE:
 	{
-
+		// For loop on p_polygonRasterizerIterator->LineIndexCursor for line from p_polygonRasterizerIterator->PolygonBoundClip.Min.y to p_polygonRasterizerIterator->PolygonBoundClip.Max.y (included)
 		p_polygonRasterizerIterator->LineIndexCursor += 1;
 		if (p_polygonRasterizerIterator->LineIndexCursor > p_polygonRasterizerIterator->PolygonBoundClip.Max.y)
 		{
@@ -179,6 +179,7 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 		break;
 	case POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN:
 	{
+		// For loop on p_polygonRasterizerIterator->ColumnIndexCursor for colum from p_polygonRasterizerIterator->PolygonBoundClip.Min.x to p_polygonRasterizerIterator->PolygonBoundClip.Max.x (excluded)
 		p_polygonRasterizerIterator->ColumnIndexCursor += 1;
 		if (p_polygonRasterizerIterator->ColumnIndexCursor >= p_polygonRasterizerIterator->PolygonBoundClip.Max.x)
 		{

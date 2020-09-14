@@ -235,16 +235,7 @@ void Vec_Inv_3f(const Vector3f_PTR p_vec, Vector3f_PTR p_out)
 
 float Vec_Dot_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right)
 {
-	float l_return = 0.0f;
-	char* l_leftCursor = (char*)p_left;
-	char* l_rightCursor = (char*)p_right;
-	for (short int i = 0; i < 3; i++)
-	{
-		l_return += (*(float*)l_leftCursor * *(float*)l_rightCursor);
-		l_leftCursor += sizeof(float);
-		l_rightCursor += sizeof(float);
-	}
-	return l_return;
+	return (p_left->Points[0] * p_right->Points[0]) + (p_left->Points[1] * p_right->Points[1]) + (p_left->Points[2] * p_right->Points[2]);
 };
 
 void Vec_Cross_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
@@ -674,7 +665,25 @@ inline float Mat_Det_M4F(const Matrix4f_PTR p_mat, const short int p_colIndex, c
 
 void Mat_Mul_M4F_M4F(const Matrix4f_PTR p_left, const Matrix4f_PTR p_right, Matrix4f_PTR p_out)
 {
-	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 4, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
+	p_out->_00 = (p_left->_00 * p_right->_00) + (p_left->_10 * p_right->_01) + (p_left->_20 * p_right->_02) + (p_left->_30 * p_right->_03);
+	p_out->_01 = (p_left->_01 * p_right->_00) + (p_left->_11 * p_right->_01) + (p_left->_21 * p_right->_02) + (p_left->_31 * p_right->_03);
+	p_out->_02 = (p_left->_02 * p_right->_00) + (p_left->_12 * p_right->_01) + (p_left->_22 * p_right->_02) + (p_left->_32 * p_right->_03);
+	p_out->_03 = (p_left->_03 * p_right->_00) + (p_left->_13 * p_right->_01) + (p_left->_23 * p_right->_02) + (p_left->_33 * p_right->_03);
+
+	p_out->_10 = (p_left->_00 * p_right->_10) + (p_left->_10 * p_right->_11) + (p_left->_20 * p_right->_12) + (p_left->_30 * p_right->_13);
+	p_out->_11 = (p_left->_01 * p_right->_10) + (p_left->_11 * p_right->_11) + (p_left->_21 * p_right->_12) + (p_left->_31 * p_right->_13);
+	p_out->_12 = (p_left->_02 * p_right->_10) + (p_left->_12 * p_right->_11) + (p_left->_22 * p_right->_12) + (p_left->_32 * p_right->_13);
+	p_out->_13 = (p_left->_03 * p_right->_10) + (p_left->_13 * p_right->_11) + (p_left->_23 * p_right->_12) + (p_left->_33 * p_right->_13);
+
+	p_out->_20 = (p_left->_00 * p_right->_20) + (p_left->_10 * p_right->_21) + (p_left->_20 * p_right->_22) + (p_left->_30 * p_right->_23);
+	p_out->_21 = (p_left->_01 * p_right->_20) + (p_left->_11 * p_right->_21) + (p_left->_21 * p_right->_22) + (p_left->_31 * p_right->_23);
+	p_out->_22 = (p_left->_02 * p_right->_20) + (p_left->_12 * p_right->_21) + (p_left->_22 * p_right->_22) + (p_left->_32 * p_right->_23);
+	p_out->_23 = (p_left->_03 * p_right->_20) + (p_left->_13 * p_right->_21) + (p_left->_23 * p_right->_22) + (p_left->_33 * p_right->_23);
+
+	p_out->_30 = (p_left->_00 * p_right->_30) + (p_left->_10 * p_right->_31) + (p_left->_20 * p_right->_32) + (p_left->_30 * p_right->_33);
+	p_out->_31 = (p_left->_01 * p_right->_30) + (p_left->_11 * p_right->_31) + (p_left->_21 * p_right->_32) + (p_left->_31 * p_right->_33);
+	p_out->_32 = (p_left->_02 * p_right->_30) + (p_left->_12 * p_right->_31) + (p_left->_22 * p_right->_32) + (p_left->_32 * p_right->_33);
+	p_out->_33 = (p_left->_03 * p_right->_30) + (p_left->_13 * p_right->_31) + (p_left->_23 * p_right->_32) + (p_left->_33 * p_right->_33);
 };
 
 void Mat_Mul_M4F_V4F(const Matrix4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
