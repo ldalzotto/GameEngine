@@ -38,14 +38,10 @@ typedef struct Array_RenderableObjectPipeline_TYP
 
 typedef struct PolygonPipelineV2_TYP
 {
-	char IsCulled;
-	Polygon_VertexIndex VerticesIndex;
+	size_t* PolygonPipelineSize;
+	Array_Char IsCulled;
+	Array_Polygon_VertexIndex VerticesIndex;
 }PolygonPipelineV2, * PolygonPipelineV2_PTR;
-
-typedef struct ARRAY_PolygonPipelineV2_TYP
-{
-	ARRAY_TYPE_DEFINITION(PolygonPipelineV2)
-} ARRAY_PolygonPipelineV2, * ARRAY_PolygonPipelineV2_PTR;
 
 typedef struct VertexPipeline_TYP
 {
@@ -64,7 +60,7 @@ typedef struct Array_VertexPipeline_TYP
 typedef struct WireframeRenderer_Memory_TYP
 {
 	Array_RenderableObjectPipeline RederableObjectsPipeline;
-	ARRAY_PolygonPipelineV2 PolygonPipelines;
+	PolygonPipelineV2 PolygonPipelines;
 	Array_VertexPipeline VertexPipeline;
 	ARRAY_RASTERISATIONSTEP RasterizedPixelsBuffer;
 } WireframeRenderer_Memory, * WireframeRenderer_Memory_PTR;

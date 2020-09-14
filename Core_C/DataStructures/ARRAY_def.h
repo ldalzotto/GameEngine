@@ -20,3 +20,8 @@ union \
 		size_t Capacity; \
 	}; \
 };
+
+typedef struct Array_Char_TYP
+{
+	ARRAY_TYPE_DEFINITION(char)
+}Array_Char, * Array_Char_PTR;

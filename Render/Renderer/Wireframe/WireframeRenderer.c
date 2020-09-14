@@ -11,16 +11,13 @@
 #include "Raster/Rasterizer.h"
 #include "Renderer/Draw/DrawFunctions.h"
 #include "DataStructures/ARRAY.h"
+#include "Objects/Resource/Mesh.h"
 
 ARRAY_ALLOC_FUNCTION(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
 ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
 
-ARRAY_ALLOC_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
-ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
-
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
-
 
 #if RENDER_PERFORMANCE_TIMER
 #include "Clock/Clock.h"
@@ -98,29 +95,27 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 				Arr_PushBackRealloc_VertexPipeline(&p_memory->VertexPipeline, &l_vertexPipeline);
 			}
 
-			PolygonPipelineV2 l_polygonPipeline;
-			size_t l_polygonPipelineIndexOffset = p_memory->PolygonPipelines.Size;
+			size_t l_polygonPipelineIndexOffset = p_memory->PolygonPipelines.IsCulled.Size;
 			for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
 			{
 				Polygon_VertexIndex_PTR l_polygon = &RRenderHeap.PolygonAllocator.array.Memory[l_renderableObject->Mesh->Polygons.Memory[j].Handle];
 
-				l_polygonPipeline = (PolygonPipelineV2){
-					.IsCulled = 0,
-					.VerticesIndex = {
+				Polygon_VertexIndex l_vrticesIndex = 
+				{
 						l_polygon->v1 + l_vertexIndexOffset,
 						l_polygon->v2 + l_vertexIndexOffset,
 						l_polygon->v3 + l_vertexIndexOffset
-					}
 				};
 
-				Arr_PushBackRealloc_PolygonPipelineV2(&p_memory->PolygonPipelines, &l_polygonPipeline);
+				Arr_PushBackRealloc_Char(&p_memory->PolygonPipelines.IsCulled, 0);
+				Arr_PushBackRealloc_Polygon_VertexIndex(&p_memory->PolygonPipelines.VerticesIndex, &l_vrticesIndex);
 			}
 
 
 			RenderableObjectPipeline l_renderaBleObjectPipeline = {
 				.RenderedObject = l_renderableObject,
 				.PolygonPipelineIndexBeginIncluded = l_polygonPipelineIndexOffset,
-				.PolygonPipelineIndexEndExcluded = p_memory->PolygonPipelines.Size,
+				.PolygonPipelineIndexEndExcluded = p_memory->PolygonPipelines.IsCulled.Size,
 				.VertexPipelineIndexBeginIncluded = l_vertexIndexOffset,
 				.VertexPipelineIndexEndExcluded = p_memory->VertexPipeline.Size
 			};
@@ -161,17 +156,16 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 #endif
 
 	// Backface culling
-	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
+	for (size_t i = 0; i < *p_memory->PolygonPipelines.PolygonPipelineSize; i++)
 	{
-		PolygonPipelineV2_PTR l_polygon = &p_memory->PolygonPipelines.Memory[i];
+		Polygon_VertexIndex_PTR l_polygonVertexIndex = &p_memory->PolygonPipelines.VerticesIndex.Memory[i];
 		Polygon4fPTR l_poly =
 		{
-			.v1 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v1].TransformedPosition,
-			.v2 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v2].TransformedPosition,
-			.v3 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v3].TransformedPosition
+			.v1 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v1].TransformedPosition,
+			.v2 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v2].TransformedPosition,
+			.v3 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v3].TransformedPosition
 		};
-
-		l_polygon->IsCulled = BackFaceCulled_Poly4FPTR(&l_poly, &p_input->CameraBuffer->WorldPosition);
+		p_memory->PolygonPipelines.IsCulled.Memory[i] = BackFaceCulled_Poly4FPTR(&l_poly, &p_input->CameraBuffer->WorldPosition);
 	}
 
 #if RENDER_PERFORMANCE_TIMER
@@ -182,15 +176,14 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 	tmp_timer = Clock_currentTime_mics();
 #endif
 
-	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
+	for (size_t i = 0; i < *p_memory->PolygonPipelines.PolygonPipelineSize; i++)
 	{
-		PolygonPipelineV2_PTR l_polygon = &p_memory->PolygonPipelines.Memory[i];
-
-		if (!l_polygon->IsCulled)
+		Polygon_VertexIndex_PTR l_polygonVertexIndex = &p_memory->PolygonPipelines.VerticesIndex.Memory[i];
+		if (!p_memory->PolygonPipelines.IsCulled.Memory[i])
 		{
-			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v1];
-			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v2];
-			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v3];
+			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v1];
+			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v2];
+			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v3];
 
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v1, p_input);
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v2, p_input);
@@ -219,7 +212,10 @@ void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 {
 	Arr_Alloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, 0);
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
-	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
+	
+	Arr_Alloc_Char(&p_memory->PolygonPipelines.IsCulled, 0);
+	Arr_Alloc_Polygon_VertexIndex(&p_memory->PolygonPipelines.VerticesIndex, 0);
+	p_memory->PolygonPipelines.PolygonPipelineSize = &p_memory->PolygonPipelines.IsCulled.Size;
 
 	Arr_Alloc_RasterisationStep(&p_memory->RasterizedPixelsBuffer, 0);
 };
@@ -227,7 +223,9 @@ void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p
 {
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
 	Arr_Clear(&p_memory->VertexPipeline.array);
-	Arr_Clear(&p_memory->PolygonPipelines.array);
+
+	Arr_Clear(&p_memory->PolygonPipelines.IsCulled.array);
+	Arr_Clear(&p_memory->PolygonPipelines.VerticesIndex.array);
 
 	Arr_Clear_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 	Arr_Resize_RasterisationStep(&p_memory->RasterizedPixelsBuffer, p_width > height ? p_width * 2 : height * 2);
@@ -237,7 +235,10 @@ void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 {
 	Arr_Free(&p_memory->RederableObjectsPipeline.array);
 	Arr_Free(&p_memory->VertexPipeline.array);
-	Arr_Free(&p_memory->PolygonPipelines.array);
+
+	Arr_Free(&p_memory->PolygonPipelines.IsCulled.array);
+	Arr_Free(&p_memory->PolygonPipelines.VerticesIndex.array);
+
 	Arr_Free_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 };
 

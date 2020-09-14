@@ -32,3 +32,7 @@ void Arr_CopyToRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, Array_PTR p_target
 #define ARRAY_ERASE_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Erase_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_index) { Arr_Erase(&p_array->array, sizeof(ArrayElementType), p_index); };
 #define ARRAY_SWAP_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Swap_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_left, size_t p_right) { Arr_Swap(&p_array->array, sizeof(ArrayElementType), p_left, p_right); };
 #define ARRAY_COPYTOREALLOC_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_CopyToRealloc_##MethodNamePrefix##(ArrayTypePTR p_source, ArrayTypePTR p_target) { Arr_CopyToRealloc(&p_source->array, sizeof(ArrayElementType), &p_target->array); };
+
+
+ARRAY_ALLOC_FUNCTION(Char, Array_Char_PTR, char);
+ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(Char, Array_Char_PTR, char);
