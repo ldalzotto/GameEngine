@@ -45,7 +45,7 @@ Matrix4f Camera_worldToClipMatrix(Camera_PTR p_camera)
 
 Segment_Vector3f Camera_buildWorldSpaceRay(Camera_PTR p_camera, Vector2f_PTR p_screenPoint)
 {
-	Vector3f tmp_vec3_0, tmp_vec3_1; Vector4f tmp_vec4_0, tmp_vec4_1, tmp_vec4_2, tmp_vec4_3;
+	Vector4f tmp_vec4_0, tmp_vec4_1, tmp_vec4_2, tmp_vec4_3;
 
 
 	Vector2f l_graphicsAPIPixelCoord;

@@ -38,6 +38,7 @@ typedef struct WireframeRendererPerformace_TYP
 	PerformanceCounter AverageLocalToWorld;
 	PerformanceCounter AverageBackfaceCulling;
 	PerformanceCounter AverageRasterization;
+	PerformanceCounter AverageRasterization_PixelDrawing;
 }WireframeRendererPerformace, * WireframeRendererPerformace_PTR;
 
 WireframeRendererPerformace GWireframeRendererPerformace = { 0 };
@@ -74,7 +75,8 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 	Vector4f tmp_vec4_0;
 
 #if RENDER_PERFORMANCE_TIMER
-	TimeClockPrecision tmp_timer = Clock_currentTime_mics();
+	TimeClockPrecision tmp_timer, tmp_timer_2;
+	tmp_timer = Clock_currentTime_mics();
 #endif
 
 	for (size_t i = 0; i < p_input->RenderableObjectsBuffer->RenderedObjects.Size; i++)
@@ -194,20 +196,20 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v2, p_input);
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v3, p_input);
 
-
-			// Rasterize
-			// {
-			// 	Draw_LineClipped(&l_v1->PixelPosition, &l_v2->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-			// 	Draw_LineClipped(&l_v2->PixelPosition, &l_v3->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-			// 	Draw_LineClipped(&l_v3->PixelPosition, &l_v1->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-			// }
+#if RENDER_PERFORMANCE_TIMER
+			tmp_timer_2 = Clock_currentTime_mics();
+#endif
 			Polygon2i l_polygon = {
 				.v1 = l_v1->PixelPosition,
 				.v2 = l_v2->PixelPosition,
 				.v3 = l_v3->PixelPosition
 			};
-			Draw_PolygonClipped(&l_polygon, &p_memory->RasterizedPixelsBuffer2, p_to, p_to_clipRect, &l_wireframeColor);
+			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &l_wireframeColor);
 			
+#if RENDER_PERFORMANCE_TIMER
+			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization_PixelDrawing, Clock_currentTime_mics() - tmp_timer);
+#endif
+
 		}
 
 	}
@@ -226,23 +228,18 @@ void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
 
-	Arr_Alloc_Vector2i(&p_memory->RasterizedPixelsBuffer2, 0);
 };
 void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
 {
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
 	Arr_Clear(&p_memory->VertexPipeline.array);
 	Arr_Clear(&p_memory->PolygonPipelines.array);
-
-	Arr_Clear(&p_memory->RasterizedPixelsBuffer2.array);
 };
 void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 {
 	Arr_Free(&p_memory->RederableObjectsPipeline.array);
 	Arr_Free(&p_memory->VertexPipeline.array);
 	Arr_Free(&p_memory->PolygonPipelines.array);
-
-	Arr_Free(&p_memory->RasterizedPixelsBuffer2.array);
 };
 
 #if RENDER_PERFORMANCE_TIMER
@@ -264,5 +261,6 @@ void WireframeRendererPerformace_Print(WireframeRendererPerformace_PTR p_wirefra
 	printf("  -> Local To World %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageLocalToWorld));
 	printf("  -> Backface Culling %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageBackfaceCulling));
 	printf("  -> Rasterization %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization));
+	printf("     -> PixelDraw %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_PixelDrawing));
 };
 #endif

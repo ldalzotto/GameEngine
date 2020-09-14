@@ -42,16 +42,21 @@ void Draw_LineClipped(
 };
 
 
-void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Array_Vector2i_PTR p_rasterizedPixelBuffer, Texture3c_PTR p_to, Recti_PTR p_clipRect,
+void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect,
 	Vector3c_PTR p_color)
 {
-	// Rasterize_PolygonClipped_DirectTest(p_polygon, p_to, p_clipRect);
-
 	//TODO /!\ Huge performance impact of using the p_rasterizedPixelBuffer.
-	Arr_Clear(&p_rasterizedPixelBuffer->array);
-	Rasterize_PolygonClipped(p_polygon, p_rasterizedPixelBuffer, p_clipRect);
-	for (size_t i = 0; i < p_rasterizedPixelBuffer->Size; i++)
+	// Rasterize_PolygonClipped_DirectTest(p_polygon, p_to, p_clipRect, p_color);
+
+	PolygonRasterizerIterator l_rasterizerIterator;
+	PolygonRasterize_Initialize(p_polygon, p_clipRect, &l_rasterizerIterator);
+	POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
+	while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
 	{
-		p_to->Pixels.Memory[p_rasterizedPixelBuffer->Memory[i].x + (p_rasterizedPixelBuffer->Memory[i].y * p_to->Width)] = *p_color;
+		l_returnCode = PolygonRasterize_MoveNext(&l_rasterizerIterator);
+		if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
+		{
+			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = *p_color;
+		}
 	}
 };

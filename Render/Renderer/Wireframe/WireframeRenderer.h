@@ -63,7 +63,6 @@ typedef struct WireframeRenderer_Memory_TYP
 	Array_RenderableObjectPipeline RederableObjectsPipeline;
 	ARRAY_PolygonPipelineV2 PolygonPipelines;
 	Array_VertexPipeline VertexPipeline;
-	Array_Vector2i RasterizedPixelsBuffer2;
 } WireframeRenderer_Memory, * WireframeRenderer_Memory_PTR;
 
 void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory);
