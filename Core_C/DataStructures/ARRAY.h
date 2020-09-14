@@ -13,6 +13,7 @@ void Arr_Clear(Array_PTR p_array);
 char Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_newCapacity);
 
 char Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value);
+char Arr_PushBackRealloc_NotInitizlized(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE);
 char Arr_PushBackNoRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value);
 
 char Arr_InsertAtRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value, size_t p_elementNb, size_t p_index);
@@ -29,10 +30,10 @@ void Arr_CopyToRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, Array_PTR p_target
 #define ARRAY_ZEROING_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Zeroing_##MethodNamePrefix##(ArrayTypePTR p_array) { Arr_Zeroing(&p_array->array, sizeof(ArrayElementType)); };
 #define ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_##MethodNamePrefix##(ArrayTypePTR p_array, ArrayElementType* p_item) { Arr_PushBackRealloc(&p_array->array, sizeof(ArrayElementType), (char*)p_item); };
 #define ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_##MethodNamePrefix##(ArrayTypePTR p_array, ArrayElementType p_item) { Arr_PushBackRealloc(&p_array->array, sizeof(ArrayElementType), (char*)&p_item); };
+#define ARRAY_PUSHBACKREALLOC_NONINITIALIZED_FUNCTION_PTR(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_NotInitizlized_##MethodNamePrefix##(ArrayTypePTR p_array) { Arr_PushBackRealloc_NotInitizlized(&p_array->array, sizeof(ArrayElementType)); };
 #define ARRAY_ERASE_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Erase_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_index) { Arr_Erase(&p_array->array, sizeof(ArrayElementType), p_index); };
 #define ARRAY_SWAP_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Swap_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_left, size_t p_right) { Arr_Swap(&p_array->array, sizeof(ArrayElementType), p_left, p_right); };
 #define ARRAY_COPYTOREALLOC_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_CopyToRealloc_##MethodNamePrefix##(ArrayTypePTR p_source, ArrayTypePTR p_target) { Arr_CopyToRealloc(&p_source->array, sizeof(ArrayElementType), &p_target->array); };
-
 
 ARRAY_ALLOC_FUNCTION(Char, Array_Char_PTR, char);
 ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(Char, Array_Char_PTR, char);

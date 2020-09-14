@@ -45,23 +45,19 @@ typedef struct PolygonPipelineV2_TYP
 
 typedef struct VertexPipeline_TYP
 {
-	Vertex_HANDLE Vertex;
-	Vector4f CameraSpacePosition;
-	Vector4f TransformedPosition;
-	Vector2i PixelPosition;
-	char PixelPositionCalculated;
+	size_t* VertexPipelineSize;
+	Array_VertexHANDLE Vertex;
+	Array_Vector4f CameraSpacePosition;
+	Array_Vector4f TransformedPosition;
+	Array_Vector2i PixelPosition;
+	Array_Char PixelPositionCalculated;
 }VertexPipeline, * VertexPipeline_PTR;
-
-typedef struct Array_VertexPipeline_TYP
-{
-	ARRAY_TYPE_DEFINITION(VertexPipeline)
-}Array_VertexPipeline, * Array_VertexPipeline_PTR;
 
 typedef struct WireframeRenderer_Memory_TYP
 {
 	Array_RenderableObjectPipeline RederableObjectsPipeline;
 	PolygonPipelineV2 PolygonPipelines;
-	Array_VertexPipeline VertexPipeline;
+	VertexPipeline VertexPipeline;
 	ARRAY_RASTERISATIONSTEP RasterizedPixelsBuffer;
 } WireframeRenderer_Memory, * WireframeRenderer_Memory_PTR;
 

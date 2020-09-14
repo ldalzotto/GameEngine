@@ -8,16 +8,15 @@
 #include "Objects/Resource/Polygon.h"
 #include "v2/_interface/WindowSize.h"
 #include "v2/_interface/MatrixC.h"
+#include "v2/_interface/VectorStructuresC.h"
 #include "Raster/Rasterizer.h"
 #include "Renderer/Draw/DrawFunctions.h"
 #include "DataStructures/ARRAY.h"
+#include "Objects/Resource/Vertex.h"
 #include "Objects/Resource/Mesh.h"
 
 ARRAY_ALLOC_FUNCTION(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
 ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
-
-ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
-ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 
 #if RENDER_PERFORMANCE_TIMER
 #include "Clock/Clock.h"
@@ -45,20 +44,22 @@ void WireframeRendererPerformace_Print(WireframeRendererPerformace_PTR p_wirefra
 
 #endif
 
-inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const WireframeRendererInput* p_input)
+inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertexPipeline, size_t p_index, const WireframeRendererInput* p_input)
 {
-	if (!p_vertex->PixelPositionCalculated)
+	if (!p_vertexPipeline->PixelPositionCalculated.Memory[p_index])
 	{
+		Vector4f_PTR p_transformedPosition = &p_vertexPipeline->TransformedPosition.Memory[p_index];
+
 		// World to camera
-		Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, &p_vertex->TransformedPosition, &p_vertex->CameraSpacePosition);
+		Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, p_transformedPosition, &p_vertexPipeline->CameraSpacePosition.Memory[p_index]);
 
 		// Camera to clip
-		Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &p_vertex->CameraSpacePosition, &p_vertex->TransformedPosition);
+		Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &p_vertexPipeline->CameraSpacePosition.Memory[p_index], p_transformedPosition);
 
 		// To pixel
-		WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, p_vertex->TransformedPosition.x, p_vertex->TransformedPosition.y, &p_vertex->PixelPosition.x, &p_vertex->PixelPosition.y);
+		WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, p_transformedPosition->x, p_transformedPosition->y, &p_vertexPipeline->PixelPosition.Memory[p_index].x, &p_vertexPipeline->PixelPosition.Memory[p_index].y);
 
-		p_vertex->PixelPositionCalculated = 1;
+		p_vertexPipeline->PixelPositionCalculated.Memory[p_index] = 1;
 	}
 };
 
@@ -84,15 +85,14 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 
 		if (!ObjectCulled_Boxf(l_renderableObject->MeshBoundingBox, (Matrix4f_PTR)&l_renderableObject->ModelMatrix, (Matrix4f_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 		{
-			VertexPipeline l_vertexPipeline;
-			size_t l_vertexIndexOffset = p_memory->VertexPipeline.Size;
+			size_t l_vertexIndexOffset = *p_memory->VertexPipeline.VertexPipelineSize;
 			for (size_t j = 0; j < l_renderableObject->Mesh->Vertices.Size; j++)
 			{
-				l_vertexPipeline = (VertexPipeline){
-					.Vertex = l_renderableObject->Mesh->Vertices.Memory[j],
-					.PixelPositionCalculated = 0
-				};
-				Arr_PushBackRealloc_VertexPipeline(&p_memory->VertexPipeline, &l_vertexPipeline);
+				Arr_PushBackRealloc_VertexHANDLE(&p_memory->VertexPipeline.Vertex, &l_renderableObject->Mesh->Vertices.Memory[j]);
+				Arr_PushBackRealloc_NotInitizlized_Vector4f(&p_memory->VertexPipeline.TransformedPosition);
+				Arr_PushBackRealloc_NotInitizlized_Vector4f(&p_memory->VertexPipeline.CameraSpacePosition);
+				Arr_PushBackRealloc_NotInitizlized_Vector2i(&p_memory->VertexPipeline.PixelPosition);
+				Arr_PushBackRealloc_Char(&p_memory->VertexPipeline.PixelPositionCalculated, 0);
 			}
 
 			size_t l_polygonPipelineIndexOffset = p_memory->PolygonPipelines.IsCulled.Size;
@@ -117,7 +117,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 				.PolygonPipelineIndexBeginIncluded = l_polygonPipelineIndexOffset,
 				.PolygonPipelineIndexEndExcluded = p_memory->PolygonPipelines.IsCulled.Size,
 				.VertexPipelineIndexBeginIncluded = l_vertexIndexOffset,
-				.VertexPipelineIndexEndExcluded = p_memory->VertexPipeline.Size
+				.VertexPipelineIndexEndExcluded = *p_memory->VertexPipeline.VertexPipelineSize
 			};
 
 			Arr_PushBackRealloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, &l_renderaBleObjectPipeline);
@@ -140,10 +140,8 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 
 		for (size_t j = l_renderableObject->VertexPipelineIndexBeginIncluded; j < l_renderableObject->VertexPipelineIndexEndExcluded; j++)
 		{
-			VertexPipeline_PTR l_vertexPipeline = &p_memory->VertexPipeline.Memory[j];
-			Vertex_PTR l_vertex = &RRenderHeap.VertexAllocator.array.Memory[l_vertexPipeline->Vertex.Handle];
-			Mat_Mul_M4F_V4F(&l_renderableObject->RenderedObject->ModelMatrix, &l_vertex->LocalPosition, &tmp_vec4_0);
-			l_vertexPipeline->TransformedPosition = tmp_vec4_0;
+			Vertex_PTR l_vertex = &RRenderHeap.VertexAllocator.array.Memory[p_memory->VertexPipeline.Vertex.Memory[j].Handle];
+			Mat_Mul_M4F_V4F(&l_renderableObject->RenderedObject->ModelMatrix, &l_vertex->LocalPosition, &p_memory->VertexPipeline.TransformedPosition.Memory[j]);
 		}
 	}
 
@@ -161,9 +159,9 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 		Polygon_VertexIndex_PTR l_polygonVertexIndex = &p_memory->PolygonPipelines.VerticesIndex.Memory[i];
 		Polygon4fPTR l_poly =
 		{
-			.v1 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v1].TransformedPosition,
-			.v2 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v2].TransformedPosition,
-			.v3 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v3].TransformedPosition
+			.v1 = &p_memory->VertexPipeline.TransformedPosition.Memory[l_polygonVertexIndex->v1],
+			.v2 = &p_memory->VertexPipeline.TransformedPosition.Memory[l_polygonVertexIndex->v2],
+			.v3 = &p_memory->VertexPipeline.TransformedPosition.Memory[l_polygonVertexIndex->v3]
 		};
 		p_memory->PolygonPipelines.IsCulled.Memory[i] = BackFaceCulled_Poly4FPTR(&l_poly, &p_input->CameraBuffer->WorldPosition);
 	}
@@ -181,20 +179,24 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 		Polygon_VertexIndex_PTR l_polygonVertexIndex = &p_memory->PolygonPipelines.VerticesIndex.Memory[i];
 		if (!p_memory->PolygonPipelines.IsCulled.Memory[i])
 		{
-			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v1];
-			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v2];
-			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonVertexIndex->v3];
-
-			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v1, p_input);
-			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v2, p_input);
-			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v3, p_input);
-
+			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(&p_memory->VertexPipeline, l_polygonVertexIndex->v1, p_input);
+			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(&p_memory->VertexPipeline, l_polygonVertexIndex->v2, p_input);
+			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(&p_memory->VertexPipeline, l_polygonVertexIndex->v3, p_input);
 
 			// Rasterize
 			{
-				Draw_LineClipped(&l_v1->PixelPosition, &l_v2->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-				Draw_LineClipped(&l_v2->PixelPosition, &l_v3->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-				Draw_LineClipped(&l_v3->PixelPosition, &l_v1->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+				Draw_LineClipped(
+					&p_memory->VertexPipeline.PixelPosition.Memory[l_polygonVertexIndex->v1], 
+					&p_memory->VertexPipeline.PixelPosition.Memory[l_polygonVertexIndex->v2], 
+					&p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+				Draw_LineClipped(
+					&p_memory->VertexPipeline.PixelPosition.Memory[l_polygonVertexIndex->v2],
+					&p_memory->VertexPipeline.PixelPosition.Memory[l_polygonVertexIndex->v3],
+					&p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+				Draw_LineClipped(
+					&p_memory->VertexPipeline.PixelPosition.Memory[l_polygonVertexIndex->v3],
+					&p_memory->VertexPipeline.PixelPosition.Memory[l_polygonVertexIndex->v1],
+					&p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
 			}
 		}
 
@@ -211,7 +213,13 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 {
 	Arr_Alloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, 0);
-	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
+	
+	Arr_Alloc_VertexHANDLE(&p_memory->VertexPipeline.Vertex, 0);
+	Arr_Alloc_Vector4f(&p_memory->VertexPipeline.TransformedPosition, 0);
+	Arr_Alloc_Vector4f(&p_memory->VertexPipeline.CameraSpacePosition, 0);
+	Arr_Alloc_Vector2i(&p_memory->VertexPipeline.PixelPosition, 0);
+	Arr_Alloc_Char(&p_memory->VertexPipeline.PixelPositionCalculated, 0);
+	p_memory->VertexPipeline.VertexPipelineSize = &p_memory->VertexPipeline.Vertex.Size;
 	
 	Arr_Alloc_Char(&p_memory->PolygonPipelines.IsCulled, 0);
 	Arr_Alloc_Polygon_VertexIndex(&p_memory->PolygonPipelines.VerticesIndex, 0);
@@ -222,7 +230,12 @@ void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
 {
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
-	Arr_Clear(&p_memory->VertexPipeline.array);
+
+	Arr_Clear(&p_memory->VertexPipeline.Vertex.array);
+	Arr_Clear(&p_memory->VertexPipeline.TransformedPosition.array);
+	Arr_Clear(&p_memory->VertexPipeline.CameraSpacePosition.array);
+	Arr_Clear(&p_memory->VertexPipeline.PixelPosition.array);
+	Arr_Clear(&p_memory->VertexPipeline.PixelPositionCalculated.array);
 
 	Arr_Clear(&p_memory->PolygonPipelines.IsCulled.array);
 	Arr_Clear(&p_memory->PolygonPipelines.VerticesIndex.array);
@@ -234,7 +247,12 @@ void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p
 void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 {
 	Arr_Free(&p_memory->RederableObjectsPipeline.array);
-	Arr_Free(&p_memory->VertexPipeline.array);
+	
+	Arr_Free(&p_memory->VertexPipeline.Vertex.array);
+	Arr_Free(&p_memory->VertexPipeline.TransformedPosition.array);
+	Arr_Free(&p_memory->VertexPipeline.CameraSpacePosition.array);
+	Arr_Free(&p_memory->VertexPipeline.PixelPosition.array);
+	Arr_Free(&p_memory->VertexPipeline.PixelPositionCalculated.array);
 
 	Arr_Free(&p_memory->PolygonPipelines.IsCulled.array);
 	Arr_Free(&p_memory->PolygonPipelines.VerticesIndex.array);
