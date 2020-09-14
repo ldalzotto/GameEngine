@@ -118,8 +118,8 @@ void Rasterize_PolygonClipped(const Polygon2i_PTR in_out_polygon, Array_Vector2i
 
 
 	{
-		Vector3f l_begin = { in_out_polygon->v2.x - in_out_polygon->v1.x, in_out_polygon->v2.y - in_out_polygon->v1.y, 0.0f };
-		Vector3f l_end = { in_out_polygon->v3.x - in_out_polygon->v1.x, in_out_polygon->v3.y - in_out_polygon->v1.y, 0.0f };
+		Vector3f l_begin = { (float)in_out_polygon->v2.x - in_out_polygon->v1.x, (float)in_out_polygon->v2.y - in_out_polygon->v1.y, 0.0f };
+		Vector3f l_end = { (float)in_out_polygon->v3.x - in_out_polygon->v1.x, (float)in_out_polygon->v3.y - in_out_polygon->v1.y, 0.0f };
 		Vector3f l_crossResult;
 		Vec_Cross_3f(&l_begin, &l_end, &l_crossResult);
 

@@ -6,8 +6,8 @@
 #include "v2/_interface/VectorC.h"
 #include "v2/_interface/WindowSize.h"
 #include "Renderer/Draw/DrawFunctions.h"
+#include "Raster/Rasterizer.h"
 #include "DataStructures/ARRAY.h"
-
 
 
 void GizmoBuffer_alloc(GizmoBuffer* p_buffer)
@@ -28,8 +28,26 @@ void GizmoBuffer_free(GizmoBuffer* p_buffer)
 	Arr_Free(&p_buffer->Vertices.array);
 };
 
-void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer)
+void GizmoRendererMemory_Alloc(GizmoRendererMemory_PTR p_gizmoRendererMemory)
 {
+	Arr_Alloc_RasterisationStep(&p_gizmoRendererMemory->LineRasterizerBuffer, 0);
+};
+
+void GizmoRendererMemory_Clear(GizmoRendererMemory_PTR p_gizmoRendererMemory, size_t p_width, size_t height)
+{
+	Arr_Clear_RasterisationStep(&p_gizmoRendererMemory->LineRasterizerBuffer);
+	Arr_Resize_RasterisationStep(&p_gizmoRendererMemory->LineRasterizerBuffer, p_width > height ? p_width * 2 : height * 2);
+};
+
+void GizmoRendererMemory_Free(GizmoRendererMemory_PTR p_gizmoRendererMemory)
+{
+	Arr_Free(&p_gizmoRendererMemory->LineRasterizerBuffer.array);
+};
+
+void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect)
+{
+	GizmoRendererMemory_Clear(p_input->GizmoRendererMemory, p_to->Width, p_to->Height);
+
 	for (size_t i = 0; i < p_input->Buffer->Lines.Size; i++)
 	{
 		GizmoLine* l_line = &p_input->Buffer->Lines.Memory[i];
@@ -59,7 +77,7 @@ void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_t
 
 		// Rasterize
 		{
-			Draw_LineClipped(&l_lineBegin_pixel, &l_lineEnd_pixel, RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_line->Color);
+			Draw_LineClipped(&l_lineBegin_pixel, &l_lineEnd_pixel, &p_input->GizmoRendererMemory->LineRasterizerBuffer, p_to, p_to_clipRect, &l_line->Color);
 		}
 	}
 

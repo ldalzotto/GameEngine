@@ -1,16 +1,13 @@
 #pragma once
 
-
-#include "Raster/Rasterizer_def.h"
 #include "Objects/RenderedObject.h"
 #include "Objects/Resource/Polygon_def.h"
-#include "v2/_interface/MatrixC_def.h"
+#include "v2/_interface/RectC_def.h"
 #include "v2/_interface/VectorC_def.h"
 #include "v2/_interface/WindowSize_def.h"
 #include "Objects/Texture/Texture_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
-#include "DataStructures/ARRAY_def.h"
 
 typedef struct WireframeRendererInput_TYP
 {
@@ -66,7 +63,6 @@ typedef struct WireframeRenderer_Memory_TYP
 	Array_RenderableObjectPipeline RederableObjectsPipeline;
 	ARRAY_PolygonPipelineV2 PolygonPipelines;
 	Array_VertexPipeline VertexPipeline;
-	ARRAY_RASTERISATIONSTEP RasterizedPixelsBuffer;
 	Array_Vector2i RasterizedPixelsBuffer2;
 } WireframeRenderer_Memory, * WireframeRenderer_Memory_PTR;
 

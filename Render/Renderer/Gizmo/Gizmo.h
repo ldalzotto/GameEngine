@@ -46,14 +46,24 @@ void GizmoBuffer_alloc(GizmoBuffer* p_buffer);
 void GizmoBuffer_clear(GizmoBuffer* p_buffer);
 void GizmoBuffer_free(GizmoBuffer* p_buffer);
 
+typedef struct GizmoRendererMemory_TYP
+{
+	ARRAY_RASTERISATIONSTEP LineRasterizerBuffer;
+}GizmoRendererMemory, * GizmoRendererMemory_PTR;
+
+void GizmoRendererMemory_Alloc(GizmoRendererMemory_PTR p_gizmoRendererMemory);
+void GizmoRendererMemory_Clear(GizmoRendererMemory_PTR p_gizmoRendererMemory, size_t p_width, size_t height);
+void GizmoRendererMemory_Free(GizmoRendererMemory_PTR p_gizmoRendererMemory);
+
 typedef struct GizmoRendererInput_TYP
 {
 	GizmoBuffer* Buffer;
 	CAMERABUFFER_PTR CameraBuffer;
 	WindowSize WindowSize;
+	GizmoRendererMemory_PTR GizmoRendererMemory;
 } GizmoRendererInput;
 
-void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, ARRAY_RASTERISATIONSTEP_PTR RasterizedPixelsBuffer);
+void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect);
 void Gizmo_DrawLine(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end);
 void Gizmo_DrawLine_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end, const Vector3c_PTR p_color);
 void Gizmo_DrawPoint(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point);
