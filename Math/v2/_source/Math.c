@@ -307,6 +307,15 @@ float Vec_Distance_3f(const Vector3f_PTR p_start, const Vector3f_PTR p_end)
 	return Vec_Length_3f(&l_vec);
 };
 
+#if 0
+double Vec_SignedAngle_2i(const Vector2i_PTR p_begin, const Vector2i_PTR p_end)
+{
+	return atan2((double)p_end->y, (double)p_end->x) - atan2((double)p_begin->y, (double)p_begin->x);
+	// return atan2(((double)p_begin->x * p_end->y) - ((double)p_begin->y * p_end->x), ((double)p_begin->x * p_end->x) - ((double)p_begin->y * p_end->y));
+};
+#endif
+
+
 float Vec_Angle_3f(const Vector3f_PTR p_begin, const Vector3f_PTR p_end)
 {
 	return acosf(
@@ -1317,6 +1326,14 @@ bool Rect_ClipSegment_Int(const Vector2i_PTR in_clippedSegment_begin, const Vect
 	*out_clippedSegment_end = (Vector2i){ out_clippedSegment_end->x , out_clippedSegment_end->y };
 
 	return true;
+};
+
+void Rect_ClipPoint_Int(const Recti_PTR p_clippedRect, Vector2i_PTR p_point)
+{
+	if (p_point->x > p_clippedRect->Max.x) { p_point->x = p_clippedRect->Max.x; }
+	if (p_point->x < p_clippedRect->Min.x) { p_point->x = p_clippedRect->Min.x; }
+	if (p_point->y > p_clippedRect->Max.y) { p_point->y = p_clippedRect->Max.y; }
+	if (p_point->y < p_clippedRect->Min.y) { p_point->y = p_clippedRect->Min.y; }
 };
 
 #endif

@@ -33,10 +33,11 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	Matrix4f l_modelMatrix = Matrix4f_IDENTITYF;
-	l_modelMatrix.Col3.z = 5.0f;
+	// l_modelMatrix.Col3.z = 5.0f;
 
 	MeshResource_HANDLE l_mesh;
-	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);
+	// MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);
+	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/SingleTriangle.obj", &l_mesh);
 	RenderedObject l_renderableObject;
 	RenderedObject_PTR l_renderableObject_ptr = &l_renderableObject;
 	BoxF l_meshBoundingBox = {0};
@@ -87,7 +88,7 @@ int main(int argc, char* argv[])
 		Mat_RotationAxis_M4F(&tmp_mat3x3_0, &l_rotation);
 		Mat_Mul_M4F_M4F(&l_renderableObject.ModelMatrix, (Matrix4f_PTR)&l_rotation, &tmp_mat4x4_0);
 		l_renderableObject.ModelMatrix = tmp_mat4x4_0;
-		
+
 		RenderV2_render(&renderV2);
 	}
 

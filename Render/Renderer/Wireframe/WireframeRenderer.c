@@ -8,6 +8,7 @@
 #include "Objects/Resource/Polygon.h"
 #include "v2/_interface/WindowSize.h"
 #include "v2/_interface/MatrixC.h"
+#include "v2/_interface/VectorStructuresC.h"
 #include "Raster/Rasterizer.h"
 #include "Renderer/Draw/DrawFunctions.h"
 #include "DataStructures/ARRAY.h"
@@ -198,11 +199,18 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 
 
 			// Rasterize
-			{
-				Draw_LineClipped(&l_v1->PixelPosition, &l_v2->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-				Draw_LineClipped(&l_v2->PixelPosition, &l_v3->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-				Draw_LineClipped(&l_v3->PixelPosition, &l_v1->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
-			}
+			// {
+			// 	Draw_LineClipped(&l_v1->PixelPosition, &l_v2->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+			// 	Draw_LineClipped(&l_v2->PixelPosition, &l_v3->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+			// 	Draw_LineClipped(&l_v3->PixelPosition, &l_v1->PixelPosition, &p_memory->RasterizedPixelsBuffer, p_to, p_to_clipRect, &l_wireframeColor);
+			// }
+			Polygon2i l_polygon = {
+				.v1 = l_v1->PixelPosition,
+				.v2 = l_v2->PixelPosition,
+				.v3 = l_v3->PixelPosition
+			};
+			Draw_PolygonClipped(&l_polygon, &p_memory->RasterizedPixelsBuffer2, p_to, p_to_clipRect, &l_wireframeColor);
+			
 		}
 
 	}
@@ -222,6 +230,7 @@ void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
 
 	Arr_Alloc_RasterisationStep(&p_memory->RasterizedPixelsBuffer, 0);
+	Arr_Alloc_Vector2i(&p_memory->RasterizedPixelsBuffer2, 0);
 };
 void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
 {
@@ -231,7 +240,7 @@ void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p
 
 	Arr_Clear_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
 	Arr_Resize_RasterisationStep(&p_memory->RasterizedPixelsBuffer, p_width > height ? p_width * 2 : height * 2);
-
+	Arr_Clear(&p_memory->RasterizedPixelsBuffer2.array);
 };
 void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 {
@@ -239,6 +248,7 @@ void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
 	Arr_Free(&p_memory->VertexPipeline.array);
 	Arr_Free(&p_memory->PolygonPipelines.array);
 	Arr_Free_RasterisationStep(&p_memory->RasterizedPixelsBuffer);
+	Arr_Free(&p_memory->RasterizedPixelsBuffer2.array);
 };
 
 #if RENDER_PERFORMANCE_TIMER

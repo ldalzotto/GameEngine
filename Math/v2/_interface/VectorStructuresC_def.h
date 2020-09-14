@@ -3,6 +3,11 @@
 #include "v2/_interface/VectorC_def.h"
 #include "DataStructures/ARRAY_def.h"
 
+typedef struct Array_Vector2i_TYP
+{
+	ARRAY_TYPE_DEFINITION(Vector2i)
+}Array_Vector2i, * Array_Vector2i_PTR;
+
 typedef struct Array_Vector3f_TYP
 {
 	ARRAY_TYPE_DEFINITION(Vector3f)

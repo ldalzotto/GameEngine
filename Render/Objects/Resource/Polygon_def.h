@@ -9,6 +9,20 @@ typedef struct Polygon2f_TYP
 	Vector2f v3;
 }Polygon2f, * Polygon2f_PTR;
 
+typedef struct Polygon2i_TYP
+{
+	union
+	{
+		struct
+		{
+			Vector2i v1;
+			Vector2i v2;
+			Vector2i v3;
+		};
+		Vector2i Points[3];
+	};
+}Polygon2i, * Polygon2i_PTR;
+
 typedef struct Polygon4f_TYP
 {
 	Vector4f v1;

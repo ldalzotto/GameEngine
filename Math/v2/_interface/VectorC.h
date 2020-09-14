@@ -41,6 +41,9 @@ void Vec_Project_3f(const Vector3f_PTR p_vec, const Vector3f_PTR p_projectedOn, 
 
 float Vec_Distance_3f(const Vector3f_PTR p_start, const Vector3f_PTR p_end);
 
+#if 0
+double Vec_SignedAngle_2i(const Vector2i_PTR p_begin, const Vector2i_PTR p_end);
+#endif
 float Vec_Angle_3f(const Vector3f_PTR p_begin, const Vector3f_PTR p_end);
 float Vec_Angle_Normalized_3f(const Vector3f_PTR p_begin, const Vector3f_PTR p_end);
 short int Vec_AngleSign_3f(const Vector3f_PTR p_begin, const Vector3f_PTR p_end, Vector3f_PTR p_referenceAxis);

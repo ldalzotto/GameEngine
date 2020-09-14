@@ -40,3 +40,15 @@ void Draw_LineClipped(
 		}
 	}
 };
+
+
+void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Array_Vector2i_PTR p_rasterizedPixelBuffer, Texture3c_PTR p_to, Recti_PTR p_clipRect,
+	Vector3c_PTR p_color)
+{
+	Arr_Clear(&p_rasterizedPixelBuffer->array);
+	Rasterize_PolygonClipped(p_polygon, p_rasterizedPixelBuffer, p_clipRect);
+	for (size_t i = 0; i < p_rasterizedPixelBuffer->Size; i++)
+	{
+		p_to->Pixels.Memory[p_rasterizedPixelBuffer->Memory[i].x + (p_rasterizedPixelBuffer->Memory[i].y * p_to->Width)] = *p_color;
+	}
+};
