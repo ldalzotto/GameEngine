@@ -85,43 +85,58 @@ bool Rasterize_LineClipped(
 }
 
 //A Parallel Algorithm for Polygon Rasterization.pdf
-void Rasterize_PolygonClipped(const Polygon2i_PTR p_polygon, Array_Vector2i_PTR out_rasterizedPixels, const Recti_PTR p_clip_rect)
+void Rasterize_PolygonClipped(const Polygon2i_PTR in_out_polygon, Array_Vector2i_PTR out_rasterizedPixels, const Recti_PTR p_clip_rect)
 {
-	// Arr_Clear(&out_rasterizedPixels->array);
-
 	//Calculate polygon rect bound clipped
 	Recti l_polygonBoundClip = {
-		.Min = p_polygon->v1,
-		.Max = p_polygon->v1
+		.Min = in_out_polygon->v1,
+		.Max = in_out_polygon->v1
 	};
 	for (short int i = 1; i < 3; i++)
 	{
-		if (p_polygon->Points[i].x < l_polygonBoundClip.Min.x) { l_polygonBoundClip.Min.x = p_polygon->Points[i].x; }
-		if (p_polygon->Points[i].x > l_polygonBoundClip.Max.x) { l_polygonBoundClip.Max.x = p_polygon->Points[i].x; }
-		if (p_polygon->Points[i].y < l_polygonBoundClip.Min.y) { l_polygonBoundClip.Min.y = p_polygon->Points[i].y; }
-		if (p_polygon->Points[i].y > l_polygonBoundClip.Max.y) { l_polygonBoundClip.Max.y = p_polygon->Points[i].y; }
+		if (in_out_polygon->Points[i].x < l_polygonBoundClip.Min.x) { l_polygonBoundClip.Min.x = in_out_polygon->Points[i].x; }
+		if (in_out_polygon->Points[i].x > l_polygonBoundClip.Max.x) { l_polygonBoundClip.Max.x = in_out_polygon->Points[i].x; }
+		if (in_out_polygon->Points[i].y < l_polygonBoundClip.Min.y) { l_polygonBoundClip.Min.y = in_out_polygon->Points[i].y; }
+		if (in_out_polygon->Points[i].y > l_polygonBoundClip.Max.y) { l_polygonBoundClip.Max.y = in_out_polygon->Points[i].y; }
 	}
 	Rect_ClipPoint_Int(p_clip_rect, &l_polygonBoundClip.Min);
 	Rect_ClipPoint_Int(p_clip_rect, &l_polygonBoundClip.Max);
 
-	// Vector2i l_begin = { p_polygon->Points[1].x - p_polygon->Points[0].x, p_polygon->Points[1].y - p_polygon->Points[0].y };
-	// Vector2i l_end = { p_polygon->Points[2].x - p_polygon->Points[0].x, p_polygon->Points[2].y - p_polygon->Points[0].y };
-	 // double l_angle = Vec_SignedAngle_2i(&l_begin, &l_end);
-
 	Vector2i l_point = l_polygonBoundClip.Min;
 
 	//Line 1
-	int l_dX0 = p_polygon->v2.x - p_polygon->v1.x; int l_dY0 = p_polygon->v2.y - p_polygon->v1.y;
-	int l_e0 = ((l_point.x - p_polygon->v2.x) * l_dY0) - ((l_point.y - p_polygon->v2.y) * l_dX0);
+	int l_dX0 = in_out_polygon->v2.x - in_out_polygon->v1.x; int l_dY0 = in_out_polygon->v2.y - in_out_polygon->v1.y;
+	int l_e0 = ((l_point.x - in_out_polygon->v2.x) * l_dY0) - ((l_point.y - in_out_polygon->v2.y) * l_dX0);
 
 	//Line 2
-	int l_dX1 = p_polygon->v3.x - p_polygon->v2.x; int l_dY1 = p_polygon->v3.y - p_polygon->v2.y;
-	int l_e1 = ((l_point.x - p_polygon->v3.x) * l_dY1) - ((l_point.y - p_polygon->v3.y) * l_dX1);
+	int l_dX1 = in_out_polygon->v3.x - in_out_polygon->v2.x; int l_dY1 = in_out_polygon->v3.y - in_out_polygon->v2.y;
+	int l_e1 = ((l_point.x - in_out_polygon->v3.x) * l_dY1) - ((l_point.y - in_out_polygon->v3.y) * l_dX1);
 
 	//Line 3
-	int l_dX2 = p_polygon->v1.x - p_polygon->v3.x; int l_dY2 = p_polygon->v1.y - p_polygon->v3.y;
-	int l_e2 = ((l_point.x - p_polygon->v1.x) * l_dY2) - ((l_point.y - p_polygon->v1.y) * l_dX2);
+	int l_dX2 = in_out_polygon->v1.x - in_out_polygon->v3.x; int l_dY2 = in_out_polygon->v1.y - in_out_polygon->v3.y;
+	int l_e2 = ((l_point.x - in_out_polygon->v1.x) * l_dY2) - ((l_point.y - in_out_polygon->v1.y) * l_dX2);
 
+
+	{
+		Vector3f l_begin = { in_out_polygon->v2.x - in_out_polygon->v1.x, in_out_polygon->v2.y - in_out_polygon->v1.y, 0.0f };
+		Vector3f l_end = { in_out_polygon->v3.x - in_out_polygon->v1.x, in_out_polygon->v3.y - in_out_polygon->v1.y, 0.0f };
+		Vector3f l_crossResult;
+		Vec_Cross_3f(&l_begin, &l_end, &l_crossResult);
+
+		// Anti-clockwise
+		if (l_crossResult.z > 0.0f)
+		{
+			l_dX0 *= -1; l_dY0 *= -1;
+			l_e0 *= -1;
+			l_dX1 *= -1; l_dY1 *= -1;
+			l_e1 *= -1;
+			l_dX2 *= -1; l_dY2 *= -1;
+			l_e2 *= -1;
+		}
+	}
+
+	//TODO -> Highly unoptimized, we iterate over the whole polygon bound clip.
+	// We can easily implement a smart iteration that try to navigates inside the polygon and try to find edges (thus, ignoring calcuation of empty )
 	for (int y = l_polygonBoundClip.Min.y; y <= l_polygonBoundClip.Max.y; y++)
 	{
 		for (int x = l_polygonBoundClip.Min.x; x < l_polygonBoundClip.Max.x; x++)
@@ -156,3 +171,94 @@ void Rasterize_PolygonClipped(const Polygon2i_PTR p_polygon, Array_Vector2i_PTR 
 		l_e2 -= l_dX2;
 	}
 };
+
+#if 0
+void Rasterize_PolygonClipped_DirectTest(const Polygon2i_PTR in_out_polygon, Texture3c_PTR p_target, const Recti_PTR p_clip_rect)
+{
+	//Calculate polygon rect bound clipped
+	Recti l_polygonBoundClip = {
+		.Min = in_out_polygon->v1,
+		.Max = in_out_polygon->v1
+	};
+	for (short int i = 1; i < 3; i++)
+	{
+		if (in_out_polygon->Points[i].x < l_polygonBoundClip.Min.x) { l_polygonBoundClip.Min.x = in_out_polygon->Points[i].x; }
+		if (in_out_polygon->Points[i].x > l_polygonBoundClip.Max.x) { l_polygonBoundClip.Max.x = in_out_polygon->Points[i].x; }
+		if (in_out_polygon->Points[i].y < l_polygonBoundClip.Min.y) { l_polygonBoundClip.Min.y = in_out_polygon->Points[i].y; }
+		if (in_out_polygon->Points[i].y > l_polygonBoundClip.Max.y) { l_polygonBoundClip.Max.y = in_out_polygon->Points[i].y; }
+	}
+	Rect_ClipPoint_Int(p_clip_rect, &l_polygonBoundClip.Min);
+	Rect_ClipPoint_Int(p_clip_rect, &l_polygonBoundClip.Max);
+
+	Vector2i l_point = l_polygonBoundClip.Min;
+
+	//Line 1
+	int l_dX0 = in_out_polygon->v2.x - in_out_polygon->v1.x; int l_dY0 = in_out_polygon->v2.y - in_out_polygon->v1.y;
+	int l_e0 = ((l_point.x - in_out_polygon->v2.x) * l_dY0) - ((l_point.y - in_out_polygon->v2.y) * l_dX0);
+
+	//Line 2
+	int l_dX1 = in_out_polygon->v3.x - in_out_polygon->v2.x; int l_dY1 = in_out_polygon->v3.y - in_out_polygon->v2.y;
+	int l_e1 = ((l_point.x - in_out_polygon->v3.x) * l_dY1) - ((l_point.y - in_out_polygon->v3.y) * l_dX1);
+
+	//Line 3
+	int l_dX2 = in_out_polygon->v1.x - in_out_polygon->v3.x; int l_dY2 = in_out_polygon->v1.y - in_out_polygon->v3.y;
+	int l_e2 = ((l_point.x - in_out_polygon->v1.x) * l_dY2) - ((l_point.y - in_out_polygon->v1.y) * l_dX2);
+
+
+	{
+		Vector3f l_begin = { in_out_polygon->v2.x - in_out_polygon->v1.x, in_out_polygon->v2.y - in_out_polygon->v1.y, 0.0f };
+		Vector3f l_end = { in_out_polygon->v3.x - in_out_polygon->v1.x, in_out_polygon->v3.y - in_out_polygon->v1.y, 0.0f };
+		Vector3f l_crossResult;
+		Vec_Cross_3f(&l_begin, &l_end, &l_crossResult);
+
+		// Anti-clockwise
+		if (l_crossResult.z > 0.0f)
+		{
+			l_dX0 *= -1; l_dY0 *= -1;
+			l_e0 *= -1;
+			l_dX1 *= -1; l_dY1 *= -1;
+			l_e1 *= -1;
+			l_dX2 *= -1; l_dY2 *= -1;
+			l_e2 *= -1;
+		}
+	}
+
+	//TODO -> Highly unoptimized, we iterate over the whole polygon bound clip.
+	// We can easily implement a smart iteration that try to navigates inside the polygon and try to find edges (thus, ignoring calcuation of empty )
+	for (int y = l_polygonBoundClip.Min.y; y <= l_polygonBoundClip.Max.y; y++)
+	{
+		for (int x = l_polygonBoundClip.Min.x; x < l_polygonBoundClip.Max.x; x++)
+		{
+			if (l_e0 >= 0 && l_e1 >= 0 && l_e2 >= 0)
+			{
+				p_target->Pixels.Memory[(l_point.x + (l_point.y * p_target->Width))] = (Vector3c){ 255,255,225 };
+				// Arr_PushBackRealloc_Vector2i(out_rasterizedPixels, &l_point);
+			}
+
+			l_point.x = x + 1;
+
+			l_e0 += l_dY0;
+			l_e1 += l_dY1;
+			l_e2 += l_dY2;
+		}
+
+		if (l_e0 >= 0 && l_e1 >= 0 && l_e2 >= 0)
+		{
+			p_target->Pixels.Memory[(l_point.x + (l_point.y * p_target->Width))] = (Vector3c){ 255,255,225 };
+		//	Arr_PushBackRealloc_Vector2i(out_rasterizedPixels, &l_point);
+		}
+
+		l_point.x = l_polygonBoundClip.Min.x;
+
+		l_e0 -= ((l_polygonBoundClip.Max.x - l_polygonBoundClip.Min.x) * l_dY0);
+		l_e1 -= ((l_polygonBoundClip.Max.x - l_polygonBoundClip.Min.x) * l_dY1);
+		l_e2 -= ((l_polygonBoundClip.Max.x - l_polygonBoundClip.Min.x) * l_dY2);
+
+		l_point.y = y + 1;
+
+		l_e0 -= l_dX0;
+		l_e1 -= l_dX1;
+		l_e2 -= l_dX2;
+	}
+};
+#endif

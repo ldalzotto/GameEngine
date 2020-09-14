@@ -45,6 +45,9 @@ void Draw_LineClipped(
 void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Array_Vector2i_PTR p_rasterizedPixelBuffer, Texture3c_PTR p_to, Recti_PTR p_clipRect,
 	Vector3c_PTR p_color)
 {
+	// Rasterize_PolygonClipped_DirectTest(p_polygon, p_to, p_clipRect);
+
+	//TODO /!\ Huge performance impact of using the p_rasterizedPixelBuffer.
 	Arr_Clear(&p_rasterizedPixelBuffer->array);
 	Rasterize_PolygonClipped(p_polygon, p_rasterizedPixelBuffer, p_clipRect);
 	for (size_t i = 0; i < p_rasterizedPixelBuffer->Size; i++)

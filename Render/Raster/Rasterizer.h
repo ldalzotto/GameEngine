@@ -7,6 +7,7 @@
 #include "Objects/Resource/Polygon_def.h"
 #include "v2/_interface/VectorStructuresC_def.h"
 
+
 bool Rasterize_LineClipped(
 	const Vector2i_PTR p_begin, const Vector2i_PTR p_end,
 	ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels,
@@ -15,6 +16,11 @@ bool Rasterize_LineClipped(
 	Vector2i_PTR out_clipped_end);
 
 void Rasterize_PolygonClipped(const Polygon2i_PTR p_polygon, Array_Vector2i_PTR out_rasterizedPixels, const Recti_PTR p_clip_rect);
+
+#if 0
+#include "Objects/Texture/Texture_def.h"
+void Rasterize_PolygonClipped_DirectTest(const Polygon2i_PTR p_polygon, Texture3c_PTR p_target , const Recti_PTR p_clip_rect);
+#endif
 
 inline void Arr_Alloc_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array, size_t p_initialSize) { Arr_Alloc(&p_array->array, sizeof(RASTERIZATIONSTEP), p_initialSize); }
 inline void Arr_Free_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array) { Arr_Free(&p_array->array); }
