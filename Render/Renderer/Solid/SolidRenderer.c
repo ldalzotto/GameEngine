@@ -1,4 +1,4 @@
-#include "WireframeRenderer.h"
+#include "SolidRenderer.h"
 
 #include <stdio.h>
 
@@ -48,7 +48,7 @@ void WireframeRendererPerformace_Print(WireframeRendererPerformace_PTR p_wirefra
 
 #endif
 
-inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const WireframeRendererInput* p_input)
+inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const SolidRendererInput* p_input)
 {
 	if (!p_vertex->PixelPositionCalculated)
 	{
@@ -65,13 +65,13 @@ inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPip
 	}
 };
 
-void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory)
+void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, SolidRenderer_Memory* p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
 #endif
 
-	WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
+	SolidRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
 	// Vector3c l_wireframeColor = { 255,0,0 };
 	Vector4f tmp_vec4_0;
 
@@ -224,20 +224,20 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 };
 
 
-void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory)
+void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory)
 {
 	Arr_Alloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, 0);
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
 
 };
-void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height)
+void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, size_t height)
 {
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
 	Arr_Clear(&p_memory->VertexPipeline.array);
 	Arr_Clear(&p_memory->PolygonPipelines.array);
 };
-void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory)
+void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
 {
 	Arr_Free(&p_memory->RederableObjectsPipeline.array);
 	Arr_Free(&p_memory->VertexPipeline.array);

@@ -3,7 +3,7 @@
 #include "RenderV2Interface.h"
 
 
-#include "Renderer/Wireframe/WireframeRenderer.h"
+#include "Renderer/Solid/SolidRenderer.h"
 #include "Renderer/Gizmo/Gizmo.h"
 #include "Objects/SwapChain/SwapChain_def.h"
 #include "Objects/Window/Window.h"
@@ -34,7 +34,7 @@ typedef struct RenderV2_TYP
 	RenderResourceProvider Resources;
 
 	GlobalBuffers GlobalBuffer;
-	WireframeRenderer_Memory WireframeRenderMemory;
+	SolidRenderer_Memory WireframeRenderMemory;
 	GizmoBuffer GizmoBuffer;
 }RenderV2, * RenderV2_PTR;
 

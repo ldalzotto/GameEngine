@@ -9,12 +9,12 @@
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 
-typedef struct WireframeRendererInput_TYP
+typedef struct SolidRendererInput_TYP
 {
 	RENDEREDOBJECT_BUFFER_PTR RenderableObjectsBuffer;
 	CAMERABUFFER_PTR CameraBuffer;
 	WindowSize WindowSize;
-} WireframeRendererInput, * WireframeRendererInput_PTR;
+} SolidRendererInput, * SolidRendererInput_PTR;
 
 
 typedef struct RenderableObjectPipeline_TYP
@@ -60,15 +60,15 @@ typedef struct Array_VertexPipeline_TYP
 	ARRAY_TYPE_DEFINITION(VertexPipeline)
 }Array_VertexPipeline, * Array_VertexPipeline_PTR;
 
-typedef struct WireframeRenderer_Memory_TYP
+typedef struct SolidRenderer_Memory_TYP
 {
 	Array_RenderableObjectPipeline RederableObjectsPipeline;
 	ARRAY_PolygonPipelineV2 PolygonPipelines;
 	Array_VertexPipeline VertexPipeline;
-} WireframeRenderer_Memory, * WireframeRenderer_Memory_PTR;
+} SolidRenderer_Memory, * SolidRenderer_Memory_PTR;
 
-void WireframeRenderer_Memory_alloc(WireframeRenderer_Memory* p_memory);
-void WireframeRenderer_Memory_clear(WireframeRenderer_Memory* p_memory, size_t p_width, size_t height);
-void WireframeRenderer_Memory_free(WireframeRenderer_Memory* p_memory);
+void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory);
+void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, size_t height);
+void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory);
 
-void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, WireframeRenderer_Memory* p_memory);
+void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, SolidRenderer_Memory* p_memory);
