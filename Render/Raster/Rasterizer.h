@@ -1,20 +1,25 @@
 #pragma once
+#pragma once
 
-#include "Rasterizer_def.h"
 #include <stdbool.h>
-#include "DataStructures/ARRAY.h"
-#include "Error/ErrorHandler.h"
 #include "Objects/Resource/Polygon_def.h"
-#include "v2/_interface/VectorStructuresC_def.h"
 #include "v2/_interface/RectC_def.h"
 
+typedef char LINERASTERIZER_ITERATOR_STEP;
+#define LINERASTERIZER_ITERATOR_STEP_BEGIN 0
+#define LINERASTERIZER_ITERATOR_STEP_LOOPING 1
+#define LINERASTERIZER_ITERATOR_STEP_END 2
 
-bool Rasterize_LineClipped(
-	const Vector2i_PTR p_begin, const Vector2i_PTR p_end,
-	ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels,
-	const Recti_PTR p_clip_rect,
-	Vector2i_PTR out_clipped_begin,
-	Vector2i_PTR out_clipped_end);
+typedef struct LineRasterizerIterator_TYP
+{
+	Vector2i CurrentPoint;
+	Vector2i EndPoint;
+	int dx, dy, sx, sy, err;
+	LINERASTERIZER_ITERATOR_STEP CurrentStep;
+}LineRasterizerIterator, * LineRasterizerIterator_PTR;
+
+char LineRasterize_Initialize(const Vector2i_PTR p_begin, const Vector2i_PTR p_end, const Recti_PTR p_clip_rect, LineRasterizerIterator_PTR out_lineRasterizerIterator);
+char LineRasterize_MoveNext(LineRasterizerIterator_PTR out_lineRasterizerIterator);
 
 #if 0
 void Rasterize_PolygonClipped(const Polygon2i_PTR p_polygon, Array_Vector2i_PTR out_rasterizedPixels, const Recti_PTR p_clip_rect);
@@ -42,9 +47,3 @@ typedef struct PolygonRasterizerIterator_TYP
 
 void PolygonRasterize_Initialize(const Polygon2i_PTR in_out_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator);
-
-inline void Arr_Alloc_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array, size_t p_initialSize) { Arr_Alloc(&p_array->array, sizeof(RASTERIZATIONSTEP), p_initialSize); }
-inline void Arr_Free_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array) { Arr_Free(&p_array->array); }
-
-inline void Arr_Clear_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array) { Arr_Clear(&p_array->array); };
-inline void Arr_Resize_RasterisationStep(ARRAY_RASTERISATIONSTEP_PTR p_array, size_t p_newCapacity) { HANDLE_ERR(Arr_Resize(&p_array->array, sizeof(RASTERIZATIONSTEP), p_newCapacity)); };

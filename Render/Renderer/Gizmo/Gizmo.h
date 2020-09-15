@@ -7,7 +7,6 @@
 #include "v2/_interface/VectorC_def.h"
 #include "v2/_interface/WindowSize_def.h"
 #include "Objects/Texture/Texture_def.h"
-#include "Raster/Rasterizer_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "DataStructures/ARRAY_def.h"
 
@@ -46,21 +45,11 @@ void GizmoBuffer_alloc(GizmoBuffer* p_buffer);
 void GizmoBuffer_clear(GizmoBuffer* p_buffer);
 void GizmoBuffer_free(GizmoBuffer* p_buffer);
 
-typedef struct GizmoRendererMemory_TYP
-{
-	ARRAY_RASTERISATIONSTEP LineRasterizerBuffer;
-}GizmoRendererMemory, * GizmoRendererMemory_PTR;
-
-void GizmoRendererMemory_Alloc(GizmoRendererMemory_PTR p_gizmoRendererMemory);
-void GizmoRendererMemory_Clear(GizmoRendererMemory_PTR p_gizmoRendererMemory, size_t p_width, size_t height);
-void GizmoRendererMemory_Free(GizmoRendererMemory_PTR p_gizmoRendererMemory);
-
 typedef struct GizmoRendererInput_TYP
 {
 	GizmoBuffer* Buffer;
 	CAMERABUFFER_PTR CameraBuffer;
 	WindowSize WindowSize;
-	GizmoRendererMemory_PTR GizmoRendererMemory;
 } GizmoRendererInput;
 
 void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect);

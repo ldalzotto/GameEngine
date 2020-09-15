@@ -25,7 +25,6 @@ void RenderV2_initialize(RenderV2* p_render)
 
 	Window_init(&p_render->AppWindow);
 	WireframeRenderer_Memory_alloc(&p_render->WireframeRenderMemory);
-	GizmoRendererMemory_Alloc(&p_render->GizmoRendererMemory);
 	GlobalBuffers_alloc(&p_render->GlobalBuffer);
 	GizmoBuffer_alloc(&p_render->GizmoBuffer);
 
@@ -68,7 +67,6 @@ void RenderV2_render(RenderV2* p_render)
 		l_gizmoRendererInput.Buffer = &p_render->GizmoBuffer;
 		l_gizmoRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;		
 		l_gizmoRendererInput.WindowSize = p_render->AppWindow.WindowSize;
-		l_gizmoRendererInput.GizmoRendererMemory = &p_render->GizmoRendererMemory;
 		Gizmo_Render(&l_gizmoRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip);
 	}
 	Window_presentTexture(&p_render->AppWindow, &p_render->SwapChain.PresentTexture);
@@ -79,7 +77,6 @@ void RenderV2_free(RenderV2* p_render)
 	GizmoBuffer_free(&p_render->GizmoBuffer);
 	GlobalBuffers_free(&p_render->GlobalBuffer);
 	SwapChain_Free(&p_render->SwapChain);
-	GizmoRendererMemory_Free(&p_render->GizmoRendererMemory);
 	WireframeRenderer_Memory_free(&p_render->WireframeRenderMemory);
 	MeshResourceProvider_Free(&p_render->Resources.MeshResourceProvider);
 	RenderHeap_Free(&RRenderHeap);

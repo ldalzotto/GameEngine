@@ -36,7 +36,6 @@ typedef struct RenderV2_TYP
 	GlobalBuffers GlobalBuffer;
 	WireframeRenderer_Memory WireframeRenderMemory;
 	GizmoBuffer GizmoBuffer;
-	GizmoRendererMemory GizmoRendererMemory;
 }RenderV2, * RenderV2_PTR;
 
 void RenderV2_initialize(RenderV2* p_render);

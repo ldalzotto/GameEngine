@@ -12,78 +12,67 @@
 #include "Error/ErrorHandler.h"
 
 
-//https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-// A possible performance improvement is to store pixel steps in out_rasterizedPixels instead of plain pixel coordinates.
-// The the consumer can create a cursor to final texture memory and move it to set appropriate color.
-char Rasterrize_Line(Vector2i_PTR p_begin, Vector2i_PTR p_end, ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels)
+// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+char LineRasterize_Initialize(const Vector2i_PTR p_begin, const Vector2i_PTR p_end, const Recti_PTR p_clip_rect, LineRasterizerIterator_PTR out_lineRasterizerIterator)
 {
-	int	l_dx = abs(p_end->x - p_begin->x); int l_sx = p_begin->x < p_end->x ? 1 : -1;
-	int	l_dy = -abs(p_end->y - p_begin->y); int l_sy = p_begin->y < p_end->y ? 1 : -1;
-	int err = l_dx + l_dy;
-	int e2;
-
-	RasterizationStepDirection l_xStep = l_sx > 0 ? RasterizationStepDirection_ADD : RasterizationStepDirection_REMOVE;
-	RasterizationStepDirection l_yStep = l_sy > 0 ? RasterizationStepDirection_ADD : RasterizationStepDirection_REMOVE;
-
-	size_t l_rasterizedPixels_bufferIndex = 0;
-	RASTERIZATIONSTEP l_rasterisationStep = { 0 };
-
-	for (;;)
+	Vector2i l_clipped_begin, l_clipped_end;
+	if (Rect_ClipSegment_Int(p_begin, p_end, p_clip_rect, &l_clipped_begin, &l_clipped_end))
 	{
-		out_rasterizedPixels->Memory[l_rasterizedPixels_bufferIndex] = l_rasterisationStep;
-		l_rasterizedPixels_bufferIndex += 1;
-		l_rasterisationStep = (RASTERIZATIONSTEP){ 0 };
-
-		e2 = 2 * err;
-		if (e2 >= l_dy)
-		{
-			if (p_begin->x == p_end->x)
-			{
-				break;
-			}
-			err += l_dy;
-			p_begin->x += l_sx;
-			l_rasterisationStep.XDirection = l_xStep;
-		}
-		if (e2 <= l_dx)
-		{
-			if (p_begin->y == p_end->y)
-			{
-				break;
-			}
-			err += l_dx;
-			p_begin->y += l_sy;
-			l_rasterisationStep.YDirection = l_yStep;
-		}
-	}
-
-	out_rasterizedPixels->Size = l_rasterizedPixels_bufferIndex - 1;
-
-#ifndef NDEBUG
-	if (out_rasterizedPixels->Size > out_rasterizedPixels->Capacity)
-	{
-		printf("Rasterizer::line_v3 : not enough memory allocated to the Rasterized pixel buffer");
-		abort();
-	}
-#endif
-
+		out_lineRasterizerIterator->CurrentPoint = l_clipped_begin;
+		out_lineRasterizerIterator->EndPoint = l_clipped_end;
+		out_lineRasterizerIterator->dx = abs(l_clipped_end.x - l_clipped_begin.x); out_lineRasterizerIterator->sx = l_clipped_begin.x < l_clipped_end.x ? 1 : -1;
+		out_lineRasterizerIterator->dy = -abs(l_clipped_end.y - l_clipped_begin.y); out_lineRasterizerIterator->sy = l_clipped_begin.y < l_clipped_end.y ? 1 : -1;
+		out_lineRasterizerIterator->err = out_lineRasterizerIterator->dx + out_lineRasterizerIterator->dy;
+		return 1;
+	};
 	return 0;
 };
 
-bool Rasterize_LineClipped(
-	const Vector2i_PTR p_begin, const Vector2i_PTR p_end,
-	ARRAY_RASTERISATIONSTEP_PTR out_rasterizedPixels,
-	const Recti_PTR p_clip_rect,
-	Vector2i_PTR out_clipped_begin,
-	Vector2i_PTR out_clipped_end)
+char LineRasterize_MoveNext(LineRasterizerIterator_PTR out_lineRasterizerIterator)
 {
-	if (Rect_ClipSegment_Int(p_begin, p_end, p_clip_rect, out_clipped_begin, out_clipped_end))
+	switch (out_lineRasterizerIterator->CurrentStep)
 	{
-		HANDLE_ERR(Rasterrize_Line(out_clipped_begin, out_clipped_end, out_rasterizedPixels));
-		return true;
-	};
-	return false;
-}
+	case LINERASTERIZER_ITERATOR_STEP_BEGIN:
+	{
+		out_lineRasterizerIterator->CurrentStep = LINERASTERIZER_ITERATOR_STEP_LOOPING;
+		return 1;
+	}
+	break;
+	case LINERASTERIZER_ITERATOR_STEP_LOOPING:
+	{
+		int e2 = 2 * out_lineRasterizerIterator->err;
+		if (e2 >= out_lineRasterizerIterator->dy)
+		{
+			if (out_lineRasterizerIterator->CurrentPoint.x == out_lineRasterizerIterator->EndPoint.x)
+			{
+				out_lineRasterizerIterator->CurrentStep = LINERASTERIZER_ITERATOR_STEP_END;
+				return 1;
+			}
+			out_lineRasterizerIterator->err += out_lineRasterizerIterator->dy;
+			out_lineRasterizerIterator->CurrentPoint.x += out_lineRasterizerIterator->sx;
+		}
+		if (e2 <= out_lineRasterizerIterator->dx)
+		{
+			if (out_lineRasterizerIterator->CurrentPoint.y == out_lineRasterizerIterator->EndPoint.y)
+			{
+				out_lineRasterizerIterator->CurrentStep = LINERASTERIZER_ITERATOR_STEP_END;
+				return 1;
+			}
+			out_lineRasterizerIterator->err += out_lineRasterizerIterator->dx;
+			out_lineRasterizerIterator->CurrentPoint.y += out_lineRasterizerIterator->sy;
+		}
+		return 1;
+	}
+	break;
+	case LINERASTERIZER_ITERATOR_STEP_END:
+	{
+		return 0;
+	}
+	break;
+	}
+
+	return 0;
+};
 
 void PolygonRasterize_Initialize(const Polygon2i_PTR in_out_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator)
 {
@@ -152,7 +141,7 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 		}
 
 		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		
+
 		if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0)
 		{
 			l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
@@ -176,7 +165,7 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 		return l_returnCode;
 
 	}
-		break;
+	break;
 	case POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN:
 	{
 		// For loop on p_polygonRasterizerIterator->ColumnIndexCursor for colum from p_polygonRasterizerIterator->PolygonBoundClip.Min.x to p_polygonRasterizerIterator->PolygonBoundClip.Max.x (excluded)
@@ -196,7 +185,7 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 		}
 
 		p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->ColumnIndexCursor + 1;
-		
+
 		p_polygonRasterizerIterator->e0 += p_polygonRasterizerIterator->dy0;
 		p_polygonRasterizerIterator->e1 += p_polygonRasterizerIterator->dy1;
 		p_polygonRasterizerIterator->e2 += p_polygonRasterizerIterator->dy2;
@@ -296,6 +285,6 @@ void Rasterize_PolygonClipped(const Polygon2i_PTR in_out_polygon, Array_Vector2i
 		abort();
 	}
 #endif
-};
+	};
 
 #endif

@@ -6,48 +6,23 @@
 
 void Draw_LineClipped(
 	Vector2i_PTR p_begin, Vector2i_PTR p_end,
-	ARRAY_RASTERISATIONSTEP_PTR in_out_rasterizedPixelsBuffer,
 	Texture3c_PTR p_to, Recti_PTR p_clipRect,
 	Vector3c_PTR p_color)
 {
-	Arr_Clear_RasterisationStep(in_out_rasterizedPixelsBuffer);
-
-	Vector2i l_clippedBegin, l_clippedEnd;
-	if (Rasterize_LineClipped(p_begin, p_end, in_out_rasterizedPixelsBuffer, p_clipRect, &l_clippedBegin, &l_clippedEnd))
+	LineRasterizerIterator l_lineRasterizerIterator;
+	if (LineRasterize_Initialize(p_begin, p_end, p_clipRect, &l_lineRasterizerIterator))
 	{
-
-		char* l_to_memory_cursor = (char*)p_to->Pixels.Memory + Texture_GetElementOffset_3C(l_clippedBegin.x, l_clippedBegin.y, p_to->Width);
-		for (size_t j = 0; j < in_out_rasterizedPixelsBuffer->Size; j++)
+		while (LineRasterize_MoveNext(&l_lineRasterizerIterator))
 		{
-			if (in_out_rasterizedPixelsBuffer->Memory[j].XDirection == RasterizationStepDirection_ADD)
-			{
-				l_to_memory_cursor -= sizeof(Vector3c);
-			}
-			else if (in_out_rasterizedPixelsBuffer->Memory[j].XDirection == RasterizationStepDirection_REMOVE)
-			{
-				l_to_memory_cursor += sizeof(Vector3c);
-			}
-
-			if (in_out_rasterizedPixelsBuffer->Memory[j].YDirection == RasterizationStepDirection_ADD)
-			{
-				l_to_memory_cursor -= (sizeof(Vector3c) * p_to->Width);
-			}
-			else if (in_out_rasterizedPixelsBuffer->Memory[j].YDirection == RasterizationStepDirection_REMOVE)
-			{
-				l_to_memory_cursor += (sizeof(Vector3c) * p_to->Width);
-			}
-			*(Vector3c_PTR)l_to_memory_cursor = *p_color;
+			p_to->Pixels.Memory[l_lineRasterizerIterator.CurrentPoint.x + (l_lineRasterizerIterator.CurrentPoint.y * p_to->Width)] = *p_color;
 		}
-	}
+	};
 };
 
 
 void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect,
 	Vector3c_PTR p_color)
 {
-	//TODO /!\ Huge performance impact of using the p_rasterizedPixelBuffer.
-	// Rasterize_PolygonClipped_DirectTest(p_polygon, p_to, p_clipRect, p_color);
-
 	PolygonRasterizerIterator l_rasterizerIterator;
 	PolygonRasterize_Initialize(p_polygon, p_clipRect, &l_rasterizerIterator);
 	POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;

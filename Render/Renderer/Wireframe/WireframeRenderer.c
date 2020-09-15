@@ -1,5 +1,7 @@
 #include "WireframeRenderer.h"
 
+#include <stdio.h>
+
 #include "Heap/RenderHeap.h"
 #include "Cull/ObjectCulling.h"
 #include "Cull/BackfaceCulling.h"
@@ -18,7 +20,6 @@ ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PT
 
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
-
 
 #if RENDER_PERFORMANCE_TIMER
 #include "Clock/Clock.h"
