@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 	// l_modelMatrix.Col3.z = 5.0f;
 
 	MeshResource_HANDLE l_mesh;
-	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/BigCube.obj", &l_mesh);
+	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "E:/GameProjects/GameEngine/Assets/Models/BigCube.obj", &l_mesh);
 	// MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/SingleTriangle.obj", &l_mesh);
 	RenderedObject l_renderableObject;
 	RenderedObject_PTR l_renderableObject_ptr = &l_renderableObject;

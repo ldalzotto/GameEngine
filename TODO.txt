@@ -1,5 +1,17 @@
 -- TODO --
 
+[] # Flat shading - Using precalculated normals for backface culling
+	-> Allowing the imported mesh to store precalculated normals. As the same as vertex, normals per vertex per polygons are stored in the RReander heap.
+	-> Adding a normal index in the polygon pipeline. The same as the vertex index.
+	-> Updating the polygon backface culling to use world normals calculated from precalculated normals.
+	
+[] # Flat shading - Shading the pixel
+	-> Adding shading information in material.
+	-> During data initialization, when the material is FLAT_SHADED, push a FlatShading lightning calculation in a memory buffer.
+	-> If the polygon is not culled, storing the world normal to a new "VertexVarying" memory buffer. And assing the index to the polygon.
+	-> Consume and perform the FlatShading lightning calculation in a memory buffer after the backface culling (to ensure that world normals have been calculated).
+	-> Use the calculated result to modify the final color of the pixel.
+
 [X] Entity Selection - The Guide plane is not correctly oriented, instead of begin fixed for direction axes it must depend of the camera position : 
 	- Position & Scale : The plane normal must face the camera as mush as possible, by staying // to the axis involved. We create a plane perpendicular to the direction, then we project the camera position to it. The direction from
 		the projected point will give us the wanted normal vector of the guide plane.

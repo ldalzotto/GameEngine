@@ -61,6 +61,10 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 
 		if (!ObjectCulled_Boxf(l_renderableObject->MeshBoundingBox, (Matrix4f_PTR)&l_renderableObject->ModelMatrix, (Matrix4f_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 		{
+			#if RENDER_PERFORMANCE_TIMER
+						tmp_timer_2 = Clock_currentTime_mics();
+			#endif
+
 			VertexPipeline l_vertexPipeline;
 			size_t l_vertexIndexOffset = p_memory->VertexPipeline.Size;
 			for (size_t j = 0; j < l_renderableObject->Mesh->Vertices.Size; j++)
@@ -80,7 +84,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 
 				l_polygonPipeline = (PolygonPipelineV2){
 					.IsCulled = 0,
-					.VerticesIndex = {
+					.VerticesPipelineIndex = {
 						l_polygon->v1 + l_vertexIndexOffset,
 						l_polygon->v2 + l_vertexIndexOffset,
 						l_polygon->v3 + l_vertexIndexOffset
@@ -101,6 +105,10 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 			};
 
 			Arr_PushBackRealloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, &l_renderaBleObjectPipeline);
+
+			#if RENDER_PERFORMANCE_TIMER
+			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageDataSetup_PushPipelineData, Clock_currentTime_mics() - tmp_timer_2);
+			#endif
 
 		}
 	}
@@ -141,9 +149,9 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 		PolygonPipelineV2_PTR l_polygon = &p_memory->PolygonPipelines.Memory[i];
 		Polygon4fPTR l_poly =
 		{
-			.v1 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v1].TransformedPosition,
-			.v2 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v2].TransformedPosition,
-			.v3 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v3].TransformedPosition
+			.v1 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v1].TransformedPosition,
+			.v2 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v2].TransformedPosition,
+			.v3 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v3].TransformedPosition
 		};
 
 		l_polygon->IsCulled = BackFaceCulled_Poly4FPTR(&l_poly, &p_input->CameraBuffer->WorldPosition);
@@ -163,9 +171,9 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 
 		if (!l_polygonPipeline->IsCulled)
 		{
-			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesIndex.v1];
-			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesIndex.v2];
-			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesIndex.v3];
+			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v1];
+			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v2];
+			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v3];
 
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v1, p_input);
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v2, p_input);
