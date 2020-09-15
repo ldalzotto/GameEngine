@@ -9,10 +9,8 @@
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorC.h"
 
-bool BackFaceCulled_Poly4FPTR(const Polygon4fPTR_PTR p_polygon, const Vector4f_PTR p_cameraWorldPosition)
+char BackFaceCulled_Poly4FPTR(const Polygon4fPTR_PTR p_polygon, const Vector4f_PTR p_cameraWorldPosition)
 {
-	Vector4f tmp_vec4_0;
-
 	Vector4f l_cameraToPolygon;
 	Vec_Min_4f_4f(p_polygon->v1, p_cameraWorldPosition, &l_cameraToPolygon);
 
@@ -20,6 +18,14 @@ bool BackFaceCulled_Poly4FPTR(const Polygon4fPTR_PTR p_polygon, const Vector4f_P
 	Polygon_CalculateNormal_V4FPTR(p_polygon, &l_normal);
 	return Vec_Dot_3f(&l_cameraToPolygon.Vec3, &l_normal.Vec3) > FLOAT_TOLERANCE;
 };
+
+char BackFaceCulled_Normal3fPTR(const Vector4f_PTR p_worldNormal, const Vector4f_PTR p_polygonWorldPosition, const Vector4f_PTR p_cameraWorldPosition)
+{
+	Vector4f l_cameraToPolygon;
+	Vec_Min_4f_4f(p_polygonWorldPosition, p_cameraWorldPosition, &l_cameraToPolygon);
+
+	return Vec_Dot_3f(&l_cameraToPolygon.Vec3, &p_worldNormal->Vec3) > FLOAT_TOLERANCE;
+}
 
 bool ObjectCulled_Boxf(const BoxF_PTR p_objectBoundingBox_localSpace, const Matrix4f_PTR p_modelMatrix,
 	const Matrix4f_PTR p_objectToCamera_matrix, const Frustum_PTR p_cameraFrustum)

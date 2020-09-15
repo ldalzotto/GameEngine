@@ -3,8 +3,13 @@
 #include "v2/_interface/VectorC_def.h"
 #include "DataStructures/ARRAY_def.h"
 
+typedef char MATERIAL_SHADING_TYPE;
+#define MATERIAL_SHADING_TYPE_NONE 0
+#define MATERIAL_SHADING_TYPE_FLAT 1
+
 typedef struct Material_TYP
 {
+	MATERIAL_SHADING_TYPE ShadingType;
 	Vector3c BaseColor;
 }Material, * Material_PTR;
 

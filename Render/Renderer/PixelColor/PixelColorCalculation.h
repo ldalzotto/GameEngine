@@ -1,0 +1,13 @@
+#pragma once
+
+#include "PixelColorCalculation_def.h"
+#include "DataStructures/ARRAY.h"
+#include "Renderer/Solid/SolidRenderer.h"
+#include "Light/Light_def.h"
+
+ARRAY_ALLOC_FUNCTION(FlatShadingPixelCalculation, Array_FlatShadingPixelCalculation_PTR, FlatShadingPixelCalculation)
+ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(FlatShadingPixelCalculation, Array_FlatShadingPixelCalculation_PTR, FlatShadingPixelCalculation)
+
+void PixelColorCaluclation_Polygon_PushCalculations(PolygonPipelineV2_PTR p_polygonPipeline, SolidRenderer_Memory_PTR p_solidRendererMemory);
+
+void FlatShadingPixelCalculation_Calculate(FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, DirectionalLight_PTR p_directionalLight, SolidRenderer_Memory_PTR p_solidRendererMemory);

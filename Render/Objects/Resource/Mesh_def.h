@@ -30,7 +30,6 @@ typedef struct Mesh_TYP
 {
 	Array_VertexHANDLE Vertices;
 	Array_Polygon_VertexIndex_HANDLE Polygons;
-	Array_PrecaculatedPolygonFlatNormalHANDLE PrecalculatedPolygonFlatNormals;
 }Mesh, *Mesh_PTR;
 
 typedef size_t MeshResource_KEY;

@@ -104,6 +104,24 @@ char Arr_PushBackRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 	return 0;
 }
 
+char Arr_PushBackRealloc_Empty(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE)
+{
+	if (p_array->Size >= p_array->Capacity)
+	{
+		if (Arr_Resize(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_array->Capacity == 0 ? 1 : (p_array->Capacity * 2)))
+		{
+			return 1;
+		};
+		Arr_PushBackRealloc_Empty(ARRAY_ELEMENTSIZE_PARAMETER_INPUT);
+	}
+	else
+	{
+		p_array->Size += 1;
+	}
+
+	return 0;
+}
+
 char Arr_PushBackNoRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, char* p_value)
 {
 	if (p_array->Size >= p_array->Capacity)

@@ -11,16 +11,24 @@
 #include "v2/_interface/VectorStructuresC.h"
 #include "Raster/Rasterizer.h"
 #include "Renderer/Draw/DrawFunctions.h"
+#include "Renderer/PixelColor/PixelColorCalculation.h"
 #include "Metrics/RenderTimeMetrics.h"
 
 ARRAY_ALLOC_FUNCTION(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
-ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
+ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
 
 ARRAY_ALLOC_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
-ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
+ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
 
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
-ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
+ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
+
+ARRAY_ALLOC_FUNCTION(PolygonVaryings, Array_PolygonVaryings_PTR, PolygonVaryings)
+ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(PolygonVaryings, Array_PolygonVaryings_PTR, PolygonVaryings)
+
+
+// There is a unique directional light
+DirectionalLight UniqueDirectionalLight = { .Direction = {1.0f, 0.0f, 0.0f}, 1.0f };
 
 inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const SolidRendererInput* p_input)
 {
@@ -61,42 +69,41 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 
 		if (!ObjectCulled_Boxf(l_renderableObject->MeshBoundingBox, (Matrix4f_PTR)&l_renderableObject->ModelMatrix, (Matrix4f_PTR)&l_object_to_camera, p_input->CameraBuffer->CameraFrustum))
 		{
-			#if RENDER_PERFORMANCE_TIMER
-						tmp_timer_2 = Clock_currentTime_mics();
-			#endif
+#if RENDER_PERFORMANCE_TIMER
+			tmp_timer_2 = Clock_currentTime_mics();
+#endif
 
-			VertexPipeline l_vertexPipeline;
 			size_t l_vertexIndexOffset = p_memory->VertexPipeline.Size;
 			for (size_t j = 0; j < l_renderableObject->Mesh->Vertices.Size; j++)
 			{
-				l_vertexPipeline = (VertexPipeline){
+				Arr_PushBackRealloc_Empty_VertexPipeline(&p_memory->VertexPipeline);
+				p_memory->VertexPipeline.Memory[p_memory->VertexPipeline.Size - 1] = (VertexPipeline){
 					.Vertex = l_renderableObject->Mesh->Vertices.Memory[j],
 					.PixelPositionCalculated = 0
 				};
-				Arr_PushBackRealloc_VertexPipeline(&p_memory->VertexPipeline, &l_vertexPipeline);
 			}
 
-			PolygonPipelineV2 l_polygonPipeline;
 			size_t l_polygonPipelineIndexOffset = p_memory->PolygonPipelines.Size;
 			for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
 			{
 				Polygon_VertexIndex_PTR l_polygon = &RRenderHeap.PolygonAllocator.array.Memory[l_renderableObject->Mesh->Polygons.Memory[j].Handle];
 
-				l_polygonPipeline = (PolygonPipelineV2){
-					.IsCulled = 0,
-					.VerticesPipelineIndex = {
-						l_polygon->v1 + l_vertexIndexOffset,
-						l_polygon->v2 + l_vertexIndexOffset,
-						l_polygon->v3 + l_vertexIndexOffset
-					},
-					.AssociatedRenderableObjectPipeline = p_memory->RederableObjectsPipeline.Size
+				Arr_PushBackRealloc_Empty_PolygonPipelineV2(&p_memory->PolygonPipelines);
+				p_memory->PolygonPipelines.Memory[p_memory->PolygonPipelines.Size - 1] = (PolygonPipelineV2){
+										.IsCulled = 0,
+										.VerticesPipelineIndex = {
+											l_polygon->v1 + l_vertexIndexOffset,
+											l_polygon->v2 + l_vertexIndexOffset,
+											l_polygon->v3 + l_vertexIndexOffset
+										},
+										.AssociatedRenderableObjectPipeline = p_memory->RederableObjectsPipeline.Size,
+										.PolygonVaryingIndex = -1,
+										.Material = l_renderableObject->Material
 				};
-
-				Arr_PushBackRealloc_PolygonPipelineV2(&p_memory->PolygonPipelines, &l_polygonPipeline);
 			}
 
-
-			RenderableObjectPipeline l_renderaBleObjectPipeline = {
+			Arr_PushBackRealloc_Empty_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline);
+			p_memory->RederableObjectsPipeline.Memory[p_memory->RederableObjectsPipeline.Size - 1] = (RenderableObjectPipeline){
 				.RenderedObject = l_renderableObject,
 				.PolygonPipelineIndexBeginIncluded = l_polygonPipelineIndexOffset,
 				.PolygonPipelineIndexEndExcluded = p_memory->PolygonPipelines.Size,
@@ -104,11 +111,9 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 				.VertexPipelineIndexEndExcluded = p_memory->VertexPipeline.Size
 			};
 
-			Arr_PushBackRealloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, &l_renderaBleObjectPipeline);
-
-			#if RENDER_PERFORMANCE_TIMER
+#if RENDER_PERFORMANCE_TIMER
 			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageDataSetup_PushPipelineData, Clock_currentTime_mics() - tmp_timer_2);
-			#endif
+#endif
 
 		}
 	}
@@ -147,6 +152,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
 	{
 		PolygonPipelineV2_PTR l_polygon = &p_memory->PolygonPipelines.Memory[i];
+
 		Polygon4fPTR l_poly =
 		{
 			.v1 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v1].TransformedPosition,
@@ -154,7 +160,21 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 			.v3 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v3].TransformedPosition
 		};
 
-		l_polygon->IsCulled = BackFaceCulled_Poly4FPTR(&l_poly, &p_input->CameraBuffer->WorldPosition);
+		Vector4f l_worldNormal;
+		Polygon_CalculateNormal_V4FPTR(&l_poly, &l_worldNormal);
+
+		l_polygon->IsCulled = BackFaceCulled_Normal3fPTR(&l_worldNormal, l_poly.v1, &p_input->CameraBuffer->WorldPosition);
+
+		if (!l_polygon->IsCulled)
+		{
+			PixelColorCaluclation_Polygon_PushCalculations(l_polygon, p_memory);
+		}
+	}
+
+	// Light Calculations
+	for (size_t i = 0; i < p_memory->FlatShadingCalculations.Size; i++)
+	{
+		FlatShadingPixelCalculation_Calculate(&p_memory->FlatShadingCalculations.Memory[i], &UniqueDirectionalLight, p_memory);
 	}
 
 #if RENDER_PERFORMANCE_TIMER
@@ -187,13 +207,15 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 				.v2 = l_v2->PixelPosition,
 				.v3 = l_v3->PixelPosition
 			};
-			// Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &RRenderHeap.MaterialAllocator.array.Memory[p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material.Handle]);
 			
+			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &RRenderHeap.MaterialAllocator.array.Memory[p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material.Handle]);
+
+			/*
 			Vector3c l_colo = { 255, 0, 0 };
 			Draw_LineClipped(&l_v1->PixelPosition, &l_v2->PixelPosition, p_to, p_to_clipRect, &l_colo);
 			Draw_LineClipped(&l_v2->PixelPosition, &l_v3->PixelPosition, p_to, p_to_clipRect, &l_colo);
 			Draw_LineClipped(&l_v3->PixelPosition, &l_v1->PixelPosition, p_to, p_to_clipRect, &l_colo);
-
+			*/
 
 #if RENDER_PERFORMANCE_TIMER
 			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization_PixelDrawing, Clock_currentTime_mics() - tmp_timer);
@@ -215,13 +237,16 @@ void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory)
 	Arr_Alloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, 0);
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
-
+	Arr_Alloc_PolygonVaryings(&p_memory->PolygonVaryings, 0);
+	Arr_Alloc_FlatShadingPixelCalculation(&p_memory->FlatShadingCalculations, 0);
 };
 void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, size_t height)
 {
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
 	Arr_Clear(&p_memory->VertexPipeline.array);
 	Arr_Clear(&p_memory->PolygonPipelines.array);
+	Arr_Clear(&p_memory->PolygonVaryings.array);
+	Arr_Clear(&p_memory->FlatShadingCalculations.array);
 };
 void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
 {
@@ -232,4 +257,6 @@ void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
 	Arr_Free(&p_memory->RederableObjectsPipeline.array);
 	Arr_Free(&p_memory->VertexPipeline.array);
 	Arr_Free(&p_memory->PolygonPipelines.array);
+	Arr_Free(&p_memory->PolygonVaryings.array);
+	Arr_Free(&p_memory->FlatShadingCalculations.array);
 };

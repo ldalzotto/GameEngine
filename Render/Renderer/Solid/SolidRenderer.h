@@ -8,6 +8,7 @@
 #include "Objects/Texture/Texture_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
+#include "Renderer/PixelColor/PixelColorCalculation_def.h"
 
 typedef struct SolidRendererInput_TYP
 {
@@ -38,13 +39,27 @@ typedef struct PolygonPipelineV2_TYP
 	char IsCulled;
 	Polygon_VertexIndex VerticesPipelineIndex;
 
+	size_t PolygonVaryingIndex;
+	size_t FlatShadingCalculationIndex;
+
 	size_t AssociatedRenderableObjectPipeline;
+	Material_HANDLE Material;
 }PolygonPipelineV2, * PolygonPipelineV2_PTR;
 
 typedef struct ARRAY_PolygonPipelineV2_TYP
 {
 	ARRAY_TYPE_DEFINITION(PolygonPipelineV2)
 } ARRAY_PolygonPipelineV2, * ARRAY_PolygonPipelineV2_PTR;
+
+typedef struct PolygonVaryings_TYP
+{
+	Vector4f WorldFlatNormal;
+}PolygonVaryings, * PolygonVaryings_PTR;
+
+typedef struct Array_PolygonVaryings_TYP
+{
+	ARRAY_TYPE_DEFINITION(PolygonVaryings)
+}Array_PolygonVaryings, * Array_PolygonVaryings_PTR;
 
 typedef struct VertexPipeline_TYP
 {
@@ -65,6 +80,8 @@ typedef struct SolidRenderer_Memory_TYP
 	Array_RenderableObjectPipeline RederableObjectsPipeline;
 	ARRAY_PolygonPipelineV2 PolygonPipelines;
 	Array_VertexPipeline VertexPipeline;
+	Array_PolygonVaryings PolygonVaryings;
+	Array_FlatShadingPixelCalculation FlatShadingCalculations;
 } SolidRenderer_Memory, * SolidRenderer_Memory_PTR;
 
 void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory);
