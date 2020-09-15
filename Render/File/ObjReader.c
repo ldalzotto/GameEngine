@@ -4,6 +4,7 @@
 #include "DataStructures/String.h"
 #include "Objects/Resource/Vertex.h"
 #include "Objects/Resource/Mesh.h"
+#include "Objects/Resource/Polygon.h"
 
 #include "Heap/RenderHeap.h"
 
@@ -128,6 +129,29 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 				}
 			}
 		}
+
+		// Precalculated flat normals
+
+		if (out_mesh)
+		{
+			for (size_t i = 0; i < out_mesh->Polygons.Size; i++)
+			{
+				PrecaculatedPolygonFlatNormal_HANDLE l_precalculatedLocalNormalInseted;
+				Mesh_AllocPrecalculatedFlatNormal(out_mesh, &l_precalculatedLocalNormalInseted);
+				PrecaculatedPolygonFlatNormal_PTR l_precalculatedLocalNormal = &RRenderHeap.PrecalculatedFlatNormalAllocator.array.Memory[l_precalculatedLocalNormalInseted.Handle];
+
+				Polygon_VertexIndex_PTR l_polygonVertexIndex = &RRenderHeap.PolygonAllocator.array.Memory[out_mesh->Polygons.Memory[i].Handle];
+				Polygon4fPTR l_polygon =
+				{
+					.v1 = &RRenderHeap.VertexAllocator.array.Memory[l_polygonVertexIndex->v1].LocalPosition,
+					.v2 = &RRenderHeap.VertexAllocator.array.Memory[l_polygonVertexIndex->v2].LocalPosition,
+					.v3 = &RRenderHeap.VertexAllocator.array.Memory[l_polygonVertexIndex->v3].LocalPosition
+				};
+				Polygon_CalculateNormal_V4FPTR(&l_polygon, &l_precalculatedLocalNormal->LocalNormal);
+
+			}
+		}
+
 	}
 	FileLineIterator_free(&l_it);
 	FileStream_close(&l_fs);

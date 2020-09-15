@@ -1,6 +1,7 @@
 #pragma once
 
 #include "v2/_interface/VectorC_def.h"
+#include "DataStructures/ARRAY_def.h"
 
 typedef struct Polygon2f_TYP
 {
@@ -41,3 +42,24 @@ typedef struct Polygon4fPTR_TYP
 ElementType v1; \
 ElementType v2; \
 ElementType v3;
+
+
+typedef struct PrecaculatedPolygonFlatNormal_TYP
+{
+	Vector4f LocalNormal;
+}PrecaculatedPolygonFlatNormal, * PrecaculatedPolygonFlatNormal_PTR;
+
+typedef struct Array_PrecaculatedPolygonFlatNormal_TYP
+{
+	ARRAY_TYPE_DEFINITION(PrecaculatedPolygonFlatNormal)
+}Array_PrecaculatedPolygonFlatNormal, * Array_PrecaculatedPolygonFlatNormal_PTR;
+
+typedef struct PrecaculatedPolygonFlatNormal_HANDLE_TYP
+{
+	size_t Handle;
+}PrecaculatedPolygonFlatNormal_HANDLE, * PrecaculatedPolygonFlatNormal_HANDLE_PTR;
+
+typedef struct Array_PrecaculatedPolygonFlatNormalHANDLE_TYP
+{
+	ARRAY_TYPE_DEFINITION(PrecaculatedPolygonFlatNormal_HANDLE)
+}Array_PrecaculatedPolygonFlatNormalHANDLE, * Array_PrecaculatedPolygonFlatNormalHANDLE_PTR;

@@ -8,6 +8,7 @@
 
 void Mesh_Alloc(Mesh_PTR p_mesh);
 void Mesh_AllocVertex(Mesh_PTR p_mesh, Vertex_HANDLE_PTR out_vertexHandle);
+void Mesh_AllocPrecalculatedFlatNormal(Mesh_PTR p_mesh, PrecaculatedPolygonFlatNormal_HANDLE_PTR out_precalculatedNormal);
 void Mesh_Free(Mesh_PTR p_mesh);
 void Mesh_BuildBoundingBox(const Mesh_PTR p_mesh, BoxF_PTR out_box);
 
