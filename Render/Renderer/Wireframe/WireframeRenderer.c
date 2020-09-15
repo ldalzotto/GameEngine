@@ -206,7 +206,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 				.v2 = l_v2->PixelPosition,
 				.v3 = l_v3->PixelPosition
 			};
-			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material);
+			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &RRenderHeap.MaterialAllocator.array.Memory[p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material.Handle]);
 			
 #if RENDER_PERFORMANCE_TIMER
 			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization_PixelDrawing, Clock_currentTime_mics() - tmp_timer);

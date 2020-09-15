@@ -11,7 +11,7 @@ typedef struct RenderedObject_TYP
 	Mesh_PTR Mesh;
 	BoxF_PTR MeshBoundingBox;
 	Matrix4f ModelMatrix;
-	Material_PTR Material;
+	Material_HANDLE Material;
 }RenderedObject, * RenderedObject_PTR, * RenderedObject_HANDLE, ** RenderedObject_HANDLE_PTR;
 
 typedef struct Array_RenderedObjectHandle_TYP

@@ -37,7 +37,6 @@ void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR 
 		if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 		{
 			EvaluatePixelColor(p_to, &l_rasterizerIterator.RasterizedPixel, p_material);
-//			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = *p_color;
 		}
 	}
 };

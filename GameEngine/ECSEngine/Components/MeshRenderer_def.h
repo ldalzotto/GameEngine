@@ -10,6 +10,6 @@ typedef struct MeshRenderer_TYP
 	ECS_ComponentHeader Header;
 	MeshResource_HANDLE MeshResource;
 	BoxF MeshBoundingBox;
-	Material Material;
+	Material_HANDLE Material;
 }MeshRenderer, * MeshRenderer_PTR;
 

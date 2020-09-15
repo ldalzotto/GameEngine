@@ -14,5 +14,10 @@ POOLALLOCATOR_ALLOCELEMENT_FUNCTION(Polygon, PoolAllocator_Polygon_PTR, Polygon_
 POOLALLOCATOR_FREEELEMENT_FUNCTION(Polygon, PoolAllocator_Polygon_PTR, Polygon_VertexIndex_HANDLE);
 POOLALLOCATOR_FREEELEMENTS_FUNCTION(Polygon, PoolAllocator_Polygon_PTR, Array_Polygon_VertexIndex_HANDLE_PTR);
 
+POOLALLOCATOR_ALLOC_FUNCTION(Material, PoolAllocator_Material_PTR, Material);
+POOLALLOCATOR_ALLOCELEMENT_FUNCTION(Material, PoolAllocator_Material_PTR, Material, Material_HANDLE_PTR);
+POOLALLOCATOR_FREEELEMENT_FUNCTION(Material, PoolAllocator_Material_PTR, Material_HANDLE);
+
+
 void RenderHeap_Alloc(RenderHeap_PTR p_renderHeap);
 void RenderHeap_Free(RenderHeap_PTR p_renderHeap);
