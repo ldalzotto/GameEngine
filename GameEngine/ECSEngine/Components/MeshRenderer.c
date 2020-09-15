@@ -9,6 +9,7 @@ void MeshRenderer_init(MeshRenderer_PTR p_meshRenderer, RenderV2Interface* p_ren
 {
 	MeshResourceProvider_UseResource(p_renderInterface->Resources.MeshResourceProvider, p_mehsRendererInfo->MeshResourcePath, &p_meshRenderer->MeshResource);
 	Mesh_BuildBoundingBox(&p_meshRenderer->MeshResource->Mesh, &p_meshRenderer->MeshBoundingBox);
+	p_meshRenderer->Material = p_mehsRendererInfo->Material;
 };
 
 /*

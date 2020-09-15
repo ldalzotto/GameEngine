@@ -23,6 +23,7 @@ char LineRasterize_Initialize(const Vector2i_PTR p_begin, const Vector2i_PTR p_e
 		out_lineRasterizerIterator->dx = abs(l_clipped_end.x - l_clipped_begin.x); out_lineRasterizerIterator->sx = l_clipped_begin.x < l_clipped_end.x ? 1 : -1;
 		out_lineRasterizerIterator->dy = -abs(l_clipped_end.y - l_clipped_begin.y); out_lineRasterizerIterator->sy = l_clipped_begin.y < l_clipped_end.y ? 1 : -1;
 		out_lineRasterizerIterator->err = out_lineRasterizerIterator->dx + out_lineRasterizerIterator->dy;
+		out_lineRasterizerIterator->CurrentStep = LINERASTERIZER_ITERATOR_STEP_BEGIN;
 		return 1;
 	};
 	return 0;

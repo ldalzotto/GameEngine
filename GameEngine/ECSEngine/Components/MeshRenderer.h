@@ -10,6 +10,7 @@ typedef struct RenderV2Interface_TYP RenderV2Interface;
 typedef struct MeshRendererInitInfo_TYP
 {
 	char* MeshResourcePath;
+	Material Material;
 }MeshRendererInitInfo, * MeshRendererInitInfo_PTR;
 
 void MeshRenderer_init(MeshRenderer_PTR p_meshRenderer, RenderV2Interface*p_renderInterface, MeshRendererInitInfo_PTR p_mehsRendererInfo);

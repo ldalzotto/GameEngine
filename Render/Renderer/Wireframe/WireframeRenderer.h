@@ -37,6 +37,8 @@ typedef struct PolygonPipelineV2_TYP
 {
 	char IsCulled;
 	Polygon_VertexIndex VerticesIndex;
+
+	size_t AssociatedRenderableObjectPipeline;
 }PolygonPipelineV2, * PolygonPipelineV2_PTR;
 
 typedef struct ARRAY_PolygonPipelineV2_TYP

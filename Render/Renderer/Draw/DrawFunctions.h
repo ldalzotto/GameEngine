@@ -5,6 +5,7 @@
 #include "v2/_interface/VectorStructuresC_def.h"
 #include "Objects/Resource/Polygon_def.h"
 #include "Objects/Texture/Texture_def.h"
+#include "Objects/Resource/Material_def.h"
 
 
 void Draw_LineClipped(
@@ -12,4 +13,4 @@ void Draw_LineClipped(
 	Texture3c_PTR p_to, Recti_PTR p_clipRect,
 	Vector3c_PTR p_color);
 
-void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect, Vector3c_PTR p_color);
+void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect, Material_PTR p_material);

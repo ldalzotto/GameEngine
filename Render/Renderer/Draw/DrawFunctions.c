@@ -4,6 +4,11 @@
 
 #include "Objects/Texture/Texture.h"
 
+inline void EvaluatePixelColor(Texture3c_PTR p_to, Vector2i_PTR p_pixelCoord, Material_PTR p_material)
+{
+	p_to->Pixels.Memory[p_pixelCoord->x + (p_pixelCoord->y * p_to->Width)] = p_material->BaseColor;
+};
+
 void Draw_LineClipped(
 	Vector2i_PTR p_begin, Vector2i_PTR p_end,
 	Texture3c_PTR p_to, Recti_PTR p_clipRect,
@@ -21,7 +26,7 @@ void Draw_LineClipped(
 
 
 void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect,
-	Vector3c_PTR p_color)
+	Material_PTR p_material)
 {
 	PolygonRasterizerIterator l_rasterizerIterator;
 	PolygonRasterize_Initialize(p_polygon, p_clipRect, &l_rasterizerIterator);
@@ -31,7 +36,8 @@ void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR 
 		l_returnCode = PolygonRasterize_MoveNext(&l_rasterizerIterator);
 		if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 		{
-			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = *p_color;
+			EvaluatePixelColor(p_to, &l_rasterizerIterator.RasterizedPixel, p_material);
+//			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = *p_color;
 		}
 	}
 };

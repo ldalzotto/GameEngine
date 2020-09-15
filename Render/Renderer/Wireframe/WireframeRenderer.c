@@ -72,7 +72,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 #endif
 
 	WireframeRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
-	Vector3c l_wireframeColor = { 255,0,0 };
+	// Vector3c l_wireframeColor = { 255,0,0 };
 	Vector4f tmp_vec4_0;
 
 #if RENDER_PERFORMANCE_TIMER
@@ -111,7 +111,8 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 						l_polygon->v1 + l_vertexIndexOffset,
 						l_polygon->v2 + l_vertexIndexOffset,
 						l_polygon->v3 + l_vertexIndexOffset
-					}
+					},
+					.AssociatedRenderableObjectPipeline = p_memory->RederableObjectsPipeline.Size
 				};
 
 				Arr_PushBackRealloc_PolygonPipelineV2(&p_memory->PolygonPipelines, &l_polygonPipeline);
@@ -185,13 +186,13 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 
 	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
 	{
-		PolygonPipelineV2_PTR l_polygon = &p_memory->PolygonPipelines.Memory[i];
+		PolygonPipelineV2_PTR l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
 
-		if (!l_polygon->IsCulled)
+		if (!l_polygonPipeline->IsCulled)
 		{
-			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v1];
-			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v2];
-			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesIndex.v3];
+			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesIndex.v1];
+			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesIndex.v2];
+			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesIndex.v3];
 
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v1, p_input);
 			WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v2, p_input);
@@ -205,7 +206,7 @@ void WireframeRenderer_renderV2(const WireframeRendererInput* p_input, Texture3c
 				.v2 = l_v2->PixelPosition,
 				.v3 = l_v3->PixelPosition
 			};
-			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &l_wireframeColor);
+			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material);
 			
 #if RENDER_PERFORMANCE_TIMER
 			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization_PixelDrawing, Clock_currentTime_mics() - tmp_timer);

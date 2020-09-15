@@ -26,6 +26,7 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 			l_meshDrawOperation.RenderedObject = (RenderedObject_PTR)malloc(sizeof(RenderedObject));
 			l_meshDrawOperation.RenderedObject->Mesh = &l_meshDrawOperation.MeshRenderer->MeshResource->Mesh;
 			l_meshDrawOperation.RenderedObject->MeshBoundingBox = &l_meshDrawOperation.MeshRenderer->MeshBoundingBox;
+			l_meshDrawOperation.RenderedObject->Material = &l_meshDrawOperation.MeshRenderer->Material;
 
 			Arr_PushBackRealloc_MeshDrawSystemOperation(&p_meshDrawSystem->MeshDrawSystemOperations, &l_meshDrawOperation);
 			Arr_PushBackRealloc_RenderedObjectHandle(&p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, &l_meshDrawOperation.RenderedObject);
