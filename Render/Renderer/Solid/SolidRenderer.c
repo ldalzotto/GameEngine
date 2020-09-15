@@ -187,8 +187,14 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 				.v2 = l_v2->PixelPosition,
 				.v3 = l_v3->PixelPosition
 			};
-			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &RRenderHeap.MaterialAllocator.array.Memory[p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material.Handle]);
+			// Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &RRenderHeap.MaterialAllocator.array.Memory[p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material.Handle]);
 			
+			Vector3c l_colo = { 255, 0, 0 };
+			Draw_LineClipped(&l_v1->PixelPosition, &l_v2->PixelPosition, p_to, p_to_clipRect, &l_colo);
+			Draw_LineClipped(&l_v2->PixelPosition, &l_v3->PixelPosition, p_to, p_to_clipRect, &l_colo);
+			Draw_LineClipped(&l_v3->PixelPosition, &l_v1->PixelPosition, p_to, p_to_clipRect, &l_colo);
+
+
 #if RENDER_PERFORMANCE_TIMER
 			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization_PixelDrawing, Clock_currentTime_mics() - tmp_timer);
 #endif

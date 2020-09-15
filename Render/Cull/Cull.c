@@ -13,16 +13,12 @@ bool BackFaceCulled_Poly4FPTR(const Polygon4fPTR_PTR p_polygon, const Vector4f_P
 {
 	Vector4f tmp_vec4_0;
 
-	Vec_Min_4f_4f(p_polygon->v1, p_cameraWorldPosition, &tmp_vec4_0);
-	Vector3f l_cameraToPolygon = tmp_vec4_0.Vec3;
-	Vec_Min_4f_4f(p_polygon->v1, p_polygon->v2, &tmp_vec4_0);
-	Vector3f l_u = tmp_vec4_0.Vec3;
-	Vec_Min_4f_4f(p_polygon->v1, p_polygon->v3, &tmp_vec4_0);
-	Vector3f l_v = tmp_vec4_0.Vec3;
-	Vector3f l_n;
-	Vec_Cross_3f(&l_u, &l_v, &l_n);
+	Vector4f l_cameraToPolygon;
+	Vec_Min_4f_4f(p_polygon->v1, p_cameraWorldPosition, &l_cameraToPolygon);
 
-	return Vec_Dot_3f(&l_cameraToPolygon, &l_n) > FLOAT_TOLERANCE;
+	Vector4f l_normal;
+	Polygon_CalculateNormal_V4FPTR(p_polygon, &l_normal);
+	return Vec_Dot_3f(&l_cameraToPolygon.Vec3, &l_normal.Vec3) > FLOAT_TOLERANCE;
 };
 
 bool ObjectCulled_Boxf(const BoxF_PTR p_objectBoundingBox_localSpace, const Matrix4f_PTR p_modelMatrix,
