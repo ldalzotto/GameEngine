@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DataStructures/ARRAY_def.h"
+#include "v2/_interface/VectorC_def.h"
 
 typedef char PerPolgyonPixelColorCalculationType;
 #define PerPolgyonPixelColorCalculationType_NONE 0
@@ -8,7 +9,7 @@ typedef char PerPolgyonPixelColorCalculationType;
 
 typedef struct FlatShadingPixelCalculation_TYP
 {
-	size_t PolygonVaryings;
+	Vector4f PolygonFlatNormal;
 	float Out_DotProduct;
 }FlatShadingPixelCalculation, *FlatShadingPixelCalculation_PTR;
 

@@ -23,10 +23,6 @@ ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 
-ARRAY_ALLOC_FUNCTION(PolygonVaryings, Array_PolygonVaryings_PTR, PolygonVaryings)
-ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonVaryings, Array_PolygonVaryings_PTR, PolygonVaryings)
-
-
 // There is a unique directional light
 DirectionalLight UniqueDirectionalLight = { .Direction = {1.0f, 0.0f, 0.0f}, 1.0f };
 
@@ -97,7 +93,6 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 											l_polygon->v3 + l_vertexIndexOffset
 										},
 										.AssociatedRenderableObjectPipeline = p_memory->RederableObjectsPipeline.Size,
-										.PolygonVaryingIndex = -1,
 										.Material = l_renderableObject->Material
 				};
 			}
@@ -167,10 +162,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 
 		if (!l_polygon->IsCulled)
 		{
-			Arr_PushBackRealloc_Empty_PolygonVaryings(&p_memory->PolygonVaryings);
-			p_memory->PolygonVaryings.Memory[p_memory->PolygonVaryings.Size - 1] = (PolygonVaryings){ .WorldFlatNormal = l_worldNormal };
-			l_polygon->PolygonVaryingIndex = p_memory->PolygonVaryings.Size - 1;
-			PixelColorCaluclation_Polygon_PushCalculations(l_polygon, p_memory);
+			PixelColorCaluclation_Polygon_PushCalculations(l_polygon, &l_worldNormal, p_memory);
 		}
 	}
 
@@ -211,27 +203,9 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 				.v3 = l_v3->PixelPosition
 			};
 			
-			Material_PTR l_material = &RRenderHeap.MaterialAllocator.array.Memory[l_polygonPipeline->Material.Handle];
-			switch (l_material->ShadingType)
-			{
-			case MATERIAL_SHADING_TYPE_FLAT:
-			{
-				Draw_PolygonClipped_FlatShaded(&l_polygon, p_to, p_to_clipRect, l_material, &p_memory->FlatShadingCalculations.Memory[l_polygonPipeline->FlatShadingCalculationIndex]);
-			}
-			break;
-			case MATERIAL_SHADING_TYPE_NONE:
-			{
-				Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, l_material);
-			}
-			break;
-			}
+			Draw_PolygonClipped(l_polygonPipeline, &l_polygon, p_to, p_to_clipRect, p_memory);
 
-			/*
-			Vector3c l_colo = { 255, 0, 0 };
-			Draw_LineClipped(&l_v1->PixelPosition, &l_v2->PixelPosition, p_to, p_to_clipRect, &l_colo);
-			Draw_LineClipped(&l_v2->PixelPosition, &l_v3->PixelPosition, p_to, p_to_clipRect, &l_colo);
-			Draw_LineClipped(&l_v3->PixelPosition, &l_v1->PixelPosition, p_to, p_to_clipRect, &l_colo);
-			*/
+		
 
 #if RENDER_PERFORMANCE_TIMER
 			PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization_PixelDrawing, Clock_currentTime_mics() - tmp_timer);
@@ -253,7 +227,6 @@ void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory)
 	Arr_Alloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, 0);
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
-	Arr_Alloc_PolygonVaryings(&p_memory->PolygonVaryings, 0);
 	Arr_Alloc_FlatShadingPixelCalculation(&p_memory->FlatShadingCalculations, 0);
 };
 void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, size_t height)
@@ -261,7 +234,6 @@ void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, 
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
 	Arr_Clear(&p_memory->VertexPipeline.array);
 	Arr_Clear(&p_memory->PolygonPipelines.array);
-	Arr_Clear(&p_memory->PolygonVaryings.array);
 	Arr_Clear(&p_memory->FlatShadingCalculations.array);
 };
 void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
@@ -273,6 +245,5 @@ void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
 	Arr_Free(&p_memory->RederableObjectsPipeline.array);
 	Arr_Free(&p_memory->VertexPipeline.array);
 	Arr_Free(&p_memory->PolygonPipelines.array);
-	Arr_Free(&p_memory->PolygonVaryings.array);
 	Arr_Free(&p_memory->FlatShadingCalculations.array);
 };
