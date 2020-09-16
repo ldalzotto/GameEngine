@@ -50,6 +50,19 @@ typedef struct ARRAY_PolygonPipelineV2_TYP
 	ARRAY_TYPE_DEFINITION(PolygonPipelineV2)
 } ARRAY_PolygonPipelineV2, * ARRAY_PolygonPipelineV2_PTR;
 
+typedef size_t PolygonPipelineIndex;
+
+typedef struct PolygonPipeline_CameraDistanceIndexed_TYP
+{
+	size_t Index;
+	float DistanceFromCamera;
+}PolygonPipeline_CameraDistanceIndexed, * PolygonPipeline_CameraDistanceIndexed_PTR;
+
+typedef struct ARRAY_PolygonPipeline_CameraDistanceIndexed_TYP
+{
+	ARRAY_TYPE_DEFINITION(PolygonPipeline_CameraDistanceIndexed)
+}ARRAY_PolygonPipeline_CameraDistanceIndexed, * ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR;
+
 typedef struct VertexPipeline_TYP
 {
 	Vertex_HANDLE Vertex;
@@ -69,6 +82,7 @@ typedef struct SolidRenderer_Memory_TYP
 {
 	Array_RenderableObjectPipeline RederableObjectsPipeline;
 	ARRAY_PolygonPipelineV2 PolygonPipelines;
+	ARRAY_PolygonPipeline_CameraDistanceIndexed OrderedPolygonPipelinesIndex;
 	Array_VertexPipeline VertexPipeline;
 	Array_FlatShadingPixelCalculation FlatShadingCalculations;
 } SolidRenderer_Memory, * SolidRenderer_Memory_PTR;

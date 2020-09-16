@@ -13,12 +13,25 @@
 #include "Renderer/Draw/DrawFunctions.h"
 #include "Renderer/PixelColor/PixelColorCalculation.h"
 #include "Metrics/RenderTimeMetrics.h"
+#include "Algorithm/Sort_alg.h"
 
 ARRAY_ALLOC_FUNCTION(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
 
 ARRAY_ALLOC_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
+
+ARRAY_ALLOC_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
+ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
+ARRAY_RESIZE_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
+
+
+#define SORT_POLYGONPIPELINE_CAMERADISTACE_COMPAREFN(ComparedElementValueExpression) ComparedElementValueExpression.DistanceFromCamera > l_pivot->DistanceFromCamera
+#define SORT_POLYGONPIPELINE_CAMERADISTACE_COMPAREFN_INVERT(ComparedElementValueExpression) ComparedElementValueExpression.DistanceFromCamera < l_pivot->DistanceFromCamera
+#define SORT_QUICK_ALGORITHM_INT_COMPAREFN_REVERSE(ComparedElementValueExpression) ComparedElementValueExpression > *l_pivot
+SORT_QUICK_ALGORITHM(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed,
+	SORT_POLYGONPIPELINE_CAMERADISTACE_COMPAREFN,
+	SORT_POLYGONPIPELINE_CAMERADISTACE_COMPAREFN_INVERT)
 
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
@@ -205,15 +218,42 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 		}
 	}
 
+#if RENDER_PERFORMANCE_TIMER
+	tmp_timer = Clock_currentTime_mics();
+#endif
+
 	//Paint algorithm -> sorting polygons
+
+	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
+	{
+		PolygonPipelineV2_PTR l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
+
+		if (!l_polygonPipeline->IsCulled)
+		{			
+			Arr_PushBackRealloc_Empty_PolygonPipeline_CameraDistanceIndexed(&p_memory->OrderedPolygonPipelinesIndex);
+			p_memory->OrderedPolygonPipelinesIndex.Memory[p_memory->OrderedPolygonPipelinesIndex.Size - 1] = (PolygonPipeline_CameraDistanceIndexed)
+			{
+				.Index = i,
+				.DistanceFromCamera = ((p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v1].CameraSpacePosition.z +
+						p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v2].CameraSpacePosition.z +
+						p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v3].CameraSpacePosition.z) * 0.333333f)
+			};
+		}
+	}
+
+	Sort_Quick_PolygonPipeline_CameraDistanceIndexed(&p_memory->OrderedPolygonPipelinesIndex);
+	
+#if RENDER_PERFORMANCE_TIMER
+	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AveragePolygonSorting, Clock_currentTime_mics() - tmp_timer);
+#endif
 
 #if RENDER_PERFORMANCE_TIMER
 	tmp_timer = Clock_currentTime_mics();
 #endif
 
-	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
+	for (size_t i = 0; i < p_memory->OrderedPolygonPipelinesIndex.Size; i++)
 	{
-		PolygonPipelineV2_PTR l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
+		PolygonPipelineV2_PTR l_polygonPipeline = &p_memory->PolygonPipelines.Memory[p_memory->OrderedPolygonPipelinesIndex.Memory[i].Index];
 
 		if (!l_polygonPipeline->IsCulled)
 		{
@@ -262,6 +302,7 @@ void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory)
 	Arr_Alloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, 0);
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
+	Arr_Alloc_PolygonPipeline_CameraDistanceIndexed(&p_memory->OrderedPolygonPipelinesIndex, 0);
 	Arr_Alloc_FlatShadingPixelCalculation(&p_memory->FlatShadingCalculations, 0);
 };
 void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, size_t height)
@@ -269,6 +310,7 @@ void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, 
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
 	Arr_Clear(&p_memory->VertexPipeline.array);
 	Arr_Clear(&p_memory->PolygonPipelines.array);
+	Arr_Clear(&p_memory->OrderedPolygonPipelinesIndex.array);
 	Arr_Clear(&p_memory->FlatShadingCalculations.array);
 };
 void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
@@ -280,5 +322,6 @@ void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
 	Arr_Free(&p_memory->RederableObjectsPipeline.array);
 	Arr_Free(&p_memory->VertexPipeline.array);
 	Arr_Free(&p_memory->PolygonPipelines.array);
+	Arr_Free(&p_memory->OrderedPolygonPipelinesIndex.array);
 	Arr_Free(&p_memory->FlatShadingCalculations.array);
 };

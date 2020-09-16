@@ -214,6 +214,21 @@ char Arr_Swap(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_left, size_t p_rig
 	return 0;
 };
 
+char Arr_Swap_Unsafe(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_left, size_t p_right)
+{
+	char* l_leftMemoryTarget = p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_left);
+	char* l_rightMemoryTarget = p_array->Memory + Arr_GetElementOffset(ARRAY_ELEMENTSIZE_PARAMETER_INPUT, p_right);
+
+	for (size_t i = 0; i < p_elementSize; i++)
+	{
+		char l_rightTmp = l_rightMemoryTarget[i];
+		l_rightMemoryTarget[i] = l_leftMemoryTarget[i];
+		l_leftMemoryTarget[i] = l_rightTmp;
+	}
+
+	return 0;
+}
+
 void Arr_CopyToRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, Array_PTR p_target)
 {
 	size_t l_sizeToCopy = Arr_GetCapacitySize(p_array, p_elementSize);

@@ -18,6 +18,7 @@ typedef struct SolidRendererMetrics_TYP
 	PerformanceCounter AverageLocalToWorld;
 	PerformanceCounter AverageBackfaceCulling;
 	PerformanceCounter AveragePreRasterizationLightCalculation;
+	PerformanceCounter AveragePolygonSorting;
 	PerformanceCounter AverageRasterization;
 	PerformanceCounter AverageRasterization_TransformCoords;
 	PerformanceCounter AverageRasterization_PixelLight;

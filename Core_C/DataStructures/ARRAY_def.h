@@ -20,3 +20,8 @@ union \
 		size_t Capacity; \
 	}; \
 };
+
+typedef struct Array_Int_TYP
+{
+	ARRAY_TYPE_DEFINITION(int)
+}Array_Int, * Array_Int_PTR;
