@@ -67,10 +67,10 @@ void EntitySelectionTest_Init(GameEngineApplication* l_app)
 	}
 }
 
-int main()
+int main(int argc, char* argv[])
 {
 	{
-		GameEngineApplication* l_app = IntegrationTest_begin();
+		GameEngineApplication* l_app = IntegrationTest_begin(argv[0]);
 		EntityConfiguration_init();
 		EntitySelectionTest_Init(l_app);
 		// bool l_exit = false;

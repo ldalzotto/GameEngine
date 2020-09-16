@@ -30,6 +30,7 @@
 #include "ECSEngine/Components/PhysicsBody.h"
 #include "ECSEngine/Systems/CameraRenderSystem.h"
 
+#include "Asset/AssetPaths.h"
 
 #include "Input/InputV2.h"
 
@@ -490,7 +491,7 @@ TransformComponent_PTR transformGizmoV2_allocArrow(ECS* p_ecs, RenderV2Interface
 	{
 		MeshRenderer_PTR l_meshRenderer = ECS_Component_Alloc_MeshRenderer();
 		MeshRendererInitInfo l_meshRendererInitInfo = { 0 };
-		l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ForwardArrow.obj";
+		l_meshRendererInitInfo.MeshResourcePath = "Models/ForwardArrow.obj";
 		l_meshRendererInitInfo.Material.BaseColor = *p_color;
 
 		MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
@@ -526,7 +527,7 @@ TransformComponent_PTR transformGizmoV2_allocRotation(ECS* p_ecs, RenderV2Interf
 	{
 		MeshRenderer_PTR l_meshRenderer = ECS_Component_Alloc_MeshRenderer();
 		MeshRendererInitInfo l_meshRendererInitInfo = { 0 };
-		l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/RotationGizmo.obj";
+		l_meshRendererInitInfo.MeshResourcePath = "Models/RotationGizmo.obj";
 		l_meshRendererInitInfo.Material.BaseColor = *p_color;
 
 		MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);
@@ -562,7 +563,8 @@ TransformComponent_PTR transformGizmoV2_allocScale(ECS* p_ecs, RenderV2Interface
 	{
 		MeshRenderer_PTR l_meshRenderer = ECS_Component_Alloc_MeshRenderer();
 		MeshRendererInitInfo l_meshRendererInitInfo = { 0 };
-		l_meshRendererInitInfo.MeshResourcePath = "E:/GameProjects/GameEngine/Assets/Models/ScaleGizmo.obj";
+
+		l_meshRendererInitInfo.MeshResourcePath = "Models/ScaleGizmo.obj";
 		l_meshRendererInitInfo.Material.BaseColor = *p_color;
 
 		MeshRenderer_init(l_meshRenderer, p_renderInterface, &l_meshRendererInitInfo);

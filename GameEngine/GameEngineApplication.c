@@ -8,6 +8,7 @@
 #include "ECSEngine/Systems/MeshDrawSystem.h"
 #include "ECSEngine/GlobalEvents/ECSEngineGlobalEvents.h"
 #include "Input/InputGlobalEvent.h"
+#include "Asset/AssetPaths.h"
 
 ECSEngineGlobal_OnComponentDestroyed_Closure_TMP TMPClosure;
 
@@ -20,9 +21,11 @@ void app_render(void* p_closure);
 void app_endOfFrame(void* p_closure);
 ///
 
-GameEngineApplication* app_alloc()
+GameEngineApplication* app_alloc(const char* p_executablePath)
 {
 	GameEngineApplication* l_gameEngineApplication = (GameEngineApplication*)calloc(1, sizeof(GameEngineApplication));
+
+	AssetPath_Initialize(p_executablePath);
 
 	AppEvent_initialize();
 	InputGlobalEvent_Initialize();

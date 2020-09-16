@@ -18,6 +18,17 @@ void String_Alloc(String_PTR p_string, size_t p_initialCapacity)
 	Arr_PushBackRealloc(&p_string->array, sizeof(char), &l_nulChar);
 };
 
+String String_FromRaw(char* p_raw)
+{
+	size_t l_len = strlen(p_raw);
+	return (String)
+	{
+		.Memory = p_raw,
+		.Size = l_len,
+		.Capacity = l_len
+	};
+};
+
 void String_Free(String_PTR p_string)
 {
 	Arr_Free(&p_string->array);
@@ -61,6 +72,20 @@ void String_AppendSliceRealloc(String_PTR p_string, StringSLICE_PTR p_appended)
 	else
 	{
 		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), l_appendedString, l_charactersInserted, 0));
+	}
+};
+
+void String_InsertSliceNoRealloc(String_PTR p_string, StringSLICE_PTR p_inserted)
+{
+	char* l_insertedString = p_inserted->Memory + p_inserted->Begin;
+	size_t l_charactersInserted = (p_inserted->End - p_inserted->Begin);
+	if (p_string->Size >= 2)
+	{
+		HANDLE_ERR(Arr_InsertAtNoRealloc(&p_string->array, sizeof(char), l_insertedString, l_charactersInserted, p_string->Size - 1));
+	}
+	else
+	{
+		HANDLE_ERR(Arr_InsertAtNoRealloc(&p_string->array, sizeof(char), l_insertedString, l_charactersInserted, 0));
 	}
 };
 

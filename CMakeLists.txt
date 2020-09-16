@@ -5,6 +5,7 @@ enable_language(C)
 # set(BUILD_TYPE "")
 
 add_compile_definitions(BUFFER_OVERFLOW_INTERNAL_CHECK=0)
+add_compile_definitions(ASSETPATH_DEV=1)
 
 add_subdirectory(Core_c)
 add_subdirectory(ECS_C)

@@ -3,9 +3,9 @@
 #include "GameEngineApplication.h"
 
 
-GameEngineApplication* IntegrationTest_begin()
+GameEngineApplication* IntegrationTest_begin(const char* p_executablePath)
 {
-	return app_alloc();
+	return app_alloc(p_executablePath);
 };
 
 void IntegrationTest_end(GameEngineApplication* p_gameEngineApplication)

@@ -37,16 +37,16 @@ size_t MeshResourceProvider_GetResource(MeshResource_Provider_PTR p_provider, Me
 	return -1;
 };
 
-void MeshResourceProvider_UseResource(MeshResource_Provider_PTR p_provider, char* p_meshSourceFilePath, MeshResource_HANDLE* out_mesh)
+void MeshResourceProvider_UseResource(MeshResource_Provider_PTR p_provider, Assetpath_PTR p_meshSourceFilePath, MeshResource_HANDLE* out_mesh)
 {
-	MeshResource_KEY l_key = HashCombine_string(0, p_meshSourceFilePath);
+	MeshResource_KEY l_key = HashCombine_string(0, p_meshSourceFilePath->Path);
 	MeshResourceProvider_GetResource(p_provider, &l_key, out_mesh);
 	if (!*out_mesh)
 	{
 		MeshResource_HANDLE l_instanciatedResource = (MeshResource_HANDLE) calloc(1, sizeof(MeshResource));
 		Arr_PushBackRealloc_MeshResourceProvider(p_provider, &l_instanciatedResource);
 		l_instanciatedResource->Key = l_key;
-		ObjReader_loadMesh(p_meshSourceFilePath, &l_instanciatedResource->Mesh);
+		ObjReader_loadMesh(p_meshSourceFilePath->Path, &l_instanciatedResource->Mesh);
 
 		*out_mesh = l_instanciatedResource;
 	}

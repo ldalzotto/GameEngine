@@ -10,7 +10,7 @@
 #include "Algorithm/Sort.h"
 #include "Clock/Clock.h"
 
-void main()
+void main(int argc, char* argv[])
 {
 	srand((unsigned int)Clock_currentTime_mics());
 

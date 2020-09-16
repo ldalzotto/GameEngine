@@ -3,6 +3,8 @@
 #include "Datastructures/ARRAY.h"
 #include <math.h>
 
+//https://en.wikipedia.org/wiki/Quicksort
+
 #define SORT_QUICK_ALGORITHM(MethodPrefix, ArrayTypePTR, ElementType, ComparisonFunction, ComparisonFunctionInvert) \
 size_t Sort_Quick_Partition_##MethodPrefix##(ArrayTypePTR p_arr, size_t p_begin, size_t p_end) \
 { \

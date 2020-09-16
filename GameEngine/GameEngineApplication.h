@@ -53,7 +53,7 @@ typedef struct GameEngineApplication_TYP
 #endif
 }GameEngineApplication, * GameEngineApplication_PTR;
 
-GameEngineApplication* app_alloc();
+GameEngineApplication* app_alloc(const char* p_executablePath);
 void app_free(GameEngineApplication* p_app);
 void app_mainLoop(GameEngineApplication* p_app);
 int app_run(GameEngineApplication* p_app);
