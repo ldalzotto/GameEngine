@@ -2,6 +2,7 @@
 
 #include "DataStructures/ARRAY_def.h"
 #include "v2/_interface/VectorC_def.h"
+#include "v2/_interface/ColorC_def.h"
 
 typedef char PerPolgyonPixelColorCalculationType;
 #define PerPolgyonPixelColorCalculationType_NONE 0
@@ -10,7 +11,8 @@ typedef char PerPolgyonPixelColorCalculationType;
 typedef struct FlatShadingPixelCalculation_TYP
 {
 	Vector4f PolygonFlatNormal;
-	float Out_DotProduct;
+	Color3f Out_AttenuatedLightColor;
+	Color3f Out_AmbientColor;
 }FlatShadingPixelCalculation, *FlatShadingPixelCalculation_PTR;
 
 typedef struct Array_FlatShadingPixelCalculation_TYP

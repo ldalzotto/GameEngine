@@ -1,7 +1,7 @@
 #pragma once
 
-#include "v2/_interface/VectorC_def.h"
+#include "v2/_interface/ColorC_def.h"
 
-extern const Vector3c Color_RED;
-extern const Vector3c Color_GREEN;
-extern const Vector3c Color_BLUE;
+extern const Color3f Color_RED;
+extern const Color3f Color_GREEN;
+extern const Color3f Color_BLUE;

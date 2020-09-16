@@ -470,7 +470,7 @@ void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySele
 		&tmp_mat_0, true, &tmp_vec3_0);
 }
 
-TransformComponent_PTR transformGizmoV2_allocArrow(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
+TransformComponent_PTR transformGizmoV2_allocArrow(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Color3f* p_color)
 {
 	ECS_Entity_HANDLE l_arrowEntity;
 	TransformComponent_PTR l_transform;
@@ -506,7 +506,7 @@ TransformComponent_PTR transformGizmoV2_allocArrow(ECS* p_ecs, RenderV2Interface
 	return l_transform;
 }
 
-TransformComponent_PTR transformGizmoV2_allocRotation(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
+TransformComponent_PTR transformGizmoV2_allocRotation(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Color3f* p_color)
 {
 	ECS_Entity_HANDLE l_rotationEntity;
 	TransformComponent_PTR l_transform;
@@ -542,7 +542,7 @@ TransformComponent_PTR transformGizmoV2_allocRotation(ECS* p_ecs, RenderV2Interf
 	return l_transform;
 }
 
-TransformComponent_PTR transformGizmoV2_allocScale(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Vector3c_PTR p_color)
+TransformComponent_PTR transformGizmoV2_allocScale(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Color3f* p_color)
 {
 	ECS_Entity_HANDLE l_arrowEntity;
 	TransformComponent_PTR l_transform;
@@ -607,13 +607,13 @@ void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_i
 		//Arrow transform gizmo
 	{
 		{
-			p_transformGizmo->RightGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_RED);
+			p_transformGizmo->RightGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, &Color_RED);
 		}
 		{
-			p_transformGizmo->UpGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_GREEN);
+			p_transformGizmo->UpGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, &Color_GREEN);
 		}
 		{
-			p_transformGizmo->ForwardGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_BLUE);
+			p_transformGizmo->ForwardGizmo = transformGizmoV2_allocArrow(p_ecs, p_entitySelection->RenderInterface, &Color_BLUE);
 		}
 
 		Transform_AddChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->ForwardGizmo->Transform);
@@ -632,9 +632,9 @@ void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_i
 	case SelectedGizmoType_ROTATION:
 		// Rotation gizmo
 	{
-		p_transformGizmo->RightGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_RED);
-		p_transformGizmo->UpGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_GREEN);
-		p_transformGizmo->ForwardGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_BLUE);
+		p_transformGizmo->RightGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, &Color_RED);
+		p_transformGizmo->UpGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, &Color_GREEN);
+		p_transformGizmo->ForwardGizmo = transformGizmoV2_allocRotation(p_ecs, p_entitySelection->RenderInterface, &Color_BLUE);
 
 		tmp_vec3_0 = (Vector3f){ 0.0f, M_PI * 0.5f, 0.0f };
 		Quat_FromEulerAngle(&tmp_vec3_0, &tmp_quat_0);
@@ -653,13 +653,13 @@ void TransformGizmoV2_alloc(EntitySelection* p_entitySelection, Vector3f_PTR p_i
 		// Scale gizmo
 	{
 		{
-			p_transformGizmo->RightGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_RED);
+			p_transformGizmo->RightGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, &Color_RED);
 		}
 		{
-			p_transformGizmo->UpGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_GREEN);
+			p_transformGizmo->UpGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, &Color_GREEN);
 		}
 		{
-			p_transformGizmo->ForwardGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, (const Vector3c_PTR)&Color_BLUE);
+			p_transformGizmo->ForwardGizmo = transformGizmoV2_allocScale(p_ecs, p_entitySelection->RenderInterface, &Color_BLUE);
 		}
 
 		Transform_AddChild(&p_transformGizmo->TransformGizoEntity->Transform, &p_transformGizmo->RightGizmo->Transform);

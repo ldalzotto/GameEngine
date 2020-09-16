@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	
 	Material_HANDLE l_materialHandle;
 	PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
-	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ .ShadingType = MATERIAL_SHADING_TYPE_FLAT, .BaseColor = (Vector3c){ 100, 100, 0 } };
+	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ .ShadingType = MATERIAL_SHADING_TYPE_FLAT, .BaseColor = (Color3f){ 0.7f, 0.7f, 0 } };
 
 	// Arr_PushBackRealloc_Mater
 

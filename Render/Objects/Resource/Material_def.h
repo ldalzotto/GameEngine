@@ -1,6 +1,6 @@
 #pragma once
 
-#include "v2/_interface/VectorC_def.h"
+#include "v2/_interface/ColorC_def.h"
 #include "DataStructures/ARRAY_def.h"
 
 typedef char MATERIAL_SHADING_TYPE;
@@ -10,7 +10,7 @@ typedef char MATERIAL_SHADING_TYPE;
 typedef struct Material_TYP
 {
 	MATERIAL_SHADING_TYPE ShadingType;
-	Vector3c BaseColor;
+	Color3f BaseColor;
 }Material, * Material_PTR;
 
 typedef struct Array_Material_TYP

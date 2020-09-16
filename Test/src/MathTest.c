@@ -2,6 +2,7 @@
 #include "v2/_interface/FrustumC.h"
 #include "v2/_interface/VectorC.h"
 #include "v2/Math.h"
+#include "v2/_interface/ColorC.h"
 #include "Constants.h"
 
 void main()
@@ -22,7 +23,10 @@ void main()
 	Vector3f l_crossTest;
 	Vec_Cross_3f(&Vector3f_FORWARD, &Vector3f_RIGHT, &l_crossTest);
 
-	
+	Color3f l_col = {0.0f, 0.5f, 2.0f};
+	Color3c l_colc;
+	Color_Convert_3F_3C(&l_col, &l_colc);
+
 	int zd = 0;
 
 }
