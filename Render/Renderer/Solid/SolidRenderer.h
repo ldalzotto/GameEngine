@@ -56,6 +56,7 @@ typedef struct VertexPipeline_TYP
 	Vector4f CameraSpacePosition;
 	Vector4f TransformedPosition;
 	Vector2i PixelPosition;
+	char CameraPositionCalculated;
 	char PixelPositionCalculated;
 }VertexPipeline, * VertexPipeline_PTR;
 
