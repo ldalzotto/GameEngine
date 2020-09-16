@@ -18,7 +18,6 @@
 #include "Objects/RenderedObject.h"
 #include "Clock/Clock.h"
 
-
 #include "File/ObjReader.h"
 
 RenderV2 renderV2;
@@ -44,7 +43,14 @@ int main(int argc, char* argv[])
 	{
 		Mesh_BuildBoundingBox(&l_mesh->Mesh, &l_meshBoundingBox);
 	}
-	l_renderableObject = (RenderedObject){ &l_mesh->Mesh , &l_meshBoundingBox, l_modelMatrix };
+	
+	Material_HANDLE l_materialHandle;
+	PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
+	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ .ShadingType = MATERIAL_SHADING_TYPE_FLAT, .BaseColor = (Vector3c){ 100, 100, 0 } };
+
+	// Arr_PushBackRealloc_Mater
+
+	l_renderableObject = (RenderedObject){ .Mesh = &l_mesh->Mesh , .MeshBoundingBox = &l_meshBoundingBox, .ModelMatrix = l_modelMatrix, .Material = l_materialHandle };
 	Arr_PushBackRealloc_RenderedObjectHandle(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
 
 	Matrix4f l_viewMatrix = { 0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.8090f, 0.5877f, -0.00f, -0.7071f, 0.4156f, 0.5720f, 0.00f, 0.00f, -0.2001f, -15.5871f, 1.00f };

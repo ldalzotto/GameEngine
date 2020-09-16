@@ -1,7 +1,7 @@
 #include "DrawFunctions.h"
 
 #include "Raster/Rasterizer.h"
-
+#include "v2/_interface/VectorC.h"
 #include "Objects/Texture/Texture.h"
 
 inline void EvaluatePixelColor(Texture3c_PTR p_to, Vector2i_PTR p_pixelCoord, Material_PTR p_material)
@@ -25,8 +25,25 @@ void Draw_LineClipped(
 };
 
 
-void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect,
-	Material_PTR p_material)
+void Draw_PolygonClipped_FlatShaded(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect, Material_PTR p_material, FlatShadingPixelCalculation_PTR p_flatShading)
+{
+	Vector3c l_pixelColor;
+	Vec_Mul_3c_1f(&p_material->BaseColor, p_flatShading->Out_DotProduct, &l_pixelColor);
+
+	PolygonRasterizerIterator l_rasterizerIterator;
+	PolygonRasterize_Initialize(p_polygon, p_clipRect, &l_rasterizerIterator);
+	POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
+	while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
+	{
+		l_returnCode = PolygonRasterize_MoveNext(&l_rasterizerIterator);
+		if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
+		{
+			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = l_pixelColor;
+		}
+	}
+};
+
+void Draw_PolygonClipped(Polygon2i_PTR p_polygon, Texture3c_PTR p_to, Recti_PTR p_clipRect, Material_PTR p_material)
 {
 	PolygonRasterizerIterator l_rasterizerIterator;
 	PolygonRasterize_Initialize(p_polygon, p_clipRect, &l_rasterizerIterator);

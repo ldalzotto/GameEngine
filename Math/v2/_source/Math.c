@@ -203,6 +203,13 @@ void Vec_Mul_3f_1f(const Vector3f_PTR p_left, const float p_right, Vector3f_PTR 
 	Vec_Mul_Xf_1f((const char*)p_left, 3, p_right, (char*)p_out);
 };
 
+void Vec_Mul_3c_1f(const Vector3c_PTR p_left, const float p_right, Vector3c_PTR p_out)
+{
+	p_out->x = (char)((float)p_left->x * p_right);
+	p_out->y = (char)((float)p_left->y * p_right);
+	p_out->z = (char)((float)p_left->z * p_right);
+};
+
 void Vec_Mul_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
 	Vec_Mul_Xf_Xf((const char*)p_left, 3, (const char*)p_right, (char*)p_out);

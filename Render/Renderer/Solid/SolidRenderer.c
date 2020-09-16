@@ -24,7 +24,7 @@ ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 
 ARRAY_ALLOC_FUNCTION(PolygonVaryings, Array_PolygonVaryings_PTR, PolygonVaryings)
-ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(PolygonVaryings, Array_PolygonVaryings_PTR, PolygonVaryings)
+ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonVaryings, Array_PolygonVaryings_PTR, PolygonVaryings)
 
 
 // There is a unique directional light
@@ -167,6 +167,9 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 
 		if (!l_polygon->IsCulled)
 		{
+			Arr_PushBackRealloc_Empty_PolygonVaryings(&p_memory->PolygonVaryings);
+			p_memory->PolygonVaryings.Memory[p_memory->PolygonVaryings.Size - 1] = (PolygonVaryings){ .WorldFlatNormal = l_worldNormal };
+			l_polygon->PolygonVaryingIndex = p_memory->PolygonVaryings.Size - 1;
 			PixelColorCaluclation_Polygon_PushCalculations(l_polygon, p_memory);
 		}
 	}
@@ -208,7 +211,20 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 				.v3 = l_v3->PixelPosition
 			};
 			
-			Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, &RRenderHeap.MaterialAllocator.array.Memory[p_memory->RederableObjectsPipeline.Memory[l_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Material.Handle]);
+			Material_PTR l_material = &RRenderHeap.MaterialAllocator.array.Memory[l_polygonPipeline->Material.Handle];
+			switch (l_material->ShadingType)
+			{
+			case MATERIAL_SHADING_TYPE_FLAT:
+			{
+				Draw_PolygonClipped_FlatShaded(&l_polygon, p_to, p_to_clipRect, l_material, &p_memory->FlatShadingCalculations.Memory[l_polygonPipeline->FlatShadingCalculationIndex]);
+			}
+			break;
+			case MATERIAL_SHADING_TYPE_NONE:
+			{
+				Draw_PolygonClipped(&l_polygon, p_to, p_to_clipRect, l_material);
+			}
+			break;
+			}
 
 			/*
 			Vector3c l_colo = { 255, 0, 0 };
