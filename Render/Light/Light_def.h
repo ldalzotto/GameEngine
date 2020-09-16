@@ -14,3 +14,9 @@ typedef struct AmbientLight_TYP
 {
 	Color3f Color;
 }AmbientLight, * AmbientLight_PTR;
+
+typedef struct RenderLights_TYP
+{
+	DirectionalLight DirectionalLight;
+	AmbientLight AmbientLight;
+}RenderLights, * RenderLights_PTR;

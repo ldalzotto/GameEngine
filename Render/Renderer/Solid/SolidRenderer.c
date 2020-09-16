@@ -24,8 +24,11 @@ ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 
 // There is a unique directional light
-DirectionalLight UniqueDirectionalLight = { .Direction = {1.0f, 0.0f, 0.0f}, .Intensity = 1.0f, .Color = {1.0f, 1.0f, 1.0f} };
-AmbientLight UniqueAmbientLight = { .Color = {0.1f, 0.1f, 0.1f} };
+RenderLights GRenderLights =
+{
+	.DirectionalLight = {.Direction = {1.0f, 0.0f, 0.0f}, .Intensity = 1.0f, .Color = {1.0f, 1.0f, 1.0f} },
+	.AmbientLight = {.Color = {0.1f, 0.1f, 0.1f} }
+};
 
 inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const SolidRendererInput* p_input)
 {
@@ -178,7 +181,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 	// Light Calculations
 	for (size_t i = 0; i < p_memory->FlatShadingCalculations.Size; i++)
 	{
-		FlatShadingPixelCalculation_Calculate(&p_memory->FlatShadingCalculations.Memory[i], &UniqueDirectionalLight, &UniqueAmbientLight, p_memory);
+		FlatShadingPixelCalculation_Calculate(&p_memory->FlatShadingCalculations.Memory[i], &GRenderLights, p_memory);
 	}
 
 #if RENDER_PERFORMANCE_TIMER
@@ -218,7 +221,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 				.v3 = l_v3->PixelPosition
 			};
 			
-			Draw_PolygonClipped(l_polygonPipeline, &l_polygon, p_to, p_to_clipRect, p_memory);
+			Draw_PolygonClipped(l_polygonPipeline, &l_polygon, p_to, p_to_clipRect, &GRenderLights, p_memory);
 
 		}
 

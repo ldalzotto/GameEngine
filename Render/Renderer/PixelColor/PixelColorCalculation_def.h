@@ -12,7 +12,6 @@ typedef struct FlatShadingPixelCalculation_TYP
 {
 	Vector4f PolygonFlatNormal;
 	Color3f Out_AttenuatedLightColor;
-	Color3f Out_AmbientColor;
 }FlatShadingPixelCalculation, *FlatShadingPixelCalculation_PTR;
 
 typedef struct Array_FlatShadingPixelCalculation_TYP

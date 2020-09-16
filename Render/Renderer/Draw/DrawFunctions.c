@@ -24,8 +24,8 @@ void Draw_LineClipped(
 	};
 };
 
-void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Texture3c_PTR p_to, Recti_PTR p_clipRect, SolidRenderer_Memory_PTR p_solidRendererMemory)
-{
+void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Texture3c_PTR p_to, Recti_PTR p_clipRect, RenderLights_PTR p_renderLights,
+	SolidRenderer_Memory_PTR p_solidRendererMemory) {
 #if RENDER_PERFORMANCE_TIMER
 	size_t tmp_timer_0;
 #endif
@@ -42,7 +42,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 	case MATERIAL_SHADING_TYPE_FLAT:
 	{
 		Color3f l_pixelColorF;
-		FlatShadingPixelCalculation_ShadeColor(&p_solidRendererMemory->FlatShadingCalculations.Memory[p_polygonPipeline->FlatShadingCalculationIndex], &l_material->BaseColor, &l_pixelColorF);
+		FlatShadingPixelCalculation_ShadeColor(&p_solidRendererMemory->FlatShadingCalculations.Memory[p_polygonPipeline->FlatShadingCalculationIndex], p_renderLights, &l_material->BaseColor, &l_pixelColorF);
 		Color_Convert_3F_3C(&l_pixelColorF, &l_pixelColor);
 	}
 	break;
