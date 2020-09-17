@@ -75,48 +75,61 @@ char LineRasterize_MoveNext(LineRasterizerIterator_PTR out_lineRasterizerIterato
 	return 0;
 };
 
-void PolygonRasterize_Initialize(const Polygon2i_PTR in_out_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator)
+void PolygonRasterizePackedData_Precalculate(PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon)
+{
+	p_packedData->dx0 = p_polygon->v2.x - p_polygon->v1.x;
+	p_packedData->dy0 = p_polygon->v2.y - p_polygon->v1.y;
+
+	p_packedData->dx1 = p_polygon->v3.x - p_polygon->v2.x;
+	p_packedData->dy1 = p_polygon->v3.y - p_polygon->v2.y;
+
+	p_packedData->dx2 = p_polygon->v1.x - p_polygon->v3.x;
+	p_packedData->dy2 = p_polygon->v1.y - p_polygon->v3.y;
+
+	Vector3f l_begin = { (float)p_polygon->v2.x - p_polygon->v1.x, (float)p_polygon->v2.y - p_polygon->v1.y, 0.0f };
+	Vector3f l_end = { (float)p_polygon->v3.x - p_polygon->v1.x, (float)p_polygon->v3.y - p_polygon->v1.y, 0.0f };
+	Vector3f l_crossResult;
+	Vec_Cross_3f(&l_begin, &l_end, &l_crossResult);
+
+	// Anti-clockwise
+	if (l_crossResult.z > 0.0f)
+	{
+		p_packedData->dx0 *= -1;
+		p_packedData->dy0 *= -1;
+		p_packedData->dx1 *= -1;
+		p_packedData->dy1 *= -1;
+		p_packedData->dx2 *= -1;
+		p_packedData->dy2 *= -1;
+	}
+};
+
+inline int PolygonRasterizePackedData_EdgeFunction_12(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+{
+	return ((p_point->x - p_polygon->v2.x) * p_packedData->dy0) - ((p_point->y - p_polygon->v2.y) * p_packedData->dx0);
+};
+
+inline int PolygonRasterizePackedData_EdgeFunction_23(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+{
+	return ((p_point->x - p_polygon->v3.x) * p_packedData->dy1) - ((p_point->y - p_polygon->v3.y) * p_packedData->dx1);
+};
+
+inline int PolygonRasterizePackedData_EdgeFunction_31(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+{
+	return ((p_point->x - p_polygon->v1.x) * p_packedData->dy2) - ((p_point->y - p_polygon->v1.y) * p_packedData->dx2);
+};
+
+void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator)
 {
 	//Calculate polygon rect bound clipped
-	Polygon_BoundingRect_2i(in_out_polygon, &out_polygonRasterizerIterator->PolygonBoundClip);
+	Polygon_BoundingRect_2i(p_polygon, &out_polygonRasterizerIterator->PolygonBoundClip);
 	Rect_ClipPoint_Int(p_clip_rect, &out_polygonRasterizerIterator->PolygonBoundClip.Min);
 	Rect_ClipPoint_Int(p_clip_rect, &out_polygonRasterizerIterator->PolygonBoundClip.Max);
 
 	out_polygonRasterizerIterator->CurrentPoint = out_polygonRasterizerIterator->PolygonBoundClip.Min;
-
-	//Line 1
-	out_polygonRasterizerIterator->dx0 = in_out_polygon->v2.x - in_out_polygon->v1.x;
-	out_polygonRasterizerIterator->dy0 = in_out_polygon->v2.y - in_out_polygon->v1.y;
-	out_polygonRasterizerIterator->e0 = ((out_polygonRasterizerIterator->CurrentPoint.x - in_out_polygon->v2.x) * out_polygonRasterizerIterator->dy0) - ((out_polygonRasterizerIterator->CurrentPoint.y - in_out_polygon->v2.y) * out_polygonRasterizerIterator->dx0);
-
-	//Line 2
-	out_polygonRasterizerIterator->dx1 = in_out_polygon->v3.x - in_out_polygon->v2.x;
-	out_polygonRasterizerIterator->dy1 = in_out_polygon->v3.y - in_out_polygon->v2.y;
-	out_polygonRasterizerIterator->e1 = ((out_polygonRasterizerIterator->CurrentPoint.x - in_out_polygon->v3.x) * out_polygonRasterizerIterator->dy1) - ((out_polygonRasterizerIterator->CurrentPoint.y - in_out_polygon->v3.y) * out_polygonRasterizerIterator->dx1);
-
-	//Line 3
-	out_polygonRasterizerIterator->dx2 = in_out_polygon->v1.x - in_out_polygon->v3.x;
-	out_polygonRasterizerIterator->dy2 = in_out_polygon->v1.y - in_out_polygon->v3.y;
-	out_polygonRasterizerIterator->e2 = ((out_polygonRasterizerIterator->CurrentPoint.x - in_out_polygon->v1.x) * out_polygonRasterizerIterator->dy2) - ((out_polygonRasterizerIterator->CurrentPoint.y - in_out_polygon->v1.y) * out_polygonRasterizerIterator->dx2);
-
-
-	{
-		Vector3f l_begin = { (float)in_out_polygon->v2.x - in_out_polygon->v1.x, (float)in_out_polygon->v2.y - in_out_polygon->v1.y, 0.0f };
-		Vector3f l_end = { (float)in_out_polygon->v3.x - in_out_polygon->v1.x, (float)in_out_polygon->v3.y - in_out_polygon->v1.y, 0.0f };
-		Vector3f l_crossResult;
-		Vec_Cross_3f(&l_begin, &l_end, &l_crossResult);
-
-		// Anti-clockwise
-		if (l_crossResult.z > 0.0f)
-		{
-			out_polygonRasterizerIterator->dx0 *= -1; out_polygonRasterizerIterator->dy0 *= -1;
-			out_polygonRasterizerIterator->e0 *= -1;
-			out_polygonRasterizerIterator->dx1 *= -1; out_polygonRasterizerIterator->dy1 *= -1;
-			out_polygonRasterizerIterator->e1 *= -1;
-			out_polygonRasterizerIterator->dx2 *= -1; out_polygonRasterizerIterator->dy2 *= -1;
-			out_polygonRasterizerIterator->e2 *= -1;
-		}
-	}
+	PolygonRasterizePackedData_Precalculate(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon);
+	out_polygonRasterizerIterator->e0 = PolygonRasterizePackedData_EdgeFunction_12(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
+	out_polygonRasterizerIterator->e1 = PolygonRasterizePackedData_EdgeFunction_23(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
+	out_polygonRasterizerIterator->e2 = PolygonRasterizePackedData_EdgeFunction_31(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
 
 	out_polygonRasterizerIterator->LineIndexCursor = out_polygonRasterizerIterator->PolygonBoundClip.Min.y;
 	out_polygonRasterizerIterator->ColumnIndexCursor = out_polygonRasterizerIterator->PolygonBoundClip.Min.x - 1;
@@ -152,15 +165,15 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 		p_polygonRasterizerIterator->ColumnIndexCursor = p_polygonRasterizerIterator->PolygonBoundClip.Min.x - 1;
 		p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->PolygonBoundClip.Min.x;
 
-		p_polygonRasterizerIterator->e0 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->dy0);
-		p_polygonRasterizerIterator->e1 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->dy1);
-		p_polygonRasterizerIterator->e2 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->dy2);
+		p_polygonRasterizerIterator->e0 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy0);
+		p_polygonRasterizerIterator->e1 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy1);
+		p_polygonRasterizerIterator->e2 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy2);
 
 		p_polygonRasterizerIterator->CurrentPoint.y = p_polygonRasterizerIterator->LineIndexCursor;
 
-		p_polygonRasterizerIterator->e0 -= p_polygonRasterizerIterator->dx0;
-		p_polygonRasterizerIterator->e1 -= p_polygonRasterizerIterator->dx1;
-		p_polygonRasterizerIterator->e2 -= p_polygonRasterizerIterator->dx2;
+		p_polygonRasterizerIterator->e0 -= p_polygonRasterizerIterator->PackedRasterizerData.dx0;
+		p_polygonRasterizerIterator->e1 -= p_polygonRasterizerIterator->PackedRasterizerData.dx1;
+		p_polygonRasterizerIterator->e2 -= p_polygonRasterizerIterator->PackedRasterizerData.dx2;
 
 		p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN;
 		return l_returnCode;
@@ -187,9 +200,9 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 
 		p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->ColumnIndexCursor + 1;
 
-		p_polygonRasterizerIterator->e0 += p_polygonRasterizerIterator->dy0;
-		p_polygonRasterizerIterator->e1 += p_polygonRasterizerIterator->dy1;
-		p_polygonRasterizerIterator->e2 += p_polygonRasterizerIterator->dy2;
+		p_polygonRasterizerIterator->e0 += p_polygonRasterizerIterator->PackedRasterizerData.dy0;
+		p_polygonRasterizerIterator->e1 += p_polygonRasterizerIterator->PackedRasterizerData.dy1;
+		p_polygonRasterizerIterator->e2 += p_polygonRasterizerIterator->PackedRasterizerData.dy2;
 
 		return l_returnCode;
 	}
@@ -198,94 +211,3 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 
 	return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END;
 };
-
-#if 0
-void Rasterize_PolygonClipped(const Polygon2i_PTR in_out_polygon, Array_Vector2i_PTR out_rasterizedPixels, const Recti_PTR p_clip_rect)
-{
-	//Calculate polygon rect bound clipped
-	Recti l_polygonBoundClip;
-	Polygon_BoundingRect_2i(in_out_polygon, &l_polygonBoundClip);
-	Rect_ClipPoint_Int(p_clip_rect, &l_polygonBoundClip.Min);
-	Rect_ClipPoint_Int(p_clip_rect, &l_polygonBoundClip.Max);
-
-	Vector2i l_point = l_polygonBoundClip.Min;
-
-	//Line 1
-	int l_dX0 = in_out_polygon->v2.x - in_out_polygon->v1.x; int l_dY0 = in_out_polygon->v2.y - in_out_polygon->v1.y;
-	int l_e0 = ((l_point.x - in_out_polygon->v2.x) * l_dY0) - ((l_point.y - in_out_polygon->v2.y) * l_dX0);
-
-	//Line 2
-	int l_dX1 = in_out_polygon->v3.x - in_out_polygon->v2.x; int l_dY1 = in_out_polygon->v3.y - in_out_polygon->v2.y;
-	int l_e1 = ((l_point.x - in_out_polygon->v3.x) * l_dY1) - ((l_point.y - in_out_polygon->v3.y) * l_dX1);
-
-	//Line 3
-	int l_dX2 = in_out_polygon->v1.x - in_out_polygon->v3.x; int l_dY2 = in_out_polygon->v1.y - in_out_polygon->v3.y;
-	int l_e2 = ((l_point.x - in_out_polygon->v1.x) * l_dY2) - ((l_point.y - in_out_polygon->v1.y) * l_dX2);
-
-
-	{
-		Vector3f l_begin = { (float)in_out_polygon->v2.x - in_out_polygon->v1.x, (float)in_out_polygon->v2.y - in_out_polygon->v1.y, 0.0f };
-		Vector3f l_end = { (float)in_out_polygon->v3.x - in_out_polygon->v1.x, (float)in_out_polygon->v3.y - in_out_polygon->v1.y, 0.0f };
-		Vector3f l_crossResult;
-		Vec_Cross_3f(&l_begin, &l_end, &l_crossResult);
-
-		// Anti-clockwise
-		if (l_crossResult.z > 0.0f)
-		{
-			l_dX0 *= -1; l_dY0 *= -1;
-			l_e0 *= -1;
-			l_dX1 *= -1; l_dY1 *= -1;
-			l_e1 *= -1;
-			l_dX2 *= -1; l_dY2 *= -1;
-			l_e2 *= -1;
-		}
-	}
-
-	//TODO -> Highly unoptimized, we iterate over the whole polygon bound clip.
-	// We can easily implement a smart iteration that try to navigates inside the polygon and try to find edges (thus, ignoring calcuation of empty )
-	for (int y = l_polygonBoundClip.Min.y; y <= l_polygonBoundClip.Max.y; y++)
-	{
-		for (int x = l_polygonBoundClip.Min.x; x < l_polygonBoundClip.Max.x; x++)
-		{
-			if (l_e0 >= 0 && l_e1 >= 0 && l_e2 >= 0)
-			{
-				out_rasterizedPixels->Memory[out_rasterizedPixels->Size] = l_point;
-				out_rasterizedPixels->Size += 1;
-			}
-
-			l_point.x = x + 1;
-
-			l_e0 += l_dY0;
-			l_e1 += l_dY1;
-			l_e2 += l_dY2;
-		}
-
-		if (l_e0 >= 0 && l_e1 >= 0 && l_e2 >= 0)
-		{
-			out_rasterizedPixels->Memory[out_rasterizedPixels->Size] = l_point;
-			out_rasterizedPixels->Size += 1;
-		}
-
-		l_point.x = l_polygonBoundClip.Min.x;
-
-		l_e0 -= ((l_polygonBoundClip.Max.x - l_polygonBoundClip.Min.x) * l_dY0);
-		l_e1 -= ((l_polygonBoundClip.Max.x - l_polygonBoundClip.Min.x) * l_dY1);
-		l_e2 -= ((l_polygonBoundClip.Max.x - l_polygonBoundClip.Min.x) * l_dY2);
-
-		l_point.y = y + 1;
-
-		l_e0 -= l_dX0;
-		l_e1 -= l_dX1;
-		l_e2 -= l_dX2;
-	}
-
-#ifndef NDEBUG
-	if (out_rasterizedPixels->Size > out_rasterizedPixels->Capacity)
-	{
-		printf("Rasterizer::Rasterize_PolygonClipped : not enough memory allocated to the Rasterized pixel buffer");
-		abort();
-	}
-#endif
-	};
-
-#endif

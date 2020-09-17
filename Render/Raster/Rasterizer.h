@@ -35,15 +35,21 @@ typedef char POLYGONRASTERIZER_ITERATOR_RETURN_CODE;
 #define POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED 1
 #define POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED 2
 
+typedef struct PolygonRasterize_PackedData_TYP
+{
+	int dx0, dy0, dx1, dy1, dx2, dy2;
+}PolygonRasterize_PackedData, * PolygonRasterize_PackedData_PTR;
+
 typedef struct PolygonRasterizerIterator_TYP
 {
 	POLYGONRASTERIZER_ITERATOR_STEP CurrentStep;
 	Vector2i CurrentPoint;
 	Recti PolygonBoundClip;
-	int dx0, dy0, e0, dx1, dy1, e1, dx2, dy2, e2;
 	int LineIndexCursor, ColumnIndexCursor;
+	PolygonRasterize_PackedData PackedRasterizerData;
+	int e0, e1, e2;
 	Vector2i RasterizedPixel;
 }PolygonRasterizerIterator, * PolygonRasterizerIterator_PTR;
 
-void PolygonRasterize_Initialize(const Polygon2i_PTR in_out_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
+void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator);

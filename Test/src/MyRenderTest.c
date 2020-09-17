@@ -38,9 +38,9 @@ int main(int argc, char* argv[])
 
 	MeshResource_HANDLE l_mesh;
 	Assetpath l_meshAssetPath;
-	AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
+	// AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
+	AssetPath_GetAbsolutePath("Models/IcoSphere.obj", &l_meshAssetPath);
 	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, &l_meshAssetPath, &l_mesh);
-	// MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/SingleTriangle.obj", &l_mesh);
 	RenderedObject l_renderableObject;
 	RenderedObject_PTR l_renderableObject_ptr = &l_renderableObject;
 	BoxF l_meshBoundingBox = {0};
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 	
 	Material_HANDLE l_materialHandle;
 	PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
-	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ .ShadingType = MATERIAL_SHADING_TYPE_FLAT, .BaseColor = (Color3f){ 0.7f, 0.7f, 0 } };
+	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ .ShadingType = MATERIAL_SHADING_TYPE_FLAT, .BaseColor = (Color3f){ 0.5f, 0.5f, 0 } };
 
 	// Arr_PushBackRealloc_Mater
 
