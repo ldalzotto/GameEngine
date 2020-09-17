@@ -66,15 +66,21 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 #endif
 
 	PolygonRasterizerIterator l_rasterizerIterator;
-	PolygonRasterize_Initialize(p_polygonPixelPositions, p_clipRect, &l_rasterizerIterator);
+	PolygonRasterize_Initialize(p_polygonPixelPositions, p_clipRect, 1, &l_rasterizerIterator);
 	POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
 	while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
 	{
 		l_returnCode = PolygonRasterize_MoveNext(&l_rasterizerIterator);
 		if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 		{
+			// Interpolation debug display
+			/*
+			Color3f l_col = { 1.0f, 1.0f, 1.0f };
+			Vec_Mul_3f_1f(&l_col.Vec, (1.0f * l_rasterizerIterator.I0) + (0.5f * l_rasterizerIterator.I1), &l_col.Vec);
+			Color_Convert_3F_3C(&l_col, &l_pixelColor);
+			*/
 			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = l_pixelColor.Vec;
-		}
+		} 
 	}
 
 #if RENDER_PERFORMANCE_TIMER

@@ -38,18 +38,27 @@ typedef char POLYGONRASTERIZER_ITERATOR_RETURN_CODE;
 typedef struct PolygonRasterize_PackedData_TYP
 {
 	int dx0, dy0, dx1, dy1, dx2, dy2;
+
+	// Interpolation precalculated areas
+	// areaX means the area proportional to the interpolation IX.
+	int area0, area1, area2;
 }PolygonRasterize_PackedData, * PolygonRasterize_PackedData_PTR;
 
 typedef struct PolygonRasterizerIterator_TYP
 {
+	char InterpolationEnabled;
 	POLYGONRASTERIZER_ITERATOR_STEP CurrentStep;
 	Vector2i CurrentPoint;
 	Recti PolygonBoundClip;
 	int LineIndexCursor, ColumnIndexCursor;
 	PolygonRasterize_PackedData PackedRasterizerData;
+	// Rasterizer edge functions
 	int e0, e1, e2;
+	// Interpolation factors
+	float I0, I1, I2;
+
 	Vector2i RasterizedPixel;
 }PolygonRasterizerIterator, * PolygonRasterizerIterator_PTR;
 
-void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
+void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, char enableInterpolation, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator);

@@ -75,7 +75,23 @@ char LineRasterize_MoveNext(LineRasterizerIterator_PTR out_lineRasterizerIterato
 	return 0;
 };
 
-void PolygonRasterizePackedData_Precalculate(PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon)
+inline int PolygonRasterizePackedData_EdgeFunction_01(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+{
+	return ((p_point->x - p_polygon->v2.x) * p_packedData->dy0) - ((p_point->y - p_polygon->v2.y) * p_packedData->dx0);
+};
+
+inline int PolygonRasterizePackedData_EdgeFunction_12(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+{
+	return ((p_point->x - p_polygon->v3.x) * p_packedData->dy1) - ((p_point->y - p_polygon->v3.y) * p_packedData->dx1);
+};
+
+inline int PolygonRasterizePackedData_EdgeFunction_20(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+{
+	return ((p_point->x - p_polygon->v1.x) * p_packedData->dy2) - ((p_point->y - p_polygon->v1.y) * p_packedData->dx2);
+};
+
+
+void PolygonRasterizePackedData_PrecalculateRasterization(PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon)
 {
 	p_packedData->dx0 = p_polygon->v2.x - p_polygon->v1.x;
 	p_packedData->dy0 = p_polygon->v2.y - p_polygon->v1.y;
@@ -103,38 +119,45 @@ void PolygonRasterizePackedData_Precalculate(PolygonRasterize_PackedData_PTR p_p
 	}
 };
 
-inline int PolygonRasterizePackedData_EdgeFunction_12(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+void PolygonRasterizePackedData_PrecalculateInterpolation(PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon)
 {
-	return ((p_point->x - p_polygon->v2.x) * p_packedData->dy0) - ((p_point->y - p_polygon->v2.y) * p_packedData->dx0);
+	p_packedData->area0 = PolygonRasterizePackedData_EdgeFunction_12(p_packedData, p_polygon, &p_polygon->v1);
+	p_packedData->area1 = PolygonRasterizePackedData_EdgeFunction_20(p_packedData, p_polygon, &p_polygon->v2);
+	p_packedData->area2 = PolygonRasterizePackedData_EdgeFunction_01(p_packedData, p_polygon, &p_polygon->v3);
 };
 
-inline int PolygonRasterizePackedData_EdgeFunction_23(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
+void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, char enableInterpolation, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator)
 {
-	return ((p_point->x - p_polygon->v3.x) * p_packedData->dy1) - ((p_point->y - p_polygon->v3.y) * p_packedData->dx1);
-};
+	out_polygonRasterizerIterator->InterpolationEnabled = enableInterpolation;
 
-inline int PolygonRasterizePackedData_EdgeFunction_31(const PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon, const Vector2i_PTR p_point)
-{
-	return ((p_point->x - p_polygon->v1.x) * p_packedData->dy2) - ((p_point->y - p_polygon->v1.y) * p_packedData->dx2);
-};
-
-void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator)
-{
 	//Calculate polygon rect bound clipped
 	Polygon_BoundingRect_2i(p_polygon, &out_polygonRasterizerIterator->PolygonBoundClip);
 	Rect_ClipPoint_Int(p_clip_rect, &out_polygonRasterizerIterator->PolygonBoundClip.Min);
 	Rect_ClipPoint_Int(p_clip_rect, &out_polygonRasterizerIterator->PolygonBoundClip.Max);
 
 	out_polygonRasterizerIterator->CurrentPoint = out_polygonRasterizerIterator->PolygonBoundClip.Min;
-	PolygonRasterizePackedData_Precalculate(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon);
-	out_polygonRasterizerIterator->e0 = PolygonRasterizePackedData_EdgeFunction_12(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
-	out_polygonRasterizerIterator->e1 = PolygonRasterizePackedData_EdgeFunction_23(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
-	out_polygonRasterizerIterator->e2 = PolygonRasterizePackedData_EdgeFunction_31(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
+	PolygonRasterizePackedData_PrecalculateRasterization(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon);
+	out_polygonRasterizerIterator->e0 = PolygonRasterizePackedData_EdgeFunction_01(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
+	out_polygonRasterizerIterator->e1 = PolygonRasterizePackedData_EdgeFunction_12(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
+	out_polygonRasterizerIterator->e2 = PolygonRasterizePackedData_EdgeFunction_20(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
+
+	if (out_polygonRasterizerIterator->InterpolationEnabled)
+	{
+		PolygonRasterizePackedData_PrecalculateInterpolation(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon);
+	}
 
 	out_polygonRasterizerIterator->LineIndexCursor = out_polygonRasterizerIterator->PolygonBoundClip.Min.y;
 	out_polygonRasterizerIterator->ColumnIndexCursor = out_polygonRasterizerIterator->PolygonBoundClip.Min.x - 1;
 	out_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN;
 }
+
+// For interpolation, we can use e1, e2, e0 as they represent the already calculated edge functions for the current pixel
+void PolygonRasterize_Interpolate(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator)
+{ 
+	p_polygonRasterizerIterator->I0 = ((float)p_polygonRasterizerIterator->e1 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area0);
+	p_polygonRasterizerIterator->I1 = ((float)p_polygonRasterizerIterator->e2 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area1);
+	p_polygonRasterizerIterator->I2 = ((float)p_polygonRasterizerIterator->e0 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area2);
+};
 
 //A Parallel Algorithm for Polygon Rasterization.pdf
 //TODO -> Highly unoptimized, we iterate over the whole polygon bound clip.
@@ -160,6 +183,11 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 		{
 			l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
 			p_polygonRasterizerIterator->RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint;
+
+			if (p_polygonRasterizerIterator->InterpolationEnabled)
+			{
+				PolygonRasterize_Interpolate(p_polygonRasterizerIterator);
+			}
 		}
 
 		p_polygonRasterizerIterator->ColumnIndexCursor = p_polygonRasterizerIterator->PolygonBoundClip.Min.x - 1;
@@ -196,6 +224,11 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasteriz
 		{
 			l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
 			p_polygonRasterizerIterator->RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint;
+
+			if (p_polygonRasterizerIterator->InterpolationEnabled)
+			{
+				PolygonRasterize_Interpolate(p_polygonRasterizerIterator);
+			}
 		}
 
 		p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->ColumnIndexCursor + 1;

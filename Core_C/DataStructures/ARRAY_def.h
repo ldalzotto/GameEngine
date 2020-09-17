@@ -25,3 +25,8 @@ typedef struct Array_Int_TYP
 {
 	ARRAY_TYPE_DEFINITION(int)
 }Array_Int, * Array_Int_PTR;
+
+typedef struct Array_Float_TYP
+{
+	ARRAY_TYPE_DEFINITION(float)
+}Array_Float, * Array_Float_PTR;
