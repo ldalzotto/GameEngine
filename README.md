@@ -1,29 +1,27 @@
 # GameEngine
 
-![](https://i.imgur.com/GeH4koY.gif)
+Supported platform : Windows only.
+
+![](https://i.imgur.com/BIZjD6j.gif)
+[![](https://i.imgur.com/GxjQt6Q.png)](https://imgur.com/a/RKVNkiz)
 
 ## External dependencies
 
-The Game Engine has the following external dependencies :
-* [Vulkan](https://www.khronos.org/vulkan/) <br/>
-  For presenting and 3D rendering.
-* [GLFW](https://github.com/glfw/glfw) <br/>
-  For managing application window and user input.
-* [Dear Imgui](https://github.com/ocornut/imgui) <br/>
-  For editor GUI.
-* [Assimp](https://github.com/assimp/assimp) <br/>
-  For loading .obj scene files.
-* [StbImage](https://github.com/nothings/stb) <br/>
-  For loading images.
+The Game Engine doesn't have any external dependencies.
 
-## Milestone 0.0.2 features
+## Milestone 0.0.3 features
 
 This milestone added the following features :
-1. [`Core library`](https://github.com/ldalzotto/GameEngine/tree/master/Core_cpp) <br/>
-   Library for handling data structures in a generic way has been heavily refactored.
-2. [`Math library`](https://github.com/ldalzotto/GameEngine/tree/master/Math/v2) <br/>
-   The Math library has also been heavily refactored to work with vector and matrix in the most generic way possible. It also clarified Qaternions calculatations (that was just copy/pasted before).
-3. [`Manipulating Entity in the world`](https://github.com/ldalzotto/GameEngine/tree/master/GameEngine/Editor/ObjectSelection) <br/>
-   Adding the possibility to move/rotate/scale Entities in the world.
-4. [`Platform specific clock and file reading`](https://github.com/ldalzotto/GameEngine/blob/master/Core_cpp/Read/File/File.cpp) <br/>
-   Instead of using cpp provided library, we are using the platform specific ones (only Windows for now). This is a choice as in the future, window creation (and threads maybe ?) will be created without library.
+1. [Software Rendering](https://github.com/ldalzotto/GameEngine/tree/master/Render) : A new software renderer prototype has been created from scratch. It isn't optimized at all.
+2. <b>Code migration to C</b> : The source code has been migrated to the C language. That's because I was only using C++ template feature.
+3. [Relative Assetpath](https://github.com/ldalzotto/GameEngine/tree/master/Core_C/Asset) : External assets must now be placed in the "Assets" folder at the same level as the executable.
+
+### Software Renderer
+The new software renderer has been created from scratch and replaces Vulkan. My goal here is to learn things about rendering technique, I am not interreseted in using premade library even if performance is worse.
+The renderer features :
+1/ Gizmo rendering.
+2/ 3D Polygon rendering.
+3/ Basic direction light shading per polygon.
+4/ Asset loading and material instance.
+
+ 
