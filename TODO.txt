@@ -1,13 +1,8 @@
 -- TODO --
 
-[] Lightning calculation is wrong when the model is scaled.
 
 
-
-
-
-
-
+[X] Lightning calculation is wrong when the model is scaled.
 
 [X] # Flat shading - Using precalculated normals for backface culling
 	-> Allowing the imported mesh to store precalculated normals. As the same as vertex, normals per vertex per polygons are stored in the RReander heap.

@@ -25,6 +25,7 @@ void Polygon_CalculateNormal_V4FPTR(const Polygon4fPTR_PTR p_polygon, Vector4f_P
 	Vector3f l_v = out_normal->Vec3;
 	Vec_Cross_3f(&l_u, &l_v, &out_normal->Vec3);
 	out_normal->w = 1.0f;
+	Vec_Normalize_3f(&out_normal->Vec3, &out_normal->Vec3);
 };
 
 void Polygon_BoundingRect_2i(const Polygon2i_PTR p_polygon, Recti_PTR out_boudingRect)

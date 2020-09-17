@@ -18,6 +18,7 @@
 #include "Objects/RenderedObject.h"
 #include "Clock/Clock.h"
 
+#include "Asset/AssetPaths.h"
 #include "File/ObjReader.h"
 
 RenderV2 renderV2;
@@ -29,13 +30,16 @@ int main(int argc, char* argv[])
 
 	LastFrameTime = Clock_currentTime_mics();
 
+	AssetPath_Initialize(argv[0]);
 	RenderV2_initialize(&renderV2);
 
 	Matrix4f l_modelMatrix = Matrix4f_IDENTITYF;
 	// l_modelMatrix.Col3.z = 5.0f;
 
 	MeshResource_HANDLE l_mesh;
-	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "E:/GameProjects/GameEngine/Assets/Models/BigCube.obj", &l_mesh);
+	Assetpath l_meshAssetPath;
+	AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
+	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, &l_meshAssetPath, &l_mesh);
 	// MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, "C:/Users/loicd/Desktop/SingleTriangle.obj", &l_mesh);
 	RenderedObject l_renderableObject;
 	RenderedObject_PTR l_renderableObject_ptr = &l_renderableObject;
