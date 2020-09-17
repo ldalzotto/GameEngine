@@ -5,6 +5,9 @@
 
 //https://en.wikipedia.org/wiki/Quicksort
 
+#define SQA_ComparedElementValueExpression p_arr->Memory[i]
+#define SQA_ComparedElementValueExpressionInvert p_arr->Memory[j]
+
 #define SORT_QUICK_ALGORITHM(MethodPrefix, ArrayTypePTR, ElementType, ComparisonFunction, ComparisonFunctionInvert) \
 size_t Sort_Quick_Partition_##MethodPrefix##(ArrayTypePTR p_arr, size_t p_begin, size_t p_end) \
 { \
@@ -15,12 +18,12 @@ while (true) \
 	do \
 	{ \
 		i += 1; \
-	} while (ComparisonFunction(p_arr->Memory[i])); \
+	} while (ComparisonFunction); \
  \
 	do \
 	{ \
 		j -= 1; \
-	} while (ComparisonFunctionInvert(p_arr->Memory[j])); \
+	} while (ComparisonFunctionInvert); \
  \
 	if (i >= j) \
 	{ \

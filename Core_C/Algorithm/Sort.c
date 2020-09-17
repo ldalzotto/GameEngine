@@ -5,9 +5,7 @@
 
 #include "Sort_alg.h"
 
-#define SORT_QUICK_ALGORITHM_INT_COMPAREFN(ComparedElementValueExpression) ComparedElementValueExpression < *l_pivot
-#define SORT_QUICK_ALGORITHM_INT_COMPAREFN_REVERSE(ComparedElementValueExpression) ComparedElementValueExpression > *l_pivot
-SORT_QUICK_ALGORITHM(Int_Decreasing, Array_Int_PTR, int, SORT_QUICK_ALGORITHM_INT_COMPAREFN, SORT_QUICK_ALGORITHM_INT_COMPAREFN_REVERSE)
+SORT_QUICK_ALGORITHM(Int_Decreasing, Array_Int_PTR, int, SQA_ComparedElementValueExpression < *l_pivot, SQA_ComparedElementValueExpressionInvert > *l_pivot)
 
 	/*
 MethodPrefix

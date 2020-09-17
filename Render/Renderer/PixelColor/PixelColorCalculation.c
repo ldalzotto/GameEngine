@@ -29,8 +29,6 @@ void FlatShadingPixelCalculation_Calculate(FlatShadingPixelCalculation_PTR p_fla
 {
 	float l_attenuation = Vec_Dot_3f(&p_renderLights->DirectionalLight.Direction, &p_flatShadingPixelCalculation->PolygonFlatNormal.Vec3) * p_renderLights->DirectionalLight.Intensity;
 	if (l_attenuation <= FLOAT_TOLERANCE) { l_attenuation = 0.0f; }
-	// float l_attenuation = ((Vec_Dot_3f(&p_directionalLight->Direction, &p_flatShadingPixelCalculation->PolygonFlatNormal.Vec3) + 1.0f) * 0.5f) * p_directionalLight->Intensity;
-	// l_attenuation = (l_attenuation + 1.0f) * 0.5f;
 
 	Vec_Mul_3f_1f(&p_renderLights->DirectionalLight.Color.Vec, l_attenuation, &p_flatShadingPixelCalculation->Out_AttenuatedLightColor.Vec);
 };
