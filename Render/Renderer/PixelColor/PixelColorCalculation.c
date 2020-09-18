@@ -33,6 +33,7 @@ void FlatShadingPixelCalculation_Calculate(FlatShadingPixelCalculation_PTR p_fla
 	Vec_Mul_3f_1f(&p_renderLights->DirectionalLight.Color.Vec, l_attenuation, &p_flatShadingPixelCalculation->Out_AttenuatedLightColor.Vec);
 };
 
+//We can have Polygon here
 void FlatShadingPixelCalculation_ShadeColor(FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, RenderLights_PTR p_renderLights, Color3f_PTR p_color, Color3f_PTR out_color)
 {
 	Vec_Mul_3f_3f(&p_color->Vec, &p_flatShadingPixelCalculation->Out_AttenuatedLightColor.Vec, &out_color->Vec);

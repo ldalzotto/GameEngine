@@ -8,6 +8,11 @@ typedef struct Array_Vector2i_TYP
 	ARRAY_TYPE_DEFINITION(Vector2i)
 }Array_Vector2i, * Array_Vector2i_PTR;
 
+typedef struct Array_Vector2f_TYP
+{
+	ARRAY_TYPE_DEFINITION(Vector2f)
+}Array_Vector2f, * Array_Vector2f_PTR;
+
 typedef struct Array_Vector3f_TYP
 {
 	ARRAY_TYPE_DEFINITION(Vector3f)

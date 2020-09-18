@@ -2,6 +2,7 @@
 
 #include "Read/File/File.h"
 #include "DataStructures/String.h"
+#include "v2/_interface/VectorStructuresC.h"
 #include "Objects/Resource/Vertex.h"
 #include "Objects/Resource/Mesh.h"
 #include "Objects/Resource/Polygon.h"
@@ -17,7 +18,10 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 		StringSLICE l_slashSlice = { "/", 0, 1 };
 		StringSLICE l_oHeader = { "o", 0, 1 };
 		StringSLICE l_vHeader = { "v", 0, 1 };
+		StringSLICE l_vtHeader = { "vt", 0, 2 };
 		StringSLICE l_fHeader = { "f", 0, 1 };
+
+		Array_Vector2f l_uvs; Arr_Alloc_Vector2f(&l_uvs, 0);
 
 		bool l_meshProcessed = false;
 		while (FileLineIterator_moveNext(&l_it))
@@ -67,6 +71,25 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 					Arr_Free_String(&l_verticesPositions);
 				}
 			}
+			else if (String_Equals(&l_lineHeaderSlice, &l_vtHeader))
+			{
+				if (out_mesh)
+				{
+					Array_String l_uvPositions;
+					Arr_Alloc_String(&l_uvPositions, 2);
+					{
+						String_Split(&l_lineWithoutHeader, &l_spaceSlice, &l_uvPositions);
+						if (l_uvPositions.Size > 0)
+						{
+							UV l_uv;
+							l_uv.x = (float)atof(l_uvPositions.Memory[0].Memory);
+							l_uv.y = (float)atof(l_uvPositions.Memory[1].Memory);
+							Arr_PushBackRealloc_Vector2f(&l_uvs, &l_uv);
+						}
+					}
+					Arr_Free_String(&l_uvPositions);
+				}
+			}
 			else if (String_Equals(&l_lineHeaderSlice, &l_fHeader))
 			{
 				if (out_mesh)
@@ -81,6 +104,8 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 							Arr_PushBackRealloc_Polygon_VertexIndex_HANDLE(&out_mesh->Polygons, &l_insertedPolyHandle);
 							Polygon_VertexIndex_PTR l_polygon = &RRenderHeap.PolygonAllocator.array.Memory[l_insertedPolyHandle.Handle];
 
+							PolygonSizeT l_polygonUV_index;
+
 							Array_String l_polygVertexIndices; Arr_Alloc_String(&l_polygVertexIndices, 3);
 
 							for (size_t i = 0; i < l_polyFaces.Size; i++)
@@ -93,16 +118,21 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 								if (l_polygVertexIndices.Size > 0)
 								{
 									VertexIndex* l_vertexIndex = NULL;
+									size_t* l_uvIndex = NULL;
+
 									switch (i)
 									{
 									case 0:
 										l_vertexIndex = &l_polygon->v1;
+										l_uvIndex = &l_polygonUV_index.v1;
 										break;
 									case 1:
 										l_vertexIndex = &l_polygon->v2;
+										l_uvIndex = &l_polygonUV_index.v2;
 										break;
 									case 2:
 										l_vertexIndex = &l_polygon->v3;
+										l_uvIndex = &l_polygonUV_index.v3;
 										break;
 									}
 
@@ -110,7 +140,10 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 									{
 										*l_vertexIndex = atoi(l_polygVertexIndices.Memory[0].Memory) - 1;
 									}
-
+									if (l_uvIndex)
+									{
+										*l_uvIndex = atoi(l_polygVertexIndices.Memory[1].Memory) - 1;
+									}
 								}
 								for (size_t i = 0; i < l_polygVertexIndices.Size; i++)
 								{
@@ -118,6 +151,17 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 								}
 								Arr_Clear_String(&l_polygVertexIndices);
 							}
+
+							//Allocating the uv polygons
+							Polgyon_UV_HANDLE l_uvPolygonHandle;
+							Mesh_AllocPolygonUV(out_mesh, &l_uvPolygonHandle);
+							*&RRenderHeap.PolygonUVAllocator.array.Memory[l_uvPolygonHandle.Handle] = 
+								(Polygon_UV){ 
+								.v1 = l_uvs.Memory[l_polygonUV_index.v1],
+								.v2 = l_uvs.Memory[l_polygonUV_index.v2], 
+								.v3 = l_uvs.Memory[l_polygonUV_index.v3] };
+							
+
 							Arr_Free_String(&l_polygVertexIndices);
 						}
 					}
@@ -130,7 +174,8 @@ void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 			}
 		}
 
-
+		// Handling UVs
+		Arr_Free(&l_uvs.array);
 	}
 	FileLineIterator_free(&l_it);
 	FileStream_close(&l_fs);

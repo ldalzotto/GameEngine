@@ -8,6 +8,7 @@ void Mesh_Alloc(Mesh_PTR p_mesh)
 {
 	Arr_Alloc_VertexHANDLE(&p_mesh->Vertices, 0);
 	Arr_Alloc_Polygon_VertexIndex_HANDLE(&p_mesh->Polygons, 0);
+	Arr_Alloc_PolygonUVHandle(&p_mesh->PerVertexData.UV1, 0);
 };
 
 void Mesh_AllocVertex(Mesh_PTR p_mesh, Vertex_HANDLE_PTR out_vertexHandle)
@@ -16,12 +17,20 @@ void Mesh_AllocVertex(Mesh_PTR p_mesh, Vertex_HANDLE_PTR out_vertexHandle)
 	Arr_PushBackRealloc_VertexHANDLE(&p_mesh->Vertices, out_vertexHandle);
 };
 
+void Mesh_AllocPolygonUV(Mesh_PTR p_mesh, Polgyon_UV_HANDLE_PTR out_polygonUvhandle)
+{
+	PoolAllocator_AllocElement_PolygonUV(&RRenderHeap.PolygonUVAllocator, out_polygonUvhandle);
+	Arr_PushBackRealloc_PolygonUVHandle(&p_mesh->PerVertexData.UV1, out_polygonUvhandle);
+};
+
 void Mesh_Free(Mesh_PTR p_mesh)
 {
 	PoolAllocator_FreeElements_Vertex(&RRenderHeap.VertexAllocator, &p_mesh->Vertices);
 	Arr_Free(&p_mesh->Vertices.array);
 	PoolAllocator_FreeElements_Polygon(&RRenderHeap.PolygonAllocator, &p_mesh->Polygons);
 	Arr_Free(&p_mesh->Polygons.array);
+	PoolAllocator_FreeElements_PolygonUV(&RRenderHeap.PolygonUVAllocator, &p_mesh->PerVertexData.UV1);
+	Arr_Free(&p_mesh->PerVertexData.UV1.array);
 };
 
 void Mesh_BuildBoundingBox(const Mesh_PTR p_mesh, BoxF_PTR p_box)

@@ -6,6 +6,8 @@
 
 typedef size_t VertexIndex;
 
+/************** VERTEX INDEX *****************/
+#if 1
 typedef struct Polygon_VertexIndex_TYP
 {
 	POLYGON_TYPE_DEFINITION(VertexIndex)
@@ -25,11 +27,38 @@ typedef struct Array_Polygon_VertexIndex_TYP
 {
 	ARRAY_TYPE_DEFINITION(Polygon_VertexIndex)
 }Array_Polygon_VertexIndex, * Array_Polygon_VertexIndex_PTR;
+#endif
+
+/************** UV *****************/ 
+#if 1
+typedef Vector2f UV, *UV_PTR;
+typedef Polygon2f Polygon_UV, *Polygon_UV_PTR;
+typedef struct Polgyon_UV_HANDLE_TYP
+{
+	size_t Handle;
+}Polgyon_UV_HANDLE, * Polgyon_UV_HANDLE_PTR;
+
+typedef struct Array_PolygonUV_TYP
+{
+	ARRAY_TYPE_DEFINITION(Polygon_UV)
+}Array_PolygonUV, * Array_PolygonUV_PTR;
+
+typedef struct Array_PolygonUVHandle_TYP
+{
+	ARRAY_TYPE_DEFINITION(Polgyon_UV_HANDLE)
+}Array_PolygonUVHandle, * Array_PolygonUVHandle_PTR;
+#endif
+
+typedef struct MeshPerVertexData_TYP
+{
+	Array_PolygonUVHandle UV1;
+}MeshPerVertexData, *MeshPerVertexData_PTR;
 
 typedef struct Mesh_TYP
 {
 	Array_VertexHANDLE Vertices;
 	Array_Polygon_VertexIndex_HANDLE Polygons;
+	MeshPerVertexData PerVertexData;
 }Mesh, *Mesh_PTR;
 
 typedef size_t MeshResource_KEY;

@@ -52,7 +52,6 @@ int main(int argc, char* argv[])
 		FileStream_WriteBytes(&l_fs, l_generatedTexture.Pixels, l_generatedTexture.Header.ImageSizeInByte);
 		FileStream_close(&l_fs);
 
-		// size_t l_
 		stbi_image_free(l_generatedTexture.Pixels);
 	}
 
