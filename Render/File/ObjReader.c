@@ -10,7 +10,7 @@
 
 void ObjReader_loadMesh(const char* p_fileAbsolutePath, Mesh_PTR out_mesh)
 {
-	FileStream l_fs = FileStream_open(p_fileAbsolutePath);
+	FileStream l_fs = FileStream_open(p_fileAbsolutePath, FILESTREAM_MODE_READ);
 	FileLineIterator l_it = FileStream_allocLineIterator(&l_fs);
 	{
 		StringSLICE l_spaceSlice = { " ", 0, 1 };

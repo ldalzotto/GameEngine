@@ -16,4 +16,3 @@ typedef struct Texture3c_MemoryCursor_TYP
 	Vector3c_PTR Current;
 	size_t CurrentIndex;
 }Texture3c_MemoryCursor, * Texture3c_MemoryCursor_PTR;
-

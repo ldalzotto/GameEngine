@@ -34,16 +34,16 @@ void String_Free(String_PTR p_string)
 	Arr_Free(&p_string->array);
 };
 
-void String_AppendRawRealloc(String_PTR p_string, char* p_appended)
+void String_AppendRawRealloc(String_PTR p_string, const char* p_appended)
 {
 	size_t l_insertedStringLength = strlen(p_appended);
 	if (p_string->Size >= 2)
 	{
-		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), p_appended, l_insertedStringLength, p_string->Size - 1));
+		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), (char*)p_appended, l_insertedStringLength, p_string->Size - 1));
 	}
 	else
 	{
-		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), p_appended, l_insertedStringLength, 0));
+		HANDLE_ERR(Arr_InsertAtRealloc(&p_string->array, sizeof(char), (char*)p_appended, l_insertedStringLength, 0));
 	}
 };
 
@@ -101,6 +101,18 @@ void String_ClearNoRealloc(String_PTR p_string)
 	p_string->Size = 0;
 	char l_nulChar = (char)NULL;
 	HANDLE_ERR(Arr_PushBackNoRealloc(&p_string->array, sizeof(char), &l_nulChar));
+};
+
+char String_CompareRaw(char* p_left, char* p_right, size_t p_size)
+{
+	for (size_t i = 0; i < p_size; i++)
+	{
+		if (p_left[i] != p_right[i])
+		{
+			return 0;
+		}
+	}
+	return 1;
 };
 
 bool String_Find(StringSLICE_PTR p_stringSlice, StringSLICE_PTR p_comparedStr, size_t* p_outfoundIndex)

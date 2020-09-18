@@ -33,3 +33,8 @@ target_link_libraries(MathTest PUBLIC Math)
 
 add_executable(CustomAllocatorTest "src/CustomAllocatorTest.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
 target_link_libraries(CustomAllocatorTest PUBLIC GameEngine)
+
+add_executable(TextureLoadTest "src/TextureLoadTest.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+target_link_libraries(TextureLoadTest PUBLIC GameEngine)
+target_link_libraries(TextureLoadTest PUBLIC MyRender)
+#copy_zlib_dll(${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})

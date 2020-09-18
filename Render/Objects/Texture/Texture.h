@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Texture_def.h"
+#include "Objects/Texture/Texture_def.h"
 #include <stdbool.h>
 #include "v2/_interface/RectC_def.h"
 
