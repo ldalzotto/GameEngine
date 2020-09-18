@@ -161,6 +161,11 @@ inline void Vec_Add_Xf_Xf(const char* p_left, const char* p_right, const short i
 	}
 };
 
+void Vec_Add_2f_2f(const Vector2f_PTR p_left, const Vector2f_PTR p_right, Vector2f_PTR p_out)
+{
+	Vec_Add_Xf_Xf((const char*)p_left, (const char*)p_right, 2, (char*)p_out);
+};
+
 void Vec_Add_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
 	Vec_Add_Xf_Xf((const char*)p_left, (const char*)p_right, 3, (char*)p_out);

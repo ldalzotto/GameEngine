@@ -34,6 +34,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 	tmp_timer_0 = Clock_currentTime_mics();
 #endif
 
+	/*
 	Material_PTR l_material = &RRenderHeap.MaterialAllocator.array.Memory[p_polygonPipeline->Material.Handle];
 	Color3c l_pixelColor;
 
@@ -42,7 +43,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 	case MATERIAL_SHADING_TYPE_FLAT:
 	{
 		Color3f l_pixelColorF;
-		FlatShadingPixelCalculation_ShadeColor(&p_solidRendererMemory->FlatShadingCalculations.Memory[p_polygonPipeline->FlatShadingCalculationIndex], p_renderLights, &l_material->BaseColor, &l_pixelColorF);
+		FlatShadingPixelCalculation_ShadePolygonColor(&p_solidRendererMemory->FlatShadingCalculations.Memory[p_polygonPipeline->FlatShadingCalculationIndex], p_renderLights, &l_material->BaseColor, &l_pixelColorF);
 		Color_Convert_3F_3C(&l_pixelColorF, &l_pixelColor);
 	}
 	break;
@@ -56,6 +57,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 		l_pixelColor = (Color3c) { 0 };
 	}
 	}
+	*/
 
 #if RENDER_PERFORMANCE_TIMER
 	PerformanceCounter_AddTime(&GWireframeRendererPerformace.AverageRasterization_PixelLight, Clock_currentTime_mics() - tmp_timer_0);
@@ -79,7 +81,8 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 			Vec_Mul_3f_1f(&l_col.Vec, (1.0f * l_rasterizerIterator.I0) + (0.5f * l_rasterizerIterator.I1), &l_col.Vec);
 			Color_Convert_3F_3C(&l_col, &l_pixelColor);
 			*/
-			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = l_pixelColor.Vec;
+			FlatShadingPixelCalculation_ShadePixelColor(p_polygonPipeline, &l_rasterizerIterator, NULL, (Color3c_PTR)&p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)]);
+			// p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = l_pixelColor.Vec;
 		} 
 	}
 

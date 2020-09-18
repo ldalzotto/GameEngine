@@ -17,6 +17,7 @@ void Vec_Min_2d_2d(const Vector2d_PTR p_left, const Vector2d_PTR p_right, Vector
 void Vec_Min_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out);
 void Vec_Min_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out);
 
+void Vec_Add_2f_2f(const Vector2f_PTR p_left, const Vector2f_PTR p_right, Vector2f_PTR p_out);
 void Vec_Add_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out);
 void Vec_Add_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out);
 

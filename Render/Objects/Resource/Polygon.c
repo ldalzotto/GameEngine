@@ -10,11 +10,23 @@ void Polygon_Mul_V4F_M4F(const Polygon4f_PTR p_polygon, const Matrix4f_PTR p_mat
 	Mat_Mul_M4F_V4F(p_matrix, &p_polygon->v2, &out_polygon->v2);
 	Mat_Mul_M4F_V4F(p_matrix, &p_polygon->v3, &out_polygon->v3);
 };
+
 void Polygon_MulHomogeneous_V4F_M4F(const Polygon4f_PTR p_polygon, const Matrix4f_PTR p_matrix, Polygon4f_PTR out_polygon)
 {
 	Mat_Mul_M4F_V4F_Homogeneous(p_matrix, &p_polygon->v1, &out_polygon->v1);
 	Mat_Mul_M4F_V4F_Homogeneous(p_matrix, &p_polygon->v2, &out_polygon->v2);
 	Mat_Mul_M4F_V4F_Homogeneous(p_matrix, &p_polygon->v3, &out_polygon->v3);
+};
+
+void Polygon_Interpolate_V2F(const Polygon2f_PTR p_polygon, float l1, float l2, float l3, Vector2f_PTR out_interpolatedValue)
+{
+	Vector2f l_tmp;
+	Vec_Mul_2f_1f(&p_polygon->v1, l1, out_interpolatedValue);
+	Vec_Mul_2f_1f(&p_polygon->v2, l2, &l_tmp);
+	Vec_Add_2f_2f(out_interpolatedValue, &l_tmp, out_interpolatedValue);
+	Vec_Mul_2f_1f(&p_polygon->v3, l3, &l_tmp);
+	Vec_Add_2f_2f(out_interpolatedValue, &l_tmp, out_interpolatedValue);
+	Vec_Mul_2f_1f(out_interpolatedValue, 0.3333333f, out_interpolatedValue);
 };
 
 void Polygon_CalculateNormal_V4FPTR(const Polygon4fPTR_PTR p_polygon, Vector4f_PTR out_normal)

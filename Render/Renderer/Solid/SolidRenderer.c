@@ -83,12 +83,16 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 			}
 
 			size_t l_polygonPipelineIndexOffset = p_memory->PolygonPipelines.Size;
+
+			Material* l_renderableObjectMaterial = &RRenderHeap.MaterialAllocator.array.Memory[l_renderableObject->Material.Handle];
+
 			for (size_t j = 0; j < l_renderableObject->Mesh->Polygons.Size; j++)
 			{
 				Polygon_VertexIndex_PTR l_polygon = &RRenderHeap.PolygonAllocator.array.Memory[l_renderableObject->Mesh->Polygons.Memory[j].Handle];
 
 				Arr_PushBackRealloc_Empty_PolygonPipelineV2(&p_memory->PolygonPipelines);
-				p_memory->PolygonPipelines.Memory[p_memory->PolygonPipelines.Size - 1] = (PolygonPipelineV2){
+				PolygonPipelineV2* l_polygonPipeline = &p_memory->PolygonPipelines.Memory[p_memory->PolygonPipelines.Size - 1];
+				*l_polygonPipeline  = (PolygonPipelineV2){
 										.IsCulled = 0,
 										.VerticesPipelineIndex = {
 											l_polygon->v1 + l_vertexIndexOffset,
@@ -97,6 +101,11 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 										},
 										.AssociatedRenderableObjectPipeline = p_memory->RederableObjectsPipeline.Size,
 										.Material = l_renderableObject->Material
+				};
+
+				if (l_renderableObjectMaterial->MeshPropertyUsage == MATERIAL_MESHPROPERTY_USAGE_UV)
+				{
+					l_polygonPipeline->MaterialMeshProperties.PolygonUV = l_renderableObject->Mesh->PerVertexData.UV1.Memory[j];
 				};
 			}
 

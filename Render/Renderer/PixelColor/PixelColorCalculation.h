@@ -4,6 +4,7 @@
 #include "DataStructures/ARRAY.h"
 #include "Renderer/Solid/SolidRenderer.h"
 #include "Light/Light_def.h"
+#include "Raster/Rasterizer.h"
 
 ARRAY_ALLOC_FUNCTION(FlatShadingPixelCalculation, Array_FlatShadingPixelCalculation_PTR, FlatShadingPixelCalculation)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(FlatShadingPixelCalculation, Array_FlatShadingPixelCalculation_PTR, FlatShadingPixelCalculation)
@@ -11,4 +12,8 @@ ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(FlatShadingPixelCalculation, Array_FlatShad
 void PixelColorCaluclation_Polygon_PushCalculations(PolygonPipelineV2_PTR p_polygonPipeline, Vector4f_PTR p_polygonWorldNormal, SolidRenderer_Memory_PTR p_solidRendererMemory);
 
 void FlatShadingPixelCalculation_Calculate(FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, RenderLights_PTR p_renderLights, SolidRenderer_Memory_PTR p_solidRendererMemory);
-void FlatShadingPixelCalculation_ShadeColor(FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, RenderLights_PTR p_renderLights, Color3f_PTR p_color, Color3f_PTR out_color);
+void FlatShadingPixelCalculation_ShadePolygonColor(FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, RenderLights_PTR p_renderLights, Color3f_PTR p_color, Color3f_PTR out_color);
+void FlatShadingPixelCalculation_ShadePixelColor(const PolygonPipelineV2_PTR p_polygonPipeline,
+	const PolygonRasterizerIterator_PTR p_polygonRasterize,
+	const Color3c_PTR p_polygonColor, Color3c_PTR out_pixelColor);
+// void FlatShadingPixelcalculation_PixelColor()
