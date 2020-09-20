@@ -42,16 +42,30 @@ void FlatShadingPixelCalculation_ShadePixelColor(
 	const PolygonRasterizerIterator_PTR p_polygonRasterize, Color3f_PTR out_pixelColor)
 {
 	
-	Vector2f l_interpolatedUv;
-	Polygon_Interpolate_V2F(&RRenderHeap.PolygonUVAllocator.array.Memory[p_polygonPipeline->MaterialMeshProperties.PolygonUV.Handle], 
-		p_polygonRasterize->I0, p_polygonRasterize->I1, p_polygonRasterize->I2, &l_interpolatedUv);
+	switch (p_material->MeshPropertyUsage)
+	{
+	case MATERIAL_MESHPROPERTY_USAGE_UV:
+	{
+		Vector2f l_interpolatedUv;
+		Polygon_Interpolate_V2F(&RRenderHeap.PolygonUVAllocator.array.Memory[p_polygonPipeline->MaterialMeshProperties.PolygonUV.Handle],
+			p_polygonRasterize->I0, p_polygonRasterize->I1, p_polygonRasterize->I2, &l_interpolatedUv);
+
+		Color3f l_sampledPoint;
+		TextureSample_Point_3f(&RRenderHeap.Texture3cAllocator.array.Memory[p_material->DiffuseTexture.Handle], &l_interpolatedUv, &l_sampledPoint);
+
+		// *out_pixelColor = (Color3f){ l_interpolatedUv.x, l_interpolatedUv.y, 0.0f };
+		// *out_pixelColor = l_sampledPoint;
+		Vec_Mul_3f_3f(&p_material->BaseColor.Vec, &l_sampledPoint.Vec, &out_pixelColor->Vec);
+		Vec_Mul_3f_3f(&out_pixelColor->Vec, &p_flatShadingPixelCalculation->AttenuatedLightColor.Vec, &out_pixelColor->Vec);
+		Vec_Add_3f_3f(&out_pixelColor->Vec, &p_renderLights->AmbientLight.Color.Vec, &out_pixelColor->Vec);
+	}
+		break;
+	default:
+	{
+		Vec_Mul_3f_3f(&p_material->BaseColor.Vec, &p_flatShadingPixelCalculation->AttenuatedLightColor.Vec, &out_pixelColor->Vec);
+		Vec_Add_3f_3f(&out_pixelColor->Vec, &p_renderLights->AmbientLight.Color.Vec, &out_pixelColor->Vec);
+	}
+		break;
+	}
 	
-	Color3f l_sampledPoint;
-	TextureSample_Point_3f(&RRenderHeap.Texture3cAllocator.array.Memory[p_material->DiffuseTexture.Handle], &l_interpolatedUv, &l_sampledPoint);
-	
-	// *out_pixelColor = (Color3f){ l_interpolatedUv.x, l_interpolatedUv.y, 0.0f };
-	// *out_pixelColor = l_sampledPoint;
-	Vec_Mul_3f_3f(&p_material->BaseColor.Vec, &l_sampledPoint.Vec, &out_pixelColor->Vec);
-	// Vec_Mul_3f_3f(&out_pixelColor->Vec, &p_flatShadingPixelCalculation->AttenuatedLightColor.Vec, &out_pixelColor->Vec);
-	// Vec_Add_3f_3f(&out_pixelColor->Vec, &p_renderLights->AmbientLight.Color.Vec, &out_pixelColor->Vec);
 };

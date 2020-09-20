@@ -18,6 +18,7 @@ typedef struct Material_TYP
 	MATERIAL_MESHPROPERTY_USAGE MeshPropertyUsage;
 	
 	Color3f BaseColor;
+
 	Texture3c_HANDLE DiffuseTexture;
 
 }Material, * Material_PTR;
