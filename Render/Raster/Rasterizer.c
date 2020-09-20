@@ -162,7 +162,7 @@ void PolygonRasterize_Interpolate(PolygonRasterizerIterator_PTR p_polygonRasteri
 //A Parallel Algorithm for Polygon Rasterization.pdf
 //TODO -> Highly unoptimized, we iterate over the whole polygon bound clip.
 // We can easily implement a smart iteration that try to navigates inside the polygon and try to find edges (thus, ignoring calcuation of empty )
-// if in the future, we want to parrallelize the rasteriation calculation, we can precalculatate e0, e1, and e2 for every pixels of the bound rectangle as the formula is linear
+// if in the future, we want to parrallelize the rasteriation calculation, we can precalculatate e0, e1, and e2 for every pixels of the bound rectangle as the formula is linear. As well as interpolation.
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator)
 {
 	switch (p_polygonRasterizerIterator->CurrentStep)

@@ -37,8 +37,10 @@ void SolidRendererMetrics_Print(SolidRendererMetrics_PTR p_wireframeRenderPerfor
 	printf("  -> Polygon Sorting %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AveragePolygonSorting));
 	printf("  -> Rasterization %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization));
 	printf("     -> TransformCoords %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_TransformCoords));
-	printf("     -> PixelRasterize %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_PixelRasterize));
-	printf("     -> PixelLight %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_PixelLight));
+#if RENDER_PERFORMANCE_TIMER_PER_PIXEL
+	printf("     -> PolygonRasterize %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_PolygonRasterize));
+	printf("     -> PixelShading %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_PixelShading));
+#endif
 };
 
 #endif

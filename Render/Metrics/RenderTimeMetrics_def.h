@@ -21,8 +21,8 @@ typedef struct SolidRendererMetrics_TYP
 	PerformanceCounter AveragePolygonSorting;
 	PerformanceCounter AverageRasterization;
 	PerformanceCounter AverageRasterization_TransformCoords;
-	PerformanceCounter AverageRasterization_PixelLight;
-	PerformanceCounter AverageRasterization_PixelRasterize;
+	PerformanceCounter AverageRasterization_PolygonRasterize;
+	PerformanceCounter AverageRasterization_PixelShading;
 }SolidRendererMetrics, * SolidRendererMetrics_PTR;
 
 extern SolidRendererMetrics GWireframeRendererPerformace;

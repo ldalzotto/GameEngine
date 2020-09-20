@@ -189,7 +189,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 	// Light Calculations
 	for (size_t i = 0; i < p_memory->FlatShadingCalculations.Size; i++)
 	{
-		FlatShadingPixelCalculation_Calculate(&p_memory->FlatShadingCalculations.Memory[i], &GRenderLights, p_memory);
+		FlatShadingPixelCalculation_PreCalculation(&p_memory->FlatShadingCalculations.Memory[i], &GRenderLights, p_memory);
 	}
 
 #if RENDER_PERFORMANCE_TIMER
@@ -256,14 +256,17 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 		};
 
 		Draw_PolygonClipped(l_polygonPipeline, &l_polygon, p_to, p_to_clipRect, &GRenderLights, p_memory);
-
 	}
 
 
-#if RENDER_PERFORMANCE_TIMER	
+#if RENDER_PERFORMANCE_TIMER
 	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_TransformCoords);
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PixelLight);
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PixelRasterize);
+#endif
+#if RENDER_PERFORMANCE_TIMER && RENDER_PERFORMANCE_TIMER_PER_PIXEL
+	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PolygonRasterize);
+	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PixelShading);
+#endif
+#if RENDER_PERFORMANCE_TIMER
 	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization, Clock_currentTime_mics() - tmp_timer);
 	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRender, Clock_currentTime_mics() - l_wireframeRenderBegin);
 #endif
