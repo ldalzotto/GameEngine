@@ -21,7 +21,7 @@ void PixelColorCaluclation_Polygon_PushCalculations(PolygonPipelineV2_PTR p_poly
 		};
 
 		p_polygonPipeline->FlatShadingCalculationIndex = p_solidRendererMemory->FlatShadingCalculations.Size - 1;
-		
+
 	}
 	break;
 	}
@@ -37,35 +37,42 @@ void FlatShadingPixelCalculation_PreCalculation(FlatShadingPixelCalculation_PTR 
 };
 
 void FlatShadingPixelCalculation_ShadePixelColor(
-	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const PolygonPipelineV2_PTR p_polygonPipeline, 
+	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const PolygonPipelineV2_PTR p_polygonPipeline,
 	RenderLights_PTR p_renderLights, Material_PTR p_material,
-	const PolygonRasterizerIterator_PTR p_polygonRasterize, Color3f_PTR out_pixelColor)
+	const PolygonRasterizer_InterpolationFactor_PTR p_interpolationFactors, Color3f_PTR out_pixelColor)
 {
-	
+
 	switch (p_material->MeshPropertyUsage)
 	{
 	case MATERIAL_MESHPROPERTY_USAGE_UV:
 	{
-		Vector2f l_interpolatedUv;
-		Polygon_Interpolate_V2F(&RRenderHeap.PolygonUVAllocator.array.Memory[p_polygonPipeline->MaterialMeshProperties.PolygonUV.Handle],
-			p_polygonRasterize->I0, p_polygonRasterize->I1, p_polygonRasterize->I2, &l_interpolatedUv);
 
+		Vector2f l_interpolatedUv;
 		Color3f l_sampledPoint;
+
+
+		Polygon_Interpolate_V2F(&RRenderHeap.PolygonUVAllocator.array.Memory[p_polygonPipeline->MaterialMeshProperties.PolygonUV.Handle],
+			p_interpolationFactors->I0, p_interpolationFactors->I1, p_interpolationFactors->I2, &l_interpolatedUv);
+
 		TextureSample_Point_3f(&RRenderHeap.Texture3cAllocator.array.Memory[p_material->DiffuseTexture.Handle], &l_interpolatedUv, &l_sampledPoint);
 
-		// *out_pixelColor = (Color3f){ l_interpolatedUv.x, l_interpolatedUv.y, 0.0f };
-		// *out_pixelColor = l_sampledPoint;
-		Vec_Mul_3f_3f(&p_material->BaseColor.Vec, &l_sampledPoint.Vec, &out_pixelColor->Vec);
-		Vec_Mul_3f_3f(&out_pixelColor->Vec, &p_flatShadingPixelCalculation->AttenuatedLightColor.Vec, &out_pixelColor->Vec);
-		Vec_Add_3f_3f(&out_pixelColor->Vec, &p_renderLights->AmbientLight.Color.Vec, &out_pixelColor->Vec);
+		out_pixelColor->Vec.x = (p_material->BaseColor.r * l_sampledPoint.r * p_flatShadingPixelCalculation->AttenuatedLightColor.r) + p_renderLights->AmbientLight.Color.r;
+		out_pixelColor->Vec.y = (p_material->BaseColor.g * l_sampledPoint.g * p_flatShadingPixelCalculation->AttenuatedLightColor.g) + p_renderLights->AmbientLight.Color.g;
+		out_pixelColor->Vec.z = (p_material->BaseColor.b * l_sampledPoint.b * p_flatShadingPixelCalculation->AttenuatedLightColor.b) + p_renderLights->AmbientLight.Color.b;
+		// 
+		// for (short int i = 0; i < 3; i++)
+		// {
+		// 	out_pixelColor->Vec.Points[i] = (p_material->BaseColor.Vec.Points[i] * l_sampledPoint.Vec.Points[i] * p_flatShadingPixelCalculation->AttenuatedLightColor.Vec.Points[i]) + p_renderLights->AmbientLight.Color.Vec.Points[i];
+		// }
+
 	}
-		break;
+	break;
 	default:
 	{
 		Vec_Mul_3f_3f(&p_material->BaseColor.Vec, &p_flatShadingPixelCalculation->AttenuatedLightColor.Vec, &out_pixelColor->Vec);
 		Vec_Add_3f_3f(&out_pixelColor->Vec, &p_renderLights->AmbientLight.Color.Vec, &out_pixelColor->Vec);
 	}
-		break;
+	break;
 	}
-	
+
 };

@@ -45,6 +45,12 @@ typedef struct PolygonRasterize_PackedData_TYP
 	int area0, area1, area2;
 }PolygonRasterize_PackedData, * PolygonRasterize_PackedData_PTR;
 
+typedef struct PolygonRasterizer_InterpolationFactor_TYP
+{
+	// Interpolation factors
+	float I0, I1, I2;
+}PolygonRasterizer_InterpolationFactor, * PolygonRasterizer_InterpolationFactor_PTR;
+
 typedef struct PolygonRasterizerIterator_TYP
 {
 	char InterpolationEnabled;
@@ -55,9 +61,8 @@ typedef struct PolygonRasterizerIterator_TYP
 	PolygonRasterize_PackedData PackedRasterizerData;
 	// Rasterizer edge functions
 	int e0, e1, e2;
-	// Interpolation factors
-	float I0, I1, I2;
 
+	PolygonRasterizer_InterpolationFactor InterpolationFactors;
 	Vector2i RasterizedPixel;
 }PolygonRasterizerIterator, * PolygonRasterizerIterator_PTR;
 

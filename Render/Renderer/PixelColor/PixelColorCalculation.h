@@ -16,6 +16,6 @@ void FlatShadingPixelCalculation_PreCalculation(FlatShadingPixelCalculation_PTR 
 void FlatShadingPixelCalculation_ShadePixelColor(
 	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const PolygonPipelineV2_PTR p_polygonPipeline,
 	RenderLights_PTR p_renderLights, Material_PTR p_material,
-	const PolygonRasterizerIterator_PTR p_polygonRasterize, Color3f_PTR out_pixelColor);
+	const PolygonRasterizer_InterpolationFactor_PTR p_interpolationFactors, Color3f_PTR out_pixelColor);
 
 // void FlatShadingPixelcalculation_PixelColor()

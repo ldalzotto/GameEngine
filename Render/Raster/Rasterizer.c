@@ -161,11 +161,11 @@ void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR 
 }
 
 // For interpolation, we can use e1, e2, e0 as they represent the already calculated edge functions for the current pixel
-void PolygonRasterize_Interpolate(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator)
+inline void PolygonRasterize_Interpolate(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator)
 { 
-	p_polygonRasterizerIterator->I0 = ((float)p_polygonRasterizerIterator->e1 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area0);
-	p_polygonRasterizerIterator->I1 = ((float)p_polygonRasterizerIterator->e2 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area1);
-	p_polygonRasterizerIterator->I2 = ((float)p_polygonRasterizerIterator->e0 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area2);
+	p_polygonRasterizerIterator->InterpolationFactors.I0 = ((float)p_polygonRasterizerIterator->e1 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area0);
+	p_polygonRasterizerIterator->InterpolationFactors.I1 = ((float)p_polygonRasterizerIterator->e2 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area1);
+	p_polygonRasterizerIterator->InterpolationFactors.I2 = ((float)p_polygonRasterizerIterator->e0 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area2);
 };
 
 //A Parallel Algorithm for Polygon Rasterization.pdf

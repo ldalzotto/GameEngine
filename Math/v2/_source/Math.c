@@ -208,12 +208,15 @@ inline void Vec_Mul_Xf_Xf(const char* p_left, const short int p_elementCount, co
 
 void Vec_Mul_2f_1f(const Vector2f_PTR p_left, const float p_right, Vector2f_PTR p_out)
 {
-	Vec_Mul_Xf_1f((const char*)p_left, 2, p_right, (char*)p_out);
+	p_out->x = p_left->x * p_right;
+	p_out->y = p_left->y * p_right;
 };
 
 void Vec_Mul_3f_1f(const Vector3f_PTR p_left, const float p_right, Vector3f_PTR p_out)
 {
-	Vec_Mul_Xf_1f((const char*)p_left, 3, p_right, (char*)p_out);
+	p_out->x = p_left->x * p_right;
+	p_out->y = p_left->y * p_right;
+	p_out->z = p_left->z * p_right;
 };
 
 void Vec_Mul_3c_1f(const Vector3c_PTR p_left, const float p_right, Vector3c_PTR p_out)
@@ -1138,12 +1141,6 @@ void Color_Convert_3F_3C(Color3f_PTR p_color3f, Color3c_PTR p_color3c)
 	p_color3c->b = (char)(Math_clamp01f(p_color3f->b) * 255.0f);
 };
 
-void Color_Convert_3C_3F(Color3c_PTR p_color3c, Color3f_PTR p_color3f)
-{
-	p_color3f->r = ((float)p_color3c->r / 255.0f);
-	p_color3f->g = ((float)p_color3c->g / 255.0f);
-	p_color3f->b = ((float)p_color3c->b / 255.0f);
-};
 #endif
 
 /************************ Plane *************************/

@@ -40,8 +40,8 @@ int main(int argc, char* argv[])
 	// l_modelMatrix.Col3.y = 8.0f;
 	MeshResource_HANDLE l_mesh;
 	Assetpath l_meshAssetPath;
-	// AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
-	AssetPath_GetAbsolutePath("Models/Icosphere2.obj", &l_meshAssetPath);
+	AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
+	// AssetPath_GetAbsolutePath("Models/Icosphere2.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/Plane.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/SingleTriangle.obj", &l_meshAssetPath);
 	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, &l_meshAssetPath, &l_mesh);
@@ -91,7 +91,10 @@ int main(int argc, char* argv[])
 
 
 
-	while (!Window_askedForClose(&renderV2.AppWindow))
+	//  while (!Window_askedForClose(&renderV2.AppWindow))
+	//  {
+	// 
+	for (size_t i = 0; i < 50; i++)
 	{
 		float l_deltaTime = (float)(Clock_currentTime_mics() - LastFrameTime);
 		LastFrameTime = Clock_currentTime_mics();
@@ -106,9 +109,11 @@ int main(int argc, char* argv[])
 		Mat_RotationAxis_M4F(&tmp_mat3x3_0, &l_rotation);
 		Mat_Mul_M4F_M4F(&l_renderableObject.ModelMatrix, (Matrix4f_PTR)&l_rotation, &tmp_mat4x4_0);
 		l_renderableObject.ModelMatrix = tmp_mat4x4_0;
-	
+
 		RenderV2_render(&renderV2);
 	}
+
+	// }
 
 	MeshResourceProvider_ReleaseResource(&renderV2.Resources.MeshResourceProvider, &l_mesh->Key);
 	RenderV2_free(&renderV2);
