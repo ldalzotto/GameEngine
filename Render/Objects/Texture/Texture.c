@@ -1,17 +1,18 @@
 #include "Texture.h"
-#include "v2/_interface/VectorStructuresC.h"
+// #include "v2/_interface/VectorStructuresC.h"
+#include "v2/_interface/ColorC.h"
 
 void Texture_Alloc_3C(Texture3c_PTR p_texture, uint16_t p_width, uint16_t p_height)
 {
 	p_texture->Width = p_width;
 	p_texture->Height = p_height;
-	Arr_Alloc_Vector3C(&p_texture->Pixels, ((size_t)p_texture->Width * p_texture->Height));
+	Arr_Alloc_Color3c(&p_texture->Pixels, ((size_t)p_texture->Width * p_texture->Height));
 	p_texture->Pixels.Size = p_texture->Pixels.Capacity;
 };
 
 void Texture_Free_3C(Texture3c_PTR p_texture)
 {
-	Arr_Free_Vector3C(&p_texture->Pixels);
+	Arr_Free(&p_texture->Pixels.array);
 };
 
 size_t Texture_GetSizeInBytes_3C(const Texture3c_PTR p_texture)
@@ -37,7 +38,7 @@ void Texture_CreateMemoryCursor_3C(Texture3c_PTR p_texture, Texture3c_MemoryCurs
 void TextureMemCursor_MoveNextPixel_3C(Texture3c_MemoryCursor_PTR p_cursor)
 {
 	p_cursor->CurrentIndex += 1;
-	p_cursor->Current = (Vector3c_PTR)((char*)p_cursor->Current + sizeof(Vector3c));
+	p_cursor->Current = (Color3c_PTR)((char*)p_cursor->Current + sizeof(Color3c));
 };
 
 bool TextureMemCursor_IsOutofBound_3C(Texture3c_MemoryCursor_PTR p_cursor)

@@ -92,7 +92,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_t
 
 				Arr_PushBackRealloc_Empty_PolygonPipelineV2(&p_memory->PolygonPipelines);
 				PolygonPipelineV2* l_polygonPipeline = &p_memory->PolygonPipelines.Memory[p_memory->PolygonPipelines.Size - 1];
-				*l_polygonPipeline  = (PolygonPipelineV2){
+				*l_polygonPipeline = (PolygonPipelineV2){
 										.IsCulled = 0,
 										.VerticesPipelineIndex = {
 											l_polygon->v1 + l_vertexIndexOffset,
@@ -305,7 +305,6 @@ inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_so
 			};
 		}
 	}
-
 	Sort_Quick_PolygonPipeline_CameraDistanceIndexed(&p_solidRendererMemory->OrderedPolygonPipelinesIndex);
 };
 

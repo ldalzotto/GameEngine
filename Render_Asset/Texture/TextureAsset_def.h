@@ -14,4 +14,11 @@ typedef struct Texture3cAsset_TYP
 {
 	TextureAssetHeader Header;
 	Color3c* Pixels;
-}TextureAsset, * TextureAsset_PTR;
+}Texture3cAsset, * Texture3cAsset_PTR;
+
+
+typedef struct Texture4cAsset_TYP
+{
+	TextureAssetHeader Header;
+	Color4c* Pixels;
+}Texture4cAsset, * Texture4cAsset_PTR;

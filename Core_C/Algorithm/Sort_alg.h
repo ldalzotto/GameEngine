@@ -45,5 +45,8 @@ void Sort_Quick_Between_##MethodPrefix##(ArrayTypePTR p_arr, size_t p_begin, siz
  \
 void Sort_Quick_##MethodPrefix##(ArrayTypePTR p_arr) \
 { \
+if (p_arr->Size > 0) \
+{ \
 	Sort_Quick_Between_##MethodPrefix##(p_arr, 0, p_arr->Size - 1); \
+} \
 };

@@ -66,7 +66,7 @@ void Gizmo_Render(GizmoRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_t
 	GizmoBuffer_clear(p_input->Buffer);
 };
 
-void Gizmo_drawLine_indices(GizmoBuffer* p_gizmo, GizmoVertexIndex* p_begin, GizmoVertexIndex* p_end, const Vector3c* p_color)
+void Gizmo_drawLine_indices(GizmoBuffer* p_gizmo, GizmoVertexIndex* p_begin, GizmoVertexIndex* p_end, const Color3c_PTR p_color)
 {
 	GizmoLine l_line = { *p_begin , *p_end, *p_color };
 	Arr_PushBackRealloc(&p_gizmo->Lines.array, sizeof(l_line), (char*)&l_line);
@@ -82,11 +82,11 @@ void Gizmo_pushVertex(GizmoBuffer* p_gizmo, const Vector3f_PTR p_position, Gizmo
 
 void Gizmo_DrawLine(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end)
 {
-	Vector3c l_color = { (char)255, 255, 255 };
+	Color3c l_color = { 255, 255, 255 };
 	Gizmo_DrawLine_Color(p_gizmo, p_begin, p_end, &l_color);
 };
 
-void Gizmo_DrawLine_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end, const Vector3c_PTR p_color)
+void Gizmo_DrawLine_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end, const Color3c_PTR p_color)
 {
 	GizmoVertexIndex l_beginIndex;
 	Gizmo_pushVertex(p_gizmo, p_begin, &l_beginIndex);
@@ -97,11 +97,11 @@ void Gizmo_DrawLine_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, cons
 
 void Gizmo_DrawPoint(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point)
 {
-	Vector3c l_color = { (char)255, 255, 255 };
+	Color3c l_color = { 255, 255, 255 };
 	Gizmo_DrawPoint_Color(p_gizmo, p_point, &l_color);
 };
 
-void Gizmo_DrawPoint_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point, const Vector3c_PTR p_color)
+void Gizmo_DrawPoint_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point, const Color3c_PTR p_color)
 {
 	Vector3f tmp_vec3;
 	Vector3f l_begin;
@@ -153,9 +153,9 @@ void Gizmo_DrawPoint_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point, con
 	}
 };
 
-void Gizmo_DrawBox(GizmoBuffer* p_gizmo, const BoxF_PTR p_box, const Matrix4f_PTR p_localToWorldMatrix, bool p_withCenter, const Vector3c_PTR p_color)
+void Gizmo_DrawBox(GizmoBuffer* p_gizmo, const BoxF_PTR p_box, const Matrix4f_PTR p_localToWorldMatrix, bool p_withCenter, const Color3c_PTR p_color)
 {
-	Vector3c l_color = { 255, 255, 255 };
+	Color3c l_color = { 255, 255, 255 };
 	if (p_color)
 	{
 		l_color = *p_color;
@@ -207,15 +207,15 @@ void Gizmo_DrawTransform(GizmoBuffer* p_gizmo, Transform_PTR p_transform)
 
 void Gizmo_DrawTransform_Axis(GizmoBuffer* p_gizmo, const Vector3f_PTR p_center, const Vector3f_PTR p_right, const Vector3f_PTR p_up, const Vector3f_PTR p_forward)
 {
-	Vector3c tmp_vec3_1;
+	Color3c tmp_vec3_1;
 	Vector3f tmp_vec3_0;
 	Vec_Add_3f_3f(p_center, p_right, &tmp_vec3_0);
-	tmp_vec3_1 = (Vector3c){ (char)255, 0, 0 };
+	tmp_vec3_1 = (Color3c){ 255, 0, 0 };
 	Gizmo_DrawLine_Color(p_gizmo, p_center, &tmp_vec3_0, &tmp_vec3_1);
 	Vec_Add_3f_3f(p_center, p_up, &tmp_vec3_0);
-	tmp_vec3_1 = (Vector3c){ 0, (char)255, 0 };
+	tmp_vec3_1 = (Color3c){ 0, 255, 0 };
 	Gizmo_DrawLine_Color(p_gizmo, p_center, &tmp_vec3_0, &tmp_vec3_1);
 	Vec_Add_3f_3f(p_center, p_forward, &tmp_vec3_0);
-	tmp_vec3_1 = (Vector3c){ 0, 0, (char)255 };
+	tmp_vec3_1 = (Color3c){ 0, 0, 255 };
 	Gizmo_DrawLine_Color(p_gizmo, p_center, &tmp_vec3_0, &tmp_vec3_1);
 };

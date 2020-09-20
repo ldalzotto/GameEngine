@@ -13,6 +13,7 @@ add_library(MyRender ${MYRENDER_HEADER} ${MYRENDER_SOURCE})
 
 target_include_directories(MyRender PUBLIC "./")
 
+target_link_libraries(MyRender PUBLIC STB_IMAGE)
 target_link_libraries(MyRender PUBLIC Render_Asset)
 target_link_libraries(MyRender PUBLIC Core_c)
 target_link_libraries(MyRender PUBLIC Math)

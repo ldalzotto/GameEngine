@@ -42,7 +42,7 @@ void RenderV2_render(RenderV2* p_render)
 	}
 
 	{
-		Vector3c l_color = { 0,0,0 };
+		Color3c l_color = { 0,0,0 };
 		Texture3c_MemoryCursor l_presentTextureCursor;
 		Texture_CreateMemoryCursor_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureCursor);
 		while (!TextureMemCursor_IsOutofBound_3C(&l_presentTextureCursor))

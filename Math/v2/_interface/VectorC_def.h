@@ -55,3 +55,13 @@ typedef struct Vector3c_TYP
 		struct { char x, y, z; };
 	};
 } Vector3c, * Vector3c_PTR;
+
+
+typedef struct Vector4c_TYP
+{
+	union
+	{
+		char Points[4];
+		struct { char x, y, z, w; };
+	};
+} Vector4c, * Vector4c_PTR;

@@ -23,5 +23,9 @@ POOLALLOCATOR_ALLOCELEMENT_FUNCTION(PolygonUV, PoolAllocator_PolygonUV_PTR, Poly
 POOLALLOCATOR_FREEELEMENT_FUNCTION(PolygonUV, PoolAllocator_PolygonUV_PTR, Polgyon_UV_HANDLE);
 POOLALLOCATOR_FREEELEMENTS_FUNCTION(PolygonUV, PoolAllocator_PolygonUV_PTR, Array_PolygonUVHandle_PTR);
 
+POOLALLOCATOR_ALLOC_FUNCTION(Texture3c, PoolAllocator_Texture3c_PTR, Texture3c);
+POOLALLOCATOR_ALLOCELEMENT_FUNCTION(Texture3c, PoolAllocator_Texture3c_PTR, Material, Texture3c_HANDLE_PTR);
+POOLALLOCATOR_FREEELEMENT_FUNCTION(Texture3c, PoolAllocator_Texture3c_PTR, Texture3c_HANDLE);
+
 void RenderHeap_Alloc(RenderHeap_PTR p_renderHeap);
 void RenderHeap_Free(RenderHeap_PTR p_renderHeap);

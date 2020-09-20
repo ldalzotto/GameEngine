@@ -457,18 +457,18 @@ void EntitySelection_scaleSelectedEntity(EntitySelection* p_entitySelection)
 
 void EntitySelection_drawSelectedEntityBoundingBox(EntitySelection* p_entitySelection, ECS_Entity_HANDLE p_selectedEntity)
 {
-	Matrix4f tmp_mat_0; Vector3c tmp_vec3_0;
+	Matrix4f tmp_mat_0; Color3c tmp_color_0;
 
 	TransformComponent_PTR l_selectedEntityTransform;
 	ECS_GetComponent_TransformComponent(p_selectedEntity, &l_selectedEntityTransform);
 	PhysicsBody_PTR l_physicsBody;
 	ECS_GetComponent_PhysicsBody(p_selectedEntity, &l_physicsBody);
 
-	tmp_vec3_0 = (Vector3c){ (char)255, (char)255, (char)255 };
+	tmp_color_0 = (Color3c){ 255, 255, 255 };
 	Transform_GetLocalToWorldMatrix(&l_selectedEntityTransform->Transform, &tmp_mat_0);
 
 	Gizmo_DrawBox(p_entitySelection->RenderInterface->GizmoBuffer, l_physicsBody->Boxcollider->Box,
-		&tmp_mat_0, true, &tmp_vec3_0);
+		&tmp_mat_0, true, &tmp_color_0);
 }
 
 TransformComponent_PTR transformGizmoV2_allocArrow(ECS* p_ecs, RenderV2Interface* p_renderInterface, const Color3f* p_color)

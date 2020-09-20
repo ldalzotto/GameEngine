@@ -1,29 +1,11 @@
 #include "TextureReader.h"
 
-#include "DataStructures/STRING.h"
-#include "Read/File/File.h"
-#include "Objects/Texture/Texture.h"
-#include "Texture/TextureAsset_def.h"
+#include "stb_image.h"
 
 void TextureReader_load(const char* p_textureAbsolutePath, Texture3c_PTR out_texture)
 {
-	String l_file;
-	File_readFile_byte(p_textureAbsolutePath, &l_file);	
-	{
-		TextureAssetHeader* l_textureAssetHeader = (TextureAssetHeader*)l_file.Memory;
-		Texture_Alloc_3C(out_texture, l_textureAssetHeader->ImageWidth, l_textureAssetHeader->ImageHeight);
-		memcpy(out_texture->Pixels.Memory, (char*)l_file.Memory + sizeof(TextureAssetHeader), l_textureAssetHeader->ImageSizeInByte);
-	}
-	String_Free(&l_file);
-#if 0
-	if (l_compressedImage)
-	{
-		// fread(l_compressedImage, sizeof(char), l_textureAssetHeader->ImageCompressedSizeInByte, l_fs.Stream);
-		if (uncompress(out_texture->Pixels.Memory, &l_textureAssetHeader->ImageSizeInByte, l_compressedImage, l_textureAssetHeader->ImageCompressedSizeInByte) < 0)
-		{
-			printf("Error, failed to uncompress texture.");
-			abort();
-		};
-	}
-#endif
+	int comp;
+	out_texture->Pixels.Memory = (Color3c*)stbi_load(p_textureAbsolutePath, (int*)&out_texture->Width, (int*)&out_texture->Height, &comp, STBI_rgb);
+	out_texture->Pixels.Capacity = (size_t)out_texture->Width * out_texture->Height;
+	out_texture->Pixels.Size = out_texture->Pixels.Capacity;
 };

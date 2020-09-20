@@ -4,14 +4,14 @@
 #include "Objects/Texture/Texture.h"
 #include "Heap/RenderHeap_def.h"
 #include "v2/_interface/ColorC.h"
+#include "v2/_interface/VectorC.h"
 #include "Renderer/PixelColor/PixelColorCalculation.h"
-
 #include "Metrics/RenderTimeMetrics.h"
 
 void Draw_LineClipped(
 	Vector2i_PTR p_begin, Vector2i_PTR p_end,
 	Texture3c_PTR p_to, Recti_PTR p_clipRect,
-	Vector3c_PTR p_color)
+	Color3c_PTR p_color)
 {
 	LineRasterizerIterator l_lineRasterizerIterator;
 	if (LineRasterize_Initialize(p_begin, p_end, p_clipRect, &l_lineRasterizerIterator))
@@ -31,7 +31,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 
 	Material_PTR l_material = &RRenderHeap.MaterialAllocator.array.Memory[p_polygonPipeline->Material.Handle];
 	Color3f l_pixelColor_3f;
-	 
+	
 	PolygonRasterizerIterator l_rasterizerIterator;
 	PolygonRasterize_Initialize(p_polygonPixelPositions, p_clipRect, 1, &l_rasterizerIterator);
 	POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
@@ -76,10 +76,10 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 			}
 
 			// Interpolation debug display
-			/*
-			l_pixelColor_3f = (Color3f){ 1.0f, 1.0f, 1.0f };
-			Vec_Mul_3f_1f(&l_pixelColor_3f.Vec, (1.0f * l_rasterizerIterator.I0) + (0.5f * l_rasterizerIterator.I1), &l_pixelColor_3f.Vec);
-			*/
+			
+			// l_pixelColor_3f = (Color3f){ 1.0f, 1.0f, 1.0f };
+			// Vec_Mul_3f_1f(&l_pixelColor_3f.Vec, (1.0f * l_rasterizerIterator.I0) , &l_pixelColor_3f.Vec);
+			
 
 			Color_Convert_3F_3C(&l_pixelColor_3f, (Color3c_PTR)&p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)]);
 

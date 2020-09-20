@@ -26,7 +26,6 @@ void Polygon_Interpolate_V2F(const Polygon2f_PTR p_polygon, float l1, float l2, 
 	Vec_Add_2f_2f(out_interpolatedValue, &l_tmp, out_interpolatedValue);
 	Vec_Mul_2f_1f(&p_polygon->v3, l3, &l_tmp);
 	Vec_Add_2f_2f(out_interpolatedValue, &l_tmp, out_interpolatedValue);
-	Vec_Mul_2f_1f(out_interpolatedValue, 0.3333333f, out_interpolatedValue);
 };
 
 void Polygon_CalculateNormal_V4FPTR(const Polygon4fPTR_PTR p_polygon, Vector4f_PTR out_normal)

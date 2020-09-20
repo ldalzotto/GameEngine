@@ -2,6 +2,7 @@
 
 #include "v2/_interface/ColorC_def.h"
 #include "DataStructures/ARRAY_def.h"
+#include "Objects/Texture/Texture_def.h"
 
 typedef char MATERIAL_SHADING_TYPE;
 #define MATERIAL_SHADING_TYPE_NONE 0
@@ -15,7 +16,10 @@ typedef struct Material_TYP
 {
 	MATERIAL_SHADING_TYPE ShadingType;
 	MATERIAL_MESHPROPERTY_USAGE MeshPropertyUsage;
+	
 	Color3f BaseColor;
+	Texture3c_HANDLE DiffuseTexture;
+
 }Material, * Material_PTR;
 
 typedef struct Array_Material_TYP

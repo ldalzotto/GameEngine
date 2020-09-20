@@ -119,7 +119,7 @@ void PolygonRasterizePackedData_PrecalculateRasterization(PolygonRasterize_Packe
 	}
 };
 
-void PolygonRasterizePackedData_PrecalculateInterpolation(PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon)
+void PolygonRasterizePackedData_PrecalculateAreas(PolygonRasterize_PackedData_PTR p_packedData, const Polygon2i_PTR p_polygon)
 {
 	p_packedData->area0 = PolygonRasterizePackedData_EdgeFunction_12(p_packedData, p_polygon, &p_polygon->v1);
 	p_packedData->area1 = PolygonRasterizePackedData_EdgeFunction_20(p_packedData, p_polygon, &p_polygon->v2);
@@ -141,14 +141,23 @@ void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR 
 	out_polygonRasterizerIterator->e1 = PolygonRasterizePackedData_EdgeFunction_12(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
 	out_polygonRasterizerIterator->e2 = PolygonRasterizePackedData_EdgeFunction_20(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CurrentPoint);
 
-	if (out_polygonRasterizerIterator->InterpolationEnabled)
+	PolygonRasterizePackedData_PrecalculateAreas(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon);
+
+	//This check is done to avoid drawing polygon which have two points that are the same.
+	// Because this cause artifacts
+	if ((out_polygonRasterizerIterator->PackedRasterizerData.area0 +
+		out_polygonRasterizerIterator->PackedRasterizerData.area1 +
+		out_polygonRasterizerIterator->PackedRasterizerData.area2) <= FLOAT_TOLERANCE)
 	{
-		PolygonRasterizePackedData_PrecalculateInterpolation(&out_polygonRasterizerIterator->PackedRasterizerData, p_polygon);
+		out_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_EXIT;
+	}
+	else
+	{
+		out_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN;
 	}
 
 	out_polygonRasterizerIterator->LineIndexCursor = out_polygonRasterizerIterator->PolygonBoundClip.Min.y;
 	out_polygonRasterizerIterator->ColumnIndexCursor = out_polygonRasterizerIterator->PolygonBoundClip.Min.x - 1;
-	out_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN;
 }
 
 // For interpolation, we can use e1, e2, e0 as they represent the already calculated edge functions for the current pixel

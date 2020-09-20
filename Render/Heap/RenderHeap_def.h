@@ -3,6 +3,7 @@
 #include "Memory/PoolAllocator_def.h"
 #include "Objects/Resource/Mesh_def.h"
 #include "Objects/Resource/Material_def.h"
+#include "Objects/Texture/Texture_def.h"
 
 typedef struct PoolAllocator_Vertex_TYP
 {
@@ -24,12 +25,18 @@ typedef struct PoolAllocator_PolygonUV_TYP
 	POOLALLOCATOR_TYPE_DEFINITION(Array_PolygonUV)
 }PoolAllocator_PolygonUV, * PoolAllocator_PolygonUV_PTR;
 
+typedef struct PoolAllocator_Texture3c_TYP
+{
+	POOLALLOCATOR_TYPE_DEFINITION(Array_Texture3c)
+}PoolAllocator_Texture3c, * PoolAllocator_Texture3c_PTR;
+
 typedef struct RenderHeap_TYP
 {
 	PoolAllocator_Vertex VertexAllocator;
 	PoolAllocator_Polygon PolygonAllocator;
 	PoolAllocator_Material MaterialAllocator;
 	PoolAllocator_PolygonUV PolygonUVAllocator;
+	PoolAllocator_Texture3c Texture3cAllocator;
 }RenderHeap, * RenderHeap_PTR;
 
 extern RenderHeap RRenderHeap;

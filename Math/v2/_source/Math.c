@@ -1137,6 +1137,13 @@ void Color_Convert_3F_3C(Color3f_PTR p_color3f, Color3c_PTR p_color3c)
 	p_color3c->g = (char)(Math_clamp01f(p_color3f->g) * 255.0f);
 	p_color3c->b = (char)(Math_clamp01f(p_color3f->b) * 255.0f);
 };
+
+void Color_Convert_3C_3F(Color3c_PTR p_color3c, Color3f_PTR p_color3f)
+{
+	p_color3f->r = ((float)p_color3c->r / 255.0f);
+	p_color3f->g = ((float)p_color3c->g / 255.0f);
+	p_color3f->b = ((float)p_color3c->b / 255.0f);
+};
 #endif
 
 /************************ Plane *************************/
