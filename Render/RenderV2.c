@@ -21,6 +21,7 @@ void RenderV2_initialize(RenderV2* p_render)
 {
 	RenderHeap_Alloc(&RRenderHeap);
 	MeshResourceProvider_Alloc(&p_render->Resources.MeshResourceProvider);
+	TextureResourceProvider_Alloc(&p_render->Resources.TextureResourceProvider);
 
 
 	Window_init(&p_render->AppWindow);
@@ -88,6 +89,7 @@ void RenderV2_free(RenderV2* p_render)
 	GlobalBuffers_free(&p_render->GlobalBuffer);
 	SwapChain_Free(&p_render->SwapChain);
 	SolidRenderer_Memory_free(&p_render->WireframeRenderMemory);
+	TextureResourceProvider_Free(&p_render->Resources.TextureResourceProvider);
 	MeshResourceProvider_Free(&p_render->Resources.MeshResourceProvider);
 	RenderHeap_Free(&RRenderHeap);
 }

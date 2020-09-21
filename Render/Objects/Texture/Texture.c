@@ -1,6 +1,7 @@
 #include "Texture.h"
 // #include "v2/_interface/VectorStructuresC.h"
 #include "v2/_interface/ColorC.h"
+#include "Heap/RenderHeap.h"
 
 void Texture_Alloc_3C(Texture3c_PTR p_texture, uint16_t p_width, uint16_t p_height)
 {
@@ -26,6 +27,24 @@ void Texture_Alloc_3f(Texture3f_PTR p_texture, uint16_t p_width, uint16_t p_heig
 void Texture_Free_3f(Texture3f_PTR p_texture)
 {
 	Arr_Free(&p_texture->Pixels.array);
+};
+
+void Texture_AllocHeap_3c(uint16_t p_width, uint16_t p_height, Texture3c_HANDLE_PTR out_textureHandle)
+{
+	PoolAllocator_AllocElement_Texture3c(&RRenderHeap.Texture3cAllocator, out_textureHandle);
+	Texture_Alloc_3C(&RRenderHeap.Texture3cAllocator.array.Memory[out_textureHandle->Handle], p_width, p_height);
+};
+
+void Texture_PushHeap_3c(Texture3c_PTR p_texture, Texture3c_HANDLE_PTR out_textureHandle)
+{
+	PoolAllocator_AllocElement_Texture3c(&RRenderHeap.Texture3cAllocator, out_textureHandle);
+	RRenderHeap.Texture3cAllocator.array.Memory[out_textureHandle->Handle] = *p_texture;
+};
+
+void Texture_FreeHeap_3c(Texture3c_HANDLE_PTR p_textureHandle)
+{
+	Texture_Free_3C(&RRenderHeap.Texture3cAllocator.array.Memory[p_textureHandle->Handle]);
+	PoolAllocator_FreeElement_Texture3c(&RRenderHeap.Texture3cAllocator, *p_textureHandle);
 };
 
 size_t Texture_GetSizeInBytes_3C(const Texture3c_PTR p_texture)

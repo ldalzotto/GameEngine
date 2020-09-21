@@ -8,6 +8,7 @@
 #include "Objects/SwapChain/SwapChain_def.h"
 #include "Objects/Window/Window.h"
 #include "Objects/Resource/MeshResourceProviderV2.h"
+#include "Objects/Texture/TextureResourceProvider.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 
@@ -22,6 +23,7 @@ typedef struct GlobalBuffers_TYP
 typedef struct RenderResourceProvider_TYP
 {
 	MeshResource_Provider MeshResourceProvider;
+	Array_TextureResourceHandle TextureResourceProvider;
 }RenderResourceProvider, * RenderResourceProvider_PTR;
 
 typedef struct RenderV2_TYP
@@ -32,7 +34,7 @@ typedef struct RenderV2_TYP
 	SwapChain SwapChain;
 
 	RenderResourceProvider Resources;
-
+	
 	Texture3f RenderTargetTexture;
 
 	GlobalBuffers GlobalBuffer;

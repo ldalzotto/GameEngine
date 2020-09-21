@@ -16,6 +16,7 @@
 #include "Heap/RenderHeap.h"
 #include "DataStructures/String.h"
 #include "Objects/Resource/Mesh.h"
+#include "Objects/Texture/TextureResourceProvider.h"
 #include "Objects/RenderedObject.h"
 #include "Clock/Clock.h"
 
@@ -53,19 +54,26 @@ int main(int argc, char* argv[])
 	}
 
 
+	/*
 	Texture3c l_tex;
-	TextureReader_load("E:/GameProjects/GameEngine/Assets/Textures/texture.png", &l_tex);
+	TextureReader_load("E:/GameProjects/GameEngine/Assets/", &l_tex);
 	Texture3c_HANDLE l_texHandle;
 	PoolAllocator_AllocElement_Texture3c(&RRenderHeap.Texture3cAllocator, &l_texHandle);
 	RRenderHeap.Texture3cAllocator.array.Memory[l_texHandle.Handle] = l_tex;
-	
+	*/
+
+	Assetpath l_textureAssterPath;
+	AssetPath_GetAbsolutePath("Textures/texture.png", &l_textureAssterPath);
+	TextureResource_PTR l_texture;
+	TextureResourceProvider_UseResource(&renderV2.Resources.TextureResourceProvider, &l_textureAssterPath, &l_texture);
+
 	Material_HANDLE l_materialHandle;
 	PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ 
 		.ShadingType = MATERIAL_SHADING_TYPE_FLAT, 
 		.MeshPropertyUsage = MATERIAL_MESHPROPERTY_USAGE_UV, 
 		.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
-		.DiffuseTexture = l_texHandle
+		.DiffuseTexture = l_texture->Texture
 	};
 
 	// Arr_PushBackRealloc_Mater
@@ -114,6 +122,7 @@ int main(int argc, char* argv[])
 	}
 
 	MeshResourceProvider_ReleaseResource(&renderV2.Resources.MeshResourceProvider, &l_mesh->Key);
+	TextureResourceProvider_ReleaseResource(&renderV2.Resources.TextureResourceProvider, &l_texture->Key);
 	RenderV2_free(&renderV2);
 
 	AppEvent_free();

@@ -22,6 +22,11 @@ typedef struct Texture3c_HANDLE_TYP
 	size_t Handle;
 }Texture3c_HANDLE, * Texture3c_HANDLE_PTR;
 
+typedef struct Array_Texutre3cHandle_TYP
+{
+	ARRAY_TYPE_DEFINITION(Texture3c_HANDLE)
+}Array_Texutre3cHandle, * Array_Texutre3cHandle_PTR;
+
 typedef struct Texture3c_MemoryCursor_TYP
 {
 	Texture3c_PTR Texture;
