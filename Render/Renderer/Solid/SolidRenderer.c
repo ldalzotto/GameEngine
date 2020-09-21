@@ -45,7 +45,7 @@ inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPip
 // Sorts polygon based on z coordinates of camera projected vertices
 inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_solidRendererMemory);
 
-void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3c_PTR p_to, Recti_PTR p_to_clipRect, SolidRenderer_Memory* p_memory)
+void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, SolidRenderer_Memory* p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();

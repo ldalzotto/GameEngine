@@ -38,11 +38,16 @@ void RenderV2_render(RenderV2* p_render)
 {
 	if (Window_consumeSizeChangeEvent(&p_render->AppWindow))
 	{
+		Texture_Free_3f(&p_render->RenderTargetTexture);
+		Texture_Alloc_3f(&p_render->RenderTargetTexture, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
+
 		SwapChain_Resize(&p_render->SwapChain, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
 	}
 
 	{
-		Color3c l_color = { 0,0,0 };
+		// Color3c l_color = { 0,0,0 };
+		memset(p_render->RenderTargetTexture.Pixels.Memory, 0, p_render->RenderTargetTexture.Pixels.Capacity * sizeof(Vector3f));
+		/*
 		Texture3c_MemoryCursor l_presentTextureCursor;
 		Texture_CreateMemoryCursor_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureCursor);
 		while (!TextureMemCursor_IsOutofBound_3C(&l_presentTextureCursor))
@@ -50,6 +55,7 @@ void RenderV2_render(RenderV2* p_render)
 			*l_presentTextureCursor.Current = l_color;
 			TextureMemCursor_MoveNextPixel_3C(&l_presentTextureCursor);
 		}
+		*/
 	}
 
 	Recti l_presentTextureClip;
@@ -60,8 +66,9 @@ void RenderV2_render(RenderV2* p_render)
 		l_wireFrameRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 		l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectsBuffer;
 		l_wireFrameRendererInput.WindowSize = p_render->AppWindow.WindowSize;
-		SolidRenderer_renderV2(&l_wireFrameRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory);
+		SolidRenderer_renderV2(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory);
 	}
+	/*
 	{
 		GizmoRendererInput l_gizmoRendererInput;
 		l_gizmoRendererInput.Buffer = &p_render->GizmoBuffer;
@@ -69,6 +76,9 @@ void RenderV2_render(RenderV2* p_render)
 		l_gizmoRendererInput.WindowSize = p_render->AppWindow.WindowSize;
 		Gizmo_Render(&l_gizmoRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip);
 	}
+	*/
+
+	SwapChain_PushTexture(&p_render->SwapChain, &p_render->RenderTargetTexture);
 	Window_presentTexture(&p_render->AppWindow, &p_render->SwapChain.PresentTexture);
 };
 

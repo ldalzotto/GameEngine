@@ -26,16 +26,16 @@ char Arr_Swap_Unsafe(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, size_t p_left, size_
 void Arr_CopyToRealloc(ARRAY_ELEMENTSIZE_PARAMETER_INTERFACE, Array_PTR p_target);
 
 
-#define ARRAY_ALLOC_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Alloc_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_initialCapacity) { Arr_Alloc(&p_array->array, sizeof(ArrayElementType), p_initialCapacity); };
-#define ARRAY_FREE_FUNCTION(MethodNamePrefix, ArrayTypePTR) inline void Arr_Free_##MethodNamePrefix##(ArrayTypePTR p_array) { Arr_Free(&p_array->array); };
-#define ARRAY_ZEROING_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Zeroing_##MethodNamePrefix##(ArrayTypePTR p_array) { Arr_Zeroing(&p_array->array, sizeof(ArrayElementType)); };
-#define ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_##MethodNamePrefix##(ArrayTypePTR p_array, ArrayElementType* p_item) { Arr_PushBackRealloc(&p_array->array, sizeof(ArrayElementType), (char*)p_item); };
-#define ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_##MethodNamePrefix##(ArrayTypePTR p_array, ArrayElementType p_item) { Arr_PushBackRealloc(&p_array->array, sizeof(ArrayElementType), (char*)&p_item); };
-#define ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_Empty_##MethodNamePrefix##(ArrayTypePTR p_array) { Arr_PushBackRealloc_Empty(&p_array->array, sizeof(ArrayElementType)); };
-#define ARRAY_ERASE_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Erase_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_index) { Arr_Erase(&p_array->array, sizeof(ArrayElementType), p_index); };
-#define ARRAY_SWAP_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Swap_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_left, size_t p_right) { Arr_Swap(&p_array->array, sizeof(ArrayElementType), p_left, p_right); };
-#define ARRAY_COPYTOREALLOC_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_CopyToRealloc_##MethodNamePrefix##(ArrayTypePTR p_source, ArrayTypePTR p_target) { Arr_CopyToRealloc(&p_source->array, sizeof(ArrayElementType), &p_target->array); };
-#define ARRAY_RESIZE_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Resize_##MethodNamePrefix##(ArrayTypePTR p_array, size_t p_newCapacity) { Arr_Resize(&p_array->array, sizeof(ArrayElementType), p_newCapacity); };
+#define ARRAY_ALLOC_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Alloc_##MethodNamePrefix(ArrayTypePTR p_array, size_t p_initialCapacity) { Arr_Alloc(&p_array->array, sizeof(ArrayElementType), p_initialCapacity); };
+#define ARRAY_FREE_FUNCTION(MethodNamePrefix, ArrayTypePTR) inline void Arr_Free_##MethodNamePrefix(ArrayTypePTR p_array) { Arr_Free(&p_array->array); };
+#define ARRAY_ZEROING_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Zeroing_##MethodNamePrefix(ArrayTypePTR p_array) { Arr_Zeroing(&p_array->array, sizeof(ArrayElementType)); };
+#define ARRAY_PUSHBACKREALLOC_FUNCTION_PTR(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_##MethodNamePrefix(ArrayTypePTR p_array, ArrayElementType* p_item) { Arr_PushBackRealloc(&p_array->array, sizeof(ArrayElementType), (char*)p_item); };
+#define ARRAY_PUSHBACKREALLOC_FUNCTION_VALUE(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_##MethodNamePrefix(ArrayTypePTR p_array, ArrayElementType p_item) { Arr_PushBackRealloc(&p_array->array, sizeof(ArrayElementType), (char*)&p_item); };
+#define ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_PushBackRealloc_Empty_##MethodNamePrefix(ArrayTypePTR p_array) { Arr_PushBackRealloc_Empty(&p_array->array, sizeof(ArrayElementType)); };
+#define ARRAY_ERASE_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Erase_##MethodNamePrefix(ArrayTypePTR p_array, size_t p_index) { Arr_Erase(&p_array->array, sizeof(ArrayElementType), p_index); };
+#define ARRAY_SWAP_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Swap_##MethodNamePrefix(ArrayTypePTR p_array, size_t p_left, size_t p_right) { Arr_Swap(&p_array->array, sizeof(ArrayElementType), p_left, p_right); };
+#define ARRAY_COPYTOREALLOC_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_CopyToRealloc_##MethodNamePrefix(ArrayTypePTR p_source, ArrayTypePTR p_target) { Arr_CopyToRealloc(&p_source->array, sizeof(ArrayElementType), &p_target->array); };
+#define ARRAY_RESIZE_FUNCTION(MethodNamePrefix, ArrayTypePTR, ArrayElementType) inline void Arr_Resize_##MethodNamePrefix(ArrayTypePTR p_array, size_t p_newCapacity) { Arr_Resize(&p_array->array, sizeof(ArrayElementType), p_newCapacity); };
 
 
 ARRAY_ALLOC_FUNCTION(Int, Array_Int_PTR, int)

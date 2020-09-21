@@ -15,6 +15,19 @@ void Texture_Free_3C(Texture3c_PTR p_texture)
 	Arr_Free(&p_texture->Pixels.array);
 };
 
+void Texture_Alloc_3f(Texture3f_PTR p_texture, uint16_t p_width, uint16_t p_height)
+{
+	p_texture->Width = p_width;
+	p_texture->Height = p_height;
+	Arr_Alloc_Color3f(&p_texture->Pixels, ((size_t)p_texture->Width * p_texture->Height));
+	p_texture->Pixels.Size = p_texture->Pixels.Capacity;
+};
+
+void Texture_Free_3f(Texture3f_PTR p_texture)
+{
+	Arr_Free(&p_texture->Pixels.array);
+};
+
 size_t Texture_GetSizeInBytes_3C(const Texture3c_PTR p_texture)
 {
 	return ((size_t)p_texture->Width * p_texture->Height) * (3 * sizeof(char));

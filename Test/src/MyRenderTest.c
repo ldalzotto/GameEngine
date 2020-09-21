@@ -91,11 +91,11 @@ int main(int argc, char* argv[])
 
 
 
-	//  while (!Window_askedForClose(&renderV2.AppWindow))
-	//  {
-	// 
-	for (size_t i = 0; i < 50; i++)
-	{
+	 while (!Window_askedForClose(&renderV2.AppWindow))
+	 {
+	
+	 // for (size_t i = 0; i < 3; i++)
+	 // {
 		float l_deltaTime = (float)(Clock_currentTime_mics() - LastFrameTime);
 		LastFrameTime = Clock_currentTime_mics();
 
@@ -112,8 +112,6 @@ int main(int argc, char* argv[])
 
 		RenderV2_render(&renderV2);
 	}
-
-	// }
 
 	MeshResourceProvider_ReleaseResource(&renderV2.Resources.MeshResourceProvider, &l_mesh->Key);
 	RenderV2_free(&renderV2);

@@ -2,6 +2,8 @@
 
 #include "Objects/Texture/Texture.h"
 #include "Objects/Window/Window.h"
+#include "v2/_interface/ColorC.h"
+#include "v2/Math.h"
 #include "Functional/Callback/Observer.h"
 
 void SwapChain_Alloc(SwapChain* p_swapChain)
@@ -36,4 +38,13 @@ void SwapChain_Resize(SwapChain* p_swapChain, uint32_t p_width, uint32_t p_heigh
 	Texture_Alloc_3C(&p_swapChain->PresentTexture, p_width, p_height);
 
 	Observer_Broadcast(&p_swapChain->OnSwapChainBuilded, NULL);
+};
+
+void SwapChain_PushTexture(SwapChain* p_swapChain, Texture3f_PTR p_pushedTexture)
+{
+	size_t l_size = (size_t)p_pushedTexture->Height * p_pushedTexture->Width;
+	for (size_t i = 0; i < l_size; i++)
+	{
+		Color_Convert_3F_3C(&p_pushedTexture->Pixels.Memory[i], &p_swapChain->PresentTexture.Pixels.Memory[i]);
+	}
 };

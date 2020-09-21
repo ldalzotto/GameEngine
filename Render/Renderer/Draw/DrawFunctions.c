@@ -23,8 +23,9 @@ void Draw_LineClipped(
 	};
 };
 
-void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Texture3c_PTR p_to, Recti_PTR p_clipRect, RenderLights_PTR p_renderLights,
+void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Texture3f_PTR p_to, Recti_PTR p_clipRect, RenderLights_PTR p_renderLights,
 	SolidRenderer_Memory_PTR p_solidRendererMemory) {
+
 #if RENDER_PERFORMANCE_TIMER && RENDER_PERFORMANCE_TIMER_PER_PIXEL
 	size_t tmp_timer_0;
 #endif
@@ -83,7 +84,9 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 			// Vec_Mul_3f_1f(&l_pixelColor_3f.Vec, (1.0f * l_rasterizerIterator.I0) , &l_pixelColor_3f.Vec);
 
 
-			Color_Convert_3F_3C(&l_pixelColor_3f, (Color3c_PTR)&p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)]);
+			// p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = (Color3c_PTR)l_pixelColor_3f;
+			p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = l_pixelColor_3f;
+			// Color_Convert_3F_3C(&l_pixelColor_3f, (Color3c_PTR)&p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)]);
 
 #if RENDER_PERFORMANCE_TIMER && RENDER_PERFORMANCE_TIMER_PER_PIXEL
 			PerformanceCounter_AddTime(&GWireframeRendererPerformace.AverageRasterization_PixelShading, Clock_currentTime_mics() - tmp_timer_0);
@@ -94,3 +97,4 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 	}
 
 };
+

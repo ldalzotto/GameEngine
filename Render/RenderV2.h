@@ -33,6 +33,8 @@ typedef struct RenderV2_TYP
 
 	RenderResourceProvider Resources;
 
+	Texture3f RenderTargetTexture;
+
 	GlobalBuffers GlobalBuffer;
 	SolidRenderer_Memory WireframeRenderMemory;
 	GizmoBuffer GizmoBuffer;

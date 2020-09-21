@@ -13,6 +13,10 @@ typedef struct Color3f_TYP
 	
 }Color3f, * Color3f_PTR;
 
+typedef struct Array_Color3f_TYP
+{
+	ARRAY_TYPE_DEFINITION(Color3f)
+}Array_Color3f, * Array_Color3f_PTR;
 
 typedef struct Color3c_TYP
 {

@@ -28,3 +28,10 @@ typedef struct Texture3c_MemoryCursor_TYP
 	Color3c_PTR Current;
 	size_t CurrentIndex;
 }Texture3c_MemoryCursor, * Texture3c_MemoryCursor_PTR;
+
+
+typedef struct Texture3f_TYP
+{
+	uint16_t Width, Height;
+	Array_Color3f Pixels;
+}Texture3f, * Texture3f_PTR;

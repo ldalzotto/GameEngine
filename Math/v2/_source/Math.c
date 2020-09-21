@@ -52,10 +52,16 @@ double Math_min(double left, double right)
 
 float Math_clamp01f(float p_value)
 {
-	if (p_value <= FLOAT_TOLERANCE) { return 0.0f; }
-	else if (p_value >= 1.0f + FLOAT_TOLERANCE) { return 1.0f; }
+	if (p_value <= 0.0f) { return 0.0f; }
+	else if (p_value >= 1.0f) { return 1.0f; }
 	else { return p_value; };
 };
+
+float Math_clamp1f(float p_value)
+{
+	return (p_value >= 1.0f ? 1.0f : p_value);
+};
+
 
 /* VECTOR - Equals */
 bool Vec_Equals_2d(const Vector2d_PTR p_left, const Vector2d_PTR p_right)
@@ -1136,9 +1142,9 @@ void BoxPoints_Mul_F_M4F(const BoxFPoints_PTR p_boxPoints, const Matrix4f_PTR p_
 #if 1
 void Color_Convert_3F_3C(Color3f_PTR p_color3f, Color3c_PTR p_color3c)
 {
-	p_color3c->r = (char)(Math_clamp01f(p_color3f->r) * 255.0f);
-	p_color3c->g = (char)(Math_clamp01f(p_color3f->g) * 255.0f);
-	p_color3c->b = (char)(Math_clamp01f(p_color3f->b) * 255.0f);
+	p_color3c->r = (char)(Math_clamp1f(p_color3f->r) * 255.0f);
+	p_color3c->g = (char)(Math_clamp1f(p_color3f->g) * 255.0f);
+	p_color3c->b = (char)(Math_clamp1f(p_color3f->b) * 255.0f);
 };
 
 #endif

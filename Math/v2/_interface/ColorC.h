@@ -13,3 +13,4 @@ inline void Color_Convert_3C_3F_inline(Color3c_PTR p_color3c, Color3f_PTR p_colo
 };
 
 ARRAY_ALLOC_FUNCTION(Color3c, Array_Color3c_PTR, Color3c)
+ARRAY_ALLOC_FUNCTION(Color3f, Array_Color3f_PTR, Color3f)

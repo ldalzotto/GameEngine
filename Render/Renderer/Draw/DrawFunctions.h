@@ -15,5 +15,5 @@ void Draw_LineClipped(
 	Texture3c_PTR p_to, Recti_PTR p_clipRect,
 	Color3c_PTR p_color);
 
-void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Texture3c_PTR p_to, Recti_PTR p_clipRect, RenderLights_PTR p_renderLights,
+void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Texture3f_PTR p_to, Recti_PTR p_clipRect, RenderLights_PTR p_renderLights,
 		SolidRenderer_Memory_PTR p_solidRendererMemory);
