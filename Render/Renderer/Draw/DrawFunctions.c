@@ -10,8 +10,8 @@
 
 void Draw_LineClipped(
 	Vector2i_PTR p_begin, Vector2i_PTR p_end,
-	Texture3c_PTR p_to, Recti_PTR p_clipRect,
-	Color3c_PTR p_color)
+	Texture3f_PTR p_to, Recti_PTR p_clipRect,
+	Color3f_PTR p_color)
 {
 	LineRasterizerIterator l_lineRasterizerIterator;
 	if (LineRasterize_Initialize(p_begin, p_end, p_clipRect, &l_lineRasterizerIterator))

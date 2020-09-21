@@ -69,15 +69,14 @@ void RenderV2_render(RenderV2* p_render)
 		l_wireFrameRendererInput.WindowSize = p_render->AppWindow.WindowSize;
 		SolidRenderer_renderV2(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->WireframeRenderMemory);
 	}
-	/*
+
 	{
 		GizmoRendererInput l_gizmoRendererInput;
 		l_gizmoRendererInput.Buffer = &p_render->GizmoBuffer;
 		l_gizmoRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;		
 		l_gizmoRendererInput.WindowSize = p_render->AppWindow.WindowSize;
-		Gizmo_Render(&l_gizmoRendererInput, &p_render->SwapChain.PresentTexture, &l_presentTextureClip);
+		Gizmo_Render(&l_gizmoRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip);
 	}
-	*/
 
 	SwapChain_PushTexture(&p_render->SwapChain, &p_render->RenderTargetTexture);
 	Window_presentTexture(&p_render->AppWindow, &p_render->SwapChain.PresentTexture);
