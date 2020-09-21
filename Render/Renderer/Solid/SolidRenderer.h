@@ -35,11 +35,6 @@ typedef struct Array_RenderableObjectPipeline_TYP
 	ARRAY_TYPE_DEFINITION(RenderableObjectPipeline)
 }Array_RenderableObjectPipeline, * Array_RenderableObjectPipeline_PTR;
 
-typedef struct MeshProperties_TYP
-{
-	Polgyon_UV_HANDLE PolygonUV;
-}MeshProperties, * MeshProperties_PTR;
-
 typedef struct PolygonPipelineV2_TYP
 {
 	char IsCulled;
@@ -48,8 +43,8 @@ typedef struct PolygonPipelineV2_TYP
 	size_t FlatShadingCalculationIndex;
 
 	size_t AssociatedRenderableObjectPipeline;
+	size_t MeshPolygonIndex;
 	Material_HANDLE Material;
-	MeshProperties MaterialMeshProperties;
 }PolygonPipelineV2, * PolygonPipelineV2_PTR;
 
 typedef struct ARRAY_PolygonPipelineV2_TYP

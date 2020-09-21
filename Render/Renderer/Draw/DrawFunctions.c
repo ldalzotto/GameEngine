@@ -33,7 +33,11 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 #endif
 
 	Color3f l_pixelColor_3f;
+
+	//TODO -> Avoiding these lookups ? Mesh can be precomputed per object ? Or maybe having a single structure that hold these informations (at least the material and the mesh)
 	Material_PTR l_material = &RRenderHeap.MaterialAllocator.array.Memory[p_polygonPipeline->Material.Handle];
+	Mesh_PTR l_mesh = p_solidRendererMemory->RederableObjectsPipeline.Memory[p_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Mesh;
+	Polygon_UV_PTR l_polygonUV = &RRenderHeap.PolygonUVAllocator.array.Memory[l_mesh->PerVertexData.UV1.Memory[p_polygonPipeline->MeshPolygonIndex].Handle];
 
 	PolygonRasterizerIterator l_rasterizerIterator;
 	PolygonRasterize_Initialize(p_polygonPixelPositions, p_clipRect, 1, &l_rasterizerIterator);
@@ -61,6 +65,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 			float l_interpolatedDepth = (p_polygonCameraDepth->v1 * l_rasterizerIterator.InterpolationFactors.I0)
 				+ (p_polygonCameraDepth->v2 * l_rasterizerIterator.InterpolationFactors.I1) + (p_polygonCameraDepth->v3 * l_rasterizerIterator.InterpolationFactors.I2);
 
+			// Pixel depth culling
 			if (DepthBuffer_PushDepthValue(p_depthBuffer, &l_rasterizerIterator.RasterizedPixel, l_interpolatedDepth))
 			{
 				switch (l_material->ShadingType)
@@ -68,7 +73,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 				case MATERIAL_SHADING_TYPE_FLAT:
 				{
 					{
-						FlatShadingPixelCalculation_ShadePixelColor(&p_solidRendererMemory->FlatShadingCalculations.Memory[p_polygonPipeline->FlatShadingCalculationIndex], p_polygonPipeline,
+						FlatShadingPixelCalculation_ShadePixelColor(&p_solidRendererMemory->FlatShadingCalculations.Memory[p_polygonPipeline->FlatShadingCalculationIndex], l_polygonUV,
 							p_renderLights, l_material, &l_rasterizerIterator.InterpolationFactors, &l_pixelColor_3f);
 					}
 					break;

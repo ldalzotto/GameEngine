@@ -14,7 +14,7 @@ void PixelColorCaluclation_Polygon_PushCalculations(PolygonPipelineV2_PTR p_poly
 void FlatShadingPixelCalculation_PreCalculation(FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, RenderLights_PTR p_renderLights, SolidRenderer_Memory_PTR p_solidRendererMemory);
 
 void FlatShadingPixelCalculation_ShadePixelColor(
-	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const PolygonPipelineV2_PTR p_polygonPipeline,
+	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const Polygon2f_PTR p_polygonUV,
 	RenderLights_PTR p_renderLights, Material_PTR p_material,
 	const PolygonRasterizer_InterpolationFactor_PTR p_interpolationFactors, Color3f_PTR out_pixelColor);
 

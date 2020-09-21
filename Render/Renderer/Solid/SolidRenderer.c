@@ -100,12 +100,8 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 											l_polygon->v3 + l_vertexIndexOffset
 										},
 										.AssociatedRenderableObjectPipeline = p_memory->RederableObjectsPipeline.Size,
-										.Material = l_renderableObject->Material
-				};
-
-				if (l_renderableObjectMaterial->MeshPropertyUsage == MATERIAL_MESHPROPERTY_USAGE_UV)
-				{
-					l_polygonPipeline->MaterialMeshProperties.PolygonUV = l_renderableObject->Mesh->PerVertexData.UV1.Memory[j];
+										.Material = l_renderableObject->Material,
+										.MeshPolygonIndex = j
 				};
 			}
 

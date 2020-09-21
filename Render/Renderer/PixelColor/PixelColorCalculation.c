@@ -37,7 +37,7 @@ void FlatShadingPixelCalculation_PreCalculation(FlatShadingPixelCalculation_PTR 
 };
 
 void FlatShadingPixelCalculation_ShadePixelColor(
-	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const PolygonPipelineV2_PTR p_polygonPipeline,
+	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const Polygon2f_PTR p_polygonUV,
 	RenderLights_PTR p_renderLights, Material_PTR p_material,
 	const PolygonRasterizer_InterpolationFactor_PTR p_interpolationFactors, Color3f_PTR out_pixelColor)
 {
@@ -49,8 +49,8 @@ void FlatShadingPixelCalculation_ShadePixelColor(
 		Vector2f l_interpolatedUv;
 		Color3f l_sampledPoint;
 
-		_i_Polygon_Interpolate_V2F(&RRenderHeap.PolygonUVAllocator.array.Memory[p_polygonPipeline->MaterialMeshProperties.PolygonUV.Handle],
-			p_interpolationFactors->I0, p_interpolationFactors->I1, p_interpolationFactors->I2, &l_interpolatedUv);
+		//&RRenderHeap.PolygonUVAllocator.array.Memory[p_polygonPipeline->MaterialMeshProperties.PolygonUV.Handle]
+		_i_Polygon_Interpolate_V2F(p_polygonUV, p_interpolationFactors->I0, p_interpolationFactors->I1, p_interpolationFactors->I2, &l_interpolatedUv);
 
 		_i_TextureSample_Point_3f(&RRenderHeap.Texture3cAllocator.array.Memory[p_material->DiffuseTexture.Handle], &l_interpolatedUv, &l_sampledPoint);
 
