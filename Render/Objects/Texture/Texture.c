@@ -29,6 +29,19 @@ void Texture_Free_3f(Texture3f_PTR p_texture)
 	Arr_Free(&p_texture->Pixels.array);
 };
 
+void Texture_Alloc_f(Texturef_PTR p_texture, uint16_t p_width, uint16_t p_height)
+{
+	p_texture->Width = p_width;
+	p_texture->Height = p_height;
+	Arr_Alloc_Float(&p_texture->Pixels, ((size_t)p_texture->Width * p_texture->Height));
+	p_texture->Pixels.Size = p_texture->Pixels.Capacity;
+};
+
+void Texture_Free_f(Texturef_PTR p_texture)
+{
+	Arr_Free(&p_texture->Pixels.array);
+};
+
 void Texture_AllocHeap_3c(uint16_t p_width, uint16_t p_height, Texture3c_HANDLE_PTR out_textureHandle)
 {
 	PoolAllocator_AllocElement_Texture3c(&RRenderHeap.Texture3cAllocator, out_textureHandle);

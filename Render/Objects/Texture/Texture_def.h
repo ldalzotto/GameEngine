@@ -40,3 +40,9 @@ typedef struct Texture3f_TYP
 	uint16_t Width, Height;
 	Array_Color3f Pixels;
 }Texture3f, * Texture3f_PTR;
+
+typedef struct Texturef_TYP
+{
+	uint16_t Width, Height;
+	Array_Float Pixels;
+}Texturef, * Texturef_PTR;

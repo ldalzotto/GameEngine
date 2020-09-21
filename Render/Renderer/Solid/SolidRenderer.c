@@ -26,8 +26,8 @@ ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRA
 ARRAY_RESIZE_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
 
 SORT_QUICK_ALGORITHM(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed,
-	SQA_ComparedElementValueExpression.DistanceFromCamera > l_pivot->DistanceFromCamera,
-	SQA_ComparedElementValueExpressionInvert.DistanceFromCamera < l_pivot->DistanceFromCamera);
+	SQA_ComparedElementValueExpression.DistanceFromCamera < l_pivot->DistanceFromCamera,
+	SQA_ComparedElementValueExpressionInvert.DistanceFromCamera > l_pivot->DistanceFromCamera);
 
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
@@ -45,7 +45,7 @@ inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPip
 // Sorts polygon based on z coordinates of camera projected vertices
 inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_solidRendererMemory);
 
-void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, SolidRenderer_Memory* p_memory)
+void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, SolidRenderer_Memory* p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
@@ -249,13 +249,21 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 		PerformanceCounter_AddTime(&GWireframeRendererPerformace.AverageRasterization_TransformCoords, Clock_currentTime_mics() - tmp_timer_2);
 #endif
 
-		Polygon2i l_polygon = {
+		Polygon2i l_polygonPixelPositions = {
 			.v1 = l_v1->PixelPosition,
 			.v2 = l_v2->PixelPosition,
 			.v3 = l_v3->PixelPosition
 		};
 
-		Draw_PolygonClipped(l_polygonPipeline, &l_polygon, p_to, p_to_clipRect, &GRenderLights, p_memory);
+		//For depth buffer
+		Polygonf l_polygoncameraDepth =
+		{
+			.v1 = l_v1->CameraSpacePosition.z,
+			.v2 = l_v2->CameraSpacePosition.z,
+			.v3 = l_v3->CameraSpacePosition.z,
+		};
+
+		Draw_PolygonClipped(l_polygonPipeline, &l_polygonPixelPositions, &l_polygoncameraDepth, p_to, p_to_clipRect, &GRenderLights, p_depthBuffer, p_memory);
 	}
 
 

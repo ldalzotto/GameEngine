@@ -18,4 +18,5 @@ typedef struct Camera_TYP
 	Matrix4f ProjectionMatrix;
 	Matrix4f ViewMatrix;
 	Frustum CameraFrustum;
+	float Far;
 }Camera, * Camera_PTR;

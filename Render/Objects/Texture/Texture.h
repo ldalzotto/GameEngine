@@ -10,6 +10,9 @@ void Texture_Free_3C(Texture3c_PTR p_texture);
 void Texture_Alloc_3f(Texture3f_PTR p_texture, uint16_t p_width, uint16_t p_height);
 void Texture_Free_3f(Texture3f_PTR p_texture);
 
+void Texture_Alloc_f(Texturef_PTR p_texture, uint16_t p_width, uint16_t p_height);
+void Texture_Free_f(Texturef_PTR p_texture);
+
 void Texture_AllocHeap_3c(uint16_t p_width, uint16_t p_height, Texture3c_HANDLE_PTR out_textureHandle);
 void Texture_PushHeap_3c(Texture3c_PTR p_texture, Texture3c_HANDLE_PTR out_textureHandle);
 void Texture_FreeHeap_3c(Texture3c_HANDLE_PTR p_textureHandle);

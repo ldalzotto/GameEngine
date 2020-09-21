@@ -46,6 +46,7 @@ void CameraRenderSystem_ConsumeECSEvents(CameraRenderSystem_PTR p_cameraRenderSy
 			CAMERABUFFER_PTR l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
 			l_cameraBuffer->ViewMatrix = (Matrix4f_PTR)&l_operation.Camera->ViewMatrix;
 			l_cameraBuffer->ProjectionMatrix = (Matrix4f_PTR)&l_operation.Camera->ProjectionMatrix;
+			l_cameraBuffer->Far = &l_operation.Camera->Far;
 			l_cameraBuffer->CameraFrustum = &l_operation.Camera->CameraFrustum;
 		}
 		break;

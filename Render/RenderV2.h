@@ -5,6 +5,7 @@
 
 #include "Renderer/Solid/SolidRenderer.h"
 #include "Renderer/Gizmo/Gizmo.h"
+#include "Depth/DepthBuffer_def.h"
 #include "Objects/SwapChain/SwapChain_def.h"
 #include "Objects/Window/Window.h"
 #include "Objects/Resource/MeshResourceProviderV2.h"
@@ -35,6 +36,7 @@ typedef struct RenderV2_TYP
 
 	RenderResourceProvider Resources;
 	
+	DepthBuffer DepthBuffer;
 	Texture3f RenderTargetTexture;
 
 	GlobalBuffers GlobalBuffer;

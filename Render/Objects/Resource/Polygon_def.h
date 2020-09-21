@@ -15,6 +15,11 @@ struct \
 ElementType Points[3]; \
 };
 
+typedef struct Polygonf_TYP
+{
+	POLYGON_TYPE_DEFINITION(float)
+}Polygonf, * Polygonf_PTR;
+
 typedef struct Polygon2f_TYP
 {
 	POLYGON_TYPE_DEFINITION(Vector2f)

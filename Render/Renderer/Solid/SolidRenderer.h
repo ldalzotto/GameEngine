@@ -9,6 +9,7 @@
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 #include "Renderer/PixelColor/PixelColorCalculation_def.h"
+#include "Depth/DepthBuffer_def.h"
 
 typedef struct SolidRendererInput_TYP
 {
@@ -97,4 +98,4 @@ void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory);
 void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, size_t height);
 void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory);
 
-void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, SolidRenderer_Memory* p_memory);
+void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, SolidRenderer_Memory* p_memory);

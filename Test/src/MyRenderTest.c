@@ -53,15 +53,6 @@ int main(int argc, char* argv[])
 		Mesh_BuildBoundingBox(&l_mesh->Mesh, &l_meshBoundingBox);
 	}
 
-
-	/*
-	Texture3c l_tex;
-	TextureReader_load("E:/GameProjects/GameEngine/Assets/", &l_tex);
-	Texture3c_HANDLE l_texHandle;
-	PoolAllocator_AllocElement_Texture3c(&RRenderHeap.Texture3cAllocator, &l_texHandle);
-	RRenderHeap.Texture3cAllocator.array.Memory[l_texHandle.Handle] = l_tex;
-	*/
-
 	Assetpath l_textureAssterPath;
 	AssetPath_GetAbsolutePath("Textures/texture.png", &l_textureAssterPath);
 	TextureResource_PTR l_texture;
@@ -86,8 +77,9 @@ int main(int argc, char* argv[])
 	Mat_ViewMatrix_M4F(&l_cameraPos, &l_forward, &l_up, &l_viewMatrix);
 
 	Matrix4f l_projectionMatrix;
+	float l_cameraFar = 50.0f;
 	Mat_Perspective_M4F(45.0f * DEG_TO_RAD,
-		((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, 50.0f, &l_projectionMatrix);
+		((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, l_cameraFar, &l_projectionMatrix);
 
 	Vector4f l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	Frustum l_cameraFrustum; Frustum_ExtractFromProjection((Matrix4f_PTR)&l_projectionMatrix, &l_cameraFrustum);
@@ -95,6 +87,7 @@ int main(int argc, char* argv[])
 	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = (Matrix4f_PTR)&l_viewMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = (Matrix4f_PTR)&l_projectionMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = l_cameraWorldPosition;
+	renderV2.GlobalBuffer.CameraBuffer.Far = &l_cameraFar;
 	renderV2.GlobalBuffer.CameraBuffer.CameraFrustum = &l_cameraFrustum;
 
 
