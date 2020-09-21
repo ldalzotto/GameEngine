@@ -83,16 +83,12 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 				break;
 				}
 
-
 				// Interpolation debug display
 
-		// l_pixelColor_3f = (Color3f){ 1.0f, 1.0f, 1.0f };
-		// Vec_Mul_3f_1f(&l_pixelColor_3f.Vec, (1.0f * l_rasterizerIterator.I0) , &l_pixelColor_3f.Vec);
+				// l_pixelColor_3f = (Color3f){ 1.0f, 1.0f, 1.0f };
+				// Vec_Mul_3f_1f(&l_pixelColor_3f.Vec, (1.0f * l_rasterizerIterator.I0) , &l_pixelColor_3f.Vec);
 
-
-		// p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = (Color3c_PTR)l_pixelColor_3f;
 				p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)] = l_pixelColor_3f;
-				// Color_Convert_3F_3C(&l_pixelColor_3f, (Color3c_PTR)&p_to->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_to->Width)]);
 
 			}
 
@@ -103,7 +99,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 			PerformanceCounter_AddTime(&GWireframeRendererPerformace.AverageRasterization_PixelShading, Clock_currentTime_mics() - tmp_timer_0);
 #endif
 
-			}
+		}
 
 		}
 

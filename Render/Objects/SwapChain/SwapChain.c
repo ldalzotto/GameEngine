@@ -2,7 +2,7 @@
 
 #include "Objects/Texture/Texture.h"
 #include "Objects/Window/Window.h"
-#include "v2/_interface/ColorC.h"
+#include "v2/_inline/ColorC_inline.c"
 #include "v2/Math.h"
 #include "Functional/Callback/Observer.h"
 
@@ -45,6 +45,6 @@ void SwapChain_PushTexture(SwapChain* p_swapChain, Texture3f_PTR p_pushedTexture
 	size_t l_size = (size_t)p_pushedTexture->Height * p_pushedTexture->Width;
 	for (size_t i = 0; i < l_size; i++)
 	{
-		Color_Convert_3F_3C(&p_pushedTexture->Pixels.Memory[i], &p_swapChain->PresentTexture.Pixels.Memory[i]);
+		_i_Color_Convert_3F_3C(&p_pushedTexture->Pixels.Memory[i], &p_swapChain->PresentTexture.Pixels.Memory[i]);
 	}
 };

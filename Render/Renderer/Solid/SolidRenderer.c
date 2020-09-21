@@ -25,7 +25,7 @@ ARRAY_ALLOC_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipelin
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
 ARRAY_RESIZE_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
 
-SORT_QUICK_ALGORITHM(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed,
+SORT_QUICK_ALGORITHM(PolygonPipeline_CameraDistanceIndexed_FrontToFar, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed,
 	SQA_ComparedElementValueExpression.DistanceFromCamera < l_pivot->DistanceFromCamera,
 	SQA_ComparedElementValueExpressionInvert.DistanceFromCamera > l_pivot->DistanceFromCamera);
 
@@ -295,6 +295,8 @@ inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPip
 	}
 };
 
+// Polygon sorting is done so that the nearest polygon from camera is rendered first.
+// This is to have better chance to discard pixel draw calculation (thanks to the depth buffer)
 inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_solidRendererMemory)
 {
 	for (size_t i = 0; i < p_solidRendererMemory->PolygonPipelines.Size; i++)
@@ -313,7 +315,7 @@ inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_so
 			};
 		}
 	}
-	Sort_Quick_PolygonPipeline_CameraDistanceIndexed(&p_solidRendererMemory->OrderedPolygonPipelinesIndex);
+	Sort_Quick_PolygonPipeline_CameraDistanceIndexed_FrontToFar(&p_solidRendererMemory->OrderedPolygonPipelinesIndex);
 };
 
 

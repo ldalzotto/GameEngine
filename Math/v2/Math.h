@@ -9,5 +9,3 @@ extern float RAD_TO_DEG;
 
 double Math_max(double left, double right);
 double Math_min(double left, double right);
-
-float Math_clamp01f(float p_value);

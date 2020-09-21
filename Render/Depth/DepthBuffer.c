@@ -19,7 +19,7 @@ void DepthBuffer_Clear(DepthBuffer_PTR p_depthBuffer, CAMERABUFFER_PTR p_cameraB
 
 char DepthBuffer_PushDepthValue(DepthBuffer_PTR p_depthBuffer, Vector2i_PTR p_pixel, float p_value)
 {
-	size_t l_pixelIndex = (size_t)p_pixel->x + (p_pixel->y * p_depthBuffer->Width);
+	size_t l_pixelIndex = ((size_t)p_pixel->y * p_depthBuffer->Width) + p_pixel->x;
 	if (p_depthBuffer->Pixels.Memory[l_pixelIndex] >= p_value)
 	{
 		p_depthBuffer->Pixels.Memory[l_pixelIndex] = p_value;
