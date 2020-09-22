@@ -29,7 +29,8 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 			l_meshDrawOperation.RenderedObject->Material = l_meshDrawOperation.MeshRenderer->Material;
 
 			Arr_PushBackRealloc_MeshDrawSystemOperation(&p_meshDrawSystem->MeshDrawSystemOperations, &l_meshDrawOperation);
-			Arr_PushBackRealloc_RenderedObjectHandle(&p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, &l_meshDrawOperation.RenderedObject);
+			RendereableObject_PushToRenderEngine(p_renderInterface->GlobalBuffer.RenderedObjectsBuffer, l_meshDrawOperation.RenderedObject);
+			// Arr_PushBackRealloc_RenderedObjectHandle(&p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, &l_meshDrawOperation.RenderedObject);
 		}
 		break;
 		case EntityFilterEventType_ConditionsJustNotMet:
@@ -43,17 +44,10 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 
 				if (l_meshDrawSystemOperation->Entity == l_event->Entity)
 				{
-					for (size_t k = 0; k < p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Size; k++)
+					if (RendereableObject_EraseFromRenderEngine(p_renderInterface->GlobalBuffer.RenderedObjectsBuffer, l_meshDrawSystemOperation->RenderedObject))
 					{
-						RenderedObject_HANDLE l_renderedObject = p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects.Memory[k];
-						if (l_renderedObject == l_meshDrawSystemOperation->RenderedObject)
-						{
-							free(l_renderedObject);
-							Arr_Erase_RenderedObjectHandle(&p_renderInterface->GlobalBuffer.RenderedObjectsBuffer->RenderedObjects, k);
-							break;
-						}
+						free(l_meshDrawSystemOperation->RenderedObject);
 					}
-
 					Arr_Erase_MeshDrawSystemOperation(&p_meshDrawSystem->MeshDrawSystemOperations, j);
 					break;
 				}

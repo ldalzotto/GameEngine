@@ -14,11 +14,18 @@
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 
 
+/*
+#define MATERIAL_TYPE_NotShaded_NotTextured 0
+#define MATERIAL_TYPE_NotShaded_Textured 1
+#define MATERIAL_TYPE_FlatShaded_Textured 2
+#define MATERIAL_TYPE_FlatShaded_NotTextured 3
+*/
 
 typedef struct GlobalBuffers_TYP
 {
 	CAMERABUFFER CameraBuffer;
-	RENDEREDOBJECT_BUFFER RenderedObjectsBuffer;
+	RenderedObjectBuffers RenderedObjectBuffers;
+
 }GlobalBuffers, *GlobalBuffers_PTR;
 
 typedef struct RenderResourceProvider_TYP

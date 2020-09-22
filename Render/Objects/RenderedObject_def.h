@@ -19,3 +19,4 @@ typedef struct Array_RenderedObjectHandle_TYP
 {
 	ARRAY_TYPE_DEFINITION(RenderedObject_HANDLE)
 }Array_RenderedObjectHandle, * Array_RenderedObjectHandle_PTR;
+

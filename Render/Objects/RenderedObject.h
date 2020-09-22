@@ -1,7 +1,11 @@
 #pragma once
 
 #include "RenderedObject_def.h"
+#include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 #include "DataStructures/ARRAY.h"
+
+void RendereableObject_PushToRenderEngine(RenderedObjectBuffers_PTR p_renderedObjectBuffers, RenderedObject_PTR p_renderableObject);
+char RendereableObject_EraseFromRenderEngine(RenderedObjectBuffers_PTR p_renderedObjectBuffers, RenderedObject_PTR p_renderableObject);
 
 inline void Arr_Alloc_RenderedObjectHandle(Array_RenderedObjectHandle_PTR p_array, size_t p_initialCapacity) { Arr_Alloc(&p_array->array, sizeof(RenderedObject_HANDLE), p_initialCapacity); };
 inline void Arr_PushBackRealloc_RenderedObjectHandle(Array_RenderedObjectHandle_PTR p_array, RenderedObject_HANDLE_PTR p_item) { Arr_PushBackRealloc(&p_array->array, sizeof(RenderedObject_HANDLE), (char*)p_item); };

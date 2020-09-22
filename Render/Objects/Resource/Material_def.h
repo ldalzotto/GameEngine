@@ -4,23 +4,17 @@
 #include "DataStructures/ARRAY_def.h"
 #include "Objects/Texture/Texture_def.h"
 
-typedef char MATERIAL_SHADING_TYPE;
-#define MATERIAL_SHADING_TYPE_NONE 0
-#define MATERIAL_SHADING_TYPE_FLAT 1
-
-typedef char MATERIAL_MESHPROPERTY_USAGE;
-#define MATERIAL_MESHPROPERTY_USAGE_NONE 0
-#define MATERIAL_MESHPROPERTY_USAGE_UV 1
+typedef unsigned char MATERIAL_TYPE;
+#define MATERIAL_TYPE_NotShaded_NotTextured 0
+#define MATERIAL_TYPE_NotShaded_Textured 1
+#define MATERIAL_TYPE_FlatShaded_Textured 2
+#define MATERIAL_TYPE_FlatShaded_NotTextured 3
 
 typedef struct Material_TYP
 {
-	MATERIAL_SHADING_TYPE ShadingType;
-	MATERIAL_MESHPROPERTY_USAGE MeshPropertyUsage;
-	
+	MATERIAL_TYPE Type;
 	Color3f BaseColor;
-
 	Texture3c_HANDLE DiffuseTexture;
-
 }Material, * Material_PTR;
 
 typedef struct Array_Material_TYP

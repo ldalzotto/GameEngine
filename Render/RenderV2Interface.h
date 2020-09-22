@@ -3,7 +3,7 @@
 typedef struct MeshResource_Provider_TYP MeshResource_Provider;
 typedef struct Window_TYP Window;
 typedef struct CAMERABUFFER_TYP CameraBuffer;
-typedef struct RENDEREDOBJECT_BUFFER_TYP RENDEREDOBJECT_BUFFER;
+typedef struct RenderedObjectBuffers_TYP RenderedObjectBuffers;
 typedef struct SwapChain_TYP SwapChain;
 typedef struct GizmoBuffer_TYP GizmoBuffer;
 typedef struct RendererPipeline_Memory_TYP RendererPipeline_Memory;
@@ -13,7 +13,7 @@ typedef struct RenderV2_TYP RenderV2;
 typedef struct GlobalBuffersInterface_TYP
 {
 	CameraBuffer* CameraBuffer;
-	RENDEREDOBJECT_BUFFER* RenderedObjectsBuffer;
+	RenderedObjectBuffers* RenderedObjectsBuffer;
 }GlobalBuffersInterface, * GlobalBuffersInterface_PTR;
 
 typedef struct RenderResourceProviderInterface_TYP

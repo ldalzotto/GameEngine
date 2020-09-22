@@ -63,8 +63,7 @@ int main(int argc, char* argv[])
 	Material_HANDLE l_materialHandle;
 	PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ 
-		.ShadingType = MATERIAL_SHADING_TYPE_FLAT, 
-		.MeshPropertyUsage = MATERIAL_MESHPROPERTY_USAGE_UV, 
+		.Type = MATERIAL_TYPE_FlatShaded_Textured,
 		.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
 		.DiffuseTexture = l_texture->Texture
 	};
@@ -72,7 +71,7 @@ int main(int argc, char* argv[])
 	// Arr_PushBackRealloc_Mater
 
 	l_renderableObject = (RenderedObject){ .Mesh = &l_mesh->Mesh , .MeshBoundingBox = &l_meshBoundingBox, .ModelMatrix = l_modelMatrix, .Material = l_materialHandle };
-	Arr_PushBackRealloc_RenderedObjectHandle(&renderV2.GlobalBuffer.RenderedObjectsBuffer.RenderedObjects, &l_renderableObject_ptr);
+	RendereableObject_PushToRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderableObject_ptr);
 
 	Vector3f l_cameraPos = { 9.0f, 9.0f, 9.0f }; Vector3f l_forward = { -0.572061539f, -0.587785244f, -0.572061360f }; Vector3f l_up = { -0.415627033f, 0.809017003f, -0.415626884f };
 	Matrix4f l_viewMatrix;
@@ -115,6 +114,9 @@ int main(int argc, char* argv[])
 
 		RenderV2_render(&renderV2);
 	}
+
+	RendereableObject_EraseFromRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderableObject_ptr);
+
 
 	MeshResourceProvider_ReleaseResource(&renderV2.Resources.MeshResourceProvider, &l_mesh->Key);
 	TextureResourceProvider_ReleaseResource(&renderV2.Resources.TextureResourceProvider, &l_texture->Key);

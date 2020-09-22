@@ -1,5 +1,6 @@
 #include "RenderableObjectToPipeline.h"
 
+#include "DataStructures/ARRAY.h"
 
 ARRAY_RESIZE_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(RenderableObjectPipeline, Array_RenderableObjectPipeline_PTR, RenderableObjectPipeline)
