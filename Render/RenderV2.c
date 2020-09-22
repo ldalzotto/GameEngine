@@ -5,6 +5,7 @@
 #include "Depth/DepthBuffer.h"
 #include "Objects/SwapChain/SwapChain.h"
 #include "Objects/Texture/Texture.h"
+#include "Renderer/Pipeline/RendererPipelineMemory.h"
 
 void GlobalBuffers_alloc(GlobalBuffers* p_buffer)
 {
@@ -27,7 +28,7 @@ void RenderV2_initialize(RenderV2* p_render)
 
 
 	Window_init(&p_render->AppWindow);
-	SolidRenderer_Memory_alloc(&p_render->WireframeRenderMemory);
+	RendererPipeline_Memory_Alloc(&p_render->WireframeRenderMemory);
 	GlobalBuffers_alloc(&p_render->GlobalBuffer);
 	GizmoBuffer_alloc(&p_render->GizmoBuffer);
 
@@ -66,6 +67,8 @@ void RenderV2_render(RenderV2* p_render)
 	Texture_BuildClipRect_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureClip);
 
 	{
+		RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
+
 		SolidRendererInput l_wireFrameRendererInput;
 		l_wireFrameRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
 		l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectsBuffer;
@@ -91,7 +94,7 @@ void RenderV2_free(RenderV2* p_render)
 	GlobalBuffers_free(&p_render->GlobalBuffer);
 	SwapChain_Free(&p_render->SwapChain);
 	DepthBuffer_Free(&p_render->DepthBuffer);
-	SolidRenderer_Memory_free(&p_render->WireframeRenderMemory);
+	RendererPipeline_Memory_Free(&p_render->WireframeRenderMemory);
 	TextureResourceProvider_Free(&p_render->Resources.TextureResourceProvider);
 	MeshResourceProvider_Free(&p_render->Resources.MeshResourceProvider);
 	RenderHeap_Free(&RRenderHeap);

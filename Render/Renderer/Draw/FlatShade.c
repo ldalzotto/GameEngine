@@ -61,7 +61,6 @@ inline char _i_DepthTest(PolygonRasterizerIterator_PTR p_rasterizer, Polygonf_PT
 typedef struct FlatShadingPixelCalculation_TYP
 {
 	Color3f AttenuatedLightColor;
-	Color3f FinalPolygonColor;
 }FlatShadingPixelCalculation, * FlatShadingPixelCalculation_PTR;
 
 inline void _i_FlatShadingPixelCalculation_PreCalculation(FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, RenderLights_PTR p_renderLights, PolygonPipelineV2_PTR p_polygonPipeline)
