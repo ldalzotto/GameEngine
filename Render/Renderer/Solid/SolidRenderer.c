@@ -3,13 +3,11 @@
 #include <stdio.h>
 
 #include "Heap/RenderHeap.h"
-#include "Cull/ObjectCulling.h"
-#include "Cull/BackfaceCulling.h"
+#include "Renderer/Transformation/RenderableObjectTransform.h"
 #include "Objects/Resource/Polygon.h"
-#include "v2/_interface/WindowSize.h"
+#include "Cull/ObjectCulling.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorStructuresC.h"
-#include "Raster/Rasterizer.h"
 #include "Renderer/Draw/DrawFunctions.h"
 #include "Renderer/PixelColor/PixelColorCalculation.h"
 #include "Metrics/RenderTimeMetrics.h"
@@ -39,20 +37,17 @@ RenderLights GRenderLights =
 	.AmbientLight = {.Color = {0.1f, 0.1f, 0.1f} }
 };
 
-inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const SolidRendererInput* p_input);
-
 //Paint algorithm -> sorting polygons
 // Sorts polygon based on z coordinates of camera projected vertices
-inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_solidRendererMemory);
+inline void SolidRenderer_SortPolygonsForRendering(RendererPipeline_Memory_PTR p_solidRendererMemory);
 
-void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, SolidRenderer_Memory* p_memory)
+void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
 #endif
 
 	SolidRenderer_Memory_clear(p_memory, p_to->Width, p_to->Height);
-	Vector4f tmp_vec4_0;
 
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision tmp_timer, tmp_timer_2;
@@ -77,7 +72,7 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 				Arr_PushBackRealloc_Empty_VertexPipeline(&p_memory->VertexPipeline);
 				p_memory->VertexPipeline.Memory[p_memory->VertexPipeline.Size - 1] = (VertexPipeline){
 					.Vertex = l_renderableObject->Mesh->Vertices.Memory[j],
-					.CameraPositionCalculated = 0,
+					.WorldPositionCalculated = 0,
 					.PixelPositionCalculated = 0
 				};
 			}
@@ -125,91 +120,16 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageDataSetup, Clock_currentTime_mics() - tmp_timer);
 #endif
 
-#if RENDER_PERFORMANCE_TIMER
-	tmp_timer = Clock_currentTime_mics();
-#endif
 
-	// Local to world
-	for (size_t i = 0; i < p_memory->RederableObjectsPipeline.Size; i++)
+	RenderableObjectTransform_Input l_renderableObjectTransformInput = 
 	{
-		RenderableObjectPipeline_PTR l_renderableObject = &p_memory->RederableObjectsPipeline.Memory[i];
+		.RenderHeap = &RRenderHeap,
+		.RendererPipelineMemory = p_memory,
+		.CameraBuffer = p_input->CameraBuffer,
+		.WindowSize = &p_input->WindowSize
+	};
+	RendereableObject_TransformPolygons(&l_renderableObjectTransformInput);
 
-		for (size_t j = l_renderableObject->VertexPipelineIndexBeginIncluded; j < l_renderableObject->VertexPipelineIndexEndExcluded; j++)
-		{
-			VertexPipeline_PTR l_vertexPipeline = &p_memory->VertexPipeline.Memory[j];
-			Vertex_PTR l_vertex = &RRenderHeap.VertexAllocator.array.Memory[l_vertexPipeline->Vertex.Handle];
-			Mat_Mul_M4F_V4F(&l_renderableObject->RenderedObject->ModelMatrix, &l_vertex->LocalPosition, &tmp_vec4_0);
-			l_vertexPipeline->TransformedPosition = tmp_vec4_0;
-		}
-	}
-
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageLocalToWorld, Clock_currentTime_mics() - tmp_timer);
-#endif
-
-#if RENDER_PERFORMANCE_TIMER
-	tmp_timer = Clock_currentTime_mics();
-#endif
-
-	// Backface culling
-	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
-	{
-		PolygonPipelineV2_PTR l_polygon = &p_memory->PolygonPipelines.Memory[i];
-
-		Polygon4fPTR l_poly =
-		{
-			.v1 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v1].TransformedPosition,
-			.v2 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v2].TransformedPosition,
-			.v3 = &p_memory->VertexPipeline.Memory[l_polygon->VerticesPipelineIndex.v3].TransformedPosition
-		};
-
-		Vector4f l_worldNormal;
-		Polygon_CalculateNormal_V4FPTR(&l_poly, &l_worldNormal);
-
-		l_polygon->IsCulled = BackFaceCulled_Normal3fPTR(&l_worldNormal, l_poly.v1, &p_input->CameraBuffer->WorldPosition);
-
-		if (!l_polygon->IsCulled)
-		{
-			PixelColorCaluclation_Polygon_PushCalculations(l_polygon, &l_worldNormal, p_memory);
-		}
-	}
-
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageBackfaceCulling, Clock_currentTime_mics() - tmp_timer);
-#endif
-
-#if RENDER_PERFORMANCE_TIMER
-	tmp_timer = Clock_currentTime_mics();
-#endif
-
-	// Light Calculations
-	for (size_t i = 0; i < p_memory->FlatShadingCalculations.Size; i++)
-	{
-		FlatShadingPixelCalculation_PreCalculation(&p_memory->FlatShadingCalculations.Memory[i], &GRenderLights, p_memory);
-	}
-
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AveragePreRasterizationLightCalculation, Clock_currentTime_mics() - tmp_timer);
-#endif
-
-
-	//World to camera
-	for (size_t i = 0; i < p_memory->PolygonPipelines.Size; i++)
-	{
-		PolygonPipelineV2_PTR l_polygonPipeline = &p_memory->PolygonPipelines.Memory[i];
-
-		if (!l_polygonPipeline->IsCulled)
-		{
-			VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v1];
-			VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v2];
-			VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v3];
-
-			if (!l_v1->CameraPositionCalculated) { Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, &l_v1->TransformedPosition, &l_v1->CameraSpacePosition); l_v1->CameraPositionCalculated = 1; }
-			if (!l_v2->CameraPositionCalculated) { Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, &l_v2->TransformedPosition, &l_v2->CameraSpacePosition); l_v2->CameraPositionCalculated = 1; }
-			if (!l_v3->CameraPositionCalculated) { Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, &l_v3->TransformedPosition, &l_v3->CameraSpacePosition); l_v3->CameraPositionCalculated = 1; }
-
-		}
-	}
 
 #if RENDER_PERFORMANCE_TIMER
 	tmp_timer = Clock_currentTime_mics();
@@ -229,21 +149,10 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 	{
 		PolygonPipelineV2_PTR l_polygonPipeline = &p_memory->PolygonPipelines.Memory[p_memory->OrderedPolygonPipelinesIndex.Memory[i].Index];
 
-#if RENDER_PERFORMANCE_TIMER
-		tmp_timer_2 = Clock_currentTime_mics();
-#endif
-
 		VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v1];
 		VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v2];
 		VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v3];
 
-		WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v1, p_input);
-		WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v2, p_input);
-		WireframeRenderer_CalculatePixelPosition_FromWorldPosition(l_v3, p_input);
-
-#if RENDER_PERFORMANCE_TIMER
-		PerformanceCounter_AddTime(&GWireframeRendererPerformace.AverageRasterization_TransformCoords, Clock_currentTime_mics() - tmp_timer_2);
-#endif
 
 		Polygon2i l_polygonPixelPositions = {
 			.v1 = l_v1->PixelPosition,
@@ -277,23 +186,9 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 };
 
 
-inline void WireframeRenderer_CalculatePixelPosition_FromWorldPosition(VertexPipeline_PTR p_vertex, const SolidRendererInput* p_input)
-{
-	if (!p_vertex->PixelPositionCalculated)
-	{
-		// Camera to clip
-		Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &p_vertex->CameraSpacePosition, &p_vertex->TransformedPosition);
-
-		// To pixel
-		WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, p_vertex->TransformedPosition.x, p_vertex->TransformedPosition.y, &p_vertex->PixelPosition.x, &p_vertex->PixelPosition.y);
-
-		p_vertex->PixelPositionCalculated = 1;
-	}
-};
-
 // Polygon sorting is done so that the nearest polygon from camera is rendered first.
 // This is to have better chance to discard pixel draw calculation (thanks to the depth buffer)
-inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_solidRendererMemory)
+inline void SolidRenderer_SortPolygonsForRendering(RendererPipeline_Memory_PTR p_solidRendererMemory)
 {
 	for (size_t i = 0; i < p_solidRendererMemory->PolygonPipelines.Size; i++)
 	{
@@ -315,23 +210,22 @@ inline void SolidRenderer_SortPolygonsForRendering(SolidRenderer_Memory_PTR p_so
 };
 
 
-void SolidRenderer_Memory_alloc(SolidRenderer_Memory* p_memory)
+void SolidRenderer_Memory_alloc(RendererPipeline_Memory_PTR p_memory)
 {
 	Arr_Alloc_RenderableObjectPipeline(&p_memory->RederableObjectsPipeline, 0);
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
 	Arr_Alloc_PolygonPipeline_CameraDistanceIndexed(&p_memory->OrderedPolygonPipelinesIndex, 0);
-	Arr_Alloc_FlatShadingPixelCalculation(&p_memory->FlatShadingCalculations, 0);
 };
-void SolidRenderer_Memory_clear(SolidRenderer_Memory* p_memory, size_t p_width, size_t height)
+void SolidRenderer_Memory_clear(RendererPipeline_Memory_PTR p_memory, size_t p_width, size_t height)
 {
 	Arr_Clear(&p_memory->RederableObjectsPipeline.array);
 	Arr_Clear(&p_memory->VertexPipeline.array);
 	Arr_Clear(&p_memory->PolygonPipelines.array);
 	Arr_Clear(&p_memory->OrderedPolygonPipelinesIndex.array);
-	Arr_Clear(&p_memory->FlatShadingCalculations.array);
 };
-void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
+
+void SolidRenderer_Memory_free(RendererPipeline_Memory_PTR p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER
 	SolidRendererMetrics_Print(&GWireframeRendererPerformace);
@@ -341,5 +235,4 @@ void SolidRenderer_Memory_free(SolidRenderer_Memory* p_memory)
 	Arr_Free(&p_memory->VertexPipeline.array);
 	Arr_Free(&p_memory->PolygonPipelines.array);
 	Arr_Free(&p_memory->OrderedPolygonPipelinesIndex.array);
-	Arr_Free(&p_memory->FlatShadingCalculations.array);
 };

@@ -14,17 +14,17 @@ char BackFaceCulled_Poly4FPTR(const Polygon4fPTR_PTR p_polygon, const Vector4f_P
 	Vector4f l_cameraToPolygon;
 	Vec_Min_4f_4f(p_polygon->v1, p_cameraWorldPosition, &l_cameraToPolygon);
 
-	Vector4f l_normal;
-	Polygon_CalculateNormal_V4FPTR(p_polygon, &l_normal);
-	return Vec_Dot_3f(&l_cameraToPolygon.Vec3, &l_normal.Vec3) > FLOAT_TOLERANCE;
+	Vector3f l_normal;
+	Polygon_CalculateNormal_V3FPTR(p_polygon, &l_normal);
+	return Vec_Dot_3f(&l_cameraToPolygon.Vec3, &l_normal) > FLOAT_TOLERANCE;
 };
 
-char BackFaceCulled_Normal3fPTR(const Vector4f_PTR p_worldNormal, const Vector4f_PTR p_polygonWorldPosition, const Vector4f_PTR p_cameraWorldPosition)
+char BackFaceCulled_Normal3fPTR(const Vector3f_PTR p_worldNormal, const Vector4f_PTR p_polygonWorldPosition, const Vector4f_PTR p_cameraWorldPosition)
 {
 	Vector4f l_cameraToPolygon;
 	Vec_Min_4f_4f(p_polygonWorldPosition, p_cameraWorldPosition, &l_cameraToPolygon);
 
-	return Vec_Dot_3f(&l_cameraToPolygon.Vec3, &p_worldNormal->Vec3) > FLOAT_TOLERANCE;
+	return Vec_Dot_3f(&l_cameraToPolygon.Vec3, p_worldNormal) > FLOAT_TOLERANCE;
 }
 
 bool ObjectCulled_Boxf(const BoxF_PTR p_objectBoundingBox_localSpace, const Matrix4f_PTR p_modelMatrix,

@@ -18,4 +18,4 @@ void Draw_LineClipped(
 
 void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Polygonf_PTR p_polygonCameraDepth, Texture3f_PTR p_to, Recti_PTR p_clipRect, RenderLights_PTR p_renderLights,
 	DepthBuffer_PTR p_depthBuffer,
-		SolidRenderer_Memory_PTR p_solidRendererMemory);
+	RendererPipeline_Memory_PTR p_solidRendererMemory);

@@ -40,7 +40,7 @@ typedef struct RenderV2_TYP
 	Texture3f RenderTargetTexture;
 
 	GlobalBuffers GlobalBuffer;
-	SolidRenderer_Memory WireframeRenderMemory;
+	RendererPipeline_Memory WireframeRenderMemory;
 	GizmoBuffer GizmoBuffer;
 }RenderV2, * RenderV2_PTR;
 

@@ -6,7 +6,7 @@ typedef struct CAMERABUFFER_TYP CameraBuffer;
 typedef struct RENDEREDOBJECT_BUFFER_TYP RENDEREDOBJECT_BUFFER;
 typedef struct SwapChain_TYP SwapChain;
 typedef struct GizmoBuffer_TYP GizmoBuffer;
-typedef struct SolidRenderer_Memory_TYP SolidRenderer_Memory;
+typedef struct RendererPipeline_Memory_TYP RendererPipeline_Memory;
 typedef struct RenderV2_TYP RenderV2;
 
 
@@ -29,7 +29,7 @@ typedef struct RenderV2Interface_TYP
 	RenderResourceProviderInterface Resources;
 
 	GlobalBuffersInterface GlobalBuffer;
-	SolidRenderer_Memory* WireframeRenderMemory;
+	RendererPipeline_Memory* WireframeRenderMemory;
 	GizmoBuffer* GizmoBuffer;
 }RenderV2Interface, * RenderV2Interface_PTR;
 

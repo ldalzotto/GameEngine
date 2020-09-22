@@ -26,7 +26,7 @@ void Draw_LineClipped(
 
 void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR p_polygonPixelPositions, Polygonf_PTR p_polygonCameraDepth, Texture3f_PTR p_to,
 	Recti_PTR p_clipRect, RenderLights_PTR p_renderLights, DepthBuffer_PTR p_depthBuffer,
-	SolidRenderer_Memory_PTR p_solidRendererMemory) {
+	RendererPipeline_Memory_PTR p_solidRendererMemory) {
 
 #if RENDER_PERFORMANCE_TIMER && RENDER_PERFORMANCE_TIMER_PER_PIXEL
 	size_t tmp_timer_0;
@@ -38,6 +38,9 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 	Material_PTR l_material = &RRenderHeap.MaterialAllocator.array.Memory[p_polygonPipeline->Material.Handle];
 	Mesh_PTR l_mesh = p_solidRendererMemory->RederableObjectsPipeline.Memory[p_polygonPipeline->AssociatedRenderableObjectPipeline].RenderedObject->Mesh;
 	Polygon_UV_PTR l_polygonUV = &RRenderHeap.PolygonUVAllocator.array.Memory[l_mesh->PerVertexData.UV1.Memory[p_polygonPipeline->MeshPolygonIndex].Handle];
+
+	FlatShadingPixelCalculation l_flatCalculation;
+	FlatShadingPixelCalculation_PreCalculation(&l_flatCalculation, p_renderLights, p_polygonPipeline);
 
 	PolygonRasterizerIterator l_rasterizerIterator;
 	PolygonRasterize_Initialize(p_polygonPixelPositions, p_clipRect, 1, &l_rasterizerIterator);
@@ -73,7 +76,7 @@ void Draw_PolygonClipped(PolygonPipelineV2_PTR p_polygonPipeline, Polygon2i_PTR 
 				case MATERIAL_SHADING_TYPE_FLAT:
 				{
 					{
-						FlatShadingPixelCalculation_ShadePixelColor(&p_solidRendererMemory->FlatShadingCalculations.Memory[p_polygonPipeline->FlatShadingCalculationIndex], l_polygonUV,
+						FlatShadingPixelCalculation_ShadePixelColor(&l_flatCalculation, l_polygonUV,
 							p_renderLights, l_material, &l_rasterizerIterator.InterpolationFactors, &l_pixelColor_3f);
 					}
 					break;
