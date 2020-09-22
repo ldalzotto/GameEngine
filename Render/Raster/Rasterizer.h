@@ -53,7 +53,6 @@ typedef struct PolygonRasterizer_InterpolationFactor_TYP
 
 typedef struct PolygonRasterizerIterator_TYP
 {
-	char InterpolationEnabled;
 	POLYGONRASTERIZER_ITERATOR_STEP CurrentStep;
 	Vector2i CurrentPoint;
 	Recti PolygonBoundClip;
@@ -66,5 +65,6 @@ typedef struct PolygonRasterizerIterator_TYP
 	Vector2i RasterizedPixel;
 }PolygonRasterizerIterator, * PolygonRasterizerIterator_PTR;
 
-void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, char enableInterpolation, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
+void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator);
+POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext_Interpolated(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator);

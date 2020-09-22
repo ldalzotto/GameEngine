@@ -8,8 +8,7 @@
 #include "Cull/ObjectCulling.h"
 #include "v2/_interface/MatrixC.h"
 #include "v2/_interface/VectorStructuresC.h"
-#include "Renderer/Draw/DrawFunctions.h"
-#include "Renderer/PixelColor/PixelColorCalculation.h"
+#include "Renderer/Draw/FlatShade.h"
 #include "Metrics/RenderTimeMetrics.h"
 #include "Algorithm/Sort_alg.h"
 
@@ -20,12 +19,7 @@ ARRAY_ALLOC_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipe
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipelineV2, ARRAY_PolygonPipelineV2_PTR, PolygonPipelineV2)
 
 ARRAY_ALLOC_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
-ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
 ARRAY_RESIZE_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
-
-SORT_QUICK_ALGORITHM(PolygonPipeline_CameraDistanceIndexed_FrontToFar, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed,
-	SQA_ComparedElementValueExpression.DistanceFromCamera < l_pivot->DistanceFromCamera,
-	SQA_ComparedElementValueExpressionInvert.DistanceFromCamera > l_pivot->DistanceFromCamera);
 
 ARRAY_ALLOC_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
 ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, VertexPipeline)
@@ -34,12 +28,8 @@ ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(VertexPipeline, Array_VertexPipeline_PTR, V
 RenderLights GRenderLights =
 {
 	.DirectionalLight = {.Direction = {1.0f, 0.0f, 0.0f}, .Intensity = 1.0f, .Color = {1.0f, 1.0f, 1.0f} },
-	.AmbientLight = {.Color = {0.1f, 0.1f, 0.1f} }
+	.AmbientLight = {.Color = {0.5f, 0.5f, 0.5f} }
 };
-
-//Paint algorithm -> sorting polygons
-// Sorts polygon based on z coordinates of camera projected vertices
-inline void SolidRenderer_SortPolygonsForRendering(RendererPipeline_Memory_PTR p_solidRendererMemory);
 
 void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
@@ -135,41 +125,15 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 	tmp_timer = Clock_currentTime_mics();
 #endif
 
-	SolidRenderer_SortPolygonsForRendering(p_memory);
-
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AveragePolygonSorting, Clock_currentTime_mics() - tmp_timer);
-#endif
-
-#if RENDER_PERFORMANCE_TIMER
-	tmp_timer = Clock_currentTime_mics();
-#endif
-
-	for (size_t i = 0; i < p_memory->OrderedPolygonPipelinesIndex.Size; i++)
-	{
-		PolygonPipelineV2_PTR l_polygonPipeline = &p_memory->PolygonPipelines.Memory[p_memory->OrderedPolygonPipelinesIndex.Memory[i].Index];
-
-		VertexPipeline_PTR l_v1 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v1];
-		VertexPipeline_PTR l_v2 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v2];
-		VertexPipeline_PTR l_v3 = &p_memory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v3];
-
-
-		Polygon2i l_polygonPixelPositions = {
-			.v1 = l_v1->PixelPosition,
-			.v2 = l_v2->PixelPosition,
-			.v3 = l_v3->PixelPosition
-		};
-
-		//For depth buffer
-		Polygonf l_polygoncameraDepth =
-		{
-			.v1 = l_v1->CameraSpacePosition.z,
-			.v2 = l_v2->CameraSpacePosition.z,
-			.v3 = l_v3->CameraSpacePosition.z,
-		};
-
-		Draw_PolygonClipped(l_polygonPipeline, &l_polygonPixelPositions, &l_polygoncameraDepth, p_to, p_to_clipRect, &GRenderLights, p_depthBuffer, p_memory);
-	}
+	DrawPolygFlatShadeTexturedInput l_drawInput = {
+		.DepthBuffer = p_depthBuffer,
+		.RendererPipelineMemory = p_memory,
+		.RenderHeap = &RRenderHeap,
+		.RenderLights = &GRenderLights,
+		.RenderTarget = p_to,
+		.TargetClip = p_to_clipRect
+	};
+	DrawPoly_FlatShade_Textured(&l_drawInput);
 
 
 #if RENDER_PERFORMANCE_TIMER
@@ -184,31 +148,6 @@ void SolidRenderer_renderV2(const SolidRendererInput* p_input, Texture3f_PTR p_t
 	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRender, Clock_currentTime_mics() - l_wireframeRenderBegin);
 #endif
 };
-
-
-// Polygon sorting is done so that the nearest polygon from camera is rendered first.
-// This is to have better chance to discard pixel draw calculation (thanks to the depth buffer)
-inline void SolidRenderer_SortPolygonsForRendering(RendererPipeline_Memory_PTR p_solidRendererMemory)
-{
-	for (size_t i = 0; i < p_solidRendererMemory->PolygonPipelines.Size; i++)
-	{
-		PolygonPipelineV2_PTR l_polygonPipeline = &p_solidRendererMemory->PolygonPipelines.Memory[i];
-
-		if (!l_polygonPipeline->IsCulled)
-		{
-			Arr_PushBackRealloc_Empty_PolygonPipeline_CameraDistanceIndexed(&p_solidRendererMemory->OrderedPolygonPipelinesIndex);
-			p_solidRendererMemory->OrderedPolygonPipelinesIndex.Memory[p_solidRendererMemory->OrderedPolygonPipelinesIndex.Size - 1] = (PolygonPipeline_CameraDistanceIndexed)
-			{
-				.Index = i,
-				.DistanceFromCamera = ((p_solidRendererMemory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v1].CameraSpacePosition.z +
-						p_solidRendererMemory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v2].CameraSpacePosition.z +
-						p_solidRendererMemory->VertexPipeline.Memory[l_polygonPipeline->VerticesPipelineIndex.v3].CameraSpacePosition.z) * 0.333333f)
-			};
-		}
-	}
-	Sort_Quick_PolygonPipeline_CameraDistanceIndexed_FrontToFar(&p_solidRendererMemory->OrderedPolygonPipelinesIndex);
-};
-
 
 void SolidRenderer_Memory_alloc(RendererPipeline_Memory_PTR p_memory)
 {

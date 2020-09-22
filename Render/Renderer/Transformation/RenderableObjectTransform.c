@@ -1,7 +1,15 @@
 #include "RenderableObjectTransform.h"
+
+#include "DataStructures/ARRAY.h"
 #include "v2/_interface/MatrixC.h"
 #include "Objects/Resource/Polygon.h"
 #include "Cull/BackfaceCulling.h"
+#include "Algorithm/Sort_alg.h"
+
+ARRAY_PUSHBACKREALLOC_ENPTY_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed)
+SORT_QUICK_ALGORITHM(PolygonPipeline_CameraDistanceIndexed_FrontToFar, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed,
+	SQA_ComparedElementValueExpression.DistanceFromCamera < l_pivot->DistanceFromCamera,
+	SQA_ComparedElementValueExpressionInvert.DistanceFromCamera > l_pivot->DistanceFromCamera);
 
 inline void _i_VertexPipeline_CalculateWorldPosition(VertexPipeline_PTR p_vertexPipeline, RenderableObjectPipeline_PTR p_renderableObject, RenderableObjectTransform_Input_PTR p_input)
 {
@@ -64,7 +72,19 @@ void RendereableObject_TransformPolygons(RenderableObjectTransform_Input_PTR p_i
 			_i_VertexPipeline_CalculatePixelPosition(l_v1, p_input);
 			_i_VertexPipeline_CalculatePixelPosition(l_v2, p_input);
 			_i_VertexPipeline_CalculatePixelPosition(l_v3, p_input);
+
+			// Push polygon to the indexed list
+			Arr_PushBackRealloc_Empty_PolygonPipeline_CameraDistanceIndexed(&p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex);
+			p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Memory[p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Size - 1] = (PolygonPipeline_CameraDistanceIndexed)
+			{
+				.Index = i,
+				.DistanceFromCamera = ((l_v1->CameraSpacePosition.z + l_v2->CameraSpacePosition.z + l_v3->CameraSpacePosition.z) * 0.333333f)
+			};
 		}
 
 	}
+
+	// Polygon sorting is done so that the nearest polygon from camera is rendered first.
+	// This is to have better chance to discard pixel draw calculation (thanks to the depth buffer)
+	Sort_Quick_PolygonPipeline_CameraDistanceIndexed_FrontToFar(&p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex);
 };

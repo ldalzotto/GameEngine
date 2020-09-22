@@ -1,0 +1,20 @@
+#pragma once
+
+#include "Renderer/Pipeline/RendererPipeline_def.h"
+#include "Heap/RenderHeap_def.h"
+#include "Depth/DepthBuffer_def.h"
+#include "Objects/Texture/Texture_def.h"
+#include "v2/_interface/RectC_def.h"
+#include "Light/Light_def.h"
+
+typedef struct DrawPolygFlatShadeTexturedInput_TYP
+{
+	RendererPipeline_Memory_PTR RendererPipelineMemory;
+	RenderHeap_PTR RenderHeap;
+	Texture3f_PTR RenderTarget;
+	Recti_PTR TargetClip;
+	DepthBuffer_PTR DepthBuffer;
+	RenderLights_PTR RenderLights;
+}DrawPolygFlatShadeTexturedInput, * DrawPolygFlatShadeTexturedInput_PTR;
+
+void DrawPoly_FlatShade_Textured(DrawPolygFlatShadeTexturedInput_PTR p_input);
