@@ -17,4 +17,6 @@ typedef struct DrawPolygFlatShadeTexturedInput_TYP
 	RenderLights_PTR RenderLights;
 }DrawPolygFlatShadeTexturedInput, * DrawPolygFlatShadeTexturedInput_PTR;
 
+void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input);
 void DrawPoly_FlatShade_Textured(DrawPolygFlatShadeTexturedInput_PTR p_input);
+void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input);

@@ -81,9 +81,20 @@ void RenderV2_render(RenderV2* p_render)
 		{
 			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_Textured;
-			SolidRenderer_renderV2(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+			DrawObjects_FlatShade_Textured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
 		}
-
+		if (p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_NotTextured.RenderedObjects.Size > 0)
+		{
+			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
+			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_NotTextured;
+			DrawObjects_FlatShade_NotTextured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+		}
+		if (p_render->GlobalBuffer.RenderedObjectBuffers.NotShaded_NotTextured.RenderedObjects.Size > 0)
+		{
+			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
+			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.NotShaded_NotTextured;
+			DrawObjects_NoShade_NotTextured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+		}
 	}
 
 
