@@ -1,6 +1,9 @@
 #pragma once
 
 #include "RendererPipeline_def.h"
+#include "DataStructures/ARRAY.h"
+
+ARRAY_RESIZE_FUNCTION(PolygonPipeline_CameraDistanceIndexed, ARRAY_PolygonPipeline_CameraDistanceIndexed_PTR, PolygonPipeline_CameraDistanceIndexed);
 
 void RendererPipeline_Memory_Clear(RendererPipeline_Memory_PTR p_memory);
 void RendererPipeline_Memory_Alloc(RendererPipeline_Memory_PTR p_memory);

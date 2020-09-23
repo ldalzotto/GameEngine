@@ -16,8 +16,8 @@ typedef struct WindowHandle_TYP
 
 typedef struct WindowState_TYP
 {
-	bool AskedForClosed;
-	bool HasResizedThisFrame;
+	char AskedForClosed;
+	char HasResizedThisFrame;
 	WindowSize HasResizedThisFrame_WindowSize;
 	Texture3c_PTR PendingPresentingTexture;
 } WindowState;

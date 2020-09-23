@@ -41,23 +41,23 @@ int main(int argc, char* argv[])
 	// l_modelMatrix.Col3.y = 0.0f;
 	MeshResource_HANDLE l_mesh;
 	Assetpath l_meshAssetPath;
-	// AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
-	AssetPath_GetAbsolutePath("Models/16.09.obj", &l_meshAssetPath);
+	AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
+	// AssetPath_GetAbsolutePath("Models/16.09.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/16.09_plane.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/Icosphere2.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/Plane.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/SingleTriangle.obj", &l_meshAssetPath);
 	MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, &l_meshAssetPath, &l_mesh);
-	RenderedObject l_renderableObject;
-	RenderedObject_PTR l_renderableObject_ptr = &l_renderableObject;
+
+	
 	BoxF l_meshBoundingBox = {0};
 	{
 		Mesh_BuildBoundingBox(&l_mesh->Mesh, &l_meshBoundingBox);
 	}
 
 	Assetpath l_textureAssterPath;
-	// AssetPath_GetAbsolutePath("Textures/texture.png", &l_textureAssterPath);
-	AssetPath_GetAbsolutePath("Textures/16.09_diffuse.png", &l_textureAssterPath);
+	AssetPath_GetAbsolutePath("Textures/texture.png", &l_textureAssterPath);
+	// AssetPath_GetAbsolutePath("Textures/16.09_diffuse.png", &l_textureAssterPath);
 	TextureResource_PTR l_texture;
 	TextureResourceProvider_UseResource(&renderV2.Resources.TextureResourceProvider, &l_textureAssterPath, &l_texture);
 
@@ -70,9 +70,28 @@ int main(int argc, char* argv[])
 	};
 
 	// Arr_PushBackRealloc_Mater
+	RenderedObject_HANDLE l_renderedObjectHandle;
+	RenderableObject_Alloc(&l_renderedObjectHandle);
+	RenderedObject_PTR l_renderableObject_ptr = &RRenderHeap.RenderedObjectAllocator.array.Memory[l_renderedObjectHandle.Handle];
+	*l_renderableObject_ptr = (RenderedObject){ .Mesh = &l_mesh->Mesh , .MeshBoundingBox = &l_meshBoundingBox, .ModelMatrix = l_modelMatrix, .Material = l_materialHandle };
+	RendereableObject_PushToRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderedObjectHandle);
 
-	l_renderableObject = (RenderedObject){ .Mesh = &l_mesh->Mesh , .MeshBoundingBox = &l_meshBoundingBox, .ModelMatrix = l_modelMatrix, .Material = l_materialHandle };
-	RendereableObject_PushToRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderableObject_ptr);
+	/*
+	{
+		RenderedObject_HANDLE l_renderedObjectHandle_2;
+		RenderableObject_Alloc(&l_renderedObjectHandle_2);
+		RenderedObject_PTR l_renderableObject_ptr_2 = &RRenderHeap.RenderedObjectAllocator.array.Memory[l_renderedObjectHandle_2.Handle];
+		*l_renderableObject_ptr_2 = (RenderedObject){ .Mesh = &l_mesh->Mesh , .MeshBoundingBox = &l_meshBoundingBox, .ModelMatrix = l_modelMatrix, .Material = l_materialHandle };
+		RendereableObject_PushToRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderedObjectHandle_2);
+	}
+	{
+		RenderedObject_HANDLE l_renderedObjectHandle_2;
+		RenderableObject_Alloc(&l_renderedObjectHandle_2);
+		RenderedObject_PTR l_renderableObject_ptr_2 = &RRenderHeap.RenderedObjectAllocator.array.Memory[l_renderedObjectHandle_2.Handle];
+		*l_renderableObject_ptr_2 = (RenderedObject){ .Mesh = &l_mesh->Mesh , .MeshBoundingBox = &l_meshBoundingBox, .ModelMatrix = l_modelMatrix, .Material = l_materialHandle };
+		RendereableObject_PushToRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderedObjectHandle_2);
+	}
+	*/
 
 	Vector3f l_cameraPos = { 9.0f, 9.0f, 9.0f }; Vector3f l_forward = { -0.572061539f, -0.587785244f, -0.572061360f }; Vector3f l_up = { -0.415627033f, 0.809017003f, -0.415626884f };
 	Matrix4f l_viewMatrix;
@@ -86,11 +105,11 @@ int main(int argc, char* argv[])
 	Vector4f l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	Frustum l_cameraFrustum; Frustum_ExtractFromProjection((Matrix4f_PTR)&l_projectionMatrix, &l_cameraFrustum);
 
-	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = (Matrix4f_PTR)&l_viewMatrix;
-	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = (Matrix4f_PTR)&l_projectionMatrix;
+	renderV2.GlobalBuffer.CameraBuffer.ViewMatrix = l_viewMatrix;
+	renderV2.GlobalBuffer.CameraBuffer.ProjectionMatrix = l_projectionMatrix;
 	renderV2.GlobalBuffer.CameraBuffer.WorldPosition = l_cameraWorldPosition;
-	renderV2.GlobalBuffer.CameraBuffer.Far = &l_cameraFar;
-	renderV2.GlobalBuffer.CameraBuffer.CameraFrustum = &l_cameraFrustum;
+	renderV2.GlobalBuffer.CameraBuffer.Far = l_cameraFar;
+	renderV2.GlobalBuffer.CameraBuffer.CameraFrustum = l_cameraFrustum;
 
 
 
@@ -110,13 +129,13 @@ int main(int argc, char* argv[])
 		Quat_RotateAround((const Vector3f_PTR)&Vector3f_UP, 0.000001f * l_deltaTime, &tmp_quat_0);
 		Quat_ExtractAxis(&tmp_quat_0, &tmp_mat3x3_0);
 		Mat_RotationAxis_M4F(&tmp_mat3x3_0, &l_rotation);
-		Mat_Mul_M4F_M4F(&l_renderableObject.ModelMatrix, (Matrix4f_PTR)&l_rotation, &tmp_mat4x4_0);
-		l_renderableObject.ModelMatrix = tmp_mat4x4_0;
+		Mat_Mul_M4F_M4F(&l_renderableObject_ptr->ModelMatrix, (Matrix4f_PTR)&l_rotation, &tmp_mat4x4_0);
+		l_renderableObject_ptr->ModelMatrix = tmp_mat4x4_0;
 
 		RenderV2_render(&renderV2);
 	}
 
-	RendereableObject_EraseFromRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderableObject_ptr);
+	RendereableObject_EraseFromRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, l_renderedObjectHandle);
 
 
 	MeshResourceProvider_ReleaseResource(&renderV2.Resources.MeshResourceProvider, &l_mesh->Key);

@@ -2,7 +2,7 @@
 
 #include "RenderV2Interface.h"
 
-
+#include "Renderer/OpenCL/OpenCLContext_def.h"
 #include "Renderer/Solid/SolidRenderer.h"
 #include "Renderer/Gizmo/Gizmo.h"
 #include "Depth/DepthBuffer_def.h"
@@ -12,14 +12,6 @@
 #include "Objects/Texture/TextureResourceProvider.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
-
-
-/*
-#define MATERIAL_TYPE_NotShaded_NotTextured 0
-#define MATERIAL_TYPE_NotShaded_Textured 1
-#define MATERIAL_TYPE_FlatShaded_Textured 2
-#define MATERIAL_TYPE_FlatShaded_NotTextured 3
-*/
 
 typedef struct GlobalBuffers_TYP
 {
@@ -49,6 +41,11 @@ typedef struct RenderV2_TYP
 	GlobalBuffers GlobalBuffer;
 	RendererPipeline_Memory WireframeRenderMemory;
 	GizmoBuffer GizmoBuffer;
+
+#if HAS_OPENCL
+	OpenCLContext OpenCLContext;
+#endif
+
 }RenderV2, * RenderV2_PTR;
 
 void RenderV2_initialize(RenderV2* p_render);

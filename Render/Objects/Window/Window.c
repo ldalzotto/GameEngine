@@ -33,6 +33,7 @@ void Window_init(Window* p_window)
 	p_window->WindowSize.Height = WINDOW_HEIGHT;
 	WindowSize_UpdateDependentValues(&p_window->WindowSize);
 
+	p_window->WindowState = (WindowState){ 0 };
 	windowHookToGlobalEvents(p_window);
 	windowPlatforwSpecific_open(p_window);
 }
@@ -44,7 +45,7 @@ void Window_closeWindow(Window* p_window)
 	p_window->Handle.Window = NULL;
 };
 
-bool Window_askedForClose(Window* p_window)
+char Window_askedForClose(Window* p_window)
 {
 	return p_window->WindowState.AskedForClosed;
 };
@@ -54,7 +55,7 @@ WindowSize Window_getSize(Window* p_window)
 	return p_window->WindowSize;
 };
 
-bool Window_consumeSizeChangeEvent(Window* p_window)
+char Window_consumeSizeChangeEvent(Window* p_window)
 {
 	if (p_window->WindowState.HasResizedThisFrame)
 	{
@@ -63,10 +64,10 @@ bool Window_consumeSizeChangeEvent(Window* p_window)
 		
 		Observer_Broadcast(&p_window->OnWindowSizeChanged, NULL);
 
-		p_window->WindowState.HasResizedThisFrame = false;
-		return true;
+		p_window->WindowState.HasResizedThisFrame = 0;
+		return 1;
 	}
-	return false;
+	return 0;
 };
 
 void window_onGlobalEvent(Window* p_window, AppEvent_Header* p_eventHeader)
@@ -78,7 +79,7 @@ void window_onGlobalEvent(Window* p_window, AppEvent_Header* p_eventHeader)
 		WindowEvent* l_windowEvent = (WindowEvent*)p_eventHeader;
 		if (memcmp(&l_windowEvent->Window, &p_window->Handle.Window, sizeof(WindowHandle)) == 0)
 		{
-			p_window->WindowState.AskedForClosed = true;
+			p_window->WindowState.AskedForClosed = 1;
 		}
 	}
 	break;
@@ -87,7 +88,7 @@ void window_onGlobalEvent(Window* p_window, AppEvent_Header* p_eventHeader)
 		WindowResizeEvent* l_windowResizeEvent = (WindowResizeEvent*)p_eventHeader;
 		if (memcmp(&l_windowResizeEvent->Window, &p_window->Handle.Window, sizeof(WindowHandle)) == 0)
 		{
-			p_window->WindowState.HasResizedThisFrame = true;
+			p_window->WindowState.HasResizedThisFrame = 1;
 			p_window->WindowState.HasResizedThisFrame_WindowSize = (WindowSize){ (uint32_t)l_windowResizeEvent->Width , (uint32_t)l_windowResizeEvent->Height };
 		}
 	}

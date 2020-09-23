@@ -39,13 +39,13 @@ void Gizmo_Render(GizmoRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_t
 		Vector4f l_lineEnd;
 
 		// World to camera
-		Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, &p_input->Buffer->Vertices.Memory[l_line->v1].WorldPosition, &l_lineBegin);
-		Mat_Mul_M4F_V4F(p_input->CameraBuffer->ViewMatrix, &p_input->Buffer->Vertices.Memory[l_line->v2].WorldPosition, &l_lineEnd);
+		Mat_Mul_M4F_V4F(&p_input->CameraBuffer->ViewMatrix, &p_input->Buffer->Vertices.Memory[l_line->v1].WorldPosition, &l_lineBegin);
+		Mat_Mul_M4F_V4F(&p_input->CameraBuffer->ViewMatrix, &p_input->Buffer->Vertices.Memory[l_line->v2].WorldPosition, &l_lineEnd);
 
 		// Camera to clip
-		Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &l_lineBegin, &tmp_vec4_0);
+		Mat_Mul_M4F_V4F_Homogeneous(&p_input->CameraBuffer->ProjectionMatrix, &l_lineBegin, &tmp_vec4_0);
 		l_lineBegin = tmp_vec4_0;
-		Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &l_lineEnd, &tmp_vec4_0);
+		Mat_Mul_M4F_V4F_Homogeneous(&p_input->CameraBuffer->ProjectionMatrix, &l_lineEnd, &tmp_vec4_0);
 		l_lineEnd = tmp_vec4_0;
 
 		// To pixel

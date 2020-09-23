@@ -7,6 +7,7 @@
 #include "Objects/Texture/Texture.h"
 #include "Renderer/Pipeline/RendererPipelineMemory.h"
 #include "Objects/RenderedObject.h"
+#include "Renderer/OpenCL/OpenCLContext.h"
 
 void GlobalBuffers_alloc(GlobalBuffers* p_buffer)
 {
@@ -27,6 +28,10 @@ void GlobalBuffers_free(GlobalBuffers* p_buffer)
 
 void RenderV2_initialize(RenderV2* p_render)
 {
+#if HAS_OPENCL
+	 OpenCLContext_Initialize(&p_render->OpenCLContext);
+#endif
+
 	RenderHeap_Alloc(&RRenderHeap);
 
 	MeshResourceProvider_Alloc(&p_render->Resources.MeshResourceProvider);
@@ -81,7 +86,11 @@ void RenderV2_render(RenderV2* p_render)
 		{
 			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_Textured;
+#if HAS_OPENCL
+			DrawObjects_FlatShade_Textured_GPU(&l_wireFrameRendererInput, &p_render->OpenCLContext, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+#else
 			DrawObjects_FlatShade_Textured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+#endif
 		}
 		if (p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_NotTextured.RenderedObjects.Size > 0)
 		{

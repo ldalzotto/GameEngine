@@ -43,11 +43,12 @@ void CameraRenderSystem_ConsumeECSEvents(CameraRenderSystem_PTR p_cameraRenderSy
 			ECS_GetComponent_TransformComponent(l_operation.Entity, &l_operation.TransformComponent);
 			Arr_PushBackRealloc_CameraRenderSystemOperation(&p_cameraRenderSystem->Operations, &l_operation);
 
-			CAMERABUFFER_PTR l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
-			l_cameraBuffer->ViewMatrix = (Matrix4f_PTR)&l_operation.Camera->ViewMatrix;
-			l_cameraBuffer->ProjectionMatrix = (Matrix4f_PTR)&l_operation.Camera->ProjectionMatrix;
-			l_cameraBuffer->Far = &l_operation.Camera->Far;
-			l_cameraBuffer->CameraFrustum = &l_operation.Camera->CameraFrustum;
+			l_operation.Camera->CameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
+			// CAMERABUFFER_PTR l_cameraBuffer = l_operation.Camera->RenderInterface->GlobalBuffer.CameraBuffer;
+			// l_cameraBuffer->ViewMatrix = (Matrix4f_PTR)&l_operation.Camera->ViewMatrix;
+			// l_cameraBuffer->ProjectionMatrix = (Matrix4f_PTR)&l_operation.Camera->ProjectionMatrix;
+			// l_cameraBuffer->Far = &l_operation.Camera->Far;
+			// l_cameraBuffer->CameraFrustum = &l_operation.Camera->CameraFrustum;
 		}
 		break;
 
@@ -87,7 +88,7 @@ void CameraRenderSystem_Update(CameraRenderSystem_PTR p_system)
 			Vector3f l_forward; Transform_GetForward(&l_transform->Transform, &l_forward);
 			Vector3f l_up; Transform_GetUp(&l_transform->Transform, &l_up);
 
-			Mat_ViewMatrix_M4F(&l_worldPosition, &l_forward, &l_up, &l_camera->ViewMatrix);
+			Mat_ViewMatrix_M4F(&l_worldPosition, &l_forward, &l_up, &l_camera->CameraBuffer->ViewMatrix);
 			l_cameraBuffer->WorldPosition.Vec3 = l_worldPosition; l_cameraBuffer->WorldPosition.Vec3_w = 1.0f;
 
 			l_transform->Transform.UserFlag_HasChanged = false;

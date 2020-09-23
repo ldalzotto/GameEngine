@@ -6,7 +6,7 @@
 
 typedef struct RenderableObjectPipeline_TYP
 {
-	RenderedObject_PTR RenderedObject;
+	RenderedObject_HANDLE RenderedObject;
 
 	size_t PolygonPipelineIndexBeginIncluded;
 	size_t PolygonPipelineIndexEndExcluded;
@@ -53,6 +53,7 @@ typedef struct ARRAY_PolygonPipeline_CameraDistanceIndexed_TYP
 typedef struct VertexPipeline_TYP
 {
 	Vertex_HANDLE Vertex;
+	size_t AssociatedRenderableObjectPipeline;
 	Vector4f WorldPosition;
 	Vector4f CameraSpacePosition;
 	Vector2i PixelPosition;
@@ -72,5 +73,8 @@ typedef struct RendererPipeline_Memory_TYP
 	ARRAY_PolygonPipelineV2 PolygonPipelines;
 	Array_VertexPipeline VertexPipeline;
 
+#if HAS_OPENCL
+	ARRAY_PolygonPipeline_CameraDistanceIndexed PolygonPipelinesIndexNotFiltered;
+#endif
 	ARRAY_PolygonPipeline_CameraDistanceIndexed OrderedPolygonPipelinesIndex;
 } RendererPipeline_Memory, * RendererPipeline_Memory_PTR;

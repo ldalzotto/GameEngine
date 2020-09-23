@@ -4,6 +4,10 @@
 
 #include "Memory/PoolAllocator.h"
 
+POOLALLOCATOR_ALLOC_FUNCTION(RenderedObject, PoolAllocator_RenderedObject_PTR, RenderedObject);
+POOLALLOCATOR_ALLOCELEMENT_FUNCTION(RenderedObject, PoolAllocator_RenderedObject_PTR, RenderedObject, RenderedObject_HANDLE_PTR);
+POOLALLOCATOR_FREEELEMENT_FUNCTION(RenderedObject, PoolAllocator_RenderedObject_PTR, RenderedObject_HANDLE);
+
 POOLALLOCATOR_ALLOC_FUNCTION(Vertex, PoolAllocator_Vertex_PTR, Vertex);
 POOLALLOCATOR_ALLOCELEMENT_FUNCTION(Vertex, PoolAllocator_Vertex_PTR, Vertex, Vertex_HANDLE_PTR);
 POOLALLOCATOR_FREEELEMENT_FUNCTION(Vertex, PoolAllocator_Vertex_PTR, Vertex_HANDLE);

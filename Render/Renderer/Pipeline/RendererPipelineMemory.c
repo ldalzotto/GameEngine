@@ -19,6 +19,10 @@ void RendererPipeline_Memory_Alloc(RendererPipeline_Memory_PTR p_memory)
 	Arr_Alloc_VertexPipeline(&p_memory->VertexPipeline, 0);
 	Arr_Alloc_PolygonPipelineV2(&p_memory->PolygonPipelines, 0);
 	Arr_Alloc_PolygonPipeline_CameraDistanceIndexed(&p_memory->OrderedPolygonPipelinesIndex, 0);
+
+#if HAS_OPENCL
+	Arr_Alloc_PolygonPipeline_CameraDistanceIndexed(&p_memory->PolygonPipelinesIndexNotFiltered, 0);
+#endif
 };
 
 void RendererPipeline_Memory_Clear(RendererPipeline_Memory_PTR p_memory)
@@ -39,5 +43,9 @@ void RendererPipeline_Memory_Free(RendererPipeline_Memory_PTR p_memory)
 	Arr_Free(&p_memory->VertexPipeline.array);
 	Arr_Free(&p_memory->PolygonPipelines.array);
 	Arr_Free(&p_memory->OrderedPolygonPipelinesIndex.array);
+
+#if HAS_OPENCL
+	Arr_Free(&p_memory->PolygonPipelinesIndexNotFiltered.array);
+#endif
 };
 

@@ -8,6 +8,7 @@
 #include "v2/_interface/TransformC.h"
 #include "ECSEngine/Components/TransformComponent.h"
 #include "ECSEngine/Components/MeshRenderer.h"
+#include "Heap/RenderHeap.h"
 
 void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, RenderV2Interface_PTR p_renderInterface)
 {
@@ -23,10 +24,11 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 			
 			ECS_GetComponent_TransformComponent(l_event->Entity, &l_meshDrawOperation.TransformComponent);
 			ECS_GetComponent_MeshRenderer(l_event->Entity, &l_meshDrawOperation.MeshRenderer);
-			l_meshDrawOperation.RenderedObject = (RenderedObject_PTR)malloc(sizeof(RenderedObject));
-			l_meshDrawOperation.RenderedObject->Mesh = &l_meshDrawOperation.MeshRenderer->MeshResource->Mesh;
-			l_meshDrawOperation.RenderedObject->MeshBoundingBox = &l_meshDrawOperation.MeshRenderer->MeshBoundingBox;
-			l_meshDrawOperation.RenderedObject->Material = l_meshDrawOperation.MeshRenderer->Material;
+			RenderableObject_Alloc(&l_meshDrawOperation.RenderedObject);
+			RenderedObject_PTR l_renderableObject = &RRenderHeap.RenderedObjectAllocator.array.Memory[l_meshDrawOperation.RenderedObject.Handle];
+			l_renderableObject->Mesh = &l_meshDrawOperation.MeshRenderer->MeshResource->Mesh;
+			l_renderableObject->MeshBoundingBox = &l_meshDrawOperation.MeshRenderer->MeshBoundingBox;
+			l_renderableObject->Material = l_meshDrawOperation.MeshRenderer->Material;
 
 			Arr_PushBackRealloc_MeshDrawSystemOperation(&p_meshDrawSystem->MeshDrawSystemOperations, &l_meshDrawOperation);
 			RendereableObject_PushToRenderEngine(p_renderInterface->GlobalBuffer.RenderedObjectsBuffer, l_meshDrawOperation.RenderedObject);
@@ -46,7 +48,7 @@ void MeshDrawSystem_ConsumeECSEvents(MeshDrawSystem_PTR p_meshDrawSystem, Render
 				{
 					if (RendereableObject_EraseFromRenderEngine(p_renderInterface->GlobalBuffer.RenderedObjectsBuffer, l_meshDrawSystemOperation->RenderedObject))
 					{
-						free(l_meshDrawSystemOperation->RenderedObject);
+						RenderableObject_Free(l_meshDrawSystemOperation->RenderedObject);
 					}
 					Arr_Erase_MeshDrawSystemOperation(&p_meshDrawSystem->MeshDrawSystemOperations, j);
 					break;
@@ -87,7 +89,7 @@ void MeshDrawSystem_Update(MeshDrawSystem_PTR p_meshDrawSystem, RenderV2Interfac
 		MeshDrawSystemOperation* l_operation = &p_meshDrawSystem->MeshDrawSystemOperations.Memory[i];
 		if (l_operation->TransformComponent->Transform.UserFlag_HasChanged)
 		{
-			Transform_GetLocalToWorldMatrix(&l_operation->TransformComponent->Transform, &l_operation->RenderedObject->ModelMatrix);
+			Transform_GetLocalToWorldMatrix(&l_operation->TransformComponent->Transform, &RRenderHeap.RenderedObjectAllocator.array.Memory[l_operation->RenderedObject.Handle].ModelMatrix);
 			l_operation->TransformComponent->Transform.UserFlag_HasChanged = false;
 		}
 	}
