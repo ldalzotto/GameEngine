@@ -16,15 +16,6 @@ RenderLights GRenderLights =
 
 void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
-#if RENDER_PERFORMANCE_TIMER
-	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
-#endif
-
-
-#if RENDER_PERFORMANCE_TIMER
-	TimeClockPrecision tmp_timer, tmp_timer_2;
-	tmp_timer = Clock_currentTime_mics();
-#endif
 
 	RenderableObject_CullObject(p_input->RenderableObjectsBuffer, p_input->CameraBuffer);
 
@@ -51,18 +42,6 @@ void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3
 
 	DrawPoly_NoShade_NotTextured(&l_drawInput);
 
-
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_TransformCoords);
-#endif
-#if RENDER_PERFORMANCE_TIMER && RENDER_PERFORMANCE_TIMER_PER_PIXEL
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PolygonRasterize);
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PixelShading);
-#endif
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization, Clock_currentTime_mics() - tmp_timer);
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRender, Clock_currentTime_mics() - l_wireframeRenderBegin);
-#endif
 }
 
 void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
@@ -73,13 +52,23 @@ void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f
 
 
 #if RENDER_PERFORMANCE_TIMER
-	TimeClockPrecision tmp_timer, tmp_timer_2;
+	TimeClockPrecision tmp_timer;
 	tmp_timer = Clock_currentTime_mics();
 #endif
 
 	RenderableObject_CullObject(p_input->RenderableObjectsBuffer, p_input->CameraBuffer);
 
+#if RENDER_PERFORMANCE_TIMER
+	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageObjectCull, Clock_currentTime_mics() - tmp_timer);
+	tmp_timer = Clock_currentTime_mics();
+#endif
+
 	RenderableObject_ToRenderPipeline(p_input->RenderableObjectsBuffer, p_memory, &RRenderHeap);
+
+#if RENDER_PERFORMANCE_TIMER
+	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AveragePipelineMapping, Clock_currentTime_mics() - tmp_timer);
+	tmp_timer = Clock_currentTime_mics();
+#endif
 
 	RenderableObjectTransform_Input l_renderableObjectTransformInput = 
 	{
@@ -90,6 +79,10 @@ void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f
 	};
 	RendereableObject_TransformPolygons(&l_renderableObjectTransformInput);
 
+#if RENDER_PERFORMANCE_TIMER
+	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageTransform, Clock_currentTime_mics() - tmp_timer);
+	tmp_timer = Clock_currentTime_mics();
+#endif
 
 	DrawPolygFlatShadeTexturedInput l_drawInput = {
 		.DepthBuffer = p_depthBuffer,
@@ -101,32 +94,15 @@ void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f
 	};
 	DrawPoly_FlatShade_Textured(&l_drawInput);
 
-
 #if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_TransformCoords);
-#endif
-#if RENDER_PERFORMANCE_TIMER && RENDER_PERFORMANCE_TIMER_PER_PIXEL
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PolygonRasterize);
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PixelShading);
-#endif
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization, Clock_currentTime_mics() - tmp_timer);
+	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterize, Clock_currentTime_mics() - tmp_timer);
 	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRender, Clock_currentTime_mics() - l_wireframeRenderBegin);
 #endif
+
 };
 
 void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
-#if RENDER_PERFORMANCE_TIMER
-	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
-#endif
-
-
-#if RENDER_PERFORMANCE_TIMER
-	TimeClockPrecision tmp_timer, tmp_timer_2;
-	tmp_timer = Clock_currentTime_mics();
-#endif
-
 	RenderableObject_CullObject(p_input->RenderableObjectsBuffer, p_input->CameraBuffer);
 
 	RenderableObject_ToRenderPipeline(p_input->RenderableObjectsBuffer, p_memory, &RRenderHeap);
@@ -151,16 +127,4 @@ void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, Textur
 	};
 	DrawPoly_FlatShade_NotTextured(&l_drawInput);
 
-
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_TransformCoords);
-#endif
-#if RENDER_PERFORMANCE_TIMER && RENDER_PERFORMANCE_TIMER_PER_PIXEL
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PolygonRasterize);
-	PerformanceCounter_IncrementCounter(&GWireframeRendererPerformace.AverageRasterization_PixelShading);
-#endif
-#if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterization, Clock_currentTime_mics() - tmp_timer);
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRender, Clock_currentTime_mics() - l_wireframeRenderBegin);
-#endif
 };

@@ -13,16 +13,10 @@ typedef struct PerformanceCounter_TYP
 typedef struct SolidRendererMetrics_TYP
 {
 	PerformanceCounter AverageRender;
-	PerformanceCounter AverageDataSetup;
-	PerformanceCounter AverageDataSetup_PushPipelineData;
-	PerformanceCounter AverageLocalToWorld;
-	PerformanceCounter AverageBackfaceCulling;
-	PerformanceCounter AveragePreRasterizationLightCalculation;
-	PerformanceCounter AveragePolygonSorting;
-	PerformanceCounter AverageRasterization;
-	PerformanceCounter AverageRasterization_TransformCoords;
-	PerformanceCounter AverageRasterization_PolygonRasterize;
-	PerformanceCounter AverageRasterization_PixelShading;
+	PerformanceCounter AverageObjectCull;
+	PerformanceCounter AveragePipelineMapping;
+	PerformanceCounter AverageTransform;
+	PerformanceCounter AverageRasterize;
 }SolidRendererMetrics, * SolidRendererMetrics_PTR;
 
 extern SolidRendererMetrics GWireframeRendererPerformace;

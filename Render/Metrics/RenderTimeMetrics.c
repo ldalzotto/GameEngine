@@ -7,7 +7,8 @@ SolidRendererMetrics GWireframeRendererPerformace = { 0 };
 
 TimeClockPrecision PerformanceCounter_GetAverage(PerformanceCounter_PTR p_performanceCounter)
 {
-	return p_performanceCounter->AccumulatedTime / p_performanceCounter->SampleCount;
+	if (p_performanceCounter->SampleCount == 0) { return 0; }
+	else { return p_performanceCounter->AccumulatedTime / p_performanceCounter->SampleCount; }
 };
 
 void PerformanceCounter_PushSample(PerformanceCounter_PTR p_performanceCounter, TimeClockPrecision p_sampleTime)
@@ -29,18 +30,10 @@ void PerformanceCounter_AddTime(PerformanceCounter_PTR p_performanceCounter, Tim
 void SolidRendererMetrics_Print(SolidRendererMetrics_PTR p_wireframeRenderPerformance)
 {
 	printf("SolidRenderer_renderV2 : %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRender));
-	// printf("  -> Data Setup %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageDataSetup));
-	// printf("     -> Pushing pipeline data %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageDataSetup_PushPipelineData));
-	// printf("  -> Local To World %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageLocalToWorld));
-	// printf("  -> Backface Culling %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageBackfaceCulling));
-	// printf("  -> Pre Rasterization Lighting %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AveragePreRasterizationLightCalculation));
-	// printf("  -> Polygon Sorting %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AveragePolygonSorting));
-	// printf("  -> Rasterization %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization));
-	// printf("     -> TransformCoords %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_TransformCoords));
-#if RENDER_PERFORMANCE_TIMER_PER_PIXEL
-	printf("     -> PolygonRasterize %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_PolygonRasterize));
-	printf("     -> PixelShading %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterization_PixelShading));
-#endif
+	printf("  -> Object cull : %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageObjectCull));
+	printf("  -> Pipeline mapping : %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AveragePipelineMapping));
+	printf("  -> Transform : %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageTransform));
+	printf("  -> Rasterize : %lldmics \n", PerformanceCounter_GetAverage(&p_wireframeRenderPerformance->AverageRasterize));
 };
 
 #endif
