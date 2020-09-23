@@ -10,8 +10,8 @@
 // There is a unique directional light
 RenderLights GRenderLights =
 {
-	.DirectionalLight = {.Direction = {1.0f, 0.0f, 0.0f}, .Intensity = 1.0f, .Color = {1.0f, 1.0f, 1.0f} },
-	.AmbientLight = {.Color = {0.5f, 0.5f, 0.5f} }
+	.DirectionalLight = {.Direction = {0.707f, 0.707f, 0.0f}, .Intensity = 1.0f, .Color = {1.0f, 1.0f, 1.0f} },
+	.AmbientLight = {.Color = {0.3f, 0.3f, 0.6f} }
 };
 
 void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
