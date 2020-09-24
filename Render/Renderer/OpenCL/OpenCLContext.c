@@ -52,7 +52,6 @@ void OpenCLContext_LoadProgram(OpenCLContext_PTR p_openclContext)
 	/*Step 8: Create kernel object */
 	TransformKernel = clCreateKernel(program, "Draw_Transform", &status);
 	PolygonNormalAndBackfaceCullKernel = clCreateKernel(program, "PolygonNormal_And_BackfaceCull", &status);
-	
 	String_Free(&l_programString);
 
 };
@@ -76,7 +75,7 @@ void OpenCLContext_Initialize(OpenCLContext_PTR p_openclContext)
 		cl_platform_id* platforms =
 			(cl_platform_id*)malloc(numPlatforms * sizeof(cl_platform_id));
 		status = clGetPlatformIDs(numPlatforms, platforms, NULL);
-		platform = platforms[0];
+		platform = platforms[1];
 		free(platforms);
 	}
 
