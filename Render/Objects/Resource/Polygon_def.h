@@ -44,3 +44,12 @@ typedef struct PolygonSizeT_TYP
 {
 	POLYGON_TYPE_DEFINITION(size_t)
 }PolygonSizeT, * PolygonSizeT_PTR;
+
+
+typedef struct PolygonPerspectiveInterpolation_TYP
+{
+	float ZValue;
+	float ZValueInv;
+
+	Polygonf InvertedZValueOnPolygon;
+}PolygonPerspectiveInterpolation, * PolygonPerspectiveInterpolation_PTR;

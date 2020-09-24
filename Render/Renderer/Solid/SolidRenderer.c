@@ -44,7 +44,7 @@ void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3
 
 }
 
-void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
+void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
@@ -92,7 +92,7 @@ void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f
 		.RenderTarget = p_to,
 		.TargetClip = p_to_clipRect
 	};
-	DrawPoly_FlatShade_Textured(&l_drawInput);
+	DrawPoly_FlatShade_Textured_Perspective(&l_drawInput);
 
 #if RENDER_PERFORMANCE_TIMER
 	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterize, Clock_currentTime_mics() - tmp_timer);

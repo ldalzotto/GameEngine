@@ -16,5 +16,5 @@ typedef struct SolidRendererInput_TYP
 } SolidRendererInput, * SolidRendererInput_PTR;
 
 void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);
-void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);
+void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);
 void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);

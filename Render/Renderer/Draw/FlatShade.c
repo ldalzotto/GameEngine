@@ -16,6 +16,8 @@ typedef struct DrawFunction_ExtractedPipeline_TYp
 	VertexPipeline_PTR V3;
 }DrawFunction_ExtractedPipeline, * DrawFunction_ExtractedPipeline_PTR;
 
+
+
 inline DrawFunction_ExtractedPipeline _i_ExtractPipeline(RendererPipeline_Memory_PTR p_renderPipelineMemory, size_t p_polygonIndex)
 {
 	DrawFunction_ExtractedPipeline l_extranctedData;
@@ -48,14 +50,37 @@ inline Polygonf _i_ExtractedPipeline_CameraDepthPolygon(DrawFunction_ExtractedPi
 	};
 };
 
+inline Polygonf _i_ExtractedPipeline_CameraDepthPolygonInverted(DrawFunction_ExtractedPipeline_PTR p_extractedPipeline)
+{
+	return (Polygonf)
+	{
+		.v1 = 1.0f / p_extractedPipeline->V1->CameraSpacePosition.z,
+			.v2 = 1.0f / p_extractedPipeline->V2->CameraSpacePosition.z,
+			.v3 = 1.0f / p_extractedPipeline->V3->CameraSpacePosition.z
+	};
+};
 
-inline char _i_DepthTest(PolygonRasterizerIterator_PTR p_rasterizer, Polygonf_PTR p_cameraDepthPolygon, DepthBuffer_PTR p_depthBuffer)
+
+
+inline char _i_DepthTest_Linear(PolygonRasterizerIterator_PTR p_rasterizer, Polygonf_PTR p_cameraDepthPolygon, DepthBuffer_PTR p_depthBuffer)
 {
 	float l_interpolatedDepth = (p_cameraDepthPolygon->v1 * p_rasterizer->InterpolationFactors.I0)
 		+ (p_cameraDepthPolygon->v2 * p_rasterizer->InterpolationFactors.I1) + (p_cameraDepthPolygon->v3 * p_rasterizer->InterpolationFactors.I2);
 
 	// Pixel depth culling
 	return DepthBuffer_PushDepthValue(p_depthBuffer, &p_rasterizer->RasterizedPixel, l_interpolatedDepth);
+}
+
+
+inline char _i_DepthTest_Perspective(PolygonRasterizerIterator_PTR p_rasterizer, DepthBuffer_PTR p_depthBuffer, 
+	PolygonPerspectiveInterpolation_PTR p_polygonPerspectiveInterpolation)
+{
+	p_polygonPerspectiveInterpolation->ZValueInv = ((p_polygonPerspectiveInterpolation->InvertedZValueOnPolygon.v1 * p_rasterizer->InterpolationFactors.I0)
+		+ (p_polygonPerspectiveInterpolation->InvertedZValueOnPolygon.v2 * p_rasterizer->InterpolationFactors.I1) + (p_polygonPerspectiveInterpolation->InvertedZValueOnPolygon.v3 * p_rasterizer->InterpolationFactors.I2));
+	p_polygonPerspectiveInterpolation->ZValue = 1.0f / p_polygonPerspectiveInterpolation->ZValueInv;
+
+	// Pixel depth culling
+	return DepthBuffer_PushDepthValue(p_depthBuffer, &p_rasterizer->RasterizedPixel, p_polygonPerspectiveInterpolation->ZValue);
 }
 
 typedef struct FlatShadingPixelCalculation_TYP
@@ -79,16 +104,16 @@ inline void _i_FlatShadingPixelCalculation_ShadePixelColor(const FlatShadingPixe
 	out_pixelColor->Vec.z = (p_material->BaseColor.b) * (p_flatShadingPixelCalculation->AttenuatedLightColor.b + p_renderLights->AmbientLight.Color.b);
 }
 
-inline void _i_FlatShadingPixelCalculation_ShadePixelColor_Textured(
+inline void _i_FlatShadingPixelCalculation_ShadePixelColor_Textured_Perspective(
 	const FlatShadingPixelCalculation_PTR p_flatShadingPixelCalculation, const Polygon2f_PTR p_polygonUV,
 	RenderLights_PTR p_renderLights, Material_PTR p_material,
-	const PolygonRasterizer_InterpolationFactor_PTR p_interpolationFactors, Color3f_PTR out_pixelColor)
+	const PolygonRasterizer_InterpolationFactor_PTR p_interpolationFactors, PolygonPerspectiveInterpolation_PTR p_perspectiveInterpolation,  Color3f_PTR out_pixelColor)
 {
 
 	Vector2f l_interpolatedUv;
 	Color3f l_sampledPoint;
 
-	_i_Polygon_Interpolate_V2F(p_polygonUV, p_interpolationFactors->I0, p_interpolationFactors->I1, p_interpolationFactors->I2, &l_interpolatedUv);
+	_i_Polygon_Interpolate_Perspective_V2F(p_polygonUV, p_interpolationFactors->I0, p_interpolationFactors->I1, p_interpolationFactors->I2, p_perspectiveInterpolation, &l_interpolatedUv);
 	_i_TextureSample_Point_3f(&RRenderHeap.Texture3cAllocator.array.Memory[p_material->DiffuseTexture.Handle], &l_interpolatedUv, &l_sampledPoint);
 
 	out_pixelColor->Vec.x = (p_material->BaseColor.r * l_sampledPoint.r) * (p_flatShadingPixelCalculation->AttenuatedLightColor.r + p_renderLights->AmbientLight.Color.r);
@@ -104,10 +129,7 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 		DrawFunction_ExtractedPipeline l_pipelineData = _i_ExtractPipeline(p_input->RendererPipelineMemory, i);
 
 		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject->Material.Handle];
-		Polygon_UV_PTR l_polygonUV = &p_input->RenderHeap->PolygonUVAllocator.array.Memory
-			[l_pipelineData.RenderableObjectPipeline->RenderedObject->Mesh->PerVertexData.UV1.Memory
-			[l_pipelineData.Polygon->MeshPolygonIndex].Handle];
-
+	
 		// Rasterize
 		Polygon2i l_pixelPositionPolygon = _i_ExtractedPipeline_PixelPositionPolygon(&l_pipelineData);
 		Polygonf l_cameraDepthPolygon = _i_ExtractedPipeline_CameraDepthPolygon(&l_pipelineData);
@@ -122,7 +144,7 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 
 			if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 			{
-				if (_i_DepthTest(&l_rasterizerIterator, &l_cameraDepthPolygon, p_input->DepthBuffer))
+				if (_i_DepthTest_Linear(&l_rasterizerIterator, &l_cameraDepthPolygon, p_input->DepthBuffer))
 				{
 					p_input->RenderTarget->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->Width)] = l_material->BaseColor;
 				}
@@ -134,7 +156,7 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 };
 
 
-void DrawPoly_FlatShade_Textured(DrawPolygFlatShadeTexturedInput_PTR p_input)
+void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR p_input)
 {
 	Color3f l_pixelColor;
 
@@ -153,8 +175,10 @@ void DrawPoly_FlatShade_Textured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 
 		// Rasterize
 		Polygon2i l_pixelPositionPolygon = _i_ExtractedPipeline_PixelPositionPolygon(&l_pipelineData);
-		Polygonf l_cameraDepthPolygon = _i_ExtractedPipeline_CameraDepthPolygon(&l_pipelineData);
-
+		
+		PolygonPerspectiveInterpolation l_perspectiveInterpolation;
+		l_perspectiveInterpolation.InvertedZValueOnPolygon = _i_ExtractedPipeline_CameraDepthPolygonInverted(&l_pipelineData);
+		
 		PolygonRasterizerIterator l_rasterizerIterator;
 		PolygonRasterize_Initialize(&l_pixelPositionPolygon, p_input->TargetClip, &l_rasterizerIterator);
 
@@ -165,9 +189,9 @@ void DrawPoly_FlatShade_Textured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 
 			if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 			{
-				if (_i_DepthTest(&l_rasterizerIterator, &l_cameraDepthPolygon, p_input->DepthBuffer))
+				if (_i_DepthTest_Perspective(&l_rasterizerIterator, p_input->DepthBuffer, &l_perspectiveInterpolation))
 				{
-					_i_FlatShadingPixelCalculation_ShadePixelColor_Textured(&l_flatCalculation, l_polygonUV, p_input->RenderLights, l_material, &l_rasterizerIterator.InterpolationFactors, &l_pixelColor);
+					_i_FlatShadingPixelCalculation_ShadePixelColor_Textured_Perspective(&l_flatCalculation, l_polygonUV, p_input->RenderLights, l_material, &l_rasterizerIterator.InterpolationFactors, &l_perspectiveInterpolation, &l_pixelColor);
 					p_input->RenderTarget->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->Width)] = l_pixelColor;
 				}
 			}
@@ -204,7 +228,7 @@ void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 
 			if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 			{
-				if (_i_DepthTest(&l_rasterizerIterator, &l_cameraDepthPolygon, p_input->DepthBuffer))
+				if (_i_DepthTest_Linear(&l_rasterizerIterator, &l_cameraDepthPolygon, p_input->DepthBuffer))
 				{
 					_i_FlatShadingPixelCalculation_ShadePixelColor(&l_flatCalculation, p_input->RenderLights, l_material, &l_pixelColor);
 					p_input->RenderTarget->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->Width)] = l_pixelColor;
