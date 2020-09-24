@@ -136,7 +136,6 @@ void DrawObjects_FlatShade_Textured_GPU(const SolidRendererInput* p_input, OpenC
 		.CameraBuffer = p_input->CameraBuffer,
 		.WindowSize = &p_input->WindowSize
 	};
-	// RendereableObject_TransformPolygons(&l_renderableObjectTransformInput);
 	RendereableObject_TransformPolygons_vertexCentralized_GPU(&l_renderableObjectTransformInput, p_openCLContext);
 
 #if RENDER_PERFORMANCE_TIMER

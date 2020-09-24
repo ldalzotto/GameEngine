@@ -347,7 +347,6 @@ __kernel void Draw_Transform(__global VertexPipeline* p_vertexPipelines, __globa
 	// Mat_Mul_M4F_V4F(&l_renderableObject->ModelMatrix, &l_vertex->LocalPosition, &l_vertexPipeline->WorldPosition);
 }
 
-
 __kernel void PolygonNormal_And_BackfaceCull(__global PolygonPipelineV2* p_polygonPipelines, __global VertexPipeline* p_vertexPipelines, __global CAMERABUFFER* p_cameraBuffer, 
 		__global PolygonPipeline_CameraDistanceIndexed* p_polygonCameraDistanceIndexed)
 {
@@ -369,7 +368,9 @@ __kernel void PolygonNormal_And_BackfaceCull(__global PolygonPipelineV2* p_polyg
 	Polygon_CalculateNormal_V3FPTR(&l_worldPositionPoly, &l_polygon->CalculatedFlatWorldNormal);
 	l_polygon->IsCulled = BackFaceCulled_Normal3fPTR(&l_polygon->CalculatedFlatWorldNormal, l_worldPositionPoly.v1, &p_cameraBuffer->WorldPosition);
 
+	if(!l_polygon->IsCulled)
+	{
 		p_polygonCameraDistanceIndexed[i].Index = i;
 		p_polygonCameraDistanceIndexed[i].DistanceFromCamera = (l_v1->CameraSpacePosition.z + l_v2->CameraSpacePosition.z + l_v3->CameraSpacePosition.z) * 0.333333f;
-
+	}
 }
