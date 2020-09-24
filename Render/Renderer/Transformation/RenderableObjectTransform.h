@@ -4,7 +4,6 @@
 #include "Heap/RenderHeap_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "v2/_interface/WindowSize.h"
-#include "Renderer/OpenCL/OpenCLContext_def.h"
 
 typedef struct RenderableObjectTransform_Input_TYP
 {
@@ -15,7 +14,3 @@ typedef struct RenderableObjectTransform_Input_TYP
 }RenderableObjectTransform_Input, * RenderableObjectTransform_Input_PTR;
 
 void RendereableObject_TransformPolygons(RenderableObjectTransform_Input_PTR p_input);
-
-#if HAS_OPENCL
-void RendereableObject_TransformPolygons_vertexCentralized_GPU(RenderableObjectTransform_Input_PTR p_input, OpenCLContext_PTR p_openCLContext);
-#endif

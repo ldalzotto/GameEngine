@@ -102,10 +102,10 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 	for (size_t i = 0; i < p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Size; i++)
 	{
 		DrawFunction_ExtractedPipeline l_pipelineData = _i_ExtractPipeline(p_input->RendererPipelineMemory, i);
-		RenderedObject_PTR l_renderedObject = &p_input->RenderHeap->RenderedObjectAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject.Handle];
-		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_renderedObject->Material.Handle];
+
+		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject->Material.Handle];
 		Polygon_UV_PTR l_polygonUV = &p_input->RenderHeap->PolygonUVAllocator.array.Memory
-			[l_renderedObject->Mesh->PerVertexData.UV1.Memory
+			[l_pipelineData.RenderableObjectPipeline->RenderedObject->Mesh->PerVertexData.UV1.Memory
 			[l_pipelineData.Polygon->MeshPolygonIndex].Handle];
 
 		// Rasterize
@@ -141,10 +141,10 @@ void DrawPoly_FlatShade_Textured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 	for (size_t i = 0; i < p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Size; i++)
 	{
 		DrawFunction_ExtractedPipeline l_pipelineData = _i_ExtractPipeline(p_input->RendererPipelineMemory, i);
-		RenderedObject_PTR l_renderedObject = &p_input->RenderHeap->RenderedObjectAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject.Handle];
-		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_renderedObject->Material.Handle];
+
+		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject->Material.Handle];
 		Polygon_UV_PTR l_polygonUV = &p_input->RenderHeap->PolygonUVAllocator.array.Memory
-				[l_renderedObject->Mesh->PerVertexData.UV1.Memory
+				[l_pipelineData.RenderableObjectPipeline->RenderedObject->Mesh->PerVertexData.UV1.Memory
 						[l_pipelineData.Polygon->MeshPolygonIndex].Handle];
 
 
@@ -185,8 +185,7 @@ void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 	{
 		DrawFunction_ExtractedPipeline l_pipelineData = _i_ExtractPipeline(p_input->RendererPipelineMemory, i);
 
-		RenderedObject_PTR l_renderedObject = &p_input->RenderHeap->RenderedObjectAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject.Handle];
-		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_renderedObject->Material.Handle];
+		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject->Material.Handle];
 
 		FlatShadingPixelCalculation l_flatCalculation;
 		_i_FlatShadingPixelCalculation_PreCalculation(&l_flatCalculation, p_input->RenderLights, l_pipelineData.Polygon);

@@ -2,6 +2,7 @@
 
 #include "Objects/RenderedObject_def.h"
 
+
 typedef struct RENDEREDOBJECT_BUFFER_TYP
 {
 	Array_RenderedObjectHandle RenderedObjects;

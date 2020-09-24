@@ -11,8 +11,8 @@ void RenderableObject_ToRenderPipeline(RENDEREDOBJECT_BUFFER_PTR p_renderableObj
 {
 	for (size_t i = 0; i < p_renderableObjects->RenderedObjects.Size; i++)
 	{
-		RenderedObject_HANDLE l_renderableObjectHandle = p_renderableObjects->RenderedObjects.Memory[i];
-		RenderedObject_PTR l_renderableObject = &p_renderHeap->RenderedObjectAllocator.array.Memory[l_renderableObjectHandle.Handle];
+		RenderedObject_PTR l_renderableObject = p_renderableObjects->RenderedObjects.Memory[i];
+
 		if (!l_renderableObject->IsCulled)
 		{
 
@@ -22,7 +22,6 @@ void RenderableObject_ToRenderPipeline(RENDEREDOBJECT_BUFFER_PTR p_renderableObj
 				Arr_PushBackRealloc_Empty_VertexPipeline(&p_renderPipelineMemory->VertexPipeline);
 				p_renderPipelineMemory->VertexPipeline.Memory[p_renderPipelineMemory->VertexPipeline.Size - 1] = (VertexPipeline){
 					.Vertex = l_renderableObject->Mesh->Vertices.Memory[j],
-					.AssociatedRenderableObjectPipeline = p_renderPipelineMemory->RederableObjectsPipeline.Size,
 					.WorldPositionCalculated = 0,
 					.PixelPositionCalculated = 0
 				};
@@ -53,7 +52,7 @@ void RenderableObject_ToRenderPipeline(RENDEREDOBJECT_BUFFER_PTR p_renderableObj
 
 			Arr_PushBackRealloc_Empty_RenderableObjectPipeline(&p_renderPipelineMemory->RederableObjectsPipeline);
 			p_renderPipelineMemory->RederableObjectsPipeline.Memory[p_renderPipelineMemory->RederableObjectsPipeline.Size - 1] = (RenderableObjectPipeline){
-				.RenderedObject = l_renderableObjectHandle,
+				.RenderedObject = l_renderableObject,
 				.PolygonPipelineIndexBeginIncluded = l_polygonPipelineIndexOffset,
 				.PolygonPipelineIndexEndExcluded = p_renderPipelineMemory->PolygonPipelines.Size,
 				.VertexPipelineIndexBeginIncluded = l_vertexIndexOffset,

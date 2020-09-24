@@ -30,17 +30,17 @@ void Camera_OnComponentDetached(Camera_PTR p_camera)
 
 void Camera_buildProjectionMatrix(Camera_PTR p_camera)
 {
-	p_camera->CameraBuffer->Far = 50.0f;
+	p_camera->Far = 50.0f;
 	Mat_Perspective_M4F(45.0f * DEG_TO_RAD,
-		((float)p_camera->RenderInterface->SwapChain->PresentTexture.Width / (float)p_camera->RenderInterface->SwapChain->PresentTexture.Height), 0.1f, p_camera->CameraBuffer->Far, &p_camera->CameraBuffer->ProjectionMatrix);
-	Frustum_ExtractFromProjection((Matrix4f_PTR)&p_camera->CameraBuffer->ProjectionMatrix, &p_camera->CameraBuffer->CameraFrustum);
+		((float)p_camera->RenderInterface->SwapChain->PresentTexture.Width / (float)p_camera->RenderInterface->SwapChain->PresentTexture.Height), 0.1f, p_camera->Far, &p_camera->ProjectionMatrix);
+	Frustum_ExtractFromProjection((Matrix4f_PTR)&p_camera->ProjectionMatrix, &p_camera->CameraFrustum);
 
 };
 
 Matrix4f Camera_worldToClipMatrix(Camera_PTR p_camera)
 {
 	Matrix4f l_return;
-	Mat_Mul_M4F_M4F(&p_camera->CameraBuffer->ProjectionMatrix, &p_camera->CameraBuffer->ViewMatrix, &l_return);
+	Mat_Mul_M4F_M4F(&p_camera->ProjectionMatrix, &p_camera->ViewMatrix, &l_return);
 	return l_return;
 };
 

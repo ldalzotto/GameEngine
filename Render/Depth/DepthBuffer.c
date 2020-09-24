@@ -13,7 +13,7 @@ void DepthBuffer_Clear(DepthBuffer_PTR p_depthBuffer, CAMERABUFFER_PTR p_cameraB
 	size_t l_size = (size_t)p_depthBuffer->Width * p_depthBuffer->Height;
 	for (size_t i = 0; i < l_size; i++)
 	{
-		p_depthBuffer->Pixels.Memory[i] = p_cameraBuffer->Far;
+		p_depthBuffer->Pixels.Memory[i] = *p_cameraBuffer->Far;
 	}
 };
 

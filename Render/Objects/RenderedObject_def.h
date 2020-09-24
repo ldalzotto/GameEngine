@@ -13,17 +13,7 @@ typedef struct RenderedObject_TYP
 	Matrix4f ModelMatrix;
 	Material_HANDLE Material;
 	char IsCulled;
-}RenderedObject, * RenderedObject_PTR;
-
-typedef struct Array_RenderedObject_TYP
-{
-	ARRAY_TYPE_DEFINITION(RenderedObject)
-}Array_RenderedObject, * Array_RenderedObject_PTR;
-
-typedef struct RenderedObject_HANDLE_TYP
-{
-	size_t Handle;
-}RenderedObject_HANDLE, * RenderedObject_HANDLE_PTR;
+}RenderedObject, * RenderedObject_PTR, * RenderedObject_HANDLE, ** RenderedObject_HANDLE_PTR;
 
 typedef struct Array_RenderedObjectHandle_TYP
 {

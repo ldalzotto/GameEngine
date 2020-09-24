@@ -7,7 +7,6 @@
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "Renderer/GlobalBuffers/RenderedObjectsBuffer.h"
 #include "Depth/DepthBuffer_def.h"
-#include "Renderer/OpenCL/OpenCLContext_def.h"
 
 typedef struct SolidRendererInput_TYP
 {
@@ -18,7 +17,4 @@ typedef struct SolidRendererInput_TYP
 
 void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);
 void DrawObjects_FlatShade_Textured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);
-#if HAS_OPENCL
-void DrawObjects_FlatShade_Textured_GPU(const SolidRendererInput* p_input, OpenCLContext_PTR p_openCLContext, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);
-#endif
 void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory);

@@ -125,9 +125,7 @@ void Vec_Min_2d_2d(const Vector2d_PTR p_left, const Vector2d_PTR p_right, Vector
 
 void Vec_Min_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector3f_PTR p_out)
 {
-	p_out->x = p_left->x - p_right->x;
-	p_out->y = p_left->y - p_right->y;
-	p_out->z = p_left->z - p_right->z;
+	Vec_Min_Xf_Xf((const char*)p_left, (const char*)p_right, 3, (char*)p_out);
 }
 
 void Vec_Min_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
@@ -228,10 +226,7 @@ void Vec_Mul_3f_3f(const Vector3f_PTR p_left, const Vector3f_PTR p_right, Vector
 
 void Vec_Mul_4f_1f(const Vector4f_PTR p_left, const float p_right, Vector4f_PTR p_out)
 {
-	p_out->x = p_left->x * p_right;
-	p_out->y = p_left->y * p_right;
-	p_out->z = p_left->z * p_right;
-	p_out->w = p_left->w * p_right;
+	Vec_Mul_Xf_1f((const char*)p_left, 4, p_right, (char*)p_out);
 };
 
 void Vec_Mul_4f_4f(const Vector4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
@@ -280,7 +275,7 @@ inline float Vec_Length_Xf(const char* p_vec, const short int p_elementCount)
 
 float Vec_Length_3f(const Vector3f_PTR p_left)
 {
-	return sqrtf((p_left->x * p_left->x) + (p_left->y * p_left->y) + (p_left->z * p_left->z));
+	return Vec_Length_Xf((const char*)p_left, 3);
 };
 
 float Vec_Length_4f(const Vector4f_PTR p_left)
@@ -304,10 +299,7 @@ inline void Vec_Normalize_Xf(const char* p_vec, const short int p_elementCount, 
 
 void Vec_Normalize_3f(const Vector3f_PTR p_vec, Vector3f_PTR p_out)
 {
-	float l_invertedLength = 1 / Vec_Length_3f(p_vec);
-	p_out->x = p_vec->x * l_invertedLength;
-	p_out->y = p_vec->y * l_invertedLength;
-	p_out->z = p_vec->z * l_invertedLength;
+	Vec_Normalize_Xf((const char*)p_vec, 3, (char*)p_out);
 };
 
 void Vec_Project_3f(const Vector3f_PTR p_vec, const Vector3f_PTR p_projectedOn, Vector3f_PTR p_out)
@@ -712,13 +704,7 @@ void Mat_Mul_M4F_M4F(const Matrix4f_PTR p_left, const Matrix4f_PTR p_right, Matr
 
 void Mat_Mul_M4F_V4F(const Matrix4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
 {
-	// Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 1, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
-
-	p_out->x = (p_left->_00 * p_right->x) + (p_left->_10 * p_right->y) + (p_left->_20 * p_right->z) + (p_left->_30 * p_right->w);
-	p_out->y = (p_left->_01 * p_right->x) + (p_left->_11 * p_right->y) + (p_left->_21 * p_right->z) + (p_left->_31 * p_right->w);
-	p_out->z = (p_left->_02 * p_right->x) + (p_left->_12 * p_right->y) + (p_left->_22 * p_right->z) + (p_left->_32 * p_right->w);
-	p_out->w = (p_left->_03 * p_right->x) + (p_left->_13 * p_right->y) + (p_left->_23 * p_right->z) + (p_left->_33 * p_right->w);
-	
+	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 1, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
 };
 
 void Mat_Mul_M4F_V4F_Homogeneous(const Matrix4f_PTR p_projectionmatrix, const Vector4f_PTR p_pos, Vector4f_PTR out_pos)

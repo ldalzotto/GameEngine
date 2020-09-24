@@ -7,9 +7,9 @@
 
 typedef struct CAMERABUFFER_TYP
 {
-	Matrix4f ViewMatrix;
-	Matrix4f ProjectionMatrix;
+	Matrix4f_PTR ViewMatrix;
+	Matrix4f_PTR ProjectionMatrix;
 	Vector4f WorldPosition;
-	float Far;
-	Frustum CameraFrustum;
+	float* Far;
+	Frustum_PTR CameraFrustum;
 }CAMERABUFFER, * CAMERABUFFER_PTR;
