@@ -1373,6 +1373,16 @@ void Rect_ClipPoint_Int(const Recti_PTR p_clippedRect, Vector2i_PTR p_point)
 
 #if 1
 
+void WindowSize_Precalculate_uint16t(uint16_t p_width, uint16_t p_height, WindowSize_PTR out_windowSize)
+{
+	out_windowSize->Width = p_width;
+	out_windowSize->Height = p_height;
+	out_windowSize->HalfWidth = (uint32_t)(0.5f * (float)p_width);
+	out_windowSize->HalfHeight = (uint32_t)(0.5f * (float)p_height);
+	out_windowSize->TwoOnHeight = 2.0f / p_height;
+	out_windowSize->TwoOnWidth = 2.0f / p_width;
+};
+
 void WindowSize_GraphicsAPIToPixel(const WindowSize* p_windowSize, float p_x, float p_y, int* out_x, int* out_y)
 {
 	//TODO -> Disable rounding ?

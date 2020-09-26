@@ -135,7 +135,7 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 		Polygonf l_cameraDepthPolygon = _i_ExtractedPipeline_CameraDepthPolygon(&l_pipelineData);
 
 		PolygonRasterizerIterator l_rasterizerIterator;
-		PolygonRasterize_Initialize(&l_pixelPositionPolygon, p_input->TargetClip, &l_rasterizerIterator);
+		PolygonRasterize_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
 		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
 		while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
@@ -146,7 +146,7 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 			{
 				if (_i_DepthTest_Linear(&l_rasterizerIterator, &l_cameraDepthPolygon, p_input->DepthBuffer))
 				{
-					p_input->RenderTarget->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->Width)] = l_material->BaseColor;
+					p_input->RenderTarget->Texture.Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->PrecalculatedDimensions.Width)] = l_material->BaseColor;
 				}
 			}
 		}
@@ -180,7 +180,7 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 		l_perspectiveInterpolation.InvertedZValueOnPolygon = _i_ExtractedPipeline_CameraDepthPolygonInverted(&l_pipelineData);
 		
 		PolygonRasterizerIterator l_rasterizerIterator;
-		PolygonRasterize_Initialize(&l_pixelPositionPolygon, p_input->TargetClip, &l_rasterizerIterator);
+		PolygonRasterize_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
 		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
 		while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
@@ -192,7 +192,7 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 				if (_i_DepthTest_Perspective(&l_rasterizerIterator, p_input->DepthBuffer, &l_perspectiveInterpolation))
 				{
 					_i_FlatShadingPixelCalculation_ShadePixelColor_Textured_Perspective(&l_flatCalculation, l_polygonUV, p_input->RenderLights, l_material, &l_rasterizerIterator.InterpolationFactors, &l_perspectiveInterpolation, &l_pixelColor);
-					p_input->RenderTarget->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->Width)] = l_pixelColor;
+					p_input->RenderTarget->Texture.Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->PrecalculatedDimensions.Width)] = l_pixelColor;
 				}
 			}
 		}
@@ -219,7 +219,7 @@ void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 		Polygonf l_cameraDepthPolygon = _i_ExtractedPipeline_CameraDepthPolygon(&l_pipelineData);
 
 		PolygonRasterizerIterator l_rasterizerIterator;
-		PolygonRasterize_Initialize(&l_pixelPositionPolygon, p_input->TargetClip, &l_rasterizerIterator);
+		PolygonRasterize_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
 		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
 		while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
@@ -231,7 +231,7 @@ void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 				if (_i_DepthTest_Linear(&l_rasterizerIterator, &l_cameraDepthPolygon, p_input->DepthBuffer))
 				{
 					_i_FlatShadingPixelCalculation_ShadePixelColor(&l_flatCalculation, p_input->RenderLights, l_material, &l_pixelColor);
-					p_input->RenderTarget->Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->Width)] = l_pixelColor;
+					p_input->RenderTarget->Texture.Pixels.Memory[l_rasterizerIterator.RasterizedPixel.x + (l_rasterizerIterator.RasterizedPixel.y * p_input->RenderTarget->PrecalculatedDimensions.Width)] = l_pixelColor;
 				}
 			}
 		}

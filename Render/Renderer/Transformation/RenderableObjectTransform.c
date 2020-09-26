@@ -33,7 +33,7 @@ inline void _i_VertexPipeline_CalculatePixelPosition(VertexPipeline_PTR p_vertex
 		Mat_Mul_M4F_V4F_Homogeneous(p_input->CameraBuffer->ProjectionMatrix, &p_vertexPipeline->CameraSpacePosition, &l_clipPosition);
 
 		// To pixel
-		WindowSize_GraphicsAPIToPixel(p_input->WindowSize, l_clipPosition.x, l_clipPosition.y, &p_vertexPipeline->PixelPosition.x, &p_vertexPipeline->PixelPosition.y);
+		WindowSize_GraphicsAPIToPixel(p_input->RenderTextureSize, l_clipPosition.x, l_clipPosition.y, &p_vertexPipeline->PixelPosition.x, &p_vertexPipeline->PixelPosition.y);
 
 		p_vertexPipeline->PixelPositionCalculated = 1;
 	}

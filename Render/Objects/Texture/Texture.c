@@ -1,5 +1,6 @@
 #include "Texture.h"
 // #include "v2/_interface/VectorStructuresC.h"
+#include "v2/_interface/WindowSize.h"
 #include "v2/_interface/ColorC.h"
 #include "Heap/RenderHeap.h"
 
@@ -27,6 +28,22 @@ void Texture_Alloc_3f(Texture3f_PTR p_texture, uint16_t p_width, uint16_t p_heig
 void Texture_Free_3f(Texture3f_PTR p_texture)
 {
 	Arr_Free(&p_texture->Pixels.array);
+};
+
+void RenderTexture_Alloc_3f(RenderTexture3f_PTR p_texture, uint16_t p_width, uint16_t p_height)
+{
+	p_texture->Texture.Width = p_width;
+	p_texture->Texture.Height = p_height;
+	Arr_Alloc_Color3f(&p_texture->Texture.Pixels, ((size_t)p_texture->Texture.Width * p_texture->Texture.Height));
+	p_texture->Texture.Pixels.Size = p_texture->Texture.Pixels.Capacity;
+	
+	Texture_BuildClipRect_3F(&p_texture->Texture, &p_texture->BoundingRectangle);
+	WindowSize_Precalculate_uint16t(p_texture->Texture.Width, p_texture->Texture.Height, &p_texture->PrecalculatedDimensions);
+};
+
+void RenderTexture_Free_3f(RenderTexture3f_PTR p_texture)
+{
+	Arr_Free(&p_texture->Texture.Pixels.array);
 };
 
 void Texture_Alloc_f(Texturef_PTR p_texture, uint16_t p_width, uint16_t p_height)
@@ -73,6 +90,11 @@ size_t Texture_GetElementOffset_3C(uint16_t W, uint16_t H, uint16_t textWidth)
 void Texture_BuildClipRect_3C(Texture3c_PTR p_texture, Recti_PTR out_rect)
 {
 	*out_rect = (Recti) { {0,0}, {(int)p_texture->Width - 1, (int)p_texture->Height - 1} };
+};
+
+void Texture_BuildClipRect_3F(Texture3f_PTR p_texture, Recti_PTR out_rect)
+{
+	*out_rect = (Recti){ {0,0}, {(int)p_texture->Width - 1, (int)p_texture->Height - 1} };
 };
 
 void Texture_CreateMemoryCursor_3C(Texture3c_PTR p_texture, Texture3c_MemoryCursor_PTR out_cursor)

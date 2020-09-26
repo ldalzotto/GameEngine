@@ -44,7 +44,7 @@ typedef struct RenderV2_TYP
 	RenderResourceProvider Resources;
 	
 	DepthBuffer DepthBuffer;
-	Texture3f RenderTargetTexture;
+	RenderTexture3f RenderTargetTexture;
 
 	GlobalBuffers GlobalBuffer;
 	RendererPipeline_Memory WireframeRenderMemory;

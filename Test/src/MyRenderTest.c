@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
 	l_modelMatrix.Col3.y = 0.0f;
 	MeshResource_HANDLE l_mesh;
 	Assetpath l_meshAssetPath;
-	AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
-	// AssetPath_GetAbsolutePath("Models/16.09.obj", &l_meshAssetPath);
+	// AssetPath_GetAbsolutePath("Models/BigCube.obj", &l_meshAssetPath);
+	AssetPath_GetAbsolutePath("Models/16.09.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/16.09_plane.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/Icosphere2.obj", &l_meshAssetPath);
 	// AssetPath_GetAbsolutePath("Models/Plane.obj", &l_meshAssetPath);
@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
 	}
 
 	Assetpath l_textureAssterPath;
-	AssetPath_GetAbsolutePath("Textures/texture.png", &l_textureAssterPath);
-	// AssetPath_GetAbsolutePath("Textures/16.09_diffuse.png", &l_textureAssterPath);
+	// AssetPath_GetAbsolutePath("Textures/texture.png", &l_textureAssterPath);
+	AssetPath_GetAbsolutePath("Textures/16.09_diffuse.png", &l_textureAssterPath);
 	TextureResource_PTR l_texture;
 	TextureResourceProvider_UseResource(&renderV2.Resources.TextureResourceProvider, &l_textureAssterPath, &l_texture);
 

@@ -30,6 +30,4 @@ typedef struct Window_TYP
 	WindowSize WindowSize;
 
 	WindowState WindowState;
-
-	OnWindowSizeChangedObserver OnWindowSizeChanged;
 }Window, * Window_PTR;

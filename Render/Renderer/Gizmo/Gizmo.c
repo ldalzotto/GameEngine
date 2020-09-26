@@ -28,7 +28,7 @@ void GizmoBuffer_free(GizmoBuffer* p_buffer)
 	Arr_Free(&p_buffer->Vertices.array);
 };
 
-void Gizmo_Render(GizmoRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect)
+void Gizmo_Render(GizmoRendererInput* p_input, RenderTexture3f_PTR p_to)
 {
 	for (size_t i = 0; i < p_input->Buffer->Lines.Size; i++)
 	{
@@ -53,13 +53,13 @@ void Gizmo_Render(GizmoRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_t
 		Vector2i l_lineBegin_pixel;
 		Vector2i l_lineEnd_pixel;
 		{
-			WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, l_lineBegin.x, l_lineBegin.y, &l_lineBegin_pixel.x, &l_lineBegin_pixel.y);
-			WindowSize_GraphicsAPIToPixel(&p_input->WindowSize, l_lineEnd.x, l_lineEnd.y, &l_lineEnd_pixel.x, &l_lineEnd_pixel.y);
+			WindowSize_GraphicsAPIToPixel(&p_to->PrecalculatedDimensions, l_lineBegin.x, l_lineBegin.y, &l_lineBegin_pixel.x, &l_lineBegin_pixel.y);
+			WindowSize_GraphicsAPIToPixel(&p_to->PrecalculatedDimensions, l_lineEnd.x, l_lineEnd.y, &l_lineEnd_pixel.x, &l_lineEnd_pixel.y);
 		}
 
 		// Rasterize
 		{
-			Draw_LineClipped(&l_lineBegin_pixel, &l_lineEnd_pixel, p_to, p_to_clipRect, &l_line->Color);
+			Draw_LineClipped(&l_lineBegin_pixel, &l_lineEnd_pixel, &p_to->Texture, &p_to->BoundingRectangle, &l_line->Color);
 		}
 	}
 

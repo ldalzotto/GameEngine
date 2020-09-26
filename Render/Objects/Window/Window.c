@@ -12,8 +12,8 @@ void windowPlatforwSpecific_close(Window* p_window);
 void windowPlatformSpecific_paintTexture(Window* p_window);
 void windowPlatforwSpecific_getClientRect(Window* p_windout, int* out_width, int* out_height);
 
-const uint32_t WINDOW_WIDTH = 320;
-const uint32_t WINDOW_HEIGHT = 240;
+const uint32_t WINDOW_WIDTH = 640;
+const uint32_t WINDOW_HEIGHT = 480;
 
 const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
@@ -27,8 +27,6 @@ void WindowSize_UpdateDependentValues(WindowSize* p_windowSize)
 
 void Window_init(Window* p_window)
 {
-	Observer_Alloc(&p_window->OnWindowSizeChanged);
-
 	p_window->WindowSize.Width = WINDOW_WIDTH;
 	p_window->WindowSize.Height = WINDOW_HEIGHT;
 	WindowSize_UpdateDependentValues(&p_window->WindowSize);
@@ -39,7 +37,6 @@ void Window_init(Window* p_window)
 
 void Window_closeWindow(Window* p_window)
 {
-	Observer_Free(&p_window->OnWindowSizeChanged);
 	windowPlatforwSpecific_close(p_window);
 	p_window->Handle.Window = NULL;
 };
@@ -61,8 +58,6 @@ bool Window_consumeSizeChangeEvent(Window* p_window)
 		windowPlatforwSpecific_getClientRect(p_window, (int*)&p_window->WindowSize.Width, (int*)&p_window->WindowSize.Height);
 		WindowSize_UpdateDependentValues(&p_window->WindowSize);
 		
-		Observer_Broadcast(&p_window->OnWindowSizeChanged, NULL);
-
 		p_window->WindowState.HasResizedThisFrame = false;
 		return true;
 	}
@@ -153,13 +148,14 @@ void windowPlatformSpecific_paintTexture(Window* p_window)
 		HBITMAP l_map = CreateCompatibleBitmap(hdc, l_presentTexture->Width, l_presentTexture->Height);
 		SelectObject(l_map_hdc, l_map);
 
+		/*
 		{
 			BITMAP structBitmapHeader;
 			memset(&structBitmapHeader, 0, sizeof(BITMAP));
 			HGDIOBJ hBitmap = GetCurrentObject(hdc, OBJ_BITMAP);
 			GetObject(hBitmap, sizeof(BITMAP), &structBitmapHeader);
 		}
-
+		*/
 		//Set bitmap header
 		{
 			BITMAPINFOHEADER bmih;
@@ -196,6 +192,8 @@ void windowPlatformSpecific_paintTexture(Window* p_window)
 
 
 		{
+			//if(!StretchBlt(hdc, 0, 0, p_window->WindowSize.Width, p_window->WindowSize.Height, l_map_hdc, 0, 0, 
+			//		l_presentTexture->Width , l_presentTexture->Height, SRCCOPY))
 			if (!BitBlt(hdc, 0, 0, l_presentTexture->Width, l_presentTexture->Height, l_map_hdc, 0, 0, SRCCOPY))
 			{
 				printf("windowPlatformSpecific_paintTexture : cannot blit texture !");

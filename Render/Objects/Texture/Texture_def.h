@@ -5,6 +5,8 @@
 #include "v2/_interface/VectorStructuresC_def.h"
 #include "v2/_interface/VectorC_def.h"
 #include "v2/_interface/ColorC_def.h"
+#include "v2/_interface/RectC_def.h"
+#include "v2/_interface/WindowSize_def.h"
 
 typedef struct Texture3c_TYP
 {
@@ -46,3 +48,10 @@ typedef struct Texturef_TYP
 	uint16_t Width, Height;
 	Array_Float Pixels;
 }Texturef, * Texturef_PTR;
+
+typedef struct RenderTexture3f_TYP
+{
+	Texture3f Texture;
+	Recti BoundingRectangle;
+	WindowSize PrecalculatedDimensions;
+}RenderTexture3f, *RenderTexture3f_PTR;

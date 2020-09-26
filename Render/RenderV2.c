@@ -42,58 +42,47 @@ void RenderV2_initialize(RenderV2* p_render)
 	RenderV2Interface_build(&p_render->RenderInterface, p_render);
 
 	SwapChain_Resize(&p_render->SwapChain, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
+
+	RenderTexture_Free_3f(&p_render->RenderTargetTexture);
+	RenderTexture_Alloc_3f(&p_render->RenderTargetTexture, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
+	DepthBuffer_Realloc(&p_render->DepthBuffer, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
+	SwapChain_Resize(&p_render->SwapChain, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
 }
 
 void RenderV2_render(RenderV2* p_render)
 {
 	if (Window_consumeSizeChangeEvent(&p_render->AppWindow))
 	{
-		Texture_Free_3f(&p_render->RenderTargetTexture);
-		Texture_Alloc_3f(&p_render->RenderTargetTexture, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
-		DepthBuffer_Realloc(&p_render->DepthBuffer, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
 		SwapChain_Resize(&p_render->SwapChain, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
 	}
 
 	{
 		// Color3c l_color = { 0,0,0 };
-		memset(p_render->RenderTargetTexture.Pixels.Memory, 0, p_render->RenderTargetTexture.Pixels.Capacity * sizeof(Vector3f));
+		memset(p_render->RenderTargetTexture.Texture.Pixels.Memory, 0, p_render->RenderTargetTexture.Texture.Pixels.Capacity * sizeof(Vector3f));
 		DepthBuffer_Clear(&p_render->DepthBuffer, &p_render->GlobalBuffer.CameraBuffer);
-		/*
-		Texture3c_MemoryCursor l_presentTextureCursor;
-		Texture_CreateMemoryCursor_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureCursor);
-		while (!TextureMemCursor_IsOutofBound_3C(&l_presentTextureCursor))
-		{
-			*l_presentTextureCursor.Current = l_color;
-			TextureMemCursor_MoveNextPixel_3C(&l_presentTextureCursor);
-		}
-		*/
 	}
-
-	Recti l_presentTextureClip;
-	Texture_BuildClipRect_3C(&p_render->SwapChain.PresentTexture, &l_presentTextureClip);
 
 	{
 		SolidRendererInput l_wireFrameRendererInput;
 		l_wireFrameRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
-		l_wireFrameRendererInput.WindowSize = p_render->AppWindow.WindowSize;
 
-		if(p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_Textured.RenderedObjects.Size > 0)
+		if (p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_Textured.RenderedObjects.Size > 0)
 		{
 			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_Textured;
-			DrawObjects_FlatShade_Textured_Perspective(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+			DrawObjects_FlatShade_Textured_Perspective(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
 		}
 		if (p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_NotTextured.RenderedObjects.Size > 0)
 		{
 			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.FlatShaded_NotTextured;
-			DrawObjects_FlatShade_NotTextured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+			DrawObjects_FlatShade_NotTextured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
 		}
 		if (p_render->GlobalBuffer.RenderedObjectBuffers.NotShaded_NotTextured.RenderedObjects.Size > 0)
 		{
 			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.NotShaded_NotTextured;
-			DrawObjects_NoShade_NotTextured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+			DrawObjects_NoShade_NotTextured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
 		}
 	}
 
@@ -102,11 +91,10 @@ void RenderV2_render(RenderV2* p_render)
 		GizmoRendererInput l_gizmoRendererInput;
 		l_gizmoRendererInput.Buffer = &p_render->GizmoBuffer;
 		l_gizmoRendererInput.CameraBuffer = &p_render->GlobalBuffer.CameraBuffer;
-		l_gizmoRendererInput.WindowSize = p_render->AppWindow.WindowSize;
-		Gizmo_Render(&l_gizmoRendererInput, &p_render->RenderTargetTexture, &l_presentTextureClip);
+		Gizmo_Render(&l_gizmoRendererInput, &p_render->RenderTargetTexture);
 	}
 
-	SwapChain_PushTexture(&p_render->SwapChain, &p_render->RenderTargetTexture);
+	SwapChain_PushTexture(&p_render->SwapChain, &p_render->RenderTargetTexture.Texture);
 	Window_presentTexture(&p_render->AppWindow, &p_render->SwapChain.PresentTexture);
 };
 

@@ -11,8 +11,7 @@ typedef struct DrawPolygFlatShadeTexturedInput_TYP
 {
 	RendererPipeline_Memory_PTR RendererPipelineMemory;
 	RenderHeap_PTR RenderHeap;
-	Texture3f_PTR RenderTarget;
-	Recti_PTR TargetClip;
+	RenderTexture3f_PTR RenderTarget;
 	DepthBuffer_PTR DepthBuffer;
 	RenderLights_PTR RenderLights;
 }DrawPolygFlatShadeTexturedInput, * DrawPolygFlatShadeTexturedInput_PTR;

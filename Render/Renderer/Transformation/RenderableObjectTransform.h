@@ -10,7 +10,7 @@ typedef struct RenderableObjectTransform_Input_TYP
 	RendererPipeline_Memory_PTR RendererPipelineMemory;
 	RenderHeap_PTR RenderHeap;
 	CAMERABUFFER_PTR CameraBuffer;
-	WindowSize_PTR WindowSize;
+	WindowSize_PTR RenderTextureSize;
 }RenderableObjectTransform_Input, * RenderableObjectTransform_Input_PTR;
 
 void RendereableObject_TransformPolygons(RenderableObjectTransform_Input_PTR p_input);

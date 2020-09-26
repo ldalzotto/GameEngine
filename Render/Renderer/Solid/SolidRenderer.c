@@ -14,7 +14,7 @@ RenderLights GRenderLights =
 	.AmbientLight = {.Color = {0.3f, 0.3f, 0.6f} }
 };
 
-void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
+void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, RenderTexture3f_PTR p_to, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
 
 	RenderableObject_CullObject(p_input->RenderableObjectsBuffer, p_input->CameraBuffer);
@@ -26,7 +26,7 @@ void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3
 		.RenderHeap = &RRenderHeap,
 		.RendererPipelineMemory = p_memory,
 		.CameraBuffer = p_input->CameraBuffer,
-		.WindowSize = &p_input->WindowSize
+		.RenderTextureSize = &p_to->PrecalculatedDimensions
 	};
 	RendereableObject_TransformPolygons(&l_renderableObjectTransformInput);
 
@@ -36,15 +36,14 @@ void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, Texture3
 		.RendererPipelineMemory = p_memory,
 		.RenderHeap = &RRenderHeap,
 		.RenderLights = &GRenderLights,
-		.RenderTarget = p_to,
-		.TargetClip = p_to_clipRect
+		.RenderTarget = p_to
 	};
 
 	DrawPoly_NoShade_NotTextured(&l_drawInput);
 
 }
 
-void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
+void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_input, RenderTexture3f_PTR p_to, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
@@ -75,7 +74,7 @@ void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_inpu
 		.RenderHeap = &RRenderHeap,
 		.RendererPipelineMemory = p_memory,
 		.CameraBuffer = p_input->CameraBuffer,
-		.WindowSize = &p_input->WindowSize
+		.RenderTextureSize = &p_to->PrecalculatedDimensions
 	};
 	RendereableObject_TransformPolygons(&l_renderableObjectTransformInput);
 
@@ -89,8 +88,7 @@ void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_inpu
 		.RendererPipelineMemory = p_memory,
 		.RenderHeap = &RRenderHeap,
 		.RenderLights = &GRenderLights,
-		.RenderTarget = p_to,
-		.TargetClip = p_to_clipRect
+		.RenderTarget = p_to
 	};
 	DrawPoly_FlatShade_Textured_Perspective(&l_drawInput);
 
@@ -101,7 +99,7 @@ void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_inpu
 
 };
 
-void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
+void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, RenderTexture3f_PTR p_to, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
 	RenderableObject_CullObject(p_input->RenderableObjectsBuffer, p_input->CameraBuffer);
 
@@ -112,7 +110,7 @@ void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, Textur
 		.RenderHeap = &RRenderHeap,
 		.RendererPipelineMemory = p_memory,
 		.CameraBuffer = p_input->CameraBuffer,
-		.WindowSize = &p_input->WindowSize
+		.RenderTextureSize = &p_to->PrecalculatedDimensions
 	};
 	RendereableObject_TransformPolygons(&l_renderableObjectTransformInput);
 
@@ -122,8 +120,7 @@ void DrawObjects_FlatShade_NotTextured(const SolidRendererInput* p_input, Textur
 		.RendererPipelineMemory = p_memory,
 		.RenderHeap = &RRenderHeap,
 		.RenderLights = &GRenderLights,
-		.RenderTarget = p_to,
-		.TargetClip = p_to_clipRect
+		.RenderTarget = p_to
 	};
 	DrawPoly_FlatShade_NotTextured(&l_drawInput);
 

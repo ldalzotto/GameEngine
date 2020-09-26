@@ -6,7 +6,6 @@
 #include "v2/_interface/RectC_def.h"
 #include "v2/_interface/VectorC_def.h"
 #include "v2/_interface/ColorC_def.h"
-#include "v2/_interface/WindowSize_def.h"
 #include "Objects/Texture/Texture_def.h"
 #include "Renderer/GlobalBuffers/CameraBuffer.h"
 #include "DataStructures/ARRAY_def.h"
@@ -50,10 +49,9 @@ typedef struct GizmoRendererInput_TYP
 {
 	GizmoBuffer* Buffer;
 	CAMERABUFFER_PTR CameraBuffer;
-	WindowSize WindowSize;
 } GizmoRendererInput;
 
-void Gizmo_Render(GizmoRendererInput* p_input, Texture3f_PTR p_to, Recti_PTR p_to_clipRect);
+void Gizmo_Render(GizmoRendererInput* p_input, RenderTexture3f_PTR p_to);
 void Gizmo_DrawLine(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end);
 void Gizmo_DrawLine_Color(GizmoBuffer* p_gizmo, const Vector3f_PTR p_begin, const Vector3f_PTR p_end, const Color3f_PTR p_color);
 void Gizmo_DrawPoint(GizmoBuffer* p_gizmo, const Vector3f_PTR p_point);
