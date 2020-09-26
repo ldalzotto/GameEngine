@@ -683,6 +683,27 @@ inline float Mat_Det_M4F(const Matrix4f_PTR p_mat, const short int p_colIndex, c
 
 void Mat_Mul_M4F_M4F(const Matrix4f_PTR p_left, const Matrix4f_PTR p_right, Matrix4f_PTR p_out)
 {
+	p_out->_00 = (p_left->_00 * p_right->_00) + (p_left->_10 * p_right->_01) + (p_left->_20 * p_right->_02) + (p_left->_30 * p_right->_03);
+	p_out->_01 = (p_left->_01 * p_right->_00) + (p_left->_11 * p_right->_01) + (p_left->_21 * p_right->_02) + (p_left->_31 * p_right->_03);
+	p_out->_02 = (p_left->_02 * p_right->_00) + (p_left->_12 * p_right->_01) + (p_left->_22 * p_right->_02) + (p_left->_32 * p_right->_03);
+	p_out->_03 = (p_left->_03 * p_right->_00) + (p_left->_13 * p_right->_01) + (p_left->_23 * p_right->_02) + (p_left->_33 * p_right->_03);
+
+	p_out->_10 = (p_left->_00 * p_right->_10) + (p_left->_10 * p_right->_11) + (p_left->_20 * p_right->_12) + (p_left->_30 * p_right->_13);
+	p_out->_11 = (p_left->_01 * p_right->_10) + (p_left->_11 * p_right->_11) + (p_left->_21 * p_right->_12) + (p_left->_31 * p_right->_13);
+	p_out->_12 = (p_left->_02 * p_right->_10) + (p_left->_12 * p_right->_11) + (p_left->_22 * p_right->_12) + (p_left->_32 * p_right->_13);
+	p_out->_13 = (p_left->_03 * p_right->_10) + (p_left->_13 * p_right->_11) + (p_left->_23 * p_right->_12) + (p_left->_33 * p_right->_13);
+
+	p_out->_20 = (p_left->_00 * p_right->_20) + (p_left->_10 * p_right->_21) + (p_left->_20 * p_right->_22) + (p_left->_30 * p_right->_23);
+	p_out->_21 = (p_left->_01 * p_right->_20) + (p_left->_11 * p_right->_21) + (p_left->_21 * p_right->_22) + (p_left->_31 * p_right->_23);
+	p_out->_22 = (p_left->_02 * p_right->_20) + (p_left->_12 * p_right->_21) + (p_left->_22 * p_right->_22) + (p_left->_32 * p_right->_23);
+	p_out->_23 = (p_left->_03 * p_right->_20) + (p_left->_13 * p_right->_21) + (p_left->_23 * p_right->_22) + (p_left->_33 * p_right->_23);
+
+	p_out->_30 = (p_left->_00 * p_right->_30) + (p_left->_10 * p_right->_31) + (p_left->_20 * p_right->_32) + (p_left->_30 * p_right->_33);
+	p_out->_31 = (p_left->_01 * p_right->_30) + (p_left->_11 * p_right->_31) + (p_left->_21 * p_right->_32) + (p_left->_31 * p_right->_33);
+	p_out->_32 = (p_left->_02 * p_right->_30) + (p_left->_12 * p_right->_31) + (p_left->_22 * p_right->_32) + (p_left->_32 * p_right->_33);
+	p_out->_33 = (p_left->_03 * p_right->_30) + (p_left->_13 * p_right->_31) + (p_left->_23 * p_right->_32) + (p_left->_33 * p_right->_33);
+
+#if 0
 	__m128 a_line, b_line, r_line;
 	for (int i = 0; i < 16; i += 4) {
 		// unroll the first step of the loop to avoid having to initialize r_line to zero
@@ -697,10 +718,14 @@ void Mat_Mul_M4F_M4F(const Matrix4f_PTR p_left, const Matrix4f_PTR p_right, Matr
 		}
 		_mm_store_ps(&p_out->Points[i], r_line);     // r[i] = r_line
 	}
+#endif
 };
 
 void Mat_Mul_M4F_V4F(const Matrix4f_PTR p_left, const Vector4f_PTR p_right, Vector4f_PTR p_out)
 {
+	Mat_Mul_MXxXf_MXxXf((const char*)p_left, (const char*)p_right, 4, 1, sizeof(Vector4f), sizeof(Vector4f), (char*)p_out);
+
+#if 0
 	__m128 l_right = _mm_load_ps1(&p_right->Points[0]);
 	__m128 l_leftColum = _mm_load_ps(&p_left->Points[0]);
 	__m128 l_out = _mm_mul_ps(l_leftColum, l_right);
@@ -712,6 +737,7 @@ void Mat_Mul_M4F_V4F(const Matrix4f_PTR p_left, const Vector4f_PTR p_right, Vect
 		// l_left = _mm_load_ps(&p_left->Points[i * 4]);
 	}
 	_mm_store_ps(&p_out->Points[0], l_out);
+#endif
 };
 
 void Mat_Mul_M4F_V4F_Homogeneous(const Matrix4f_PTR p_projectionmatrix, const Vector4f_PTR p_pos, Vector4f_PTR out_pos)
@@ -1377,8 +1403,8 @@ void WindowSize_Precalculate_uint16t(uint16_t p_width, uint16_t p_height, Window
 {
 	out_windowSize->Width = p_width;
 	out_windowSize->Height = p_height;
-	out_windowSize->HalfWidth = (uint32_t)(0.5f * (float)p_width);
-	out_windowSize->HalfHeight = (uint32_t)(0.5f * (float)p_height);
+	out_windowSize->HalfWidth = 0.5f * p_width;
+	out_windowSize->HalfHeight = 0.5f * p_height;
 	out_windowSize->TwoOnHeight = 2.0f / p_height;
 	out_windowSize->TwoOnWidth = 2.0f / p_width;
 };
@@ -1386,8 +1412,9 @@ void WindowSize_Precalculate_uint16t(uint16_t p_width, uint16_t p_height, Window
 void WindowSize_GraphicsAPIToPixel(const WindowSize* p_windowSize, float p_x, float p_y, int* out_x, int* out_y)
 {
 	//TODO -> Disable rounding ?
-	*out_x = (int)roundf(((p_x * p_windowSize->HalfWidth) + p_windowSize->HalfWidth));
-	*out_y = (int)roundf(((p_y * p_windowSize->HalfHeight) + p_windowSize->HalfHeight));
+	
+	*out_x = (int)nearbyintf(((p_x * p_windowSize->HalfWidth) + p_windowSize->HalfWidth));
+	*out_y = (int)nearbyintf(((p_y * p_windowSize->HalfHeight) + p_windowSize->HalfHeight));
 };
 
 void WindowSize_PixelToGraphicsAPI(const WindowSize* p_windowSize, int p_x, int p_y, float* out_x, float* out_y)

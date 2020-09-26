@@ -51,20 +51,51 @@ typedef struct PolygonRasterizer_InterpolationFactor_TYP
 	float I0, I1, I2;
 }PolygonRasterizer_InterpolationFactor, * PolygonRasterizer_InterpolationFactor_PTR;
 
-typedef struct PolygonRasterizerIterator_TYP
+typedef struct PolygonRasterizerIterator_CommonStructure_TYP
 {
-	POLYGONRASTERIZER_ITERATOR_STEP CurrentStep;
-	Vector2i CurrentPoint;
 	Recti PolygonBoundClip;
-	int LineIndexCursor, ColumnIndexCursor;
 	PolygonRasterize_PackedData PackedRasterizerData;
-	// Rasterizer edge functions
-	int e0, e1, e2;
-
 	PolygonRasterizer_InterpolationFactor InterpolationFactors;
 	Vector2i RasterizedPixel;
+}PolygonRasterizerIterator_CommonStructure, * PolygonRasterizerIterator_CommonStructure_PTR;
+
+typedef struct PolygonRasterizerIterator_TYP
+{
+	PolygonRasterizerIterator_CommonStructure CommonStructure;
+	
+	POLYGONRASTERIZER_ITERATOR_STEP CurrentStep;
+	Vector2i CurrentPoint;
+	// Rasterizer current edge functions
+	int e0, e1, e2;
+
+	Vector2i LineBeginPoint;
+	int line_e0, line_e1, line_e2;
 }PolygonRasterizerIterator, * PolygonRasterizerIterator_PTR;
 
 void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizerIterator_PTR out_polygonRasterizerIterator);
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator);
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext_Interpolated(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator);
+
+
+typedef char POLYGONRASTERIZER_SMART_TYPE;
+#define POLYGONRASTERIZER_SMART_TYPE_NOTHING 0
+#define POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND 1
+#define POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT 2
+#define POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT 3
+#define POLYGONRASTERIZER_SMART_TYPE_CENTER_EXIT 4
+
+typedef struct PolygonRasterizeSmartIterator_TYP
+{
+	PolygonRasterizerIterator_CommonStructure CommonStructure;
+
+	POLYGONRASTERIZER_SMART_TYPE CurrentStep;
+
+	Vector2i CenterScanCursor;
+	int Center_e0, Center_e1, Center_e2;
+
+	Vector2i LineScanCursor;
+	int Line_e0, Line_e1, Line_e2;
+}PolygonRasterizeSmartIterator, * PolygonRasterizeSmartIterator_PTR;
+
+void PolygonRasterizeSmart_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizeSmartIterator_PTR out_polygonRasterizerIterator);
+POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterizeSmart_MoveNext_Interpolated(PolygonRasterizeSmartIterator_PTR out_polygonRasterizerIterator);

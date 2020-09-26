@@ -12,8 +12,11 @@ void windowPlatforwSpecific_close(Window* p_window);
 void windowPlatformSpecific_paintTexture(Window* p_window);
 void windowPlatforwSpecific_getClientRect(Window* p_windout, int* out_width, int* out_height);
 
-const uint32_t WINDOW_WIDTH = 640;
-const uint32_t WINDOW_HEIGHT = 480;
+
+// const uint32_t WINDOW_WIDTH = 1280;
+// const uint32_t WINDOW_HEIGHT = 720;
+const uint32_t WINDOW_WIDTH = 512;
+const uint32_t WINDOW_HEIGHT = 448;
 
 const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
