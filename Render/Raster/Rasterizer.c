@@ -442,6 +442,10 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterizeSmart_MoveNext_Interpolat
 					memcpy(&p_polygonRasterizerIterator->Center_e0, &l_left_e[0], sizeof(int) * 3);
 					p_polygonRasterizerIterator->CenterScanCursor.x = l_lineIndex;
 
+					p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor;
+					memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
+					p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT;
+
 					p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor;
 					_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, & p_polygonRasterizerIterator->Center_e0);
 					return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
@@ -465,6 +469,10 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterizeSmart_MoveNext_Interpolat
 					// *(int(**)[3])& p_polygonRasterizerIterator->Center_e0 = l_left_e;
 					memcpy(&p_polygonRasterizerIterator->Center_e0, &l_left_e[0], sizeof(int) * 3);
 					p_polygonRasterizerIterator->CenterScanCursor.x = l_lineIndex;
+
+					p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor;
+					memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
+					p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT;
 
 					p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor;
 					_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, & p_polygonRasterizerIterator->Center_e0);

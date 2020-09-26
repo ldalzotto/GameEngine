@@ -181,7 +181,7 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 		l_perspectiveInterpolation.InvertedZValueOnPolygon = _i_ExtractedPipeline_CameraDepthPolygonInverted(&l_pipelineData);
 		
 
-		
+#if 0
 		PolygonRasterizerIterator l_rasterizerIterator;
 		PolygonRasterize_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
@@ -199,8 +199,9 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 				}
 			}
 		}
-		
-		/*
+#endif
+
+#if 1
 		PolygonRasterizeSmartIterator l_rasterizerIterator;
 		PolygonRasterizeSmart_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
@@ -218,7 +219,7 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 				}
 			}
 		}
-		*/
+#endif
 	}
 };
 
