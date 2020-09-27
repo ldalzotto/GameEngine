@@ -8,6 +8,10 @@
 #include "Renderer/Pipeline/RendererPipelineMemory.h"
 #include "Objects/RenderedObject.h"
 
+
+const uint32_t RENDERTEXTURE_WIDTH = 256;
+const uint32_t RENDERTEXTURE_HEIGHT = 224;
+
 void GlobalBuffers_alloc(GlobalBuffers* p_buffer)
 {
 	Arr_Alloc_RenderedObjectHandle(&p_buffer->RenderedObjectBuffers.NotShaded_NotTextured.RenderedObjects, 0);
@@ -44,8 +48,8 @@ void RenderV2_initialize(RenderV2* p_render)
 	SwapChain_Resize(&p_render->SwapChain, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
 
 	RenderTexture_Free_3f(&p_render->RenderTargetTexture);
-	RenderTexture_Alloc_3f(&p_render->RenderTargetTexture, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
-	DepthBuffer_Realloc(&p_render->DepthBuffer, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
+	RenderTexture_Alloc_3f(&p_render->RenderTargetTexture, RENDERTEXTURE_WIDTH, RENDERTEXTURE_HEIGHT);
+	DepthBuffer_Realloc(&p_render->DepthBuffer, RENDERTEXTURE_WIDTH, RENDERTEXTURE_HEIGHT);
 	SwapChain_Resize(&p_render->SwapChain, p_render->AppWindow.WindowSize.Width, p_render->AppWindow.WindowSize.Height);
 }
 

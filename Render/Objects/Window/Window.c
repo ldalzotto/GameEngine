@@ -15,10 +15,10 @@ void windowPlatforwSpecific_getClientRect(Window* p_windout, int* out_width, int
 
 // const uint32_t WINDOW_WIDTH = 1280;
 // const uint32_t WINDOW_HEIGHT = 720;
-// const uint32_t WINDOW_WIDTH = 512;
-// const uint32_t WINDOW_HEIGHT = 448;
-const uint32_t WINDOW_WIDTH = 256;
-const uint32_t WINDOW_HEIGHT = 224;
+const uint32_t WINDOW_WIDTH = 512;
+const uint32_t WINDOW_HEIGHT = 448;
+// const uint32_t WINDOW_WIDTH = 256;
+// const uint32_t WINDOW_HEIGHT = 224;
 
 const char* WINDOW_ERROR_NOT_INITIALIZED = "The Window->Window is not initialized.";
 
