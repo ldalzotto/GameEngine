@@ -10,3 +10,5 @@ bool Rect_ClipSegment_Int(const Vector2i_PTR in_clippedSegment_begin, const Vect
 	const Recti_PTR p_clippedRect, Vector2i_PTR out_clippedSegment_begin, Vector2i_PTR out_clippedSegment_end);
 
 void Rect_ClipPoint_Int(const Recti_PTR p_clippedRect, Vector2i_PTR p_point);
+
+RECT_INTERSECTION_TEST Intersection_Recti_Recti(const Recti_PTR p_left, const Recti_PTR p_right);

@@ -36,10 +36,10 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	Matrix4f l_modelMatrix = Matrix4f_IDENTITYF;
-	// l_modelMatrix.Col3.z = 0.0f;
-	// l_modelMatrix.Col3.x = 0.0f;
-	// l_modelMatrix.Col3.y = 0.0f;
-	// l_modelMatrix.Col0.x = 0.2f;
+	l_modelMatrix.Col3.z = 0.0f;
+	l_modelMatrix.Col3.x = 0.0f;
+	l_modelMatrix.Col3.y = 0.0f;
+	// l_modelMatrix.Col0.x = 5.0f;
 	// l_modelMatrix.Col1.y = 0.2f;
 	// l_modelMatrix.Col2.z = 0.2f;
 

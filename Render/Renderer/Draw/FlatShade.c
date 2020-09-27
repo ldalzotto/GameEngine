@@ -80,7 +80,7 @@ inline char _i_DepthTest_Perspective(PolygonRasterizerIterator_CommonStructure_P
 	p_polygonPerspectiveInterpolation->ZValue = 1.0f / p_polygonPerspectiveInterpolation->ZValueInv;
 
 	// Pixel depth culling
-	return DepthBuffer_PushDepthValue(p_depthBuffer, &p_rasterizer->RasterizedPixel, p_polygonPerspectiveInterpolation->ZValue);
+	return DepthBuffer_PushDepthValue(p_depthBuffer, &p_rasterizer->RasterizedPixel, p_polygonPerspectiveInterpolation->ZValue) /* && p_polygonPerspectiveInterpolation->ZValue > 0.0f */;
 }
 
 typedef struct FlatShadingPixelCalculation_TYP
@@ -180,6 +180,7 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 		PolygonPerspectiveInterpolation l_perspectiveInterpolation;
 		l_perspectiveInterpolation.InvertedZValueOnPolygon = _i_ExtractedPipeline_CameraDepthPolygonInverted(&l_pipelineData);
 	
+
 		PolygonRasterizeSmartIterator l_rasterizerIterator;
 		PolygonRasterizeSmart_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 

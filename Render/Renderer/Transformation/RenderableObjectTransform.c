@@ -73,13 +73,16 @@ void RendereableObject_TransformPolygons(RenderableObjectTransform_Input_PTR p_i
 			_i_VertexPipeline_CalculatePixelPosition(l_v2, p_input);
 			_i_VertexPipeline_CalculatePixelPosition(l_v3, p_input);
 
-			// Push polygon to the indexed list
-			Arr_PushBackRealloc_Empty_PolygonPipeline_CameraDistanceIndexed(&p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex);
-			p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Memory[p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Size - 1] = (PolygonPipeline_CameraDistanceIndexed)
-			{
-				.Index = i,
-				.DistanceFromCamera = ((l_v1->CameraSpacePosition.z + l_v2->CameraSpacePosition.z + l_v3->CameraSpacePosition.z) * 0.333333f)
-			};
+			// if (l_v1->CameraSpacePosition.z > 0.0f && l_v2->CameraSpacePosition.z > 0.0f && l_v3->CameraSpacePosition.z > 0.0f)
+			// {
+				// Push polygon to the indexed list
+				Arr_PushBackRealloc_Empty_PolygonPipeline_CameraDistanceIndexed(&p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex);
+				p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Memory[p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Size - 1] = (PolygonPipeline_CameraDistanceIndexed)
+				{
+					.Index = i,
+					.DistanceFromCamera = ((l_v1->CameraSpacePosition.z + l_v2->CameraSpacePosition.z + l_v3->CameraSpacePosition.z) * 0.333333f)
+				};
+			// }
 		}
 
 	}

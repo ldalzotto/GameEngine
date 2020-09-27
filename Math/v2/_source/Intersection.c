@@ -8,6 +8,7 @@
 #include "v2/_interface/SegmentC.h"
 #include "v2/_interface/BoxC.h"
 #include "v2/_interface/FrustumC.h"
+#include "v2/_interface/RectC.h"
 
 bool Intersection_AABB_Ray(const BoxF_PTR p_AABB, const Segment_Vector3f_PTR p_ray, Vector3f_PTR p_outIntersectionPoint)
 {
@@ -189,4 +190,72 @@ bool Intersection_Contains_Frustum_Sphere(const Frustum_PTR p_frustum, const Sph
 		}
 	}
 	return false;
+};
+
+typedef char RECT_INTERSECTION_INTERNAL_TEST;
+#define RECT_INTERSECTION_TEST_X_NOTHING 1
+#define RECT_INTERSECTION_TEST_Y_NOTHING 2
+#define RECT_INTERSECTION_TEST_X_INTERSECTION 4
+#define RECT_INTERSECTION_TEST_Y_INTERSECTION 8
+#define RECT_INTERSECTION_TEST_X_CONTAINS 16
+#define RECT_INTERSECTION_TEST_Y_CONTAINS 32
+
+RECT_INTERSECTION_TEST Intersection_Recti_Recti(const Recti_PTR p_source, const Recti_PTR p_target)
+{
+	RECT_INTERSECTION_INTERNAL_TEST l_x_intersection = RECT_INTERSECTION_TEST_X_NOTHING;
+
+	if (p_target->Min.x < p_source->Max.x)
+	{
+		if (p_target->Max.x > p_source->Max.x)
+		{
+			l_x_intersection = RECT_INTERSECTION_TEST_X_INTERSECTION;
+		}
+		else if (p_target->Min.x < p_source->Min.x)
+		{
+			if (p_target->Max.x > p_source->Min.x)
+			{
+				l_x_intersection = RECT_INTERSECTION_TEST_X_INTERSECTION;
+			}
+			else
+			{
+				l_x_intersection = RECT_INTERSECTION_TEST_X_CONTAINS;
+			}
+		}
+	}
+
+
+	RECT_INTERSECTION_INTERNAL_TEST l_y_intersection = RECT_INTERSECTION_TEST_Y_NOTHING;
+	if (p_target->Min.y < p_source->Max.y)
+	{
+		if (p_target->Max.y > p_source->Max.y)
+		{
+			l_y_intersection = RECT_INTERSECTION_TEST_Y_INTERSECTION;
+		}
+		else if(p_target->Min.y < p_source->Min.y)
+		{
+			if (p_target->Max.y > p_source->Min.y)
+			{
+				l_y_intersection = RECT_INTERSECTION_TEST_Y_INTERSECTION;
+			}
+			else
+			{
+				l_y_intersection = RECT_INTERSECTION_TEST_Y_CONTAINS;
+			}
+		}
+	}
+
+	RECT_INTERSECTION_INTERNAL_TEST l_intersectionSum = l_x_intersection + l_y_intersection;
+	if (l_intersectionSum == (RECT_INTERSECTION_TEST_X_CONTAINS + RECT_INTERSECTION_TEST_Y_CONTAINS))
+	{
+		return RECT_INTERSECTION_TEST_CONTAINS;
+	}
+	else if (l_intersectionSum == (RECT_INTERSECTION_TEST_X_NOTHING + RECT_INTERSECTION_TEST_Y_NOTHING))
+	{
+		return RECT_INTERSECTION_TEST_NOTHING;
+	}
+	else
+	{
+		return RECT_INTERSECTION_TEST_INTERSECTION;
+	}
+
 };
