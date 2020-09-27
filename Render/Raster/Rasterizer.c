@@ -102,17 +102,6 @@ inline void _i_PolygonRasterizePackedData_PrecalculateRasterization(PolygonRaste
 	p_packedData->dx2 = p_polygon->v3.x - p_polygon->v2.x;
 	p_packedData->dy2 = p_polygon->v3.y - p_polygon->v2.y;
 
-	/*
-	p_packedData->dx0 = p_polygon->v2.x - p_polygon->v1.x;
-	p_packedData->dy0 = p_polygon->v2.y - p_polygon->v1.y;
-
-	p_packedData->dx1 = p_polygon->v3.x - p_polygon->v2.x;
-	p_packedData->dy1 = p_polygon->v3.y - p_polygon->v2.y;
-
-	p_packedData->dx2 = p_polygon->v1.x - p_polygon->v3.x;
-	p_packedData->dy2 = p_polygon->v1.y - p_polygon->v3.y;
-	*/
-
 	Vector3f l_begin = { (float)p_polygon->v2.x - p_polygon->v1.x, (float)p_polygon->v2.y - p_polygon->v1.y, 0.0f };
 	Vector3f l_end = { (float)p_polygon->v3.x - p_polygon->v1.x, (float)p_polygon->v3.y - p_polygon->v1.y, 0.0f };
 	Vector3f l_crossResult;
@@ -175,181 +164,31 @@ void PolygonRasterize_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR 
 // For interpolation, we can use e1, e2, e0 as they represent the already calculated edge functions for the current pixel
 inline void _i_PolygonRasterize_Interpolate(PolygonRasterizerIterator_CommonStructure_PTR p_polygonRasterizerIterator, int p_edgeFunctions[3])
 {
-	// p_polygonRasterizerIterator->InterpolationFactors.I0 = ((float)p_polygonRasterizerIterator->e1 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area0);
-	// p_polygonRasterizerIterator->InterpolationFactors.I1 = ((float)p_polygonRasterizerIterator->e2 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area1);
-	// p_polygonRasterizerIterator->InterpolationFactors.I2 = ((float)p_polygonRasterizerIterator->e0 / (float)p_polygonRasterizerIterator->PackedRasterizerData.area2);
-
-
 	p_polygonRasterizerIterator->InterpolationFactors.I0 = ((float)p_edgeFunctions[2] / (float)p_polygonRasterizerIterator->PackedRasterizerData.area0);
 	p_polygonRasterizerIterator->InterpolationFactors.I1 = ((float)p_edgeFunctions[0] / (float)p_polygonRasterizerIterator->PackedRasterizerData.area1);
 	p_polygonRasterizerIterator->InterpolationFactors.I2 = ((float)p_edgeFunctions[1] / (float)p_polygonRasterizerIterator->PackedRasterizerData.area2);
 };
 
-#if 1
-#define PolygonRasterize_MoveNext_Algorithm(TOKEN_RECURSE_FUNCTION_NAME, TOKEN_ON_PRIXEL_RASTERIZED) \
-	switch (p_polygonRasterizerIterator->CurrentStep)  \
-	{ \
-	case POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE: \
-	{ \
-		/* For loop on p_polygonRasterizerIterator->LineIndexCursor for line from p_polygonRasterizerIterator->PolygonBoundClip.Min.y to p_polygonRasterizerIterator->PolygonBoundClip.Max.y (included) */ \
-		p_polygonRasterizerIterator->LineIndexCursor += 1; \
-		if (p_polygonRasterizerIterator->LineIndexCursor > p_polygonRasterizerIterator->PolygonBoundClip.Max.y) \
-		{ \
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NOTHING; \
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END; \
-		} \
- \
-		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; \
- \
-		if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0) \
-		{ \
-			l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; \
-			p_polygonRasterizerIterator->RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint; \
- \
-			TOKEN_ON_PRIXEL_RASTERIZED \
-		} \
- \
-		p_polygonRasterizerIterator->ColumnIndexCursor = p_polygonRasterizerIterator->PolygonBoundClip.Min.x - 1; \
-		p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->PolygonBoundClip.Min.x; \
- \
-		/*_i_PolygonRasterize_Increment_e0(p_polygonRasterizerIterator, )*/ \
-		p_polygonRasterizerIterator->e0 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy0); \
-		p_polygonRasterizerIterator->e1 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy1); \
-		p_polygonRasterizerIterator->e2 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy2); \
- \
-		p_polygonRasterizerIterator->CurrentPoint.y = p_polygonRasterizerIterator->LineIndexCursor; \
- \
-		p_polygonRasterizerIterator->e0 -= p_polygonRasterizerIterator->PackedRasterizerData.dx0; \
-		p_polygonRasterizerIterator->e1 -= p_polygonRasterizerIterator->PackedRasterizerData.dx1; \
-		p_polygonRasterizerIterator->e2 -= p_polygonRasterizerIterator->PackedRasterizerData.dx2; \
- \
-		p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN; \
-		return l_returnCode; \
- \
-	} \
-	break; \
-	case POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN: \
-	{ \
-		/* For loop on p_polygonRasterizerIterator->ColumnIndexCursor for colum from p_polygonRasterizerIterator->PolygonBoundClip.Min.x to p_polygonRasterizerIterator->PolygonBoundClip.Max.x (excluded) */ \
-		p_polygonRasterizerIterator->ColumnIndexCursor += 1; \
-		if (p_polygonRasterizerIterator->ColumnIndexCursor >= p_polygonRasterizerIterator->PolygonBoundClip.Max.x) \
-		{ \
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE; \
-			return TOKEN_RECURSE_FUNCTION_NAME(p_polygonRasterizerIterator); \
-		} \
- \
-		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; \
- \
-		if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0) \
-		{ \
-			l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; \
-			p_polygonRasterizerIterator->RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint; \
- \
-			TOKEN_ON_PRIXEL_RASTERIZED \
-		} \
- \
-		p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->ColumnIndexCursor + 1; \
- \
-		p_polygonRasterizerIterator->e0 += p_polygonRasterizerIterator->PackedRasterizerData.dy0; \
-		p_polygonRasterizerIterator->e1 += p_polygonRasterizerIterator->PackedRasterizerData.dy1; \
-		p_polygonRasterizerIterator->e2 += p_polygonRasterizerIterator->PackedRasterizerData.dy2; \
- \
-		return l_returnCode; \
-	} \
-	break; \
-	} \
- \
-	return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END;
-
-#define PolygonRasterize_MoveNext_Algorithm_Interpolation(TOKEN_RECURSE_FUNCTION_NAME) PolygonRasterize_MoveNext_Algorithm(TOKEN_RECURSE_FUNCTION_NAME, _i_PolygonRasterize_Interpolate(p_polygonRasterizerIterator);)
-
-#endif
+//A Parallel Algorithm for Polygon Rasterization.pdf
+// This polygon rasterize iterator iterate over the bounding box of the Polygon and rasterize the pixel is inside the polygon.
+#define PolygonRasterize_MoveNext_Algorithm(TOKEN_ON_PRIXEL_RASTERIZED) \
+/*PolygonRasterize_MoveNext_Algorithm_Interpolation(PolygonRasterize_MoveNext_Interpolated)*/ switch (p_polygonRasterizerIterator->CurrentStep) { case POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE: { p_polygonRasterizerIterator->CurrentPoint.y += 1; if (p_polygonRasterizerIterator->CurrentPoint.y > p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.y) { p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END; } p_polygonRasterizerIterator->e0 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx0; p_polygonRasterizerIterator->e1 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx1; p_polygonRasterizerIterator->e2 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx2; p_polygonRasterizerIterator->LineBeginPoint = p_polygonRasterizerIterator->CurrentPoint; memcpy(&p_polygonRasterizerIterator->line_e0, &p_polygonRasterizerIterator->e0, sizeof(int) * 3); p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN; if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0) { p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint; TOKEN_ON_PRIXEL_RASTERIZED; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; } else { return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; } } break; case 2: { p_polygonRasterizerIterator->CurrentPoint.x += 1; if (p_polygonRasterizerIterator->CurrentPoint.x > p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.x) { p_polygonRasterizerIterator->CurrentPoint = p_polygonRasterizerIterator->LineBeginPoint; memcpy(&p_polygonRasterizerIterator->e0, &p_polygonRasterizerIterator->line_e0, sizeof(int) * 3); p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; } p_polygonRasterizerIterator->e0 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0; p_polygonRasterizerIterator->e1 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1; p_polygonRasterizerIterator->e2 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2; if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0) { p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint; TOKEN_ON_PRIXEL_RASTERIZED; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; } else { return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; } } break; } return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END;
 
 //A Parallel Algorithm for Polygon Rasterization.pdf
-//TODO -> Highly unoptimized, we iterate over the whole polygon bound clip.
-// We can easily implement a smart iteration that try to navigates inside the polygon and try to find edges (thus, ignoring calcuation of empty )
-// if in the future, we want to parrallelize the rasteriation calculation, we can precalculatate e0, e1, and e2 for every pixels of the bound rectangle as the formula is linear. As well as interpolation.
+// This smart polygon rasterizer iterator go from top to bottom while staying inside the polygon. For each line, we find if any pixels to left and right are inside the Polygon, and rasterize them.
+#define PolygonRasterizeSmart_MoveNext_Algorithm(TOKEN_ON_PRIXEL_RASTERIZED_CENTER, TOKEN_ON_PRIXEL_RASTERIZED_LINE) \
+switch (p_polygonRasterizerIterator->CurrentStep) { case POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND: { /* We move the center cursor down */ p_polygonRasterizerIterator->CenterScanCursor.y -= 1; if (p_polygonRasterizerIterator->CenterScanCursor.y < p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Min.y) { break; } /* We go down one pixel */ p_polygonRasterizerIterator->Center_e0 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx0; p_polygonRasterizerIterator->Center_e1 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx1; p_polygonRasterizerIterator->Center_e2 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx2; /* Is the value iside the polygon ? */ if (p_polygonRasterizerIterator->Center_e0 >= 0 && p_polygonRasterizerIterator->Center_e1 >= 0 && p_polygonRasterizerIterator->Center_e2 >= 0) { /* We scan to the left edge */ p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor; memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3); p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT; p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor; TOKEN_ON_PRIXEL_RASTERIZED_CENTER; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; } /* Else, maybe that the center is at the same line */ else { int l_lineIndex = p_polygonRasterizerIterator->CenterScanCursor.x - 1; int l_left_e[3] = {0}; memcpy(&l_left_e[0], &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3); while (l_lineIndex >= p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Min.x) { l_left_e[0] -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0; l_left_e[1] -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1; l_left_e[2] -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2; if (l_left_e[0] >= 0 && l_left_e[1] >= 0 && l_left_e[2] >= 0) { memcpy(&p_polygonRasterizerIterator->Center_e0, &l_left_e[0], sizeof(int) * 3); p_polygonRasterizerIterator->CenterScanCursor.x = l_lineIndex; p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor; memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3); p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT; p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor; TOKEN_ON_PRIXEL_RASTERIZED_CENTER; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; } l_lineIndex -= 1; } l_lineIndex = p_polygonRasterizerIterator->CenterScanCursor.x + 1; memcpy(&l_left_e[0], &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3); while (l_lineIndex <= p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.x) { l_left_e[0] += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0; l_left_e[1] += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1; l_left_e[2] += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2; if (l_left_e[0] >= 0 && l_left_e[1] >= 0 && l_left_e[2] >= 0) { memcpy(&p_polygonRasterizerIterator->Center_e0, &l_left_e[0], sizeof(int) * 3); p_polygonRasterizerIterator->CenterScanCursor.x = l_lineIndex; p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor; memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3); p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT; p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor; TOKEN_ON_PRIXEL_RASTERIZED_CENTER; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; } l_lineIndex += 1; } } /* Else, rasterization is over */ } /* The first step of the line scan line is going to left from center. Once the scan has reached the end, we go to POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT */ case POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT: { p_polygonRasterizerIterator->LineScanCursor.x -= 1; if (p_polygonRasterizerIterator->LineScanCursor.x < p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Min.x) { p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT; p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor; memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3); return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; } p_polygonRasterizerIterator->Line_e0 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0; p_polygonRasterizerIterator->Line_e1 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1; p_polygonRasterizerIterator->Line_e2 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2; if (p_polygonRasterizerIterator->Line_e0 >= 0 && p_polygonRasterizerIterator->Line_e1 >= 0 && p_polygonRasterizerIterator->Line_e2 >= 0) { p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->LineScanCursor; TOKEN_ON_PRIXEL_RASTERIZED_LINE; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; } else { p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT; p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor; memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3); return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; } } /* The last step of a scan line is going right from center. When we have reached the end, we try to find a new center POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND. */ case POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT: { p_polygonRasterizerIterator->LineScanCursor.x += 1; if (p_polygonRasterizerIterator->LineScanCursor.x > p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.x) { p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; } p_polygonRasterizerIterator->Line_e0 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0; p_polygonRasterizerIterator->Line_e1 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1; p_polygonRasterizerIterator->Line_e2 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2; if (p_polygonRasterizerIterator->Line_e0 >= 0 && p_polygonRasterizerIterator->Line_e1 >= 0 && p_polygonRasterizerIterator->Line_e2 >= 0) { p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->LineScanCursor; TOKEN_ON_PRIXEL_RASTERIZED_LINE; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED; } else { p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND; return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED; } } break; } return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END;
+
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator)
 {
-	// PolygonRasterize_MoveNext_Algorithm(PolygonRasterize_MoveNext, ;)
-	//switch (p_polygonRasterizerIterator->CurrentStep) { case 1: { p_polygonRasterizerIterator->LineIndexCursor += 1; if (p_polygonRasterizerIterator->LineIndexCursor > p_polygonRasterizerIterator->PolygonBoundClip.Max.y) { p_polygonRasterizerIterator->CurrentStep = 0; return 0; } POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = 2; if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0) { l_returnCode = 1; p_polygonRasterizerIterator->RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint; ; } p_polygonRasterizerIterator->ColumnIndexCursor = p_polygonRasterizerIterator->PolygonBoundClip.Min.x - 1; p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->PolygonBoundClip.Min.x; p_polygonRasterizerIterator->e0 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy0); p_polygonRasterizerIterator->e1 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy1); p_polygonRasterizerIterator->e2 -= ((p_polygonRasterizerIterator->PolygonBoundClip.Max.x - p_polygonRasterizerIterator->PolygonBoundClip.Min.x) * p_polygonRasterizerIterator->PackedRasterizerData.dy2); p_polygonRasterizerIterator->CurrentPoint.y = p_polygonRasterizerIterator->LineIndexCursor; p_polygonRasterizerIterator->e0 -= p_polygonRasterizerIterator->PackedRasterizerData.dx0; p_polygonRasterizerIterator->e1 -= p_polygonRasterizerIterator->PackedRasterizerData.dx1; p_polygonRasterizerIterator->e2 -= p_polygonRasterizerIterator->PackedRasterizerData.dx2; p_polygonRasterizerIterator->CurrentStep = 2; return l_returnCode; } break; case 2: { p_polygonRasterizerIterator->ColumnIndexCursor += 1; if (p_polygonRasterizerIterator->ColumnIndexCursor >= p_polygonRasterizerIterator->PolygonBoundClip.Max.x) { p_polygonRasterizerIterator->CurrentStep = 1; return PolygonRasterize_MoveNext(p_polygonRasterizerIterator); } POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = 2; if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0) { l_returnCode = 1; p_polygonRasterizerIterator->RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint; ; } p_polygonRasterizerIterator->CurrentPoint.x = p_polygonRasterizerIterator->ColumnIndexCursor + 1; p_polygonRasterizerIterator->e0 += p_polygonRasterizerIterator->PackedRasterizerData.dy0; p_polygonRasterizerIterator->e1 += p_polygonRasterizerIterator->PackedRasterizerData.dy1; p_polygonRasterizerIterator->e2 += p_polygonRasterizerIterator->PackedRasterizerData.dy2; return l_returnCode; } break; } return 0;
+	PolygonRasterize_MoveNext_Algorithm(;);
 };
 
-/*
-typedef char POLYGONRASTERIZER_ITERATOR_STEP;
-#define POLYGONRASTERIZER_ITERATOR_STEP_NOTHING 0
-#define POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE 1
-#define POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN 2
-#define POLYGONRASTERIZER_ITERATOR_STEP_EXIT 3
-*/
 
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterize_MoveNext_Interpolated(PolygonRasterizerIterator_PTR p_polygonRasterizerIterator)
 {
-	//PolygonRasterize_MoveNext_Algorithm_Interpolation(PolygonRasterize_MoveNext_Interpolated)
-	switch (p_polygonRasterizerIterator->CurrentStep)
-	{
-	case POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE:
-	{
-		p_polygonRasterizerIterator->CurrentPoint.y += 1;
-		if (p_polygonRasterizerIterator->CurrentPoint.y > p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.y)
-		{
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWCOLUMN;
-			return 0;
-		}
-	
-		p_polygonRasterizerIterator->e0 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx0;
-		p_polygonRasterizerIterator->e1 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx1;
-		p_polygonRasterizerIterator->e2 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx2;
-
-		p_polygonRasterizerIterator->LineBeginPoint = p_polygonRasterizerIterator->CurrentPoint;
-		memcpy(&p_polygonRasterizerIterator->line_e0, &p_polygonRasterizerIterator->e0, sizeof(int) * 3);
-
-		p_polygonRasterizerIterator->CurrentStep = 2;
-
-		if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0)
-		{
-			p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint;
-			_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, &p_polygonRasterizerIterator->e0);
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
-		}
-		else
-		{
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		}
-	}
-	break;
-	case 2:
-	{
-		p_polygonRasterizerIterator->CurrentPoint.x += 1;
-		if (p_polygonRasterizerIterator->CurrentPoint.x > p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.x)
-		{
-			p_polygonRasterizerIterator->CurrentPoint = p_polygonRasterizerIterator->LineBeginPoint;
-			memcpy(&p_polygonRasterizerIterator->e0, &p_polygonRasterizerIterator->line_e0, sizeof(int) * 3);
-
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_ITERATOR_STEP_NEWLINE;
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		}
-	
-		p_polygonRasterizerIterator->e0 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0;
-		p_polygonRasterizerIterator->e1 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1;
-		p_polygonRasterizerIterator->e2 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2;
-
-		if (p_polygonRasterizerIterator->e0 >= 0 && p_polygonRasterizerIterator->e1 >= 0 && p_polygonRasterizerIterator->e2 >= 0)
-		{
-			p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CurrentPoint;
-			_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, &p_polygonRasterizerIterator->e0);
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
-		}
-		else
-		{
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		}
-	}
-	break;
-	}
-	return 0;
+	PolygonRasterize_MoveNext_Algorithm(_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, &p_polygonRasterizerIterator->e0););
 };
-
 
 
 void PolygonRasterizeSmart_Initialize(const Polygon2i_PTR p_polygon, const Recti_PTR p_clip_rect, PolygonRasterizeSmartIterator_PTR out_polygonRasterizerIterator)
@@ -377,10 +216,6 @@ void PolygonRasterizeSmart_Initialize(const Polygon2i_PTR p_polygon, const Recti
 
 		out_polygonRasterizerIterator->CenterScanCursor = p_polygon->Points[l_topVertexIndex];
 		out_polygonRasterizerIterator->CenterScanCursor.y += 1;
-		// out_polygonRasterizerIterator->LineScanCursor = out_polygonRasterizerIterator->CenterScanCursor;
-
-		// out_polygonRasterizerIterator->CommonStructure.CurrentPoint = out_polygonRasterizerIterator->CenterScanCursor;
-		// 
 
 		out_polygonRasterizerIterator->Center_e0 = _i_PolygonRasterizePackedData_EdgeFunction_0(&out_polygonRasterizerIterator->CommonStructure.PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CenterScanCursor);
 		out_polygonRasterizerIterator->Center_e1 = _i_PolygonRasterizePackedData_EdgeFunction_1(&out_polygonRasterizerIterator->CommonStructure.PackedRasterizerData, p_polygon, &out_polygonRasterizerIterator->CenterScanCursor);
@@ -390,159 +225,15 @@ void PolygonRasterizeSmart_Initialize(const Polygon2i_PTR p_polygon, const Recti
 	}
 };
 
+POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterizeSmart_MoveNext(PolygonRasterizeSmartIterator_PTR p_polygonRasterizerIterator)
+{
+	PolygonRasterizeSmart_MoveNext_Algorithm(;,;);
+};
+
 POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterizeSmart_MoveNext_Interpolated(PolygonRasterizeSmartIterator_PTR p_polygonRasterizerIterator)
 {
-	switch (p_polygonRasterizerIterator->CurrentStep)
-	{
-	case POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND:
-	{
-		// We move the center cursor down
-		p_polygonRasterizerIterator->CenterScanCursor.y -= 1;
-
-		if (p_polygonRasterizerIterator->CenterScanCursor.y < p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Min.y)
-		{
-			break;
-		}
-
-		// We go down one pixel
-		p_polygonRasterizerIterator->Center_e0 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx0;
-		p_polygonRasterizerIterator->Center_e1 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx1;
-		p_polygonRasterizerIterator->Center_e2 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dx2;
-
-		// Is the value iside the polygon ?
-		if (p_polygonRasterizerIterator->Center_e0 >= 0 && p_polygonRasterizerIterator->Center_e1 >= 0 && p_polygonRasterizerIterator->Center_e2 >= 0)
-		{
-			// We scan to the left edge
-			p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor;
-			memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
-			
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT;
-
-			p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor;
-			_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, & p_polygonRasterizerIterator->Center_e0);
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
-		}
-		// Else, maybe that the center is at the same line
-		else
-		{
-			int l_lineIndex = p_polygonRasterizerIterator->CenterScanCursor.x - 1;
-			int l_left_e[3] = {0};
-			memcpy(&l_left_e[0], &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
-			// l_left_e = *((int(*)[3]) & p_polygonRasterizerIterator->Center_e0);
-			
-			while (l_lineIndex >= p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Min.x)
-			{
-				l_left_e[0] -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0;
-				l_left_e[1] -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1;
-				l_left_e[2] -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2;
-
-				if (l_left_e[0] >= 0 && l_left_e[1] >= 0 && l_left_e[2] >= 0)
-				{
-					// *(int(**)[3])&p_polygonRasterizerIterator->Center_e0 = l_left_e;
-					memcpy(&p_polygonRasterizerIterator->Center_e0, &l_left_e[0], sizeof(int) * 3);
-					p_polygonRasterizerIterator->CenterScanCursor.x = l_lineIndex;
-
-					p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor;
-					memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
-					p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT;
-
-					p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor;
-					_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, & p_polygonRasterizerIterator->Center_e0);
-					return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
-				}
-
-				l_lineIndex -= 1;
-			}
-
-			l_lineIndex = p_polygonRasterizerIterator->CenterScanCursor.x + 1;
-			memcpy(&l_left_e[0], &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
-
-
-			while (l_lineIndex <= p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.x)
-			{
-				l_left_e[0] += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0;
-				l_left_e[1] += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1;
-				l_left_e[2] += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2;
-
-				if (l_left_e[0] >= 0 && l_left_e[1] >= 0 && l_left_e[2] >= 0)
-				{
-					// *(int(**)[3])& p_polygonRasterizerIterator->Center_e0 = l_left_e;
-					memcpy(&p_polygonRasterizerIterator->Center_e0, &l_left_e[0], sizeof(int) * 3);
-					p_polygonRasterizerIterator->CenterScanCursor.x = l_lineIndex;
-
-					p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor;
-					memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
-					p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT;
-
-					p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->CenterScanCursor;
-					_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, & p_polygonRasterizerIterator->Center_e0);
-					return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
-				}
-
-				l_lineIndex += 1;
-			}
-
-		}
-		// Else, rasterization is over
-	}
-	case POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_LEFT:
-	{
-		p_polygonRasterizerIterator->LineScanCursor.x -= 1;
-		if (p_polygonRasterizerIterator->LineScanCursor.x < p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Min.x)
-		{
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT;
-			p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor;
-			memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		}
-
-		p_polygonRasterizerIterator->Line_e0 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0;
-		p_polygonRasterizerIterator->Line_e1 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1;
-		p_polygonRasterizerIterator->Line_e2 -= p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2;
-
-		if (p_polygonRasterizerIterator->Line_e0 >= 0 && p_polygonRasterizerIterator->Line_e1 >= 0 && p_polygonRasterizerIterator->Line_e2 >= 0)
-		{
-			p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->LineScanCursor;
-			_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, &p_polygonRasterizerIterator->Line_e0);
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
-		}
-		else
-		{
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT;
-			p_polygonRasterizerIterator->LineScanCursor = p_polygonRasterizerIterator->CenterScanCursor;
-			memcpy(&p_polygonRasterizerIterator->Line_e0, &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		}
-
-	}
-	case POLYGONRASTERIZER_SMART_TYPE_CENTER_LINESCAN_RIGHT:
-	{
-		p_polygonRasterizerIterator->LineScanCursor.x += 1;
-		if (p_polygonRasterizerIterator->LineScanCursor.x > p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Max.x)
-		{
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND;
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		}
-
-		p_polygonRasterizerIterator->Line_e0 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy0;
-		p_polygonRasterizerIterator->Line_e1 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy1;
-		p_polygonRasterizerIterator->Line_e2 += p_polygonRasterizerIterator->CommonStructure.PackedRasterizerData.dy2;
-
-		if (p_polygonRasterizerIterator->Line_e0 >= 0 && p_polygonRasterizerIterator->Line_e1 >= 0 && p_polygonRasterizerIterator->Line_e2 >= 0)
-		{
-			p_polygonRasterizerIterator->CommonStructure.RasterizedPixel = p_polygonRasterizerIterator->LineScanCursor;
-			_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, &p_polygonRasterizerIterator->Line_e0);
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED;
-		}
-		else
-		{
-			p_polygonRasterizerIterator->CurrentStep = POLYGONRASTERIZER_SMART_TYPE_CENTER_FIND;
-			return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		}
-
-	}
-	break;
-	}
-
-	return POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END;
+	PolygonRasterizeSmart_MoveNext_Algorithm(
+		_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, &p_polygonRasterizerIterator->Center_e0); ,
+		_i_PolygonRasterize_Interpolate(&p_polygonRasterizerIterator->CommonStructure, &p_polygonRasterizerIterator->Line_e0);
+	);
 };

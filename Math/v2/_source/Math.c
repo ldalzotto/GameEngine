@@ -1403,8 +1403,8 @@ void WindowSize_Precalculate_uint16t(uint16_t p_width, uint16_t p_height, Window
 {
 	out_windowSize->Width = p_width;
 	out_windowSize->Height = p_height;
-	out_windowSize->HalfWidth = 0.5f * p_width;
-	out_windowSize->HalfHeight = 0.5f * p_height;
+	out_windowSize->HalfWidth = (uint32_t)nearbyintf(0.5f * p_width);
+	out_windowSize->HalfHeight = (uint32_t)nearbyintf(0.5f * p_height);
 	out_windowSize->TwoOnHeight = 2.0f / p_height;
 	out_windowSize->TwoOnWidth = 2.0f / p_width;
 };

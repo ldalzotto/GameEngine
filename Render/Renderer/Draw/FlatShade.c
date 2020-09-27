@@ -134,13 +134,14 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 		Polygon2i l_pixelPositionPolygon = _i_ExtractedPipeline_PixelPositionPolygon(&l_pipelineData);
 		Polygonf l_cameraDepthPolygon = _i_ExtractedPipeline_CameraDepthPolygon(&l_pipelineData);
 
-		PolygonRasterizerIterator l_rasterizerIterator;
-		PolygonRasterize_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
+
+		PolygonRasterizeSmartIterator l_rasterizerIterator;
+		PolygonRasterizeSmart_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
 		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
 		while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
 		{
-			l_returnCode = PolygonRasterize_MoveNext_Interpolated(&l_rasterizerIterator);
+			l_returnCode = PolygonRasterizeSmart_MoveNext_Interpolated(&l_rasterizerIterator);
 
 			if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 			{
@@ -151,7 +152,6 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 				}
 			}
 		}
-
 
 	}
 };
@@ -179,29 +179,7 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 		
 		PolygonPerspectiveInterpolation l_perspectiveInterpolation;
 		l_perspectiveInterpolation.InvertedZValueOnPolygon = _i_ExtractedPipeline_CameraDepthPolygonInverted(&l_pipelineData);
-		
-
-#if 0
-		PolygonRasterizerIterator l_rasterizerIterator;
-		PolygonRasterize_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
-
-		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
-		while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
-		{
-			l_returnCode = PolygonRasterize_MoveNext_Interpolated(&l_rasterizerIterator);
-
-			if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
-			{
-				if (_i_DepthTest_Perspective(&l_rasterizerIterator.CommonStructure, p_input->DepthBuffer, &l_perspectiveInterpolation))
-				{
-					_i_FlatShadingPixelCalculation_ShadePixelColor_Textured_Perspective(&l_flatCalculation, l_polygonUV, p_input->RenderLights, l_material, &l_rasterizerIterator.CommonStructure.InterpolationFactors, &l_perspectiveInterpolation, &l_pixelColor);
-					p_input->RenderTarget->Texture.Pixels.Memory[l_rasterizerIterator.CommonStructure.RasterizedPixel.x + (l_rasterizerIterator.CommonStructure.RasterizedPixel.y * p_input->RenderTarget->PrecalculatedDimensions.Width)] = l_pixelColor;
-				}
-			}
-		}
-#endif
-
-#if 1
+	
 		PolygonRasterizeSmartIterator l_rasterizerIterator;
 		PolygonRasterizeSmart_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
@@ -219,7 +197,6 @@ void DrawPoly_FlatShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR
 				}
 			}
 		}
-#endif
 	}
 };
 
@@ -232,7 +209,7 @@ void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 		DrawFunction_ExtractedPipeline l_pipelineData = _i_ExtractPipeline(p_input->RendererPipelineMemory, i);
 
 		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject->Material.Handle];
-
+		 
 		FlatShadingPixelCalculation l_flatCalculation;
 		_i_FlatShadingPixelCalculation_PreCalculation(&l_flatCalculation, p_input->RenderLights, l_pipelineData.Polygon);
 
@@ -240,13 +217,13 @@ void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 		Polygon2i l_pixelPositionPolygon = _i_ExtractedPipeline_PixelPositionPolygon(&l_pipelineData);
 		Polygonf l_cameraDepthPolygon = _i_ExtractedPipeline_CameraDepthPolygon(&l_pipelineData);
 
-		PolygonRasterizerIterator l_rasterizerIterator;
-		PolygonRasterize_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
+		PolygonRasterizeSmartIterator l_rasterizerIterator;
+		PolygonRasterizeSmart_Initialize(&l_pixelPositionPolygon, &p_input->RenderTarget->BoundingRectangle, &l_rasterizerIterator);
 
 		POLYGONRASTERIZER_ITERATOR_RETURN_CODE l_returnCode = POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_NOT_RASTERIZED;
 		while (l_returnCode != POLYGONRASTERIZER_ITERATOR_RETURN_CODE_END)
 		{
-			l_returnCode = PolygonRasterize_MoveNext_Interpolated(&l_rasterizerIterator);
+			l_returnCode = PolygonRasterizeSmart_MoveNext_Interpolated(&l_rasterizerIterator);
 
 			if (l_returnCode == POLYGONRASTERIZER_ITERATOR_RETURN_CODE_PIXEL_RASTERIZED)
 			{
@@ -257,7 +234,6 @@ void DrawPoly_FlatShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 				}
 			}
 		}
-
 
 	}
 };
