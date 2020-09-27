@@ -43,6 +43,36 @@ void DrawObjects_NoShade_NotTextured(const SolidRendererInput* p_input, RenderTe
 
 }
 
+void DrawObjects_NoShade_Textured(const SolidRendererInput* p_input, RenderTexture3f_PTR p_to, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
+{
+
+	RenderableObject_CullObject(p_input->RenderableObjectsBuffer, p_input->CameraBuffer);
+
+	RenderableObject_ToRenderPipeline(p_input->RenderableObjectsBuffer, p_memory, &RRenderHeap);
+
+	RenderableObjectTransform_Input l_renderableObjectTransformInput =
+	{
+		.RenderHeap = &RRenderHeap,
+		.RendererPipelineMemory = p_memory,
+		.CameraBuffer = p_input->CameraBuffer,
+		.RenderTextureSize = &p_to->PrecalculatedDimensions
+	};
+	RendereableObject_TransformPolygons(&l_renderableObjectTransformInput);
+
+
+	DrawPolygFlatShadeTexturedInput l_drawInput = {
+		.DepthBuffer = p_depthBuffer,
+		.RendererPipelineMemory = p_memory,
+		.RenderHeap = &RRenderHeap,
+		.RenderLights = &GRenderLights,
+		.RenderTarget = p_to
+	};
+
+	DrawPoly_NoShade_Textured_Perspective(&l_drawInput);
+
+}
+
+
 void DrawObjects_FlatShade_Textured_Perspective(const SolidRendererInput* p_input, RenderTexture3f_PTR p_to, DepthBuffer_PTR p_depthBuffer, RendererPipeline_Memory_PTR p_memory)
 {
 #if RENDER_PERFORMANCE_TIMER

@@ -36,9 +36,9 @@ int main(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	Matrix4f l_modelMatrix = Matrix4f_IDENTITYF;
-	l_modelMatrix.Col3.z = 0.0f;
-	l_modelMatrix.Col3.x = 0.0f;
-	l_modelMatrix.Col3.y = 0.0f;
+	l_modelMatrix.Col3.z = 2.0f;
+	l_modelMatrix.Col3.x = 2.0f;
+	l_modelMatrix.Col3.y = 1.0f;
 	// l_modelMatrix.Col0.x = 5.0f;
 	// l_modelMatrix.Col1.y = 0.2f;
 	// l_modelMatrix.Col2.z = 0.2f;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 	Material_HANDLE l_materialHandle;
 	PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 	RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){ 
-		.Type = MATERIAL_TYPE_FlatShaded_Textured,
+		.Type = MATERIAL_TYPE_NotShaded_Textured,
 		.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
 		.DiffuseTexture = l_texture->Texture
 	};

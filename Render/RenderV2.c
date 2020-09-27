@@ -12,6 +12,9 @@
 const uint32_t RENDERTEXTURE_WIDTH = 256;
 const uint32_t RENDERTEXTURE_HEIGHT = 224;
 
+// const uint32_t RENDERTEXTURE_WIDTH = 512;
+// const uint32_t RENDERTEXTURE_HEIGHT = 448;
+
 void GlobalBuffers_alloc(GlobalBuffers* p_buffer)
 {
 	Arr_Alloc_RenderedObjectHandle(&p_buffer->RenderedObjectBuffers.NotShaded_NotTextured.RenderedObjects, 0);
@@ -87,6 +90,12 @@ void RenderV2_render(RenderV2* p_render)
 			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
 			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.NotShaded_NotTextured;
 			DrawObjects_NoShade_NotTextured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
+		}
+		if (p_render->GlobalBuffer.RenderedObjectBuffers.NotShaded_Textured.RenderedObjects.Size > 0)
+		{
+			RendererPipeline_Memory_Clear(&p_render->WireframeRenderMemory);
+			l_wireFrameRendererInput.RenderableObjectsBuffer = &p_render->GlobalBuffer.RenderedObjectBuffers.NotShaded_Textured;
+			DrawObjects_NoShade_Textured(&l_wireFrameRendererInput, &p_render->RenderTargetTexture, &p_render->DepthBuffer, &p_render->WireframeRenderMemory);
 		}
 	}
 
