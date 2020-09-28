@@ -2,26 +2,20 @@
 
 Supported platform : Windows only.
 
-![](https://i.imgur.com/BIZjD6j.gif)
-[![](https://i.imgur.com/GxjQt6Q.png)](https://imgur.com/a/RKVNkiz)
+![](https://i.imgur.com/SPNdNuE.gif)
+![](https://i.imgur.com/8LRG2xY.gif)
 
 ## External dependencies
 
-The Game Engine doesn't have any external dependencies.
+* <b>STB_IMAGE</b> : For loading textures.
 
-## Milestone 0.0.3 features
+## Milestone 0.0.4 features
 
 This milestone added the following features :
-1. [Software Rendering](https://github.com/ldalzotto/GameEngine/tree/master/Render) : A new software renderer prototype has been created from scratch. It isn't optimized at all.
-2. <b>Code migration to C</b> : The source code has been migrated to the C language. That's because I was only using C++ template feature.
-3. [Relative Assetpath](https://github.com/ldalzotto/GameEngine/tree/master/Core_C/Asset) : External assets must now be placed in the "Assets" folder at the same level as the executable.
 
 ### Software Renderer
-The new software renderer has been created from scratch and replaces Vulkan. My goal here is to learn things about rendering technique, I am not interreseted in using premade library even if performance is worse.
-The renderer features :
-1/ Gizmo rendering.
-2/ 3D Polygon rendering.
-3/ Basic direction light shading per polygon.
-4/ Asset loading and material instance.
-
- 
+1/ <b>Texture Mapping</b> : adding support for texture mapping, with perspective corrected interpolation.
+2/ <b>ZBuffer</b> : implementing a ZBuffer for visibility problem.
+3/ <b>Smart rasterizer</b> : improving the rasterizer algorithm that iterate over the polygon bounding box in a smarter way.
+4/ <b>RenderPipeline</b> : adding support for multiple RenderPipeline (unlit_textured - flatlit_textured - flatlit_nottextured).
+5/ <b>Window scaling</b> : the renderer now have an internal rendered texture. This texture is then stretched to fit the window size.
