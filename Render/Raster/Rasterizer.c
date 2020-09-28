@@ -299,7 +299,7 @@ POLYGONRASTERIZER_ITERATOR_RETURN_CODE PolygonRasterizeSmart_MoveNext_Interpolat
 		else
 		{
 			int l_lineIndex = p_polygonRasterizerIterator->CenterScanCursor.x - 1;
-			int l_left_e[3] = { 0 };
+			int l_left_e[3];
 			memcpy(&l_left_e[0], &p_polygonRasterizerIterator->Center_e0, sizeof(int) * 3);
 			while (l_lineIndex >= p_polygonRasterizerIterator->CommonStructure.PolygonBoundClip.Min.x)
 			{

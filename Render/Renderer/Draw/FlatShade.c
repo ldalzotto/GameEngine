@@ -122,17 +122,17 @@ inline void _i_FlatShadingPixelCalculation_ShadePixelColor_Textured_Perspective(
 
 };
 
-inline void _i_NoShade_Textured_Perspective(const Polygon2f_PTR p_polygonUV,
-	RenderLights_PTR p_renderLights, Material_PTR p_material,
+inline void _i_NoShade_Textured_Perspective(const Polygon2i_PTR p_polygonTexCoords,
+	RenderLights_PTR p_renderLights, Material_PTR p_material, Texture3c_PTR p_materialDiffuseTexture,
 	const PolygonRasterizer_InterpolationFactor_PTR p_interpolationFactors, PolygonPerspectiveInterpolation_PTR p_perspectiveInterpolation, Color3f_PTR out_pixelColor)
 {
 
-	Vector2f l_interpolatedUv;
+	Vector2i l_interpolatedCoordinates;
 	Color3f l_sampledPoint;
 
-	_i_Polygon_Interpolate_Perspective_V2F(p_polygonUV, p_interpolationFactors->I0, p_interpolationFactors->I1, p_interpolationFactors->I2, p_perspectiveInterpolation, &l_interpolatedUv);
-	_i_TextureSample_Point_3f(&RRenderHeap.Texture3cAllocator.array.Memory[p_material->DiffuseTexture.Handle], &l_interpolatedUv, &l_sampledPoint);
-
+	_i_Polygon_Interpolate_Perspective_V2i(p_polygonTexCoords, p_interpolationFactors->I0, p_interpolationFactors->I1, p_interpolationFactors->I2, p_perspectiveInterpolation, &l_interpolatedCoordinates);
+	_i_TextureSample_Point_Coords_3f(p_materialDiffuseTexture, &l_interpolatedCoordinates, &l_sampledPoint);
+	
 	out_pixelColor->Vec.x = (p_material->BaseColor.r * l_sampledPoint.r) /*+ (p_renderLights->AmbientLight.Color.r)*/;
 	out_pixelColor->Vec.y = (p_material->BaseColor.g * l_sampledPoint.g) /*+ (p_renderLights->AmbientLight.Color.g)*/;
 	out_pixelColor->Vec.z = (p_material->BaseColor.b * l_sampledPoint.b) /*+ (p_renderLights->AmbientLight.Color.b)*/;
@@ -146,7 +146,7 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 		DrawFunction_ExtractedPipeline l_pipelineData = _i_ExtractPipeline(p_input->RendererPipelineMemory, i);
 
 		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject->Material.Handle];
-	
+
 		// Rasterize
 		Polygon2i l_pixelPositionPolygon = _i_ExtractedPipeline_PixelPositionPolygon(&l_pipelineData);
 		Polygonf l_cameraDepthPolygon = _i_ExtractedPipeline_CameraDepthPolygon(&l_pipelineData);
@@ -176,15 +176,27 @@ void DrawPoly_NoShade_NotTextured(DrawPolygFlatShadeTexturedInput_PTR p_input)
 void DrawPoly_NoShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR p_input)
 {
 	Color3f l_pixelColor;
-
+	Polygon2i l_difuseTextureCoord_polygon;
 	for (size_t i = 0; i < p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex.Size; i++)
 	{
 		DrawFunction_ExtractedPipeline l_pipelineData = _i_ExtractPipeline(p_input->RendererPipelineMemory, i);
 
 		Material_PTR l_material = &p_input->RenderHeap->MaterialAllocator.array.Memory[l_pipelineData.RenderableObjectPipeline->RenderedObject->Material.Handle];
+		Texture3c_PTR l_materialDiffuseTexture = &p_input->RenderHeap->Texture3cAllocator.array.Memory[l_material->DiffuseTexture.Handle];
+
 		Polygon_UV_PTR l_polygonUV = &p_input->RenderHeap->PolygonUVAllocator.array.Memory
 			[l_pipelineData.RenderableObjectPipeline->RenderedObject->Mesh->PerVertexData.UV1.Memory
 			[l_pipelineData.Polygon->MeshPolygonIndex].Handle];
+
+		// Instead of calculating texture coordinate for every pixels, we calculate it once for the polygon, then interpolate it.
+		float l_diffuseWidth_min1 =  l_materialDiffuseTexture->Width - 1.0f;
+		float l_diffuseHeight_min1 = l_materialDiffuseTexture->Width - 1.0f;
+		l_difuseTextureCoord_polygon = (Polygon2i) {
+				(Vector2i) {(l_polygonUV->v1.x * l_diffuseWidth_min1), ((1.0f - l_polygonUV->v1.y) * l_diffuseHeight_min1 ) },
+				(Vector2i) {(l_polygonUV->v2.x * l_diffuseWidth_min1), ((1.0f - l_polygonUV->v2.y) * l_diffuseHeight_min1 ) },
+				(Vector2i) {(l_polygonUV->v3.x * l_diffuseWidth_min1), ((1.0f - l_polygonUV->v3.y) * l_diffuseHeight_min1 ) },
+		};
+		
 
 		// Rasterize
 		Polygon2i l_pixelPositionPolygon = _i_ExtractedPipeline_PixelPositionPolygon(&l_pipelineData);
@@ -204,8 +216,7 @@ void DrawPoly_NoShade_Textured_Perspective(DrawPolygFlatShadeTexturedInput_PTR p
 			{
 				if (_i_DepthTest_Perspective(&l_rasterizerIterator.CommonStructure, p_input->DepthBuffer, &l_perspectiveInterpolation))
 				{
-					
-					_i_NoShade_Textured_Perspective(l_polygonUV, p_input->RenderLights, l_material, &l_rasterizerIterator.CommonStructure.InterpolationFactors, &l_perspectiveInterpolation,
+					_i_NoShade_Textured_Perspective(&l_difuseTextureCoord_polygon, p_input->RenderLights, l_material, l_materialDiffuseTexture, &l_rasterizerIterator.CommonStructure.InterpolationFactors, &l_perspectiveInterpolation,
 						&l_pixelColor);
 					p_input->RenderTarget->Texture.Pixels.Memory[l_rasterizerIterator.CommonStructure.RasterizedPixel.x + (l_rasterizerIterator.CommonStructure.RasterizedPixel.y * p_input->RenderTarget->PrecalculatedDimensions.Width)] = l_pixelColor;
 				}
