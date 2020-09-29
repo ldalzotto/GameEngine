@@ -1,5 +1,6 @@
 #include "DepthBuffer.h"
 #include "Objects/Texture/Texture.h"
+#include "Constants.h"
 
 
 void DepthBuffer_Realloc(DepthBuffer_PTR p_depthBuffer, uint32_t p_width, uint32_t p_height)

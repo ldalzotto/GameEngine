@@ -8,7 +8,6 @@
 #include "Renderer/Pipeline/RendererPipelineMemory.h"
 #include "Objects/RenderedObject.h"
 
-
 const uint32_t RENDERTEXTURE_WIDTH = 256;
 const uint32_t RENDERTEXTURE_HEIGHT = 224;
 

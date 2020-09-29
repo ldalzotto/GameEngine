@@ -91,5 +91,5 @@ void RendereableObject_TransformPolygons(RenderableObjectTransform_Input_PTR p_i
 
 	// Polygon sorting is done so that the nearest polygon from camera is rendered first.
 	// This is to have better chance to discard pixel draw calculation (thanks to the depth buffer)
-	Sort_Quick_PolygonPipeline_CameraDistanceIndexed_FrontToFar(&p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex);
+	// Sort_Quick_PolygonPipeline_CameraDistanceIndexed_FrontToFar(&p_input->RendererPipelineMemory->OrderedPolygonPipelinesIndex);
 };

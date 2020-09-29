@@ -6,6 +6,11 @@
 typedef struct Vertex_TYP
 {
 	Vector4f LocalPosition;
+
+	Vector4f WorldPosition;
+	Vector4f CameraSpacePosition;
+	Vector2i PixelPosition;
+	char WorldPositionCalcualted, PixelPositionCalcualted;
 }Vertex, * Vertex_PTR;
 
 typedef struct Array_Vertex_TYP

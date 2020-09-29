@@ -6,6 +6,7 @@
 #include "Renderer/Transformation/RenderableObjectTransform.h"
 #include "Renderer/Transformation/RenderableObjectToPipeline.h"
 #include "Renderer/Transformation/RenderableObjectCull.h"
+#include "SolidRendererV2.h"
 
 // There is a unique directional light
 RenderLights GRenderLights =
@@ -48,8 +49,8 @@ void DrawObjects_NoShade_Textured(const SolidRendererInput* p_input, RenderTextu
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision l_wireframeRenderBegin = Clock_currentTime_mics();
 #endif
-
-
+	DrawObjects_NoShade_Textured_V2(p_input, p_to, p_depthBuffer, p_memory);
+	/*
 #if RENDER_PERFORMANCE_TIMER
 	TimeClockPrecision tmp_timer;
 	tmp_timer = Clock_currentTime_mics();
@@ -92,9 +93,9 @@ void DrawObjects_NoShade_Textured(const SolidRendererInput* p_input, RenderTextu
 	};
 
 	DrawPoly_NoShade_Textured_Perspective(&l_drawInput);
-
+	*/
 #if RENDER_PERFORMANCE_TIMER
-	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterize, Clock_currentTime_mics() - tmp_timer);
+	// PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRasterize, Clock_currentTime_mics() - tmp_timer);
 	PerformanceCounter_PushSample(&GWireframeRendererPerformace.AverageRender, Clock_currentTime_mics() - l_wireframeRenderBegin);
 #endif
 }
