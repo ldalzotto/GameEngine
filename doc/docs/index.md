@@ -1,12 +1,16 @@
 # Welcome
 
-The software renderer project is a 3D renderer created as a personal project and coded in C.
+This project emulates computations done by the GPU hardware to draw 3D objects. <br/>
+The goal of this project is to remove the usage of graphics API like OpenGL or Vulkan by re-implementing rasterization functions.
 
-The software renderer program replicates computations done by the GPU hardware inside a C program. 
+This project was made to challenge myself to write a software rasterizer from scratch with little prior knowledge in C and 3D mathematics. Learning graphics concepts and maths in the process. <br/>
+It is a learning journey, so as much as possible, it will use handmade solutions (memory containers, maths library, 3D scene management, 3D graphics abstraction, OS interactions).
 
-This project was made to challenge myself to write a software rasterizer from scratch with little prior knowledge in C and 3D mathematics. Learning graphics concepts and math in the process. <br/>
-It is a learning journey, so as much as possible, it will use handmade solutions (memory containers, maths
-library, 3D scene management, 3D graphics abstraction, OS interactions).
+# Third party
+
+Usage of third party libraries is limited to :
+
+1. [stbimage](https://github.com/nothings/stb) for png loading.
 
 # Features
 
@@ -24,11 +28,7 @@ The big picture of the algorithms used for the software renderer and the entity 
 
 ![](https://i.imgur.com/BIZjD6j.gif)
 
-# Third party
-
-Usage of third party libraries is limited to :
-
-1. [stbimage](https://github.com/nothings/stb) for png loading.
+> The project only works for windows platform !
 
 ## Entity selection
 
@@ -42,7 +42,9 @@ Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasteri
 
 The project uses CMake as build system.
 
-Clone the repository and on the root folder with power shell :
+* Clone the repository.
+* Update the EXECUTABLEPATH_DEV definition in the source code located at "Core_C/Asset/AssetPaths_def.h" to make it point to the project root path that contains the asset folder.
+* On the root folder with power shell :
 
 ```
 mkdir ./build
@@ -53,7 +55,7 @@ cmake --build . --target EntitySelectionTest
 
 It will generate EntitySelectionTest.exe in the path mentioned in the command prompt.
 
-## Software renderer shocase
+## Software renderer showcase
 
 ### Try it from precompiled binaries
 
@@ -63,7 +65,9 @@ Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasteri
 
 The project uses CMake as build system.
 
-Clone the repository and on the root folder with power shell :
+* Clone the repository.
+* Update the EXECUTABLEPATH_DEV definition in the source code located at "Core_C/Asset/AssetPaths_def.h" to make it point to the project root path that contains the asset folder.
+* On the root folder with power shell :
 
 ```
 mkdir ./build
@@ -74,5 +78,3 @@ cmake --build . --target SoftwareRendererShowcase_tower
 ```
 
 It will generate SoftwareRendererShowcase_icosphere.exe and SoftwareRendererShowcase_tower.exe in the path mentioned in the command prompt.
-
-> **WARNING:** if you want to run the program from source, make sure to update the EXECUTABLEPATH_DEV definition in the source code to make it point to the project root path that contains the asset folder.
