@@ -17,7 +17,7 @@ library, 3D scene management, 3D graphics abstraction, OS interactions).
 * 3D transformation gizmo to move entities in the world.
 * obj file loader.
 
-The big picture of the algorithms used for the software renderer and the entity movement are detailed here.
+The big picture of the algorithms used for the software renderer and the entity movement are detailed [here](https://ldalzotto.github.io/SoftwareRasterizer/).
 
 ![](https://i.imgur.com/SPNdNuE.gif)
 ![](https://i.imgur.com/8LRG2xY.gif)
