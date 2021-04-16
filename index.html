@@ -37,11 +37,11 @@
         var pageToc = [
           {title: "Welcome", url: "#_top", children: [
           ]},
-          {title: "Features", url: "#features", children: [
-          ]},
           {title: "Third party", url: "#third-party", children: [
+          ]},
+          {title: "Features", url: "#features", children: [
               {title: "Entity selection", url: "#entity-selection" },
-              {title: "Software renderer shocase", url: "#software-renderer-shocase" },
+              {title: "Software renderer showcase", url: "#software-renderer-showcase" },
           ]},
         ];
 
@@ -119,11 +119,15 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
     
 
     <h1 id="welcome">Welcome</h1>
-<p>The software renderer project is a 3D renderer created as a personal project and coded in C.</p>
-<p>The software renderer program replicates computations done by the GPU hardware inside a C program. </p>
-<p>This project was made to challenge myself to write a software rasterizer from scratch with little prior knowledge in C and 3D mathematics. Learning graphics concepts and math in the process. <br/>
-It is a learning journey, so as much as possible, it will use handmade solutions (memory containers, maths
-library, 3D scene management, 3D graphics abstraction, OS interactions).</p>
+<p>This project emulates computations done by the GPU hardware to draw 3D objects. <br/>
+The goal of this project is to remove the usage of graphics API like OpenGL or Vulkan by re-implementing rasterization functions.</p>
+<p>This project was made to challenge myself to write a software rasterizer from scratch with little prior knowledge in C and 3D mathematics. Learning graphics concepts and maths in the process. <br/>
+It is a learning journey, so as much as possible, it will use handmade solutions (memory containers, maths library, 3D scene management, 3D graphics abstraction, OS interactions).</p>
+<h1 id="third-party">Third party</h1>
+<p>Usage of third party libraries is limited to :</p>
+<ol>
+<li><a href="https://github.com/nothings/stb">stbimage</a> for png loading.</li>
+</ol>
 <h1 id="features">Features</h1>
 <ul>
 <li>3D mesh rasterization on the CPU.</li>
@@ -133,15 +137,10 @@ library, 3D scene management, 3D graphics abstraction, OS interactions).</p>
 <li>3D transformation gizmo to move entities in the world.</li>
 <li>obj file loader.</li>
 </ul>
-<p>The big picture of the algorithms used for the software renderer and the entity movement are detailed here.</p>
+<p>The big picture of the algorithms used for the software renderer and the entity movement are detailed <a href="https://ldalzotto.github.io/SoftwareRasterizer/">here</a>.</p>
 <p><img alt="" src="https://i.imgur.com/SPNdNuE.gif" />
 <img alt="" src="https://i.imgur.com/8LRG2xY.gif" /></p>
 <p><img alt="" src="https://i.imgur.com/BIZjD6j.gif" /></p>
-<h1 id="third-party">Third party</h1>
-<p>Usage of third party libraries is limited to :</p>
-<ol>
-<li><a href="https://github.com/nothings/stb">stbimage</a> for png loading.</li>
-</ol>
 <h2 id="entity-selection">Entity selection</h2>
 <p>Click one of the cube to select it. Press T,R or S to enable translation, rotation and scale gizmos.</p>
 <h3 id="try-it-from-precompiled-binaries">Try it from precompiled binaries</h3>
@@ -155,12 +154,12 @@ cmake ../
 cmake --build . --target EntitySelectionTest
 </code></pre>
 <p>It will generate EntitySelectionTest.exe in the path mentioned in the command prompt.</p>
-<h2 id="software-renderer-shocase">Software renderer shocase</h2>
+<h2 id="software-renderer-showcase">Software renderer showcase</h2>
 <h3 id="try-it-from-precompiled-binaries_1">Try it from precompiled binaries</h3>
 <p>Download and extract the <a href="https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.4/004_Release.7z">binaries</a>.</p>
 <h3 id="or-build-from-source_1">Or build from source</h3>
 <p>The project uses CMake as build system.</p>
-<p>Clone the repository and on the root folder with power shell :</p>
+<p>Clone the repository and on the root folder with PowerShell :</p>
 <pre><code>mkdir ./build
 cd ./build
 cmake ../
@@ -186,5 +185,5 @@ cmake --build . --target SoftwareRendererShowcase_tower
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-04-16 18:07:08.868010+00:00
+Build Date UTC : 2021-04-16 18:39:15.645823+00:00
 -->
