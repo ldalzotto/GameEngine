@@ -1,25 +1,78 @@
-# GameEngine
+# Welcome
 
-Supported platform : Windows only.
+The software renderer project is a 3D renderer created as a personal project and coded in C.
+
+The software renderer program replicates computations done by the GPU hardware inside a C program.
+
+This project was made to challenge myself to write a software rasterizer from scratch with little prior knowledge in C and 3D mathematics. Learning graphics concepts and math in the process. <br/>
+It is a learning journey, so as much as possible, it will use handmade solutions (memory containers, maths
+library, 3D scene management, 3D graphics abstraction, OS interactions).
+
+# Features
+
+* 3D mesh rasterization on the CPU.
+* Line renderer.
+* Pixel shading with texture mapping.
+* Flat shading.
+* 3D transformation gizmo to move entities in the world.
+* obj file loader.
+
+The big picture of the algorithms used for the software renderer and the entity movement are detailed here.
 
 ![](https://i.imgur.com/SPNdNuE.gif)
 ![](https://i.imgur.com/8LRG2xY.gif)
 
-## External dependencies
+![](https://i.imgur.com/BIZjD6j.gif)
 
-* <b>STB_IMAGE</b> : For loading textures.
+# Third party
 
-## Milestone 0.0.4 features
+Usage of third party libraries is limited to :
 
-This milestone added the following features :
+1. [stbimage](https://github.com/nothings/stb) for png loading.
 
-### Software Renderer
-1/ <b>Texture Mapping</b> : adding support for texture mapping, with perspective corrected interpolation.
+## Entity selection
 
-2/ <b>ZBuffer</b> : implementing a ZBuffer for visibility problem.
+Click one of the cube to select it. Press T,R or S to enable translation, rotation and scale gizmos.
 
-3/ <b>Smart rasterizer</b> : improving the rasterizer algorithm that iterate over the polygon bounding box in a smarter way.
+### Try it from precompiled binaries
 
-4/ <b>RenderPipeline</b> : adding support for multiple RenderPipeline (unlit_textured - flatlit_textured - flatlit_nottextured).
+Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.3/GameEngine_0.0.3.7z).
 
-5/ <b>Window scaling</b> : the renderer now have an internal rendered texture. This texture is then stretched to fit the window size.
+### Or build from source
+
+The project uses CMake as build system.
+
+Clone the repository and on the root folder with power shell :
+
+```
+mkdir ./build
+cd ./build
+cmake ../
+cmake --build . --target EntitySelectionTest
+```
+
+It will generate EntitySelectionTest.exe in the path mentioned in the command prompt.
+
+## Software renderer shocase
+
+### Try it from precompiled binaries
+
+Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.4/004_Release.7z).
+
+### Or build from source
+
+The project uses CMake as build system.
+
+Clone the repository and on the root folder with power shell :
+
+```
+mkdir ./build
+cd ./build
+cmake ../
+cmake --build . --target SoftwareRendererShowcase_icosphere
+cmake --build . --target SoftwareRendererShowcase_tower
+```
+
+It will generate SoftwareRendererShowcase_icosphere.exe and SoftwareRendererShowcase_tower.exe in the path mentioned in the command prompt.
+
+> **WARNING:** if you want to run the program from source, make sure to update the EXECUTABLEPATH_DEV definition in the source code to make it point to the project root path that contains the asset folder.

@@ -1,9 +1,6 @@
-site_name: Software Rasterizer
+site_name: Software Renderer
 theme: 'windmill'
 nav:
-    - 'Architecture Overview': 'architecture_overview.md'
-    - 'ECS': "ecs.md"
-    - 'ECS Types': "ecs_types.md"
     - 'Entity editor selection': "entity_editor_selection.md"
     - 'Software Renderer': "software_renderer.md"
 extra_javascript:

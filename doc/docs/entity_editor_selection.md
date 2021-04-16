@@ -7,7 +7,7 @@ The system allows :
 
 # Entity selection
 
-// TODO
+The entity selection is done by casting a ray from the camera transform position in the direction pointed by the mouse against the physics world. The first intersected physics body bounding box is the entity that will be selected.
 
 # Entity movement
 
@@ -17,12 +17,11 @@ The movement algorithm is composed of three parts :
 
 ## 1. The guiding plane
 
-A guiding plane is either instantiated or positioned at the selected transform. The guiding plane will be used to project the screen space movement of the mouse.<br/>
-// so that the movement/rotation/scale to the transform is constrained to this scale.  
+A guiding plane is either instantiated or positioned at the selected transform. The guiding plane will be used to project the screen space movement of the mouse in world space.<br/>
 
 ## 2. Mouse movement projection
 
-The mouse movement delta between two frames is projected from the screen space to the guiding plane. All further calculations are based on this projection.
+The mouse movement delta between two frames is projected from the screen space to the guiding plane. Projection is done by finding the intersection points between the rays fired to mouse positions from the camera. All further calculations are based on this projection.
 
 ## 3. transform movement calculation
 

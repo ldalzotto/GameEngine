@@ -14,7 +14,3 @@ build
 .vs
 .idea
 cmake-build-debug
-
-Assets/Models
-Assets/Textures
-Assets/Shader/out

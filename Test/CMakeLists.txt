@@ -40,6 +40,10 @@ target_link_libraries(TextureLoadTest PUBLIC GameEngine)
 target_link_libraries(TextureLoadTest PUBLIC MyRender)
 #copy_zlib_dll(${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 
-add_executable(Release_004 "src/Release_004.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
-target_link_libraries(Release_004 PUBLIC GameEngine)
-target_link_libraries(Release_004 PUBLIC MyRender)
+add_executable(SoftwareRendererShowcase_icosphere "src/SoftwareRendererShowcase_icosphere.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+target_link_libraries(SoftwareRendererShowcase_icosphere PUBLIC GameEngine)
+target_link_libraries(SoftwareRendererShowcase_icosphere PUBLIC MyRender)
+
+add_executable(SoftwareRendererShowcase_tower "src/SoftwareRendererShowcase_tower.c" ${TEST_APP_PUBLIC} ${TEST_APP_PRIVATE})
+target_link_libraries(SoftwareRendererShowcase_tower PUBLIC GameEngine)
+target_link_libraries(SoftwareRendererShowcase_tower PUBLIC MyRender)

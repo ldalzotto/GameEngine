@@ -350,7 +350,7 @@ void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_
 	{
 		Vector3f l_rayBeginPoint; Transform_GetWorldPosition(&(p_test->PhysicsRayBegin)->Transform, &l_rayBeginPoint);
 		Vector3f l_rayEndPoint; Transform_GetWorldPosition(&(p_test->PhysicsRayEnd)->Transform, &l_rayEndPoint);
-		Vector3c l_color = { 0, 255, 0 };
+		Color3f l_color = { 0, 1.0f, 0 };
 
 		Gizmo_DrawLine(l_interface->RenderInterface->GizmoBuffer, &l_rayBeginPoint, &l_rayEndPoint);
 
@@ -380,7 +380,7 @@ void TestInt_udpate(GameEngineApplicationInterface* l_interface, TestIntTest* p_
 		{
 			Gizmo_DrawPoint(l_interface->RenderInterface->GizmoBuffer, &l_hit.HitPoint);
 			Transform_GetLocalToWorldMatrix(l_hit.Collider->Transform, &tmp_mat_0);
-			Vector3c l_whiteColor = { 255, 255, 255 };
+			Color3f l_whiteColor = { 1.0f, 1.0f, 1.0f };
 			Gizmo_DrawBox(l_interface->RenderInterface->GizmoBuffer, l_hit.Collider->Box, &tmp_mat_0, false, &l_whiteColor);
 		}
 

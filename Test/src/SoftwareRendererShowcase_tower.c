@@ -1,5 +1,5 @@
 
-#include <stdlib.h> 
+#include <stdlib.h>
 
 #include "RenderV2.h"
 #include "AppEvent/AppEvent.h"
@@ -36,7 +36,7 @@ inline void MainLoop(Array_RenderedObjectHandle_PTR p_renderedObects)
 	Matrix4f l_projectionMatrix;
 	float l_cameraFar = 50.0f;
 	Mat_Perspective_M4F(45.0f * DEG_TO_RAD,
-		((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, l_cameraFar, &l_projectionMatrix);
+			((float)renderV2.SwapChain.PresentTexture.Width / (float)renderV2.SwapChain.PresentTexture.Height), 0.1f, l_cameraFar, &l_projectionMatrix);
 
 	Vector4f l_cameraWorldPosition = { 9.0f, 9.0f, 9.0f, 1.0f };
 	Frustum l_cameraFrustum; Frustum_ExtractFromProjection((Matrix4f_PTR)&l_projectionMatrix, &l_cameraFrustum);
@@ -86,7 +86,7 @@ void ComplexShape(int argc, char* argv[])
 	RenderV2_initialize(&renderV2);
 
 	Array_RenderedObjectHandle l_renderedObjects; Arr_Alloc_RenderedObjectHandle(&l_renderedObjects, 1);
-	
+
 
 	Matrix4f l_modelMatrix_0 = Matrix4f_IDENTITYF;
 	Matrix4f_PTR l_modelMatrix_PTR_0 = &l_modelMatrix_0;
@@ -104,8 +104,8 @@ void ComplexShape(int argc, char* argv[])
 		Assetpath l_meshAssetPath;
 		AssetPath_GetAbsolutePath("Models/16.09.obj", &l_meshAssetPath);
 		MeshResourceProvider_UseResource(&renderV2.Resources.MeshResourceProvider, &l_meshAssetPath, &l_mesh);
-	
-		
+
+
 		{
 			Mesh_BuildBoundingBox(&l_mesh->Mesh, &l_meshBoundingBox_0);
 		}
@@ -119,12 +119,12 @@ void ComplexShape(int argc, char* argv[])
 		Material_HANDLE l_materialHandle;
 		PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 		RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){
-			.Type = MATERIAL_TYPE_NotShaded_Textured,
-			.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
-			.DiffuseTexture = l_texture->Texture
+				.Type = MATERIAL_TYPE_NotShaded_Textured,
+				.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
+				.DiffuseTexture = l_texture->Texture
 		};
 
-		
+
 		l_renderableObject_0 = (RenderedObject){ .Mesh = &l_mesh->Mesh , .MeshBoundingBox = &l_meshBoundingBox_0, .ModelMatrix = l_modelMatrix_0, .Material = l_materialHandle };
 		RendereableObject_PushToRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, &l_renderableObject_0);
 
@@ -239,26 +239,26 @@ void Icos(int argc, char* argv[])
 	RenderedObject l_renderableObject_0;
 	RenderedObject_PTR l_renderableObjectPTR_0 = &l_renderableObject_0;
 
-	
+
 	Matrix4f l_modelMatrix_1 = Matrix4f_IDENTITYF;
 	Matrix4f_PTR l_modelMatrix_PTR_1 = &l_modelMatrix_1;
 	BoxF l_meshBoundingBox_1 = { 0 };
 	RenderedObject l_renderableObject_1;
 	RenderedObject_PTR l_renderableObjectPTR_1 = &l_renderableObject_1;
-	
+
 	Matrix4f l_modelMatrix_2 = Matrix4f_IDENTITYF;
 	Matrix4f_PTR l_modelMatrix_PTR_2 = &l_modelMatrix_2;
 	BoxF l_meshBoundingBox_2 = { 0 };
 	RenderedObject l_renderableObject_2;
 	RenderedObject_PTR l_renderableObjectPTR_2 = &l_renderableObject_2;
 
-	
+
 	Matrix4f l_modelMatrix_3 = Matrix4f_IDENTITYF;
 	Matrix4f_PTR l_modelMatrix_PTR_3 = &l_modelMatrix_3;
 	BoxF l_meshBoundingBox_3 = { 0 };
 	RenderedObject l_renderableObject_3;
 	RenderedObject_PTR l_renderableObjectPTR_3 = &l_renderableObject_3;
-	
+
 
 	Arr_PushBackRealloc_RenderedObjectHandle(&l_renderedObjects, &l_renderableObjectPTR_0);
 	Arr_PushBackRealloc_RenderedObjectHandle(&l_renderedObjects, &l_renderableObjectPTR_1);
@@ -289,8 +289,8 @@ void Icos(int argc, char* argv[])
 		Material_HANDLE l_materialHandle;
 		PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 		RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){
-			.Type = MATERIAL_TYPE_FlatShaded_NotTextured,
-			.BaseColor = (Color3f){ 0.0f, 1.0f, 1.0f }
+				.Type = MATERIAL_TYPE_FlatShaded_NotTextured,
+				.BaseColor = (Color3f){ 0.0f, 1.0f, 1.0f }
 		};
 
 
@@ -321,8 +321,8 @@ void Icos(int argc, char* argv[])
 		Material_HANDLE l_materialHandle;
 		PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 		RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){
-			.Type = MATERIAL_TYPE_NotShaded_NotTextured,
-			.BaseColor = (Color3f){ 0.0f, 1.0f, 1.0f }
+				.Type = MATERIAL_TYPE_NotShaded_NotTextured,
+				.BaseColor = (Color3f){ 0.0f, 1.0f, 1.0f }
 		};
 
 
@@ -360,9 +360,9 @@ void Icos(int argc, char* argv[])
 		Material_HANDLE l_materialHandle;
 		PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 		RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){
-			.Type = MATERIAL_TYPE_FlatShaded_Textured,
-			.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
-			.DiffuseTexture = l_texture->Texture
+				.Type = MATERIAL_TYPE_FlatShaded_Textured,
+				.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
+				.DiffuseTexture = l_texture->Texture
 		};
 
 
@@ -370,7 +370,7 @@ void Icos(int argc, char* argv[])
 		RendereableObject_PushToRenderEngine(&renderV2.GlobalBuffer.RenderedObjectBuffers, &l_renderableObject_2);
 
 	}
-	
+
 	//3
 	{
 		l_modelMatrix_3.Col3.z = 1.0f;
@@ -400,9 +400,9 @@ void Icos(int argc, char* argv[])
 		Material_HANDLE l_materialHandle;
 		PoolAllocator_AllocElement_Material(&RRenderHeap.MaterialAllocator, &l_materialHandle);
 		RRenderHeap.MaterialAllocator.array.Memory[l_materialHandle.Handle] = (Material){
-			.Type = MATERIAL_TYPE_NotShaded_Textured,
-			.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
-			.DiffuseTexture = l_texture->Texture
+				.Type = MATERIAL_TYPE_NotShaded_Textured,
+				.BaseColor = (Color3f){ 1.0f, 1.0f, 1.0f },
+				.DiffuseTexture = l_texture->Texture
 		};
 
 
@@ -417,9 +417,9 @@ void Icos(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-	 ComplexShape(argc, argv);
+	ComplexShape(argc, argv);
 	// Icos(argc, argv);
 
 
-	 RenderV2_free(&renderV2);
+	RenderV2_free(&renderV2);
 }

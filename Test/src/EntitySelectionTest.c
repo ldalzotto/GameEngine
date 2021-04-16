@@ -11,9 +11,6 @@
 #include "ECS.h"
 #include "ECSEngine/Components/Camera.h"
 #include "ECSEngine/Components/TransformComponent.h"
-#include "ECSEngine/Components/Types_def.h"
-#include "Physics/World/RayCast.h"
-#include "Physics/World/Collider/BoxCollider.h"
 
 
 void EntitySelectionTest_Init(GameEngineApplication* l_app)
