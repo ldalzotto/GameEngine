@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Ecs types - Software Renderer</title>
+    <link href="../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/highlight.css">
+    <link href="../css/custom.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Transform component", url: "#_top", children: [
+          ]},
+          {title: "MeshRenderer component", url: "#meshrenderer-component", children: [
+          ]},
+          {title: "Mesh draw system", url: "#mesh-draw-system", children: [
+          ]},
+          {title: "Camera component", url: "#camera-component", children: [
+          ]},
+          {title: "Camera render system", url: "#camera-render-system", children: [
+          ]},
+          {title: "PhysicsBody component", url: "#physicsbody-component", children: [
+          ]},
+          {title: "Physics system", url: "#physics-system", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../js/base.js"></script>
+      <script src="../js/custom.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+
+    <p>This page describe all component and system types.</p>
+<h1 id="transform-component">Transform component</h1>
+<p>The transform component defines a 3D position of the entity.</p>
+<p>When updating an entity transform, what we change is the local transform. The local to world matrix is recalculated on the fly, only when needed. The local to world matrix value is cached until the transform change again.</p>
+<p>Because transforms have a parent/child relationship, the parent movement affect the child position. When a transform parent position is set, this change is propagated recursively into the children. This propagation is done instantaneously.</p>
+<p>When a transform has changed, the internal state of the transform indicates that the node has changed. This state can be consumed to check if a node has moved or not.</p>
+<h1 id="meshrenderer-component">MeshRenderer component</h1>
+<p>The MeshRenderer component holds references to a render material object and mesh resource. Material and mesh are allocated instantaneously on demand.<br/>
+MeshRenderer also computes the bounding box the the allocated mesh.</p>
+<h1 id="mesh-draw-system">Mesh draw system</h1>
+<p>The mesh draw system updates render model matrices when an entity has moved.</p>
+<p><strong>ECS event consumption:</strong></p>
+<p>The system allocate an entity filter that listen to the presence of Transform and MeshRenderer components. When an entity met the criteria, the system allocates a rendered object from the render system and link it to the mesh renderer component. 
+The rendered object is deallocated when criteria are no more met.</p>
+<h1 id="camera-component">Camera component</h1>
+<p>The Camera component holds projection and view matrices.</p>
+<h1 id="camera-render-system">Camera render system</h1>
+<p>The camera render system updates view and projection matrices when an entity has moved. </p>
+<p><strong>ECS event consumption:</strong></p>
+<p>The system allocate an entity filter that listen to the presence of Transform and Camera components.</p>
+<h1 id="physicsbody-component">PhysicsBody component</h1>
+<p>The PhysicsBody component holds a reference to :</p>
+<ul>
+<li>The BoxCollider object of the physics system.</li>
+<li>The transform component to get entity position. </li>
+<li>The mesh renderer bounding box to get the shape geometry. </li>
+</ul>
+<h1 id="physics-system">Physics system</h1>
+<p><strong>ECS event consumption:</strong>
+The system allocate an entity filter that listen to the presence of Transform, PhysicsBody and MeshRenderer components. When an entity met the criteria, the system allocates a box collider object and push it to the physics world.</p>
+
+  <br>
+    
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

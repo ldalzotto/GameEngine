@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="None">
+    
+    
+    <link rel="shortcut icon" href="./img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Software Renderer</title>
+    <link href="./css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="./css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="./css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/highlight.css">
+    <link href="css/custom.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="./js/jquery-3.2.1.min.js"></script>
+    <script src="./js/bootstrap-3.3.7.min.js"></script>
+    <script src="./js/highlight.pack.js"></script>
+    
+      <script src="./js/elasticlunr.min.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '.';
+      var is_top_frame = (window === window.parent);
+        
+        var pageToc = [
+          {title: "Welcome", url: "#_top", children: [
+          ]},
+          {title: "Features", url: "#features", children: [
+          ]},
+          {title: "Third party", url: "#third-party", children: [
+              {title: "Entity selection", url: "#entity-selection" },
+              {title: "Software renderer shocase", url: "#software-renderer-shocase" },
+          ]},
+        ];
+
+    </script>
+    <script src="./js/base.js"></script>
+      <script src="js/custom.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+<nav class="navbar wm-page-top-frame">
+  <div class="container-fluid wm-top-container">
+    
+    <div class="wm-top-tool pull-right wm-vcenter">
+      <form class="dropdown wm-vcentered" id="wm-search-form" action="./search.html">
+        
+        <button id="wm-search-show" class="btn btn-sm btn-default" type="submit"
+          ><i class="fa fa-search" aria-hidden="true"></i></button>
+
+        <div class="input-group input-group-sm wm-top-search">
+          <input type="text" name="q" class="form-control" id="mkdocs-search-query" placeholder="Search" autocomplete="off">
+          <span class="input-group-btn" role="search">
+            
+            <button class="btn btn-default dropdown-toggle collapse" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+            <ul id="mkdocs-search-results" class="dropdown-menu dropdown-menu-right"></ul>
+            <button id="wm-search-go" class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </span>
+        </div>
+      </form>
+    </div>
+
+    
+    <div class="wm-top-tool wm-vcenter pull-right wm-small-left">
+      <button id="wm-toc-button" type="button" class="btn btn-sm btn-default wm-vcentered"><i class="fa fa-th-list" aria-hidden="true"></i></button>
+    </div>
+
+    
+    
+
+    
+    <a href="" class="wm-top-brand wm-top-link wm-vcenter">
+      
+      <div class="wm-top-title">
+        Software Renderer<br>
+        
+      </div>
+    </a>
+  </div>
+</nav>
+
+  <div id="main-content" class="wm-page-top-frame">
+    
+<nav class="wm-toc-pane">
+  
+  <ul class="wm-toctree">
+        <li class="wm-toc-li wm-toc-lev1 "><a href="software_renderer/" class="wm-article-link wm-toc-text">Software Renderer</a>
+</li>
+        <li class="wm-toc-li wm-toc-lev1 "><a href="entity_editor_selection/" class="wm-article-link wm-toc-text">Entity editor selection</a>
+</li>
+  </ul>
+</nav>
+
+    <div class="wm-content-pane">
+      <iframe class="wm-article" name="article"></iframe>
+    </div>
+  </div>
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+
+    <h1 id="welcome">Welcome</h1>
+<p>The software renderer project is a 3D renderer created as a personal project and coded in C.</p>
+<p>The software renderer program replicates computations done by the GPU hardware inside a C program. </p>
+<p>This project was made to challenge myself to write a software rasterizer from scratch with little prior knowledge in C and 3D mathematics. Learning graphics concepts and math in the process. <br/>
+It is a learning journey, so as much as possible, it will use handmade solutions (memory containers, maths
+library, 3D scene management, 3D graphics abstraction, OS interactions).</p>
+<h1 id="features">Features</h1>
+<ul>
+<li>3D mesh rasterization on the CPU.</li>
+<li>Line renderer.</li>
+<li>Pixel shading with texture mapping.</li>
+<li>Flat shading.</li>
+<li>3D transformation gizmo to move entities in the world.</li>
+<li>obj file loader.</li>
+</ul>
+<p>The big picture of the algorithms used for the software renderer and the entity movement are detailed here.</p>
+<p><img alt="" src="https://i.imgur.com/SPNdNuE.gif" />
+<img alt="" src="https://i.imgur.com/8LRG2xY.gif" /></p>
+<p><img alt="" src="https://i.imgur.com/BIZjD6j.gif" /></p>
+<h1 id="third-party">Third party</h1>
+<p>Usage of third party libraries is limited to :</p>
+<ol>
+<li><a href="https://github.com/nothings/stb">stbimage</a> for png loading.</li>
+</ol>
+<h2 id="entity-selection">Entity selection</h2>
+<p>Click one of the cube to select it. Press T,R or S to enable translation, rotation and scale gizmos.</p>
+<h3 id="try-it-from-precompiled-binaries">Try it from precompiled binaries</h3>
+<p>Download and extract the <a href="https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.3/GameEngine_0.0.3.7z">binaries</a>.</p>
+<h3 id="or-build-from-source">Or build from source</h3>
+<p>The project uses CMake as build system.</p>
+<p>Clone the repository and on the root folder with power shell :</p>
+<pre><code>mkdir ./build
+cd ./build
+cmake ../
+cmake --build . --target EntitySelectionTest
+</code></pre>
+<p>It will generate EntitySelectionTest.exe in the path mentioned in the command prompt.</p>
+<h2 id="software-renderer-shocase">Software renderer shocase</h2>
+<h3 id="try-it-from-precompiled-binaries_1">Try it from precompiled binaries</h3>
+<p>Download and extract the <a href="https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.4/004_Release.7z">binaries</a>.</p>
+<h3 id="or-build-from-source_1">Or build from source</h3>
+<p>The project uses CMake as build system.</p>
+<p>Clone the repository and on the root folder with power shell :</p>
+<pre><code>mkdir ./build
+cd ./build
+cmake ../
+cmake --build . --target SoftwareRendererShowcase_icosphere
+cmake --build . --target SoftwareRendererShowcase_tower
+</code></pre>
+<p>It will generate SoftwareRendererShowcase_icosphere.exe and SoftwareRendererShowcase_tower.exe in the path mentioned in the command prompt.</p>
+<blockquote>
+<p><strong>WARNING:</strong> if you want to run the program from source, make sure to update the EXECUTABLEPATH_DEV definition in the source code to make it point to the project root path that contains the asset folder.</p>
+</blockquote>
+
+  <br>
+    
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
+<!--
+MkDocs version : 1.1.2
+Build Date UTC : 2021-04-16 18:07:08.868010+00:00
+-->

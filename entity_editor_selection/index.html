@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Entity editor selection - Software Renderer</title>
+    <link href="../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/highlight.css">
+    <link href="../css/custom.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Entity selection", url: "#_top", children: [
+          ]},
+          {title: "Entity movement", url: "#entity-movement", children: [
+              {title: "1. The guiding plane", url: "#1-the-guiding-plane" },
+              {title: "2. Mouse movement projection", url: "#2-mouse-movement-projection" },
+              {title: "3. transform movement calculation", url: "#3-transform-movement-calculation" },
+          ]},
+        ];
+
+    </script>
+    <script src="../js/base.js"></script>
+      <script src="../js/custom.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav">
+      <a href="../software_renderer/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../software_renderer/" class="btn btn-xs btn-link">
+        Software Renderer
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <p>The entity editor selection is a system implemented to assert that the math library is correctly implemented. <br/>
+The system allows :</p>
+<ul>
+<li>Select any entity with a mesh renderer component by clicking on it.</li>
+<li>Move, rotate and scale entity with 3D gizmos.</li>
+</ul>
+<h1 id="entity-selection">Entity selection</h1>
+<p>The entity selection is done by casting a ray from the camera transform position in the direction pointed by the mouse against the physics world. The first intersected physics body bounding box is the entity that will be selected.</p>
+<h1 id="entity-movement">Entity movement</h1>
+<p>The entity movement system is the most basic form of moving a 3D object in a scene with gizmo implemented by any 3D software. <br/></p>
+<p>The movement algorithm is composed of three parts :</p>
+<h2 id="1-the-guiding-plane">1. The guiding plane</h2>
+<p>A guiding plane is either instantiated or positioned at the selected transform. The guiding plane will be used to project the screen space movement of the mouse in world space.<br/></p>
+<h2 id="2-mouse-movement-projection">2. Mouse movement projection</h2>
+<p>The mouse movement delta between two frames is projected from the screen space to the guiding plane. Projection is done by finding the intersection points between the rays fired to mouse positions from the camera. All further calculations are based on this projection.</p>
+<h2 id="3-transform-movement-calculation">3. transform movement calculation</h2>
+<p><strong>Translation:</strong></p>
+<p>The translation gizmo is represented by three arrows that points to the transform local axis. <br/>
+For one selected direction, the guiding plane must contain the line defined by the direction. <br/>
+Also, to allow the user to move the object, the plane orientation is facing "as much as possible" the camera. This means that the angle between the guiding plane normal and the camera direction must be minimal. </p>
+<p>The delta mouse position in plane space is projected to the selected axis. Resulting to the movement distance of the transform along the selected direction. </p>
+<p><strong>Rotation:</strong></p>
+<p>The rotation gizmo is represented by three quarter circle facing the orientation axis. <br/>
+The guiding plane is facing the camera. <br/>
+The delta mouse position is converted to angle delta by taking the transform as point of origin. <br/>
+The angle delta is applied to the rotation.</p>
+<blockquote>
+<p>This could have been entirely be done in screen space.</p>
+</blockquote>
+<p><strong>Scale:</strong></p>
+<p>Exact same as the translation, but instead of moving the transform, we scale it.</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav">
+      <a href="../software_renderer/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../software_renderer/" class="btn btn-xs btn-link">
+        Software Renderer
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
