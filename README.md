@@ -38,19 +38,3 @@ Click one of the cube to select it. Press T,R or S to enable translation, rotati
 
 Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.3/GameEngine_0.0.3.7z).
 
-### Or build from source
-
-The project uses CMake as build system.
-
-* Clone the repository.
-* Update the EXECUTABLEPATH_DEV definition in the source code located at "Core_C/Asset/AssetPaths_def.h" to make it point to the project root path that contains the asset folder.
-* On the root folder with power shell :
-
-```
-mkdir ./build
-cd ./build
-cmake ../
-cmake --build . --target EntitySelectionTest
-```
-
-It will generate EntitySelectionTest.exe in the path mentioned in the command prompt.
