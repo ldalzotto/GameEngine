@@ -36,5 +36,5 @@ Click one of the cube to select it. Press T,R or S to enable translation, rotati
 
 ### Try it from precompiled binaries
 
-Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.3/GameEngine_0.0.3.7z).
+Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.4/Rasterize_showcase.7z).
 
