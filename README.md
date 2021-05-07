@@ -54,27 +54,3 @@ cmake --build . --target EntitySelectionTest
 ```
 
 It will generate EntitySelectionTest.exe in the path mentioned in the command prompt.
-
-## Software renderer showcase
-
-### Try it from precompiled binaries
-
-Download and extract the [binaries](https://github.com/ldalzotto/SoftwareRasterizer/releases/download/0.0.4/004_Release.7z).
-
-### Or build from source
-
-The project uses CMake as build system.
-
-* Clone the repository.
-* Update the EXECUTABLEPATH_DEV definition in the source code located at "Core_C/Asset/AssetPaths_def.h" to make it point to the project root path that contains the asset folder.
-* On the root folder with power shell :
-
-```
-mkdir ./build
-cd ./build
-cmake ../
-cmake --build . --target SoftwareRendererShowcase_icosphere
-cmake --build . --target SoftwareRendererShowcase_tower
-```
-
-It will generate SoftwareRendererShowcase_icosphere.exe and SoftwareRendererShowcase_tower.exe in the path mentioned in the command prompt.
