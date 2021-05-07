@@ -6,6 +6,8 @@ The goal of this project is to remove the usage of graphics API like OpenGL or V
 This project was made to challenge myself to write a software rasterizer from scratch with little prior knowledge in C and 3D mathematics. Learning graphics concepts and maths in the process. <br/>
 It is a learning journey, so as much as possible, it will use handmade solutions (memory containers, maths library, 3D scene management, 3D graphics abstraction, OS interactions).
 
+The big picture of the algorithms used for the software renderer and the entity movement are detailed [here](https://ldalzotto.github.io/SoftwareRasterizer/).
+
 # Third party
 
 Usage of third party libraries is limited to :
@@ -20,8 +22,6 @@ Usage of third party libraries is limited to :
 * Flat shading.
 * 3D transformation gizmo to move entities in the world.
 * obj file loader.
-
-The big picture of the algorithms used for the software renderer and the entity movement are detailed [here](https://ldalzotto.github.io/SoftwareRasterizer/).
 
 ![](https://i.imgur.com/SPNdNuE.gif)
 ![](https://i.imgur.com/8LRG2xY.gif)
